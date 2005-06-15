@@ -2,3 +2,13 @@
 PROJECT(praxix)
 
 SUBDIRS(convert resize)
+
+#---------------------------------------------------------------------
+# Output directories.
+
+SET (LIBRARY_OUTPUT_PATH ${praxix_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all libraries.")
+SET (EXECUTABLE_OUTPUT_PATH ${praxix_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all executables.")
+MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
+SET(praxix_LIBRARY_PATH "${LIBRARY_OUTPUT_PATH}")
+SET(praxix_EXECUTABLE_PATH "${EXECUTABLE_OUTPUT_PATH}")
+
