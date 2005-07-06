@@ -53,6 +53,13 @@ int	main(	int	argc,	char *argv[] )
 	std::string	pixelType	=	testImageIOBase->GetPixelTypeAsString(
 		testImageIOBase->GetPixelType()	);
 
+	/** Get the size of the image. */
+	std::vector<unsigned int> size(dimension);
+	for ( unsigned int i = 0; i < dimension; i++ )
+	{
+		size[ i ] = testImageIOBase->GetDimensions( i );
+	}
+
 	/**	Call the correct ReadWriteImage(). */
 	if ( dimension ==	2	)
 	{
@@ -113,12 +120,12 @@ int	main(	int	argc,	char *argv[] )
 			}
 			else if	(	strcmp(	iOComponent.c_str(), "unknown" ) ==	0	)
 			{
-				std::cerr	<< "ComponentType	unknown."	<< std::endl;
+				std::cerr	<< "ComponentType unknown."	<< std::endl;
 				return -1;
 			}
 			else
 			{
-				std::cerr	<< "ComponentType	not	supported."	<< std::endl;
+				std::cerr	<< "ComponentType not supported."	<< std::endl;
 				return -1;
 			}
 		} // end support for SCALAR pixel type
@@ -189,12 +196,12 @@ int	main(	int	argc,	char *argv[] )
 			}
 			else if	(	strcmp(	iOComponent.c_str(), "unknown" ) ==	0	)
 			{
-				std::cerr	<< "ComponentType	unknown."	<< std::endl;
+				std::cerr	<< "ComponentType unknown."	<< std::endl;
 				return -1;
 			}
 			else
 			{
-				std::cerr	<< "ComponentType	not	supported."	<< std::endl;
+				std::cerr	<< "ComponentType not supported."	<< std::endl;
 				return -1;
 			}
 		} // end Support for RGB pixel type
@@ -266,12 +273,12 @@ int	main(	int	argc,	char *argv[] )
 			}
 			else if	(	strcmp(	iOComponent.c_str(), "unknown" ) ==	0	)
 			{
-				std::cerr	<< "ComponentType	unknown."	<< std::endl;
+				std::cerr	<< "ComponentType unknown."	<< std::endl;
 				return -1;
 			}
 			else
 			{
-				std::cerr	<< "ComponentType	not	supported."	<< std::endl;
+				std::cerr	<< "ComponentType not supported."	<< std::endl;
 				return -1;
 			}
 		} // end support for SCALAR pixel types
@@ -342,12 +349,12 @@ int	main(	int	argc,	char *argv[] )
 			}
 			else if	(	strcmp(	iOComponent.c_str(), "unknown" ) ==	0	)
 			{
-				std::cerr	<< "ComponentType	unknown."	<< std::endl;
+				std::cerr	<< "ComponentType unknown."	<< std::endl;
 				return -1;
 			}
 			else
 			{
-				std::cerr	<< "ComponentType	not	supported."	<< std::endl;
+				std::cerr	<< "ComponentType not supported."	<< std::endl;
 				return -1;
 			}
 		} // end Support for RGB pixel type
@@ -362,8 +369,13 @@ int	main(	int	argc,	char *argv[] )
 	} // end 3D case
 	else
 	{
-		std::cerr	<< "Dimension	not	supported."	<< std::endl;
-		std::cerr	<< "Only 2D	and	3D images	are	supported."	<< std::endl;
+		std::cerr	<< "Dimension equals " << dimension << " ( ";
+		for ( unsigned int i = 0; i < dimension; i++ )
+		{
+			std::cerr << size[ i ] << " ";
+		}
+		std::cerr << "), which is not supported."	<< std::endl;
+		std::cerr	<< "Only 2D and 3D images are supported."	<< std::endl;
 		return -1;
 	}
 
@@ -399,7 +411,7 @@ void ReadWriteImage( std::string inputFileName,	std::string	outputFileName )
 	}
 	catch( itk::ExceptionObject	&	err	)
 	{
-		std::cerr	<< "ExceptionObject	caught !"	<< std::endl;
+		std::cerr	<< "ExceptionObject caught !"	<< std::endl;
 		std::cerr	<< err <<	std::endl;
 	}
 
