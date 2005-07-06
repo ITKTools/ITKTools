@@ -1,0 +1,83 @@
+#!/bin/bash
+
+helpneeded="false"
+
+if [ $# = 0 ]
+then
+  helpneeded="true"
+fi
+
+if [ "$1" = "-h" ]
+then
+  helpneeded="true"
+fi
+
+
+if [ "$1" = "--help" ]
+then
+  helpneeded="true"
+fi
+
+if [ "$1" = "--h" ]
+then
+  helpneeded="true"
+fi
+
+
+if [ "$1" = "-d" ]
+then
+  indir=$2
+ else
+	helpneeded="true"
+fi
+
+if [ "$helpneeded" = "true" ]
+then
+echo
+echo "unziptp script"
+echo
+echo "Unpack the result (TransformParametersArchive.tar.gz) of ziptp." 
+echo "The archive is optionally deleted"
+echo 
+echo "Usage:"
+echo
+echo "unziptp -d <dir> [delete]"
+echo
+exit 64
+fi
+
+deleten=`echo $* | grep "delete"`
+nowdir=`pwd`
+cd $indir
+tparchive="TransformParametersArchive.tar"
+ziptpbusy="ziptpbusy.txt"
+
+if [ -e $ziptpbusy ]
+then
+  echo "A $ziptpbusy-file has been found in the following directory: $indir"
+  echo "This probably means that ziptp is still running in this directory, or that something unexpected happened in a previous run of ziptp!"
+  cd $nowdir
+  exit 65
+fi
+
+echo
+echo "The following directory will be processed by unziptp: $indir"
+echo
+
+echo "Decompressing $indir/$tparchive.gz"
+gzip -d $tparchive.gz
+
+echo "Unpacking $indir/$tparchive"
+tar -xf $tparchive
+
+if [ -n "$deleten" ]
+then
+  echo "Removing $indir/$tparchive"
+  rm $tparchive
+fi
+
+cd $nowdir
+echo "Ready!"
+
+exit 0
+

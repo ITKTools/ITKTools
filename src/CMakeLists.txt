@@ -1,7 +1,7 @@
 # This project is intended to be built outside the Insight source tree
 PROJECT(praxix)
 
-SUBDIRS(convert resize)
+SUBDIRS(convert resize scripts)
 
 #---------------------------------------------------------------------
 # Output directories.
@@ -11,4 +11,5 @@ SET (EXECUTABLE_OUTPUT_PATH ${praxix_BINARY_DIR}/bin CACHE INTERNAL "Single outp
 MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
 SET(praxix_LIBRARY_PATH "${LIBRARY_OUTPUT_PATH}")
 SET(praxix_EXECUTABLE_PATH "${EXECUTABLE_OUTPUT_PATH}")
+
 

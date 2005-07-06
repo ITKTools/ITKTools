@@ -1,0 +1,120 @@
+#!/bin/bash
+#
+
+if [ $# = 0 ]
+then
+echo
+echo "vpx2mhd script"
+echo
+echo
+echo "Convert a .vpx image to a .mhd image"
+echo
+echo "Usage:"
+echo 
+echo "vpx2mhd <image.vpx>"
+echo
+echo "The result is saved as image.mhd and image.raw"
+echo
+echo "Currently only signed/unsigned short/char images are supported, but"
+echo "extension to long,  float and double would be easy."
+echo "Extension to vector images is more difficult, and i don't need it now..."
+echo
+echo "The voxelspacing is not written, because it's not stored in the vpx."
+echo "However, it is stored in a .vhd, which is not used in iX, but Koen"
+echo "uses it. You can make a .vhd with the following command:"
+echo
+echo "chunk im.vpx im.vpx"
+echo "which generates im.vhd"
+echo
+echo "then with the command:"
+echo "add_pixelinfo pixelsize slicethickness im"
+echo "the pixelsize and slicethickness are written to im.vhd."
+echo
+echo "So, in fact, this script could be extended by letting it search"
+echo "for the .vhd and try to read the pixelspacings."
+echo
+echo "See the following link for a description of the .mhd header format."
+echo "http://caddlab.rad.unc.edu/software/MetaIO/MetaIO-Introduction.htm"
+echo "The fields ElementSize and HeaderSize are not used in this script."
+echo
+echo "NB: Currently only shorts, unsigned shorts, chars and unsigned chars"
+echo "are supported. Extension to other types would be easy though, I guess."
+echo
+exit 64
+fi
+
+
+vpximages=`ls $*`
+
+for vpximage in $vpximages
+do
+
+echo "Vpx-image to convert: $vpximage"
+
+metaHeaderFile=${vpximage/%vpx/mhd}
+metaElementDataFile=${vpximage/%vpx/raw}
+metaElementDataFileWithoutPath=${metaElementDataFile##*/}
+
+metaObjectType="Image"
+metaNDims=`header -nrdims $vpximage`
+metaBinaryData="True"
+metaBinaryDataByteOrderMSB="False"
+metaDimSize=`header $vpximage -imdims`
+metaDimSize=${metaDimSize// x / }
+metaElementSpacing="1 1 1"
+metaElementNumberOfChannels="1"
+
+vpxElementType=`header -type $vpximage`
+#nrofbits=`echo $vpxpixeltype|cut -f2 -d"Bit"`
+
+metaElementType="unknown"
+if [ "$vpxElementType" = "VpxBit16" ]
+then
+	metaElementType="MET_SHORT"
+fi
+
+if [ "$vpxElementType" = "VpxUbit16" ]
+then
+	metaElementType="MET_USHORT"
+fi
+
+if [ "$vpxElementType" = "VpxBit8" ]
+then
+	metaElementType="MET_CHAR"
+fi
+
+if [ "$vpxElementType" = "VpxUbit8" ]
+then
+	metaElementType="MET_UCHAR"
+fi
+
+if [ "$metaElementType" = "unknown" ]
+then
+
+	echo "$vpximage has unsupported pixel type: $vpxElementType"
+	
+else
+
+	echo "Converting .vpx to .raw ..."
+	dido -raw $vpximage $metaElementDataFile
+	
+	echo "Writing .mhd  header file..."
+	>$metaHeaderFile
+	echo "ObjectType = $metaObjectType" >> $metaHeaderFile
+	echo "NDims = $metaNDims"  >> $metaHeaderFile
+	echo "BinaryData = $metaBinaryData " >> $metaHeaderFile
+	echo "DimSize = $metaDimSize " >> $metaHeaderFile
+#	echo "ElementSpacing = " $metaElementSpacing >> $metaHeaderFile
+	echo "ElementNumberOfChannels = $metaElementNumberOfChannels " >> $metaHeaderFile
+	echo "ElementType = $metaElementType " >> $metaHeaderFile
+	echo "ElementDataFile = $metaElementDataFileWithoutPath " >> $metaHeaderFile
+	echo >> $metaHeaderFile
+	
+	echo "Done!"
+		
+fi
+
+
+
+done #for vpximage in $vpximages
+

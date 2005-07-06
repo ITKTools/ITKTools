@@ -1,0 +1,30 @@
+#!/bin/bash
+#
+
+if [ $# = 0 ]
+then
+echo
+echo "2unix script"
+echo
+echo "Converts a dos txt file to a unix txt file."
+echo
+echo "The dos txt is renamed to <originalname>.dos"
+echo "The unix txt is called <originalname>"
+echo "before conversion the executable status is removed"
+echo
+echo "example: 2unix blabla.txt"
+echo
+exit 64
+fi
+
+inputfiles=`ls $*`
+
+for inputfile in $inputfiles
+do
+
+  mv $inputfile $inputfile.dos 
+  chmod a-x $inputfile.dos
+  dos2unix -n $inputfile.dos $inputfile
+
+done
+
