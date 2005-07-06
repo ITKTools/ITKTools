@@ -62,7 +62,7 @@ rm $masknameshortvpx $masknameshortvhd $masknamevhd
 
 if [ "$extension" = "mhd" ]
 then
-	vpx2mhd $masknamevpx
+	pxvpx2mhd $masknamevpx
 	rm $masknamevpx
   # added for marius:
 	rm $masknamemhd
