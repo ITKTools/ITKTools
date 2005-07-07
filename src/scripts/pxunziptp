@@ -49,7 +49,7 @@ fi
 deleten=`echo $* | grep "delete"`
 nowdir=`pwd`
 cd $indir
-tparchive="TransformParametersArchive.tar"
+tparchive="TransformParametersArchive.tgz"
 ziptpbusy="ziptpbusy.txt"
 
 if [ -e $ziptpbusy ]
@@ -64,11 +64,8 @@ echo
 echo "The following directory will be processed by unziptp: $indir"
 echo
 
-echo "Decompressing $indir/$tparchive.gz"
-gzip -d $tparchive.gz
-
 echo "Unpacking $indir/$tparchive"
-tar -xf $tparchive
+tar -xjf $tparchive
 
 if [ -n "$deleten" ]
 then
