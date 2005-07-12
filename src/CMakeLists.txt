@@ -1,7 +1,7 @@
 # This project is intended to be built outside the Insight source tree
 PROJECT(praxix)
 
-SUBDIRS(computeoverlap convert resize scripts)
+SUBDIRS(castconvert computeoverlap convert resize scripts)
 
 #---------------------------------------------------------------------
 # Output directories.
