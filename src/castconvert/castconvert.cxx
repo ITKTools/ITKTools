@@ -38,7 +38,10 @@
 #include "itkImageSeriesReader.h"
 #include "itkImageFileWriter.h"
 
-/** DICOM headers. */
+/** DICOM headers. We had some problems with the GDCM version
+ * from ITK 2.0, and decided to use DICOMImageIO2.
+ * Later we can easily change this to GDCM again.
+ */
 //#include "itkGDCMImageIO.h"
 //#include "itkGDCMSeriesFileNames.h"
 #include "itkDICOMImageIO2.h"
@@ -48,11 +51,14 @@
 #include "itkShiftScaleImageFilter.h"
 #include "itkRescaleIntensityImageFilter.h"
 
-/** In order to determine if */
+/** In order to determine if argv[1] is a directory or a file,
+ * so that we can distinguish between dicom and other files.
+ */
 #include <itksys/SystemTools.hxx>
 
 /** Declare a function to do the actual conversion.
- * ReadCastWriteImage() is for non-dicom images. */
+ * ReadCastWriteImage() is for non-dicom images.
+ */
 template<	class	InputImageType,	class	OutputImageType	>
 void ReadCastWriteImage( std::string inputFileName,	std::string	outputFileName );
 
@@ -68,7 +74,8 @@ void PrintInfo(	ReaderType reader, WriterType	writer );
 /** Macros are used in order to make the code in main() look cleaner. */
 
 /** callCorrectReadWriterMacro:
- * A macro to call the conversion function. */
+ * A macro to call the conversion function.
+ */
 
 #define callCorrectReadWriterMacro(typeIn,typeOut,dim) \
 	if ( inputPixelComponentType == #typeIn && outputPixelComponentType == #typeOut && inputDimension == dim) \
@@ -79,7 +86,8 @@ void PrintInfo(	ReaderType reader, WriterType	writer );
 		}
 
 /** callCorrectReadDicomWriterMacro:
- * A macro to call the dicom-conversion function. */
+ * A macro to call the dicom-conversion function.
+ */
 
 #define callCorrectReadDicomWriterMacro(typeIn,typeOut) \
 	if ( inputPixelComponentType == #typeIn && outputPixelComponentType == #typeOut ) \
@@ -101,7 +109,7 @@ int	main(	int	argc,	char *argv[] )
 	{
 		std::cout	<< "Usage:"	<< std::endl;
 		std::cout	<< "\tpxcastconvert inputfilename outputfilename [outputPixelComponentType]" << std::endl;
-		std::cout	<< "\tpxcastconvert DicomDirectory outputfilename [outputPixelComponentType]" << std::endl;
+		std::cout	<< "\tpxcastconvert dicomDirectory outputfilename [outputPixelComponentType]" << std::endl;
 		std::cout	<< "\twhere outputPixelComponentType is one of:" << std::endl;
 		std::cout	<< "\t\t- unsigned_char" << std::endl;
 		std::cout	<< "\t\t- char" << std::endl;
@@ -115,7 +123,6 @@ int	main(	int	argc,	char *argv[] )
 		std::cout	<< "\t\t- double" << std::endl;
 		std::cout	<< "\tprovided that the outputPixelComponentType is supported by the output file format." << std::endl;
 		std::cout	<< "\tBy default the outputPixelComponentType is set to the inputPixelComponentType." << std::endl;
-		//std::cout	<< "\tOnly 3D scalar dicoms are supported." << std::endl;
 		return 1;
 	}
 
@@ -126,7 +133,8 @@ int	main(	int	argc,	char *argv[] )
 	if ( argc == 4 ) outputPixelComponentType = argv[ 3 ];
 
 	/** Make sure last character of input != "/".
-	 * Otherwise FileIsDirectory() wont work. */
+	 * Otherwise FileIsDirectory() won't work.
+	 */
 	if ( input.rfind( "/" ) == input.size() - 1 )
 	{
 		input.erase( input.size() - 1, 1 );
@@ -169,7 +177,7 @@ int	main(	int	argc,	char *argv[] )
 		&& outputPixelComponentType != "float"
 		&& outputPixelComponentType != "double" )
 	{
-		/** In this case an illegal outputPixelType is given. */
+		/** In this case an illegal outputPixelComponentType is given. */
 		std::cerr << "The given outputPixelComponentType is \"" << outputPixelComponentType
 			<< "\", which is not supported." << std::endl;
 		return 1;
@@ -211,7 +219,7 @@ int	main(	int	argc,	char *argv[] )
 		FileNamesContainerType fileNames = nameGenerator->GetInputFileNames();
 		std::string fileName = fileNames[ 0 ];
 
-		/** Get a name of a 2D image. */
+		/** Get a name of a 2D dicom image. */
 		DICOMNamesGeneratorType::Pointer nameGenerator = DICOMNamesGeneratorType::New();
 		nameGenerator->SetDirectory( inputDirectoryName.c_str() );
 		FileNamesContainerType fileNames = nameGenerator->GetFileNames();
@@ -250,19 +258,20 @@ int	main(	int	argc,	char *argv[] )
 	if ( outputPixelComponentType == "" )
 	{
 		/** In this case this option is not given, and by default
-		 * we set it to the inputPixelType.
+		 * we set it to the inputPixelComponentType.
 		 */
 		outputPixelComponentType = inputPixelComponentType;
 	}
 
 	/** Get rid of the "_" in inputPixelComponentType and outputPixelComponentType. */
-	unsigned int pos = inputPixelComponentType.find( "_" );
-	if ( pos != std::string::npos )
+	std::basic_string<char>::size_type pos = inputPixelComponentType.find( "_" );
+	static const std::basic_string<char>::size_type npos = -1;
+	if ( pos != npos )
 	{
 		inputPixelComponentType.replace( pos, 1, " " );
 	}
 	pos = outputPixelComponentType.find( "_" );
-	if ( pos != std::string::npos )
+	if ( pos != npos )
 	{
 		outputPixelComponentType.replace( pos, 1, " " );
 	}
@@ -685,10 +694,11 @@ int	main(	int	argc,	char *argv[] )
 
 }	// end main
 
-/**	The	function that	reads	the	input	image	and	writes the output	image.
-* This	function is	templated	over the image types.	In the main	function
-* we	have to	make sure	to call	the	right	instantiation.
-*/
+
+/**	The	function that	reads	the	input	dicom image	and	writes the output	image.
+ * This	function is	templated	over the image types.	In the main	function
+ * we	have to	make sure	to call	the	right	instantiation.
+ */
 template<	class	InputImageType,	class	OutputImageType	>
 void ReadDicomSeriesCastWriteImage( std::string inputDirectoryName,	std::string	outputFileName )
 {
@@ -752,10 +762,11 @@ void ReadDicomSeriesCastWriteImage( std::string inputDirectoryName,	std::string	
 
 }	// end ReadDicomSeriesCastWriteImage
 
+
 /**	The	function that	reads	the	input	image	and	writes the output	image.
-* This	function is	templated	over the image types.	In the main	function
-* we	have to	make sure	to call	the	right	instantiation.
-*/
+ * This	function is	templated	over the image types.	In the main	function
+ * we	have to	make sure	to call	the	right	instantiation.
+ */
 template<	class	InputImageType,	class	OutputImageType	>
 void ReadCastWriteImage( std::string inputFileName,	std::string	outputFileName )
 {
@@ -800,9 +811,7 @@ void ReadCastWriteImage( std::string inputFileName,	std::string	outputFileName )
 }	// end ReadWriteImage
 
 
-/**
-*
-*/
+/** Print image information from the reader and the writer. */
 template<	class	ReaderType,	class	WriterType >
 void PrintInfo(	ReaderType reader, WriterType	writer )
 {
@@ -855,3 +864,4 @@ void PrintInfo(	ReaderType reader, WriterType	writer )
 	std::cout	<< std::endl;
 
 }	// end PrintInfo
+
