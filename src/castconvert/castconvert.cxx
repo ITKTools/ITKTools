@@ -38,14 +38,9 @@
 #include "itkImageSeriesReader.h"
 #include "itkImageFileWriter.h"
 
-/** DICOM headers. We had some problems with the GDCM version
- * from ITK 2.0, and decided to use DICOMImageIO2.
- * Later we can easily change this to GDCM again.
- */
-//#include "itkGDCMImageIO.h"
-//#include "itkGDCMSeriesFileNames.h"
-#include "itkDICOMImageIO2.h"
-#include "itkDICOMSeriesFileNames.h"
+/** DICOM headers. */
+#include "itkGDCMImageIO.h"
+#include "itkGDCMSeriesFileNames.h"
 
 /** One of these is used to cast the image. */
 #include "itkShiftScaleImageFilter.h"
@@ -196,10 +191,8 @@ int	main(	int	argc,	char *argv[] )
 	typedef	itk::Image<	PixelType, Dimension >			ImageType;
 	typedef	itk::ImageFileReader<	ImageType	>				ReaderType;
 	typedef	itk::ImageIOBase												ImageIOBaseType;
-	//typedef itk::GDCMImageIO                        GDCMImageIOType;
-	//typedef itk::GDCMSeriesFileNames								GDCMNamesGeneratorType;
-	typedef itk::DICOMImageIO2											DICOMImageIOType;
-	typedef itk::DICOMSeriesFileNames								DICOMNamesGeneratorType;
+	typedef itk::GDCMImageIO                        GDCMImageIOType;
+	typedef itk::GDCMSeriesFileNames								GDCMNamesGeneratorType;
 	typedef std::vector< std::string >							FileNamesContainerType;
 
 	/** Create a testReader. */
@@ -213,21 +206,15 @@ int	main(	int	argc,	char *argv[] )
 	}
 	else
 	{
-		/** Get a name of a 2D image. *
+		/** Get a name of a 2D image. */
 		GDCMNamesGeneratorType::Pointer nameGenerator = GDCMNamesGeneratorType::New();
-		nameGenerator->SetInputDirectory( inputDirName.c_str() );
+		nameGenerator->SetInputDirectory( inputDirectoryName.c_str() );
 		FileNamesContainerType fileNames = nameGenerator->GetInputFileNames();
 		std::string fileName = fileNames[ 0 ];
 
-		/** Get a name of a 2D dicom image. */
-		DICOMNamesGeneratorType::Pointer nameGenerator = DICOMNamesGeneratorType::New();
-		nameGenerator->SetDirectory( inputDirectoryName.c_str() );
-		FileNamesContainerType fileNames = nameGenerator->GetFileNames();
-		std::string fileName = fileNames[ 0 ];
-
 		/** Create a dicom ImageIO and set it in the testReader. */
-		//GDCMImageIOType::Pointer dicomIO = GDCMImageIOType::New();
-		DICOMImageIOType::Pointer dicomIO = DICOMImageIOType::New();
+		GDCMImageIOType::Pointer dicomIO = GDCMImageIOType::New();
+		//DICOMImageIOType::Pointer dicomIO = DICOMImageIOType::New();
 		testReader->SetImageIO( dicomIO );
 
 		/** Set the name of the 2D dicom image in the testReader. */
@@ -253,6 +240,24 @@ int	main(	int	argc,	char *argv[] )
 	 * Do some preparations.
 	 * *******************************************************************
 	 */
+
+	/** Check inputPixelType. */
+	if ( inputPixelComponentType != "unsigned_char"
+		&& inputPixelComponentType != "char"
+		&& inputPixelComponentType != "unsigned_short"
+		&& inputPixelComponentType != "short"
+		&& inputPixelComponentType != "unsigned_int"
+		&& inputPixelComponentType != "int"
+		&& inputPixelComponentType != "unsigned_long"
+		&& inputPixelComponentType != "long"
+		&& inputPixelComponentType != "float"
+		&& inputPixelComponentType != "double" )
+	{
+		/** In this case an illegal inputPixelComponentType is found. */
+		std::cerr << "The found inputPixelComponentType is \"" << inputPixelComponentType
+			<< "\", which is not supported." << std::endl;
+		return 1;
+	}
 
 	/** Check outputPixelType. */
 	if ( outputPixelComponentType == "" )
@@ -282,412 +287,422 @@ int	main(	int	argc,	char *argv[] )
 	 * *******************************************************************
 	 */
 
-	if ( !isDICOM )
+	try
 	{
-		/**
-		 * ****************** Support for SCALAR pixel types. **********************************
-		 */
-		if ( strcmp( pixelType.c_str(),	"scalar" ) == 0	&& numberOfComponents	== 1 )
+		if ( !isDICOM )
 		{
-			/** Support for 2D images. */
-			if ( inputDimension == 2 )
+			/**
+			 * ****************** Support for SCALAR pixel types. **********************************
+			 */
+			if ( strcmp( pixelType.c_str(),	"scalar" ) == 0	&& numberOfComponents	== 1 )
 			{
-				/** From unsigned char to something else. */
-				callCorrectReadWriterMacro( unsigned char, unsigned char, 2 );
-				callCorrectReadWriterMacro( unsigned char, char, 2 );
-				callCorrectReadWriterMacro( unsigned char, unsigned short, 2 );
-				callCorrectReadWriterMacro( unsigned char, short, 2 );
-				callCorrectReadWriterMacro( unsigned char, unsigned int, 2 );
-				callCorrectReadWriterMacro( unsigned char, int, 2 );
-				callCorrectReadWriterMacro( unsigned char, unsigned long, 2 );
-				callCorrectReadWriterMacro( unsigned char, long, 2 );
-				callCorrectReadWriterMacro( unsigned char, float, 2 );
-				callCorrectReadWriterMacro( unsigned char, double, 2 );
+				/** Support for 2D images. */
+				if ( inputDimension == 2 )
+				{
+					/** From unsigned char to something else. */
+					callCorrectReadWriterMacro( unsigned char, unsigned char, 2 );
+					callCorrectReadWriterMacro( unsigned char, char, 2 );
+					callCorrectReadWriterMacro( unsigned char, unsigned short, 2 );
+					callCorrectReadWriterMacro( unsigned char, short, 2 );
+					callCorrectReadWriterMacro( unsigned char, unsigned int, 2 );
+					callCorrectReadWriterMacro( unsigned char, int, 2 );
+					callCorrectReadWriterMacro( unsigned char, unsigned long, 2 );
+					callCorrectReadWriterMacro( unsigned char, long, 2 );
+					callCorrectReadWriterMacro( unsigned char, float, 2 );
+					callCorrectReadWriterMacro( unsigned char, double, 2 );
 
-				/** From char to something else. */
-				callCorrectReadWriterMacro( char, unsigned char, 2 );
-				callCorrectReadWriterMacro( char, char, 2 );
-				callCorrectReadWriterMacro( char, unsigned short, 2 );
-				callCorrectReadWriterMacro( char, short, 2 );
-				callCorrectReadWriterMacro( char, unsigned int, 2 );
-				callCorrectReadWriterMacro( char, int, 2 );
-				callCorrectReadWriterMacro( char, unsigned long, 2 );
-				callCorrectReadWriterMacro( char, long, 2 );
-				callCorrectReadWriterMacro( char, float, 2 );
-				callCorrectReadWriterMacro( char, double, 2 );
+					/** From char to something else. */
+					callCorrectReadWriterMacro( char, unsigned char, 2 );
+					callCorrectReadWriterMacro( char, char, 2 );
+					callCorrectReadWriterMacro( char, unsigned short, 2 );
+					callCorrectReadWriterMacro( char, short, 2 );
+					callCorrectReadWriterMacro( char, unsigned int, 2 );
+					callCorrectReadWriterMacro( char, int, 2 );
+					callCorrectReadWriterMacro( char, unsigned long, 2 );
+					callCorrectReadWriterMacro( char, long, 2 );
+					callCorrectReadWriterMacro( char, float, 2 );
+					callCorrectReadWriterMacro( char, double, 2 );
 
-				/** From unsigned short to something else. */
-				callCorrectReadWriterMacro( unsigned short, unsigned char, 2 );
-				callCorrectReadWriterMacro( unsigned short, char, 2 );
-				callCorrectReadWriterMacro( unsigned short, unsigned short, 2 );
-				callCorrectReadWriterMacro( unsigned short, short, 2 );
-				callCorrectReadWriterMacro( unsigned short, unsigned int, 2 );
-				callCorrectReadWriterMacro( unsigned short, int, 2 );
-				callCorrectReadWriterMacro( unsigned short, unsigned long, 2 );
-				callCorrectReadWriterMacro( unsigned short, long, 2 );
-				callCorrectReadWriterMacro( unsigned short, float, 2 );
-				callCorrectReadWriterMacro( unsigned short, double, 2 );
+					/** From unsigned short to something else. */
+					callCorrectReadWriterMacro( unsigned short, unsigned char, 2 );
+					callCorrectReadWriterMacro( unsigned short, char, 2 );
+					callCorrectReadWriterMacro( unsigned short, unsigned short, 2 );
+					callCorrectReadWriterMacro( unsigned short, short, 2 );
+					callCorrectReadWriterMacro( unsigned short, unsigned int, 2 );
+					callCorrectReadWriterMacro( unsigned short, int, 2 );
+					callCorrectReadWriterMacro( unsigned short, unsigned long, 2 );
+					callCorrectReadWriterMacro( unsigned short, long, 2 );
+					callCorrectReadWriterMacro( unsigned short, float, 2 );
+					callCorrectReadWriterMacro( unsigned short, double, 2 );
 
-				/** From short to something else. */
-				callCorrectReadWriterMacro( short, unsigned char, 2 );
-				callCorrectReadWriterMacro( short, char, 2 );
-				callCorrectReadWriterMacro( short, unsigned short, 2 );
-				callCorrectReadWriterMacro( short, short, 2 );
-				callCorrectReadWriterMacro( short, unsigned int, 2 );
-				callCorrectReadWriterMacro( short, int, 2 );
-				callCorrectReadWriterMacro( short, unsigned long, 2 );
-				callCorrectReadWriterMacro( short, long, 2 );
-				callCorrectReadWriterMacro( short, float, 2 );
-				callCorrectReadWriterMacro( short, double, 2 );
+					/** From short to something else. */
+					callCorrectReadWriterMacro( short, unsigned char, 2 );
+					callCorrectReadWriterMacro( short, char, 2 );
+					callCorrectReadWriterMacro( short, unsigned short, 2 );
+					callCorrectReadWriterMacro( short, short, 2 );
+					callCorrectReadWriterMacro( short, unsigned int, 2 );
+					callCorrectReadWriterMacro( short, int, 2 );
+					callCorrectReadWriterMacro( short, unsigned long, 2 );
+					callCorrectReadWriterMacro( short, long, 2 );
+					callCorrectReadWriterMacro( short, float, 2 );
+					callCorrectReadWriterMacro( short, double, 2 );
 
-				/** From unsigned int to something else. */
-				callCorrectReadWriterMacro( unsigned int, unsigned char, 2 );
-				callCorrectReadWriterMacro( unsigned int, char, 2 );
-				callCorrectReadWriterMacro( unsigned int, unsigned short, 2 );
-				callCorrectReadWriterMacro( unsigned int, short, 2 );
-				callCorrectReadWriterMacro( unsigned int, unsigned int, 2 );
-				callCorrectReadWriterMacro( unsigned int, int, 2 );
-				callCorrectReadWriterMacro( unsigned int, unsigned long, 2 );
-				callCorrectReadWriterMacro( unsigned int, long, 2 );
-				callCorrectReadWriterMacro( unsigned int, float, 2 );
-				callCorrectReadWriterMacro( unsigned int, double, 2 );
+					/** From unsigned int to something else. */
+					callCorrectReadWriterMacro( unsigned int, unsigned char, 2 );
+					callCorrectReadWriterMacro( unsigned int, char, 2 );
+					callCorrectReadWriterMacro( unsigned int, unsigned short, 2 );
+					callCorrectReadWriterMacro( unsigned int, short, 2 );
+					callCorrectReadWriterMacro( unsigned int, unsigned int, 2 );
+					callCorrectReadWriterMacro( unsigned int, int, 2 );
+					callCorrectReadWriterMacro( unsigned int, unsigned long, 2 );
+					callCorrectReadWriterMacro( unsigned int, long, 2 );
+					callCorrectReadWriterMacro( unsigned int, float, 2 );
+					callCorrectReadWriterMacro( unsigned int, double, 2 );
 
-				/** From int to something else. */
-				callCorrectReadWriterMacro( int, unsigned char, 2 );
-				callCorrectReadWriterMacro( int, char, 2 );
-				callCorrectReadWriterMacro( int, unsigned short, 2 );
-				callCorrectReadWriterMacro( int, short, 2 );
-				callCorrectReadWriterMacro( int, unsigned int, 2 );
-				callCorrectReadWriterMacro( int, int, 2 );
-				callCorrectReadWriterMacro( int, unsigned long, 2 );
-				callCorrectReadWriterMacro( int, long, 2 );
-				callCorrectReadWriterMacro( int, float, 2 );
-				callCorrectReadWriterMacro( int, double, 2 );
+					/** From int to something else. */
+					callCorrectReadWriterMacro( int, unsigned char, 2 );
+					callCorrectReadWriterMacro( int, char, 2 );
+					callCorrectReadWriterMacro( int, unsigned short, 2 );
+					callCorrectReadWriterMacro( int, short, 2 );
+					callCorrectReadWriterMacro( int, unsigned int, 2 );
+					callCorrectReadWriterMacro( int, int, 2 );
+					callCorrectReadWriterMacro( int, unsigned long, 2 );
+					callCorrectReadWriterMacro( int, long, 2 );
+					callCorrectReadWriterMacro( int, float, 2 );
+					callCorrectReadWriterMacro( int, double, 2 );
 
-				/** From unsigned long to something else. */
-				callCorrectReadWriterMacro( unsigned long, unsigned char, 2 );
-				callCorrectReadWriterMacro( unsigned long, char, 2 );
-				callCorrectReadWriterMacro( unsigned long, unsigned short, 2 );
-				callCorrectReadWriterMacro( unsigned long, short, 2 );
-				callCorrectReadWriterMacro( unsigned long, unsigned int, 2 );
-				callCorrectReadWriterMacro( unsigned long, int, 2 );
-				callCorrectReadWriterMacro( unsigned long, unsigned long, 2 );
-				callCorrectReadWriterMacro( unsigned long, long, 2 );
-				callCorrectReadWriterMacro( unsigned long, float, 2 );
-				callCorrectReadWriterMacro( unsigned long, double, 2 );
+					/** From unsigned long to something else. */
+					callCorrectReadWriterMacro( unsigned long, unsigned char, 2 );
+					callCorrectReadWriterMacro( unsigned long, char, 2 );
+					callCorrectReadWriterMacro( unsigned long, unsigned short, 2 );
+					callCorrectReadWriterMacro( unsigned long, short, 2 );
+					callCorrectReadWriterMacro( unsigned long, unsigned int, 2 );
+					callCorrectReadWriterMacro( unsigned long, int, 2 );
+					callCorrectReadWriterMacro( unsigned long, unsigned long, 2 );
+					callCorrectReadWriterMacro( unsigned long, long, 2 );
+					callCorrectReadWriterMacro( unsigned long, float, 2 );
+					callCorrectReadWriterMacro( unsigned long, double, 2 );
 
-				/** From long to something else. */
-				callCorrectReadWriterMacro( long, unsigned char, 2 );
-				callCorrectReadWriterMacro( long, char, 2 );
-				callCorrectReadWriterMacro( long, unsigned short, 2 );
-				callCorrectReadWriterMacro( long, short, 2 );
-				callCorrectReadWriterMacro( long, unsigned int, 2 );
-				callCorrectReadWriterMacro( long, int, 2 );
-				callCorrectReadWriterMacro( long, unsigned long, 2 );
-				callCorrectReadWriterMacro( long, long, 2 );
-				callCorrectReadWriterMacro( long, float, 2 );
-				callCorrectReadWriterMacro( long, double, 2 );
+					/** From long to something else. */
+					callCorrectReadWriterMacro( long, unsigned char, 2 );
+					callCorrectReadWriterMacro( long, char, 2 );
+					callCorrectReadWriterMacro( long, unsigned short, 2 );
+					callCorrectReadWriterMacro( long, short, 2 );
+					callCorrectReadWriterMacro( long, unsigned int, 2 );
+					callCorrectReadWriterMacro( long, int, 2 );
+					callCorrectReadWriterMacro( long, unsigned long, 2 );
+					callCorrectReadWriterMacro( long, long, 2 );
+					callCorrectReadWriterMacro( long, float, 2 );
+					callCorrectReadWriterMacro( long, double, 2 );
 
-				/** From float to something else. */
-				callCorrectReadWriterMacro( float, unsigned char, 2 );
-				callCorrectReadWriterMacro( float, char, 2 );
-				callCorrectReadWriterMacro( float, unsigned short, 2 );
-				callCorrectReadWriterMacro( float, short, 2 );
-				callCorrectReadWriterMacro( float, unsigned int, 2 );
-				callCorrectReadWriterMacro( float, int, 2 );
-				callCorrectReadWriterMacro( float, unsigned long, 2 );
-				callCorrectReadWriterMacro( float, long, 2 );
-				callCorrectReadWriterMacro( float, float, 2 );
-				callCorrectReadWriterMacro( float, double, 2 );
+					/** From float to something else. */
+					callCorrectReadWriterMacro( float, unsigned char, 2 );
+					callCorrectReadWriterMacro( float, char, 2 );
+					callCorrectReadWriterMacro( float, unsigned short, 2 );
+					callCorrectReadWriterMacro( float, short, 2 );
+					callCorrectReadWriterMacro( float, unsigned int, 2 );
+					callCorrectReadWriterMacro( float, int, 2 );
+					callCorrectReadWriterMacro( float, unsigned long, 2 );
+					callCorrectReadWriterMacro( float, long, 2 );
+					callCorrectReadWriterMacro( float, float, 2 );
+					callCorrectReadWriterMacro( float, double, 2 );
 
-				/** From double to something else. */
-				callCorrectReadWriterMacro( double, unsigned char, 2 );
-				callCorrectReadWriterMacro( double, char, 2 );
-				callCorrectReadWriterMacro( double, unsigned short, 2 );
-				callCorrectReadWriterMacro( double, short, 2 );
-				callCorrectReadWriterMacro( double, unsigned int, 2 );
-				callCorrectReadWriterMacro( double, int, 2 );
-				callCorrectReadWriterMacro( double, unsigned long, 2 );
-				callCorrectReadWriterMacro( double, long, 2 );
-				callCorrectReadWriterMacro( double, float, 2 );
-				callCorrectReadWriterMacro( double, double, 2 );
+					/** From double to something else. */
+					callCorrectReadWriterMacro( double, unsigned char, 2 );
+					callCorrectReadWriterMacro( double, char, 2 );
+					callCorrectReadWriterMacro( double, unsigned short, 2 );
+					callCorrectReadWriterMacro( double, short, 2 );
+					callCorrectReadWriterMacro( double, unsigned int, 2 );
+					callCorrectReadWriterMacro( double, int, 2 );
+					callCorrectReadWriterMacro( double, unsigned long, 2 );
+					callCorrectReadWriterMacro( double, long, 2 );
+					callCorrectReadWriterMacro( double, float, 2 );
+					callCorrectReadWriterMacro( double, double, 2 );
 
-			} // end support for 2D images
-			/** Support for 3D images. */
-			else if ( inputDimension == 3 )
-			{
-				/** From unsigned char to something else. */
-				callCorrectReadWriterMacro( unsigned char, unsigned char, 3 );
-				callCorrectReadWriterMacro( unsigned char, char, 3 );
-				callCorrectReadWriterMacro( unsigned char, unsigned short, 3 );
-				callCorrectReadWriterMacro( unsigned char, short, 3 );
-				callCorrectReadWriterMacro( unsigned char, unsigned int, 3 );
-				callCorrectReadWriterMacro( unsigned char, int, 3 );
-				callCorrectReadWriterMacro( unsigned char, unsigned long, 3 );
-				callCorrectReadWriterMacro( unsigned char, long, 3 );
-				callCorrectReadWriterMacro( unsigned char, float, 3 );
-				callCorrectReadWriterMacro( unsigned char, double, 3 );
+				} // end support for 2D images
+				/** Support for 3D images. */
+				else if ( inputDimension == 3 )
+				{
+					/** From unsigned char to something else. */
+					callCorrectReadWriterMacro( unsigned char, unsigned char, 3 );
+					callCorrectReadWriterMacro( unsigned char, char, 3 );
+					callCorrectReadWriterMacro( unsigned char, unsigned short, 3 );
+					callCorrectReadWriterMacro( unsigned char, short, 3 );
+					callCorrectReadWriterMacro( unsigned char, unsigned int, 3 );
+					callCorrectReadWriterMacro( unsigned char, int, 3 );
+					callCorrectReadWriterMacro( unsigned char, unsigned long, 3 );
+					callCorrectReadWriterMacro( unsigned char, long, 3 );
+					callCorrectReadWriterMacro( unsigned char, float, 3 );
+					callCorrectReadWriterMacro( unsigned char, double, 3 );
 
-				/** From char to something else. */
-				callCorrectReadWriterMacro( char, unsigned char, 3 );
-				callCorrectReadWriterMacro( char, char, 3 );
-				callCorrectReadWriterMacro( char, unsigned short, 3 );
-				callCorrectReadWriterMacro( char, short, 3 );
-				callCorrectReadWriterMacro( char, unsigned int, 3 );
-				callCorrectReadWriterMacro( char, int, 3 );
-				callCorrectReadWriterMacro( char, unsigned long, 3 );
-				callCorrectReadWriterMacro( char, long, 3 );
-				callCorrectReadWriterMacro( char, float, 3 );
-				callCorrectReadWriterMacro( char, double, 3 );
+					/** From char to something else. */
+					callCorrectReadWriterMacro( char, unsigned char, 3 );
+					callCorrectReadWriterMacro( char, char, 3 );
+					callCorrectReadWriterMacro( char, unsigned short, 3 );
+					callCorrectReadWriterMacro( char, short, 3 );
+					callCorrectReadWriterMacro( char, unsigned int, 3 );
+					callCorrectReadWriterMacro( char, int, 3 );
+					callCorrectReadWriterMacro( char, unsigned long, 3 );
+					callCorrectReadWriterMacro( char, long, 3 );
+					callCorrectReadWriterMacro( char, float, 3 );
+					callCorrectReadWriterMacro( char, double, 3 );
 
-				/** From unsigned short to something else. */
-				callCorrectReadWriterMacro( unsigned short, unsigned char, 3 );
-				callCorrectReadWriterMacro( unsigned short, char, 3 );
-				callCorrectReadWriterMacro( unsigned short, unsigned short, 3 );
-				callCorrectReadWriterMacro( unsigned short, short, 3 );
-				callCorrectReadWriterMacro( unsigned short, unsigned int, 3 );
-				callCorrectReadWriterMacro( unsigned short, int, 3 );
-				callCorrectReadWriterMacro( unsigned short, unsigned long, 3 );
-				callCorrectReadWriterMacro( unsigned short, long, 3 );
-				callCorrectReadWriterMacro( unsigned short, float, 3 );
-				callCorrectReadWriterMacro( unsigned short, double, 3 );
+					/** From unsigned short to something else. */
+					callCorrectReadWriterMacro( unsigned short, unsigned char, 3 );
+					callCorrectReadWriterMacro( unsigned short, char, 3 );
+					callCorrectReadWriterMacro( unsigned short, unsigned short, 3 );
+					callCorrectReadWriterMacro( unsigned short, short, 3 );
+					callCorrectReadWriterMacro( unsigned short, unsigned int, 3 );
+					callCorrectReadWriterMacro( unsigned short, int, 3 );
+					callCorrectReadWriterMacro( unsigned short, unsigned long, 3 );
+					callCorrectReadWriterMacro( unsigned short, long, 3 );
+					callCorrectReadWriterMacro( unsigned short, float, 3 );
+					callCorrectReadWriterMacro( unsigned short, double, 3 );
 
-				/** From short to something else. */
-				callCorrectReadWriterMacro( short, unsigned char, 3 );
-				callCorrectReadWriterMacro( short, char, 3 );
-				callCorrectReadWriterMacro( short, unsigned short, 3 );
-				callCorrectReadWriterMacro( short, short, 3 );
-				callCorrectReadWriterMacro( short, unsigned int, 3 );
-				callCorrectReadWriterMacro( short, int, 3 );
-				callCorrectReadWriterMacro( short, unsigned long, 3 );
-				callCorrectReadWriterMacro( short, long, 3 );
-				callCorrectReadWriterMacro( short, float, 3 );
-				callCorrectReadWriterMacro( short, double, 3 );
+					/** From short to something else. */
+					callCorrectReadWriterMacro( short, unsigned char, 3 );
+					callCorrectReadWriterMacro( short, char, 3 );
+					callCorrectReadWriterMacro( short, unsigned short, 3 );
+					callCorrectReadWriterMacro( short, short, 3 );
+					callCorrectReadWriterMacro( short, unsigned int, 3 );
+					callCorrectReadWriterMacro( short, int, 3 );
+					callCorrectReadWriterMacro( short, unsigned long, 3 );
+					callCorrectReadWriterMacro( short, long, 3 );
+					callCorrectReadWriterMacro( short, float, 3 );
+					callCorrectReadWriterMacro( short, double, 3 );
 
-				/** From unsigned int to something else. */
-				callCorrectReadWriterMacro( unsigned int, unsigned char, 3 );
-				callCorrectReadWriterMacro( unsigned int, char, 3 );
-				callCorrectReadWriterMacro( unsigned int, unsigned short, 3 );
-				callCorrectReadWriterMacro( unsigned int, short, 3 );
-				callCorrectReadWriterMacro( unsigned int, unsigned int, 3 );
-				callCorrectReadWriterMacro( unsigned int, int, 3 );
-				callCorrectReadWriterMacro( unsigned int, unsigned long, 3 );
-				callCorrectReadWriterMacro( unsigned int, long, 3 );
-				callCorrectReadWriterMacro( unsigned int, float, 3 );
-				callCorrectReadWriterMacro( unsigned int, double, 3 );
+					/** From unsigned int to something else. */
+					callCorrectReadWriterMacro( unsigned int, unsigned char, 3 );
+					callCorrectReadWriterMacro( unsigned int, char, 3 );
+					callCorrectReadWriterMacro( unsigned int, unsigned short, 3 );
+					callCorrectReadWriterMacro( unsigned int, short, 3 );
+					callCorrectReadWriterMacro( unsigned int, unsigned int, 3 );
+					callCorrectReadWriterMacro( unsigned int, int, 3 );
+					callCorrectReadWriterMacro( unsigned int, unsigned long, 3 );
+					callCorrectReadWriterMacro( unsigned int, long, 3 );
+					callCorrectReadWriterMacro( unsigned int, float, 3 );
+					callCorrectReadWriterMacro( unsigned int, double, 3 );
 
-				/** From int to something else. */
-				callCorrectReadWriterMacro( int, unsigned char, 3 );
-				callCorrectReadWriterMacro( int, char, 3 );
-				callCorrectReadWriterMacro( int, unsigned short, 3 );
-				callCorrectReadWriterMacro( int, short, 3 );
-				callCorrectReadWriterMacro( int, unsigned int, 3 );
-				callCorrectReadWriterMacro( int, int, 3 );
-				callCorrectReadWriterMacro( int, unsigned long, 3 );
-				callCorrectReadWriterMacro( int, long, 3 );
-				callCorrectReadWriterMacro( int, float, 3 );
-				callCorrectReadWriterMacro( int, double, 3 );
+					/** From int to something else. */
+					callCorrectReadWriterMacro( int, unsigned char, 3 );
+					callCorrectReadWriterMacro( int, char, 3 );
+					callCorrectReadWriterMacro( int, unsigned short, 3 );
+					callCorrectReadWriterMacro( int, short, 3 );
+					callCorrectReadWriterMacro( int, unsigned int, 3 );
+					callCorrectReadWriterMacro( int, int, 3 );
+					callCorrectReadWriterMacro( int, unsigned long, 3 );
+					callCorrectReadWriterMacro( int, long, 3 );
+					callCorrectReadWriterMacro( int, float, 3 );
+					callCorrectReadWriterMacro( int, double, 3 );
 
-				/** From unsigned long to something else. */
-				callCorrectReadWriterMacro( unsigned long, unsigned char, 3 );
-				callCorrectReadWriterMacro( unsigned long, char, 3 );
-				callCorrectReadWriterMacro( unsigned long, unsigned short, 3 );
-				callCorrectReadWriterMacro( unsigned long, short, 3 );
-				callCorrectReadWriterMacro( unsigned long, unsigned int, 3 );
-				callCorrectReadWriterMacro( unsigned long, int, 3 );
-				callCorrectReadWriterMacro( unsigned long, unsigned long, 3 );
-				callCorrectReadWriterMacro( unsigned long, long, 3 );
-				callCorrectReadWriterMacro( unsigned long, float, 3 );
-				callCorrectReadWriterMacro( unsigned long, double, 3 );
+					/** From unsigned long to something else. */
+					callCorrectReadWriterMacro( unsigned long, unsigned char, 3 );
+					callCorrectReadWriterMacro( unsigned long, char, 3 );
+					callCorrectReadWriterMacro( unsigned long, unsigned short, 3 );
+					callCorrectReadWriterMacro( unsigned long, short, 3 );
+					callCorrectReadWriterMacro( unsigned long, unsigned int, 3 );
+					callCorrectReadWriterMacro( unsigned long, int, 3 );
+					callCorrectReadWriterMacro( unsigned long, unsigned long, 3 );
+					callCorrectReadWriterMacro( unsigned long, long, 3 );
+					callCorrectReadWriterMacro( unsigned long, float, 3 );
+					callCorrectReadWriterMacro( unsigned long, double, 3 );
 
-				/** From long to something else. */
-				callCorrectReadWriterMacro( long, unsigned char, 3 );
-				callCorrectReadWriterMacro( long, char, 3 );
-				callCorrectReadWriterMacro( long, unsigned short, 3 );
-				callCorrectReadWriterMacro( long, short, 3 );
-				callCorrectReadWriterMacro( long, unsigned int, 3 );
-				callCorrectReadWriterMacro( long, int, 3 );
-				callCorrectReadWriterMacro( long, unsigned long, 3 );
-				callCorrectReadWriterMacro( long, long, 3 );
-				callCorrectReadWriterMacro( long, float, 3 );
-				callCorrectReadWriterMacro( long, double, 3 );
+					/** From long to something else. */
+					callCorrectReadWriterMacro( long, unsigned char, 3 );
+					callCorrectReadWriterMacro( long, char, 3 );
+					callCorrectReadWriterMacro( long, unsigned short, 3 );
+					callCorrectReadWriterMacro( long, short, 3 );
+					callCorrectReadWriterMacro( long, unsigned int, 3 );
+					callCorrectReadWriterMacro( long, int, 3 );
+					callCorrectReadWriterMacro( long, unsigned long, 3 );
+					callCorrectReadWriterMacro( long, long, 3 );
+					callCorrectReadWriterMacro( long, float, 3 );
+					callCorrectReadWriterMacro( long, double, 3 );
 
-				/** From float to something else. */
-				callCorrectReadWriterMacro( float, unsigned char, 3 );
-				callCorrectReadWriterMacro( float, char, 3 );
-				callCorrectReadWriterMacro( float, unsigned short, 3 );
-				callCorrectReadWriterMacro( float, short, 3 );
-				callCorrectReadWriterMacro( float, unsigned int, 3 );
-				callCorrectReadWriterMacro( float, int, 3 );
-				callCorrectReadWriterMacro( float, unsigned long, 3 );
-				callCorrectReadWriterMacro( float, long, 3 );
-				callCorrectReadWriterMacro( float, float, 3 );
-				callCorrectReadWriterMacro( float, double, 3 );
+					/** From float to something else. */
+					callCorrectReadWriterMacro( float, unsigned char, 3 );
+					callCorrectReadWriterMacro( float, char, 3 );
+					callCorrectReadWriterMacro( float, unsigned short, 3 );
+					callCorrectReadWriterMacro( float, short, 3 );
+					callCorrectReadWriterMacro( float, unsigned int, 3 );
+					callCorrectReadWriterMacro( float, int, 3 );
+					callCorrectReadWriterMacro( float, unsigned long, 3 );
+					callCorrectReadWriterMacro( float, long, 3 );
+					callCorrectReadWriterMacro( float, float, 3 );
+					callCorrectReadWriterMacro( float, double, 3 );
 
-				/** From double to something else. */
-				callCorrectReadWriterMacro( double, unsigned char, 3 );
-				callCorrectReadWriterMacro( double, char, 3 );
-				callCorrectReadWriterMacro( double, unsigned short, 3 );
-				callCorrectReadWriterMacro( double, short, 3 );
-				callCorrectReadWriterMacro( double, unsigned int, 3 );
-				callCorrectReadWriterMacro( double, int, 3 );
-				callCorrectReadWriterMacro( double, unsigned long, 3 );
-				callCorrectReadWriterMacro( double, long, 3 );
-				callCorrectReadWriterMacro( double, float, 3 );
-				callCorrectReadWriterMacro( double, double, 3 );
+					/** From double to something else. */
+					callCorrectReadWriterMacro( double, unsigned char, 3 );
+					callCorrectReadWriterMacro( double, char, 3 );
+					callCorrectReadWriterMacro( double, unsigned short, 3 );
+					callCorrectReadWriterMacro( double, short, 3 );
+					callCorrectReadWriterMacro( double, unsigned int, 3 );
+					callCorrectReadWriterMacro( double, int, 3 );
+					callCorrectReadWriterMacro( double, unsigned long, 3 );
+					callCorrectReadWriterMacro( double, long, 3 );
+					callCorrectReadWriterMacro( double, float, 3 );
+					callCorrectReadWriterMacro( double, double, 3 );
 
-			} // end support for 3D images
+				} // end support for 3D images
+				else
+				{
+					std::cerr	<< "Dimension equals " << inputDimension << ", which is not supported."	<< std::endl;
+					std::cerr	<< "Only 2D and 3D images are supported."	<< std::endl;
+					return 1;
+				} // end if over inputDimension
+
+			} // end support for SCALAR pixel type
 			else
 			{
-				std::cerr	<< "Dimension equals " << inputDimension << ", which is not supported."	<< std::endl;
-				std::cerr	<< "Only 2D and 3D images are supported."	<< std::endl;
+				std::cerr	<< "Pixel type is "	<< pixelType
+					<< ", component type is " << inputPixelComponentType
+					<< " and number of components equals " <<	numberOfComponents <<	"."	<< std::endl;
+				std::cerr	<< "ERROR: This image type is not supported."	<< std::endl;
 				return 1;
-			} // end if over inputDimension
-
-		} // end support for SCALAR pixel type
+			}
+		}
 		else
 		{
-			std::cerr	<< "Pixel type is "	<< pixelType
-				<< ", component type is " << inputPixelComponentType
-				<< " and number of components equals " <<	numberOfComponents <<	"."	<< std::endl;
-			std::cerr	<< "ERROR: This image type is not supported."	<< std::endl;
-			return 1;
-		}
-	}
-	else
-	{
-		/** In this case input is a DICOM series, from which we only support
-		 * SCALAR pixel types, with component type:
-		 * DICOMImageIO2: (unsigned) char, (unsigned) short, float
-		 * GDCMImageIO: (unsigned) char, (unsigned) short, (unsigned) int, double
-		 * It is also assumed that the dicom series consist of multiple
-		 * 2D images forming a 3D image.
-		 */
+			/** In this case input is a DICOM series, from which we only support
+			* SCALAR pixel types, with component type:
+			* DICOMImageIO2: (unsigned) char, (unsigned) short, float
+			* GDCMImageIO: (unsigned) char, (unsigned) short, (unsigned) int, double
+			* It is also assumed that the dicom series consist of multiple
+			* 2D images forming a 3D image.
+			*/
 
-		if ( strcmp( pixelType.c_str(),	"scalar" ) == 0	&& numberOfComponents	== 1 )
-		{
-			/** From unsigned char to something else. */
-			callCorrectReadDicomWriterMacro( unsigned char, unsigned char );
-			callCorrectReadDicomWriterMacro( unsigned char, char );
-			callCorrectReadDicomWriterMacro( unsigned char, unsigned short );
-			callCorrectReadDicomWriterMacro( unsigned char, short );
-			callCorrectReadDicomWriterMacro( unsigned char, unsigned int );
-			callCorrectReadDicomWriterMacro( unsigned char, int );
-			callCorrectReadDicomWriterMacro( unsigned char, unsigned long );
-			callCorrectReadDicomWriterMacro( unsigned char, long );
-			callCorrectReadDicomWriterMacro( unsigned char, float );
-			callCorrectReadDicomWriterMacro( unsigned char, double );
+			if ( strcmp( pixelType.c_str(),	"scalar" ) == 0	&& numberOfComponents	== 1 )
+			{
+				/** From unsigned char to something else. */
+				callCorrectReadDicomWriterMacro( unsigned char, unsigned char );
+				callCorrectReadDicomWriterMacro( unsigned char, char );
+				callCorrectReadDicomWriterMacro( unsigned char, unsigned short );
+				callCorrectReadDicomWriterMacro( unsigned char, short );
+				callCorrectReadDicomWriterMacro( unsigned char, unsigned int );
+				callCorrectReadDicomWriterMacro( unsigned char, int );
+				callCorrectReadDicomWriterMacro( unsigned char, unsigned long );
+				callCorrectReadDicomWriterMacro( unsigned char, long );
+				callCorrectReadDicomWriterMacro( unsigned char, float );
+				callCorrectReadDicomWriterMacro( unsigned char, double );
 
-			/** From char to something else. */
-			callCorrectReadDicomWriterMacro( char, unsigned char );
-			callCorrectReadDicomWriterMacro( char, char );
-			callCorrectReadDicomWriterMacro( char, unsigned short );
-			callCorrectReadDicomWriterMacro( char, short );
-			callCorrectReadDicomWriterMacro( char, unsigned int );
-			callCorrectReadDicomWriterMacro( char, int );
-			callCorrectReadDicomWriterMacro( char, unsigned long );
-			callCorrectReadDicomWriterMacro( char, long );
-			callCorrectReadDicomWriterMacro( char, float );
-			callCorrectReadDicomWriterMacro( char, double );
+				/** From char to something else. */
+				callCorrectReadDicomWriterMacro( char, unsigned char );
+				callCorrectReadDicomWriterMacro( char, char );
+				callCorrectReadDicomWriterMacro( char, unsigned short );
+				callCorrectReadDicomWriterMacro( char, short );
+				callCorrectReadDicomWriterMacro( char, unsigned int );
+				callCorrectReadDicomWriterMacro( char, int );
+				callCorrectReadDicomWriterMacro( char, unsigned long );
+				callCorrectReadDicomWriterMacro( char, long );
+				callCorrectReadDicomWriterMacro( char, float );
+				callCorrectReadDicomWriterMacro( char, double );
 
-			/** From unsigned short to something else. */
-			callCorrectReadDicomWriterMacro( unsigned short, unsigned char );
-			callCorrectReadDicomWriterMacro( unsigned short, char );
-			callCorrectReadDicomWriterMacro( unsigned short, unsigned short );
-			callCorrectReadDicomWriterMacro( unsigned short, short );
-			callCorrectReadDicomWriterMacro( unsigned short, unsigned int );
-			callCorrectReadDicomWriterMacro( unsigned short, int );
-			callCorrectReadDicomWriterMacro( unsigned short, unsigned long );
-			callCorrectReadDicomWriterMacro( unsigned short, long );
-			callCorrectReadDicomWriterMacro( unsigned short, float );
-			callCorrectReadDicomWriterMacro( unsigned short, double );
+				/** From unsigned short to something else. */
+				callCorrectReadDicomWriterMacro( unsigned short, unsigned char );
+				callCorrectReadDicomWriterMacro( unsigned short, char );
+				callCorrectReadDicomWriterMacro( unsigned short, unsigned short );
+				callCorrectReadDicomWriterMacro( unsigned short, short );
+				callCorrectReadDicomWriterMacro( unsigned short, unsigned int );
+				callCorrectReadDicomWriterMacro( unsigned short, int );
+				callCorrectReadDicomWriterMacro( unsigned short, unsigned long );
+				callCorrectReadDicomWriterMacro( unsigned short, long );
+				callCorrectReadDicomWriterMacro( unsigned short, float );
+				callCorrectReadDicomWriterMacro( unsigned short, double );
 
-			/** From short to something else. */
-			callCorrectReadDicomWriterMacro( short, unsigned char );
-			callCorrectReadDicomWriterMacro( short, char );
-			callCorrectReadDicomWriterMacro( short, unsigned short );
-			callCorrectReadDicomWriterMacro( short, short );
-			callCorrectReadDicomWriterMacro( short, unsigned int );
-			callCorrectReadDicomWriterMacro( short, int );
-			callCorrectReadDicomWriterMacro( short, unsigned long );
-			callCorrectReadDicomWriterMacro( short, long );
-			callCorrectReadDicomWriterMacro( short, float );
-			callCorrectReadDicomWriterMacro( short, double );
+				/** From short to something else. */
+				callCorrectReadDicomWriterMacro( short, unsigned char );
+				callCorrectReadDicomWriterMacro( short, char );
+				callCorrectReadDicomWriterMacro( short, unsigned short );
+				callCorrectReadDicomWriterMacro( short, short );
+				callCorrectReadDicomWriterMacro( short, unsigned int );
+				callCorrectReadDicomWriterMacro( short, int );
+				callCorrectReadDicomWriterMacro( short, unsigned long );
+				callCorrectReadDicomWriterMacro( short, long );
+				callCorrectReadDicomWriterMacro( short, float );
+				callCorrectReadDicomWriterMacro( short, double );
 
-			/** From unsigned int to something else. *
-			callCorrectReadDicomWriterMacro( unsigned int, unsigned char );
-			callCorrectReadDicomWriterMacro( unsigned int, char );
-			callCorrectReadDicomWriterMacro( unsigned int, unsigned short );
-			callCorrectReadDicomWriterMacro( unsigned int, short );
-			callCorrectReadDicomWriterMacro( unsigned int, unsigned int );
-			callCorrectReadDicomWriterMacro( unsigned int, int );
-			callCorrectReadDicomWriterMacro( unsigned int, unsigned long );
-			callCorrectReadDicomWriterMacro( unsigned int, long );
-			callCorrectReadDicomWriterMacro( unsigned int, float );
-			callCorrectReadDicomWriterMacro( unsigned int, double );
+				/** From unsigned int to something else. */
+				callCorrectReadDicomWriterMacro( unsigned int, unsigned char );
+				callCorrectReadDicomWriterMacro( unsigned int, char );
+				callCorrectReadDicomWriterMacro( unsigned int, unsigned short );
+				callCorrectReadDicomWriterMacro( unsigned int, short );
+				callCorrectReadDicomWriterMacro( unsigned int, unsigned int );
+				callCorrectReadDicomWriterMacro( unsigned int, int );
+				callCorrectReadDicomWriterMacro( unsigned int, unsigned long );
+				callCorrectReadDicomWriterMacro( unsigned int, long );
+				callCorrectReadDicomWriterMacro( unsigned int, float );
+				callCorrectReadDicomWriterMacro( unsigned int, double );
 
-			/** From int to something else. *
-			callCorrectReadDicomWriterMacro( int, unsigned char );
-			callCorrectReadDicomWriterMacro( int, char );
-			callCorrectReadDicomWriterMacro( int, unsigned short );
-			callCorrectReadDicomWriterMacro( int, short );
-			callCorrectReadDicomWriterMacro( int, unsigned int );
-			callCorrectReadDicomWriterMacro( int, int );
-			callCorrectReadDicomWriterMacro( int, unsigned long );
-			callCorrectReadDicomWriterMacro( int, long );
-			callCorrectReadDicomWriterMacro( int, float );
-			callCorrectReadDicomWriterMacro( int, double );
+				/** From int to something else. */
+				callCorrectReadDicomWriterMacro( int, unsigned char );
+				callCorrectReadDicomWriterMacro( int, char );
+				callCorrectReadDicomWriterMacro( int, unsigned short );
+				callCorrectReadDicomWriterMacro( int, short );
+				callCorrectReadDicomWriterMacro( int, unsigned int );
+				callCorrectReadDicomWriterMacro( int, int );
+				callCorrectReadDicomWriterMacro( int, unsigned long );
+				callCorrectReadDicomWriterMacro( int, long );
+				callCorrectReadDicomWriterMacro( int, float );
+				callCorrectReadDicomWriterMacro( int, double );
 
-			/** From float to something else. */
-			callCorrectReadDicomWriterMacro( float, unsigned char );
-			callCorrectReadDicomWriterMacro( float, char );
-			callCorrectReadDicomWriterMacro( float, unsigned short );
-			callCorrectReadDicomWriterMacro( float, short );
-			callCorrectReadDicomWriterMacro( float, unsigned int );
-			callCorrectReadDicomWriterMacro( float, int );
-			callCorrectReadDicomWriterMacro( float, unsigned long );
-			callCorrectReadDicomWriterMacro( float, long );
-			callCorrectReadDicomWriterMacro( float, float );
-			callCorrectReadDicomWriterMacro( float, double );
+				/** From float to something else. *
+				callCorrectReadDicomWriterMacro( float, unsigned char );
+				callCorrectReadDicomWriterMacro( float, char );
+				callCorrectReadDicomWriterMacro( float, unsigned short );
+				callCorrectReadDicomWriterMacro( float, short );
+				callCorrectReadDicomWriterMacro( float, unsigned int );
+				callCorrectReadDicomWriterMacro( float, int );
+				callCorrectReadDicomWriterMacro( float, unsigned long );
+				callCorrectReadDicomWriterMacro( float, long );
+				callCorrectReadDicomWriterMacro( float, float );
+				callCorrectReadDicomWriterMacro( float, double );
 
-			/** From double to something else. *
-			callCorrectReadDicomWriterMacro( double, unsigned char );
-			callCorrectReadDicomWriterMacro( double, char );
-			callCorrectReadDicomWriterMacro( double, unsigned short );
-			callCorrectReadDicomWriterMacro( double, short );
-			callCorrectReadDicomWriterMacro( double, unsigned int );
-			callCorrectReadDicomWriterMacro( double, int );
-			callCorrectReadDicomWriterMacro( double, unsigned long );
-			callCorrectReadDicomWriterMacro( double, long );
-			callCorrectReadDicomWriterMacro( double, float );
-			callCorrectReadDicomWriterMacro( double, double );*/
+				/** From double to something else. */
+				callCorrectReadDicomWriterMacro( double, unsigned char );
+				callCorrectReadDicomWriterMacro( double, char );
+				callCorrectReadDicomWriterMacro( double, unsigned short );
+				callCorrectReadDicomWriterMacro( double, short );
+				callCorrectReadDicomWriterMacro( double, unsigned int );
+				callCorrectReadDicomWriterMacro( double, int );
+				callCorrectReadDicomWriterMacro( double, unsigned long );
+				callCorrectReadDicomWriterMacro( double, long );
+				callCorrectReadDicomWriterMacro( double, float );
+				callCorrectReadDicomWriterMacro( double, double );
 
-		} // end support for SCALAR pixel type
-		else
-		{
-			std::cerr	<< "Pixel type is "	<< pixelType
-				<< ", component type is " << inputPixelComponentType
-				<< " and number of components equals " <<	numberOfComponents <<	"."	<< std::endl;
-			std::cerr	<< "ERROR: This image type is not supported."	<< std::endl;
-			return 1;
-		}
+			} // end support for SCALAR pixel type
+			else
+			{
+				std::cerr	<< "Pixel type is "	<< pixelType
+					<< ", component type is " << inputPixelComponentType
+					<< " and number of components equals " <<	numberOfComponents <<	"."	<< std::endl;
+				std::cerr	<< "ERROR: This image type is not supported."	<< std::endl;
+				return 1;
+			}
 
-	} // end isDICOM
+		} // end isDICOM
 
 
 		/**
-		 * ****************** Support for RGB pixel types. **********************************
-		 *
+		* ****************** Support for RGB pixel types. **********************************
+		*
 		else if ( strcmp( pixelType.c_str(),	"rgb" ) == 0	&& numberOfComponents	== 3 )
 		{
-			if ( strcmp( iOComponent.c_str(),	"unsigned_char"	)	== 0 )
-			{
-				typedef itk::RGBPixel< unsigned char >		PixelType;
-				typedef	itk::Image<	PixelType, 2 >				ImageType;
-				ReadWriteImage<	ImageType, ImageType >(	inputFileName, outputFileName	);
-			}
+		if ( strcmp( iOComponent.c_str(),	"unsigned_char"	)	== 0 )
+		{
+		typedef itk::RGBPixel< unsigned char >		PixelType;
+		typedef	itk::Image<	PixelType, 2 >				ImageType;
+		ReadWriteImage<	ImageType, ImageType >(	inputFileName, outputFileName	);
+		}
 		} // end Support for RGB pixel type */
 
+	} // end try
+	/** If any errors have occurred, catch and print the exception and return false. */
+	catch( itk::ExceptionObject	&	err	)
+	{
+		std::cerr	<< "ExceptionObject caught !"	<< std::endl;
+		std::cerr	<< err <<	std::endl;
+		return 1;
+	}
 
 	/**	End	program. */
 	return 0;
@@ -711,23 +726,17 @@ void ReadDicomSeriesCastWriteImage( std::string inputDirectoryName,	std::string	
 	typedef	typename itk::ImageFileWriter< OutputImageType >		ImageWriterType;
 
 	/** Typedef dicom stuff. */
-	//typedef itk::GDCMImageIO                        GDCMImageIOType;
-	//typedef itk::GDCMSeriesFileNames								GDCMNamesGeneratorType;
-	typedef itk::DICOMImageIO2											DICOMImageIOType;
-	typedef itk::DICOMSeriesFileNames								DICOMNamesGeneratorType;
+	typedef itk::GDCMImageIO                        GDCMImageIOType;
+	typedef itk::GDCMSeriesFileNames								GDCMNamesGeneratorType;
 	typedef std::vector< std::string >							FileNamesContainerType;
 
 	/** Create the dicom ImageIO. */
-	//typename GDCMImageIOType::Pointer dicomIO = GDCMImageIOType::New();
-	typename DICOMImageIOType::Pointer dicomIO = DICOMImageIOType::New();
+	typename GDCMImageIOType::Pointer dicomIO = GDCMImageIOType::New();
 	
 	/** Get a list of the filenames of the 2D input dicom images. */
-	//GDCMNamesGeneratorType::Pointer nameGenerator = GDCMNamesGeneratorType::New();
-  //nameGenerator->SetInputDirectory( inputDirectoryName.c_str() );
-	//FileNamesContainerType fileNames = nameGenerator->GetInputFileNames();
-	DICOMNamesGeneratorType::Pointer nameGenerator = DICOMNamesGeneratorType::New();
-	nameGenerator->SetDirectory( inputDirectoryName.c_str() );
-	FileNamesContainerType fileNames = nameGenerator->GetFileNames();
+	GDCMNamesGeneratorType::Pointer nameGenerator = GDCMNamesGeneratorType::New();
+  nameGenerator->SetInputDirectory( inputDirectoryName.c_str() );
+	FileNamesContainerType fileNames = nameGenerator->GetInputFileNames();
 
 	/** Create and setup the seriesReader. */
 	typename SeriesReaderType::Pointer seriesReader = SeriesReaderType::New();
@@ -747,15 +756,7 @@ void ReadDicomSeriesCastWriteImage( std::string inputDirectoryName,	std::string	
 	writer->SetInput(	caster->GetOutput()	);
 
 	/**	Do the actual	conversion.	*/
-	try
-	{
-		writer->Update();
-	}
-	catch( itk::ExceptionObject	&	err	)
-	{
-		std::cerr	<< "ExceptionObject caught !"	<< std::endl;
-		std::cerr	<< err <<	std::endl;
-	}
+	writer->Update();
 
 	/**	Print	information. */
 	PrintInfo( seriesReader, writer	);
@@ -795,15 +796,7 @@ void ReadCastWriteImage( std::string inputFileName,	std::string	outputFileName )
 	writer->SetInput(	caster->GetOutput()	);
 
 	/**	Do the actual	conversion.	*/
-	try
-	{
-		writer->Update();
-	}
-	catch( itk::ExceptionObject	&	err	)
-	{
-		std::cerr	<< "ExceptionObject caught !"	<< std::endl;
-		std::cerr	<< err <<	std::endl;
-	}
+	writer->Update();
 
 	/**	Print	information. */
 	PrintInfo( reader, writer	);
