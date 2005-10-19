@@ -24,6 +24,9 @@
  * Output images can be in all file formats ITK supports and for which
  * the ImageFileReader works, so no dicom output is currently supported.
  *
+ *
+ * authors:				Marius Staring and Stefan Klein
+ * version/date:	2005-10-12
  */
 
 /** Basic Image support. */
@@ -47,7 +50,7 @@
 #include "itkRescaleIntensityImageFilter.h"
 
 /** In order to determine if argv[1] is a directory or a file,
- * so that we can distinguish between dicom and other files.
+ * so that we can distinguish between dicom directories and other files.
  */
 #include <itksys/SystemTools.hxx>
 
@@ -58,7 +61,8 @@ template<	class	InputImageType,	class	OutputImageType	>
 void ReadCastWriteImage( std::string inputFileName,	std::string	outputFileName );
 
 /** Declare a function to do the actual conversion.
- * ReadDicomSeriesCastWriteImage() is for dicom images. */
+ * ReadDicomSeriesCastWriteImage() is for dicom images.
+ */
 template<	class	InputImageType,	class	OutputImageType	>
 void ReadDicomSeriesCastWriteImage( std::string inputDirectoryName,	std::string	outputFileName );
 
@@ -71,7 +75,6 @@ void PrintInfo(	ReaderType reader, WriterType	writer );
 /** callCorrectReadWriterMacro:
  * A macro to call the conversion function.
  */
-
 #define callCorrectReadWriterMacro(typeIn,typeOut,dim) \
 	if ( inputPixelComponentType == #typeIn && outputPixelComponentType == #typeOut && inputDimension == dim) \
 		{ \
@@ -83,7 +86,6 @@ void PrintInfo(	ReaderType reader, WriterType	writer );
 /** callCorrectReadDicomWriterMacro:
  * A macro to call the dicom-conversion function.
  */
-
 #define callCorrectReadDicomWriterMacro(typeIn,typeOut) \
 	if ( inputPixelComponentType == #typeIn && outputPixelComponentType == #typeOut ) \
 		{ \
@@ -214,7 +216,6 @@ int	main(	int	argc,	char *argv[] )
 
 		/** Create a dicom ImageIO and set it in the testReader. */
 		GDCMImageIOType::Pointer dicomIO = GDCMImageIOType::New();
-		//DICOMImageIOType::Pointer dicomIO = DICOMImageIOType::New();
 		testReader->SetImageIO( dicomIO );
 
 		/** Set the name of the 2D dicom image in the testReader. */
@@ -564,12 +565,12 @@ int	main(	int	argc,	char *argv[] )
 		else
 		{
 			/** In this case input is a DICOM series, from which we only support
-			* SCALAR pixel types, with component type:
-			* DICOMImageIO2: (unsigned) char, (unsigned) short, float
-			* GDCMImageIO: (unsigned) char, (unsigned) short, (unsigned) int, double
-			* It is also assumed that the dicom series consist of multiple
-			* 2D images forming a 3D image.
-			*/
+			 * SCALAR pixel types, with component type:
+			 * DICOMImageIO2: (unsigned) char, (unsigned) short, float
+			 * GDCMImageIO: (unsigned) char, (unsigned) short, (unsigned) int, double
+			 * It is also assumed that the dicom series consist of multiple
+			 * 2D images forming a 3D image.
+			 */
 
 			if ( strcmp( pixelType.c_str(),	"scalar" ) == 0	&& numberOfComponents	== 1 )
 			{
@@ -704,7 +705,7 @@ int	main(	int	argc,	char *argv[] )
 		return 1;
 	}
 
-	/**	End	program. */
+	/**	End	program. Return succes. */
 	return 0;
 
 }	// end main
@@ -835,7 +836,7 @@ void PrintInfo(	ReaderType reader, WriterType	writer )
 	unsigned int dimensionOut	=	imageIOBaseOut->GetNumberOfDimensions();
 	SizeType sizeOut = iORegionOut.GetSize();
 
-	/**	Print	information. */
+	/**	Print	information from the input image. */
 	std::cout	<< "Information about the input image \""	<< fileNameIn	<< "\":" <<	std::endl;
 	std::cout	<< "\tdimension:\t\t"	<< dimensionIn <<	std::endl;
 	std::cout	<< "\tpixel type:\t\t" <<	pixelTypeIn	<< std::endl;
@@ -845,7 +846,7 @@ void PrintInfo(	ReaderType reader, WriterType	writer )
 	for	(	unsigned int i = 0;	i	<	dimensionIn; i++ ) std::cout <<	sizeIn[	i	]	<< " ";
 	std::cout	<< std::endl;
 
-	/**	Print	information. */
+	/**	Print	information from the output image. */
 	std::cout	<< std::endl;
 	std::cout	<< "Information about the output image \"" <<	fileNameOut	<< "\":" <<	std::endl;
 	std::cout	<< "\tdimension:\t\t"	<< dimensionOut	<< std::endl;
