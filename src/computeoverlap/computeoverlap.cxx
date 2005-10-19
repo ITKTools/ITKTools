@@ -20,9 +20,11 @@ int main( int argc, char ** argv )
 {
 	/** Warning. */
 	std::cout << "Warning: this program assumes 3d images with a pixeltype convertible to shorts!\n" << std::endl;
+
 	/** Define image type. */
 	const unsigned int Dimension = 3;
 	typedef short PixelType;
+
 	/** Some typedef's. */
 	typedef itk::Image<PixelType, Dimension>						ImageType;
 	typedef ImageType::Pointer													ImagePointer;
@@ -37,8 +39,10 @@ int main( int argc, char ** argv )
 	typedef ThresholdFilterType::Pointer								ThresholdFilterPointer;
 	typedef ThresholdFilterType::ThresholdVector				ThresholdVectorType;
 	typedef std::map<std::string, std::string>					ArgMapType;
+
 	/** Store the command line arguments. */
 	ArgMapType argmap;
+
 	/** Get and print the command line arguments. */
 	std::cout << "ComputeOverlap called with the following arguments:" << std::endl;
 	for ( unsigned int i = 1; i < argc; i += 2 )
@@ -53,6 +57,7 @@ int main( int argc, char ** argv )
 		argmap[ key ] = value;
 	}
 	std::cout << std::endl;
+
 	/** Print HELP if needed. */
 	if (argmap.count("-help") | 
 		  argmap.count("--help") |
@@ -66,7 +71,7 @@ int main( int argc, char ** argv )
 							<< "in the images (for example an US beam) are also taken into account.\n"
 							<< "If the image are not binary, you must specify a threshold value.\n";
 		std::cerr << "\nUsage:\n";
-		std::cerr << "computeoverlap\n"
+		std::cerr << "pxcomputeoverlap\n"
 							<< "\t-im1 <image> -im2 <image>\n"
 							<< "\t[ -mask1 <mask-image> ] [ -mask2 <mask-image> ]\n"
 							<< "\t[ -t1 <threshold value> ] [ -t2 <threshold value> ]\n";
@@ -80,12 +85,14 @@ int main( int argc, char ** argv )
 	/**
 	 * Setup pipeline 
 	 */
+
 	/** Create readers and an AND filter. */
 	ImageReaderPointer imreader1 = ImageReaderType::New();
 	imreader1->SetFileName( argmap["-im1"].c_str() );
   ImageReaderPointer imreader2 = ImageReaderType::New();
 	imreader2->SetFileName( argmap["-im2"].c_str() );
 	AndFilterPointer finalANDFilter = AndFilterType::New();
+
 	/** Create images, threshold filters, and threshold vectors. */
 	ImagePointer im1 = 0;
 	ImagePointer im2 = 0;
@@ -93,6 +100,7 @@ int main( int argc, char ** argv )
 	ThresholdFilterPointer im2Thresholder = 0;
 	ThresholdVectorType im1thresholdvector( 2 );
 	ThresholdVectorType im2thresholdvector( 2 );
+
 	/** If there is a threshold given for image1, use it. */
 	if ( argmap.count("-t1") )
 	{
@@ -108,6 +116,7 @@ int main( int argc, char ** argv )
 	{
 		im1 = imreader1->GetOutput();
 	}
+
 	/** If there is a threshold given for image2, use it. */
 	if ( argmap.count("-t2") )
 	{
@@ -123,11 +132,13 @@ int main( int argc, char ** argv )
 	{
 		im2 = imreader2->GetOutput();
 	}
+
 	/** Create readers for the masks and AND filters. */
 	ImageReaderPointer maskreader1 = 0;
 	ImageReaderPointer maskreader2 = 0;
 	AndFilterPointer im2ANDmask1Filter = 0;
 	AndFilterPointer im1ANDmask2Filter = 0;
+
 	/** If there is a mask given for image1, use it on image2. */
 	if ( argmap.count("-mask1") )
 	{
@@ -164,6 +175,7 @@ int main( int argc, char ** argv )
 	 *
 	 * Call the update of the final filter, in order to execute the whole pipeline.
 	 */
+
 	try
 	{
 		finalANDFilter->Update();
@@ -185,6 +197,7 @@ int main( int argc, char ** argv )
 		finalANDFilter->GetInput(0)->GetLargestPossibleRegion() );
 	IteratorType iteratorC( finalANDFilter->GetOutput(),
 		finalANDFilter->GetOutput()->GetLargestPossibleRegion()	);
+
 	/** Determine size of first object. */
 	long long sumA = 0;
 	for ( iteratorA.GoToBegin(); !iteratorA.IsAtEnd(); ++iteratorA )
@@ -195,6 +208,7 @@ int main( int argc, char ** argv )
 		}
 	}
 	std::cout << "Size of first object: " << sumA << std::endl;
+
 	/** Determine size of second object. */
 	long long sumB = 0;
 	for ( iteratorB.GoToBegin(); !iteratorB.IsAtEnd(); ++iteratorB )
@@ -205,6 +219,7 @@ int main( int argc, char ** argv )
 		}
 	}
 	std::cout << "Size of second object: " << sumB << std::endl;
+
 	/** Determine size of cross-section. */
 	long long sumC = 0;
 	for ( iteratorC.GoToBegin(); !iteratorC.IsAtEnd(); ++iteratorC )
@@ -215,6 +230,7 @@ int main( int argc, char ** argv )
 		}
 	}
 	std::cout << "Size of cross-section of both objects: " << sumC << std::endl;
+
 	/** Calculate the overlap. */
 	double overlap;
 	if ( ( sumA + sumB ) == 0 )
@@ -225,9 +241,11 @@ int main( int argc, char ** argv )
 	{
 		overlap = static_cast<double>( 2 * sumC ) / static_cast<double>( sumA + sumB );
 	}
+
 	/** Format the output and show overlap. */
 	std::cout << std::fixed << std::showpoint;
 	std::cout << "Overlap: " << overlap << std::endl;
+
 	/** Return a value. */
 	return 0;
 
