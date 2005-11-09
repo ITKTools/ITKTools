@@ -10,10 +10,10 @@ ELSE(ITK_FOUND)
           "Cannot build without ITK.  Please set ITK_DIR.")
 ENDIF(ITK_FOUND)
 
-ADD_EXECUTABLE(castconvert castconvert.cxx  castconvertDicomScalar.cxx castconvertScalar.cxx  castconvertScalar2D.cxx castconvertScalar3D.cxx castconvertScalar4D.cxx)
+ADD_EXECUTABLE(pxcastconvert castconvert.cxx  castconvertDicomScalar.cxx castconvertScalar.cxx  castconvertScalar2D.cxx castconvertScalar3D.cxx castconvertScalar4D.cxx)
 ADD_EXECUTABLE(ImageCompare ImageCompare.cxx)
 
-TARGET_LINK_LIBRARIES(castconvert  ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxcastconvert ITKIO ITKCommon)
 TARGET_LINK_LIBRARIES(ImageCompare ITKIO ITKCommon)
 
 
@@ -61,5 +61,5 @@ ADD_TEST(compare_vtk_long         ${IMAGE_COMPARE_TOOL} ${IMAGE_PATH}/image_in.m
 ADD_TEST(compare_gipl             ${IMAGE_COMPARE_TOOL} ${IMAGE_PATH}/image_in.mhd ${IMAGE_PATH_OUTPUTS}/image_in8.mhd)
 #only 3D currently ADD_TEST(ccvnt_compare_nifti            ${IMAGE_COMPARE_TOOL} ${IMAGE_PATH}/image_in.mhd ${IMAGE_PATH_OUTPUTS}/image_in8.mhd)
 
-INSTALL_TARGETS(/. castconvert)
+INSTALL_TARGETS(/. pxcastconvert)
 INSTALL_TARGETS(/. ImageCompare)
