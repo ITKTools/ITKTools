@@ -45,7 +45,7 @@ int main( int argc, char *argv[] )
 	else
 	{
 		std::cout << "Usage:" << std::endl;
-		std::cout << "CalculateEntropy image [mask] [useVoxelsInMask] numberOfBins" << std::endl;
+		std::cout << "pxcomputedistances image [mask] [useVoxelsInMask] numberOfBins" << std::endl;
 		std::cout << "where useVoxelsInMask = 1, yields taking into account all voxels inside the mask," << std::endl;
 		std::cout << "and where useVoxelsInMask = 0, yields taking into account all voxels outside the mask." << std::endl;
 		std::cout << "Default is useVoxelsInMask = 1." << std::endl;
@@ -237,10 +237,10 @@ int main( int argc, char *argv[] )
 	std::cout << "The entropy equals: " << totalEntropy << std::endl;
 
 	/** Print stuff to screen. (SquaredDistance and Entropy). */
-	std::cout << "NrOfVoxels:\t" << numberOfVoxels << std::endl;
+	std::cout << "NrOfVoxels:\t\t" << numberOfVoxels << std::endl;
 	std::cout << "SquaredDistance:\t" << sumOfSquaredVoxels << std::endl;
 	std::cout << "AverageSquaredDistance:\t" << averageSD << std::endl;
-	std::cout << "Entropy: " << totalEntropy << std::endl;
+	std::cout << "Entropy:\t\t" << totalEntropy << std::endl;
 	
 	/** Return a value. */
 	return 0;
