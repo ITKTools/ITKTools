@@ -9,6 +9,7 @@
 #include "itkListSampleToHistogramGenerator.h"
 #include "itkHistogramToEntropyImageFilter.h"
 
+#include <iomanip>
 
 //-------------------------------------------------------------------------------------
 
@@ -237,8 +238,11 @@ int main( int argc, char *argv[] )
 	std::cout << "The entropy equals: " << totalEntropy << std::endl;
 
 	/** Print stuff to screen. (SquaredDistance and Entropy). */
+	std::cout << std::fixed;
+	std::cout << std::showpoint;
+	std::cout << std::setprecision( 10 );
 	std::cout << "NrOfVoxels:\t\t" << numberOfVoxels << std::endl;
-	std::cout << "SquaredDistance:\t" << sumOfSquaredVoxels << std::endl;
+	std::cout << "SquaredDistance:\t" << static_cast<long long>( sumOfSquaredVoxels ) << std::endl;
 	std::cout << "AverageSquaredDistance:\t" << averageSD << std::endl;
 	std::cout << "Entropy:\t\t" << totalEntropy << std::endl;
 	
