@@ -15,6 +15,14 @@ int main( int argc, char **argv )
 		std::cerr << "This program only accepts 2D short images." << std::endl;
 		return 1;
 	}
+	
+	/** Print arguments. */
+	std::cout << "pxandnotimagefilter ";
+	for ( unsigned int i = 1; i < argc; i++ )
+	{
+		std::cout << argv[ i ] << " ";
+	}
+	std::cout << std::endl;
 
 	/** Get the image names. */
 	std::string image1FileName = argv[ 1 ];
@@ -24,14 +32,6 @@ int main( int argc, char **argv )
 	{
 		outputFileName = argv[ 3 ];
 	}
-
-	/** Print arguments. */
-	std::cout << "pxandnotimagefilter ";
-	for ( unsigned int i = 1; i < argc; i++ )
-	{
-		std::cout << argv[ i ] << " ";
-	}
-	std::cout << std::endl;
 
   /** typedefs. */
 	typedef short		PixelType;
@@ -97,6 +97,7 @@ int main( int argc, char **argv )
 	WriterType::Pointer writer = WriterType::New();
 	writer->SetInput( andNotFilter->GetOutput() );
 
+	/** Create and set filename. */
 	if ( argc == 3 )
 	{
 		std::string::size_type slash = image2FileName.find_last_of( "/" ) + 1;
