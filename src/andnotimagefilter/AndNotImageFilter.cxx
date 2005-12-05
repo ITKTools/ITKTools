@@ -8,17 +8,30 @@
 int main( int argc, char **argv )
 {
 	/** Check arguments. */
-	if( argc != 3 )
+	if( argc != 3 && argc != 4 )
 	{
 		std::cerr << "Usage:" << std::endl;
-		std::cerr << "pxandnotimagefilter image1 image2" << std::endl;
+		std::cerr << "pxandnotimagefilter image1 image2 [outputname]" << std::endl;
 		std::cerr << "This program only accepts 2D short images." << std::endl;
 		return 1;
 	}
 
 	/** Get the image names. */
-	std::string image1Filename = argv[ 1 ];
-	std::string image2Filename = argv[ 2 ];
+	std::string image1FileName = argv[ 1 ];
+	std::string image2FileName = argv[ 2 ];
+	std::string outputFileName = "";
+	if ( argc == 4 )
+	{
+		outputFileName = argv[ 3 ];
+	}
+
+	/** Print arguments. */
+	std::cout << "pxandnotimagefilter ";
+	for ( unsigned int i = 1; i < argc; i++ )
+	{
+		std::cout << argv[ i ] << " ";
+	}
+	std::cout << std::endl;
 
   /** typedefs. */
 	typedef short		PixelType;
@@ -30,7 +43,7 @@ int main( int argc, char **argv )
 
   /** Read image1. */
   ReaderType::Pointer image1Reader = ReaderType::New();
-	image1Reader->SetFileName( image1Filename.c_str() );
+	image1Reader->SetFileName( image1FileName.c_str() );
   try
 	{
 		image1Reader->Update();
@@ -38,14 +51,14 @@ int main( int argc, char **argv )
 	catch (itk::ExceptionObject& e)
 	{
 		std::cerr << "Exception detected while reading "
-			<< image1Filename
+			<< image1FileName
 			<< " : "  << e.GetDescription() << std::endl;
 		return 1;
 	}
 
 	/** Read image2. */
   ReaderType::Pointer image2Reader = ReaderType::New();
-	image2Reader->SetFileName( image2Filename.c_str() );
+	image2Reader->SetFileName( image2FileName.c_str() );
   try
 	{
 		image2Reader->Update();
@@ -53,7 +66,7 @@ int main( int argc, char **argv )
 	catch (itk::ExceptionObject& e)
 	{
 		std::cerr << "Exception detected while reading "
-			<< image2Filename
+			<< image2FileName
 			<< " : "  << e.GetDescription() << std::endl;
 		return 1;
 	}
@@ -65,9 +78,9 @@ int main( int argc, char **argv )
   if ( size1 != size2 )
 	{
 		std::cerr << "The size of the two images do not match!" << std::endl;
-		std::cerr << "image1: " << image1Filename
+		std::cerr << "image1: " << image1FileName
 			<< " has size " << size1 << std::endl;
-		std::cerr << "image2: " << image2Filename
+		std::cerr << "image2: " << image2FileName
 			<< " has size " << size2 << std::endl;
 		return 1;
 	}
@@ -80,14 +93,26 @@ int main( int argc, char **argv )
 	andNotFilter->SetInput1( image1Reader->GetOutput() );
 	andNotFilter->SetInput2( image2Reader->GetOutput() );
 
-	/** Create writer and filename. */
+	/** Create writer. */
 	WriterType::Pointer writer = WriterType::New();
 	writer->SetInput( andNotFilter->GetOutput() );
-	std::string outputName = image1Filename.substr( 0, image1Filename.rfind( "." ) );
-	outputName += "ANDNOT";
-	outputName += image2Filename.substr( 0, image2Filename.rfind( "." ) );
-	outputName += ".mhd";	
-	writer->SetFileName( outputName.c_str() );
+
+	if ( argc == 3 )
+	{
+		std::string::size_type slash = image2FileName.find_last_of( "/" ) + 1;
+    outputFileName = image1FileName.substr( 0, image1FileName.rfind( "." ) );
+		outputFileName += "ANDNOT";
+		outputFileName += image2FileName.substr( slash, image2FileName.rfind( "." ) - slash );
+		outputFileName += ".mhd";
+		writer->SetFileName( outputFileName.c_str() );
+	}
+	else
+	{
+		writer->SetFileName( outputFileName.c_str() );
+	}
+
+	/** Print output filename. */
+	std::cout << "Output filename: " << outputFileName << std::endl;
 
 	/** Write difference image. */
 	try
