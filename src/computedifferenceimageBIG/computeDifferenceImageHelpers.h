@@ -103,8 +103,8 @@ void ComputeScalarDifferenceImage( std::string image1FileName,
 	reader2->Update();
 
   /** The sizes of the image1 and image2 must match. */
-	InputImageType1::SizeType size1 = reader1->GetOutput()->GetLargestPossibleRegion().GetSize();
-	InputImageType2::SizeType size2 = reader2->GetOutput()->GetLargestPossibleRegion().GetSize();
+	typename InputImageType1::SizeType size1 = reader1->GetOutput()->GetLargestPossibleRegion().GetSize();
+	typename InputImageType2::SizeType size2 = reader2->GetOutput()->GetLargestPossibleRegion().GetSize();
 
 	if ( size1 != size2 )
 	{
@@ -117,7 +117,7 @@ void ComputeScalarDifferenceImage( std::string image1FileName,
 	}
 
 	/** Create an output image. */
-	OutputImageType::Pointer outputImage = OutputImageType::New();
+	typename OutputImageType::Pointer outputImage = OutputImageType::New();
 	outputImage->SetRegions( reader1->GetOutput()->GetLargestPossibleRegion() );
 	outputImage->SetSpacing( reader1->GetOutput()->GetSpacing() );
 	outputImage->SetOrigin( reader1->GetOutput()->GetOrigin() );
@@ -163,7 +163,7 @@ void ComputeScalarDifferenceImage( std::string image1FileName,
 	} // end while
 
   /** Connect the pipeline. */
-	ImageWriterType::Pointer writer = ImageWriterType::New();
+	typename ImageWriterType::Pointer writer = ImageWriterType::New();
 	writer->SetFileName( outputFileName.c_str() );
   writer->SetInput( outputImage );
 
@@ -212,8 +212,8 @@ void ComputeVectorDifferenceImage( std::string image1FileName,
 	reader2->Update();
 
   /** The sizes of the image1 and image2 must match. */
-	InputImageType1::SizeType size1 = reader1->GetOutput()->GetLargestPossibleRegion().GetSize();
-	InputImageType2::SizeType size2 = reader2->GetOutput()->GetLargestPossibleRegion().GetSize();
+	typename InputImageType1::SizeType size1 = reader1->GetOutput()->GetLargestPossibleRegion().GetSize();
+	typename InputImageType2::SizeType size2 = reader2->GetOutput()->GetLargestPossibleRegion().GetSize();
 
 	if ( size1 != size2 )
 	{
@@ -226,7 +226,7 @@ void ComputeVectorDifferenceImage( std::string image1FileName,
 	}
 
 	/** Create an output image. */
-	OutputImageType::Pointer outputImage = OutputImageType::New();
+	typename OutputImageType::Pointer outputImage = OutputImageType::New();
 	outputImage->SetRegions( reader1->GetOutput()->GetLargestPossibleRegion() );
 	outputImage->SetSpacing( reader1->GetOutput()->GetSpacing() );
 	outputImage->SetOrigin( reader1->GetOutput()->GetOrigin() );
@@ -278,7 +278,7 @@ void ComputeVectorDifferenceImage( std::string image1FileName,
 	} // end while
 
   /** Connect the pipeline. */
-	ImageWriterType::Pointer writer = ImageWriterType::New();
+	typename ImageWriterType::Pointer writer = ImageWriterType::New();
 	writer->SetFileName( outputFileName.c_str() );
   writer->SetInput( outputImage );
 
