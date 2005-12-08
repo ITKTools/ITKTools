@@ -284,7 +284,8 @@ int  main(  int  argc,  char *argv[] )
 		/**
 		 * ****************** Support for VECTOR pixel types. **********************************
 		 */
-		else if ( strcmp( pixelType1.c_str(), "vector" ) == 0 )
+		//else if ( strcmp( pixelType1.c_str(), "vector" ) == 0 )
+		else if ( numberOfComponents1 > 1 )
 		{
 			const int ret_value = ComputeVectorDifferenceImage(
 				inputPixelComponentType1, inputPixelComponentType2,
