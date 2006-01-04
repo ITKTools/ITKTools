@@ -99,11 +99,17 @@ cp $ziptpbusy $tempdirname/$ziptpbusy
 > $tparchive
 tar -cjf $tparchive --exclude $tparchive --exclude $ziptpbusy .
 mv $tparchive $tempdirname
-cd $tempdirname
-rm -R $indirabs
-mkdir $indirabs
-mv * $indirabs
-cd $indirabs
+
+rm -R *
+mv $tempdirname/* .
+
+# used to work like this:
+#cd $tempdirname
+#rm -R $indirabs
+#mkdir $indirabs
+#mv * $indirabs
+#cd $indirabs
+
 rm -R $tempdirname
 rm $ziptpbusy
 
