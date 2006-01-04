@@ -97,10 +97,12 @@ mv $niet $tempdirname
 cp $ziptpbusy $tempdirname/$ziptpbusy
 
 > $tparchive
-tar -cjf $tparchive --exclude $tparchive --exclude $ziptpbusy .
-mv $tparchive $tempdirname
+tar -cjf $tparchive --exclude $tparchive --exclude $ziptpbusy --remove-files .
 
-rm -R *
+#remove dirs
+#mv $tparchive $tempdirname
+rm -R TransformixOutput.?.R?.It*
+
 mv $tempdirname/* .
 
 # used to work like this:
