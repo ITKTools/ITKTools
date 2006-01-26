@@ -6,7 +6,7 @@ then
 echo
 echo "2unix script"
 echo
-echo "C o n v e r t s a dos txt file to a unix txt file."
+echo "Converts a dos txt file to a unix txt file."
 echo
 echo "The dos txt is renamed to <originalname>.dos"
 echo "The unix txt is called <originalname>"

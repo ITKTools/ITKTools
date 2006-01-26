@@ -1,5 +1,5 @@
 # This project is intended to be built outside the Insight source tree
-PROJECT(ComputeOverlap)
+PROJECT(CountNonZeroVoxels)
 
 # Find ITK.
 FIND_PACKAGE(ITK)
@@ -10,12 +10,8 @@ ELSE(ITK_FOUND)
           "Cannot build without ITK.  Please set ITK_DIR.")
 ENDIF(ITK_FOUND)
 
-ADD_EXECUTABLE(pxcomputeoverlap computeoverlap.cxx)
+ADD_EXECUTABLE(pxcountnonzerovoxels countnonzerovoxels.cxx)
 
-TARGET_LINK_LIBRARIES(pxcomputeoverlap
-ITKBasicFilters
-ITKNumerics
-ITKIO
-ITKCommon )
+INSTALL_TARGETS(/. pxcountnonzerovoxels)
 
-INSTALL_TARGETS(/. pxcomputeoverlap)
+TARGET_LINK_LIBRARIES(pxcountnonzerovoxels ITKIO ITKCommon)

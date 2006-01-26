@@ -1,5 +1,5 @@
 # This project is intended to be built outside the Insight source tree
-PROJECT(ComputeOverlap)
+PROJECT(CreateSphere)
 
 # Find ITK.
 FIND_PACKAGE(ITK)
@@ -10,12 +10,8 @@ ELSE(ITK_FOUND)
           "Cannot build without ITK.  Please set ITK_DIR.")
 ENDIF(ITK_FOUND)
 
-ADD_EXECUTABLE(pxcomputeoverlap computeoverlap.cxx)
+ADD_EXECUTABLE(pxcreatesphere createsphere.cxx)
 
-TARGET_LINK_LIBRARIES(pxcomputeoverlap
-ITKBasicFilters
-ITKNumerics
-ITKIO
-ITKCommon )
+INSTALL_TARGETS(/. pxcreatesphere)
 
-INSTALL_TARGETS(/. pxcomputeoverlap)
+TARGET_LINK_LIBRARIES(pxcreatesphere ITKBasicFilters ITKIO ITKCommon)

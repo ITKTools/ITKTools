@@ -196,7 +196,7 @@ int  main(  int  argc,  char *argv[] )
 		return 1;
 	}
 
-	/** Check inputPixelType1. */
+	/** Check inputPixelComponentType1. */
 	if ( inputPixelComponentType1 != "unsigned_char"
 		&& inputPixelComponentType1 != "char"
 		&& inputPixelComponentType1 != "unsigned_short"
