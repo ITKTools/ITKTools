@@ -115,6 +115,9 @@ int main( int argc, char *argv[] )
 			<< "\" could not be opened!" << std::endl;
 		return 1;
 	} // end if
+
+	/** Close all files. */
+	pointfile.close();
 	
 	/** End program. Return a value. */
 	return 0;

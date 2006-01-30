@@ -152,6 +152,9 @@ int main( int argc, char *argv[] )
 		return 1;
 	}
 
+	/** Close all files. */
+	pointfile.close();
+
 	/** End program. Return a value. */
 	return 0;
 
