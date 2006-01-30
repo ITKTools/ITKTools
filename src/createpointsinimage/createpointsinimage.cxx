@@ -1,7 +1,6 @@
 #ifndef __CreatePointsInImage_CXX__
 #define __CreatePointsInImage_CXX__
 
-#include "itkSphereSpatialFunction.h"
 #include "itkImageRegionIterator.h"
 #include "itkImageFileWriter.h"
 
@@ -16,7 +15,7 @@ int main( int argc, char *argv[] )
 	if ( argc < 5 )
 	{
 		std::cout << "Usage:" << std::endl;
-		std::cout << "CreatePointsInImage pointsfilename imagename -s imagesize [-sp spacing]" << std::endl;
+		std::cout << "pxcreatepointsinimage pointsfilename imagename -s imagesize [-sp spacing]" << std::endl;
 		std::cout << "NOTE: only 2D short are created and arguments should be in above order." << std::endl;
 		return 1;
 	}
@@ -111,7 +110,7 @@ int main( int argc, char *argv[] )
 		++it;
 	} // end while
 
-	/** Open the file containing the inputpoints.*/
+	/** Open the file containing the inputpoints. */
 	std::ifstream pointfile( pointfilename.c_str() );
 	unsigned int nrofpoints;
 	IndexType inputIndex;
@@ -122,10 +121,9 @@ int main( int argc, char *argv[] )
 		pointfile >> nrofpoints;
 		for ( unsigned int j = 0; j < nrofpoints; j++ )
 		{
-			/** Get the points from the file; they are given in iX coordinates. */
+			/** Get the points from the file. */
 			pointfile >> inputIndex[ 0 ];
 			pointfile >> inputIndex[ 1 ];
-			inputIndex[ 1 ] = size[ 1 ] - inputIndex[ 1 ];
 			/** Set this point to some number, ranging from 1 to nrofpoints. */
 			image->SetPixel( inputIndex, valueofpoint );
 			valueofpoint++;

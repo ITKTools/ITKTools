@@ -12,7 +12,7 @@ int main( int argc, char *argv[] )
 	if ( argc != 2 )
 	{
 		std::cout << "Usage:" << std::endl;
-		std::cout << "CountNonZeroVoxels imagename" << std::endl;
+		std::cout << "pxcountnonzerovoxels imagename" << std::endl;
 		return 1;
 	}
 
