@@ -1,7 +1,7 @@
 # This project is intended to be built outside the Insight source tree
 PROJECT(praxix)
 
-SUBDIRS(andimagefilter andnotimagefilter castconvert computedifferenceimage computedifferenceimageBIG computedistances computeoverlap convert countnonzerovoxels createpointsinimage createsphere dilateimage erodeimage extractindexfromvectorimage extractslice getpointsinimage imagecompare resize scripts)
+SUBDIRS(andimagefilter andnotimagefilter castconvert computedifferenceimage computedifferenceimageBIG computedistances computeoverlap convert countnonzerovoxels createpointsinimage createsphere dilateimage erodeimage extractindexfromvectorimage extractslice getpointsinimage imagecompare resize scripts tileimages)
 
 #---------------------------------------------------------------------
 # Output directories.
