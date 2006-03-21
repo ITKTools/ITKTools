@@ -10,7 +10,7 @@ int main( int argc, char ** argv )
 	/** Warning. */
 	//std::cout << "Warning: this program assumes images with a pixelType convertible to shorts!\n" << std::endl;
 
-	if ( argc > 2 || argv[ 1 ] == "--help" )
+	if ( argc < 2 || argv[ 1 ] == "--help" )
 	{
 		std::cout << "Usage:" << std::endl;
 		std::cout << "pxtileimages 2Dinputimage" << std::endl;
