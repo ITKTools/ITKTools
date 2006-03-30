@@ -1,7 +1,7 @@
-#ifndef __cri_cxx
-#define __cri_cxx
+#ifndef __createrandomimage_cxx
+#define __createrandomimage_cxx
 
-#include "cri.h"
+#include "createrandomimage.h"
 
 
 typedef std::map<std::string, std::string> ArgMapType;
@@ -14,16 +14,16 @@ void PrintUsageString(void)
 	std::cerr 
 		<< "\nThis program creates a random image.\n\n"
 		<< "Usage:\n"
-		<< "CreateRandomImage\n"
+		<< "pxcreaterandomimage\n"
 		<< "\t-out   \tOutputImageFileName\n"
 		<< "\t-pt    \tPixelType <SHORT, USHORT, INT, UINT, CHAR, UCHAR, FLOAT>\n"
 		<< "\t-id    \tImageDimension <2,3>\n"
 		<< "\t[-sd]  \tSpaceDimension (the number of channels) <1,2,3>\n"
 		<< "\t-d0    \tSize of dimension 0\n"
-		<< "\t[-d1]  \tSize of dimension 1\n"
+		<< "\t-d1    \tSize of dimension 1\n"
 		<< "\t[-d2]  \tSize of dimension 2\n"
-		<< "\t[-d3]  \tSize of dimension 3\n"
-		<< "\t[-d4]  \tSize of dimension 4\n"
+		//<< "\t[-d3]  \tSize of dimension 3\n"
+		//<< "\t[-d4]  \tSize of dimension 4\n"
 		<< "\t[-r]   \tThe resolution of the random image <unsigned long>.\n"
 		<< "\t\t\tThis determines the number of voxels set to a random value before blurring.\n"
 		<< "\t\t\tIf set to 0, all voxels are set to a random value\n"
@@ -265,5 +265,5 @@ int main(int argc, char** argv)
 	
 } // end function main
 
-#endif // #ifndef __avm_cxx
+#endif // #ifndef __createrandomimage_cxx
 

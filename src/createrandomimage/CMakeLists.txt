@@ -21,7 +21,7 @@ IF(CMAKE_BUILD_TOOL MATCHES "(msdev|devenv|nmake)")
 ENDIF(CMAKE_BUILD_TOOL MATCHES "(msdev|devenv|nmake)")
 
 
-ADD_EXECUTABLE(pxcreaterandomimage cri.cxx cri.h)
+ADD_EXECUTABLE(pxcreaterandomimage createrandomimage.cxx createrandomimage.h)
 
 TARGET_LINK_LIBRARIES(pxcreaterandomimage
 ITKBasicFilters

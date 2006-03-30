@@ -1,5 +1,5 @@
-#ifndef __cri_h
-#define __cri_h
+#ifndef __createrandomimage_h
+#define __createrandomimage_h
 
 
 #include "itkImageFileWriter.h"
@@ -457,4 +457,4 @@ ptswrap(){}
 
 
 
-#endif // #ifndef __cri_h
+#endif // #ifndef __createrandomimage_h
