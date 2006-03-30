@@ -1,0 +1,34 @@
+# This project is intended to be built outside the Insight source tree
+PROJECT(createrandomimage)
+
+# Find ITK.
+FIND_PACKAGE(ITK)
+IF(ITK_FOUND)
+  INCLUDE(${ITK_USE_FILE})
+ELSE(ITK_FOUND)
+  MESSAGE(FATAL_ERROR
+          "Cannot build without ITK.  Please set ITK_DIR.")
+ENDIF(ITK_FOUND)
+
+# Make sure the MS VC compiler has enough memory 
+
+IF(CMAKE_BUILD_TOOL MATCHES "(msdev|devenv|nmake)")
+ IF(CMAKE_CXX_FLAGS MATCHES "/Zm(0|1|2|3|4|5|6|7|8|9)*[^ ]")
+   STRING(REGEX REPLACE "/Zm(0|1|2|3|4|5|6|7|8|9)*[^ ]" "/Zm1600 " CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+ ELSE(CMAKE_CXX_FLAGS MATCHES "/Zm(0|1|2|3|4|5|6|7|8|9)*[^ ]")
+   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zm1600 ")
+ ENDIF(CMAKE_CXX_FLAGS MATCHES "/Zm(0|1|2|3|4|5|6|7|8|9)*[^ ]")
+ENDIF(CMAKE_BUILD_TOOL MATCHES "(msdev|devenv|nmake)")
+
+
+ADD_EXECUTABLE(pxcreaterandomimage cri.cxx cri.h)
+
+TARGET_LINK_LIBRARIES(pxcreaterandomimage
+ITKBasicFilters
+ITKNumerics
+ITKIO
+ITKCommon
+ITKStatistics )
+
+INSTALL_TARGETS(/. pxcreaterandomimage)
+
