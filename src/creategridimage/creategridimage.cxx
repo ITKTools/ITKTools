@@ -69,7 +69,7 @@ int main( int argc, char *argv[] )
 	IndexType index;
 	RegionType region;
 	size.Fill( imagesize );
-	index.Fill(0.0);
+	index.Fill(0);
 	region.SetIndex(index);
 	region.SetSize(size);
 
