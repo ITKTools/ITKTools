@@ -5,6 +5,7 @@ PROJECT(praxix)
 SUBDIRS(
  andimagefilter
  andnotimagefilter
+ averagevectormagnitude
  castconvert
  computedifferenceimage
  computedifferenceimageBIG
