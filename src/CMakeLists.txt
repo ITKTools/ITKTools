@@ -13,6 +13,7 @@ SUBDIRS(
  computeoverlap
  convert
  countnonzerovoxels
+ createbox
  creategridimage
  createpointsinimage
  createrandomimage
