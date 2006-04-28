@@ -1,0 +1,18 @@
+# This project is intended to be built outside the Insight source tree
+PROJECT(cropimage)
+
+# Find ITK.
+FIND_PACKAGE(ITK)
+IF(ITK_FOUND)
+  INCLUDE(${ITK_USE_FILE})
+ELSE(ITK_FOUND)
+  MESSAGE(FATAL_ERROR
+          "Cannot build without ITK.  Please set ITK_DIR.")
+ENDIF(ITK_FOUND)
+
+ADD_EXECUTABLE(pxcropimage cropimage.cxx cropimage.h)
+
+INSTALL_TARGETS(/. pxcropimage)
+
+TARGET_LINK_LIBRARIES(pxcropimage ITKBasicFilters ITKIO ITKCommon)
+

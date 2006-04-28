@@ -18,6 +18,7 @@ SUBDIRS(
  createpointsinimage
  createrandomimage
  createsphere
+ cropimage
  dilateimage
  erodeimage
  extractindexfromvectorimage
