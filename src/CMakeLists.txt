@@ -11,6 +11,7 @@ SUBDIRS(
  computedifferenceimageBIG
  computedistances
  computeoverlap
+ contrastenhanceimage
  convert
  countnonzerovoxels
  createbox
@@ -24,6 +25,7 @@ SUBDIRS(
  extractindexfromvectorimage
  extractslice
  getpointsinimage
+ histogramequalizeimage
  imagecompare
  resize
  scripts
