@@ -3,6 +3,7 @@ PROJECT(praxix)
 
 
 SUBDIRS(
+ addtopixelimagefilter
  andimagefilter
  andnotimagefilter
  averagevectormagnitude
@@ -27,8 +28,10 @@ SUBDIRS(
  getpointsinimage
  histogramequalizeimage
  imagecompare
+ invertintensityimagefilter
  maximumimagefilter
  minimumimagefilter
+ multiplypixelimagefilter
  resize
  scripts
  statisticsonimage
