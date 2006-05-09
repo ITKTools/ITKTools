@@ -85,9 +85,6 @@ int main( int argc, char **argv )
 		return 1;
 	}
 
-	/** Create an output image. */
-	ImageType::Pointer outputImage;
-
   /** Now AndNot the two images. */
 	AndNotFilterType::Pointer andNotFilter = AndNotFilterType::New();
 	andNotFilter->SetInput1( image1Reader->GetOutput() );

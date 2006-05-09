@@ -27,6 +27,8 @@ SUBDIRS(
  getpointsinimage
  histogramequalizeimage
  imagecompare
+ maximumimagefilter
+ minimumimagefilter
  resize
  scripts
  statisticsonimage
