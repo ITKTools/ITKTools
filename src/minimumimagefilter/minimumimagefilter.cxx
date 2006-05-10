@@ -15,14 +15,6 @@ int main( int argc, char **argv )
 		std::cerr << "This program only accepts 2D short images." << std::endl;
 		return 1;
 	}
-	
-	/** Print arguments. */
-	std::cout << "pxminimumimagefilter ";
-	for ( unsigned int i = 1; i < argc; i++ )
-	{
-		std::cout << argv[ i ] << " ";
-	}
-	std::cout << std::endl;
 
 	/** Get the image names. */
 	std::string image1FileName = argv[ 1 ];
@@ -110,9 +102,6 @@ int main( int argc, char **argv )
 	{
 		writer->SetFileName( outputFileName.c_str() );
 	}
-
-	/** Print output filename. */
-	std::cout << "Output filename: " << outputFileName << std::endl;
 
 	/** Write difference image. */
 	try
