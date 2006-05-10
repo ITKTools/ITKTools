@@ -69,6 +69,14 @@ int main( int argc, char **argv )
 		return 1;
 	}
 
+	/** Get rid of the possible "_" in PixelType. */
+	std::basic_string<char>::size_type pos = PixelType.find( "_" );
+	static const std::basic_string<char>::size_type npos = std::basic_string<char>::npos;
+	if ( pos != npos )
+	{
+		PixelType.replace( pos, 1, " " );
+	}
+
 	/** Run the program. */
 	try
 	{

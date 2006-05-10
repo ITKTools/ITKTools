@@ -32,6 +32,7 @@ SUBDIRS(
  maximumimagefilter
  minimumimagefilter
  multiplypixelimagefilter
+ rescaleintensityimagefilter
  resizeimage
  scripts
  statisticsonimage
