@@ -1,6 +1,5 @@
 
 #include "itkImage.h"
-//#include "itkIdentityTransform.h"
 #include "itkResampleImageFilter.h"
 
 #include "itkImageFileReader.h"
@@ -28,8 +27,6 @@ int main( int argc, char *argv[] )
 	typedef itk::Image< PixelType, Dimension >					ImageType;
 	typedef itk::ResampleImageFilter<
 		ImageType, ImageType >														ResamplerType;
-	//typedef itk::IdentityTransform<
-	//	PixelType, Dimension >														IdentityTransformType;
 	typedef itk::ImageFileReader< ImageType >						ReaderType;
 	typedef itk::ImageFileWriter< ImageType >						WriterType;
 
@@ -39,7 +36,6 @@ int main( int argc, char *argv[] )
 	/** DECLARATION'S. */
 	ImageType::Pointer inputImage = ImageType::New();
 	ResamplerType::Pointer resampler = ResamplerType::New();
-	//IdentityTransformType::Pointer identityTransform = IdentityTransformType::New();
 	ReaderType::Pointer reader = ReaderType::New();
 	WriterType::Pointer writer = WriterType::New();
 
@@ -62,8 +58,6 @@ int main( int argc, char *argv[] )
 	 * a LinearInterpolateImageFunction as interpolator.
 	 */
 	resampler->SetInput( inputImage );
-	//resampler->SetTransform( dynamic_cast<IdentityTransformType *>( identityTransform ) );
-	//resampler->SetInterpolator();
 	resampler->SetSize( outputSize );
 	resampler->SetDefaultPixelValue( 0 );
 	resampler->SetOutputStartIndex( inputImage->GetLargestPossibleRegion().GetIndex() );

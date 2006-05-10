@@ -1,13 +1,13 @@
 # This project is intended to be built outside the Insight source tree
 PROJECT(praxix)
 
-
 SUBDIRS(
  addtopixelimagefilter
  andimagefilter
  andnotimagefilter
  averagevectormagnitude
  castconvert
+ common
  computedifferenceimage
  computedifferenceimageBIG
  computedistances
@@ -32,7 +32,7 @@ SUBDIRS(
  maximumimagefilter
  minimumimagefilter
  multiplypixelimagefilter
- resize
+ resizeimage
  scripts
  statisticsonimage
  tileimages)
@@ -46,5 +46,6 @@ SET (EXECUTABLE_OUTPUT_PATH ${praxix_BINARY_DIR}/bin CACHE INTERNAL "Single outp
 MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
 SET(praxix_LIBRARY_PATH "${LIBRARY_OUTPUT_PATH}")
 SET(praxix_EXECUTABLE_PATH "${EXECUTABLE_OUTPUT_PATH}")
+INCLUDE_DIRECTORIES(${praxix_SOURCE_DIR}/common)
 
 
