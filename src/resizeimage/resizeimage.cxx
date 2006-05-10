@@ -103,16 +103,16 @@ void resizeImage( std::string inputFileName, std::string outputFileName, double 
 	typedef itk::ImageFileReader< InputImageType >			ReaderType;
 	typedef itk::ImageFileWriter< InputImageType >			WriterType;
 
-	typedef InputImageType::SizeType				SizeType;
-	typedef InputImageType::SpacingType			SpacingType;
+	typedef typename InputImageType::SizeType				SizeType;
+	typedef typename InputImageType::SpacingType			SpacingType;
 
 	const unsigned int Dimension = InputImageType::ImageDimension;
 
 	/** DECLARATION'S. */
-	InputImageType::Pointer inputImage = InputImageType::New();
-	ResamplerType::Pointer resampler = ResamplerType::New();
-	ReaderType::Pointer reader = ReaderType::New();
-	WriterType::Pointer writer = WriterType::New();
+	typename InputImageType::Pointer inputImage = InputImageType::New();
+	typename ResamplerType::Pointer resampler = ResamplerType::New();
+	typename ReaderType::Pointer reader = ReaderType::New();
+	typename WriterType::Pointer writer = WriterType::New();
 
 	/** Read in the inputImage. */
 	reader->SetFileName( inputFileName.c_str() );
