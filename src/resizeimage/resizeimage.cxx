@@ -96,7 +96,7 @@ int main( int argc, char **argv )
 	 */
 
 template< class InputImageType >
-void resizeImage<InputImageType>( std::string inputFileName, std::string outputFileName, double factor )
+void resizeImage( std::string inputFileName, std::string outputFileName, double factor )
 {
 	/** TYPEDEF's. */
 	typedef itk::ResampleImageFilter< InputImageType, InputImageType >	ResamplerType;
