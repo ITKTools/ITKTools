@@ -43,8 +43,11 @@ namespace itk
 			}
 			if ( keyFound && m_argv[ i ].substr(0,1) == "-" )
 			{
-				nextKeyIndex = i;
-				break;
+				if ( !this->IsANumber( m_argv[ i ] ) )
+				{
+					nextKeyIndex = i;
+					break;
+				}
 			}
 		} // end for loop
 
@@ -56,6 +59,23 @@ namespace itk
 
 	} // end FindKey()
 
+	/**
+	 * ******************* IsANumber *******************
+	 *
+	 * Checks if something startin with a "-" is a key or a negative number.
+	 */
+
+	bool CommandLineArgumentParser::
+		IsANumber( const std::string & arg )
+		{
+			std::string number = "0123456789";
+			if ( arg.size() > 1 )
+			{
+				return number.find( arg.substr(1,1) );
+			}
+
+			return false;
+		} // end IsANumber()
 
 	/**
 	 * ******************* GetCommandLineArgument *******************

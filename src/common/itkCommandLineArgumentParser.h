@@ -131,6 +131,8 @@ protected:
 	/** General functionality. */
 	bool FindKey( const std::string & key, unsigned int & keyIndex, unsigned int & nextKeyIndex );
 
+	bool IsANumber( const std::string & arg );
+
 	/** A vector of strings to store the command line arguments. */
 	std::vector<std::string> m_argv;
 
