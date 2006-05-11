@@ -28,7 +28,7 @@ void rescaleIntensity( std::string inputFileName, std::string outputFileName, do
 int main( int argc, char **argv )
 {
 	/** Check number of arguments. */
-	if ( argc < 3 || argc > 11 || argv[ 1 ] == "--help" )
+	if ( argc < 3 || argc > 12 || argv[ 1 ] == "--help" )
 	{
 		std::cout << "Usage:" << std::endl;
 		std::cout << "\tpxrescaleintensityimagefilter -in inputfilename [-out outputfilename] [-mm minimum maximum] [-dim Dimension] [-pt PixelType]" << std::endl;
