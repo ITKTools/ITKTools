@@ -32,7 +32,7 @@ int main( int argc, char **argv )
 		std::cout << "Usage:" << std::endl;
 		std::cout << "\tpxresizeimage -in inputfilename [-out outputfilename] -f factor [-dim Dimension] [-pt PixelType]" << std::endl;
 		std::cout << "Defaults: Dimension = 2, PixelType = short, out = in + RESIZED." << std::endl;
-		std::cout << "Supported: 2D, 3D, (unsigned) short." << std::endl;
+		std::cout << "Supported: 2D, 3D, (unsigned) short, (unsigned) char." << std::endl;
 		return 1;
 	}
 
@@ -80,6 +80,10 @@ int main( int argc, char **argv )
 	/** Run the program. */
 	try
 	{
+		run(resizeImage,unsigned char,2);
+		run(resizeImage,unsigned char,3);
+		run(resizeImage,char,2);
+		run(resizeImage,char,3);
 		run(resizeImage,unsigned short,2);
 		run(resizeImage,unsigned short,3);
 		run(resizeImage,short,2);
