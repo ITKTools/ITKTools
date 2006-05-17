@@ -12,27 +12,28 @@
 #define run(function,type,dim) \
 if ( PixelType == #type && Dimension == #dim ) \
 { \
-    typedef  itk::Image< type, dim >   InputImageType; \
-    function< InputImageType >( inputFileName, outputFileName, factor ); \
+    typedef itk::Image< type, dim > InputImageType; \
+    function< InputImageType >( inputFileName, outputFileName, factorOrSpacing, isFactor ); \
 }
 
 //-------------------------------------------------------------------------------------
 
 /** Declare resizeImage. */
 template< class InputImageType >
-void resizeImage( std::string inputFileName, std::string outputFileName, double factor );
+void resizeImage( std::string inputFileName, std::string outputFileName,
+								 std::vector<double> factorOrSpacing, bool isFactor );
+
+/** Declare PrintHelp. */
+void PrintHelp(void);
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char **argv )
 {
-	/** Check number of arguments. */
-	if ( argc < 5 || argc > 11 || argv[ 1 ] == "--help" )
+	/** Check arguments for help. */
+	if ( argc < 5 || argc > 13 )
 	{
-		std::cout << "Usage:" << std::endl;
-		std::cout << "\tpxresizeimage -in inputfilename [-out outputfilename] -f factor [-dim Dimension] [-pt PixelType]" << std::endl;
-		std::cout << "Defaults: Dimension = 2, PixelType = short, out = in + RESIZED." << std::endl;
-		std::cout << "Supported: 2D, 3D, (unsigned) short, (unsigned) char." << std::endl;
+		PrintHelp();
 		return 1;
 	}
 
@@ -48,14 +49,19 @@ int main( int argc, char **argv )
 	outputFileName += "RESIZED.mhd";
 	bool ret2 = parser->GetCommandLineArgument( "-out", outputFileName );
 
-	double factor;
+	std::vector<double> factor;
 	bool ret3 = parser->GetCommandLineArgument( "-f", factor );
+	bool isFactor = ret3;
+
+	std::vector<double> spacing;
+	bool ret4 = parser->GetCommandLineArgument( "-sp", spacing );
 
 	std::string	Dimension = "2";
-	bool ret4 = parser->GetCommandLineArgument( "-dim", Dimension );
+	bool ret5 = parser->GetCommandLineArgument( "-dim", Dimension );
+	const unsigned int DimensionInt = atoi( Dimension.c_str() );
 
 	std::string	PixelType = "short";
-	bool ret5 = parser->GetCommandLineArgument( "-pt", PixelType );
+	bool ret6 = parser->GetCommandLineArgument( "-pt", PixelType );
 
 	/** Check if the required arguments are given. */
 	if ( !ret1 )
@@ -63,9 +69,9 @@ int main( int argc, char **argv )
 		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
 		return 1;
 	}
-	if ( !ret3 )
+	if ( !( ret3 ^ ret4 ) )
 	{
-		std::cerr << "ERROR: You should specify \"-f\"." << std::endl;
+		std::cerr << "ERROR: You should specify either \"-f\" or \"-sp\"." << std::endl;
 		return 1;
 	}
 
@@ -75,6 +81,52 @@ int main( int argc, char **argv )
 	if ( pos != npos )
 	{
 		PixelType.replace( pos, 1, " " );
+	}
+
+	/** Check factor and spacing. */
+	if ( ret3 )
+	{
+		if( factor.size() != DimensionInt && factor.size() != 1 )
+		{
+			std::cout << "ERROR: The number of factors should be 1 or Dimension." << std::endl;
+			return 1;
+		}
+	}
+	if ( ret4 )
+	{
+		if( spacing.size() != DimensionInt && spacing.size() != 1 )
+		{
+			std::cout << "ERROR: The number of spacings should be 1 or Dimension." << std::endl;
+			return 1;
+		}
+	}
+
+	/** Get the factor or spacing. */
+	double vector0 = ( ret3 ? factor[ 0 ] : spacing[ 0 ] );
+	std::vector<double> factorOrSpacing( DimensionInt, vector0 );
+	if ( ret3 && factor.size() == DimensionInt )
+	{
+		for ( unsigned int i = 1; i < DimensionInt; i++ )
+		{
+			factorOrSpacing[ i ] = factor[ i ];
+		}
+	}
+	if ( ret4 && spacing.size() == DimensionInt )
+	{
+		for ( unsigned int i = 1; i < DimensionInt; i++ )
+		{
+			factorOrSpacing[ i ] = spacing[ i ];
+		}
+	}
+
+	/** Check factorOrSpacing for negative numbers. */
+	for ( unsigned int i = 1; i < DimensionInt; i++ )
+	{
+		if ( factorOrSpacing[ i ] < 0.00001 )
+		{
+			std::cout << "ERROR: No negative numbers are allowed in factor or spacing." << std::endl;
+			return 1;
+		}
 	}
 
 	/** Run the program. */
@@ -108,14 +160,14 @@ int main( int argc, char **argv )
 	 */
 
 template< class InputImageType >
-void resizeImage( std::string inputFileName, std::string outputFileName, double factor )
+void resizeImage( std::string inputFileName, std::string outputFileName, std::vector<double> factorOrSpacing, bool isFactor )
 {
 	/** TYPEDEF's. */
 	typedef itk::ResampleImageFilter< InputImageType, InputImageType >	ResamplerType;
 	typedef itk::ImageFileReader< InputImageType >			ReaderType;
 	typedef itk::ImageFileWriter< InputImageType >			WriterType;
 
-	typedef typename InputImageType::SizeType				SizeType;
+	typedef typename InputImageType::SizeType					SizeType;
 	typedef typename InputImageType::SpacingType			SpacingType;
 
 	const unsigned int Dimension = InputImageType::ImageDimension;
@@ -132,12 +184,25 @@ void resizeImage( std::string inputFileName, std::string outputFileName, double 
 	inputImage->Update();
 
 	/** Prepare stuff. */
-	SpacingType outputSpacing = inputImage->GetSpacing();
-	SizeType outputSize = inputImage->GetLargestPossibleRegion().GetSize();
-	for ( unsigned int i = 0; i < Dimension; i++ )
+	SpacingType	inputSpacing	= inputImage->GetSpacing();
+	SizeType		inputSize			= inputImage->GetLargestPossibleRegion().GetSize();
+	SpacingType outputSpacing	= inputSpacing;
+	SizeType		outputSize		= inputSize;	
+	if ( isFactor )
 	{
-		outputSpacing[ i ] = outputSpacing[ i ] / factor;
-		outputSize[ i ] = static_cast<unsigned int>( outputSize[ i ] * factor );
+		for ( unsigned int i = 0; i < Dimension; i++ )
+		{
+			outputSpacing[ i ] /= factorOrSpacing[ i ];
+			outputSize[ i ] = static_cast<unsigned int>( outputSize[ i ] * factorOrSpacing[ i ] );
+		}
+	}
+	else
+	{
+		for ( unsigned int i = 0; i < Dimension; i++ )
+		{
+			outputSpacing[ i ] = factorOrSpacing[ i ];
+			outputSize[ i ] = static_cast<unsigned int>( inputSpacing[ i ] * inputSize[ i ] / factorOrSpacing[ i ] );
+		}
 	}
 
 	/** Setup the pipeline.
@@ -158,3 +223,19 @@ void resizeImage( std::string inputFileName, std::string outputFileName, double 
 
 } // end resize
 
+
+	/**
+	 * ******************* PrintHelp *******************
+	 */
+void PrintHelp()
+{
+	std::cout << "Usage:" << std::endl << "pxresizeimage" << std::endl;
+	std::cout << "\t-in\tinputFilename" << std::endl;
+	std::cout << "\t[-out]\toutputFilename, default in + RESIZED.mhd" << std::endl;
+	std::cout << "\t[-f]\tfactor" << std::endl;
+	std::cout << "\t[-sp]\tspacing" << std::endl;
+	std::cout << "\t[-dim]\tdimension, default 2" << std::endl;
+	std::cout << "\t[-pt]\tpixelType, default short" << std::endl;
+	std::cout << "One of -f and -sp should be given." << std::endl;
+	std::cout << "Supported: 2D, 3D, (unsigned) short, (unsigned) char." << std::endl;
+} // end PrintHelp
