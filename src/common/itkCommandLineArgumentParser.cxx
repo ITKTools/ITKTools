@@ -69,9 +69,13 @@ namespace itk
 		IsANumber( const std::string & arg )
 		{
 			std::string number = "0123456789";
+			static const std::basic_string<char>::size_type npos = std::basic_string<char>::npos;
 			if ( arg.size() > 1 )
 			{
-				return number.find( arg.substr(1,1) );
+				if ( npos != number.find( arg.substr(1,1) ) )
+				{
+					return true;
+				}
 			}
 
 			return false;
