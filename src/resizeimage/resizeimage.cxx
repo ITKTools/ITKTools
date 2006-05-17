@@ -239,3 +239,4 @@ void PrintHelp()
 	std::cout << "One of -f and -sp should be given." << std::endl;
 	std::cout << "Supported: 2D, 3D, (unsigned) short, (unsigned) char." << std::endl;
 } // end PrintHelp
+
