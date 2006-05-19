@@ -19,10 +19,10 @@ if ( PixelType == #type && Dimension == dim ) \
 
 //-------------------------------------------------------------------------------------
 
-/** Declare resizeImage. */
+/** Declare ResizeImage. */
 template< class InputImageType >
-void resizeImage( std::string inputFileName, std::string outputFileName,
-								 std::vector<double> factorOrSpacing, bool isFactor );
+void ResizeImage( std::string inputFileName, std::string outputFileName,
+	std::vector<double> factorOrSpacing, bool isFactor );
 
 /** Declare PrintHelp. */
 void PrintHelp(void);
@@ -76,7 +76,7 @@ int main( int argc, char **argv )
 	}
 
 	/** Get rid of the possible "_" in PixelType. */
-	ReplaceUnderscoreWithSpace(PixelType);
+	ReplaceUnderscoreWithSpace( PixelType );
 
 	/** Check factor and spacing. */
 	if ( retf )
@@ -127,14 +127,14 @@ int main( int argc, char **argv )
 	/** Run the program. */
 	try
 	{
-		run(resizeImage,unsigned char,2);
-		run(resizeImage,unsigned char,3);
-		run(resizeImage,char,2);
-		run(resizeImage,char,3);
-		run(resizeImage,unsigned short,2);
-		run(resizeImage,unsigned short,3);
-		run(resizeImage,short,2);
-		run(resizeImage,short,3);
+		run(ResizeImage,unsigned char,2);
+		run(ResizeImage,unsigned char,3);
+		run(ResizeImage,char,2);
+		run(ResizeImage,char,3);
+		run(ResizeImage,unsigned short,2);
+		run(ResizeImage,unsigned short,3);
+		run(ResizeImage,short,2);
+		run(ResizeImage,short,3);
 	}
 	catch( itk::ExceptionObject &e )
 	{
@@ -149,15 +149,16 @@ int main( int argc, char **argv )
 
 
 	/**
-	 * ******************* resizeImage *******************
+	 * ******************* ResizeImage *******************
 	 *
 	 * The resize function templated over the input pixel type.
 	 */
 
 template< class InputImageType >
-void resizeImage( std::string inputFileName, std::string outputFileName, std::vector<double> factorOrSpacing, bool isFactor )
+void ResizeImage( std::string inputFileName, std::string outputFileName,
+	std::vector<double> factorOrSpacing, bool isFactor )
 {
-	/** TYPEDEF's. */
+	/** Typedefs. */
 	typedef itk::ResampleImageFilter< InputImageType, InputImageType >	ResamplerType;
 	typedef itk::ImageFileReader< InputImageType >			ReaderType;
 	typedef itk::ImageFileWriter< InputImageType >			WriterType;
@@ -167,8 +168,8 @@ void resizeImage( std::string inputFileName, std::string outputFileName, std::ve
 
 	const unsigned int Dimension = InputImageType::ImageDimension;
 
-	/** DECLARATION'S. */
-	typename InputImageType::Pointer inputImage = InputImageType::New();
+	/** Declarations. */
+	typename InputImageType::Pointer inputImage;
 	typename ResamplerType::Pointer resampler = ResamplerType::New();
 	typename ReaderType::Pointer reader = ReaderType::New();
 	typename WriterType::Pointer writer = WriterType::New();
@@ -216,7 +217,7 @@ void resizeImage( std::string inputFileName, std::string outputFileName, std::ve
 	writer->SetInput( resampler->GetOutput() );
 	writer->Update();
 
-} // end resize
+} // end ResizeImage
 
 
 	/**
@@ -229,7 +230,7 @@ void PrintHelp()
 	std::cout << "\t[-out]\toutputFilename, default in + RESIZED.mhd" << std::endl;
 	std::cout << "\t[-f]\tfactor" << std::endl;
 	std::cout << "\t[-sp]\tspacing" << std::endl;
-	std::cout << "\t[-dim]\tdimension, default 2" << std::endl;
+	std::cout << "\t[-dim]\tdimension, default 3" << std::endl;
 	std::cout << "\t[-pt]\tpixelType, default short" << std::endl;
 	std::cout << "One of -f and -sp should be given." << std::endl;
 	std::cout << "Supported: 2D, 3D, (unsigned) short, (unsigned) char." << std::endl;
