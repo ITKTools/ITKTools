@@ -13,6 +13,8 @@ ENDIF(ITK_FOUND)
 ADD_LIBRARY(pxcommon
  itkCommandLineArgumentParser.cxx
  itkCommandLineArgumentParser.h
+ CommandLineArgumentHelper.cxx
+ CommandLineArgumentHelper.h
 )
 
 TARGET_LINK_LIBRARIES(pxcommon ITKCommon)

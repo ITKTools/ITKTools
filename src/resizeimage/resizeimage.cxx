@@ -1,4 +1,5 @@
 #include "itkCommandLineArgumentParser.h"
+#include "CommandLineArgumentHelper.h"
 
 #include "itkImage.h"
 #include "itkResampleImageFilter.h"
@@ -10,7 +11,7 @@
 
 /** run: A macro to call a function. */
 #define run(function,type,dim) \
-if ( PixelType == #type && Dimension == #dim ) \
+if ( PixelType == #type && Dimension == dim ) \
 { \
     typedef itk::Image< type, dim > InputImageType; \
     function< InputImageType >( inputFileName, outputFileName, factorOrSpacing, isFactor ); \
@@ -43,58 +44,52 @@ int main( int argc, char **argv )
 
 	/** Get arguments. */
 	std::string	inputFileName = "";
-	bool ret1 = parser->GetCommandLineArgument( "-in", inputFileName );
+	bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
 
 	std::string	outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
 	outputFileName += "RESIZED.mhd";
-	bool ret2 = parser->GetCommandLineArgument( "-out", outputFileName );
+	bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
 
 	std::vector<double> factor;
-	bool ret3 = parser->GetCommandLineArgument( "-f", factor );
-	bool isFactor = ret3;
+	bool retf = parser->GetCommandLineArgument( "-f", factor );
+	bool isFactor = retf;
 
 	std::vector<double> spacing;
-	bool ret4 = parser->GetCommandLineArgument( "-sp", spacing );
+	bool retsp = parser->GetCommandLineArgument( "-sp", spacing );
 
-	std::string	Dimension = "2";
-	bool ret5 = parser->GetCommandLineArgument( "-dim", Dimension );
-	const unsigned int DimensionInt = atoi( Dimension.c_str() );
+	unsigned int Dimension = 3;
+	bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
 
 	std::string	PixelType = "short";
-	bool ret6 = parser->GetCommandLineArgument( "-pt", PixelType );
+	bool retpt = parser->GetCommandLineArgument( "-pt", PixelType );
 
 	/** Check if the required arguments are given. */
-	if ( !ret1 )
+	if ( !retin )
 	{
 		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
 		return 1;
 	}
-	if ( !( ret3 ^ ret4 ) )
+	if ( !( retf ^ retsp ) )
 	{
 		std::cerr << "ERROR: You should specify either \"-f\" or \"-sp\"." << std::endl;
 		return 1;
 	}
 
 	/** Get rid of the possible "_" in PixelType. */
-	std::basic_string<char>::size_type pos = PixelType.find( "_" );
-	static const std::basic_string<char>::size_type npos = std::basic_string<char>::npos;
-	if ( pos != npos )
-	{
-		PixelType.replace( pos, 1, " " );
-	}
+	ReplaceUnderscoreWithSpace(PixelType);
 
 	/** Check factor and spacing. */
-	if ( ret3 )
+	if ( retf )
 	{
-		if( factor.size() != DimensionInt && factor.size() != 1 )
+		if( factor.size() != Dimension && factor.size() != 1 )
 		{
 			std::cout << "ERROR: The number of factors should be 1 or Dimension." << std::endl;
 			return 1;
 		}
 	}
-	if ( ret4 )
+	if ( retsp )
 	{
-		if( spacing.size() != DimensionInt && spacing.size() != 1 )
+		if( spacing.size() != Dimension && spacing.size() != 1 )
 		{
 			std::cout << "ERROR: The number of spacings should be 1 or Dimension." << std::endl;
 			return 1;
@@ -102,25 +97,25 @@ int main( int argc, char **argv )
 	}
 
 	/** Get the factor or spacing. */
-	double vector0 = ( ret3 ? factor[ 0 ] : spacing[ 0 ] );
-	std::vector<double> factorOrSpacing( DimensionInt, vector0 );
-	if ( ret3 && factor.size() == DimensionInt )
+	double vector0 = ( retf ? factor[ 0 ] : spacing[ 0 ] );
+	std::vector<double> factorOrSpacing( Dimension, vector0 );
+	if ( retf && factor.size() == Dimension )
 	{
-		for ( unsigned int i = 1; i < DimensionInt; i++ )
+		for ( unsigned int i = 1; i < Dimension; i++ )
 		{
 			factorOrSpacing[ i ] = factor[ i ];
 		}
 	}
-	if ( ret4 && spacing.size() == DimensionInt )
+	if ( retsp && spacing.size() == Dimension )
 	{
-		for ( unsigned int i = 1; i < DimensionInt; i++ )
+		for ( unsigned int i = 1; i < Dimension; i++ )
 		{
 			factorOrSpacing[ i ] = spacing[ i ];
 		}
 	}
 
 	/** Check factorOrSpacing for negative numbers. */
-	for ( unsigned int i = 1; i < DimensionInt; i++ )
+	for ( unsigned int i = 1; i < Dimension; i++ )
 	{
 		if ( factorOrSpacing[ i ] < 0.00001 )
 		{
