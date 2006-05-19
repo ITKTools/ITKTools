@@ -23,6 +23,7 @@ SUBDIRS(
  cropimage
  dilateimage
  erodeimage
+ extracteveryotherslice
  extractindexfromvectorimage
  extractslice
  getpointsinimage
