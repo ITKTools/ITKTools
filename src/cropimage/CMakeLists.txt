@@ -10,9 +10,9 @@ ELSE(ITK_FOUND)
           "Cannot build without ITK.  Please set ITK_DIR.")
 ENDIF(ITK_FOUND)
 
-ADD_EXECUTABLE(pxcropimage cropimage.cxx cropimage.h)
+ADD_EXECUTABLE(pxcropimage cropimage.cxx)
 
 INSTALL_TARGETS(/. pxcropimage)
 
-TARGET_LINK_LIBRARIES(pxcropimage ITKBasicFilters ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxcropimage pxcommon ITKBasicFilters ITKIO ITKCommon)
 
