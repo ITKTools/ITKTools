@@ -122,7 +122,8 @@ void DetectGoldMarkers( const std::string & inputFileName, const std::string & o
 	
 	/** constants */
 	const unsigned int Dimension = InputImageType::ImageDimension;
-	const unsigned int NumberOfBins = 1.0 / (1.0 - threshold );
+	const unsigned int NumberOfBins = static_cast<unsigned int>(
+		vcl_ceil( 1.0 / (1.0 - threshold ) )   );
 	const double SmallSigma = 1.0;
 
 	/** TYPEDEF's. */
