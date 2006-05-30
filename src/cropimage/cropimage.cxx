@@ -36,7 +36,7 @@ void GetBox( std::vector<unsigned int> & pA, std::vector<unsigned int> & pB, uns
 
 std::vector<unsigned int> GetUpperBoundary( const std::vector<unsigned int> & input1,
 	 const std::vector<unsigned int> & input2, const std::vector<unsigned int> & imageSize,
-	 const unsigned int dimension );
+	 unsigned int dimension, unsigned int option );
 
 //-------------------------------------------------------------------------------------
 
@@ -377,7 +377,7 @@ void GetBox( std::vector<unsigned int> & pA, std::vector<unsigned int> & pB, uns
 
  std::vector<unsigned int> GetUpperBoundary( const std::vector<unsigned int> & input1,
 	 const std::vector<unsigned int> & input2, const std::vector<unsigned int> & imageSize,
-	 const unsigned int dimension, const unsigned int option )
+	 unsigned int dimension, unsigned int option )
 {
 	/** Create output vector. */
 	std::vector<unsigned int > output( dimension, 0 );
