@@ -290,6 +290,17 @@ void DetectGoldMarkers( const std::string & inputFileName, const std::string & o
 	 */
 void PrintHelp()
 {
+	std::cout << "This program creates a mask for mr_bffe images of the prostate that contains gold marker seeds." << std::endl;
+	std::cout << "The program computes the following:\n"
+		<< "\t Laplacian at scale 'sigma' (L_xx(sigma) + L_yy(sigma) + L_zz(sigma)),\n"
+		<< "\t A highpass filtered version of the original image. (L - L(sigma)),\n"
+		<< "\t BlurAbsHighPass = Gaussian(sigma)[ abs(highpass) ];\n"
+		<< "\t FeatureImage = Laplacian times BlurAbsHighPass;\n"
+		<< "\t Histogram of FeatureImage; the quantile 'threshold' is used to determine a threshold value,\n"
+		<< "\t Threshold of the FeatureImage;\n"
+		<< "\t Dilation of the Threshold FeatureImage with binary ball with specified 'radius';\n"
+		<< "\t A Not-filter to make the gold markers 0 and the rest 1.\n" << std::endl;
+
 	std::cout << "Usage:" << std::endl << "pxdetectgoldmarkers" << std::endl;
 	std::cout << "\t-in\tinputFilename" << std::endl;
 	std::cout << "\t[-out]\toutputFilename, default in + MASK.mhd" << std::endl;
