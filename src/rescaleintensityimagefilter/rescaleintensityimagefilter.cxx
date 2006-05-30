@@ -140,7 +140,7 @@ void rescaleIntensity( std::string inputFileName, std::string outputFileName, do
 	PixelType min, max;
 	if ( minimum == 0.0 && maximum == 0.0 )
 	{
-		min = itk::NumericTraits<PixelType>::min();
+		min = itk::NumericTraits<PixelType>::NonpositiveMin();
 		max = itk::NumericTraits<PixelType>::max();
 	}
 	else

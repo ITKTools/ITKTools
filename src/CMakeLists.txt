@@ -21,6 +21,7 @@ SUBDIRS(
  createrandomimage
  createsphere
  cropimage
+ detectgoldmarkers
  dilateimage
  erodeimage
  extracteveryotherslice

@@ -38,7 +38,8 @@ HistogramEqualizationImageFilter<TImage>
 		this->GetOutput()->GetRequestedRegion() );
 
 	InputImagePixelType tempmin = itk::NumericTraits<InputImagePixelType>::max();
-	InputImagePixelType tempmax = itk::NumericTraits<InputImagePixelType>::min();
+	InputImagePixelType tempmax = 
+		itk::NumericTraits<InputImagePixelType>::NonpositiveMin();
 
 	it.GoToBegin();
 	while ( !it.IsAtEnd() )
