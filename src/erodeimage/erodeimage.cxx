@@ -145,15 +145,15 @@ void ErodeImage( std::string inputFileName, std::string outputFileName,
 	
 	typedef itk::BinaryBallStructuringElement<
 		PixelType, Dimension >														StructuringElementType;
-	typedef StructuringElementType::RadiusType					RadiusType;
+	typedef typename StructuringElementType::RadiusType					RadiusType;
 	typedef itk::GrayscaleErodeImageFilter<
 		InputImageType, InputImageType,
 		StructuringElementType >													ErodeFilterType;
 
 	/** DECLARATION'S. */
-	ReaderType::Pointer reader = ReaderType::New();
-	WriterType::Pointer writer = WriterType::New();
-	ErodeFilterType::Pointer erosion = ErodeFilterType::New();
+	typename ReaderType::Pointer reader = ReaderType::New();
+	typename WriterType::Pointer writer = WriterType::New();
+	typename ErodeFilterType::Pointer erosion = ErodeFilterType::New();
 	RadiusType	radiusarray;
 	StructuringElementType	S_ball;
 

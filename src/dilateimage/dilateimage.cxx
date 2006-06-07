@@ -145,15 +145,15 @@ void DilateImage( std::string inputFileName, std::string outputFileName,
 	
 	typedef itk::BinaryBallStructuringElement<
 		PixelType, Dimension >														StructuringElementType;
-	typedef StructuringElementType::RadiusType					RadiusType;
+	typedef typename StructuringElementType::RadiusType					RadiusType;
 	typedef itk::GrayscaleDilateImageFilter<
 		InputImageType, InputImageType,
 		StructuringElementType >													DilateFilterType;
 
 	/** DECLARATION'S. */
-	ReaderType::Pointer reader = ReaderType::New();
-	WriterType::Pointer writer = WriterType::New();
-	DilateFilterType::Pointer dilation = DilateFilterType::New();
+	typename ReaderType::Pointer reader = ReaderType::New();
+	typename WriterType::Pointer writer = WriterType::New();
+	typename DilateFilterType::Pointer dilation = DilateFilterType::New();
 	RadiusType	radiusarray;
 	StructuringElementType	S_ball;
 

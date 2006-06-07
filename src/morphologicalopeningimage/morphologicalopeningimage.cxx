@@ -145,15 +145,15 @@ void GrayscaleMorphologicalOpening( std::string inputFileName, std::string outpu
 	
 	typedef itk::BinaryBallStructuringElement<
 		PixelType, Dimension >														StructuringElementType;
-	typedef StructuringElementType::RadiusType					RadiusType;
+	typedef typename StructuringElementType::RadiusType					RadiusType;
 	typedef itk::GrayscaleMorphologicalOpeningImageFilter<
 		InputImageType, InputImageType,
 		StructuringElementType >													OpeningFilterType;
 
 	/** DECLARATION'S. */
-	ReaderType::Pointer reader = ReaderType::New();
-	WriterType::Pointer writer = WriterType::New();
-	OpeningFilterType::Pointer opening = OpeningFilterType::New();
+	typename ReaderType::Pointer reader = ReaderType::New();
+	typename WriterType::Pointer writer = WriterType::New();
+	typename OpeningFilterType::Pointer opening = OpeningFilterType::New();
 	RadiusType	radiusarray;
 	StructuringElementType	S_ball;
 

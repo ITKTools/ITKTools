@@ -145,15 +145,15 @@ void GrayscaleMorphologicalClosing( std::string inputFileName, std::string outpu
 	
 	typedef itk::BinaryBallStructuringElement<
 		PixelType, Dimension >														StructuringElementType;
-	typedef StructuringElementType::RadiusType					RadiusType;
+	typedef typename StructuringElementType::RadiusType					RadiusType;
 	typedef itk::GrayscaleMorphologicalClosingImageFilter<
 		InputImageType, InputImageType,
 		StructuringElementType >													ClosingFilterType;
 
 	/** DECLARATION'S. */
-	ReaderType::Pointer reader = ReaderType::New();
-	WriterType::Pointer writer = WriterType::New();
-	ClosingFilterType::Pointer closing = ClosingFilterType::New();
+	typename ReaderType::Pointer reader = ReaderType::New();
+	typename WriterType::Pointer writer = WriterType::New();
+	typename ClosingFilterType::Pointer closing = ClosingFilterType::New();
 	RadiusType	radiusarray;
 	StructuringElementType	S_ball;
 
