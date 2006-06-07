@@ -1,5 +1,5 @@
 # This project is intended to be built outside the Insight source tree
-PROJECT(ErodeImage)
+PROJECT(erodeimage)
 
 # Find ITK.
 FIND_PACKAGE(ITK)
@@ -14,4 +14,4 @@ ADD_EXECUTABLE(pxerodeimage erodeimage.cxx)
 
 INSTALL_TARGETS(/. pxerodeimage)
 
-TARGET_LINK_LIBRARIES(pxerodeimage ITKBasicFilters ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxerodeimage pxcommon ITKBasicFilters ITKIO ITKCommon)

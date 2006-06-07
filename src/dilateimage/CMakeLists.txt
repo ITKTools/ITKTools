@@ -1,5 +1,5 @@
 # This project is intended to be built outside the Insight source tree
-PROJECT(DilateImage)
+PROJECT(dilateimage)
 
 # Find ITK.
 FIND_PACKAGE(ITK)
@@ -14,4 +14,4 @@ ADD_EXECUTABLE(pxdilateimage dilateimage.cxx)
 
 INSTALL_TARGETS(/. pxdilateimage)
 
-TARGET_LINK_LIBRARIES(pxdilateimage ITKBasicFilters ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxdilateimage pxcommon ITKBasicFilters ITKIO ITKCommon)

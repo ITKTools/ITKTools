@@ -33,6 +33,8 @@ SUBDIRS(
  invertintensityimagefilter
  maximumimagefilter
  minimumimagefilter
+ morphologicalclosingimage
+ morphologicalopeningimage
  multiplypixelimagefilter
  rescaleintensityimagefilter
  resizeimage

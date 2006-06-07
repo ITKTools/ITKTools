@@ -114,8 +114,8 @@ int main( int argc, char **argv )
 		}
 	}
 
-	/** Check factorOrSpacing for negative numbers. */
-	for ( unsigned int i = 1; i < Dimension; i++ )
+	/** Check factorOrSpacing for nonpositive numbers. */
+	for ( unsigned int i = 0; i < Dimension; i++ )
 	{
 		if ( factorOrSpacing[ i ] < 0.00001 )
 		{

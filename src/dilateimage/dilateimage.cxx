@@ -1,38 +1,154 @@
+#include "itkCommandLineArgumentParser.h"
+#include "CommandLineArgumentHelper.h"
 
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
 #include "itkBinaryBallStructuringElement.h"
-//#include "itkGrayscaleErodeImageFilter.h"
 #include "itkGrayscaleDilateImageFilter.h"
+
+//-------------------------------------------------------------------------------------
+
+/** run: A macro to call a function. */
+#define run(function,type,dim) \
+if ( PixelType == #type && Dimension == dim ) \
+{ \
+    typedef itk::Image< type, dim > InputImageType; \
+    function< InputImageType >( inputFileName, outputFileName, Radius ); \
+}
+
+//-------------------------------------------------------------------------------------
+
+/** Declare DilateImage. */
+template< class InputImageType >
+void DilateImage( std::string inputFileName, std::string outputFileName,
+	std::vector<unsigned int> radius );
+
+/** Declare PrintHelp. */
+void PrintHelp(void);
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char *argv[] )
 {
-	// Some consts.
-	const unsigned int	Dimension = 2;
-	typedef short	PixelType;
-
-	std::cout << "NOTE: This program only dilates 2D short images!" << std::endl;
-	/** Check number of arguments. */
-	if ( argc != 4 )
+	/** Check arguments for help. */
+	if ( argc < 5 || argc > 13 )
 	{
-		std::cout << "Usage:" << std::endl;
-		std::cout << "\tDilateImage inputfilename outputfilename radius" << std::endl;
+		PrintHelp();
 		return 1;
 	}
-	unsigned int radius = atoi( argv[ 3 ] );
 
-	/** TYPEDEF's. */
-	typedef itk::Image< PixelType, Dimension >					ImageType;
-	typedef itk::ImageFileReader< ImageType >						ReaderType;
-	typedef itk::ImageFileWriter< ImageType >						WriterType;
+	/** Create a command line argument parser. */
+	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+	parser->SetCommandLineArguments( argc, argv );
+
+	/** Get arguments. */
+	std::string	inputFileName = "";
+	bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+
+	std::string	outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
+	outputFileName += "DILATED.mhd";
+	bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+
+	std::vector<unsigned int> radius;
+	bool retr = parser->GetCommandLineArgument( "-r", radius );
+
+	unsigned int Dimension = 3;
+	bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
+
+	std::string	PixelType = "short";
+	bool retpt = parser->GetCommandLineArgument( "-pt", PixelType );
+
+	/** Check if the required arguments are given. */
+	if ( !retin )
+	{
+		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
+		return 1;
+	}
+	if ( !retr )
+	{
+		std::cerr << "ERROR: You should specify \"-r\"." << std::endl;
+		return 1;
+	}
+
+	/** Get rid of the possible "_" in PixelType. */
+	ReplaceUnderscoreWithSpace( PixelType );
+
+	/** Check radius. */
+	if ( retr )
+	{
+		if( radius.size() != Dimension && radius.size() != 1 )
+		{
+			std::cout << "ERROR: The number of radii should be 1 or Dimension." << std::endl;
+			return 1;
+		}
+	}
+
+	/** Get the radius. */
+	std::vector<unsigned int> Radius( Dimension, radius[ 0 ] );
+	if ( retr && radius.size() == Dimension )
+	{
+		for ( unsigned int i = 1; i < Dimension; i++ )
+		{
+			Radius[ i ] = radius[ i ];
+		}
+	}
+
+	/** Check Radius for nonpositive numbers. */
+	for ( unsigned int i = 0; i < Dimension; i++ )
+	{
+		if ( Radius[ i ] < 1 )
+		{
+			std::cout << "ERROR: No nonpositive numbers are allowed in radius." << std::endl;
+			return 1;
+		}
+	}
+
+	/** Run the program. */
+	try
+	{
+		run(DilateImage,unsigned char,2);
+		run(DilateImage,unsigned char,3);
+		run(DilateImage,char,2);
+		run(DilateImage,char,3);
+		run(DilateImage,unsigned short,2);
+		run(DilateImage,unsigned short,3);
+		run(DilateImage,short,2);
+		run(DilateImage,short,3);
+	}
+	catch( itk::ExceptionObject &e )
+	{
+		std::cerr << "Caught ITK exception: " << e << std::endl;
+		return 1;
+	}
+	
+	/** End program. */
+	return 0;
+
+} // end main
+
+
+	/**
+	 * ******************* DilateImage *******************
+	 */
+
+template< class InputImageType >
+void DilateImage( std::string inputFileName, std::string outputFileName,
+	std::vector<unsigned int> radius )
+{
+	/** Typedefs. */
+	typedef itk::ImageFileReader< InputImageType >			ReaderType;
+	typedef itk::ImageFileWriter< InputImageType >			WriterType;
+
+	typedef typename InputImageType::PixelType					PixelType;
+	const unsigned int Dimension = InputImageType::ImageDimension;
+	
 	typedef itk::BinaryBallStructuringElement<
 		PixelType, Dimension >														StructuringElementType;
 	typedef StructuringElementType::RadiusType					RadiusType;
 	typedef itk::GrayscaleDilateImageFilter<
-		ImageType, ImageType, StructuringElementType >		DilateFilterType;
+		InputImageType, InputImageType,
+		StructuringElementType >													DilateFilterType;
 
 	/** DECLARATION'S. */
 	ReaderType::Pointer reader = ReaderType::New();
@@ -42,13 +158,13 @@ int main( int argc, char *argv[] )
 	StructuringElementType	S_ball;
 
 	/** Setup the reader. */
-	reader->SetFileName( argv[ 1 ] );
+	reader->SetFileName( inputFileName.c_str() );
 
 	/** Create and fill the radius. */
-	radiusarray.Fill( 0 );
+	radiusarray.Fill( 1 );
 	for ( unsigned int i = 0; i < Dimension; i++ )
 	{
-		radiusarray.SetElement( i, radius );
+		radiusarray.SetElement( i, radius[ i ] );
 	}
 
 	/** Create the structuring element and set it into the dilation filter. */
@@ -59,24 +175,25 @@ int main( int argc, char *argv[] )
 	/** Connect the pipeline. */
 	dilation->SetInput( reader->GetOutput() );
 
-	/** Setup the writer and connect the pipeline. */
-	writer->SetFileName( argv[ 2 ] );
+	/** Write the output image. */
+	writer->SetFileName( outputFileName.c_str() );
 	writer->SetInput( dilation->GetOutput() );
+	writer->Update();
 
-	/** Write the output image and execute the pipeline. */
-	try
-	{
-		writer->Update();
-	}
-	catch( itk::ExceptionObject & excp )
-	{
-		std::cerr << "ERROR: caught ITK exception while executing the pipeline." << std::endl;
-		std::cerr << excp << std::endl;
-		return 1;
-	}
+} // end DilateImage
 
-	/** End program. */
-	return 0;
 
-} // end main
+	/**
+	 * ******************* PrintHelp *******************
+	 */
+void PrintHelp()
+{
+	std::cout << "Usage:" << std::endl << "pxdilateimage" << std::endl;
+	std::cout << "\t-in\tinputFilename" << std::endl;
+	std::cout << "\t[-out]\toutputFilename, default in + DILATED.mhd" << std::endl;
+	std::cout << "\t-r\tradius" << std::endl;
+	std::cout << "\t[-dim]\tdimension, default 3" << std::endl;
+	std::cout << "\t[-pt]\tpixelType, default short" << std::endl;
+	std::cout << "Supported: 2D, 3D, (unsigned) short, (unsigned) char." << std::endl;
+} // end PrintHelp
 
