@@ -27,6 +27,7 @@ SUBDIRS(
  extracteveryotherslice
  extractindexfromvectorimage
  extractslice
+ getDICOMseriesUIDs
  getpointsinimage
  histogramequalizeimage
  imagecompare
