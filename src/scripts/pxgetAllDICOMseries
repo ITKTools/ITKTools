@@ -1,0 +1,66 @@
+#!/bin/bash
+
+# This script reads all DICOM series in a directory
+# and writes them to multiple .mhd's.
+
+#############################################################################
+
+# Argument parsing
+if [ "$#" -gt "6" ] || [ "$#" -lt "4" ] || [ "$1" == "--help" ]
+then
+	echo "Usage: pxgetAllDICOMseries"
+  echo " -i\tdicomDirectoryName"
+	echo " -o\toutputbasename"
+	echo " [-p]\toutputPixelComponentType"
+	exit 1
+fi
+
+while getopts "i:o:p:" argje
+do
+	case $argje in
+		i ) dicomDir="$OPTARG";;
+		o ) outbase="$OPTARG";;
+		p ) opct="$OPTARG";;
+		* ) echo "ERROR: Wrong arguments"; exit 1;;
+	esac
+done
+
+if [ "$dicomDir" == "" ]
+then
+	echo "ERROR: -i is required"; exit 1;
+fi
+if [ "$outbase" == "" ]
+then
+	echo "ERROR: -o is required"; exit 1;
+fi
+
+# Get a list of all series in this directory
+serieslist=`pxgetDICOMseriesUIDs $dicomDir`
+if [ "$serieslist" == "" ]
+then
+	exit 1;
+fi
+
+# Loop over the series
+i=1
+for series in $serieslist
+do
+	# Create a number
+	number=`printf "%03d" $i`
+	# Create an outputname
+	out=$outbase$number".mhd"
+	# Get the DICOM series and write to $out
+	if [ "$opct" == "" ]
+	then
+		pxcastconvert -in $dicomDir -out $out -s $series
+	else
+		pxcastconvert -in $dicomDir -out $out -opct $opct -s $series
+	fi
+	# Increase iteration number
+	let "i += 1"
+	echo "--------------------------------------------------"
+done
+
+# exit the script
+exit 0
+
