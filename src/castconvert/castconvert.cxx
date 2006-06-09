@@ -3,8 +3,8 @@
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: castconvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2006-05-23 12:17:41 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2006-06-09 09:26:41 $
+  Version:   $Revision: 1.8 $
 
   Copyright (c) 2002 Insight Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -35,16 +35,30 @@
  *
  * Currently supported are the SCALAR pixel types and also multi-
  * component pixel types, such as vector and RGB pixels. For multi-
- * component pixel types, everything is read in as am itk::Vector with
+ * component pixel types, everything is read in as an itk::Vector with
  * the correct pixel component type and number of components. This is
  * also the case for the writer.
  *
  * Input images can be in all file formats ITK supports and for which
- * the ImageFileReader works, and additionally single 3D dicom series
- * using the ImageSeriesReader. The pixel component type should
- * of course be a component type supported by the file format.
- * Output images can be in all file formats ITK supports and for which
- * the ImageFileReader works, so no dicom output is currently supported.
+ * the ImageFileReader works, and additionally 3D dicom series
+ * using the ImageSeriesReader. It is also possible to extract a specific
+ * DICOM series from a directory by supplying the seriesUID. The pixel
+ * component type should of course be a component type supported by the
+ * file format. Output images can be in all file formats ITK supports and
+ * for which the ImageFileReader works, so no dicom output is
+ * currently supported.
+ *
+ * Usage:
+ *   pxcastconvert -in inputFileName -out outputFileName [-opct outputPixelComponentType]
+ * OR:
+ *   pxcastconvert -in dicomDirectoryName -out outputFileName
+ *                [-opct outputPixelComponentType] [-s seriesUID]
+ *
+ * Where outputPixelComponentType is one of: unsigned_char, char,
+ * unsigned_short, short, unsigned_int, int, unsigned_long, long,
+ * float or double.
+ * By default the outputPixelComponentType is set to the inputPixelComponentType.
+ * By default the seriesUID is the first UID found.
  *
  * authors:       Marius Staring and Stefan Klein
  *
@@ -53,111 +67,62 @@
  * so that the compiler does not overflow.
  *
  * ENH: on 23-05-2006 we added multi-component support.
+ * ENH: on 09-06-2006 we added support for extracting a specific DICOM serie.
  */
 
 #include <iostream>
+#include "castconverthelpers2.h"
+
 #include "itkImageFileReader.h"
-
-/** DICOM headers. */
 #include "itkGDCMImageIO.h"
-#include "itkGDCMSeriesFileNames.h"
-
-/** In order to determine if argv[1] is a directory or a file,
- * so that we can distinguish between dicom and other files.
- */
-#include <itksys/SystemTools.hxx>
 
 /** Functions to do the actual conversion. */
-extern int      FileConverterScalar( const std::string &inputPixelComponentType, const std::string &outputPixelComponentType, const std::string &inputFileName, const std::string &outputFileName, const unsigned int inputDimension );
-extern int DicomFileConverterScalarA( const std::string &inputPixelComponentType, const std::string &outputPixelComponentType, const std::string &inputFileName, const std::string &outputFileName, const unsigned int inputDimension );
-extern int DicomFileConverterScalarB( const std::string &inputPixelComponentType, const std::string &outputPixelComponentType, const std::string &inputFileName, const std::string &outputFileName, const unsigned int inputDimension );
-extern int      FileConverterMultiComponent( const std::string &inputPixelComponentType, const std::string &outputPixelComponentType, const unsigned int numberOfComponents, const std::string &inputFileName, const std::string &outputFileName, const unsigned int inputDimension );
+extern int FileConverterScalar( const std::string &inputPixelComponentType, const std::string &outputPixelComponentType, const std::string &inputFileName, const std::string &outputFileName, const unsigned int inputDimension );
+extern int DicomFileConverterScalarA( const std::string &inputPixelComponentType, const std::string &outputPixelComponentType, const std::string &inputDirectoryName, const std::string &seriesUID, const std::string &outputFileName, const unsigned int inputDimension );
+extern int DicomFileConverterScalarB( const std::string &inputPixelComponentType, const std::string &outputPixelComponentType, const std::string &inputDirectoryName, const std::string &seriesUID, const std::string &outputFileName, const unsigned int inputDimension );
+extern int FileConverterMultiComponent( const std::string &inputPixelComponentType, const std::string &outputPixelComponentType, const unsigned int numberOfComponents, const std::string &inputFileName, const std::string &outputFileName, const unsigned int inputDimension );
 
 //-------------------------------------------------------------------------------------
 
-int  main(  int  argc,  char *argv[] )
+int main( int argc, char **argv )
 {
   /** TASK 1:
    * Check arguments.
    * *******************************************************************
    */
-  if ( argc  < 3 || argv[ 1 ] == "--help" )
+  if ( argc  < 5 )
   {
-    std::cout  << "Usage:"  << std::endl;
-    std::cout  << "\tcastconvert inputfilename outputfilename [outputPixelComponentType]" << std::endl;
-    std::cout  << "\tcastconvert dicomDirectory outputfilename [outputPixelComponentType]" << std::endl;
-    std::cout  << "\twhere outputPixelComponentType is one of:" << std::endl;
-    std::cout  << "\t\t- unsigned_char" << std::endl;
-    std::cout  << "\t\t- char" << std::endl;
-    std::cout  << "\t\t- unsigned_short" << std::endl;
-    std::cout  << "\t\t- short" << std::endl;
-    std::cout  << "\t\t- unsigned_int" << std::endl;
-    std::cout  << "\t\t- int" << std::endl;
-    std::cout  << "\t\t- unsigned_long" << std::endl;
-    std::cout  << "\t\t- long" << std::endl;
-    std::cout  << "\t\t- float" << std::endl;
-    std::cout  << "\t\t- double" << std::endl;
-    std::cout  << "\tprovided that the outputPixelComponentType is supported by the output file format." << std::endl;
-    std::cout  << "\tBy default the outputPixelComponentType is set to the inputPixelComponentType." << std::endl;
+    PrintHelp();
     return 1;
   }
 
-  /**  Get  the  inputs. */
-  std::string  input = argv[ 1 ];
-  std::string outputFileName = argv[ 2 ];
+  /** Get the command line arguments. */
+  std::string input = "";
+  std::string outputFileName = "";
   std::string outputPixelComponentType = "";
-  if ( argc == 4 ) outputPixelComponentType = argv[ 3 ];
+	std::string seriesUID = "";
+	std::string errorMessage = "";
+	int returnValue1 = GetCommandLineArguments( argc, argv, errorMessage,
+		input, outputFileName, outputPixelComponentType, seriesUID );
+	if ( returnValue1 )
+	{
+		std::cout << errorMessage << std::endl;
+		return returnValue1;
+	}
 
-  /** Make sure last character of input != "/".
-  * Otherwise FileIsDirectory() won't work.
-  */
-  if ( input.rfind( "/" ) == input.size() - 1 )
-  {
-    input.erase( input.size() - 1, 1 );
-  }
+	/** Are we dealing with an image or a dicom series? */
+	bool isDICOM = false;
+	int returnValue2 = IsDICOM( input, errorMessage, isDICOM );
+	if ( returnValue2 )
+	{
+		std::cout << errorMessage << std::endl;
+		return returnValue2;
+	}
 
-  /** Check if input is a file or a directory. */
-  bool exists = itksys::SystemTools::FileExists( input.c_str() );
-  bool isDir = itksys::SystemTools::FileIsDirectory( input.c_str() );
-  bool isDICOM = false;
-  std::string inputFileName, inputDirectoryName;
-
-  if ( exists && !isDir )
-  {
-    /** Input is a file, and we use the ImageFileReader. */
-    inputFileName = input;
-  }
-  else if ( exists && isDir )
-  {
-    /** Input is a directory, and we use the ImageSeriesReader. */
-    inputDirectoryName = input;
-    isDICOM = true;
-  }
-  else
-  {
-    /** Something is wrong. */
-    std::cerr << "ERROR: first input argument does not exist!" << std::endl;
-    return 1;
-  }
-
-  /** Check outputPixelType. */
-  if ( outputPixelComponentType != ""
-    && outputPixelComponentType != "unsigned_char"
-    && outputPixelComponentType != "char"
-    && outputPixelComponentType != "unsigned_short"
-    && outputPixelComponentType != "short"
-    && outputPixelComponentType != "unsigned_int"
-    && outputPixelComponentType != "int"
-    && outputPixelComponentType != "unsigned_long"
-    && outputPixelComponentType != "long"
-    && outputPixelComponentType != "float"
-    && outputPixelComponentType != "double" )
-  {
-    /** In this case an illegal outputPixelComponentType is given. */
-    std::cerr << "The given outputPixelComponentType is \"" << outputPixelComponentType
-      << "\", which is not supported." << std::endl;
-    return 1;
-  }
+	/** Get inputFileName or inputDirectoryName. */
+	std::string inputFileName, inputDirectoryName;
+	if ( !isDICOM ) inputFileName = input;
+	else inputDirectoryName = input;
 
   /** TASK 2:
    * Typedefs and test reading to determine correct image types.
@@ -165,16 +130,14 @@ int  main(  int  argc,  char *argv[] )
    */
 
   /** Initial image type. */
-  const unsigned int    Dimension  =  3;
-  typedef short         PixelType;
+  const unsigned int Dimension = 3;
+  typedef short      PixelType;
 
   /** Some typedef's. */
-  typedef itk::Image< PixelType, Dimension >      ImageType;
-  typedef itk::ImageFileReader< ImageType >       ReaderType;
-  typedef itk::ImageIOBase                        ImageIOBaseType;
-  typedef itk::GDCMImageIO                        GDCMImageIOType;
-  typedef itk::GDCMSeriesFileNames                GDCMNamesGeneratorType;
-  typedef std::vector< std::string >              FileNamesContainerType;
+  typedef itk::Image< PixelType, Dimension >   ImageType;
+  typedef itk::ImageFileReader< ImageType >    ReaderType;
+  typedef itk::ImageIOBase                     ImageIOBaseType;
+  typedef itk::GDCMImageIO                     GDCMImageIOType;
 
   /** Create a testReader. */
   ReaderType::Pointer testReader = ReaderType::New();
@@ -187,12 +150,14 @@ int  main(  int  argc,  char *argv[] )
   }
   else
   {
-    /** Get a name of a 2D image. */
-    GDCMNamesGeneratorType::Pointer nameGenerator = GDCMNamesGeneratorType::New();
-    nameGenerator->SetInputDirectory( inputDirectoryName.c_str() );
-    FileNamesContainerType fileNames = nameGenerator->GetInputFileNames();
-    std::string fileName = fileNames[ 0 ];
-
+		std::string fileName = "";
+		int returnValue3 = GetFileNameFromDICOMDirectory( seriesUID, inputDirectoryName, errorMessage, fileName );
+		if ( returnValue3 )
+		{
+			std::cout << errorMessage << std::endl;
+			return returnValue3;
+		}
+		
     /** Create a dicom ImageIO and set it in the testReader. */
     GDCMImageIOType::Pointer dicomIO = GDCMImageIOType::New();
     testReader->SetImageIO( dicomIO );
@@ -203,7 +168,16 @@ int  main(  int  argc,  char *argv[] )
   } // end isDICOM
 
   /** Generate all information. */
-  testReader->GenerateOutputInformation();
+	try
+	{
+		testReader->GenerateOutputInformation();
+	}
+	catch( itk::ExceptionObject  &  err  )
+  {
+    std::cerr  << "ExceptionObject caught !"  << std::endl;
+    std::cerr  << err <<  std::endl;
+    return 1;
+  }
 
   /** Extract the ImageIO from the testReader. */
   ImageIOBaseType::Pointer testImageIOBase = testReader->GetImageIO();
@@ -320,10 +294,10 @@ int  main(  int  argc,  char *argv[] )
       {
         const int ret_value = DicomFileConverterScalarA(
           inputPixelComponentType, outputPixelComponentType,
-          inputDirectoryName, outputFileName, inputDimension )
-      ||                  DicomFileConverterScalarB(
-          inputPixelComponentType, outputPixelComponentType,
-          inputDirectoryName, outputFileName, inputDimension );
+          inputDirectoryName, seriesUID, outputFileName, inputDimension )
+					|| DicomFileConverterScalarB(
+					inputPixelComponentType, outputPixelComponentType,
+          inputDirectoryName, seriesUID, outputFileName, inputDimension );
         if ( ret_value != 0 )
         {
           return ret_value;
@@ -339,21 +313,7 @@ int  main(  int  argc,  char *argv[] )
       }
 
     } // end isDICOM
-
-
-    /**
-    * ****************** Support for RGB pixel types. **********************************
-    *
-    else if ( strcmp( pixelType.c_str(),  "rgb" ) == 0  && numberOfComponents  == 3 )
-    {
-    if ( strcmp( iOComponent.c_str(),  "unsigned_char"  )  == 0 )
-    {
-    typedef itk::RGBPixel< unsigned char >    PixelType;
-    typedef  itk::Image<  PixelType, 2 >        ImageType;
-    ReadWriteImage<  ImageType, ImageType >(  inputFileName, outputFileName  );
-    }
-    } // end Support for RGB pixel type */
-
+ 
   } // end try
   /** If any errors have occurred, catch and print the exception and return false. */
   catch( itk::ExceptionObject  &  err  )
@@ -367,3 +327,4 @@ int  main(  int  argc,  char *argv[] )
   return 0;
 
 }  // end main
+

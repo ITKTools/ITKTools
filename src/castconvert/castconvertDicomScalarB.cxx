@@ -3,8 +3,8 @@
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: castconvertDicomScalarB.cxx,v $
   Language:  C++
-  Date:      $Date: 2006-05-23 12:17:41 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2006-06-09 09:26:41 $
+  Version:   $Revision: 1.2 $
 
   Copyright (c) 2002 Insight Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -17,9 +17,10 @@
 /** Authors: Marius Staring and Stefan Klein **/
 #include "castconverthelpers.h"
 
-int DicomFileConverterScalarB( const std::string &inputPixelComponentType,
-  const std::string &outputPixelComponentType, const std::string &inputDirectoryName,
-  const std::string &outputFileName, const unsigned int inputDimension )
+int DicomFileConverterScalarB(
+	const std::string &inputPixelComponentType, const std::string &outputPixelComponentType,
+	const std::string &inputDirectoryName, const std::string &seriesUID,
+	const std::string &outputFileName, const unsigned int inputDimension )
 {
   /** Support for 3D images. */
   if ( inputDimension == 3 )

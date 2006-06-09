@@ -42,7 +42,7 @@ ADD_EXECUTABLE(pxcastconvert
  castconvertMultiComponent4D4CB.cxx
 )
 
-TARGET_LINK_LIBRARIES(pxcastconvert ITKIO ITKCommon ITKBasicFilters)
+TARGET_LINK_LIBRARIES(pxcastconvert pxcommon ITKIO ITKCommon ITKBasicFilters)
 
 INSTALL_TARGETS(/. pxcastconvert)
 

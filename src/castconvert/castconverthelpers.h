@@ -3,8 +3,8 @@
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: castconverthelpers.h,v $
   Language:  C++
-  Date:      $Date: 2006-05-23 12:17:42 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2006-06-09 09:26:41 $
+  Version:   $Revision: 1.3 $
 
   Copyright (c) 2002 Insight Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -21,14 +21,10 @@
 #include "itkImage.h"
 #include "itkImageIORegion.h"
 
-/** For the support of RGB voxels. */
-//#include "itkRGBPixel.h"
-
 /** Reading and writing images. */
 #include "itkImageFileReader.h"
 #include "itkImageSeriesReader.h"
 #include "itkImageFileWriter.h"
-#include "itkImageRegionConstIterator.h"
 
 /** DICOM headers. */
 #include "itkGDCMImageIO.h"
@@ -36,7 +32,7 @@
 
 /** One of these is used to cast the image. */
 #include "itkShiftScaleImageFilter.h"
-#include "itkRescaleIntensityImageFilter.h"
+//#include "itkRescaleIntensityImageFilter.h"
 #include "itkVectorCastImageFilter.h"
 
 /** Print image information from the reader and the writer. */
@@ -59,7 +55,7 @@ void PrintInfo( ReaderType reader, WriterType writer )
   unsigned int dimensionIn = imageIOBaseIn->GetNumberOfDimensions();
   SizeType sizeIn = iORegionIn.GetSize();
 
-  /**  Get  IOBase of  the  writer and extract information.  */
+  /** Get IOBase of the writer and extract information. */
   ImageIOBaseType::Pointer imageIOBaseOut = writer->GetImageIO();
   ImageIORegionType iORegionOut = imageIOBaseOut->GetIORegion();
 
@@ -98,12 +94,13 @@ void PrintInfo( ReaderType reader, WriterType writer )
  * we have to make sure to call the right instantiation.
  */
 template< class InputImageType, class OutputImageType >
-void ReadDicomSeriesCastWriteImage( std::string inputDirectoryName, std::string outputFileName )
+void ReadDicomSeriesCastWriteImage( std::string inputDirectoryName,
+	std::string outputFileName, std::string seriesUID )
 {
   /** Typedef the correct reader, caster and writer. */
   typedef typename itk::ImageSeriesReader< InputImageType >     SeriesReaderType;
-  typedef typename itk::RescaleIntensityImageFilter<
-    InputImageType, OutputImageType >                           RescaleFilterType;
+  //typedef typename itk::RescaleIntensityImageFilter<
+    //InputImageType, OutputImageType >                           RescaleFilterType;
   typedef typename itk::ShiftScaleImageFilter<
     InputImageType, OutputImageType >                           ShiftScaleFilterType;
   typedef typename itk::ImageFileWriter< OutputImageType >      ImageWriterType;
@@ -118,8 +115,10 @@ void ReadDicomSeriesCastWriteImage( std::string inputDirectoryName, std::string 
 
   /** Get a list of the filenames of the 2D input dicom images. */
   GDCMNamesGeneratorType::Pointer nameGenerator = GDCMNamesGeneratorType::New();
+	nameGenerator->SetUseSeriesDetails( true );
   nameGenerator->SetInputDirectory( inputDirectoryName.c_str() );
-  FileNamesContainerType fileNames = nameGenerator->GetInputFileNames();
+  //FileNamesContainerType fileNames = nameGenerator->GetInputFileNames();
+	FileNamesContainerType fileNames = nameGenerator->GetFileNames( seriesUID );
 
   /** Create and setup the seriesReader. */
   typename SeriesReaderType::Pointer seriesReader = SeriesReaderType::New();
@@ -156,8 +155,8 @@ void ReadCastWriteImage( std::string inputFileName, std::string outputFileName )
 {
   /**  Typedef the correct reader, caster and writer. */
   typedef typename itk::ImageFileReader< InputImageType >     ImageReaderType;
-  typedef typename itk::RescaleIntensityImageFilter<
-    InputImageType, OutputImageType >                         RescaleFilterType;
+  //typedef typename itk::RescaleIntensityImageFilter<
+    //InputImageType, OutputImageType >                         RescaleFilterType;
   typedef typename itk::ShiftScaleImageFilter<
     InputImageType, OutputImageType >                         ShiftScaleFilterType;
   typedef typename itk::ImageFileWriter< OutputImageType >    ImageWriterType;
@@ -233,7 +232,7 @@ void ReadCastWriteVectorImage( std::string inputFileName, std::string outputFile
 { \
   typedef  itk::Image< typeIn, 3 >    InputImageType; \
   typedef  itk::Image< typeOut, 3 >  OutputImageType; \
-  ReadDicomSeriesCastWriteImage< InputImageType, OutputImageType >( inputDirectoryName, outputFileName ); \
+  ReadDicomSeriesCastWriteImage< InputImageType, OutputImageType >( inputDirectoryName, outputFileName, seriesUID ); \
 }
 
 /** callCorrectReadWriterMacro:
