@@ -31,6 +31,7 @@ SUBDIRS(
  getpointsinimage
  histogramequalizeimage
  imagecompare
+ intensitywindowing
  invertintensityimagefilter
  maximumimagefilter
  minimumimagefilter
