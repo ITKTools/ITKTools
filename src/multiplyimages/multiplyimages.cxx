@@ -32,7 +32,7 @@ void PrintHelp(void);
 int main( int argc, char **argv )
 {
 	/** Check arguments for help. */
-	if ( argc < 4 || argc > 6 )
+	if ( argc < 4 || argc > 10 )
 	{
 		PrintHelp();
 		return 1;
