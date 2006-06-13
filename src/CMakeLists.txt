@@ -43,7 +43,8 @@ SUBDIRS(
  resizeimage
  scripts
  statisticsonimage
- tileimages)
+ tileimages
+ thresholdimage)
 
 
 #---------------------------------------------------------------------
