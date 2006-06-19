@@ -1,69 +1,143 @@
-#include "itkImageFileReader.h"
-#include "itkStatisticsImageFilter.h"
 
-/** This program determines the minimum, maximum and
- * mean of an image.
+#include "itkCommandLineArgumentParser.h"
+#include "CommandLineArgumentHelper.h"
+
+#include "statisticsonimage.h"
+
+/** This program determines the minimum, maximum, 
+ * mean, sigma, variance, and sum of an image, or its magnitude/jacobian.
  */
+
+//-------------------------------------------------------------------------------------
+
+/** run: A macro to call a function. */
+#define run(function,type,dim,nrofcomp) \
+if ( ComponentType == #type && Dimension == dim && NumberOfComponents == nrofcomp) \
+{ \
+    function< type, dim, nrofcomp >( inputFileName, maskFileName, histogramOutputFileName,\
+    useMagnitude, useJacobian, numberOfBins ); \
+}
+
+/** Declare PrintHelp, implemented at the bottom of this file. */
+void PrintHelp(void);
+
+//-------------------------------------------------------------------------------------
+
 
 int main( int argc, char ** argv )
 {
-	/** Warning. */
-	//std::cout << "Warning: this program assumes images with a pixelType convertible to shorts!\n" << std::endl;
-
-	if ( argc < 2 || argv[ 1 ] == "--help" )
+	
+	if ( argc < 3 || argv[ 1 ] == "--help" )
 	{
-		std::cout << "Usage:" << std::endl;
-		std::cout << "pxtileimages 2Dinputimage" << std::endl;
+		PrintHelp();
 		return 1;
 	}
 
-	/** Define image type. */
-	const unsigned int Dimension = 2;
-	typedef short PixelType;
+	/** Create a command line argument parser. */
+	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+	parser->SetCommandLineArguments( argc, argv );
 
-	/** Some typedef's. */
-	typedef itk::Image<PixelType, Dimension>						ImageType;
-	typedef itk::ImageFileReader< ImageType >						ImageReaderType;
-	typedef itk::StatisticsImageFilter< ImageType >			StatisticsFilterType;
-	typedef StatisticsFilterType::RealType			RealType;
-	
-	/** Create reader. */
-	ImageReaderType::Pointer reader = ImageReaderType::New();
-	reader->SetFileName( argv[ 1 ] );
+	/** Get arguments. */
+	std::string	inputFileName = "";
+	bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+	if ( !retin )
+	{
+		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
+		return 1;
+	}
 
-	/** Create statistics filter. */
-	StatisticsFilterType::Pointer statistics = StatisticsFilterType::New();
-	statistics->SetInput( reader->GetOutput() );
+  std::string	maskFileName = "";
+	bool retmask = parser->GetCommandLineArgument( "-mask", maskFileName );
 
-	/** Update. */
+  std::string	histogramOutputFileName = "";
+	bool rethist = parser->GetCommandLineArgument( "-out", histogramOutputFileName );
+
+  bool useMagnitude = true;
+  std::string	useMagnitudeString = "true";
+	bool retM = parser->GetCommandLineArgument( "-M", useMagnitudeString );
+  if ( useMagnitudeString == "false" )
+  {
+    useMagnitude = false;
+  }
+
+  bool useJacobian = false;
+  std::string	useJacobianString = "false";
+	bool retJ = parser->GetCommandLineArgument( "-J", useJacobianString );
+  if ( useJacobianString == "true" )
+  {
+    useJacobian = true;
+  }
+
+  unsigned int numberOfBins = 100;
+  bool retb = parser->GetCommandLineArgument( "-b", numberOfBins );
+  
+  std::string ComponentType = "float";
+  std::string	PixelType; //we don't use this
+  unsigned int Dimension = 2;  
+  unsigned int NumberOfComponents = 1;  
+  GetImageProperties(
+    inputFileName,
+    PixelType,
+    ComponentType,
+    Dimension,
+    NumberOfComponents);
+
+  std::cout << "The input image has the following properties:" << std::endl;
+  std::cout << "\tPixelType:          " << PixelType << std::endl;
+  std::cout << "\tComponentType:      " << ComponentType << std::endl;
+  std::cout << "\tDimension:          " << Dimension << std::endl;
+  std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
+
+  /** force images to sneaky be converted to floats */
+	ComponentType = "float";
+		
+	/** Run the program. */
 	try
 	{
-		statistics->Update();
-	}
-	catch ( itk::ExceptionObject & err )
+    run(StatisticsOnImage, float, 2, 1);
+    run(StatisticsOnImage, float, 2, 2);
+    run(StatisticsOnImage, float, 2, 3);
+    run(StatisticsOnImage, float, 3, 1);
+    run(StatisticsOnImage, float, 3, 2);
+    run(StatisticsOnImage, float, 3, 3);
+  }
+	catch( itk::ExceptionObject &e )
 	{
-		std::cerr << "ERROR occured." << std::endl;
-		std::cerr << err << std::endl;
+		std::cerr << "Caught ITK exception: " << e << std::endl;
 		return 1;
 	}
-
-	/** Get all the output stuff. */
-	PixelType min = statistics->GetMinimum();
-	RealType mean = statistics->GetMean();
-	PixelType max = statistics->GetMaximum();
-	RealType std = statistics->GetSigma();
-	RealType sum = statistics->GetSum();
-
-	/** Print to screen. */
-	std::cout << "min:\t" << min << std::endl;
-	std::cout << "mean:\t" << mean << std::endl;
-	std::cout << "max:\t" << max << std::endl;
-	std::cout << "std:\t" << std << std::endl;
-	std::cout << "sum:\t" << sum << std::endl;
-
-	/** Return a value. */
+	
+	/** End program. */
 	return 0;
 
 } // end main
 
 
+
+
+
+
+	/**
+	 * ******************* PrintHelp *******************
+	 */
+void PrintHelp()
+{
+  std::cout << "Compute statistics on an image. For vector images, the magnitude and/or its jacobian is used." << std::endl;
+  std::cout << "Usage:" << std::endl << "pxstatisticonimage" << std::endl;
+	std::cout << "\t-in\tInputFilename" << std::endl;
+  std::cout << "\t[-out]\tOutputFileName for histogram, without extension;\n";
+  std::cout << "\t      \tif omitted, no histogram is written; default: <empty>;\n";
+  std::cout << "\t      \tthe keyword INTENSITY, MAGNITUDE, or JACOBIAN is appended;" << std::endl;
+  std::cout << "\t[-mask]\tMaskFileName, mask should have the same size as the input image\n";
+  std::cout << "\t       \tand be of pixeltype (convertable to) unsigned char,\n";
+  std::cout << "\t       \t1 = within mask, 0 = outside mask;" << std::endl;
+  std::cout << "\t[-M]\tUseMagnitude {true,false}, default: true" << std::endl;
+  std::cout << "\t[-J]\tUseJacobian {true,false}, default: false" << std::endl;
+  std::cout << "\t[-b]\tNumberOfBins to use for histogram, default: 100;\n";
+  std::cout << "\t    \tfor an accurate estimate of median and quartiles\n";
+  std::cout << "\t    \tfor integer images, choose the number of bins\n";
+  std::cout << "\t    \tmuch larger (~100x) than the number of gray values." << std::endl;
+  std::cout << "Supported: 2D, 3D, float, (unsigned) short, (unsigned) char, 1, 2 or 3 components per pixel." << std::endl;
+  std::cout << "The Jacobian is only used when dimension and number of components are equal." << std::endl;
+
+} // end PrintHelp

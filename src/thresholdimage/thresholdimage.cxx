@@ -37,7 +37,7 @@ void PrintHelp(void);
 int main( int argc, char **argv )
 {
 	/** Check arguments for help. */
-	if ( argc < 3 || argc > 9 )
+	if ( argc < 3 )
 	{
 		PrintHelp();
 		return 1;
@@ -141,10 +141,16 @@ void ThresholdImage( const std::string & inputFileName, const std::string & outp
 	thresholder->SetLowerThreshold( 
 		lowerthreshold );
 	thresholder->SetUpperThreshold( static_cast<InputPixelType>(threshold2) );
-	thresholder->SetInsideValue( itk::NumericTraits<OutputPixelType>::Zero );
+  thresholder->SetInsideValue( itk::NumericTraits<OutputPixelType>::Zero );
 	thresholder->SetOutsideValue( itk::NumericTraits<OutputPixelType>::One );
 	thresholder->SetInput( reader->GetOutput() );
-	std::cout << "Applying threshold..." << std::endl;
+	std::cout 
+    << "Applying threshold with LowerThreshold = " 
+    << thresholder->GetLowerThreshold()
+    << " and UpperThreshold = "
+    << thresholder->GetUpperThreshold()
+    << " ."
+    << std::endl;
 	thresholder->Update();
 	std::cout << "Threshold applied." << std::endl;
 
@@ -169,7 +175,7 @@ void PrintHelp()
 	std::cout << "\t-in\tinputFilename" << std::endl;
 	std::cout << "\t[-out]\toutputFilename; default: in + THRESHOLDED.mhd" << std::endl;
 	std::cout << "\t[-t1]\tlower threshold; default: -infinity" << std::endl;
-	std::cout << "\t[-t2]\tupper threshold; default: 1.0" << std::endl;
+	std::cout << "\t[-t2]\tupper threshold; everything >t2 will get a value 1 default: 1.0" << std::endl;
 	std::cout << "\t[-dim]\tdimension; default: 3" << std::endl;
 	std::cout << "\t[-pt]\tpixelType; default: short" << std::endl;
 	std::cout << "Supported: 2D, 3D, short." << std::endl;
