@@ -87,3 +87,4 @@ void GetImageProperties(
 
 
 #endif // end #ifndef __CommandLineArgumentHelper_h
+

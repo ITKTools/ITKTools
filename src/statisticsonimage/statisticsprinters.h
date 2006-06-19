@@ -94,3 +94,4 @@ void PrintHistogramStatistics( const THistogram * histogram,
 
 
 #endif // #ifndef __statisticsprinters_h
+

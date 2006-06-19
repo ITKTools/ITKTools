@@ -156,7 +156,7 @@ void StatisticsOnImage(
   typename MaskSpatialObjectType::Pointer mask = 0;
   typename MaskReaderType::Pointer maskReader =
     MaskReaderType::New();
-  typename BaseFilterType::Pointer maskerOrCopier = CopierType::New();
+  typename BaseFilterType::Pointer maskerOrCopier = (CopierType::New()).GetPointer();
   if ( maskFileName != "" )
   {
     /** Read mask */
@@ -175,7 +175,7 @@ void StatisticsOnImage(
     maskFilter->SetInput2( maskReader->GetOutput() );
     maskFilter->SetOutsideValue(
       itk::NumericTraits<InternalPixelType>::NonpositiveMin() );
-    maskerOrCopier = maskFilter;
+    maskerOrCopier = maskFilter.GetPointer();
   }
   
   /** Create StatisticsFilter */
@@ -211,6 +211,7 @@ void StatisticsOnImage(
     }
 
     /** Call the generic ComputeStatistics function */
+
     ComputeStatistics<
       InternalImageType,
       BaseFilterType,
@@ -273,7 +274,7 @@ void StatisticsOnImage(
       std::cout << "Statistics are computed on the jacobian of the vectors." << std::endl;
 
       /** Hack to make the template function compile for the case NumberOfComponents != Dimension.  */
-      DeformationVectorImageType::Pointer deformationVectorImage =
+      typename DeformationVectorImageType::Pointer deformationVectorImage =
         dynamic_cast< DeformationVectorImageType * >( reader->GetOutput() );
 
       jacobianFilter->SetInput( deformationVectorImage );
@@ -311,3 +312,4 @@ void StatisticsOnImage(
 
 
 #endif // #ifndef __statisticsonimage_h
+
