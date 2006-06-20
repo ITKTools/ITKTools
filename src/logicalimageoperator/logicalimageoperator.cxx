@@ -27,9 +27,9 @@ if ( ComponentType == #type && Dimension == dim ) \
 
 //-------------------------------------------------------------------------------------
 
-/** Declare IntensityWindowing. */
+/** Declare LogicalImageOperator. */
 template< class InputImageType >
-void LogicalOps( 
+void LogicalImageOperator( 
   const std::string & inputFileName1,
   const std::string & inputFileName2,
   const std::string & outputFileName,
@@ -149,14 +149,14 @@ int main( int argc, char **argv )
 	{
     /** NB: do not add floating point support, since logical operators are
      * not defined on those types */
-		run(LogicalOps,unsigned char,2);
-		run(LogicalOps,unsigned char,3);
-		run(LogicalOps,char,2);
-		run(LogicalOps,char,3);
-		run(LogicalOps,unsigned short,2);
-		run(LogicalOps,unsigned short,3);
-		run(LogicalOps,short,2);
-		run(LogicalOps,short,3);
+		run(LogicalImageOperator,unsigned char,2);
+		run(LogicalImageOperator,unsigned char,3);
+		run(LogicalImageOperator,char,2);
+		run(LogicalImageOperator,char,3);
+		run(LogicalImageOperator,unsigned short,2);
+		run(LogicalImageOperator,unsigned short,3);
+		run(LogicalImageOperator,short,2);
+		run(LogicalImageOperator,short,3);
 	}
 	catch( itk::ExceptionObject &e )
 	{
@@ -195,7 +195,7 @@ int main( int argc, char **argv )
 	 */
 
 template< class InputImageType >
-void LogicalOps( 
+void LogicalImageOperator( 
   const std::string & inputFileName1,
   const std::string & inputFileName2,
   const std::string & outputFileName,
@@ -374,7 +374,7 @@ void LogicalOps(
 void PrintHelp()
 {
   std::cout << "Logical operations on one or two images." << std::endl;
-	std::cout << "Usage:" << std::endl << "pxlogicalops" << std::endl;
+	std::cout << "Usage:" << std::endl << "pxlogicalimageoperator" << std::endl;
 	std::cout << "\t-in\tinputFilename1 [inputFilename2]" << std::endl;
   std::cout << "\t-ops\tLogicalOperator of the following form:\n"
             << "\t    \t  [!]( ([!] A) [{&,|,^} ([!] B])] )\n"

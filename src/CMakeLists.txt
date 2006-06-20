@@ -31,7 +31,7 @@ SUBDIRS(
  imagecompare
  intensitywindowing
  invertintensityimagefilter
- logicalops
+ logicalimageoperator
  maximumimagefilter
  minimumimagefilter
  morphologicalclosingimage
