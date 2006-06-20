@@ -96,7 +96,7 @@ int main( int argc, char **argv )
   std::cout << "The first input image has the following properties:" << std::endl;
   /** Do not bother the user with the difference between pixeltype and componenttype:*/
   //std::cout << "\tPixelType:          " << PixelType << std::endl;
-  std::cout << "\tPixelType:      " << ComponentType << std::endl;
+  std::cout << "\tPixelType:          " << ComponentType << std::endl;
   std::cout << "\tDimension:          " << Dimension << std::endl;
   std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
   

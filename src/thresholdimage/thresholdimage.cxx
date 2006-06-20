@@ -13,7 +13,7 @@
 
 /** run: A macro to call a function. */
 #define run(function,type,dim) \
-if ( PixelType == #type && Dimension == dim ) \
+if ( ComponentType == #type && Dimension == dim ) \
 { \
     typedef itk::Image< type, dim > InputImageType; \
     function< InputImageType >( inputFileName, outputFileName, threshold1, threshold2 ); \
@@ -50,6 +50,11 @@ int main( int argc, char **argv )
 	/** Get arguments. */
 	std::string	inputFileName = "";
 	bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  if ( !retin )
+	{
+		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
+		return 1;
+	}
 
 	std::string	outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
 	outputFileName += "THRESHOLDED.mhd";
@@ -60,28 +65,57 @@ int main( int argc, char **argv )
 
 	double threshold2 = itk::NumericTraits<double>::One;
 	bool rett2 = parser->GetCommandLineArgument( "-t2", threshold2 );
-		
-	unsigned int Dimension = 3;
-	bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
-	
-	std::string	PixelType = "short";
-	bool retpt = parser->GetCommandLineArgument( "-pt", PixelType );
 
-	/** Check if the required arguments are given. */
-	if ( !retin )
-	{
-		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-		return 1;
-	}
-	
+  /** Determine image properties */
+  std::string ComponentType = "short";
+  std::string	PixelType; //we don't use this
+  unsigned int Dimension = 2;  
+  unsigned int NumberOfComponents = 1;  
+  GetImageProperties(
+    inputFileName,
+    PixelType,
+    ComponentType,
+    Dimension,
+    NumberOfComponents);
+  std::cout << "The first input image has the following properties:" << std::endl;
+  /** Do not bother the user with the difference between pixeltype and componenttype:*/
+  //std::cout << "\tPixelType:          " << PixelType << std::endl;
+  std::cout << "\tPixelType:          " << ComponentType << std::endl;
+  std::cout << "\tDimension:          " << Dimension << std::endl;
+  std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
+  
+  /** Let the user overrule this */
+	bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
+	bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
+  if (retdim | retpt)
+  {
+    std::cout << "The user has overruled this by specifying -pt and/or -dim:" << std::endl;
+    std::cout << "\tPixelType:          " << ComponentType << std::endl;
+    std::cout << "\tDimension:          " << Dimension << std::endl;
+    std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
+  }
+
+  if (NumberOfComponents > 1)
+  { 
+    std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
+    std::cerr << "Vector images are not supported!" << std::endl;
+    return 1; 
+  }
+
 	/** Get rid of the possible "_" in PixelType. */
-	ReplaceUnderscoreWithSpace(PixelType);
+	ReplaceUnderscoreWithSpace(ComponentType);
 	
 	/** Run the program. */
 	try
 	{
+    run(ThresholdImage,char,2);
+		run(ThresholdImage,char,3);
+    run(ThresholdImage,unsigned char,2);
+		run(ThresholdImage,unsigned char,3);
 		run(ThresholdImage,short,2);
 		run(ThresholdImage,short,3);
+    run(ThresholdImage,unsigned short,2);
+		run(ThresholdImage,unsigned short,3);
 	}
 	catch( itk::ExceptionObject &e )
 	{
@@ -172,12 +206,12 @@ void PrintHelp()
 	std::cout << "This program thresholds an image, using the ITK-BinaryThresholdImageFilter. See the ITK documentation for more information." << std::endl;
 	
 	std::cout << "Usage:" << std::endl << "pxThresholdImage" << std::endl;
-	std::cout << "\t-in\tinputFilename" << std::endl;
+	std::cout << "\t-in   \tinputFilename" << std::endl;
 	std::cout << "\t[-out]\toutputFilename; default: in + THRESHOLDED.mhd" << std::endl;
-	std::cout << "\t[-t1]\tlower threshold; default: -infinity" << std::endl;
-	std::cout << "\t[-t2]\tupper threshold; everything >t2 will get a value 1 default: 1.0" << std::endl;
-	std::cout << "\t[-dim]\tdimension; default: 3" << std::endl;
-	std::cout << "\t[-pt]\tpixelType; default: short" << std::endl;
-	std::cout << "Supported: 2D, 3D, short." << std::endl;
+	std::cout << "\t[-t1] \tlower threshold; default: -infinity" << std::endl;
+	std::cout << "\t[-t2] \tupper threshold; everything >t2 will get a value 1 default: 1.0" << std::endl;
+	std::cout << "\t[-dim]\tdimension; default: automatically determined from image" << std::endl;
+	std::cout << "\t[-pt] \tpixelType; default: automatically determined from image" << std::endl;
+	std::cout << "Supported: 2D, 3D, short, unsigned short, char, unsigned char." << std::endl;
 } // end PrintHelp
 
