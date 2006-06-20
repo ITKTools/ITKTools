@@ -3,8 +3,6 @@ PROJECT(praxix)
 
 SUBDIRS(
  addtopixelimagefilter
- andimagefilter
- andnotimagefilter
  averagevectormagnitude
  castconvert
  common
