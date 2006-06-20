@@ -200,7 +200,7 @@ void LogicalOps(
   const std::string & ops )
 {
 	/** Typedefs. */
-  typedef InputImageType::PixelType                               InputPixelType;
+  typedef typename InputImageType::PixelType                      InputPixelType;
   typedef itk::ImageToImageFilter<InputImageType, InputImageType> BaseFilterType;
   typedef itk::NotImageFilter<InputImageType, InputImageType>     NotFilterType;
   /** \todo: write a real dummy filter which does really nothing */
