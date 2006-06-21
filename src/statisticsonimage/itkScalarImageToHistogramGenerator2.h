@@ -3,8 +3,8 @@
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: itkScalarImageToHistogramGenerator2.h,v $
   Language:  C++
-  Date:      $Date: 2006-06-19 12:51:56 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2006-06-21 16:11:03 $
+  Version:   $Revision: 1.2 $
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -80,11 +80,12 @@ public:
   /** Set marginal scale value to be passed to the histogram generator */
   void SetMarginalScale( double marginalScale );
 
-  /** Added, just like in the ImageToHistogramGenerator */
+  /** Added, just like in the ImageToHistogramGenerator
+   * \todo in ITK they seem to agree that PixelType should be replaced by its RealType */
   void SetHistogramMin(const PixelType & histogramMin);
   void SetHistogramMax(const PixelType & histogramMax);
   void SetAutoMinMax(bool autoMinMax);
-
+  
 
 protected:
   ScalarImageToHistogramGenerator2();

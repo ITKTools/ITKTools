@@ -54,18 +54,35 @@ void ComputeStatistics(
   maskerOrCopier->Update();
   std::cout << "\tDone replacing all pixels outside the mask by -infinity." << std::endl;
   
-  /** this code is copied from the ListSampleToHistogramGenerator->GenerateData().
+  /** this code is copied from the ListSampleToHistogramGenerator->GenerateData()
+   * and adapted.
    * It makes sure that the maximum values are also included in the histogram. */
   PixelType histogramMax;
   if ( !itk::NumericTraits< PixelType >::is_integer )
   {
     /** floating pixeltype */
+
+    /** if the maximum (almost) equals the minimum, we have to make sure that 
+     * everything still works. 
+     * 4 conditions:
+     * - The binsize must be greater than epsilon
+     * - The uppermargin must be greater than epsilon
+     * - the histogramMax must be at least statistics->GetMaximum() + uppermargin
+     * - the histogramMax must be at least numberOfBins * binsize
+     * epsilon is chosen a little larger than the computer indicates,
+     * to be on the safe side. The factor of 100.0 is determined empirically
+     * to still give good results.
+     */
     double marginalScale = 100.0;
-    double uppermargin = 
+    double epsilon = itk::NumericTraits<PixelType>::epsilon() * 100.0;
+    double binsize = 
       static_cast<double>( statistics->GetMaximum() - statistics->GetMinimum() ) /
-      static_cast<double>(numberOfBins) /
-      marginalScale;
-    histogramMax = static_cast<PixelType>( statistics->GetMaximum() + uppermargin );
+      static_cast<double>(numberOfBins);
+    binsize = vnl_math_max( binsize, epsilon );
+    double uppermargin = vnl_math_max( epsilon, binsize / marginalScale );
+    histogramMax = static_cast<PixelType>(
+      vnl_math_max( binsize * static_cast<double>( numberOfBins ),
+               statistics->GetMaximum() + uppermargin )   );
   }
   else
   {
@@ -77,12 +94,13 @@ void ComputeStatistics(
   if ( histogramMax <= statistics->GetMaximum() )
   {
     /** overflow occcured; maximum was already maximum of pixeltype;
-     * We could solve this somehow, but the situation is quite unlikely;
-     * anyway, mostly something is going wrong when a float image has value
-     * infinity somewhere */
+     * We could solve this somehow (by adding a ClipBinsAtUpperBound(bool) function
+     * to the itkScalarImageToHistogramGenerator2, and calling it with argument 'false'),
+     * but the situation is quite unlikely; anyway, mostly something is going wrong when
+     * a float image has value infinity somewhere */
     std::cerr << "\tError during histogram computation!" << std::endl;
     std::cerr << "\tThe maximum of the image is equal to the maximum of its pixeltype." << std::endl;
-    std::cerr << "\tHistogram computation cannot be performed now. pxstatisticsonimage cannot handle this situation." << std::endl;
+    std::cerr << "\tHistogram computation cannot be reliably performed now. pxstatisticsonimage cannot handle this situation." << std::endl;
     itkGenericExceptionMacro(<< "Histogram cannot be computed.");        
   }
 
@@ -117,7 +135,7 @@ void StatisticsOnImage(
 {
 	/** Typedefs. */
   typedef ComponentType ScalarPixelType;
-  typedef float InternalPixelType;
+  typedef double InternalPixelType;
   typedef unsigned char MaskPixelType;
   typedef itk::Vector<ComponentType, NumberOfComponents>  VectorPixelType;
   typedef itk::Vector<ComponentType, Dimension>           DeformationVectorPixelType;

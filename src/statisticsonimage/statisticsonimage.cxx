@@ -88,18 +88,18 @@ int main( int argc, char ** argv )
   std::cout << "\tDimension:          " << Dimension << std::endl;
   std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
 
-  /** force images to sneaky be converted to floats */
-	ComponentType = "float";
+  /** force images to sneaky be converted to doubles */
+	ComponentType = "double";
 		
 	/** Run the program. */
 	try
 	{
-    run(StatisticsOnImage, float, 2, 1);
-    run(StatisticsOnImage, float, 2, 2);
-    run(StatisticsOnImage, float, 2, 3);
-    run(StatisticsOnImage, float, 3, 1);
-    run(StatisticsOnImage, float, 3, 2);
-    run(StatisticsOnImage, float, 3, 3);
+    run(StatisticsOnImage, double, 2, 1);
+    run(StatisticsOnImage, double, 2, 2);
+    run(StatisticsOnImage, double, 2, 3);
+    run(StatisticsOnImage, double, 3, 1);
+    run(StatisticsOnImage, double, 3, 2);
+    run(StatisticsOnImage, double, 3, 3);
   }
 	catch( itk::ExceptionObject &e )
 	{

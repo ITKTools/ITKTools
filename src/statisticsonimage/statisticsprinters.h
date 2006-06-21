@@ -3,6 +3,7 @@
 
 
 #include <fstream>
+#include <iomanip>
 
 /** this file defines two function that print statistics information */
 
@@ -14,13 +15,14 @@ template<class TStatisticsFilter>
 void PrintStatistics( const TStatisticsFilter * statistics ) 
 {
   /** Print to screen. */
-	std::cout << "\tmin: \t" << statistics->GetMinimum() << std::endl;
+  std::cout << std::setprecision(10);
+  std::cout << "\tmin: \t" << statistics->GetMinimum() << std::endl;
   std::cout << "\tmax: \t" << statistics->GetMaximum() << std::endl;
 	std::cout << "\tmean:\t" << statistics->GetMean() << std::endl;
 	std::cout << "\tstd: \t" << statistics->GetSigma() << std::endl;
 	std::cout << "\tvar: \t" << statistics->GetVariance() << std::endl;
   std::cout << "\tsum: \t" << statistics->GetSum() << std::endl;
-
+  
 } // end PrintStatistics
 
 
@@ -40,8 +42,11 @@ void PrintHistogramStatistics( const THistogram * histogram,
   double median = histogram->Quantile(0, 0.5);
   double firstquartile = histogram->Quantile(0,0.25);
   double thirdquartile = histogram->Quantile(0,0.75);
+  double binsize = histogram->GetBinMax(0,0) - histogram->GetBinMin(0,0);
 
+  std::cout << std::setprecision(10);
   std::cout << "\tnumber of pixels:\t" << nrOfPixels << std::endl;
+  std::cout << "\tbinsize:         \t" << binsize << std::endl;
   std::cout << "\tmedian:          \t" << median << std::endl;
   std::cout << "\t1st quartile:    \t" << firstquartile << std::endl;
   std::cout << "\t3rd quartile:    \t" << thirdquartile << std::endl;
@@ -59,6 +64,7 @@ void PrintHistogramStatistics( const THistogram * histogram,
     }
     histogramOutputFile << std::fixed;
     histogramOutputFile << std::showpoint;
+    histogramOutputFile << std::setprecision(16);
     histogramOutputFile
       << "nr"
       << "\t" 
