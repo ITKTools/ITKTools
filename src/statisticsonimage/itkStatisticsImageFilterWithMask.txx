@@ -3,8 +3,8 @@
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: itkStatisticsImageFilterWithMask.txx,v $
   Language:  C++
-  Date:      $Date: 2006-06-19 12:51:56 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2006-06-22 09:29:14 $
+  Version:   $Revision: 1.2 $
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -16,7 +16,7 @@
 =========================================================================*/
 #ifndef _itkStatisticsImageFilter_txx
 #define _itkStatisticsImageFilter_txx
-#include "itkStatisticsImageFilter.h"
+#include "itkStatisticsImageFilterWithMask.h"
 
 #include "itkImageRegionIterator.h"
 #include "itkImageRegionConstIterator.h"
@@ -297,7 +297,9 @@ StatisticsImageFilter<TInputImage>
   // unbiased estimate
   variance = (sumOfSquares - (sum*sum / static_cast<RealType>(count)))
     / (static_cast<RealType>(count) - 1);
-  sigma = sqrt(variance);
+  // in case of numerical errors the variance might be <0.
+  variance = vnl_math_max(0.0, variance);
+  sigma = vcl_sqrt(variance);
 
   // Set the outputs
   this->GetMinimumOutput()->Set( minimum );

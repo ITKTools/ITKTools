@@ -11,8 +11,8 @@
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: itkStatisticsImageFilterWithMask.h,v $
   Language:  C++
-  Date:      $Date: 2006-06-19 12:51:56 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2006-06-22 09:29:12 $
+  Version:   $Revision: 1.2 $
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -136,6 +136,7 @@ public:
    * output. */
   virtual DataObjectPointer MakeOutput(unsigned int idx);
 
+  /** Set/Get Mask */
   itkSetObjectMacro(Mask, MaskType);
   itkGetConstObjectMacro(Mask, MaskType);
 

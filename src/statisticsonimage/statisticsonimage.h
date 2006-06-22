@@ -50,9 +50,16 @@ void ComputeStatistics(
   PrintStatistics<StatisticsFilterType>(statistics);
    
   maskerOrCopier->SetInput( inputImage );
-  std::cout << "\tReplacing all pixels outside the mask by -infinity, to make sure they are not included in the histogram..." << std::endl;
+  std::string maskerOrCopierName = maskerOrCopier->GetNameOfClass();
+  if ( maskerOrCopierName == "MaskImageFilter" )
+  {
+    std::cout << "\tReplacing all pixels outside the mask by -infinity, to make sure they are not included in the histogram..." << std::endl;
+  }
   maskerOrCopier->Update();
-  std::cout << "\tDone replacing all pixels outside the mask by -infinity." << std::endl;
+  if ( maskerOrCopierName == "MaskImageFilter" )
+  {
+    std::cout << "\tDone replacing all pixels outside the mask by -infinity." << std::endl;
+  }
   
   /** this code is copied from the ListSampleToHistogramGenerator->GenerateData()
    * and adapted.
