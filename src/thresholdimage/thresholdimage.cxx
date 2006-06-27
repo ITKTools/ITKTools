@@ -71,13 +71,17 @@ int main( int argc, char **argv )
   std::string	PixelType; //we don't use this
   unsigned int Dimension = 2;  
   unsigned int NumberOfComponents = 1;  
-  GetImageProperties(
+  int retgip = GetImageProperties(
     inputFileName,
     PixelType,
     ComponentType,
     Dimension,
     NumberOfComponents);
-  std::cout << "The first input image has the following properties:" << std::endl;
+  if ( retgip !=0 )
+  {
+    return 1;
+  }
+  std::cout << "The input image has the following properties:" << std::endl;
   /** Do not bother the user with the difference between pixeltype and componenttype:*/
   //std::cout << "\tPixelType:          " << PixelType << std::endl;
   std::cout << "\tPixelType:          " << ComponentType << std::endl;

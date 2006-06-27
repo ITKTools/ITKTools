@@ -15,7 +15,7 @@
 if ( ComponentType == #type && Dimension == dim && NumberOfComponents == nrofcomp) \
 { \
     function< type, dim, nrofcomp >( inputFileName, maskFileName, histogramOutputFileName,\
-    useMagnitude, useJacobian, numberOfBins ); \
+    numberOfBins ); \
 }
 
 /** Declare PrintHelp, implemented at the bottom of this file. */
@@ -52,22 +52,6 @@ int main( int argc, char ** argv )
   std::string	histogramOutputFileName = "";
 	bool rethist = parser->GetCommandLineArgument( "-out", histogramOutputFileName );
 
-  bool useMagnitude = true;
-  std::string	useMagnitudeString = "true";
-	bool retM = parser->GetCommandLineArgument( "-M", useMagnitudeString );
-  if ( useMagnitudeString == "false" )
-  {
-    useMagnitude = false;
-  }
-
-  bool useJacobian = false;
-  std::string	useJacobianString = "false";
-	bool retJ = parser->GetCommandLineArgument( "-J", useJacobianString );
-  if ( useJacobianString == "true" )
-  {
-    useJacobian = true;
-  }
-
   unsigned int numberOfBins = 100;
   bool retb = parser->GetCommandLineArgument( "-b", numberOfBins );
   
@@ -75,13 +59,16 @@ int main( int argc, char ** argv )
   std::string	PixelType; //we don't use this
   unsigned int Dimension = 2;  
   unsigned int NumberOfComponents = 1;  
-  GetImageProperties(
+  int retgip = GetImageProperties(
     inputFileName,
     PixelType,
     ComponentType,
     Dimension,
     NumberOfComponents);
-
+  if ( retgip !=0 )
+  {
+    return 1;
+  }
   std::cout << "The input image has the following properties:" << std::endl;
   std::cout << "\tPixelType:          " << PixelType << std::endl;
   std::cout << "\tComponentType:      " << ComponentType << std::endl;
@@ -122,22 +109,17 @@ int main( int argc, char ** argv )
 	 */
 void PrintHelp()
 {
-  std::cout << "Compute statistics on an image. For vector images, the magnitude and/or its jacobian is used." << std::endl;
+  std::cout << "Compute statistics on an image. For vector images, the magnitude is used." << std::endl;
   std::cout << "Usage:" << std::endl << "pxstatisticonimage" << std::endl;
 	std::cout << "\t-in\tInputFilename" << std::endl;
-  std::cout << "\t[-out]\tOutputFileName for histogram, without extension;\n";
-  std::cout << "\t      \tif omitted, no histogram is written; default: <empty>;\n";
-  std::cout << "\t      \tthe keyword INTENSITY, MAGNITUDE, or JACOBIAN is appended;" << std::endl;
+  std::cout << "\t[-out]\tOutputFileName for histogram;\n";
+  std::cout << "\t      \tif omitted, no histogram is written; default: <empty>" << std::endl;
   std::cout << "\t[-mask]\tMaskFileName, mask should have the same size as the input image\n";
   std::cout << "\t       \tand be of pixeltype (convertable to) unsigned char,\n";
   std::cout << "\t       \t1 = within mask, 0 = outside mask;" << std::endl;
-  std::cout << "\t[-M]\tUseMagnitude {true,false}, default: true" << std::endl;
-  std::cout << "\t[-J]\tUseJacobian {true,false}, default: false" << std::endl;
   std::cout << "\t[-b]\tNumberOfBins to use for histogram, default: 100;\n";
   std::cout << "\t    \tfor an accurate estimate of median and quartiles\n";
   std::cout << "\t    \tfor integer images, choose the number of bins\n";
   std::cout << "\t    \tmuch larger (~100x) than the number of gray values." << std::endl;
   std::cout << "Supported: 2D, 3D, float, (unsigned) short, (unsigned) char, 1, 2 or 3 components per pixel." << std::endl;
-  std::cout << "The Jacobian is only used when dimension and number of components are equal." << std::endl;
-
 } // end PrintHelp

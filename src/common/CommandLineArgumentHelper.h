@@ -7,8 +7,10 @@
 void ReplaceUnderscoreWithSpace( std::string & arg );
 
 /** Determine pixeltype (scalar/vector), componenttype (short, float etc),
- * dimension and numberofcomponents from an image */
-void GetImageProperties(
+ * dimension and numberofcomponents from an image
+ * returns 0 when successful. 0 otherwise.
+ */
+int GetImageProperties(
   const std::string & filename,
   std::string & pixeltype,
   std::string & componenttype,

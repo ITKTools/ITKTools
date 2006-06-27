@@ -19,6 +19,7 @@ SUBDIRS(
  createrandomimage
  createsphere
  cropimage
+ deformationfieldoperator
  detectgoldmarkers
  dilateimage
  erodeimage

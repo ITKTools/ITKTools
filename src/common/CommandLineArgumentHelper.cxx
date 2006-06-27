@@ -25,7 +25,7 @@ void ReplaceUnderscoreWithSpace( std::string & arg )
  * ***************** GetImageProperties ************************
  */
 
-void GetImageProperties(
+int GetImageProperties(
   const std::string & filename,
   std::string & pixeltype,
   std::string & componenttype,
@@ -48,7 +48,16 @@ void GetImageProperties(
   testReader->SetFileName( filename.c_str() );
 
   /** Generate all information. */
-	testReader->GenerateOutputInformation();
+  try
+  {
+   	testReader->GenerateOutputInformation();
+  }
+	catch( itk::ExceptionObject &e )
+	{
+		std::cerr << "Caught ITK exception: " << e << std::endl;
+		return 1;
+	}
+  
 	
   /** Extract the ImageIO from the testReader. */
   ImageIOBaseType::Pointer testImageIOBase = testReader->GetImageIO();
@@ -75,13 +84,16 @@ void GetImageProperties(
     && componenttype != "double" )
   {
     /** In this case an illegal pixeltype  is found. */
-    itkGenericExceptionMacro( 
+    std::cerr 
+      << "ERROR while determining image properties!"
       << "The found componenttype is \""
       << componenttype
-      << "\", which is not supported.\n" );
+      << "\", which is not supported." 
+      << std::endl;
+    return 1;
   }
 
-  return;
+  return 0;
   
 } // end GetImageProperties
 

@@ -5,7 +5,7 @@
 #include <fstream>
 #include <iomanip>
 
-/** this file defines two function that print statistics information */
+/** this file defines three function that print statistics information */
 
 /**
  * Print the results of an itk::StatisticsImageFilter
@@ -16,14 +16,33 @@ void PrintStatistics( const TStatisticsFilter * statistics )
 {
   /** Print to screen. */
   std::cout << std::setprecision(10);
-  std::cout << "\tmin: \t" << statistics->GetMinimum() << std::endl;
-  std::cout << "\tmax: \t" << statistics->GetMaximum() << std::endl;
-	std::cout << "\tmean:\t" << statistics->GetMean() << std::endl;
-	std::cout << "\tstd: \t" << statistics->GetSigma() << std::endl;
-	std::cout << "\tvar: \t" << statistics->GetVariance() << std::endl;
-  std::cout << "\tsum: \t" << statistics->GetSum() << std::endl;
+  std::cout << "\tmin             : " << statistics->GetMinimum() << std::endl;
+  std::cout << "\tmax             : " << statistics->GetMaximum() << std::endl;
+	std::cout << "\tarithmetic mean : " << statistics->GetMean() << std::endl;
+	std::cout << "\tarithmetic stdev: " << statistics->GetSigma() << std::endl;
+	std::cout << "\tarithmetic var  : " << statistics->GetVariance() << std::endl;
+  std::cout << "\tsum             : " << statistics->GetSum() << std::endl;
   
 } // end PrintStatistics
+
+
+/**
+ * Print the results of an itk::StatisticsImageFilter
+ * Assume that statistics were calculated on the log
+ * of the actual image. exp gives the Geometric mean.
+ */
+
+template<class TStatisticsFilter>
+void PrintGeometricStatistics( const TStatisticsFilter * statistics ) 
+{
+  /** Print to screen. */
+  std::cout << std::setprecision(10);
+  double geometricmean = vcl_exp( statistics->GetMean() );
+  double geometricstdev = vcl_exp( statistics->GetSigma() );
+  std::cout << "\tgeometric mean : " << geometricmean << std::endl;
+	std::cout << "\tgeometric stdev: " << geometricstdev << std::endl;
+	  
+} // end PrintGeometricStatistics
 
 
 /**
@@ -54,7 +73,7 @@ void PrintHistogramStatistics( const THistogram * histogram,
   /** print histogram to output file */
   if (histogramOutputFileName != "")
   {
-    std::cout << "\tHistogram is written to file: " <<
+    std::cout << "Histogram is written to file: " <<
       histogramOutputFileName << " ..." << std::endl;
     std::ofstream histogramOutputFile;
     histogramOutputFile.open( histogramOutputFileName.c_str() );
@@ -93,7 +112,7 @@ void PrintHistogramStatistics( const THistogram * histogram,
         << std::endl;
     } // end for
     histogramOutputFile.close();
-    std::cout << "\tDone writing histogram to file." << std::endl;
+    std::cout << "Done writing histogram to file." << std::endl;
   } // end if
 
 } // end PrintHistogramStatistics

@@ -5,10 +5,10 @@
 #include "itkImageMaskSpatialObject.h"
 #include "itkStatisticsImageFilterWithMask.h"
 #include "itkCastImageFilter.h"
-#include "itkDeformationFieldJacobianDeterminantFilter.h"
 #include "itkGradientToMagnitudeImageFilter.h"
 #include "itkScalarImageToHistogramGenerator2.h"
 #include "itkMaskImageFilter.h"
+#include "itkLogImageFilter.h"
 
 #include "statisticsprinters.h"
 
@@ -42,23 +42,39 @@ void ComputeStatistics(
     HistogramGeneratorType::HistogramType             HistogramType;
   typedef TStatisticsFilter                           StatisticsFilterType;
   typedef typename StatisticsFilterType::PixelType    PixelType;
+  typedef TInputImage                                 InputImageType;
+  typedef itk::LogImageFilter<
+    InputImageType, InputImageType>                   LogFilterType;
   
+  /** Arithmetic mean */
   statistics->SetInput( inputImage );
-  std::cout << "\tComputing statistics..." << std::endl;
+  std::cout << "Computing arithmetic statistics..." << std::endl;
   statistics->Update();
-  std::cout << "\tDone computing statistics." << std::endl;
+  std::cout << "Done computing arithmetic statistics." << std::endl;
   PrintStatistics<StatisticsFilterType>(statistics);
+  /** save for later */
+  PixelType maxPixelValue = statistics->GetMaximum();
+  PixelType minPixelValue = statistics->GetMinimum();
+
+  /** Geometric mean/std: */
+  LogFilterType::Pointer logger = LogFilterType::New();
+  logger->SetInput(inputImage);
+  statistics->SetInput( logger->GetOutput() );
+  std::cout << "Computing geometric statistics..." << std::endl;
+  statistics->Update();
+  std::cout << "Done computing geometric statistics." << std::endl;
+  PrintGeometricStatistics<StatisticsFilterType>(statistics);
    
   maskerOrCopier->SetInput( inputImage );
   std::string maskerOrCopierName = maskerOrCopier->GetNameOfClass();
   if ( maskerOrCopierName == "MaskImageFilter" )
   {
-    std::cout << "\tReplacing all pixels outside the mask by -infinity, to make sure they are not included in the histogram..." << std::endl;
+    std::cout << "Replacing all pixels outside the mask by -infinity, to make sure they are not included in the histogram..." << std::endl;
   }
   maskerOrCopier->Update();
   if ( maskerOrCopierName == "MaskImageFilter" )
   {
-    std::cout << "\tDone replacing all pixels outside the mask by -infinity." << std::endl;
+    std::cout << "Done replacing all pixels outside the mask by -infinity." << std::endl;
   }
   
   /** this code is copied from the ListSampleToHistogramGenerator->GenerateData()
@@ -83,42 +99,42 @@ void ComputeStatistics(
     double marginalScale = 100.0;
     double epsilon = itk::NumericTraits<PixelType>::epsilon() * 100.0;
     double binsize = 
-      static_cast<double>( statistics->GetMaximum() - statistics->GetMinimum() ) /
+      static_cast<double>( maxPixelValue - minPixelValue ) /
       static_cast<double>(numberOfBins);
     binsize = vnl_math_max( binsize, epsilon );
     double uppermargin = vnl_math_max( epsilon, binsize / marginalScale );
     histogramMax = static_cast<PixelType>(
       vnl_math_max( binsize * static_cast<double>( numberOfBins ),
-               statistics->GetMaximum() + uppermargin )   );
+               maxPixelValue + uppermargin )   );
   }
   else
   {
     /** integer pixeltypes. in principle this function will never be called with
      * an integer pixeltype, but just in case this is changed in the future...*/
     PixelType uppermargin = itk::NumericTraits<PixelType>::One;
-    histogramMax = static_cast<PixelType>( statistics->GetMaximum() + uppermargin );
+    histogramMax = static_cast<PixelType>( maxPixelValue + uppermargin );
   }
-  if ( histogramMax <= statistics->GetMaximum() )
+  if ( histogramMax <= maxPixelValue )
   {
     /** overflow occcured; maximum was already maximum of pixeltype;
      * We could solve this somehow (by adding a ClipBinsAtUpperBound(bool) function
      * to the itkScalarImageToHistogramGenerator2, and calling it with argument 'false'),
      * but the situation is quite unlikely; anyway, mostly something is going wrong when
      * a float image has value infinity somewhere */
-    std::cerr << "\tError during histogram computation!" << std::endl;
-    std::cerr << "\tThe maximum of the image is equal to the maximum of its pixeltype." << std::endl;
-    std::cerr << "\tHistogram computation cannot be reliably performed now. pxstatisticsonimage cannot handle this situation." << std::endl;
+    std::cerr << "Error during histogram computation!" << std::endl;
+    std::cerr << "The maximum of the image is equal to the maximum of its pixeltype." << std::endl;
+    std::cerr << "Histogram computation cannot be reliably performed now. pxstatisticsonimage cannot handle this situation." << std::endl;
     itkGenericExceptionMacro(<< "Histogram cannot be computed.");        
   }
 
   histogramGenerator->SetAutoMinMax(false);
   histogramGenerator->SetNumberOfBins(numberOfBins);
-  histogramGenerator->SetHistogramMin( statistics->GetMinimum() );
+  histogramGenerator->SetHistogramMin( minPixelValue );
   histogramGenerator->SetHistogramMax( histogramMax );
   histogramGenerator->SetInput( maskerOrCopier->GetOutput() );
-  std::cout << "\tComputing histogram..." << std::endl;
+  std::cout << "Computing histogram..." << std::endl;
   histogramGenerator->Compute();
-  std::cout << "\tDone computing histogram." << std::endl;
+  std::cout << "Done computing histogram." << std::endl;
   PrintHistogramStatistics<HistogramType>( histogramGenerator->GetOutput(), histogramOutputFileName );
 
 } // end ComputeStatistics
@@ -136,8 +152,6 @@ void StatisticsOnImage(
   const std::string & inputFileName,
   const std::string & maskFileName, 
   const std::string & histogramOutputFileName,
-  bool useMagnitude,
-  bool useJacobian,
   unsigned int numberOfBins)
 {
 	/** Typedefs. */
@@ -145,11 +159,8 @@ void StatisticsOnImage(
   typedef double InternalPixelType;
   typedef unsigned char MaskPixelType;
   typedef itk::Vector<ComponentType, NumberOfComponents>  VectorPixelType;
-  typedef itk::Vector<ComponentType, Dimension>           DeformationVectorPixelType;
   typedef itk::Image<ScalarPixelType, Dimension>          ScalarImageType;
   typedef itk::Image<VectorPixelType, Dimension>          VectorImageType;
-  typedef itk::Image<
-    DeformationVectorPixelType, Dimension>                DeformationVectorImageType;
   
   typedef itk::Image<InternalPixelType, Dimension>    InternalImageType;
   typedef itk::Image<MaskPixelType, Dimension>        MaskImageType;
@@ -166,8 +177,6 @@ void StatisticsOnImage(
     InternalImageType, InternalImageType>             CopierType;
   typedef itk::GradientToMagnitudeImageFilter<
     VectorImageType, InternalImageType >              MagnitudeFilterType;
-  typedef itk::DeformationFieldJacobianDeterminantFilter<
-    DeformationVectorImageType, InternalPixelType >   JacobianFilterType;
   typedef itk::StatisticsImageFilter<
     InternalImageType >                               StatisticsFilterType;
   typedef itk::Statistics::ScalarImageToHistogramGenerator2<
@@ -220,20 +229,14 @@ void StatisticsOnImage(
     std::cout << "Statistics are computed on the gray values." << std::endl;
 
     reader->SetFileName( inputFileName.c_str() );
-    std::cout << "\tReading input image..." << std::endl;
+    std::cout << "Reading input image..." << std::endl;
     reader->Update();
-    std::cout << "\tDone reading input image." << std::endl;
+    std::cout << "Done reading input image." << std::endl;
     
     caster->SetInput( reader->GetOutput() );
-    std::cout << "\tCasting input image to float..." << std::endl;
+    std::cout << "Casting input image to float..." << std::endl;
     caster->Update();
-    std::cout << "\tDone casting input image to float." << std::endl;
-
-    std::string histout = "";
-    if ( histogramOutputFileName != "" )
-    {
-      histout = histogramOutputFileName + "INTENSITY.txt";
-    }
+    std::cout << "Done casting input image to float." << std::endl;
 
     /** Call the generic ComputeStatistics function */
 
@@ -247,7 +250,7 @@ void StatisticsOnImage(
         statistics,
         histogramGenerator,
         numberOfBins,
-        histout);
+        histogramOutputFileName);
         
   } // end scalar images
   else
@@ -255,82 +258,33 @@ void StatisticsOnImage(
     typename VectorReaderType::Pointer reader = VectorReaderType::New();
     
     std::cout << "InputImage is a vector image." << std::endl;
+    std::cout << "Statistics are computed on the magnitude of the vectors." << std::endl;
     
     reader->SetFileName( inputFileName.c_str() );
-    std::cout << "\tReading input image..." << std::endl;
+    std::cout << "Reading input image..." << std::endl;
     reader->Update();
-    std::cout << "\tDone reading input image." << std::endl;
-  
-    if (useMagnitude)
-    {
-      typename MagnitudeFilterType::Pointer magnitudeFilter = MagnitudeFilterType::New();
-      
-      std::cout << "Statistics are computed on the magnitude of the vectors." << std::endl;
+    std::cout << "Done reading input image." << std::endl;
 
-      magnitudeFilter->SetInput( reader->GetOutput() );
-      std::cout << "\tComputing magnitude image..." << std::endl;
-      magnitudeFilter->Update();
-      std::cout << "\tDone computing magnitude image." << std::endl;
-      
-      std::string histout = "";
-      if ( histogramOutputFileName != "" )
-      {
-         histout = histogramOutputFileName + "MAGNITUDE.txt";
-      }
+    typename MagnitudeFilterType::Pointer magnitudeFilter = MagnitudeFilterType::New();
+    
+    magnitudeFilter->SetInput( reader->GetOutput() );
+    std::cout << "Computing magnitude image..." << std::endl;
+    magnitudeFilter->Update();
+    std::cout << "Done computing magnitude image." << std::endl;
+    
+    /** Call the generic ComputeStatistics function */
+    ComputeStatistics<
+      InternalImageType,
+      BaseFilterType,
+      StatisticsFilterType,
+      HistogramGeneratorType>(
+        magnitudeFilter->GetOutput(),
+        maskerOrCopier,
+        statistics,
+        histogramGenerator,
+        numberOfBins,
+        histogramOutputFileName);
 
-      /** Call the generic ComputeStatistics function */
-      ComputeStatistics<
-        InternalImageType,
-        BaseFilterType,
-        StatisticsFilterType,
-        HistogramGeneratorType>(
-          magnitudeFilter->GetOutput(),
-          maskerOrCopier,
-          statistics,
-          histogramGenerator,
-          numberOfBins,
-          histout);
-
-    } // end useMagnitude
-    if (useJacobian && NumberOfComponents == Dimension )
-    {
-      typename JacobianFilterType::Pointer jacobianFilter = JacobianFilterType::New();
-      
-      std::cout << "Statistics are computed on the jacobian of the vectors." << std::endl;
-
-      /** Hack to make the template function compile for the case NumberOfComponents != Dimension.  */
-      typename DeformationVectorImageType::Pointer deformationVectorImage =
-        dynamic_cast< DeformationVectorImageType * >( reader->GetOutput() );
-
-      jacobianFilter->SetInput( deformationVectorImage );
-      std::cout << "\tComputing jacobian image..." << std::endl;
-      jacobianFilter->Update();
-      std::cout << "\tDone computing jacobian image." << std::endl;
-
-      std::string histout = "";
-      if ( histogramOutputFileName != "" )
-      {
-        histout = histogramOutputFileName + "JACOBIAN.txt";
-      }
-
-      /** Call the generic ComputeStatistics function */
-      ComputeStatistics<
-        InternalImageType,
-        BaseFilterType,
-        StatisticsFilterType,
-        HistogramGeneratorType>(
-          jacobianFilter->GetOutput(),
-          maskerOrCopier,
-          statistics,
-          histogramGenerator,
-          numberOfBins,
-          histout);
-
-    } // end useJacobian
-    if (useJacobian && NumberOfComponents != Dimension )
-    {
-      std::cout << "The Jacobian cannot be computed, because the image dimension is not equal to the number of components of the pixels." << std::endl;
-    }
   } // end vector images
 
 } // end StatisticsOnImage
