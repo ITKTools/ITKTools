@@ -57,7 +57,7 @@ void ComputeStatistics(
   PixelType minPixelValue = statistics->GetMinimum();
 
   /** Geometric mean/std: */
-  LogFilterType::Pointer logger = LogFilterType::New();
+  typename LogFilterType::Pointer logger = LogFilterType::New();
   logger->SetInput(inputImage);
   statistics->SetInput( logger->GetOutput() );
   std::cout << "Computing geometric statistics..." << std::endl;
