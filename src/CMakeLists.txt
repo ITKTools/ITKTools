@@ -2,7 +2,6 @@
 PROJECT(praxix)
 
 SUBDIRS(
- addtopixelimagefilter
  averagevectormagnitude
  castconvert
  common
@@ -11,7 +10,6 @@ SUBDIRS(
  computedistances
  computeoverlap
  contrastenhanceimage
- convert
  countnonzerovoxels
  createbox
  creategridimage
@@ -38,7 +36,6 @@ SUBDIRS(
  morphologicalclosingimage
  morphologicalopeningimage
  multiplyimages
- multiplypixelimagefilter
  rescaleintensityimagefilter
  resizeimage
  scripts
