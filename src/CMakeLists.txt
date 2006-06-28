@@ -44,7 +44,8 @@ SUBDIRS(
  scripts
  statisticsonimage
  tileimages
- thresholdimage)
+ thresholdimage
+ unaryimageoperator)
 
 
 #---------------------------------------------------------------------

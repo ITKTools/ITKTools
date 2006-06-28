@@ -57,8 +57,7 @@ int GetImageProperties(
 		std::cerr << "Caught ITK exception: " << e << std::endl;
 		return 1;
 	}
-  
-	
+  	
   /** Extract the ImageIO from the testReader. */
   ImageIOBaseType::Pointer testImageIOBase = testReader->GetImageIO();
 

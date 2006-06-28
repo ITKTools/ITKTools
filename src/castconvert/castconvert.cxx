@@ -3,8 +3,8 @@
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: castconvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2006-06-09 09:26:41 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2006-06-28 15:09:16 $
+  Version:   $Revision: 1.9 $
 
   Copyright (c) 2002 Insight Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -248,7 +248,7 @@ int main( int argc, char **argv )
       /**
 			 * ****************** Support for SCALAR pixel types. **********************************
 			 */
-      if ( ( pixelType == "scalar" && numberOfComponents == 1 ) )
+      if ( pixelType == "scalar" && numberOfComponents == 1 )
       {
         const int ret_value = FileConverterScalar(
           inputPixelComponentType, outputPixelComponentType,
