@@ -91,9 +91,9 @@ void ComputeMagnitude(
   typename WriterType::Pointer writer = WriterType::New();
     
   magnitudeFilter->SetInput( inputImage );
-  std::cout << "\tComputing magnitude image..." << std::endl;
+  std::cout << "Computing magnitude image..." << std::endl;
   magnitudeFilter->Update();
-  std::cout << "\tDone computing magnitude image." << std::endl;
+  std::cout << "Done computing magnitude image." << std::endl;
 
   /** Write the output image. */
 	writer->SetInput( magnitudeFilter->GetOutput() );
@@ -127,9 +127,9 @@ void ComputeJacobian(
 
   jacobianFilter->SetUseImageSpacingOn();    
   jacobianFilter->SetInput( inputImage );
-  std::cout << "\tComputing jacobian image..." << std::endl;
+  std::cout << "Computing jacobian image..." << std::endl;
   jacobianFilter->Update();
-  std::cout << "\tDone computing jacobian image." << std::endl;
+  std::cout << "Done computing jacobian image." << std::endl;
 
   /** Write the output image. */
 	writer->SetInput( jacobianFilter->GetOutput() );
