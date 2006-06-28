@@ -19,7 +19,7 @@ ADD_EXECUTABLE(pxunaryimageoperator
  unaryimageoperatorScalar3DB.cxx
  itkUnaryFunctors.h
  UnaryImageOperatorHelper.h
- UnaryImageOperatorHelperMain.h)
+ UnaryImageOperatorMainHelper.h)
 
 INSTALL_TARGETS(/. pxunaryimageoperator)
 
