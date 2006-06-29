@@ -27,7 +27,7 @@ void PrintHelp(void);
 int main( int argc, char ** argv )
 {
 	
-	if ( argc < 3 || argv[ 1 ] == "--help" )
+	if ( argc < 3 )
 	{
 		PrintHelp();
 		return 1;
