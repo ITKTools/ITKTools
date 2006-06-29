@@ -115,6 +115,9 @@ void UnaryImageOperator(
   InstantiateUnaryFilter( LMODDOUBLE, double );
   InstantiateUnaryFilter( NLOG, double );
   // arg is dummy
+  InstantiateUnaryFilter2( NEG );
+  InstantiateUnaryFilter2( SIGNINT );
+  InstantiateUnaryFilter2( SIGNDOUBLE );
   InstantiateUnaryFilter2( ABSINT );
   InstantiateUnaryFilter2( ABSDOUBLE );
   InstantiateUnaryFilter2( FLOOR );
