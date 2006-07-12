@@ -37,7 +37,7 @@ echo "See the following link for a description of the .mhd header format."
 echo "http://caddlab.rad.unc.edu/software/MetaIO/MetaIO-Introduction.htm"
 echo "The fields ElementSize and HeaderSize are not used in this script."
 echo
-echo "NB: Currently only shorts, unsigned shorts, chars and unsigned chars, float
+echo "NB: Currently only shorts, unsigned shorts, chars and unsigned chars, float"
 echo "are supported. Extension to other types would be easy though, I guess."
 echo
 exit 64
