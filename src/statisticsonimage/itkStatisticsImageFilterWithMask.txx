@@ -3,8 +3,8 @@
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: itkStatisticsImageFilterWithMask.txx,v $
   Language:  C++
-  Date:      $Date: 2006-06-22 09:29:14 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2006-07-18 12:47:09 $
+  Version:   $Revision: 1.3 $
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -249,6 +249,19 @@ StatisticsImageFilter<TInputImage>
   m_SumOfSquares.Fill(NumericTraits<RealType>::Zero);
   m_ThreadMin.Fill(NumericTraits<PixelType>::max());
   m_ThreadMax.Fill(NumericTraits<PixelType>::NonpositiveMin());
+
+  // Call the IsInside function from the Mask. This function internally computes
+  // the inverse of a MatrixOffsetTransform, which uses vnl_svd. This function
+  // is not thread-safe. However, if the GetInverse() has been computed once, it
+  // is saved for later use, and, consequently, the vnl_svd is not used anymore 
+  // when IsInside is called later on.
+  if (this->m_Mask)
+  {
+    PointType point;
+    point.Fill(0.0);
+    this->m_Mask->IsInside( point );
+  }
+
 }
 
 template<class TInputImage>
