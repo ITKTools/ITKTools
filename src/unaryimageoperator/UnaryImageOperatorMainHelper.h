@@ -29,7 +29,7 @@ void PrintHelp()
   std::cout << "\t[-arg]\targument, necessary for some ops" << std::endl;
 	std::cout << "\t[-out]\toutputFilename, default in + <ops> + <arg> + .mhd" << std::endl;
   std::cout << "\t[-pto]\toutputPixelType, default: same as inputimage" << std::endl;
-	std::cout << "Supported: 2D, 3D, (unsigned) short, (unsigned) char." << std::endl;
+	std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, float." << std::endl;
 } // end PrintHelp
 
 
