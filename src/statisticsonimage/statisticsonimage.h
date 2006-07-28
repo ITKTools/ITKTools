@@ -216,6 +216,8 @@ void StatisticsOnImage(
   typename StatisticsFilterType::Pointer statistics = 
     StatisticsFilterType::New();
   statistics->SetMask(mask);
+  /** vnl_svd is used by this class, which is not thread safe */
+  statistics->SetNumberOfThreads(1);
 
   typename HistogramGeneratorType::Pointer histogramGenerator = 
     HistogramGeneratorType::New();
