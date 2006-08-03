@@ -1,19 +1,6 @@
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 
-/*#include "itkImage.h"
-#include "itkUnaryFunctorImageFilter.h"
-#include <map>
-#include <utility>
-#include <vector>
-#include <itksys/SystemTools.hxx>
-
-#include "itkUnaryFunctors.h"
-#include "UnaryImageOperatorHelper.h"
-
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
-*/
 #include "UnaryImageOperatorMainHelper.h"
 
 /** Functions to do the work: this splits things up

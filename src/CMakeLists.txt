@@ -4,6 +4,7 @@ PROJECT(praxix)
 SUBDIRS(
  averagevectormagnitude
  castconvert
+ closestversor3Dtransform
  common
  computedifferenceimage
  computedifferenceimageBIG
