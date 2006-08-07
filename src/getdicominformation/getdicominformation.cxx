@@ -24,18 +24,18 @@ int main( int argc, char **argv )
 	bool rets = parser->GetCommandLineArgument( "-s", seriesNumber );
 
   /** Check arguments. */
-	if ( !retin )
-	{
-		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-		return 1;
-	}
-	
 	if ( argc < 3 || argc > 5 )
 	{
     std::cout << "Usage:" << std::endl << "pxgetdicominformation" << std::endl;
     std::cout << "\t-in\tinputDirectoryName" << std::endl;
     std::cout << "\t[-s]\tseriesUID" << std::endl;
     std::cout << "By default the first series encountered is used." << std::endl;
+		return 1;
+	}
+
+  if ( !retin )
+	{
+		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
 		return 1;
 	}
 
