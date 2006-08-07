@@ -15,7 +15,7 @@ int main( int argc, char **argv )
 	if ( argc != 2 || firstarg == "--help" )
 	{
 		std::cout << "Usage:" << std::endl;
-		std::cout << "getseriesUIDs inputDirectoryName" << std::endl;
+		std::cout << "pxgetseriesUIDs inputDirectoryName" << std::endl;
 		return 1;
 	}
 	std::string inputDirectoryName = argv[ 1 ];
