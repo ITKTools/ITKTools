@@ -162,6 +162,9 @@ int main( int argc, char **argv )
   dicomIO->GetStudyDescription( studyDesc );
   char studyID[maxSize];
   dicomIO->GetStudyID( studyID );
+  std::string protocoltag = "0018|1030";
+  std::string protocolvalue;
+  dicomIO->GetValueFromTag( protocoltag, protocolvalue );
 
   /** Get scanner information from the dicomIO. */
   char modality[maxSize];
@@ -178,7 +181,7 @@ int main( int argc, char **argv )
   /** Print patient and study information. */
   std::cout << std::endl;
   std::cout << "Patient information:" << std::endl;
-  std::cout << "name:             " << patientName << std::endl;
+  std::cout << "patient name:     " << patientName << std::endl;
   std::cout << "age:              " << patientAge << std::endl;
   std::cout << "sex:              " << patientSex << std::endl;
   std::cout << "DOB:              " << patientDOB << std::endl;
@@ -193,6 +196,7 @@ int main( int argc, char **argv )
   std::cout << "date:             " << studyDate << std::endl;
   std::cout << "description:      " << studyDesc << std::endl;
   std::cout << "ID:               " << studyID << std::endl;
+  std::cout << "protocol name:    " << protocolvalue << std::endl;
 
   /** Print scanner information. */
   std::cout << std::endl;
