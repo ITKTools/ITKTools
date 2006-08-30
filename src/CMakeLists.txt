@@ -28,6 +28,7 @@ SUBDIRS(
  getdicominformation
  getDICOMseriesUIDs
  getpointsinimage
+ giplconvert
  histogramequalizeimage
  imagecompare
  intensitywindowing
