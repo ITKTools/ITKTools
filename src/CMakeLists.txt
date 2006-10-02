@@ -6,6 +6,7 @@ SUBDIRS(
  castconvert
  closestversor3Dtransform
  common
+ computeboundingbox
  computedifferenceimage
  computedifferenceimageBIG
  computedistances

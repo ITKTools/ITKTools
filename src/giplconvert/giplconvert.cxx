@@ -4,12 +4,13 @@
 #include "itkGiplImageIO.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
+#include "itkArray.h"
 
 //-------------------------------------------------------------------------------------
 
 /** run: A macro to call a function. */
 #define run(function,type,dim) \
-if ( PixelType == #type && Dimension == dim ) \
+if ( ComponentType == #type && Dimension == dim ) \
 { \
     typedef itk::Image< type, dim > InputImageType; \
     function< InputImageType >( inputFileName, outputFileName); \
@@ -48,21 +49,112 @@ int main( int argc, char **argv )
 	outputFileName += ".gipl";
 	bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
 
-	unsigned int Dimension = 3;
-	bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
-
-	std::string	PixelType = "short";
-	bool retpt = parser->GetCommandLineArgument( "-pt", PixelType );
-
-	/** Get rid of the possible "_" in PixelType. */
-	ReplaceUnderscoreWithSpace( PixelType );
-
 	/** Check if the required arguments are given. */
 	if ( !retin )
 	{
 		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
 		return 1;
 	}
+
+  /** Dummy image type. */
+  const unsigned int DummyDimension = 3;
+  typedef short      DummyPixelType;
+  typedef itk::Image< DummyPixelType, DummyDimension >   DummyImageType;
+
+  /** Test reader */
+  typedef itk::ImageFileReader< DummyImageType >     ReaderType;
+  typedef itk::GiplImageIO                            ImageIOType;
+  
+  typedef itk::Array<unsigned int> SizeArrayType;
+
+  /** Create a test imageIO object */
+  ImageIOType::Pointer testImageIO = ImageIOType::New();
+ 
+  /** Create a testReader. */
+  ReaderType::Pointer testReader = ReaderType::New();
+  testReader->SetFileName( inputFileName.c_str() );
+  testReader->SetImageIO(testImageIO);  
+  
+  /** Determine image properties */
+  std::string ComponentType = "short";
+  std::string	PixelType; //we don't use this
+  unsigned int Dimension = 2;  
+  unsigned int NumberOfComponents = 1;  
+  SizeArrayType imageSize;
+  
+  /** Generate all information. */
+  try
+  {
+   	testReader->GenerateOutputInformation();
+  }
+	catch( itk::ExceptionObject &e )
+	{
+		std::cerr << "Caught ITK exception: " << e << std::endl;
+		return 1;
+	}
+  	
+  /** Get the component type, number of components, dimension and pixel type. */
+  Dimension = testImageIO->GetNumberOfDimensions();
+  NumberOfComponents = testImageIO->GetNumberOfComponents();
+  ComponentType = testImageIO->GetComponentTypeAsString( testImageIO->GetComponentType() );
+  ReplaceUnderscoreWithSpace(ComponentType);
+  PixelType = testImageIO->GetPixelTypeAsString( testImageIO->GetPixelType() );
+  imageSize.SetSize(Dimension);
+  for (unsigned int i = 0; i < Dimension; ++i)
+  {
+    imageSize[i] = testImageIO->GetDimensions(i);
+  }
+
+  /** Check inputPixelType. */
+  if ( ComponentType != "unsigned char"
+    && ComponentType != "char"
+    && ComponentType != "unsigned short"
+    && ComponentType != "short"
+    && ComponentType != "unsigned int"
+    && ComponentType != "int"
+    && ComponentType != "unsigned long"
+    && ComponentType != "long"
+    && ComponentType != "float"
+    && ComponentType != "double" )
+  {
+    /** In this case an illegal pixeltype  is found. */
+    std::cerr 
+      << "ERROR while determining image properties!"
+      << "The found componenttype is \""
+      << ComponentType
+      << "\", which is not supported." 
+      << std::endl;
+    return 1;
+  }
+
+  std::cout << "The input image has the following properties:" << std::endl;
+  /** Do not bother the user with the difference between pixeltype and componenttype:*/
+  //std::cout << "\tPixelType:          " << PixelType << std::endl;
+  std::cout << "\tPixelType:          " << ComponentType << std::endl;
+  std::cout << "\tDimension:          " << Dimension << std::endl;
+  std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
+  std::cout << "\tSize                " << imageSize << std::endl;
+  
+  /** Let the user overrule this */
+	bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
+	bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
+  if (retdim | retpt)
+  {
+    std::cout << "The user has overruled this by specifying -pt and/or -dim:" << std::endl;
+    std::cout << "\tPixelType:          " << ComponentType << std::endl;
+    std::cout << "\tDimension:          " << Dimension << std::endl;
+    std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
+  }
+
+  if (NumberOfComponents > 1)
+  { 
+    std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
+    std::cerr << "Vector images are not supported!" << std::endl;
+    return 1; 
+  }
+ 
+	/** Get rid of the possible "_" in PixelType. */
+	ReplaceUnderscoreWithSpace(ComponentType);
 
 	/** Run the program. */
 	try
