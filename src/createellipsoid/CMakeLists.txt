@@ -1,5 +1,5 @@
 # This project is intended to be built outside the Insight source tree
-PROJECT(CreateSphere)
+PROJECT(createellipsoid)
 
 # Find ITK.
 FIND_PACKAGE(ITK)
@@ -10,8 +10,8 @@ ELSE(ITK_FOUND)
           "Cannot build without ITK.  Please set ITK_DIR.")
 ENDIF(ITK_FOUND)
 
-ADD_EXECUTABLE(pxcreatesphere createsphere.cxx)
+ADD_EXECUTABLE(pxcreateellipsoid createellipsoid.cxx)
 
-INSTALL_TARGETS(/. pxcreatesphere)
+INSTALL_TARGETS(/. pxcreateellipsoid)
 
-TARGET_LINK_LIBRARIES(pxcreatesphere pxcommon ITKBasicFilters ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxcreateellipsoid pxcommon ITKBasicFilters ITKIO ITKCommon)

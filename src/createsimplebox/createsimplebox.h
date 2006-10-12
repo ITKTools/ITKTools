@@ -8,7 +8,7 @@
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
-#include "itkBoxSpatialFunction.h"
+#include "itkSimpleBoxSpatialFunction.h"
 #include "itkSpatialFunctionImageEvaluatorFilter.h"
 
 
@@ -19,7 +19,7 @@ void PrintUsageString(void)
 	std::cerr 
 		<< "\nThis program creates an image containing a white box, defined by point A and B.\n\n"
 		<< "Usage:\n"
-		<< "pxcreatebox\n"
+		<< "pxcreatesimplebox\n"
 		<< "\t[-in]  \tInputImageFileName\t\n"
 		<< "\t\tSize, origin, and spacing for the output image will be taken\n"
 		<< "\t\tfrom this image. NB: not the dimension and the pixeltype;\n"
@@ -96,7 +96,7 @@ class runwrap
 		typedef itk::ImageFileWriter<ImageType>				WriterType;
 		typedef typename ReaderType::Pointer					ReaderPointer;
 		typedef typename WriterType::Pointer					WriterPointer;
-		typedef itk::BoxSpatialFunction<
+		typedef itk::SimpleBoxSpatialFunction<
 			ImageDimension, PointType>									BoxFunctionType;
 		typedef typename BoxFunctionType::Pointer			BoxFunctionPointer;
 		typedef itk::SpatialFunctionImageEvaluatorFilter<

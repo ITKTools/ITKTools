@@ -2,6 +2,8 @@
 #define __itkBoxSpatialFunction_h
 
 #include "itkInteriorExteriorSpatialFunction.h"
+#include "itkEuler2DTransform.h"
+#include "itkEuler3DTransform.h"
 
 namespace itk
 {
@@ -14,22 +16,24 @@ namespace itk
  * 
  * \ingroup SpatialFunctions
  */
-template <unsigned int VImageDimension=3,typename TInput=Point<double,VImageDimension> >
+template < unsigned int VImageDimension = 3,
+  typename TInput = Point< double, VImageDimension > >
 class ITK_EXPORT BoxSpatialFunction
 : public InteriorExteriorSpatialFunction<VImageDimension,TInput>
 {
 public:
   /** Standard class typedefs. */
-  typedef BoxSpatialFunction<VImageDimension,TInput> Self;
-  typedef InteriorExteriorSpatialFunction<VImageDimension,TInput> Superclass;
-  typedef SmartPointer<Self>  Pointer;
-  typedef SmartPointer<const Self>  ConstPointer;
+  typedef BoxSpatialFunction<VImageDimension,TInput>    Self;
+  typedef InteriorExteriorSpatialFunction<
+    VImageDimension,TInput>                             Superclass;
+  typedef SmartPointer<Self>                            Pointer;
+  typedef SmartPointer<const Self>                      ConstPointer;
     
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(BoxSpatialFunction,InteriorExteriorSpatialFunction);
+  itkTypeMacro( BoxSpatialFunction, InteriorExteriorSpatialFunction );
 
 	itkStaticConstMacro(ImageDimension, unsigned int, VImageDimension);
 
@@ -39,33 +43,54 @@ public:
   /** Output type for the function. */
   typedef typename Superclass::OutputType OutputType;
 
+  /** Typedefs for the orientation. */
+  typedef Euler2DTransform< double >      Euler2DTransformType;
+  typedef typename Euler2DTransformType::InputPointType InputPointType2D;
+  typedef typename Euler2DTransformType::OutputPointType OutputPointType2D;
+  typedef Euler3DTransform< double >      Euler3DTransformType;
+  typedef typename Euler3DTransformType::InputPointType InputPointType3D;
+  typedef typename Euler3DTransformType::OutputPointType OutputPointType3D;
+
+  /** Set the center of the box. */
+  virtual void SetCenter( const InputType _arg );
+
+  /** Get the center of the box. */
+  itkGetMacro( Center, InputType );
+  
+  /** Set the radius lengths of the box. */
+  itkSetMacro( Radius, InputType );
+
+  /** Get the radius lengths of the box. */
+  itkGetMacro( Radius, InputType );
+  
+  /** Set the orientation vector, which are Euler angles. */
+  virtual void SetOrientation( const InputType _arg );
+
   /** Evaluates the function at a given position */
   OutputType Evaluate(const InputType& position) const;
-
-  /** Get and set the first point that defines the box. */
-  itkGetMacro( PointA, InputType);
-  itkSetMacro( PointA, InputType);
-  
-  /** Get and set the second point that defines the box */
-  itkGetMacro( PointB, InputType);
-  itkSetMacro( PointB, InputType);
 	       
 protected:
   BoxSpatialFunction();
   virtual ~BoxSpatialFunction();
+
   void PrintSelf(std::ostream& os, Indent indent) const;
 
 private:
   BoxSpatialFunction(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
 
-  /** The first point that defines the box */
-  InputType m_PointA;
+  /** The center of the box. */
+  InputType m_Center;
 
-  /** The second point that defines the box */
-  InputType m_PointB;
+  /** The radius lenths of the box. */
+  InputType m_Radius;
 
-};
+  /** The orientation. */
+  InputType m_Orientation;
+  typename Euler2DTransformType::Pointer  m_Euler2DTransform;
+  typename Euler3DTransformType::Pointer  m_Euler3DTransform;
+
+}; // end class BoxSpatialFunction
 
 } // end namespace itk
 
@@ -73,4 +98,4 @@ private:
 #include "itkBoxSpatialFunction.txx"
 #endif
 
-#endif
+#endif // end #ifndef __itkBoxSpatialFunction_h

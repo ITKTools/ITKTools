@@ -14,9 +14,11 @@ SUBDIRS(
  contrastenhanceimage
  countnonzerovoxels
  createbox
+ createellipsoid
  creategridimage
  createpointsinimage
  createrandomimage
+ createsimplebox
  createsphere
  cropimage
  deformationfieldgenerator

@@ -10,9 +10,9 @@ ELSE(ITK_FOUND)
           "Cannot build without ITK.  Please set ITK_DIR.")
 ENDIF(ITK_FOUND)
 
-ADD_EXECUTABLE(pxcreatebox createbox.cxx createbox.h itkBoxSpatialFunction.txx itkBoxSpatialFunction.h)
+ADD_EXECUTABLE(pxcreatebox createbox.cxx itkBoxSpatialFunction.txx itkBoxSpatialFunction.h)
 
 INSTALL_TARGETS(/. pxcreatebox)
 
-TARGET_LINK_LIBRARIES(pxcreatebox ITKBasicFilters ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxcreatebox pxcommon ITKBasicFilters ITKIO ITKCommon)
 

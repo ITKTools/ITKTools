@@ -1,7 +1,7 @@
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 
-#include "itkSphereSpatialFunction.h"
+#include "itkEllipsoidInteriorExteriorSpatialFunction.h"
 #include "itkImageRegionIterator.h"
 #include "itkImageFileWriter.h"
 
@@ -12,18 +12,19 @@
 if ( PixelType == #type && Dimension == dim ) \
 { \
     typedef itk::Image< type, dim > ImageType; \
-    function< ImageType >( outputFileName, size, spacing, center, radius ); \
+    function< ImageType >( outputFileName, size, spacing, center, radius, orientation ); \
 }
 
 //-------------------------------------------------------------------------------------
 
-/** Declare CreateSphere. */
+/** Declare CreateElipsoid. */
 template< class ImageType >
-void CreateSphere( std::string outputFileName,
+void CreateEllipsoid( std::string outputFileName,
   std::vector<unsigned int> size,
   std::vector<double> spacing,
   std::vector<double> center,
-	double radius );
+	std::vector<double> radius,
+  std::vector<double> orientation );
 
 /** Declare PrintHelp. */
 void PrintHelp(void);
@@ -53,7 +54,7 @@ int main( int argc, char *argv[] )
   std::vector<double> center;
 	bool retc = parser->GetCommandLineArgument( "-c", center );
 
-	double radius;
+	std::vector<double> radius;
 	bool retr = parser->GetCommandLineArgument( "-r", radius );
 
 	unsigned int Dimension = 3;
@@ -64,6 +65,9 @@ int main( int argc, char *argv[] )
 
   std::vector<double> spacing( Dimension, 1.0 );
 	bool retsp = parser->GetCommandLineArgument( "-sp", spacing );
+
+  std::vector<double> orientation( Dimension * Dimension, 0.0 );
+	bool reto = parser->GetCommandLineArgument( "-o", orientation );
 
 	/** Check if the required arguments are given. */
 	if ( !retout )
@@ -86,6 +90,13 @@ int main( int argc, char *argv[] )
 		std::cerr << "ERROR: You should specify \"-r\"." << std::endl;
 		return 1;
 	}
+  if ( !reto )
+  {
+    for ( unsigned int i = 0; i < Dimension; i++ )
+    {
+      orientation[ i * ( Dimension + 1 ) ] = 1.0;
+    }
+  }
 
   /** Get rid of the possible "_" in PixelType. */
 	ReplaceUnderscoreWithSpace( PixelType );
@@ -93,18 +104,18 @@ int main( int argc, char *argv[] )
   /** Run the program. */
 	try
 	{
-		run(CreateSphere,unsigned char,2);
-		run(CreateSphere,unsigned char,3);
-		run(CreateSphere,char,2);
-		run(CreateSphere,char,3);
-		run(CreateSphere,unsigned short,2);
-		run(CreateSphere,unsigned short,3);
-		run(CreateSphere,short,2);
-		run(CreateSphere,short,3);
-    run(CreateSphere,float,2);
-		run(CreateSphere,float,3);
-    run(CreateSphere,double,2);
-		run(CreateSphere,double,3);
+		run(CreateEllipsoid,unsigned char,2);
+		run(CreateEllipsoid,unsigned char,3);
+		run(CreateEllipsoid,char,2);
+		run(CreateEllipsoid,char,3);
+		run(CreateEllipsoid,unsigned short,2);
+		run(CreateEllipsoid,unsigned short,3);
+		run(CreateEllipsoid,short,2);
+		run(CreateEllipsoid,short,3);
+    run(CreateEllipsoid,float,2);
+		run(CreateEllipsoid,float,3);
+    run(CreateEllipsoid,double,2);
+		run(CreateEllipsoid,double,3);
 	}
 	catch( itk::ExceptionObject &e )
 	{
@@ -117,22 +128,26 @@ int main( int argc, char *argv[] )
 
 } // end main 
 
-/**
-	 * ******************* CreateSphere *******************
+
+  /**
+	 * ******************* CreateEllipsoid *******************
 	 */
 
 template< class ImageType >
-void CreateSphere( std::string filename,
+void CreateEllipsoid( std::string filename,
   std::vector<unsigned int> size,
   std::vector<double> spacing,
   std::vector<double> center,
-	double radius )
+	std::vector<double> radius,
+  std::vector<double> orientation )
 {
   /** Typedefs. */
   const unsigned int Dimension = ImageType::ImageDimension;
 	typedef itk::ImageRegionIterator< ImageType >		IteratorType;
-  typedef itk::SphereSpatialFunction< Dimension >	SphereSpatialFunctionType;
-  typedef SphereSpatialFunctionType::InputType    InputType;
+	typedef itk::EllipsoidInteriorExteriorSpatialFunction<
+    Dimension >			                              EllipsoidSpatialFunctionType;
+  typedef EllipsoidSpatialFunctionType::InputType InputType;
+  typedef EllipsoidSpatialFunctionType::OrientationType OrientationType;
 	typedef itk::ImageFileWriter< ImageType >				ImageWriterType;
 
 	typedef ImageType::RegionType			RegionType;
@@ -143,14 +158,21 @@ void CreateSphere( std::string filename,
 	typedef ImageType::SpacingType		SpacingType;
 
   /** Parse the arguments. */
-  SizeType    Size;
+  SizeType Size;
   SpacingType Spacing;
-  InputType   Center;
+  InputType Center;
+  InputType Radius;
+  OrientationType Orientation;
   for ( unsigned int i = 0; i < Dimension; i++ )
   {
     Size[ i ] = static_cast<SizeValueType>( size[ i ] );
     Spacing[ i ] = spacing[ i ];
-    Center[ i ] = static_cast<double>( center[ i ] );
+    Center[ i ] = center[ i ];
+    Radius[ i ] = radius[ i ];
+    for ( unsigned int j = 0; j < Dimension; j++ )
+    {
+      Orientation[ i ][ j ] = orientation[ i * Dimension + j ];
+    }
   }
 
 	/** Create image. */
@@ -162,9 +184,10 @@ void CreateSphere( std::string filename,
 	image->Allocate();
 
 	/** Create and initialize ellipsoid. */
-	SphereSpatialFunctionType::Pointer sphere = SphereSpatialFunctionType::New();
-	sphere->SetCenter( Center );
-	sphere->SetRadius( radius );
+	EllipsoidSpatialFunctionType::Pointer ellipsoid = EllipsoidSpatialFunctionType::New();
+	ellipsoid->SetCenter( Center );
+	ellipsoid->SetAxes( Radius );
+  ellipsoid->SetOrientations( Orientation );
 
 	/** Create iterator, index and point. */
 	IteratorType it( image, region );
@@ -177,9 +200,10 @@ void CreateSphere( std::string filename,
 	{
 		index = it.GetIndex();
 		image->TransformIndexToPhysicalPoint( index, point );
-		it.Set( sphere->Evaluate( point ) );
+		it.Set( ellipsoid->Evaluate( point ) );
+		/** Increase iterator. */		
 		++it;
-  }
+	} // end while
 
 	/** Write image. */
 	ImageWriterType::Pointer writer = ImageWriterType::New();
@@ -195,14 +219,17 @@ void CreateSphere( std::string filename,
 	 */
 void PrintHelp()
 {
-	std::cout << "Usage:" << std::endl << "pxcreatesphere" << std::endl;
+	std::cout << "Usage:" << std::endl << "pxcreateellipsoid" << std::endl;
 	std::cout << "\t-out\toutputFilename" << std::endl;
   std::cout << "\t-s\timage size (voxels)" << std::endl;
   std::cout << "\t[-sp]\timage spacing (mm)" << std::endl;
   std::cout << "\t-c\tcenter (mm)" << std::endl;
 	std::cout << "\t-r\tradii (mm)" << std::endl;
+  std::cout << "\t[-o]\torientation, default xyz" << std::endl;
 	std::cout << "\t[-dim]\tdimension, default 3" << std::endl;
 	std::cout << "\t[-pt]\tpixelType, default short" << std::endl;
+  std::cout << "The orientation is a dim*dim matrix, specified in row order." << std::endl;
+  std::cout << "The user should take care of supplying an orthogonal matrix." << std::endl;
 	std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double." << std::endl;
 } // end PrintHelp
 
