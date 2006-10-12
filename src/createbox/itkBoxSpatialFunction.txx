@@ -2,7 +2,7 @@
 #define __itkBoxSpatialFunction_txx
 
 #include "itkBoxSpatialFunction.h"
-#include <math.h>
+#include "vnl/vnl_math.h"
 
 namespace itk
 {
@@ -58,7 +58,7 @@ BoxSpatialFunction<VImageDimension,TInput>
   bool acc = true;
   for( unsigned int i = 0; i < ImageDimension; i++ )
   {
-    acc &= abs( mappedPosition[ i ] - this->m_Center[ i ] ) < this->m_Radius[ i ];
+    acc &= vcl_abs( mappedPosition[ i ] - this->m_Center[ i ] ) < this->m_Radius[ i ];
   }
 
   /** Return a value. */

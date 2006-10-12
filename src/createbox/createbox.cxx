@@ -4,6 +4,7 @@
 #include "itkBoxSpatialFunction.h"
 #include "itkImageRegionIterator.h"
 #include "itkImageFileWriter.h"
+#include "vnl/vnl_math.h"
 
 //-------------------------------------------------------------------------------------
 
@@ -110,7 +111,7 @@ int main(int argc, char** argv)
     for ( unsigned int i = 0; i < Dimension; i++ )
     {
       center[ i ] = ( corner1[ i ] + corner2[ i ] ) / 2.0;
-      radius[ i ] = abs( corner1[ i ] - center[ i ] );
+      radius[ i ] = vcl_abs( corner1[ i ] - center[ i ] );
     }
   }
 
@@ -158,15 +159,15 @@ void CreateBox( std::string filename,
   const unsigned int Dimension = ImageType::ImageDimension;
 	typedef itk::ImageRegionIterator<ImageType>		  IteratorType;
 	typedef itk::BoxSpatialFunction<Dimension>      BoxSpatialFunctionType;
-  typedef BoxSpatialFunctionType::InputType       InputType;
+  typedef typename BoxSpatialFunctionType::InputType       InputType;
 	typedef itk::ImageFileWriter<ImageType> 				ImageWriterType;
 
-	typedef ImageType::RegionType			RegionType;
-	typedef RegionType::SizeType			SizeType;
-  typedef RegionType::SizeValueType	SizeValueType;
-	typedef ImageType::PointType			PointType;
-	typedef ImageType::IndexType			IndexType;
-	typedef ImageType::SpacingType		SpacingType;
+	typedef typename ImageType::RegionType			RegionType;
+	typedef typename RegionType::SizeType			SizeType;
+  typedef typename RegionType::SizeValueType	SizeValueType;
+	typedef typename ImageType::PointType			PointType;
+	typedef typename ImageType::IndexType			IndexType;
+	typedef typename ImageType::SpacingType		SpacingType;
 
   /** Parse the arguments. */
   SizeType    Size;
@@ -186,13 +187,13 @@ void CreateBox( std::string filename,
 	/** Create image. */
 	RegionType region;
 	region.SetSize( Size );
-	ImageType::Pointer image = ImageType::New();
+	typename ImageType::Pointer image = ImageType::New();
 	image->SetRegions( region );
 	image->SetSpacing( Spacing );
 	image->Allocate();
 
 	/** Create and initialize ellipsoid. */
-	BoxSpatialFunctionType::Pointer box = BoxSpatialFunctionType::New();
+	typename BoxSpatialFunctionType::Pointer box = BoxSpatialFunctionType::New();
 	box->SetCenter( Center );
 	box->SetRadius( Radius );
   box->SetOrientation( Orientation );
@@ -209,12 +210,11 @@ void CreateBox( std::string filename,
 		index = it.GetIndex();
 		image->TransformIndexToPhysicalPoint( index, point );
 		it.Set( box->Evaluate( point ) );
-		/** Increase iterator. */		
 		++it;
 	} // end while
 
 	/** Write image. */
-	ImageWriterType::Pointer writer = ImageWriterType::New();
+	typename ImageWriterType::Pointer writer = ImageWriterType::New();
 	writer->SetFileName( filename.c_str() );
 	writer->SetInput( image );
 	writer->Update();
