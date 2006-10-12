@@ -132,15 +132,15 @@ void CreateSphere( std::string filename,
   const unsigned int Dimension = ImageType::ImageDimension;
 	typedef itk::ImageRegionIterator< ImageType >		IteratorType;
   typedef itk::SphereSpatialFunction< Dimension >	SphereSpatialFunctionType;
-  typedef SphereSpatialFunctionType::InputType    InputType;
+  typedef typename SphereSpatialFunctionType::InputType    InputType;
 	typedef itk::ImageFileWriter< ImageType >				ImageWriterType;
 
-	typedef ImageType::RegionType			RegionType;
-	typedef RegionType::SizeType			SizeType;
-  typedef RegionType::SizeValueType	SizeValueType;
-	typedef ImageType::PointType			PointType;
-	typedef ImageType::IndexType			IndexType;
-	typedef ImageType::SpacingType		SpacingType;
+	typedef typename ImageType::RegionType			RegionType;
+	typedef typename RegionType::SizeType			SizeType;
+  typedef typename RegionType::SizeValueType	SizeValueType;
+	typedef typename ImageType::PointType			PointType;
+	typedef typename ImageType::IndexType			IndexType;
+	typedef typename ImageType::SpacingType		SpacingType;
 
   /** Parse the arguments. */
   SizeType    Size;
@@ -156,13 +156,13 @@ void CreateSphere( std::string filename,
 	/** Create image. */
 	RegionType region;
 	region.SetSize( Size );
-	ImageType::Pointer image = ImageType::New();
+	typename ImageType::Pointer image = ImageType::New();
 	image->SetRegions( region );
 	image->SetSpacing( Spacing );
 	image->Allocate();
 
 	/** Create and initialize ellipsoid. */
-	SphereSpatialFunctionType::Pointer sphere = SphereSpatialFunctionType::New();
+	typename SphereSpatialFunctionType::Pointer sphere = SphereSpatialFunctionType::New();
 	sphere->SetCenter( Center );
 	sphere->SetRadius( radius );
 
@@ -182,7 +182,7 @@ void CreateSphere( std::string filename,
   }
 
 	/** Write image. */
-	ImageWriterType::Pointer writer = ImageWriterType::New();
+	typename ImageWriterType::Pointer writer = ImageWriterType::New();
 	writer->SetFileName( filename.c_str() );
 	writer->SetInput( image );
 	writer->Update();

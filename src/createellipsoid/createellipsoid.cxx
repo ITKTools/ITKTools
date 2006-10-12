@@ -146,16 +146,16 @@ void CreateEllipsoid( std::string filename,
 	typedef itk::ImageRegionIterator< ImageType >		IteratorType;
 	typedef itk::EllipsoidInteriorExteriorSpatialFunction<
     Dimension >			                              EllipsoidSpatialFunctionType;
-  typedef EllipsoidSpatialFunctionType::InputType InputType;
-  typedef EllipsoidSpatialFunctionType::OrientationType OrientationType;
+  typedef typename EllipsoidSpatialFunctionType::InputType InputType;
+  typedef typename EllipsoidSpatialFunctionType::OrientationType OrientationType;
 	typedef itk::ImageFileWriter< ImageType >				ImageWriterType;
 
-	typedef ImageType::RegionType			RegionType;
-	typedef RegionType::SizeType			SizeType;
-  typedef RegionType::SizeValueType	SizeValueType;
-	typedef ImageType::PointType			PointType;
-	typedef ImageType::IndexType			IndexType;
-	typedef ImageType::SpacingType		SpacingType;
+	typedef typename ImageType::RegionType			RegionType;
+	typedef typename RegionType::SizeType			SizeType;
+  typedef typename RegionType::SizeValueType	SizeValueType;
+	typedef typename ImageType::PointType			PointType;
+	typedef typename ImageType::IndexType			IndexType;
+	typedef typename ImageType::SpacingType		SpacingType;
 
   /** Parse the arguments. */
   SizeType Size;
@@ -178,13 +178,13 @@ void CreateEllipsoid( std::string filename,
 	/** Create image. */
 	RegionType region;
 	region.SetSize( Size );
-	ImageType::Pointer image = ImageType::New();
+	typename ImageType::Pointer image = ImageType::New();
 	image->SetRegions( region );
 	image->SetSpacing( Spacing );
 	image->Allocate();
 
 	/** Create and initialize ellipsoid. */
-	EllipsoidSpatialFunctionType::Pointer ellipsoid = EllipsoidSpatialFunctionType::New();
+	typename EllipsoidSpatialFunctionType::Pointer ellipsoid = EllipsoidSpatialFunctionType::New();
 	ellipsoid->SetCenter( Center );
 	ellipsoid->SetAxes( Radius );
   ellipsoid->SetOrientations( Orientation );
@@ -201,12 +201,11 @@ void CreateEllipsoid( std::string filename,
 		index = it.GetIndex();
 		image->TransformIndexToPhysicalPoint( index, point );
 		it.Set( ellipsoid->Evaluate( point ) );
-		/** Increase iterator. */		
 		++it;
 	} // end while
 
 	/** Write image. */
-	ImageWriterType::Pointer writer = ImageWriterType::New();
+	typename ImageWriterType::Pointer writer = ImageWriterType::New();
 	writer->SetFileName( filename.c_str() );
 	writer->SetInput( image );
 	writer->Update();
