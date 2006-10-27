@@ -35,7 +35,7 @@ void PrintHelp(void);
 
 int main(int argc, char** argv)
 {
-/** Check arguments for help. */
+  /** Check arguments for help. */
 	if ( argc < 5 )
 	{
 		PrintHelp();
@@ -240,8 +240,7 @@ void PrintHelp()
 	std::cout << "\t[-pt]\tpixelType, default short" << std::endl;
   std::cout << "The user should EITHER specify the center and the radius," << std::endl;
   std::cout << "OR the positions of two opposite corner points." << std::endl;
-  std::cout << "The orientation is a dim*dim matrix, specified in row order." << std::endl;
-  std::cout << "The user should take care of supplying an orthogonal matrix." << std::endl;
+  std::cout << "The orientation is a vector with the Euler angles (rad)." << std::endl;
 	std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double." << std::endl;
 } // end PrintHelp
 
