@@ -34,8 +34,11 @@ int main( int argc, char *argv[] )
   std::string	whichMean = "arithmetic";
 	bool retm = parser->GetCommandLineArgument( "-m", whichMean );
 
-  unsigned int skip = 0;
-  bool rets = parser->GetCommandLineArgument( "-s", skip );
+  unsigned int skiprow = 0;
+  bool retsr = parser->GetCommandLineArgument( "-sr", skiprow );
+
+  unsigned int skipcolumn = 0;
+  bool retsc = parser->GetCommandLineArgument( "-sc", skipcolumn );
 
   unsigned int column = 0;
   bool retc = parser->GetCommandLineArgument( "-c", column );
@@ -59,11 +62,12 @@ int main( int argc, char *argv[] )
   std::vector<double> values;
   std::string tmpString, line;
 
-  /** Read the MSDs. */
+  /** Read the values. */
   if ( fileIn.is_open() )
 	{
+    unsigned int l = 0;
     /** Skip some lines. */
-    for ( unsigned int i = 0; i < skip; i++ )
+    for ( unsigned int i = 0; i < skiprow; i++ )
     {
       std::getline( fileIn, line );
     }
@@ -74,7 +78,10 @@ int main( int argc, char *argv[] )
       std::vector<double> tmp;
       std::getline( fileIn, line );
       std::istringstream lineSS( line.c_str() );
-      lineSS >> tmpString;
+      for ( unsigned int i = 0; i < skipcolumn; i++ )
+      {
+        lineSS >> tmpString;
+      }
       bool endOfLine = false;
       while ( !endOfLine )
       {
@@ -82,19 +89,24 @@ int main( int argc, char *argv[] )
         lineSS >> tmpd;
         if ( tmpd == -1.0 ) endOfLine = true;
         else tmp.push_back( tmpd );
-      } // end while over line
+      }
       /** Fill values. */
-      if ( column <= tmp.size() )
+      if ( column < tmp.size() && tmp.size() != 0 )
       {
         values.push_back( tmp[ column ] );
       }
-      else
+      else if ( column >= tmp.size() && tmp.size() != 0 )
       {
-        std::cerr << "ERROR: There is no " << column << "th column." << std::endl;
+        std::cerr << "ERROR: There is no column nr. " << column << "." << std::endl;
         return 1;
       }
     } // end while over file
   } // end if
+  else
+  {
+    std::cerr << "ERROR: The file \"" << inputTextFile << "\" could not be opened." << std::endl;
+    return 1;
+  }
 
   /** Close the file stream. */
   fileIn.close();
