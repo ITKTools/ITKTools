@@ -43,6 +43,9 @@ int main( int argc, char *argv[] )
   unsigned int column = 0;
   bool retc = parser->GetCommandLineArgument( "-c", column );
 
+  unsigned int precision = 6;
+  bool retp = parser->GetCommandLineArgument( "-p", precision );
+
   /** Check if the required arguments are given. */
 	if ( !retin )
 	{
@@ -151,7 +154,7 @@ int main( int argc, char *argv[] )
   /** Setup the output format. */
   std::cout << std::fixed;
   std::cout << std::showpoint;
-  std::cout << std::setprecision( 6 );
+  std::cout << std::setprecision( precision );
 
   /** Print output to screen. */
   std::cout << meanString << mean << std::endl;
@@ -173,6 +176,8 @@ void PrintHelp()
   std::cout << "\t[-m]\twhat kind of mean" << std::endl;
   std::cout << "\t[-c]\tcolumn of which the mean is taken" << std::endl;
   std::cout << "\t[-s]\tskip: how many rows are skipped" << std::endl;
+  std::cout << "\t[-p]\toutput precision" << std::endl;
   std::cout << "-m should be \"arithmetic\" or \"geometric\", the default is \"arithmetic\"." << std::endl;
+  std::cout << "The default output precision is 6." << std::endl;
 } // end PrintHelp
 
