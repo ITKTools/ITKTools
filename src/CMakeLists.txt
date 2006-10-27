@@ -10,6 +10,7 @@ SUBDIRS(
  computedifferenceimage
  computedifferenceimageBIG
  computedistances
+ computemean
  computeoverlap
  contrastenhanceimage
  countnonzerovoxels
