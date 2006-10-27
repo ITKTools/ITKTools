@@ -17,7 +17,7 @@ void PrintHelp(void);
 int main( int argc, char *argv[] )
 {
   /** Check arguments for help. */
-	if ( argc < 5 )
+	if ( argc < 3 )
 	{
 		PrintHelp();
 		return 1;
