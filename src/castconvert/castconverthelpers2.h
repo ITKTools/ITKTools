@@ -3,8 +3,8 @@
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: castconverthelpers2.h,v $
   Language:  C++
-  Date:      $Date: 2006-06-09 09:29:43 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2006-11-03 12:58:27 $
+  Version:   $Revision: 1.2 $
 
   Copyright (c) 2002 Insight Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -154,8 +154,16 @@ int GetFileNameFromDICOMDirectory( std::string & seriesUID, std::string & inputD
 	if ( seriesUID == "" )
 	{
 		fileNames = nameGenerator->GetInputFileNames();
-		fileName = fileNames[ 0 ];
-		return 0;
+    if ( fileNames.size() != 0 )
+    {
+      fileName = fileNames[ 0 ];
+      return 0;
+    }
+    else
+    {
+      std::cerr << "ERROR: No files found in this directory." << std::endl;
+      return 1;
+    }
 	}
 
 	/** Get all series in this directory. */
