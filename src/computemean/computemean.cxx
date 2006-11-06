@@ -8,6 +8,7 @@
 #include <iomanip>
 #include <vector>
 #include "math.h"
+#include <algorithm>
 
 /** Declare PrintHelp. */
 void PrintHelp(void);
@@ -52,7 +53,7 @@ int main( int argc, char *argv[] )
 		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
 		return 1;
 	}
-  if ( whichMean != "arithmetic" && whichMean != "geometric" )
+  if ( whichMean != "arithmetic" && whichMean != "geometric" && whichMean != "median" )
   {
     std::cerr << "ERROR: \"-m\" should be one of { arithmetic, geometric }." << std::endl;
 		return 1;
@@ -115,7 +116,9 @@ int main( int argc, char *argv[] )
   fileIn.close();
 
   /** Calculate mean and standard deviation. */
-  double mean = 0.0, std = 0.0;
+  double mean = 0.0, std = 0.0, median = 0.0,
+    firstquartile = 0.0, thirdquartile = 0.0,
+    minimum = 0.0, maximum = 0.0;
   std::string meanString = "", stdString = "";
   if ( whichMean == "arithmetic" )
   {
@@ -132,7 +135,7 @@ int main( int argc, char *argv[] )
       std += ( values[ i ] - mean ) * ( values[ i ] - mean );
     }
     std = sqrt( std / ( values.size() - 1.0 ) );
-  }
+  } // end if arithmetic
   else if ( whichMean == "geometric" )
   {
     /** The geometic version. */
@@ -149,7 +152,32 @@ int main( int argc, char *argv[] )
     }
     mean = exp( mean );
     std = exp( sqrt( std / values.size() ) );
-  } // end if
+  } // end if geometric
+  else if ( whichMean == "median" )
+  {
+    sort( values.begin(), values.end() );
+    if ( values.size() % 2 )
+    {
+      /** size() is odd. */
+      median = values[ ( values.size() + 1 ) / 2 - 1 ];
+    }
+    else
+    {
+      /** size() is even. */
+      median = ( values[ values.size() / 2 - 1 ] + values[ values.size() / 2 ] ) / 2.0;
+    }
+    /** Determine first (Q1) and third quartile (Q3), and minimum and maximum.
+     * Use the value at position: round( ( n + 1 ) / 4 ) for Q1
+     * Use the value at position: round( ( 3n + 3 ) / 4 ) for Q3
+     * Subtract 1 for the index, since this is c++.
+     */
+    unsigned int ind1 = ( values.size() + 1.0 ) / 4.0 + 0.5;
+    unsigned int ind3 = ( 3.0 * values.size() + 3.0 ) / 4.0 + 0.5;
+    minimum = values[ 0 ];
+    maximum = values[ values.size() - 1 ];
+    firstquartile = values[ ind1 - 1 ];
+    thirdquartile = values[ ind3 - 1 ];
+  } // end if median
 
   /** Setup the output format. */
   std::cout << std::fixed;
@@ -157,8 +185,19 @@ int main( int argc, char *argv[] )
   std::cout << std::setprecision( precision );
 
   /** Print output to screen. */
-  std::cout << meanString << mean << std::endl;
-  std::cout << stdString  << std  << std::endl;
+  if ( whichMean == "arithmetic" || whichMean == "geometric" )
+  {
+    std::cout << meanString << mean << std::endl;
+    std::cout << stdString  << std  << std::endl;
+  }
+  else if ( whichMean == "median" )
+  {
+    std::cout << minimum << " "
+      << firstquartile << " "
+      << median << " "
+      << thirdquartile << " "
+      << maximum << std::endl;
+  }
 
 	/** Return a value. */
 	return 0;
@@ -177,7 +216,8 @@ void PrintHelp()
   std::cout << "\t[-c]\tcolumn of which the mean is taken" << std::endl;
   std::cout << "\t[-s]\tskip: how many rows are skipped" << std::endl;
   std::cout << "\t[-p]\toutput precision" << std::endl;
-  std::cout << "-m should be \"arithmetic\" or \"geometric\", the default is \"arithmetic\"." << std::endl;
+  std::cout << "-m should be \"arithmetic\", \"geometric\" or \"median\", the default is \"arithmetic\"." << std::endl;
   std::cout << "The default output precision is 6." << std::endl;
+  std::cout << "The output for median is: minimum, first quartile, median, third quartile, maximum." << std::endl;
 } // end PrintHelp
 
