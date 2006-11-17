@@ -144,9 +144,8 @@ void TileImages(
 
 	/** Some typedef's. */
 	typedef itk::Image<PixelType, Dimension>						ImageType;
-	typedef ImageType::SpacingType									  	SpacingType;
+	typedef typename ImageType::SpacingType					  	SpacingType;
 	typedef itk::ImageSeriesReader<ImageType>	  				ImageSeriesReaderType;
-	typedef ImageSeriesReaderType::FileNamesContainer		FileNamesContainer;
 	typedef itk::ImageFileWriter<ImageType>		  				ImageWriterType;
 
   /** Create reader. */
@@ -194,4 +193,6 @@ void PrintHelp(void)
   std::cout << "\t[-s]  \tspacing in z-direction [double]; if omitted, the origins of the 2d images are used to find the spacing; if these are identical, a spacing of 1.0 is assumed." << std::endl;
   std::cout << "Supported pixel types: short, float.\n" << std::endl; 
 
-}
+} // end PrintHelp
+
+
