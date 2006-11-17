@@ -47,6 +47,7 @@ SUBDIRS(
  rescaleintensityimagefilter
  resizeimage
  scripts
+ segmentationdistance
  statisticsonimage
  tileimages
  thresholdimage
