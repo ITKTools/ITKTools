@@ -194,8 +194,8 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
    * for each output voxel how much total weight was assigned.
    * The sum image stores the cumulative weight*pixelvalue
    * So, sumImage ./ counts image is a kind of weighted average. */
-  InternalImageType::Pointer sumImage = InternalImageType::New();
-  InternalImageType::Pointer countsImage = InternalImageType::New();
+  typename InternalImageType::Pointer sumImage = InternalImageType::New();
+  typename InternalImageType::Pointer countsImage = InternalImageType::New();
 
   bool useInterpolator = false;
   if ( this->m_Interpolator.IsNotNull() )
@@ -293,7 +293,7 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
       sumImage->TransformPhysicalPointToContinuousIndex( rtpPoint, rtpCIndex);
       for ( unsigned int i=0 ; i < ImageDimension; ++i)
       {
-        rtpIndex0[i] = vcl_floor( rtpCIndex[i] );
+        rtpIndex0[i] = static_cast<int>( vcl_floor( rtpCIndex[i] ) );
         parzenWeight(i,0) = kernel->Evaluate( 
           static_cast<double>(rtpIndex0[i]) - rtpCIndex[i] );
         parzenWeight(i,1) = kernel->Evaluate( 

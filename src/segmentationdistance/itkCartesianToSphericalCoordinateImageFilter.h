@@ -69,16 +69,16 @@ public:
   typedef typename OutputImageType::PointType   PointType;
   typedef typename OutputImageType::SpacingType SpacingType;
   typedef typename OutputImageType::PointType   OriginPointType;
-  typedef typename Vector<
+  typedef Vector<
     double, 
     itkGetStaticConstMacro(InputImageDimension)> VectorType;
   typedef typename PointType::CoordRepType      CoordRepType;
 
   typedef typename OutputImageType::PixelType   OutputPixelType;
   typedef typename InputImageType::PixelType    InputPixelType;
-  typedef typename 
+  typedef typename  
     NumericTraits<InputPixelType>::RealType     InternalPixelType;
-  typedef typename Image<
+  typedef Image<
     InternalPixelType,
     itkGetStaticConstMacro(InputImageDimension)> InternalImageType;
   
