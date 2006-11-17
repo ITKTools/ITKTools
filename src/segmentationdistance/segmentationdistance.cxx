@@ -27,7 +27,7 @@ if ( PixelType == #type && Dimension == dim ) \
 { \
     typedef itk::Image< type, dim > InputImageType; \
     function< InputImageType >( inputFileName1, inputFileName2, outputFileName,\
-    samples, thetasize, phisize ); \
+    manualcor, samples, thetasize, phisize ); \
 }
 
 //-------------------------------------------------------------------------------------
@@ -38,6 +38,7 @@ void SegmentationDistance(
   const std::string & inputFileName1,
   const std::string & inputFileName2,
 	const std::string & outputFileName,
+  const std::vector<double> & mancor,
   unsigned int samples,
 	unsigned int thetasize,
 	unsigned int phisize);
@@ -94,6 +95,9 @@ int main( int argc, char **argv )
     outputFileName = part1 + ops + part2;
 	}
 
+  std::vector<double> manualcor;
+  bool retc = parser->GetCommandLineArgument( "-c", manualcor);
+
   unsigned int samples = 20;
 	bool rets = parser->GetCommandLineArgument( "-s", samples );
 
@@ -140,6 +144,7 @@ void SegmentationDistance(
   const std::string & inputFileName1,
   const std::string & inputFileName2,
 	const std::string & outputFileName,
+  const std::vector<double> & mancor,
   unsigned int samples,
 	unsigned int thetasize,
 	unsigned int phisize)
@@ -266,16 +271,27 @@ void SegmentationDistance(
 	std::cout << "Multiplying done." << std::endl;
   
   /** Compute the center of gravity of image 1 */
-  momentCalculator->SetImage( reader1->GetOutput() );
-  std::cout << "Computing center of mass of image 1..." << std::endl;
-  momentCalculator->Compute();
-  VectorType corvec = momentCalculator->GetCenterOfGravity();
-  std::cout << "Center of mass computed. Result: " << corvec << std::endl;
-  // convert to point
   PointType cor;
-  for ( unsigned int i=0; i< Dimension; ++i)
+  if ( mancor.size() == Dimension )
   {
-    cor[i]=corvec[i];
+    for ( unsigned int i=0; i< Dimension; ++i)
+    {
+      cor[i]=mancor[i];
+    }
+    std::cout << "Center of mass given by user: " << cor << std::endl;
+  }
+  else
+  {
+    momentCalculator->SetImage( reader1->GetOutput() );
+    std::cout << "Computing center of mass of image 1..." << std::endl;
+    momentCalculator->Compute();
+    VectorType corvec = momentCalculator->GetCenterOfGravity();
+    std::cout << "Center of mass computed. Result: " << corvec << std::endl;
+    // convert to point
+    for ( unsigned int i=0; i< Dimension; ++i)
+    {
+      cor[i]=corvec[i];
+    }
   }
   
   /** Computing spherical transforms */
@@ -364,6 +380,7 @@ void PrintHelp()
 	std::cout << "Usage:" << std::endl << "pxsegmentationdistance" << std::endl;
 	std::cout << "\t-in   \tinputFilename1 inputFileName2" << std::endl;
 	std::cout << "\t[-out]\toutputFilename, default <in1>DISTANCE<in2>.mhd" << std::endl;
+  std::cout << "\t[-c]  \tCenter of rotation, used to compute the spherical transform. In world coordinates." << std::endl;
 	std::cout << "\t[-s]  \tsamples [unsigned int]; number of samples per pixel, used to do the spherical transform; default 20." << std::endl;
 	std::cout << "\t[-t]  \ttheta size; the size of the theta dimension. default: 180, which yields a spacing of 2 degrees." << std::endl;
   std::cout << "\t[-p]  \tphi size; the size of the phi dimension. default: 90, which yields a spacing of 2 degrees." << std::endl;
