@@ -92,8 +92,9 @@ int main( int argc, char **argv )
     PixelType,
     ComponentType,
     Dimension,
-    NumberOfComponents);
-  if ( retgip !=0 )
+    NumberOfComponents );
+
+  if ( retgip != 0 )
   {
     return 1;
   }
@@ -107,7 +108,7 @@ int main( int argc, char **argv )
   /** Let the user overrule this */
 	bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
 	bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
-  if (retdim | retpt)
+  if ( retdim | retpt )
   {
     std::cout << "The user has overruled this by specifying -pt and/or -dim:" << std::endl;
     std::cout << "\tPixelType:          " << ComponentType << std::endl;
@@ -115,7 +116,7 @@ int main( int argc, char **argv )
     std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
   }
 
-  if (NumberOfComponents > 1)
+  if ( NumberOfComponents > 1 )
   { 
     std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
     std::cerr << "Vector images are not supported!" << std::endl;
