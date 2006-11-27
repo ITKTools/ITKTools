@@ -302,11 +302,11 @@ void SegmentationDistance(
   cscFilter1->SetInput( multiplier->GetOutput() );
   cscFilter1->SetOutputSize( rtpSize);
   cscFilter1->SetCenterOfRotation( cor );
-  cscFilter1->SetNumberOfSamplesPerVoxel(samples);
+  cscFilter1->SetMaximumNumberOfSamplesPerVoxel(samples);
   cscFilter2->SetInput( subtracter->GetOutput() );
   cscFilter2->SetOutputSize( rtpSize);
   cscFilter2->SetCenterOfRotation( cor );
-  cscFilter2->SetNumberOfSamplesPerVoxel(samples);
+  cscFilter2->SetMaximumNumberOfSamplesPerVoxel(samples);
   std::cout << "Computing spherical transforms of DE and E..." << std::endl;   
   cscFilter1->GetRandomGenerator()->SetSeed(12345);
   cscFilter1->Update();
@@ -381,7 +381,7 @@ void PrintHelp()
 	std::cout << "\t-in   \tinputFilename1 inputFileName2" << std::endl;
 	std::cout << "\t[-out]\toutputFilename, default <in1>DISTANCE<in2>.mhd" << std::endl;
   std::cout << "\t[-c]  \tCenter of rotation, used to compute the spherical transform. In world coordinates." << std::endl;
-	std::cout << "\t[-s]  \tsamples [unsigned int]; number of samples per pixel, used to do the spherical transform; default 20." << std::endl;
+	std::cout << "\t[-s]  \tsamples [unsigned int]; maximum number of samples per pixel, used to do the spherical transform; default 20." << std::endl;
 	std::cout << "\t[-t]  \ttheta size; the size of the theta dimension. default: 180, which yields a spacing of 2 degrees." << std::endl;
   std::cout << "\t[-p]  \tphi size; the size of the phi dimension. default: 90, which yields a spacing of 2 degrees." << std::endl;
 	std::cout << "Supported: 3D, short, and everything convertable to short." << std::endl;

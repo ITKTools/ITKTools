@@ -28,7 +28,7 @@ CartesianToSphericalCoordinateImageFilter<TInputImage, TOutputImage>
   this->m_OutputSize.Fill( 0 );
   this->m_OutputStartIndex.Fill( 0 );
   this->m_Interpolator = 0;
-  this->m_NumberOfSamplesPerVoxel = 5;
+  this->m_MaximumNumberOfSamplesPerVoxel = 5;
 
   this->m_RandomGenerator = RandomGeneratorType::New();
    
@@ -230,6 +230,26 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
   sumImage->FillBuffer(0.0);
   countsImage->FillBuffer(0.0);
 
+  /** Compute (dVrtp') /(dVxyz'); This factor will be needed
+   * for computation of the number of samples per voxel
+   * dVrtp' = min(dr, dtheta, dphi)^3
+   * dVxyz' = max( dx, dy, dz)^3
+   * This makes sure that we will take enough samples for sure.
+   */
+  double dVrtp = itk::NumericTraits<double>::max();
+  double dVxyz = 0.0;
+  for (unsigned int i = 0; i < ImageDimension; ++i)
+  {
+    dVrtp = vnl_math_min( this->m_OutputSpacing[i], dVrtp);
+    dVxyz = vnl_math_max( this->m_InputSpacing[i], dVxyz);
+  }
+  double deltaVolumeRatioFactor = 
+    ( dVrtp / dVxyz ) * ( dVrtp / dVxyz ) * ( dVrtp / dVxyz );
+
+  const double invMaximumNumberOfSamplesPerVoxel = 
+    1.0 / static_cast<double>(this->m_MaximumNumberOfSamplesPerVoxel);
+  
+  /** Set up an iterator */
   typedef ImageRegionConstIteratorWithIndex< InputImageType > InputIteratorType;
   InputIteratorType inIt( inputImage, inputImage->GetRequestedRegion() );
   inIt.GoToBegin();
@@ -242,15 +262,36 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
     const IndexType & inIndex = inIt.GetIndex();
     double inValue = inIt.Value();
     PointType inPoint;
-    PointType randomPoint;
     inputImage->TransformIndexToPhysicalPoint(inIndex, inPoint);
 
-    for ( unsigned int i = 0; i < this->m_NumberOfSamplesPerVoxel; ++i)
-    {
-      /** Randomly pick a coordinate in the neighborhood of this pixel */
-      this->GenerateRandomCoordinate(inPoint, randomPoint);
+    /** distance of indexpoint to cor  */
+    VectorType vec0 = inPoint - cor;
+    /** compute r^2 sin(phi) */
+    const double r2 = vec0.GetSquaredNorm() ;
+    const double sinphi = vcl_sin( vcl_acos( vec0[2] / vcl_sqrt(r2) ) );
 
-      /** if an interpolator is used, and if it's a valid point then use it
+    /** Compute the number of samples needed */
+    const double deltaVolumeRatio = deltaVolumeRatioFactor * r2 * sinphi;
+    unsigned int numberOfSamplesPerVoxel = 1;
+    if ( deltaVolumeRatio <= invMaximumNumberOfSamplesPerVoxel )
+    {
+      numberOfSamplesPerVoxel = this->m_MaximumNumberOfSamplesPerVoxel;
+    }
+    else
+    {
+      /** Use ceil: at least 1 sample! */
+      numberOfSamplesPerVoxel = static_cast<unsigned int>(
+        vcl_ceil( 1.0 / deltaVolumeRatio ) );
+    }
+
+    /** For the first iteration use the indexPoint. This makes sure that,
+     * if only one point is used, that point is the indexPoint */
+    PointType randomPoint = inPoint;
+
+    for ( unsigned int i = 0; i < numberOfSamplesPerVoxel; ++i)
+    {
+      /** if an interpolator is used, and if the randomPoint is a valid point
+       * then use it.
        * if no interpolator is used, we simply use the voxel value itself:
        * nearest neighbor interpolatorion  */
       if ( useInterpolator )
@@ -265,7 +306,7 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
         }
       }
         
-      /** distance to cor */
+      /** distance of random point to cor */
       VectorType vec = randomPoint - cor;
       const double x = vec[0];
       const double y = vec[1];
@@ -318,6 +359,9 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
           }
         }
       }
+
+      /** Randomly pick a coordinate in the neighborhood of this pixel */
+      this->GenerateRandomCoordinate(inPoint, randomPoint);
     
     } // next random coordinate
       

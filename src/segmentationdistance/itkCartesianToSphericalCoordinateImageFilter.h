@@ -11,15 +11,16 @@ namespace itk
 {
 
 /** \class CartesianToSphericalCoordinateImageFilter
- * \brief CartesianToSphericalCoordinate an image via a coordinate transform
+ * \brief Transform an image to spherical coordinates using a kind of ParzenWindow approach.
  *
- * Output information (spacing, size and direction) for the output
- * image should be set. This information has the normal defaults of
- * unit spacing, zero origin and identity direction. Optionally, the
- * output information can be obtained from a reference image. If the
- * reference image is provided and UseReferenceImage is On, then the
- * spacing, origin and direction of the reference image will be used.
- *
+ * This filter computes the spherical transform of a 3D image. 
+ * It uses a quite unconventional way. Instead of 'shooting rays' and 
+ * interpolating the xyz image it walks over the xyz image and computes
+ * the contribution of each voxel to each r-theta-phi voxel in the output 
+ * image, using a linear parzen window. Multiple (random) samples per xyz voxel
+ * may be taken to make sure that every r-theta-phi is filled with a sensible
+ * value.
+ * 
  * Since this filter produces an image which is a different size than
  * its input, it needs to override several of the methods defined
  * in ProcessObject in order to properly manage the pipeline execution model.
@@ -88,8 +89,8 @@ public:
   typedef InterpolateImageFunction<
     InputImageType, CoordRepType>               InterpolatorType;
   
-  /** Set/Get an interpolator; not mandatory. Nearest neighbor interpolation 
-   * is used if you don't set it. */
+  /** Set/Get an interpolator; not mandatory. Implicitly, nearest
+   * neighbor interpolation is used if you don't set it.  */
   itkSetObjectMacro(Interpolator, InterpolatorType);
   itkGetObjectMacro(Interpolator, InterpolatorType);
 
@@ -101,9 +102,9 @@ public:
   itkSetMacro(CenterOfRotation, PointType);
   itkGetConstReferenceMacro( CenterOfRotation, PointType);
 
-  /** Set the number of random samples per pixel */
-  itkSetMacro(NumberOfSamplesPerVoxel, unsigned int);
-  itkGetConstMacro(NumberOfSamplesPerVoxel, unsigned int);
+  /** Set the maximum number of random samples per pixel */
+  itkSetMacro(MaximumNumberOfSamplesPerVoxel, unsigned int);
+  itkGetConstMacro(MaximumNumberOfSamplesPerVoxel, unsigned int);
     
   /** CartesianToSphericalCoordinateImageFilter produces an image which is a different size
    * than its input.  As such, it needs to provide an implementation
@@ -161,7 +162,7 @@ private:
   SizeType                m_OutputSize;       // Size of the output image
   PointType               m_CenterOfRotation;
   typename InterpolatorType::Pointer m_Interpolator;
-  unsigned int            m_NumberOfSamplesPerVoxel;
+  unsigned int            m_MaximumNumberOfSamplesPerVoxel;
 
 };
 
