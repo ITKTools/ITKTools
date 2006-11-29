@@ -11,7 +11,7 @@
 
 /** run: A macro to call a function. */
 #define run(function,type,dim) \
-if ( PixelType == #type && Dimension == dim ) \
+if ( ComponentType == #type && Dimension == dim ) \
 { \
     typedef itk::Image< type, dim > InputImageType; \
     function< InputImageType >( inputFileName, outputFileName, window ); \
@@ -32,7 +32,7 @@ void PrintHelp(void);
 int main( int argc, char **argv )
 {
 	/** Check arguments for help. */
-	if ( argc < 6 || argc > 12 )
+	if ( argc < 6 || argc > 10 )
 	{
 		PrintHelp();
 		return 1;
@@ -190,13 +190,13 @@ void IntensityWindowing( std::string inputFileName, std::string outputFileName,
 void PrintHelp()
 {
 	std::cout << "Usage:" << std::endl << "pxintensitywindowing" << std::endl;
-	std::cout << "\t-in\tinputFilename" << std::endl;
+	std::cout << "\t-in   \tinputFilename" << std::endl;
 	std::cout << "\t[-out]\toutputFilename, default in + WINDOWED.mhd" << std::endl;
-	std::cout << "\t-w\twindowMinimum windowMaximum" << std::endl;
+	std::cout << "\t-w    \twindowMinimum windowMaximum" << std::endl;
 	//std::cout << "\t[-dim]\tdimension, default 3" << std::endl;
 	//std::cout << "\t[-pt]\tpixelType, default short" << std::endl;
   std::cout << "\t[-pt] \tpixel type of input and output images;" << std::endl;
   std::cout << "\t      \tdefault: automatically determined from the first input image." << std::endl;
-  std::cout << "Supported: 2D, 3D, (unsigned) short, (unsigned) char." << std::endl;
+  std::cout << "Supported: 2D, 3D, (unsigned) short, (unsigned) char, float." << std::endl;
 } // end PrintHelp
 
