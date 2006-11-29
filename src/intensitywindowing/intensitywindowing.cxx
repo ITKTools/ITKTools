@@ -42,29 +42,57 @@ int main( int argc, char **argv )
 	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
 	parser->SetCommandLineArguments( argc, argv );
 
-	/** Get arguments. */
+	/** Get input file name. */
 	std::string	inputFileName = "";
 	bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
-
-	std::string	outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
-	outputFileName += "WINDOWED.mhd";
-	bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
-
-	std::vector<double> window;
-	bool retw = parser->GetCommandLineArgument( "-w", window );
-
-	unsigned int Dimension = 3;
-	bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
-
-	std::string	PixelType = "short";
-	bool retpt = parser->GetCommandLineArgument( "-pt", PixelType );
-
-	/** Check if the required arguments are given. */
-	if ( !retin )
+  if ( !retin )
 	{
 		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
 		return 1;
 	}
+
+  /** Determine input image properties. */
+  std::string ComponentType = "short";
+  std::string	PixelType; //we don't use this
+  unsigned int Dimension = 3;
+  unsigned int NumberOfComponents = 1;
+  std::vector<unsigned int> imagesize( Dimension, 0 );
+  int retgip = GetImageProperties(
+    inputFileName,
+    PixelType,
+    ComponentType,
+    Dimension,
+    NumberOfComponents,
+    imagesize );
+  if ( retgip != 0 )
+  {
+    return 1;
+  }
+
+  /** Let the user overrule this. */
+	bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
+  
+  /** Error checking. */
+  if ( NumberOfComponents > 1 )
+  { 
+    std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
+    std::cerr << "Vector images are not supported!" << std::endl;
+    return 1;
+  }
+
+  /** Get the output file name. */
+	std::string	outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
+	outputFileName += "WINDOWED.mhd";
+	bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+
+  /** Get the window. */
+	std::vector<double> window;
+	bool retw = parser->GetCommandLineArgument( "-w", window );
+
+	//unsigned int Dimension = 3;
+	//bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
+
+	/** Check if the required arguments are given. */
 	if ( !retw )
 	{
 		std::cerr << "ERROR: You should specify \"-w\"." << std::endl;
@@ -163,8 +191,10 @@ void PrintHelp()
 	std::cout << "\t-in\tinputFilename" << std::endl;
 	std::cout << "\t[-out]\toutputFilename, default in + WINDOWED.mhd" << std::endl;
 	std::cout << "\t-w\twindowMinimum windowMaximum" << std::endl;
-	std::cout << "\t[-dim]\tdimension, default 3" << std::endl;
-	std::cout << "\t[-pt]\tpixelType, default short" << std::endl;
-	std::cout << "Supported: 2D, 3D, (unsigned) short, (unsigned) char." << std::endl;
+	//std::cout << "\t[-dim]\tdimension, default 3" << std::endl;
+	//std::cout << "\t[-pt]\tpixelType, default short" << std::endl;
+  std::cout << "\t[-pt] \tpixel type of input and output images;" << std::endl;
+  std::cout << "\t      \tdefault: automatically determined from the first input image." << std::endl;
+  std::cout << "Supported: 2D, 3D, (unsigned) short, (unsigned) char." << std::endl;
 } // end PrintHelp
 
