@@ -131,6 +131,8 @@ int main( int argc, char **argv )
 		run(IntensityWindowing,unsigned short,3);
 		run(IntensityWindowing,short,2);
 		run(IntensityWindowing,short,3);
+    run(IntensityWindowing,float,2);
+		run(IntensityWindowing,float,3);
 	}
 	catch( itk::ExceptionObject &e )
 	{
