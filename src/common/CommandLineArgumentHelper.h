@@ -2,6 +2,7 @@
 #define __CommandLineArgumentHelper_h
 
 #include <string>
+#include <vector>
 
 /** Replace underscores in the input string with spaces */
 void ReplaceUnderscoreWithSpace( std::string & arg );
@@ -15,7 +16,8 @@ int GetImageProperties(
   std::string & pixeltype,
   std::string & componenttype,
   unsigned int & dimension,
-  unsigned int & numberofcomponents);
+  unsigned int & numberofcomponents,
+  std::vector<unsigned int> & imagesize );
 
 #endif // end #ifndef __CommandLineArgumentHelper_h
 

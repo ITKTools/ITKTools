@@ -30,7 +30,8 @@ int GetImageProperties(
   std::string & pixeltype,
   std::string & componenttype,
   unsigned int & dimension,
-  unsigned int & numberofcomponents)
+  unsigned int & numberofcomponents,
+  std::vector<unsigned int> & imagesize )
 {
   /** Dummy image type. */
   const unsigned int DummyDimension = 3;
@@ -70,6 +71,13 @@ int GetImageProperties(
   pixeltype = testImageIOBase->GetPixelTypeAsString(
     testImageIOBase->GetPixelType() );
 
+  /** Get the image size. */
+  imagesize.resize( dimension );
+  for ( unsigned int i = 0; i < dimension; i++ )
+  {
+    imagesize[ i ] = testImageIOBase->GetDimensions( i );
+  }
+
   /** Check inputPixelType. */
   if ( componenttype != "unsigned char"
     && componenttype != "char"
@@ -82,7 +90,7 @@ int GetImageProperties(
     && componenttype != "float"
     && componenttype != "double" )
   {
-    /** In this case an illegal pixeltype  is found. */
+    /** In this case an illegal pixeltype is found. */
     std::cerr 
       << "ERROR while determining image properties!"
       << "The found componenttype is \""
