@@ -1,115 +1,155 @@
 
 
-/** Include the right headers. */
-
+#include "itkCommandLineArgumentParser.h"
+#include "CommandLineArgumentHelper.h"
 #include "itkImageFileReader.h"
 #include "itkExtractImageFilter.h"
 #include "itkImageFileWriter.h"
-
-#include "itkImage.h"
+#include <string>
+#include <vector>
+#include <itksys/SystemTools.hxx>
 
 /** \todo explain rationale.
  *
  *
  */
+
+/** run: A macro to call a function. */
+#define run(function,type) \
+if ( ComponentType == #type ) \
+{ \
+  function< type >( inputFileName, outputFileName, slicenumber, which_dimension ); \
+}
+
+//-------------------------------------------------------------------------------------
+
+/** Declare ExtractSlice. */
+template< class PixelType >
+void ExtractSlice(
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+  unsigned int slicenumber,
+  unsigned int which_dimension );
+
+/** Declare PrintHelp function. */
+void PrintHelp(void);
+
+//-------------------------------------------------------------------------------------
+
 int main( int argc, char ** argv )
 {
-	/** Warning. */
-	//std::cout << "Warning: this program assumes 3d images with a pixelType convertible to shorts!\n" << std::endl;
-
-	if ( argc == 1 || argv[ 1 ] == "--help" )
+  if ( argc < 5 )
 	{
-		std::cout << "Usage:" << std::endl;
-		std::cout << "pxextractslice inputimage outputimage slicenumber" << std::endl;
+    PrintHelp();
 		return 1;
 	}
 
-	/** Define image type. */
-	typedef short PixelType;
+  /** Create a command line argument parser. */
+	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+	parser->SetCommandLineArguments( argc, argv );
 
-	/** Some typedef's. */
-	typedef itk::Image<PixelType, 3>										Image3DType;
-	typedef Image3DType::Pointer												Image3DPointer;
-	typedef itk::Image<PixelType, 2>										Image2DType;
-	typedef Image2DType::Pointer												Image2DPointer;
-	typedef itk::ImageFileReader<Image3DType>						ImageReaderType;
-	typedef ImageReaderType::Pointer										ImageReaderPointer;
-	typedef itk::ExtractImageFilter<
-		Image3DType, Image2DType >												ExtractFilterType;
-	typedef ExtractFilterType::Pointer									ExtractFilterPointer;
-	typedef itk::ImageFileWriter<Image2DType>						ImageWriterType;
-	typedef ImageWriterType::Pointer										ImageWriterPointer;
-
-	typedef Image3DType::RegionType				RegionType;
-	typedef Image3DType::SizeType					SizeType;
-	typedef Image3DType::IndexType				IndexType;
-
-	/**	Task 1:
-	 * **********************************************************************
-	 * Read in the input image.
-	 */
-
-	/** Create reader. */
-	ImageReaderPointer reader = ImageReaderType::New();
-	reader->SetFileName( argv[ 1 ] );
-
-	/** Update the reader. */
-	try
+  /** Get the input file names. */
+	std::string inputFileName;
+	bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  if ( !retin )
 	{
-		reader->Update();
-	}
-	catch ( itk::ExceptionObject & err )
-	{
-		std::cerr << "ERROR occured while reading the image." << std::endl;
-		std::cerr << err << std::endl;
+		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
 		return 1;
 	}
 
-	/** Create extractor and writer. */
-	ExtractFilterPointer extractor = ExtractFilterType::New();
-	extractor->SetInput( reader->GetOutput() );
-	ImageWriterPointer writer = ImageWriterType::New();
-	writer->SetFileName( argv[ 2 ] );
-	writer->SetInput( extractor->GetOutput() );
+  /** Determine input image properties. */
+  std::string ComponentType = "short";
+  std::string	PixelType; //we don't use this
+  unsigned int Dimension = 3;
+  unsigned int NumberOfComponents = 1;
+  std::vector<unsigned int> imagesize( Dimension, 0 );
+  int retgip = GetImageProperties(
+    inputFileName,
+    PixelType,
+    ComponentType,
+    Dimension,
+    NumberOfComponents,
+    imagesize );
 
-	/** Get the slicenumber. */
-	const unsigned int slicenumber = atoi( argv[ 3 ] );
+  if ( retgip != 0 )
+  {
+    return 1;
+  }
+  
+  /** Let the user overrule this. */
+	bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
+  
+  /** Error checking. */
+  if ( NumberOfComponents > 1 )
+  { 
+    std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
+    std::cerr << "Vector images are not supported!" << std::endl;
+    return 1;
+  }
 
-	/** Get the size. */
-  RegionType inputRegion = reader->GetOutput()->GetLargestPossibleRegion();
-	SizeType size = inputRegion.GetSize();
+  /** Get the slicenumber which is to be extracted. */
+	unsigned int slicenumber;
+	bool retsn = parser->GetCommandLineArgument( "-sn", slicenumber );
+  if ( !retsn )
+	{
+		std::cerr << "ERROR: You should specify \"-sn\"." << std::endl;
+		return 1;
+	}
+  std::string slicenumberstring;
+	bool retsns = parser->GetCommandLineArgument( "-sn", slicenumberstring );
 
-	/** Sanity check. */
-	if ( slicenumber > size[ 2 ] )
+  /** Get the dimension in which the slice is to be extracted.
+   * The default is the z-direction.
+   */
+	unsigned int which_dimension = 2;
+  bool retd = parser->GetCommandLineArgument( "-d", which_dimension );
+
+  /** Sanity check. */
+	if ( slicenumber > imagesize[ which_dimension ] )
 	{
 		std::cerr << "ERROR: You selected slice number "
-			<< slicenumber << ", where the input image only has "
-			<< size[ 2 ] << " number of slices." << std::endl;
+			<< slicenumber
+      << ", where the input image only has "
+			<< imagesize[ which_dimension ]
+      << " slices in dimension "
+      << which_dimension << "." << std::endl;
 		return 1;
 	}
-	/** Set the third dimension to zero. */
-  size[ 2 ] = 0;
 
-	/** Get the index. Set the third dimension to the correct slice. */
-	IndexType start = inputRegion.GetIndex();
-  start[ 2 ] = slicenumber;
-
-	/** Create a desired extraction region and set it into the extractor. */
-	RegionType desiredRegion;
-  desiredRegion.SetSize(  size  );
-  desiredRegion.SetIndex( start );
-
-	extractor->SetExtractionRegion( desiredRegion );
-
-	/** Update. */
-	try
+  /** Sanity check. */
+	if ( which_dimension > Dimension - 1 )
 	{
-		writer->Update();
+		std::cerr << "ERROR: You selected to extract a slice from dimension "
+			<< which_dimension + 1
+      << ", where the input image is "
+			<< Dimension
+      << "D." << std::endl;
+		return 1;
 	}
-	catch ( itk::ExceptionObject & err )
+
+  /** Get the outputFileName. */
+  std::string direction = "z";
+  if ( which_dimension == 0 ) direction = "x";
+  else if ( which_dimension == 1 ) direction = "y";
+  std::string part1 =
+      itksys::SystemTools::GetFilenameWithoutLastExtension( inputFileName );
+  std::string part2 =
+    itksys::SystemTools::GetFilenameLastExtension( inputFileName );
+  std::string	outputFileName = part1 + "_slice_" + direction + "=" + slicenumberstring + part2;
+	bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+
+  /** Run the program. */
+  try
 	{
-		std::cerr << "ERROR occured." << std::endl;
-		std::cerr << err << std::endl;
+    run( ExtractSlice, unsigned char );
+    run( ExtractSlice, char );
+    run( ExtractSlice, unsigned short );
+    run( ExtractSlice, short );
+    run( ExtractSlice, float );
+  }
+	catch( itk::ExceptionObject &e )
+	{
+		std::cerr << "Caught ITK exception: " << e << std::endl;
 		return 1;
 	}
 
@@ -117,5 +157,82 @@ int main( int argc, char ** argv )
 	return 0;
 
 } // end main
+
+
+//-------------------------------------------------------------------------------------
+
+/** Define ExtractSlice. */
+template< class PixelType >
+void ExtractSlice(
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+  unsigned int slicenumber,
+  unsigned int which_dimension )
+{
+	/** Some typedef's. */
+	typedef itk::Image<PixelType, 3>										Image3DType;
+	//typedef Image3DType::Pointer												Image3DPointer;
+	typedef itk::Image<PixelType, 2>										Image2DType;
+	//typedef Image2DType::Pointer												Image2DPointer;
+	typedef itk::ImageFileReader<Image3DType>						ImageReaderType;
+	//typedef ImageReaderType::Pointer										ImageReaderPointer;
+	typedef itk::ExtractImageFilter<
+		Image3DType, Image2DType >												ExtractFilterType;
+	//typedef ExtractFilterType::Pointer									ExtractFilterPointer;
+	typedef itk::ImageFileWriter<Image2DType>						ImageWriterType;
+	//typedef ImageWriterType::Pointer										ImageWriterPointer;
+
+	typedef Image3DType::RegionType				RegionType;
+	typedef Image3DType::SizeType					SizeType;
+	typedef Image3DType::IndexType				IndexType;
+
+	/** Create reader. */
+  typename ImageReaderType::Pointer reader = ImageReaderType::New();
+  reader->SetFileName( inputFileName.c_str() );
+	reader->Update();
+
+	/** Create extractor. */
+  typename ExtractFilterType::Pointer extractor = ExtractFilterType::New();
+	extractor->SetInput( reader->GetOutput() );
+
+	/** Get the size and set which_dimension to zero. */
+  RegionType inputRegion = reader->GetOutput()->GetLargestPossibleRegion();
+	SizeType size = inputRegion.GetSize();
+  size[ which_dimension ] = 0;
+
+	/** Get the index and set which_dimension to the correct slice. */
+	IndexType start = inputRegion.GetIndex();
+  start[ which_dimension ] = slicenumber;
+
+	/** Create a desired extraction region and set it into the extractor. */
+	RegionType desiredRegion;
+  desiredRegion.SetSize(  size  );
+  desiredRegion.SetIndex( start );
+	extractor->SetExtractionRegion( desiredRegion );
+
+  /** Write the 2D output image. */
+  typename ImageWriterType::Pointer writer = ImageWriterType::New();
+	writer->SetFileName( outputFileName.c_str() );
+	writer->SetInput( extractor->GetOutput() );
+	writer->Update();
+
+} // end ExtractSlice
+
+//-------------------------------------------------------------------------------------
+
+/** Define PrintHelp. */
+void PrintHelp(void)
+{
+  std::cout << "pxextractslice extracts a 2D slice from a 3D image." << std::endl;
+  std::cout << "Usage:  \npxextractslice" << std::endl;
+  std::cout << "\t-in   \tinput image filename" << std::endl;
+  std::cout << "\t[-out]\toutput image filename" << std::endl;
+  std::cout << "\t[-pt] \tpixel type of input and output images;" << std::endl;
+  std::cout << "\t      \tdefault: automatically determined from the first input image." << std::endl;
+  std::cout << "\t-sn   \tslice number" << std::endl;
+  std::cout << "\t[-d]  \tthe dimension from which a slice is extracted, default the z dimension" << std::endl;
+  std::cout << "Supported pixel types: (unsigned) char, (unsigned) short, float.\n" << std::endl; 
+
+} // end PrintHelp
 
 

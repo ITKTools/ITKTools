@@ -12,7 +12,7 @@ ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxextractslice extractslice.cxx)
 
-TARGET_LINK_LIBRARIES(pxextractslice ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxextractslice pxcommon ITKIO ITKCommon)
 
 INSTALL_TARGETS(/. pxextractslice)
 
