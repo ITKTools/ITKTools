@@ -72,17 +72,19 @@ int main( int argc, char *argv[] )
 		return 1;
 	}
   
-  /** Determine image properties */
+  /** Determine image properties. */
   std::string ComponentType = "short";
   std::string	PixelType; //we don't use this
-  unsigned int Dimension = 3;  
-  unsigned int NumberOfComponents = 1;  
+  unsigned int Dimension = 3;
+  unsigned int NumberOfComponents = 1;
+  std::vector<unsigned int> imagesize( Dimension, 0 );
   int retgip = GetImageProperties(
     inputFileName,
     PixelType,
     ComponentType,
     Dimension,
-    NumberOfComponents);
+    NumberOfComponents,
+    imagesize );
   if ( retgip !=0 )
   {
     return 1;

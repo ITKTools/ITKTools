@@ -55,16 +55,19 @@ int main( int argc, char ** argv )
   unsigned int numberOfBins = 100;
   bool retb = parser->GetCommandLineArgument( "-b", numberOfBins );
   
+  /** Determine image properties. */
   std::string ComponentType = "float";
   std::string	PixelType; //we don't use this
-  unsigned int Dimension = 2;  
-  unsigned int NumberOfComponents = 1;  
+  unsigned int Dimension = 2;
+  unsigned int NumberOfComponents = 1;
+  std::vector<unsigned int> imagesize( Dimension, 0 );
   int retgip = GetImageProperties(
     inputFileName,
     PixelType,
     ComponentType,
     Dimension,
-    NumberOfComponents);
+    NumberOfComponents,
+    imagesize );
   if ( retgip !=0 )
   {
     return 1;

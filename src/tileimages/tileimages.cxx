@@ -50,8 +50,7 @@ void PrintHelp(void);
 
 int main( int argc, char ** argv )
 {
-	
-	if ( argc < 6 || argv[ 1 ] == "--help" )
+	if ( argc < 6 )
 	{
     PrintHelp();
 		return 1;
@@ -99,14 +98,16 @@ int main( int argc, char ** argv )
   /** Determine image properties. */
   std::string ComponentType = "short";
   std::string	PixelType; //we don't use this
-  unsigned int Dimension = 3;  
-  unsigned int NumberOfComponents = 1;  
+  unsigned int Dimension = 3;
+  unsigned int NumberOfComponents = 1;
+  std::vector<unsigned int> imagesize( Dimension, 0 );
   int retgip = GetImageProperties(
-    inputFileNames[0],
+    inputFileNames[ 0 ],
     PixelType,
     ComponentType,
     Dimension,
-    NumberOfComponents );
+    NumberOfComponents,
+    imagesize );
 
   if ( retgip != 0 )
   {
@@ -292,14 +293,14 @@ void PrintHelp(void)
   std::cout << "otherwise 2D-2D or 3D-3D tiling is performed.\n" << std::endl;
 
   std::cout << "Usage:  \npxtileimages" << std::endl;
-  std::cout << "\t-in   \tinput image filenames, at least 2." << std::endl;
-  std::cout << "\t-out  \toutput image filename." << std::endl;
-  std::cout << "\t[-pt] \tpixel type of input and output images;" << std::endl;
-  std::cout << "\t      \tdefault: automatically determined from the first input image." << std::endl;
+  std::cout << "\t-in   \tinput image filenames, at least 2" << std::endl;
+  std::cout << "\t-out  \toutput image filename" << std::endl;
+  std::cout << "\t[-pt] \tpixel type of input and output images" << std::endl;
+  std::cout << "\t      \tdefault: automatically determined from the first input image" << std::endl;
   std::cout << "\t[-sp] \tspacing in z-direction for 2D-3D tiling [double];" << std::endl;
   std::cout << "\t      \tif omitted, the origins of the 2d images are used to find the spacing;" << std::endl;
-  std::cout << "\t      \tif these are identical, a spacing of 1.0 is assumed." << std::endl;
-  std::cout << "\t[-ly] \tlayout of the nD-nD tiling." << std::endl;
+  std::cout << "\t      \tif these are identical, a spacing of 1.0 is assumed" << std::endl;
+  std::cout << "\t[-ly] \tlayout of the nD-nD tiling" << std::endl;
   std::cout << "\t      \texample: in 2D for 4 images \"-ly 2 2\" results in" << std::endl;
   std::cout << "\t      \t\t im1 im2" << std::endl;
   std::cout << "\t      \t\t im3 im4" << std::endl;

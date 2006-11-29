@@ -59,8 +59,14 @@ int main( int argc, char **argv )
   std::string	inputPixelType = "";
   unsigned int inputDimension = 2;
   unsigned int numberOfComponents = 1;
-  int retgip = GetImageProperties( inputFileName, inputPixelType,
-    inputComponentType, inputDimension, numberOfComponents);
+  std::vector<unsigned int> imagesize( inputDimension, 0 );
+  int retgip = GetImageProperties(
+    inputFileName,
+    inputPixelType,
+    inputComponentType,
+    inputDimension,
+    numberOfComponents,
+    imagesize );
   if ( retgip ) return retgip;
 
   /** Get the output component type. */

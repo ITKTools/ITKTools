@@ -58,17 +58,19 @@ int main( int argc, char **argv )
     outputFileName = part1 + ops + ext;
   }
 	
-  /** Determine image properties */
+  /** Determine image properties. */
   std::string ComponentType = "float";
   std::string	PixelType = "VECTOR";
-  unsigned int Dimension = 2;  
-  unsigned int NumberOfComponents = Dimension; 
+  unsigned int Dimension = 2;
+  unsigned int NumberOfComponents = Dimension;
+  std::vector<unsigned int> imagesize( Dimension, 0 );
   int retgip = GetImageProperties(
     inputFileName,
     PixelType,
     ComponentType,
     Dimension,
-    NumberOfComponents);
+    NumberOfComponents,
+    imagesize );
   if ( retgip !=0 )
   {
     return 1;
