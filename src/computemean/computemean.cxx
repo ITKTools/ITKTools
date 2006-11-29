@@ -171,8 +171,8 @@ int main( int argc, char *argv[] )
      * Use the value at position: round( ( 3n + 3 ) / 4 ) for Q3
      * Subtract 1 for the index, since this is c++.
      */
-    unsigned int ind1 = ( values.size() + 1.0 ) / 4.0 + 0.5;
-    unsigned int ind3 = ( 3.0 * values.size() + 3.0 ) / 4.0 + 0.5;
+    unsigned int ind1 = static_cast<unsigned int>( ( values.size() + 1.0 ) / 4.0 + 0.5 );
+    unsigned int ind3 = static_cast<unsigned int>( ( 3.0 * values.size() + 3.0 ) / 4.0 + 0.5 );
     minimum = values[ 0 ];
     maximum = values[ values.size() - 1 ];
     firstquartile = values[ ind1 - 1 ];
