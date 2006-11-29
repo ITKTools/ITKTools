@@ -171,20 +171,15 @@ void ExtractSlice(
 {
 	/** Some typedef's. */
 	typedef itk::Image<PixelType, 3>										Image3DType;
-	//typedef Image3DType::Pointer												Image3DPointer;
 	typedef itk::Image<PixelType, 2>										Image2DType;
-	//typedef Image2DType::Pointer												Image2DPointer;
 	typedef itk::ImageFileReader<Image3DType>						ImageReaderType;
-	//typedef ImageReaderType::Pointer										ImageReaderPointer;
 	typedef itk::ExtractImageFilter<
 		Image3DType, Image2DType >												ExtractFilterType;
-	//typedef ExtractFilterType::Pointer									ExtractFilterPointer;
 	typedef itk::ImageFileWriter<Image2DType>						ImageWriterType;
-	//typedef ImageWriterType::Pointer										ImageWriterPointer;
 
-	typedef Image3DType::RegionType				RegionType;
-	typedef Image3DType::SizeType					SizeType;
-	typedef Image3DType::IndexType				IndexType;
+	typedef typename Image3DType::RegionType				RegionType;
+	typedef typename Image3DType::SizeType					SizeType;
+	typedef typename Image3DType::IndexType				IndexType;
 
 	/** Create reader. */
   typename ImageReaderType::Pointer reader = ImageReaderType::New();
