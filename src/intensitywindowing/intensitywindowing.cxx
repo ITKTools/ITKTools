@@ -1,9 +1,8 @@
+
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
-
 #include "itkImage.h"
 #include "itkIntensityWindowingImageFilter.h"
-
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
@@ -117,8 +116,8 @@ int main( int argc, char **argv )
 		return 1;
 	}
 
-	/** Get rid of the possible "_" in PixelType. */
-	ReplaceUnderscoreWithSpace( PixelType );
+	/** Get rid of the possible "_" in ComponentType. */
+	ReplaceUnderscoreWithSpace( ComponentType );
 
 	/** Run the program. */
 	try
@@ -184,9 +183,9 @@ void IntensityWindowing( std::string inputFileName, std::string outputFileName,
 } // end IntensityWindowing
 
 
-	/**
-	 * ******************* PrintHelp *******************
-	 */
+/**
+ * ******************* PrintHelp *******************
+ */
 void PrintHelp()
 {
 	std::cout << "Usage:" << std::endl << "pxintensitywindowing" << std::endl;
@@ -198,5 +197,6 @@ void PrintHelp()
   std::cout << "\t[-pt] \tpixel type of input and output images;" << std::endl;
   std::cout << "\t      \tdefault: automatically determined from the first input image." << std::endl;
   std::cout << "Supported: 2D, 3D, (unsigned) short, (unsigned) char, float." << std::endl;
+
 } // end PrintHelp
 

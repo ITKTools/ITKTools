@@ -81,19 +81,19 @@ int main( int argc, char **argv )
   std::cout << "\tDimension:          " << Dimension << std::endl;
   std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
   
-  if (NumberOfComponents != Dimension)
+  if ( NumberOfComponents != Dimension )
   { 
     std::cerr << "ERROR: The NumberOfComponents must equal the Dimension!" << std::endl;
     return 1; 
   }
-  if (NumberOfComponents == 1)
+  if ( NumberOfComponents == 1 )
   { 
     std::cerr << "Scalar images are not supported!" << std::endl;
     return 1; 
   }
   
-	/** Get rid of the possible "_" in PixelType. */
-	ReplaceUnderscoreWithSpace(ComponentType);
+	/** Get rid of the possible "_" in ComponentType. */
+	ReplaceUnderscoreWithSpace( ComponentType );
 	
 	/** Run the program. */
 	try

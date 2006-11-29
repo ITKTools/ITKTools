@@ -97,7 +97,7 @@ int main( int argc, char **argv )
   Dimension = testImageIO->GetNumberOfDimensions();
   NumberOfComponents = testImageIO->GetNumberOfComponents();
   ComponentType = testImageIO->GetComponentTypeAsString( testImageIO->GetComponentType() );
-  ReplaceUnderscoreWithSpace(ComponentType);
+  ReplaceUnderscoreWithSpace( ComponentType );
   PixelType = testImageIO->GetPixelTypeAsString( testImageIO->GetPixelType() );
   imageSize.SetSize(Dimension);
   for (unsigned int i = 0; i < Dimension; ++i)
@@ -138,7 +138,7 @@ int main( int argc, char **argv )
   /** Let the user overrule this */
 	bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
 	bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
-  if (retdim | retpt)
+  if ( retdim | retpt )
   {
     std::cout << "The user has overruled this by specifying -pt and/or -dim:" << std::endl;
     std::cout << "\tPixelType:          " << ComponentType << std::endl;
@@ -146,15 +146,15 @@ int main( int argc, char **argv )
     std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
   }
 
-  if (NumberOfComponents > 1)
+  if ( NumberOfComponents > 1 )
   { 
     std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
     std::cerr << "Vector images are not supported!" << std::endl;
     return 1; 
   }
  
-	/** Get rid of the possible "_" in PixelType. */
-	ReplaceUnderscoreWithSpace(ComponentType);
+	/** Get rid of the possible "_" in ComponentType. */
+	ReplaceUnderscoreWithSpace( ComponentType );
 
 	/** Run the program. */
 	try

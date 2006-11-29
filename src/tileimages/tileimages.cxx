@@ -138,7 +138,7 @@ int main( int argc, char ** argv )
     return 1;
   }
 
-	/** Get rid of the possible "_" in PixelType. */
+	/** Get rid of the possible "_" in ComponentType. */
 	ReplaceUnderscoreWithSpace( ComponentType );
 	
 	/** Run the program. */	
