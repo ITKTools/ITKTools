@@ -48,7 +48,7 @@ int main( int argc, char ** argv )
 	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
 	parser->SetCommandLineArguments( argc, argv );
 
-  /** Get the input file names. */
+  /** Get the input file name. */
 	std::string inputFileName;
 	bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
   if ( !retin )
@@ -170,15 +170,15 @@ void ExtractSlice(
   unsigned int which_dimension )
 {
 	/** Some typedef's. */
-	typedef itk::Image<PixelType, 3>										Image3DType;
-	typedef itk::Image<PixelType, 2>										Image2DType;
-	typedef itk::ImageFileReader<Image3DType>						ImageReaderType;
+	typedef itk::Image<PixelType, 3>							Image3DType;
+	typedef itk::Image<PixelType, 2>							Image2DType;
+	typedef itk::ImageFileReader<Image3DType>			ImageReaderType;
 	typedef itk::ExtractImageFilter<
-		Image3DType, Image2DType >												ExtractFilterType;
-	typedef itk::ImageFileWriter<Image2DType>						ImageWriterType;
+		Image3DType, Image2DType >									ExtractFilterType;
+	typedef itk::ImageFileWriter<Image2DType>			ImageWriterType;
 
-	typedef typename Image3DType::RegionType				RegionType;
-	typedef typename Image3DType::SizeType					SizeType;
+	typedef typename Image3DType::RegionType			RegionType;
+	typedef typename Image3DType::SizeType				SizeType;
 	typedef typename Image3DType::IndexType				IndexType;
 
 	/** Create reader. */
