@@ -5,8 +5,7 @@
 #include "itkExceptionObject.h"
 #include "itkImageFileReader.h"
 #include "itkSignedMaurerDistanceMapImageFilter.h"
-#include "itkBinaryBallStructuringElement.h"
-//#include "itkBinaryErodeImageFilter.h"
+#include "itkBinaryCrossStructuringElement.h"
 #include "itkGrayscaleErodeImageFilter.h"
 #include "itkSubtractImageFilter.h"
 #include "itkMultiplyImageFilter.h"
@@ -14,9 +13,12 @@
 #include "itkCartesianToSphericalCoordinateImageFilter.h"
 #include "itkAccumulateImageFilter.h"
 #include "itkImageRegionIterator.h"
+#include "itkImageRegionConstIterator.h"
+#include "itkAddImageFilter.h"
 #include "itkDivideImageFilter.h"
 #include "itkExtractImageFilter.h"
 #include "itkImageFileWriter.h"
+#include "itkLinearInterpolateImageFunction.h"
 
 
 //-------------------------------------------------------------------------------------
@@ -133,6 +135,224 @@ int main( int argc, char **argv )
 } // end main
 
 
+
+	/**
+	 * ******************* SegmentationDistanceHelper ****************
+	 *
+	 * The function that does the work, templated over the image type.
+	 */
+
+template< class InputImageType1, class InputImageType2, class ImageType >
+void SegmentationDistanceHelper(
+  const InputImageType1 * inputImage1,
+  const InputImageType2 * inputImage2,
+  typename ImageType::Pointer & accum1,
+  typename ImageType::Pointer & accum2,
+  std::vector<double> & mancor,
+  unsigned int samples,
+	unsigned int thetasize,
+	unsigned int phisize,
+  bool invertedImage
+  )
+{
+	
+	/** constants */
+	const unsigned int Dimension = ImageType::ImageDimension;
+  typedef typename ImageType::PixelType					      PixelType;
+  typedef typename InputImageType1::PixelType         InputPixelType1;
+  typedef typename InputImageType2::PixelType         InputPixelType2;
+    
+  typedef itk::SignedMaurerDistanceMapImageFilter<
+    InputImageType1, ImageType>                       DistanceMapFilterType;
+  typedef itk::BinaryCrossStructuringElement<
+    InputPixelType2, Dimension >											StructuringElementType;
+	typedef itk::GrayscaleErodeImageFilter<
+		InputImageType2, InputImageType2,
+		StructuringElementType >													ErodeFilterType;
+  typedef itk::SubtractImageFilter<
+    InputImageType2, InputImageType2, ImageType>      SubtracterType;
+  typedef itk::MultiplyImageFilter<
+    ImageType, ImageType, ImageType>                  MultiplierType;
+  typedef itk::ImageMomentsCalculator<
+    InputImageType1 >                                 MomentCalculatorType;
+  typedef itk::CartesianToSphericalCoordinateImageFilter<
+    ImageType, ImageType>                             CSCFilterType;
+  typedef itk::LinearInterpolateImageFunction<
+    ImageType, double>                                InterpolatorType;
+  typedef itk::AccumulateImageFilter<
+    ImageType, ImageType>                             AccumulatorType;
+    
+  typedef typename InputImageType1::IndexType         IndexType;
+  typedef typename InputImageType1::SizeType          SizeType;
+  typedef typename InputImageType1::SpacingType       SpacingType;
+  typedef typename CSCFilterType::SizeType            RTPSizeType;
+  typedef typename CSCFilterType::PointType           PointType;
+  typedef typename MomentCalculatorType::VectorType   VectorType;
+  typedef itk::ImageRegionIterator<
+    ImageType>                                        OutputIteratorType;
+  typedef typename  
+    ErodeFilterType::DefaultBoundaryConditionType     BoundaryConditionType;
+  
+  /** Instantiate filters */
+  typename DistanceMapFilterType::Pointer distanceMapFilter =
+    DistanceMapFilterType::New();
+  typename ErodeFilterType::Pointer erosion = ErodeFilterType::New();
+  typename SubtracterType::Pointer subtracter = SubtracterType::New();
+  typename MultiplierType::Pointer multiplier = MultiplierType::New();
+  typename CSCFilterType::Pointer cscFilter1 = CSCFilterType::New();
+  typename CSCFilterType::Pointer cscFilter2 = CSCFilterType::New();
+  typename InterpolatorType::Pointer interpolator1 = InterpolatorType::New();
+  typename InterpolatorType::Pointer interpolator2 = InterpolatorType::New();
+  typename MomentCalculatorType::Pointer momentCalculator = 
+    MomentCalculatorType::New();
+  typename AccumulatorType::Pointer accumulator1 = AccumulatorType::New();
+  typename AccumulatorType::Pointer accumulator2 = AccumulatorType::New();
+    
+  /** Compute the distance map of image 1 */
+  distanceMapFilter->SetInput( inputImage1 );
+  distanceMapFilter->SetUseImageSpacing( true );
+  distanceMapFilter->SetSquaredDistance( false );
+  std::cout << "Computing distance map D of input image 1..." << std::endl;
+  distanceMapFilter->Update();
+  std::cout << "Distance map computed." << std::endl;
+  
+  StructuringElementType S_cross;
+  S_cross.CreateStructuringElement();
+  erosion->SetKernel( S_cross );
+  erosion->SetInput( inputImage2 );
+  /** Set a boundary condition value. This is the value outside the image.
+   * use zero. */
+  BoundaryConditionType bc;
+  InputPixelType2 bcValue;
+  if (invertedImage)
+  {
+     bcValue = itk::NumericTraits<InputPixelType2>::One;
+  }
+  else
+  {
+    bcValue = itk::NumericTraits<InputPixelType2>::Zero;
+  }
+  bc.SetConstant( bcValue );
+  erosion->OverrideBoundaryCondition(&bc);
+  std::cout << "Computing erosion of input image 2..." << std::endl;
+  erosion->Update();
+  std::cout << "Erosion computed." << std::endl;
+
+  /** compute difference of original and erosion */
+  subtracter->SetInput1( inputImage2 );
+  subtracter->SetInput2( erosion->GetOutput() );
+  std::cout << "Computing edge image E of input image 2..." << std::endl;
+  subtracter->Update();
+  std::cout << "Edge image E computed." << std::endl;
+  
+  /** Compute the center of gravity of image 1 */
+  PointType cor;
+  if ( mancor.size() == Dimension )
+  {
+    for ( unsigned int i=0; i< Dimension; ++i)
+    {
+      cor[i]=mancor[i];
+    }
+    std::cout << "Center of mass given by user: " << cor << std::endl;
+  }
+  else
+  {
+    mancor.resize( Dimension);
+    momentCalculator->SetImage( inputImage1 );
+    std::cout << "Computing center of mass of image 1..." << std::endl;
+    momentCalculator->Compute();
+    VectorType corvec = momentCalculator->GetCenterOfGravity();
+    std::cout << "Center of mass computed. Result: " << corvec << std::endl;
+    // convert to point
+    for ( unsigned int i=0; i< Dimension; ++i)
+    {
+      cor[i] = corvec[i];
+      /** return to user */
+      mancor[i] = cor[i];
+    }
+  }
+
+  /** Compute maximum r */
+  IndexType inputIndex = inputImage1->
+    GetLargestPossibleRegion().GetIndex();
+  SizeType inputSize = inputImage1->
+    GetLargestPossibleRegion().GetSize();
+  double maxR = 0.0;
+  IndexType cornerIndex = inputIndex;
+  for (unsigned int i = 0; i < 2; ++i)
+  {
+    cornerIndex[0] = inputIndex[0] + i * (inputSize[0] -1);
+    for (unsigned int j = 0; j < 2; ++j)
+    {
+      cornerIndex[1] = inputIndex[1] + j * (inputSize[1] -1);
+      for (unsigned int k = 0; k < 2; ++k)
+      {
+        cornerIndex[2] = inputIndex[2] + k * (inputSize[2] -1 );
+        PointType cornerPoint;
+        inputImage1->TransformIndexToPhysicalPoint(
+          cornerIndex, cornerPoint);
+        VectorType vec = cornerPoint - cor;
+        maxR = vnl_math_max( maxR, vec.GetNorm() );
+      }
+    }
+  }
+
+  /** Compute minimum spacing */
+  double minSpacing = itk::NumericTraits<double>::max();
+  SpacingType inputSpacing = inputImage1->GetSpacing();
+  for (unsigned int i = 0; i < Dimension; ++i)
+  {
+    minSpacing = vnl_math_min( minSpacing, inputSpacing[i]);
+  }
+      
+  /** Computing spherical transforms */
+  RTPSizeType rtpSize;
+  rtpSize[0] = static_cast<unsigned int>( vcl_ceil(maxR / minSpacing / 2.0) );
+  rtpSize[1] = thetasize;
+  rtpSize[2] = phisize;
+  cscFilter1->SetInput( distanceMapFilter->GetOutput() );
+  cscFilter1->SetOutputSize( rtpSize);
+  cscFilter1->SetCenterOfRotation( cor );
+  cscFilter1->SetMaximumNumberOfSamplesPerVoxel(samples);
+  cscFilter1->SetInterpolator( interpolator1);
+  cscFilter2->SetInput( subtracter->GetOutput() );
+  cscFilter2->SetOutputSize( rtpSize);
+  cscFilter2->SetCenterOfRotation( cor );
+  cscFilter2->SetMaximumNumberOfSamplesPerVoxel(samples);
+  cscFilter2->SetInterpolator( interpolator2);
+  std::cout << "Computing spherical transforms of D and E: S(D) and S(E)..." << std::endl;   
+  cscFilter1->GetRandomGenerator()->SetSeed(12345);
+  cscFilter1->Update();
+  cscFilter2->GetRandomGenerator()->SetSeed(12345);
+  cscFilter2->Update();
+  std::cout << "Spherical transforms computed." << std::endl;
+
+  /** Computing DE = S(DistanceMap)*S(EdgeImage) */
+	multiplier->SetInput1( cscFilter1->GetOutput() );
+	multiplier->SetInput2( cscFilter2->GetOutput() );
+	std::cout << "Computing DE = S(D) * S(E)..." << std::endl;
+	multiplier->Update();
+	std::cout << "Multiplying done." << std::endl;
+
+  /** Integrate along r dimension */
+  accumulator1->SetInput( multiplier->GetOutput() );
+  accumulator1->SetAccumulateDimension(0);
+  accumulator1->SetAverage(false);
+  accumulator2->SetInput( cscFilter2->GetOutput() );
+  accumulator2->SetAccumulateDimension(0);
+  accumulator2->SetAverage(false);
+  std::cout << "Integrate along r dimension of the spherical transforms..." << std::endl;
+  accumulator1->Update();
+  accumulator2->Update();
+  std::cout << "Done integrating." << std::endl;
+
+  accum1 = accumulator1->GetOutput();
+  accum2 = accumulator2->GetOutput();
+
+} // end SegmentationDistanceHelper
+
+
+
 	/**
 	 * ******************* SegmentationDistance ****************
 	 *
@@ -154,30 +374,21 @@ void SegmentationDistance(
 	const unsigned int Dimension = ImageType::ImageDimension;
   const unsigned int OutputDimension = Dimension-1;
   typedef typename ImageType::PixelType					      PixelType;
-  typedef short                                       InputPixelType;
+  typedef short                                       InputPixelType1;
+  typedef PixelType                                   InputPixelType2;
       
 	/** TYPEDEF's. */
-  typedef itk::Image<InputPixelType, Dimension>       InputImageType;
+  typedef itk::Image<InputPixelType1, Dimension>      InputImageType1;
+  typedef itk::Image<InputPixelType2, Dimension>      InputImageType2;
+
   typedef itk::Image<PixelType, OutputDimension>      OutputImageType;
 
-  typedef itk::ImageFileReader<InputImageType>        ReaderType;
-  typedef itk::SignedMaurerDistanceMapImageFilter<
-    InputImageType, ImageType>                        DistanceMapFilterType;
-  typedef itk::BinaryBallStructuringElement<
-    InputPixelType, Dimension >												StructuringElementType;
-	typedef itk::GrayscaleErodeImageFilter<
-		InputImageType, InputImageType,
-		StructuringElementType >													ErodeFilterType;
+  typedef itk::ImageFileReader<InputImageType1>       ReaderType1;
+  typedef itk::ImageFileReader<InputImageType2>       ReaderType2;
+  typedef itk::AddImageFilter<
+    ImageType, ImageType, ImageType>                  AdderType;
   typedef itk::SubtractImageFilter<
-    InputImageType, InputImageType, ImageType>        SubtracterType;
-  typedef itk::MultiplyImageFilter<
-    ImageType, ImageType, ImageType>                  MultiplierType;
-  typedef itk::ImageMomentsCalculator<
-    InputImageType >                                  MomentCalculatorType;
-  typedef itk::CartesianToSphericalCoordinateImageFilter<
-    ImageType, ImageType>                             CSCFilterType;
-  typedef itk::AccumulateImageFilter<
-    ImageType, ImageType>                             AccumulatorType;
+    ImageType, ImageType, ImageType>                  SubtracterType;
   typedef itk::DivideImageFilter<
     ImageType, ImageType, ImageType>                  DividerType;
   typedef itk::ExtractImageFilter<
@@ -188,29 +399,22 @@ void SegmentationDistance(
     ExtracterType::InputImageRegionType               RegionType;
   typedef typename RegionType::IndexType              IndexType;
   typedef typename RegionType::SizeType               SizeType;
-  typedef typename CSCFilterType::SizeType            RTPSizeType;
-  typedef typename CSCFilterType::PointType           PointType;
-  typedef typename MomentCalculatorType::VectorType   VectorType;
-  typedef typename StructuringElementType::RadiusType	RadiusType;
+  typedef itk::ImageRegionConstIterator<
+    InputImageType1>                                  ConstInputIteratorType1;
+  typedef itk::ImageRegionConstIterator<
+    InputImageType2>                                  ConstInputIteratorType2;
+  typedef itk::ImageRegionIterator<
+    InputImageType1>                                  InputIteratorType1;
+  typedef itk::ImageRegionIterator<
+    InputImageType2>                                  InputIteratorType2;
   typedef itk::ImageRegionIterator<
     ImageType>                                        OutputIteratorType;
-  typedef typename  
-    ErodeFilterType::DefaultBoundaryConditionType     BoundaryConditionType;
-
+  
   /** Instantiate filters */
-  typename ReaderType::Pointer reader1 = ReaderType::New();
-  typename ReaderType::Pointer reader2 = ReaderType::New();
-  typename DistanceMapFilterType::Pointer distanceMapFilter =
-    DistanceMapFilterType::New();
-  typename ErodeFilterType::Pointer erosion = ErodeFilterType::New();
+  typename ReaderType1::Pointer reader1 = ReaderType1::New();
+  typename ReaderType2::Pointer reader2 = ReaderType2::New();
+  typename AdderType::Pointer adder = AdderType::New();
   typename SubtracterType::Pointer subtracter = SubtracterType::New();
-  typename MultiplierType::Pointer multiplier = MultiplierType::New();
-  typename CSCFilterType::Pointer cscFilter1 = CSCFilterType::New();
-  typename CSCFilterType::Pointer cscFilter2 = CSCFilterType::New();
-  typename MomentCalculatorType::Pointer momentCalculator = 
-    MomentCalculatorType::New();
-  typename AccumulatorType::Pointer accumulator1 = AccumulatorType::New();
-  typename AccumulatorType::Pointer accumulator2 = AccumulatorType::New();
   typename DividerType::Pointer divider = DividerType::New();
   typename ExtracterType::Pointer extracter = ExtracterType::New();
   typename WriterType::Pointer writer = WriterType::New();
@@ -223,113 +427,64 @@ void SegmentationDistance(
   reader2->Update();
 	std::cout << "Input images read." << std::endl;
 
-  /** Compute the distance map of image 1 */
-  distanceMapFilter->SetInput( reader1->GetOutput() );
-  distanceMapFilter->SetUseImageSpacing( true );
-  distanceMapFilter->SetSquaredDistance( false );
-  std::cout << "Computing distance map of input image 1..." << std::endl;
-  distanceMapFilter->Update();
-  std::cout << "Distance map computed." << std::endl;
+  /** Compute the distance */
+  typename ImageType::Pointer accum1 = 0;
+  typename ImageType::Pointer accum2 = 0;
+  std::vector<double> cor = mancor;
 
-  /** Compute the G = edge image of image 2 */
- 	RadiusType	radiusarray;
-	StructuringElementType	S_ball;
-  radiusarray.Fill( 1 );
-  /** Create and fill the radius. */
-	radiusarray.Fill( 1 );
-	for ( unsigned int i = 0; i < Dimension; i++ )
-	{
-		radiusarray.SetElement( i, 1 );
-	}
- 	/** Create the structuring element and set it into the erosion filter. */
-	S_ball.SetRadius( radiusarray );
-	S_ball.CreateStructuringElement();
-	erosion->SetKernel( S_ball );
-  erosion->SetInput( reader2->GetOutput() );
-  /** Set a boundary condition value. This is the value outside the image.
-   * use zero. */
-  BoundaryConditionType bc;
-  InputPixelType bcValue = itk::NumericTraits<InputPixelType>::Zero;
-  bc.SetConstant( bcValue );
-    erosion->OverrideBoundaryCondition(&bc);
-  std::cout << "Computing erosion of input image 2..." << std::endl;
-  erosion->Update();
-  std::cout << "Erosion computed." << std::endl;
+  SegmentationDistanceHelper<InputImageType1, InputImageType2, ImageType>(
+    reader1->GetOutput(), reader2->GetOutput(), accum1, accum2, cor,
+    samples, thetasize, phisize, false);
 
-  /** compute difference of original and erosion */
-  subtracter->SetInput1( reader2->GetOutput() );
-  subtracter->SetInput2( erosion->GetOutput() );
-  std::cout << "Computing edge image E of input image 2..." << std::endl;
+  /** Compute 1 minus the input images */
+  typename InputImageType1::Pointer invInputImage1 = InputImageType1::New();
+  typename InputImageType2::Pointer invInputImage2 = InputImageType2::New();
+  invInputImage1->SetRegions( reader1->GetOutput()->GetLargestPossibleRegion() );
+  invInputImage2->SetRegions( reader2->GetOutput()->GetLargestPossibleRegion() );
+  invInputImage1->Allocate();
+  invInputImage2->Allocate();
+
+  ConstInputIteratorType1 init1( reader1->GetOutput(), reader1->GetOutput()->GetLargestPossibleRegion() );
+  ConstInputIteratorType2 init2( reader2->GetOutput(), reader2->GetOutput()->GetLargestPossibleRegion() );
+  InputIteratorType1 invinit1( invInputImage1, invInputImage1->GetLargestPossibleRegion() );
+  InputIteratorType2 invinit2( invInputImage2, invInputImage2->GetLargestPossibleRegion() );
+  init1.GoToBegin();
+  init2.GoToBegin();  
+  invinit1.GoToBegin();
+  invinit2.GoToBegin();
+  while ( !init1.IsAtEnd() )
+  {
+    invinit1.Value() = itk::NumericTraits<InputPixelType1>::One - init1.Value();
+    invinit2.Value() = itk::NumericTraits<InputPixelType1>::One - init2.Value();
+
+    ++init1;
+    ++init2;
+    ++invinit1;
+    ++invinit2;
+  }
+
+  /** Compute again the distance */
+  typename ImageType::Pointer accum1inv = 0;
+  typename ImageType::Pointer accum2inv = 0;
+
+  SegmentationDistanceHelper<InputImageType1, InputImageType2, ImageType>(
+    invInputImage1, invInputImage2, accum1inv, accum2inv, cor,
+    samples, thetasize, phisize, true);
+
+  /** Add the results (subtract for distance transform, because its negated) */
+  subtracter->SetInput1( accum1);
+  subtracter->SetInput2( accum1inv);
+  adder->SetInput1( accum2);
+  adder->SetInput2( accum2inv);
+  std::cout << "Adveraging the results of the normal images and the inverted images." << std::endl;
   subtracter->Update();
-  std::cout << "Edge image E computed." << std::endl;
-  
-  /** Computing DE = DistanceMap*EdgeImage */
-	multiplier->SetInput1( distanceMapFilter->GetOutput() );
-	multiplier->SetInput2( subtracter->GetOutput() );
-	std::cout << "Computing DE = DistanceMap * Edge image..." << std::endl;
-	multiplier->Update();
-	std::cout << "Multiplying done." << std::endl;
-  
-  /** Compute the center of gravity of image 1 */
-  PointType cor;
-  if ( mancor.size() == Dimension )
-  {
-    for ( unsigned int i=0; i< Dimension; ++i)
-    {
-      cor[i]=mancor[i];
-    }
-    std::cout << "Center of mass given by user: " << cor << std::endl;
-  }
-  else
-  {
-    momentCalculator->SetImage( reader1->GetOutput() );
-    std::cout << "Computing center of mass of image 1..." << std::endl;
-    momentCalculator->Compute();
-    VectorType corvec = momentCalculator->GetCenterOfGravity();
-    std::cout << "Center of mass computed. Result: " << corvec << std::endl;
-    // convert to point
-    for ( unsigned int i=0; i< Dimension; ++i)
-    {
-      cor[i]=corvec[i];
-    }
-  }
-  
-  /** Computing spherical transforms */
-  RTPSizeType rtpSize;
-  rtpSize[0] = 2;
-  rtpSize[1] = thetasize;
-  rtpSize[2] = phisize;
-  cscFilter1->SetInput( multiplier->GetOutput() );
-  cscFilter1->SetOutputSize( rtpSize);
-  cscFilter1->SetCenterOfRotation( cor );
-  cscFilter1->SetMaximumNumberOfSamplesPerVoxel(samples);
-  cscFilter2->SetInput( subtracter->GetOutput() );
-  cscFilter2->SetOutputSize( rtpSize);
-  cscFilter2->SetCenterOfRotation( cor );
-  cscFilter2->SetMaximumNumberOfSamplesPerVoxel(samples);
-  std::cout << "Computing spherical transforms of DE and E..." << std::endl;   
-  cscFilter1->GetRandomGenerator()->SetSeed(12345);
-  cscFilter1->Update();
-  cscFilter2->GetRandomGenerator()->SetSeed(12345);
-  cscFilter2->Update();
-  std::cout << "Spherical transforms computed." << std::endl;
+  adder->Update();
+  std::cout << "Ready averaging..." << std::endl;
 
-  /** Integrate along r dimension */
-  accumulator1->SetInput( cscFilter1->GetOutput() );
-  accumulator1->SetAccumulateDimension(0);
-  accumulator1->SetAverage(false);
-  accumulator2->SetInput( cscFilter2->GetOutput() );
-  accumulator2->SetAccumulateDimension(0);
-  accumulator2->SetAverage(false);
-  std::cout << "Integrate along r dimension of the spherical transforms..." << std::endl;
-  accumulator1->Update();
-  accumulator2->Update();
-  std::cout << "Done integrating." << std::endl;
-
-  typename ImageType::Pointer accum2out = accumulator2->GetOutput();
-  accum2out->DisconnectPipeline();
-  OutputIteratorType it( accum2out,
-    accum2out->GetLargestPossibleRegion() );
+  typename ImageType::Pointer sumEdgeAccums = adder->GetOutput();
+  sumEdgeAccums->DisconnectPipeline();
+  OutputIteratorType it( sumEdgeAccums,
+    sumEdgeAccums->GetLargestPossibleRegion() );
   const double smallnumber= 1e-10;
   it.GoToBegin();
   while (!it.IsAtEnd() )
@@ -344,9 +499,9 @@ void SegmentationDistance(
   }  
 
   /** Divide the integrated spherical transforms */
-  divider->SetInput1( accumulator1->GetOutput() );
-	divider->SetInput2( accum2out );
-	std::cout << "Dividing the integrated spherical transforms..." << std::endl;
+  divider->SetInput1( subtracter->GetOutput() );
+	divider->SetInput2( sumEdgeAccums );
+	std::cout << "Dividing the averaged integrated spherical transforms..." << std::endl;
 	divider->Update();
 	std::cout << "Dividing done." << std::endl;
 
@@ -368,7 +523,7 @@ void SegmentationDistance(
 	writer->Update();
 	std::cout << "Done." << std::endl;
 
-} // end DetectGoldMarkers
+} // end SegmentationDistance
 
 
 	/**
@@ -386,5 +541,6 @@ void PrintHelp()
   std::cout << "\t[-p]  \tphi size; the size of the phi dimension. default: 90, which yields a spacing of 2 degrees." << std::endl;
 	std::cout << "Supported: 3D, short, and everything convertable to short." << std::endl;
 } // end PrintHelp
+
 
 
