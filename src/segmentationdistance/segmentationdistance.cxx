@@ -29,7 +29,7 @@ if ( PixelType == #type && Dimension == dim ) \
 { \
     typedef itk::Image< type, dim > InputImageType; \
     function< InputImageType >( inputFileName1, inputFileName2, outputFileName,\
-    manualcor, samples, thetasize, phisize ); \
+    manualcor, samples, thetasize, phisize, cartesianonly ); \
 }
 
 //-------------------------------------------------------------------------------------
@@ -43,7 +43,8 @@ void SegmentationDistance(
   const std::vector<double> & mancor,
   unsigned int samples,
 	unsigned int thetasize,
-	unsigned int phisize);
+	unsigned int phisize,
+  bool cartesianonly );
 
 /** Declare PrintHelp. */
 void PrintHelp(void);
@@ -108,6 +109,14 @@ int main( int argc, char **argv )
   
   unsigned int phisize = 90;
 	bool retp = parser->GetCommandLineArgument( "-p", phisize );
+
+  std::string cartesianstr = "false";
+  bool cartesianonly = false;
+  bool retcar = parser->GetCommandLineArgument( "-car", cartesianstr);
+  if ( cartesianstr == "true" )
+  {
+    cartesianonly = true;
+  }  
     
   /** This program supports only the following INTERNAL pixel type.
    * The input images  are assumed to be short. Input images other
@@ -148,12 +157,14 @@ void SegmentationDistanceHelper(
   const InputImageType2 * inputImage2,
   typename ImageType::Pointer & accum1,
   typename ImageType::Pointer & accum2,
+  typename ImageType::Pointer & distanceTransformOnEdge,
+  typename ImageType::Pointer & edgeImage,
   std::vector<double> & mancor,
   unsigned int samples,
 	unsigned int thetasize,
 	unsigned int phisize,
-  bool invertedImage
-  )
+  bool cartesianonly,
+  bool invertedImage  )
 {
 	
 	/** constants */
@@ -199,6 +210,7 @@ void SegmentationDistanceHelper(
   typename ErodeFilterType::Pointer erosion = ErodeFilterType::New();
   typename SubtracterType::Pointer subtracter = SubtracterType::New();
   typename MultiplierType::Pointer multiplier = MultiplierType::New();
+  typename MultiplierType::Pointer multiplier2 = MultiplierType::New();
   typename CSCFilterType::Pointer cscFilter1 = CSCFilterType::New();
   typename CSCFilterType::Pointer cscFilter2 = CSCFilterType::New();
   typename InterpolatorType::Pointer interpolator1 = InterpolatorType::New();
@@ -215,7 +227,7 @@ void SegmentationDistanceHelper(
   std::cout << "Computing distance map D of input image 1..." << std::endl;
   distanceMapFilter->Update();
   std::cout << "Distance map computed." << std::endl;
-  
+    
   StructuringElementType S_cross;
   S_cross.CreateStructuringElement();
   erosion->SetKernel( S_cross );
@@ -244,6 +256,17 @@ void SegmentationDistanceHelper(
   std::cout << "Computing edge image E of input image 2..." << std::endl;
   subtracter->Update();
   std::cout << "Edge image E computed." << std::endl;
+    
+  /** Save for the caller of this function */
+  edgeImage = subtracter->GetOutput();
+  multiplier2->SetInput1( edgeImage );
+  multiplier2->SetInput2( distanceMapFilter->GetOutput() );
+  multiplier2->Update();
+  distanceTransformOnEdge = multiplier2->GetOutput();
+  if ( cartesianonly )
+  {
+    return;
+  }
   
   /** Compute the center of gravity of image 1 */
   PointType cor;
@@ -367,7 +390,8 @@ void SegmentationDistance(
   const std::vector<double> & mancor,
   unsigned int samples,
 	unsigned int thetasize,
-	unsigned int phisize)
+	unsigned int phisize,
+  bool cartesianonly)
 {
 	
 	/** constants */
@@ -394,6 +418,7 @@ void SegmentationDistance(
   typedef itk::ExtractImageFilter<
     ImageType, OutputImageType>                       ExtracterType;
   typedef itk::ImageFileWriter<OutputImageType>       WriterType;
+  typedef itk::ImageFileWriter<ImageType>             WriterCartesianType;
 
   typedef typename 
     ExtracterType::InputImageRegionType               RegionType;
@@ -409,15 +434,21 @@ void SegmentationDistance(
     InputImageType2>                                  InputIteratorType2;
   typedef itk::ImageRegionIterator<
     ImageType>                                        OutputIteratorType;
+  typedef itk::ImageRegionConstIterator<
+    ImageType>                                        ConstOutputImageIteratorType;
   
   /** Instantiate filters */
   typename ReaderType1::Pointer reader1 = ReaderType1::New();
   typename ReaderType2::Pointer reader2 = ReaderType2::New();
   typename AdderType::Pointer adder = AdderType::New();
+  typename AdderType::Pointer adder2 = AdderType::New();
   typename SubtracterType::Pointer subtracter = SubtracterType::New();
+  typename SubtracterType::Pointer subtracter2 = SubtracterType::New();
   typename DividerType::Pointer divider = DividerType::New();
+  typename DividerType::Pointer divider2 = DividerType::New();
   typename ExtracterType::Pointer extracter = ExtracterType::New();
   typename WriterType::Pointer writer = WriterType::New();
+  typename WriterCartesianType::Pointer writerCartesian = WriterCartesianType::New();
 
    /** Read in the inputImages. */
 	reader1->SetFileName( inputFileName1.c_str() );
@@ -430,11 +461,14 @@ void SegmentationDistance(
   /** Compute the distance */
   typename ImageType::Pointer accum1 = 0;
   typename ImageType::Pointer accum2 = 0;
+  typename ImageType::Pointer dist = 0;
+  typename ImageType::Pointer edge = 0;
+
   std::vector<double> cor = mancor;
 
   SegmentationDistanceHelper<InputImageType1, InputImageType2, ImageType>(
-    reader1->GetOutput(), reader2->GetOutput(), accum1, accum2, cor,
-    samples, thetasize, phisize, false);
+    reader1->GetOutput(), reader2->GetOutput(), accum1, accum2, dist, edge, 
+    cor, samples, thetasize, phisize, cartesianonly, false);
 
   /** Compute 1 minus the input images */
   typename InputImageType1::Pointer invInputImage1 = InputImageType1::New();
@@ -466,17 +500,53 @@ void SegmentationDistance(
   /** Compute again the distance */
   typename ImageType::Pointer accum1inv = 0;
   typename ImageType::Pointer accum2inv = 0;
+  typename ImageType::Pointer distinv = 0;
+  typename ImageType::Pointer edgeinv = 0;
 
   SegmentationDistanceHelper<InputImageType1, InputImageType2, ImageType>(
-    invInputImage1, invInputImage2, accum1inv, accum2inv, cor,
-    samples, thetasize, phisize, true);
+    invInputImage1, invInputImage2, accum1inv, accum2inv, distinv, edgeinv,
+    cor, samples, thetasize, phisize, cartesianonly, true);
+  
+  /** Return the mean distance, based on the cartesian coordinate image */
+  std::cout << "Computing mean distance based on cartesian coordinates..." << std::endl;
+  subtracter2->SetInput1( dist );
+  subtracter2->SetInput2( distinv );
+  subtracter2->Update();
+  adder2->SetInput1( edge );
+  adder2->SetInput2( edgeinv );
+  adder2->Update();
+  ConstOutputImageIteratorType itcar1( subtracter2->GetOutput(),
+    subtracter2->GetOutput()->GetLargestPossibleRegion() );
+  ConstOutputImageIteratorType itcar2( adder2->GetOutput(),
+    adder2->GetOutput()->GetLargestPossibleRegion() );
+  itcar1.GoToBegin();
+  itcar2.GoToBegin();
+  double sumdist = 0.0;
+  double sumweight=0.0;
+  while( ! itcar1.IsAtEnd() )
+  {
+    sumdist += vcl_abs( itcar1.Value() );
+    sumweight += itcar2.Value();
+    ++itcar1;
+    ++itcar2;
+  }    
+  double weightedmean = 0.0;
+  if ( sumweight > 1e-14 )
+  {
+    weightedmean = sumdist / sumweight;
+  }
+  std::cout << "Mean distance: " << weightedmean << std::endl;
+  if ( cartesianonly )
+  {
+    return;
+  }
 
   /** Add the results (subtract for distance transform, because its negated) */
   subtracter->SetInput1( accum1);
   subtracter->SetInput2( accum1inv);
   adder->SetInput1( accum2);
   adder->SetInput2( accum2inv);
-  std::cout << "Adveraging the results of the normal images and the inverted images." << std::endl;
+  std::cout << "Averaging the results of the normal images and the inverted images." << std::endl;
   subtracter->Update();
   adder->Update();
   std::cout << "Ready averaging..." << std::endl;
@@ -539,8 +609,11 @@ void PrintHelp()
 	std::cout << "\t[-s]  \tsamples [unsigned int]; maximum number of samples per pixel, used to do the spherical transform; default 20." << std::endl;
 	std::cout << "\t[-t]  \ttheta size; the size of the theta dimension. default: 180, which yields a spacing of 2 degrees." << std::endl;
   std::cout << "\t[-p]  \tphi size; the size of the phi dimension. default: 90, which yields a spacing of 2 degrees." << std::endl;
-	std::cout << "Supported: 3D, short, and everything convertable to short." << std::endl;
+  std::cout << "\t[-car]\tskip the polar transform and return mean distance: true or false; default = false" << std::endl;
+	std::cout << "Supported: 3D short for inputImage1, and everything convertable to short." << std::endl;
+  std::cout << "           3D float for inputImage2, and everything convertable to float." << std::endl;
 } // end PrintHelp
+
 
 
 
