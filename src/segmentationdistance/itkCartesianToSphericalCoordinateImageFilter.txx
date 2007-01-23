@@ -28,10 +28,11 @@ CartesianToSphericalCoordinateImageFilter<TInputImage, TOutputImage>
   this->m_OutputSize.Fill( 0 );
   this->m_OutputStartIndex.Fill( 0 );
   this->m_Interpolator = 0;
+  this->m_MaskImage = 0;
   this->m_MaximumNumberOfSamplesPerVoxel = 5;
 
   this->m_RandomGenerator = RandomGeneratorType::New();
-   
+     
 }
 
 
@@ -249,124 +250,152 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
   const double invMaximumNumberOfSamplesPerVoxel = 
     1.0 / static_cast<double>(this->m_MaximumNumberOfSamplesPerVoxel);
   
-  /** Set up an iterator */
+  /** Set up iterators over input image and input mask */
   typedef ImageRegionConstIteratorWithIndex< InputImageType > InputIteratorType;
   InputIteratorType inIt( inputImage, inputImage->GetRequestedRegion() );
   inIt.GoToBegin();
+
+  typedef ImageRegionConstIteratorWithIndex< MaskImageType > MaskIteratorType;
+  MaskIteratorType maskIt;
+  bool useMask = false;
+  if ( this->m_MaskImage.IsNotNull() )
+  {
+    useMask = true;
+    maskIt = MaskIteratorType( this->m_MaskImage, inputImage->GetRequestedRegion() );
+    maskIt.GoToBegin();
+  }
    
   PointType cor = this->GetCenterOfRotation();
   
   while ( !inIt.IsAtEnd() )
   {
     /** Compute vector to cor */
-    const IndexType & inIndex = inIt.GetIndex();
-    double inValue = inIt.Value();
-    PointType inPoint;
-    inputImage->TransformIndexToPhysicalPoint(inIndex, inPoint);
-
-    /** distance of indexpoint to cor  */
-    VectorType vec0 = inPoint - cor;
-    /** compute r^2 sin(phi) */
-    const double r2 = vec0.GetSquaredNorm() ;
-    const double sinphi = vcl_sin( vcl_acos( vec0[2] / vcl_sqrt(r2) ) );
-
-    /** Compute the number of samples needed */
-    const double deltaVolumeRatio = deltaVolumeRatioFactor * r2 * sinphi;
-    unsigned int numberOfSamplesPerVoxel = 1;
-    if ( deltaVolumeRatio <= invMaximumNumberOfSamplesPerVoxel )
+    bool validPixel = true;
+    if (useMask)
     {
-      numberOfSamplesPerVoxel = this->m_MaximumNumberOfSamplesPerVoxel;
-    }
-    else
-    {
-      /** Use ceil: at least 1 sample! */
-      numberOfSamplesPerVoxel = static_cast<unsigned int>(
-        vcl_ceil( 1.0 / deltaVolumeRatio ) );
+      if ( maskIt.Value() == 0 )
+      {        
+        validPixel = false;      
+      }      
     }
 
-    /** For the first iteration use the indexPoint. This makes sure that,
-     * if only one point is used, that point is the indexPoint */
-    PointType randomPoint = inPoint;
-
-    for ( unsigned int i = 0; i < numberOfSamplesPerVoxel; ++i)
+    if ( validPixel )
     {
-      /** if an interpolator is used, and if the randomPoint is a valid point
-       * then use it.
-       * if no interpolator is used, we simply use the voxel value itself:
-       * nearest neighbor interpolatorion  */
-      if ( useInterpolator )
-      {
-        if ( this->m_Interpolator->IsInsideBuffer( randomPoint ) )
-        {
-          inValue = this->m_Interpolator->Evaluate( randomPoint);
-        }
-        else
-        {
-          continue;
-        }
-      }
-        
-      /** distance of random point to cor */
-      VectorType vec = randomPoint - cor;
-      const double x = vec[0];
-      const double y = vec[1];
-      const double z = vec[2];
-      
-      /** compute r, theta and phi */
-      const double r = vec.GetNorm() ;
-      double theta = vcl_atan2( y, x);
-      if ( theta<0 )
-      {
-        theta += 2.0* vnl_math::pi;
-      }
-      const double phi = vcl_acos( z / r );
+      const IndexType & inIndex = inIt.GetIndex();
+      double inValue = inIt.Value();
+      PointType inPoint;
+      inputImage->TransformIndexToPhysicalPoint(inIndex, inPoint);
 
-      /** Find out in which voxels in the sumImage and countImage we have to do something */
-      PointType rtpPoint;
-      ContinuousIndexType rtpCIndex;
-      IndexType rtpIndex0;
-      IndexType rtpIndex;
-      ParzenWeightContainerType parzenWeight;
+      /** distance of indexpoint to cor  */
+      VectorType vec0 = inPoint - cor;
+      /** compute r^2 sin(phi) */
+      const double r2 = vec0.GetSquaredNorm() ;
+      const double sinphi = vcl_sin( vcl_acos( vec0[2] / vcl_sqrt(r2) ) );
 
-      rtpPoint[0] = r;
-      rtpPoint[1] = theta;
-      rtpPoint[2] = phi;
-      sumImage->TransformPhysicalPointToContinuousIndex( rtpPoint, rtpCIndex);
-      for ( unsigned int i=0 ; i < ImageDimension; ++i)
+      /** Compute the number of samples needed */
+      const double deltaVolumeRatio = deltaVolumeRatioFactor * r2 * sinphi;
+      unsigned int numberOfSamplesPerVoxel = 1;
+      if ( deltaVolumeRatio <= invMaximumNumberOfSamplesPerVoxel )
       {
-        rtpIndex0[i] = static_cast<int>( vcl_floor( rtpCIndex[i] ) );
-        parzenWeight(i,0) = kernel->Evaluate( 
-          static_cast<double>(rtpIndex0[i]) - rtpCIndex[i] );
-        parzenWeight(i,1) = kernel->Evaluate( 
-          static_cast<double>(rtpIndex0[i]+1) - rtpCIndex[i] );
+        numberOfSamplesPerVoxel = this->m_MaximumNumberOfSamplesPerVoxel;
+      }
+      else
+      {
+        /** Use ceil: at least 1 sample! */
+        numberOfSamplesPerVoxel = static_cast<unsigned int>(
+          vcl_ceil( 1.0 / deltaVolumeRatio ) );
       }
 
-      /** Update the sumImage and countsImage */
-      for (unsigned int i = 0; i < 2; ++i)
+      /** For the first iteration use the indexPoint. This makes sure that,
+      * if only one point is used, that point is the indexPoint */
+      PointType randomPoint = inPoint;
+
+      for ( unsigned int i = 0; i < numberOfSamplesPerVoxel; ++i)
       {
-        rtpIndex[0] = rtpIndex0[0] + i;
-        for (unsigned int j = 0; j < 2; ++j)
+        /** if an interpolator is used, and if the randomPoint is a valid point
+        * then use it.
+        * if no interpolator is used, we simply use the voxel value itself:
+        * nearest neighbor interpolatorion  */
+        if ( useInterpolator )
         {
-          rtpIndex[1] = rtpIndex0[1] + j;
-          for (unsigned int k = 0; k < 2; ++k)
+          if ( this->m_Interpolator->IsInsideBuffer( randomPoint ) )
           {
-            rtpIndex[2] = rtpIndex0[2] + k;
-            const double parzenValue =
-              parzenWeight(0,i)*parzenWeight(1,j)*parzenWeight(2,k);
-            
-            sumImage->GetPixel( rtpIndex ) += inValue*parzenValue;
-            countsImage->GetPixel( rtpIndex ) += parzenValue;
+            inValue = this->m_Interpolator->Evaluate( randomPoint);
+          }
+          else
+          {
+            continue;
           }
         }
-      }
+          
+        /** distance of random point to cor */
+        VectorType vec = randomPoint - cor;
+        const double x = vec[0];
+        const double y = vec[1];
+        const double z = vec[2];
+        
+        /** compute r, theta and phi */
+        const double r = vec.GetNorm() ;
+        double theta = vcl_atan2( y, x);
+        if ( theta<0 )
+        {
+          theta += 2.0* vnl_math::pi;
+        }
+        const double phi = vcl_acos( z / r );
 
-      /** Randomly pick a coordinate in the neighborhood of this pixel */
-      this->GenerateRandomCoordinate(inPoint, randomPoint);
-    
-    } // next random coordinate
+        /** Find out in which voxels in the sumImage and countImage we have to do something */
+        PointType rtpPoint;
+        ContinuousIndexType rtpCIndex;
+        IndexType rtpIndex0;
+        IndexType rtpIndex;
+        ParzenWeightContainerType parzenWeight;
+
+        rtpPoint[0] = r;
+        rtpPoint[1] = theta;
+        rtpPoint[2] = phi;
+        sumImage->TransformPhysicalPointToContinuousIndex( rtpPoint, rtpCIndex);
+        for ( unsigned int i=0 ; i < ImageDimension; ++i)
+        {
+          rtpIndex0[i] = static_cast<int>( vcl_floor( rtpCIndex[i] ) );
+          parzenWeight(i,0) = kernel->Evaluate( 
+            static_cast<double>(rtpIndex0[i]) - rtpCIndex[i] );
+          parzenWeight(i,1) = kernel->Evaluate( 
+            static_cast<double>(rtpIndex0[i]+1) - rtpCIndex[i] );
+        }
+
+        /** Update the sumImage and countsImage */
+        for (unsigned int i = 0; i < 2; ++i)
+        {
+          rtpIndex[0] = rtpIndex0[0] + i;
+          for (unsigned int j = 0; j < 2; ++j)
+          {
+            rtpIndex[1] = rtpIndex0[1] + j;
+            for (unsigned int k = 0; k < 2; ++k)
+            {
+              rtpIndex[2] = rtpIndex0[2] + k;
+              const double parzenValue =
+                parzenWeight(0,i)*parzenWeight(1,j)*parzenWeight(2,k);
+              
+              sumImage->GetPixel( rtpIndex ) += inValue*parzenValue;
+              countsImage->GetPixel( rtpIndex ) += parzenValue;
+            }
+          }
+        }
+
+        /** Randomly pick a coordinate in the neighborhood of this pixel */
+        this->GenerateRandomCoordinate(inPoint, randomPoint);
       
-    /** inc image iterator */
+      } // next random coordinate
+
+    } // end if validPixel
+        
+    /** inc image iterators */
     ++inIt;
+    if ( useMask )
+    {
+      ++maskIt;
+    }
+
   } // next pixel
 
   /** Add the last theta slice to the first theta slice */

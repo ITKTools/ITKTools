@@ -58,6 +58,10 @@ public:
   typedef typename InputImageType::Pointer      InputImagePointer;
   typedef typename InputImageType::ConstPointer InputImageConstPointer;
   typedef typename OutputImageType::Pointer     OutputImagePointer;
+
+  typedef unsigned char                         MaskPixelType;
+  typedef Image<MaskPixelType, ImageDimension>  MaskImageType;
+  typedef typename MaskImageType::Pointer       MaskImagePointer;
   
   typedef typename InputImageType::RegionType   InputImageRegionType;
   typedef typename OutputImageType::RegionType  OutputImageRegionType;
@@ -93,6 +97,13 @@ public:
    * neighbor interpolation is used if you don't set it.  */
   itkSetObjectMacro(Interpolator, InterpolatorType);
   itkGetObjectMacro(Interpolator, InterpolatorType);
+
+  /** Set/Get a mask. Only that part of the input image is transformed
+   * that has a nonzero mask-value.
+   * It is assumed that the supplied mask image has the same size as the
+   * the input image */
+  itkSetObjectMacro(MaskImage, MaskImageType);
+  itkGetObjectMacro(MaskImage, MaskImageType);
 
   /** Set/Get the size of the output image. [r, theta, phi]. */
   itkSetMacro( OutputSize, SizeType );
@@ -153,7 +164,6 @@ protected:
   SpacingType             m_InputSpacing; // input image spacing cached
   OriginPointType         m_OutputOrigin;  // output image origin
   IndexType               m_OutputStartIndex; // output image start index
- 
 
 private:
   CartesianToSphericalCoordinateImageFilter(const Self&); //purposely not implemented
@@ -161,8 +171,10 @@ private:
   
   SizeType                m_OutputSize;       // Size of the output image
   PointType               m_CenterOfRotation;
-  typename InterpolatorType::Pointer m_Interpolator;
   unsigned int            m_MaximumNumberOfSamplesPerVoxel;
+
+  MaskImagePointer        m_MaskImage; 
+  typename InterpolatorType::Pointer m_Interpolator;
 
 };
 
