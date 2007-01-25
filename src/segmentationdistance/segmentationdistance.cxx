@@ -615,7 +615,8 @@ void PrintHelp()
 	std::cout << "\t[-s]  \tsamples [unsigned int]; maximum number of samples per pixel, used to do the spherical transform; default 20." << std::endl;
 	std::cout << "\t[-t]  \ttheta size; the size of the theta dimension. default: 180, which yields a spacing of 2 degrees." << std::endl;
   std::cout << "\t[-p]  \tphi size; the size of the phi dimension. default: 90, which yields a spacing of 2 degrees." << std::endl;
-  //std::cout << "\t[-car]\tskip the polar transform and return mean distance: true or false; default = false" << std::endl;
+  std::cout << "\t[-car]\tskip the polar transform and return two output images (outputFileNameDIST and outputFileNameEDGE): true or false; default = false" << std::endl;
+  std::cout << "\t      \tThe EDGE output image is an edge mask for inputfile2. The DIST output image contains the distance at each edge pixel to the first inputFile." << std::endl;
 	std::cout << "Supported: 3D short for inputImage1, and everything convertable to short." << std::endl;
   std::cout << "           3D short for inputImage2, and everything convertable to short." << std::endl;
 } // end PrintHelp
