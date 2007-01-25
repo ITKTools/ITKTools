@@ -437,14 +437,14 @@ void SegmentationDistance(
   typename ReaderType1::Pointer reader1 = ReaderType1::New();
   typename ReaderType2::Pointer reader2 = ReaderType2::New();
   typename AdderType::Pointer adder = AdderType::New();
-  typename AdderType::Pointer adder2 = AdderType::New();
+  typename AdderType::Pointer adderEdgeCartesian = AdderType::New();
   typename SubtracterType::Pointer subtracter = SubtracterType::New();
-  typename SubtracterType::Pointer subtracter2 = SubtracterType::New();
+  typename SubtracterType::Pointer subtracterDistCartesian = SubtracterType::New();
   typename DividerType::Pointer divider = DividerType::New();
-  typename DividerType::Pointer divider2 = DividerType::New();
   typename ExtracterType::Pointer extracter = ExtracterType::New();
   typename WriterType::Pointer writer = WriterType::New();
-  typename WriterCartesianType::Pointer writerCartesian = WriterCartesianType::New();
+  typename WriterCartesianType::Pointer writerDistCartesian = WriterCartesianType::New();
+  typename WriterCartesianType::Pointer writerEdgeCartesian = WriterCartesianType::New();
 
    /** Read in the inputImages. */
 	reader1->SetFileName( inputFileName1.c_str() );
@@ -507,6 +507,46 @@ void SegmentationDistance(
     invInputImage1, invInputImage2, accum1inv, accum2inv, distinv, edgeinv,
     cor, samples, thetasize, phisize, cartesianonly, true);
   
+  // 
+  if ( cartesianonly )
+  {
+    
+      
+    /** Compute dist-distinv and edge+edgeinv */
+    subtracterDistCartesian->SetInput1( dist );
+    subtracterDistCartesian->SetInput2( distinv );
+    adderEdgeCartesian->SetInput1( edge);
+    adderEdgeCartesian->SetInput2( edgeinv);
+    subtracterDistCartesian->Update();
+    adderEdgeCartesian->Update();
+
+    /** outputfilename extensie afknippen en DIST en EDGE toevoegen.*/
+    std::string part1 =
+      itksys::SystemTools::GetFilenameWithoutLastExtension(outputFileName);
+    /** get file name extension */
+    std::string part2 = "";
+    part2 += itksys::SystemTools::GetFilenameLastExtension(outputFileName);
+    std::string diststr = "DIST";
+    std::string edgestr = "EDGE";
+    
+    /** compose outputfilename */
+    std::string outputFileNameDIST = part1 + diststr + part2;
+    std::string outputFileNameEDGE = part1 + edgestr + part2;
+
+    /** Write to disk */
+    writerDistCartesian->SetFileName( outputFileNameDIST );
+    writerEdgeCartesian->SetFileName( outputFileNameEDGE );
+    writerDistCartesian->SetInput( subtracterDistCartesian->GetOutput() );
+    writerEdgeCartesian->SetInput( adderEdgeCartesian->GetOutput() );
+
+    std::cout << "The spherical transforms are skipped and the results are written as:\n\t"
+      << outputFileNameDIST << "\n\t"  << outputFileNameEDGE << std::endl;
+    writerDistCartesian->Update();
+    writerEdgeCartesian->Update();
+    
+    return;
+  }
+
   /** Add the results (subtract for distance transform, because its negated) */
   subtracter->SetInput1( accum1);
   subtracter->SetInput2( accum1inv);

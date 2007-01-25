@@ -144,7 +144,7 @@ int main( int argc, char **argv )
     }
     else
     {
-      part2 = ".";
+      part2 = "";
       part2 += itksys::SystemTools::GetFilenameLastExtension(inputFileName1);
     }
     /** compose outputfilename */
