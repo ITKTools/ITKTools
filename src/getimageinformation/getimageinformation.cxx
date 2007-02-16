@@ -126,6 +126,8 @@ int main( int argc, char **argv )
   }
 
   /** Print image spacing. */
+  std::cout << std::fixed;
+  std::cout << std::setprecision( 6 );
   if ( exsp )
   {
     if ( reti )
