@@ -21,6 +21,7 @@ SUBDIRS(
  createrandomimage
  createsimplebox
  createsphere
+ createzeroimage
  cropimage
  deformationfieldgenerator
  deformationfieldoperator
