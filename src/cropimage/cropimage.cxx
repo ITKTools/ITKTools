@@ -3,6 +3,7 @@
 
 #include "itkImage.h"
 #include "itkCropImageFilter.h"
+#include "itkConstantPadImageFilter.h"
 
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
@@ -14,7 +15,7 @@
 if ( PixelType == #type && Dimension == dim ) \
 { \
     typedef itk::Image< type, dim > InputImageType; \
-    function< InputImageType >( inputFileName, outputFileName, input1, input2, option ); \
+    function< InputImageType >( inputFileName, outputFileName, input1, input2, option, force ); \
 }
 
 //-------------------------------------------------------------------------------------
@@ -22,7 +23,8 @@ if ( PixelType == #type && Dimension == dim ) \
 /** Declare CropImage. */
 template< class InputImageType >
 void CropImage( std::string inputFileName, std::string outputFileName,
-	std::vector<unsigned int> input1, std::vector<unsigned int> input2, unsigned int option );
+	std::vector<int> input1, std::vector<int> input2,
+  unsigned int option, bool force );
 
 /** Declare other functions. */
 void PrintHelp(void);
@@ -30,13 +32,14 @@ void PrintHelp(void);
 bool CheckWhichInputOption( bool pAGiven, bool pBGiven, bool szGiven,
 	bool lbGiven, bool ubGiven, unsigned int & arg );
 
-bool ProcessArgument( std::vector<unsigned int> & arg, unsigned int dimension );
+bool ProcessArgument( std::vector<int> & arg, unsigned int dimension );
 
-void GetBox( std::vector<unsigned int> & pA, std::vector<unsigned int> & pB, unsigned int dimension );
+void GetBox( std::vector<int> & pA, std::vector<int> & pB, unsigned int dimension );
 
-std::vector<unsigned int> GetUpperBoundary( const std::vector<unsigned int> & input1,
-	 const std::vector<unsigned int> & input2, const std::vector<unsigned int> & imageSize,
-	 unsigned int dimension, unsigned int option );
+std::vector<int> GetUpperBoundary( const std::vector<int> & input1,
+	 const std::vector<int> & input2, const std::vector<unsigned int> & imageSize,
+	 unsigned int dimension, unsigned int option,
+   bool force, std::vector<unsigned long> & padUpperBound );
 
 //-------------------------------------------------------------------------------------
 
@@ -61,19 +64,19 @@ int main( int argc, char **argv )
 	outputFileName += "CROPPED.mhd";
 	bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
 
-	std::vector<unsigned int> pA;
+	std::vector<int> pA;
 	bool retpA = parser->GetCommandLineArgument( "-pA", pA );
 
-	std::vector<unsigned int> pB;
+	std::vector<int> pB;
 	bool retpB = parser->GetCommandLineArgument( "-pB", pB );
 
-	std::vector<unsigned int> sz;
+	std::vector<int> sz;
 	bool retsz = parser->GetCommandLineArgument( "-sz", sz );
 
-	std::vector<unsigned int> lowBound;
+	std::vector<int> lowBound;
 	bool retlb = parser->GetCommandLineArgument( "-lb", lowBound );
 
-	std::vector<unsigned int> upBound;
+	std::vector<int> upBound;
 	bool retub = parser->GetCommandLineArgument( "-ub", upBound );
 
 	unsigned int Dimension = 3;
@@ -81,6 +84,8 @@ int main( int argc, char **argv )
 
 	std::string	PixelType = "short";
 	bool retpt = parser->GetCommandLineArgument( "-pt", PixelType );
+
+	bool force = parser->ArgumentExists( "-force" );
 
 	/** Get rid of the possible "_" in PixelType. */
 	ReplaceUnderscoreWithSpace( PixelType );
@@ -155,7 +160,7 @@ int main( int argc, char **argv )
 	}
 
 	/** Get inputs. */
-	std::vector<unsigned int> input1, input2;
+	std::vector<int> input1, input2;
 	if ( option == 1 )
 	{
 		GetBox( pA, pB, Dimension );
@@ -177,13 +182,26 @@ int main( int argc, char **argv )
 	try
 	{
 		run(CropImage,unsigned char,2);
-		run(CropImage,unsigned char,3);
 		run(CropImage,char,2);
-		run(CropImage,char,3);
 		run(CropImage,unsigned short,2);
-		run(CropImage,unsigned short,3);
 		run(CropImage,short,2);
+    /*run(CropImage,unsigned int,2);
+		run(CropImage,int,2);
+    run(CropImage,unsigned long,2);
+		run(CropImage,long,2);
+    run(CropImage,float,2);
+		run(CropImage,double,2);*/
+
+    run(CropImage,unsigned char,3);
+		run(CropImage,char,3);
+		run(CropImage,unsigned short,3);
 		run(CropImage,short,3);
+    /*run(CropImage,unsigned int,3);
+		run(CropImage,int,3);
+    run(CropImage,unsigned long,3);
+		run(CropImage,long,3);
+    run(CropImage,float,3);
+		run(CropImage,double,3);*/
 	}
 	catch( itk::ExceptionObject &e )
 	{
@@ -203,18 +221,21 @@ int main( int argc, char **argv )
 
 template< class InputImageType >
 void CropImage( std::string inputFileName, std::string outputFileName,
-	std::vector<unsigned int> input1, std::vector<unsigned int> input2, unsigned int option )
+	std::vector<int> input1, std::vector<int> input2,
+  unsigned int option, bool force )
 {
 	/** Typedefs. */
-	typedef itk::CropImageFilter< InputImageType, InputImageType >	CropImageFilterType;
+	typedef itk::CropImageFilter< InputImageType, InputImageType >	      CropImageFilterType;
+  typedef itk::ConstantPadImageFilter< InputImageType, InputImageType > PadFilterType;
 	typedef itk::ImageFileReader< InputImageType >			ReaderType;
 	typedef itk::ImageFileWriter< InputImageType >			WriterType;
-	typedef typename InputImageType::SizeType					SizeType;
+	typedef typename InputImageType::SizeType					  SizeType;
 
 	const unsigned int Dimension = InputImageType::ImageDimension;
 
 	/** Declarations. */
 	typename CropImageFilterType::Pointer cropFilter = CropImageFilterType::New();
+  typename PadFilterType::Pointer padFilter = PadFilterType::New();
 	typename ReaderType::Pointer reader = ReaderType::New();
 	typename WriterType::Pointer writer = WriterType::New();
 
@@ -236,18 +257,41 @@ void CropImage( std::string inputFileName, std::string outputFileName,
 	for ( unsigned int i = 0; i < Dimension; i++ ) imSize[ i ] = imageSize[ i ];
 
 	/** Get the upper boundary. */
-	std::vector<unsigned int> up = GetUpperBoundary( input1, input2, imSize, Dimension, option );
+  std::vector<unsigned long> padUpperBound;
+	std::vector<int> up = GetUpperBoundary(
+    input1, input2, imSize, Dimension, option, force, padUpperBound );
 	SizeType upSize;
 	for ( unsigned int i = 0; i < Dimension; i++ ) upSize[ i ] = up[ i ];
 
-	/** Set the boundaries. */
+	/** Set the boundaries for the cropping filter. */
+  cropFilter->SetInput( reader->GetOutput() );
 	cropFilter->SetLowerBoundaryCropSize( input1Size );
 	cropFilter->SetUpperBoundaryCropSize( upSize );
 
+  /** In case the force option is set to true, we force the output image to be of the
+   * desired size.
+   */
+  if ( force )
+  {
+    unsigned long uBound[ Dimension ];
+    unsigned long lBound[ Dimension ];
+    for ( unsigned int i = 0; i < Dimension; i++ )
+    {
+      lBound[ i ] = 0;
+      uBound[ i ] = padUpperBound[ i ];
+    }
+    padFilter->SetPadLowerBound( lBound );
+    padFilter->SetPadUpperBound( uBound );
+    padFilter->SetInput( cropFilter->GetOutput() );
+    writer->SetInput( padFilter->GetOutput() );
+  }
+  else
+  {
+    writer->SetInput( cropFilter->GetOutput() );
+  }
+
 	/** Setup and process the pipeline. */
-	cropFilter->SetInput( reader->GetOutput() );
 	writer->SetFileName( outputFileName.c_str() );
-	writer->SetInput( cropFilter->GetOutput() );
 	writer->Update();
 
 } // end CropImage
@@ -315,7 +359,7 @@ bool CheckWhichInputOption( bool pAGiven, bool pBGiven, bool szGiven,
 	 * ******************* ProcessArgument *******************
 	 */
 
-bool ProcessArgument( std::vector<unsigned int> & arg, unsigned int dimension )
+bool ProcessArgument( std::vector<int> & arg, unsigned int dimension )
 {
 	/** Check if arg is of the right size. */
 	if( arg.size() != dimension && arg.size() != 1 )
@@ -327,7 +371,7 @@ bool ProcessArgument( std::vector<unsigned int> & arg, unsigned int dimension )
 	 * - ( arg[0], ..., arg[0] ) if arg.size() == 1
 	 * - ( arg[0], ..., arg[dimension-1] ) if arg.size() == dimension
 	 */
-	std::vector<unsigned int> arg2( dimension, arg[ 0 ] );
+	std::vector<int> arg2( dimension, arg[ 0 ] );
 	if ( arg.size() == dimension )
 	{
 		for ( unsigned int i = 1; i < dimension; i++ )
@@ -355,11 +399,11 @@ bool ProcessArgument( std::vector<unsigned int> & arg, unsigned int dimension )
 	 * ******************* GetBox *******************
 	 */
 
-void GetBox( std::vector<unsigned int> & pA, std::vector<unsigned int> & pB, unsigned int dimension )
+void GetBox( std::vector<int> & pA, std::vector<int> & pB, unsigned int dimension )
 {
 	/** Get the outer points of the box. */
-	std::vector<unsigned int> pa( dimension, 0 );
-	std::vector<unsigned int> pb( dimension, 0 );
+	std::vector<int> pa( dimension, 0 );
+	std::vector<int> pb( dimension, 0 );
 	for ( unsigned int i = 0; i < dimension; i++ )
 	{
 		pa[ i ] = vnl_math_min( pA[ i ], pB[ i ] );
@@ -375,63 +419,88 @@ void GetBox( std::vector<unsigned int> & pA, std::vector<unsigned int> & pB, uns
 	 * ******************* GetUpperBoundary *******************
 	 */
 
- std::vector<unsigned int> GetUpperBoundary( const std::vector<unsigned int> & input1,
-	 const std::vector<unsigned int> & input2, const std::vector<unsigned int> & imageSize,
-	 unsigned int dimension, unsigned int option )
+ std::vector<int> GetUpperBoundary( const std::vector<int> & input1,
+	 const std::vector<int> & input2, const std::vector<unsigned int> & imageSize,
+   unsigned int dimension, unsigned int option,
+   bool force, std::vector<unsigned long> & padUpperBound )
 {
 	/** Create output vector. */
-	std::vector<unsigned int > output( dimension, 0 );
+	std::vector<int> upperBoundary( dimension, 0 );
+  padUpperBound.resize( dimension, 0 );
 	
 	/** Fill output vector. */
 	if ( option == 1 )
 	{
 		for ( unsigned int i = 0; i < dimension; i++ )
 		{
+      upperBoundary[ i ] = imageSize[ i ] - input2[ i ];
 			if ( imageSize[ i ] < input2[ i ] )
 			{
-				itkGenericExceptionMacro( << "out of bounds." );
+        if ( force )
+        {
+          upperBoundary[ i ] = 0;
+          padUpperBound[ i ] = input2[ i ] - imageSize[ i ];
+        }
+        else
+        {
+          itkGenericExceptionMacro( << "out of bounds." );
+        }
 			}
 			if ( input1[ i ] == input2[ i ] )
 			{
 				itkGenericExceptionMacro( << "size[" << i << "] = 0" );
 			}
-			output[ i ] = imageSize[ i ] - input2[ i ];
 		}
 	}
 	else if ( option == 2 )
 	{
 		for ( unsigned int i = 0; i < dimension; i++ )
 		{
+      upperBoundary[ i ] = imageSize[ i ] - input1[ i ] - input2[ i ];
 			if ( imageSize[ i ] < input1[ i ] + input2[ i ] )
 			{
-				itkGenericExceptionMacro( << "out of bounds." );
+        if ( force )
+        {
+          upperBoundary[ i ] = 0;
+          padUpperBound[ i ] = input1[ i ] + input2[ i ] - imageSize[ i ];
+        }
+        else
+        {
+          itkGenericExceptionMacro( << "out of bounds." );
+        }
 			}
-
 			if ( input2[ i ] == 0 )
 			{
 				itkGenericExceptionMacro( << "size[" << i << "] = 0" );
 			}
-			output[ i ] = imageSize[ i ] - input1[ i ] - input2[ i ];
 		}
 	}
 	else if ( option == 3 )
 	{
 		for ( unsigned int i = 0; i < dimension; i++ )
 		{
+      upperBoundary[ i ] = input2[ i ];
 			if ( imageSize[ i ] < input1[ i ] + input2[ i ] )
 			{
-				itkGenericExceptionMacro( << "out of bounds." );
+        if ( force )
+        {
+          upperBoundary[ i ] = 0;
+          padUpperBound[ i ] = -input2[ i ];
+        }
+        else
+        {
+          itkGenericExceptionMacro( << "out of bounds." );
+        }
 			}
 			if ( input1[ i ] + input2[ i ] == imageSize[ i ] )
 			{
 				itkGenericExceptionMacro( << "size[" << i << "] = 0" );
 			}
-			output[ i ] = input2[ i ];
 		}
 	} // end if
 
 	/** Return output. */
-	return output;
+	return upperBoundary;
 
 } // end GetUpperBoundary
 
