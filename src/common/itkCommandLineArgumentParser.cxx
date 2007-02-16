@@ -18,7 +18,40 @@ namespace itk
 		{
 			m_argv[ i ] = argv [ i ];
 		}
-	} // end SetCommandLineArguments
+    this->CreateArgumentMap();
+	} // end SetCommandLineArguments()
+
+
+  /**
+	 * ******************* CreateArgumentMap *******************
+	 */
+
+	void CommandLineArgumentParser::CreateArgumentMap( void )
+  {
+    for ( unsigned int i = 1; i < m_argv.size(); ++i )
+    {
+      if ( m_argv[ i ].substr( 0, 1 ) == "-" )
+      {
+        /** All key entries are removed, the latest is stored. */
+        this->m_ArgumentMap.erase( m_argv[ i ] );
+        this->m_ArgumentMap.insert( EntryType( m_argv[ i ], i ) );
+      }
+    }
+  } // end CreateArgumentMap()
+
+
+  /**
+	 * ******************* ArgumentExists *******************
+	 */
+
+  bool CommandLineArgumentParser::ArgumentExists( std::string key )
+  {
+    if ( this->m_ArgumentMap.count( key ) == 0 )
+    {
+      return false;
+    }
+    return true;
+  } // end ArgumentExists()
 
 
 	/**
@@ -91,7 +124,7 @@ namespace itk
 		GetCommandLineArgument( const std::string & key, std::vector<std::string> & arg )
 	{
 		return this->GetCommandLineArgumentString( key, arg );
-	}
+	} // end GetCommandLineArgument()
 
 
 	/**

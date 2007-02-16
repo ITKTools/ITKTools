@@ -33,6 +33,7 @@ SUBDIRS(
  extractslice
  getdicominformation
  getDICOMseriesUIDs
+ getimageinformation
  getpointsinimage
  giplconvert
  histogramequalizeimage

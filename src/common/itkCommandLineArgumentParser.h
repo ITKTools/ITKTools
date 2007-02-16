@@ -5,6 +5,7 @@
 #include "itkObjectFactory.h"
 #include <vector>
 #include <string>
+#include <map>
 
 namespace itk
 {
@@ -35,6 +36,12 @@ public:
 
 	/** Set the command line arguments in a vector of strings. */
 	void SetCommandLineArguments( int argc, char **argv );
+
+  /** Map to store the arguments and their indices. */
+  typedef std::map< std::string, unsigned int >   ArgumentMapType;
+  typedef ArgumentMapType::value_type					    EntryType;
+  void CreateArgumentMap( void );
+  bool ArgumentExists( std::string key );
 
 	/** Get command line argument if it is not a vector type. */
 	template <class T>
@@ -183,6 +190,9 @@ protected:
 
 	/** A vector of strings to store the command line arguments. */
 	std::vector<std::string> m_argv;
+
+  /** A map to store the arguments and their indices. */
+  ArgumentMapType m_ArgumentMap;
 
 private:
 	CommandLineArgumentParser(const Self&); //purposely not implemented
