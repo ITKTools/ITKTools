@@ -147,7 +147,7 @@ int main( int argc, char **argv )
   }
 
   /** Print image origin. */
-  if ( exsp )
+  if ( exo )
   {
     if ( reti )
     {
