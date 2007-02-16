@@ -27,7 +27,7 @@ int main( int argc, char **argv )
 	std::string	inputFileName = "";
 	bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
 
-  unsigned int index;
+  int index = -1;
   bool reti = parser->GetCommandLineArgument( "-i", index );
 
 	bool exdim = parser->ArgumentExists( "-dim" );
@@ -71,7 +71,7 @@ int main( int argc, char **argv )
   unsigned int dim = testImageIOBase->GetNumberOfDimensions();
 
   /** Check the index. */
-  if ( index > dim - 1 )
+  if ( index > static_cast<int>( dim ) - 1 )
   {
     std::cerr << "ERROR: index out of bounds." << std::endl;
     return 1;
@@ -139,7 +139,7 @@ int main( int argc, char **argv )
     {
       for ( unsigned int i = 0; i < dim - 1; i++ )
       {
-        std::cout << testImageIOBase->GetDimensions( i ) << " ";
+        std::cout << testImageIOBase->GetSpacing( i ) << " ";
       }
       std::cout << testImageIOBase->GetSpacing( dim - 1 );
     }
@@ -157,7 +157,7 @@ int main( int argc, char **argv )
     {
       for ( unsigned int i = 0; i < dim - 1; i++ )
       {
-        std::cout << testImageIOBase->GetDimensions( i ) << " ";
+        std::cout << testImageIOBase->GetOrigin( i ) << " ";
       }
       std::cout << testImageIOBase->GetOrigin( dim - 1 );
     }
