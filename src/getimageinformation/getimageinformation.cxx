@@ -3,6 +3,7 @@
 #include "itkImage.h"
 #include "itkImageIOBase.h"
 #include "itkImageFileReader.h"
+#include <iomanip>
 
 /** Declare PrintHelp. */
 void PrintHelp(void);
