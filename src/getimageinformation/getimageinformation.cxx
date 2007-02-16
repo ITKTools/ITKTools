@@ -178,10 +178,10 @@ void PrintHelp()
 {
 	std::cout << "Usage:" << std::endl << "pxgetimageinformation" << std::endl;
 	std::cout << "  -in     inputFileName" << std::endl;
-	std::cout << "  [-dim]  dimension, default 3" << std::endl;
-	std::cout << "  [-pt]   pixelType, default scalar" << std::endl;
-  std::cout << "  [-ct]   componentType, default short" << std::endl;
-  std::cout << "  [-noc]  #components, default 1" << std::endl;
+	std::cout << "  [-dim]  dimension" << std::endl;
+	std::cout << "  [-pt]   pixelType" << std::endl;
+  std::cout << "  [-ct]   componentType" << std::endl;
+  std::cout << "  [-noc]  #components" << std::endl;
   std::cout << "  [-sz]   size" << std::endl;
   std::cout << "  [-sp]   spacing" << std::endl;
   std::cout << "  [-o]    origin" << std::endl;
