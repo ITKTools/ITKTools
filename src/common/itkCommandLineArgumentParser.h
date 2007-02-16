@@ -58,11 +58,27 @@ public:
 		bool keyFound = this->FindKey( key, keyIndex, nextKeyIndex );
 		if ( !keyFound ) return false;
 		
-		/** Gather the arguments and put them in arg. */
-		arg.clear();
+    /** If a vector of size oldSize > 1 is given to this function, and if
+     * only one (1) argument is provided in the command line, we create
+     * a vector of size oldSize and fill it with the single argument.
+     */
+    unsigned int oldSize = arg.size();
+    if ( oldSize > 1 && nextKeyIndex - keyIndex == 2 )
+    {
+      arg.clear();
+      arg.resize( oldSize, m_argv[ keyIndex + 1 ] );
+      return true;
+    }
+    
+    /** Otherwise, gather the arguments and put them in arg. */
+    unsigned int newSize = nextKeyIndex - keyIndex - 1;
+    newSize = newSize > oldSize ? newSize : oldSize;
+    arg.resize( newSize );
+    unsigned int j = 0;
 		for ( unsigned int i = keyIndex + 1; i < nextKeyIndex; i++ )
 		{
-			arg.push_back( m_argv[ i ] );
+			arg[ j ] = m_argv[ i ];
+      ++j;
 		}
 		return true;
 
@@ -78,11 +94,27 @@ public:
 		bool keyFound = this->FindKey( key, keyIndex, nextKeyIndex );
 		if ( !keyFound ) return false;
 		
-		/** Gather the arguments and put them in arg. */
-		arg.clear();
+    /** If a vector of size oldSize > 1 is given to this function, and if
+     * only one (1) argument is provided in the command line, we create
+     * a vector of size oldSize and fill it with the single argument.
+     */
+    unsigned int oldSize = arg.size();
+    if ( oldSize > 1 && nextKeyIndex - keyIndex == 2 )
+    {
+      arg.clear();
+      arg.resize( oldSize, static_cast<T>( atoi( m_argv[ keyIndex + 1 ].c_str() ) ) );
+      return true;
+    }
+    
+    /** Otherwise, gather the arguments and put them in arg. */
+    unsigned int newSize = nextKeyIndex - keyIndex - 1;
+    newSize = newSize > oldSize ? newSize : oldSize;
+    arg.resize( newSize );
+    unsigned int j = 0;
 		for ( unsigned int i = keyIndex + 1; i < nextKeyIndex; i++ )
 		{
-			arg.push_back( static_cast<T>( atoi( m_argv[ i ].c_str() ) ) );
+			arg[ j ] = static_cast<T>( atoi( m_argv[ i ].c_str() ) );
+      ++j;
 		}
 		return true;
 
@@ -98,11 +130,27 @@ public:
 		bool keyFound = this->FindKey( key, keyIndex, nextKeyIndex );
 		if ( !keyFound ) return false;
 		
-		/** Gather the arguments and put them in arg. */
-		arg.clear();
+    /** If a vector of size oldSize > 1 is given to this function, and if
+     * only one (1) argument is provided in the command line, we create
+     * a vector of size oldSize and fill it with the single argument.
+     */
+    unsigned int oldSize = arg.size();
+    if ( oldSize > 1 && nextKeyIndex - keyIndex == 2 )
+    {
+      arg.clear();
+      arg.resize( oldSize, static_cast<T>( atof( m_argv[ keyIndex + 1 ].c_str() ) ) );
+      return true;
+    }
+    
+    /** Otherwise, gather the arguments and put them in arg. */
+    unsigned int newSize = nextKeyIndex - keyIndex - 1;
+    newSize = newSize > oldSize ? newSize : oldSize;
+    arg.resize( newSize );
+    unsigned int j = 0;
 		for ( unsigned int i = keyIndex + 1; i < nextKeyIndex; i++ )
 		{
-			arg.push_back( static_cast<T>( atof( m_argv[ i ].c_str() ) ) );
+			arg[ j ] = static_cast<T>( atof( m_argv[ i ].c_str() ) );
+      ++j;
 		}
 		return true;
 
