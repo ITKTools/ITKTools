@@ -1,5 +1,5 @@
 # This project is intended to be built outside the Insight source tree
-PROJECT(createemptyimage)
+PROJECT(createzeroimage)
 
 # Find ITK.
 FIND_PACKAGE(ITK)
@@ -10,9 +10,9 @@ ELSE(ITK_FOUND)
           "Cannot build without ITK.  Please set ITK_DIR.")
 ENDIF(ITK_FOUND)
 
-ADD_EXECUTABLE(pxcreateemptyimage createemptyimage.cxx)
+ADD_EXECUTABLE(pxcreatezeroimage createzeroimage.cxx)
 
-INSTALL_TARGETS(/. pxcreateemptyimage)
+INSTALL_TARGETS(/. pxcreatezeroimage)
 
-TARGET_LINK_LIBRARIES(pxcreateemptyimage pxcommon ITKBasicFilters ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxcreatezeroimage pxcommon ITKBasicFilters ITKIO ITKCommon)
 
