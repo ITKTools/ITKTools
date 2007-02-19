@@ -22,24 +22,27 @@ if ( PixelType == #type && Dimension == dim ) \
 
 /** Declare CropImage. */
 template< class InputImageType >
-void CropImage( std::string inputFileName, std::string outputFileName,
-	std::vector<int> input1, std::vector<int> input2,
-  unsigned int option, bool force );
+void CropImage( const std::string & inputFileName, const std::string & outputFileName,
+	const std::vector<int> & input1, const std::vector<int> & input2,
+  const unsigned int option, const bool force );
 
 /** Declare other functions. */
-void PrintHelp(void);
+void PrintHelp( void );
 
-bool CheckWhichInputOption( bool pAGiven, bool pBGiven, bool szGiven,
-	bool lbGiven, bool ubGiven, unsigned int & arg );
+bool CheckWhichInputOption( const bool pAGiven, const bool pBGiven, const bool szGiven,
+	const bool lbGiven, const bool ubGiven, unsigned int & arg );
 
-bool ProcessArgument( std::vector<int> & arg, unsigned int dimension );
+bool ProcessArgument( std::vector<int> & arg, const unsigned int dimension, const bool positive );
 
-void GetBox( std::vector<int> & pA, std::vector<int> & pB, unsigned int dimension );
+void GetBox( std::vector<int> & pA, std::vector<int> & pB, const unsigned int dimension );
+
+std::vector<int> GetLowerBoundary( const std::vector<int> & input1,
+	 const unsigned int dimension, const bool force, std::vector<unsigned long> & padLowerBound );
 
 std::vector<int> GetUpperBoundary( const std::vector<int> & input1,
-	 const std::vector<int> & input2, const std::vector<unsigned int> & imageSize,
-	 unsigned int dimension, unsigned int option,
-   bool force, std::vector<unsigned long> & padUpperBound );
+	 const std::vector<int> & input2, const std::vector<int> & imageSize,
+	 const unsigned int dimension, const unsigned int option,
+   const bool force, std::vector<unsigned long> & padUpperBound );
 
 //-------------------------------------------------------------------------------------
 
@@ -109,30 +112,30 @@ int main( int argc, char **argv )
 		return 1;
 	}
 	
-	/** Check argument pA. */
+	/** Check argument pA. Point A should only be positive if not force. */
 	if ( retpA )
 	{
-		if ( !ProcessArgument( pA, Dimension ) )
+		if ( !ProcessArgument( pA, Dimension, force ) )
 		{
 			std::cout << "ERROR: Point A should consist of 1 or Dimension positive values." << std::endl;
 			return 1;
 		}
 	}
 
-	/** Check argument pB. */
+	/** Check argument pB. Point B should always be positive. */
 	if ( retpB )
 	{
-		if ( !ProcessArgument( pB, Dimension ) )
+		if ( !ProcessArgument( pB, Dimension, false ) )
 		{
 			std::cout << "ERROR: Point B should consist of 1 or Dimension positive values." << std::endl;
 			return 1;
 		}
 	}
 
-	/** Check argument sz. */
+	/** Check argument sz. Size should always be positive. */
 	if ( retsz )
 	{
-		if ( !ProcessArgument( sz, Dimension ) )
+		if ( !ProcessArgument( sz, Dimension, false ) )
 		{
 			std::cout << "ERROR: The size sz should consist of 1 or Dimension positive values." << std::endl;
 			return 1;
@@ -142,7 +145,7 @@ int main( int argc, char **argv )
 	/** Check argument lb. */
 	if ( retlb )
 	{
-		if ( !ProcessArgument( lowBound, Dimension ) )
+		if ( !ProcessArgument( lowBound, Dimension, force ) )
 		{
 			std::cout << "ERROR: The lowerbound lb should consist of 1 or Dimension positive values." << std::endl;
 			return 1;
@@ -152,7 +155,7 @@ int main( int argc, char **argv )
 	/** Check argument ub. */
 	if ( retub )
 	{
-		if ( !ProcessArgument( upBound, Dimension ) )
+		if ( !ProcessArgument( upBound, Dimension, force ) )
 		{
 			std::cout << "ERROR: The upperbound ub should consist of 1 or Dimension positive values." << std::endl;
 			return 1;
@@ -212,7 +215,7 @@ int main( int argc, char **argv )
 	/** End program. */
 	return 0;
 
-} // end main
+} // end main()
 
 
 	/**
@@ -220,9 +223,9 @@ int main( int argc, char **argv )
 	 */
 
 template< class InputImageType >
-void CropImage( std::string inputFileName, std::string outputFileName,
-	std::vector<int> input1, std::vector<int> input2,
-  unsigned int option, bool force )
+void CropImage( const std::string & inputFileName, const std::string & outputFileName,
+	const std::vector<int> & input1, const std::vector<int> & input2,
+  const unsigned int option, const bool force )
 {
 	/** Typedefs. */
 	typedef itk::CropImageFilter< InputImageType, InputImageType >	      CropImageFilterType;
@@ -253,19 +256,25 @@ void CropImage( std::string inputFileName, std::string outputFileName,
 
 	/** Get the size of input image. */
 	SizeType imageSize = reader->GetOutput()->GetLargestPossibleRegion().GetSize();
-	std::vector<unsigned int> imSize( Dimension );
-	for ( unsigned int i = 0; i < Dimension; i++ ) imSize[ i ] = imageSize[ i ];
+	std::vector<int> imSize( Dimension );
+	for ( unsigned int i = 0; i < Dimension; i++ ) imSize[ i ] = static_cast<int>( imageSize[ i ] );
 
-	/** Get the upper boundary. */
-  std::vector<unsigned long> padUpperBound;
+  /** Get the lower and upper boundary. */
+  std::vector<unsigned long> padLowerBound, padUpperBound;
+  std::vector<int> down = GetLowerBoundary(
+    input1, Dimension, force, padLowerBound );
 	std::vector<int> up = GetUpperBoundary(
     input1, input2, imSize, Dimension, option, force, padUpperBound );
-	SizeType upSize;
-	for ( unsigned int i = 0; i < Dimension; i++ ) upSize[ i ] = up[ i ];
+	SizeType downSize, upSize;
+	for ( unsigned int i = 0; i < Dimension; i++ )
+  {
+    downSize[ i ] = down[ i ];
+    upSize[ i ] = up[ i ];
+  }
 
 	/** Set the boundaries for the cropping filter. */
   cropFilter->SetInput( reader->GetOutput() );
-	cropFilter->SetLowerBoundaryCropSize( input1Size );
+	cropFilter->SetLowerBoundaryCropSize( downSize );
 	cropFilter->SetUpperBoundaryCropSize( upSize );
 
   /** In case the force option is set to true, we force the output image to be of the
@@ -277,7 +286,7 @@ void CropImage( std::string inputFileName, std::string outputFileName,
     unsigned long lBound[ Dimension ];
     for ( unsigned int i = 0; i < Dimension; i++ )
     {
-      lBound[ i ] = 0;
+      lBound[ i ] = padLowerBound[ i ];
       uBound[ i ] = padUpperBound[ i ];
     }
     padFilter->SetPadLowerBound( lBound );
@@ -294,13 +303,13 @@ void CropImage( std::string inputFileName, std::string outputFileName,
 	writer->SetFileName( outputFileName.c_str() );
 	writer->Update();
 
-} // end CropImage
+} // end CropImage()
 
 
 	/**
 	 * ******************* PrintHelp *******************
 	 */
-void PrintHelp()
+void PrintHelp( void )
 {
 	std::cout << "Usage:" << std::endl << "pxcropimage" << std::endl;
 	std::cout << "\t-in\tinputFilename" << std::endl;
@@ -317,7 +326,7 @@ void PrintHelp()
 	std::cout << "\t2: supply a points and a size with \"-pA\" and \"-sz\"." << std::endl;
 	std::cout << "\t3: supply a lower and an upper bound with \"-lb\" and \"-ub\"." << std::endl;
 	std::cout << "Supported: 2D, 3D, (unsigned) short, (unsigned) char." << std::endl;
-} // end PrintHelp
+} // end PrintHelp()
 
 
 	/**
@@ -327,8 +336,8 @@ void PrintHelp()
 	 * 2: supply a points and a size with -pA and -sz
 	 * 3: supply a lower and an upper bound with -lb and -ub
 	 */
-bool CheckWhichInputOption( bool pAGiven, bool pBGiven, bool szGiven,
-	bool lbGiven, bool ubGiven, unsigned int & arg )
+bool CheckWhichInputOption( const bool pAGiven, const bool pBGiven, const bool szGiven,
+	const bool lbGiven, const bool ubGiven, unsigned int & arg )
 {
 	if ( pAGiven && pBGiven && !szGiven && !lbGiven && !ubGiven )
 	{
@@ -352,14 +361,14 @@ bool CheckWhichInputOption( bool pAGiven, bool pBGiven, bool szGiven,
 	/** Return a value. */
 	return false;
 
-} // end CheckWhichInputOption
+} // end CheckWhichInputOption()
 
 
 	/**
 	 * ******************* ProcessArgument *******************
 	 */
 
-bool ProcessArgument( std::vector<int> & arg, unsigned int dimension )
+bool ProcessArgument( std::vector<int> & arg, const unsigned int dimension, const bool positive )
 {
 	/** Check if arg is of the right size. */
 	if( arg.size() != dimension && arg.size() != 1 )
@@ -384,15 +393,18 @@ bool ProcessArgument( std::vector<int> & arg, unsigned int dimension )
 	arg = arg2;
 
 	/** Check for positive numbers. */
-	for ( unsigned int i = 1; i < dimension; i++ )
-	{
-		if ( arg[ i ] < 0 ) return false;
-	}
+  if ( !positive )
+  {
+    for ( unsigned int i = 0; i < dimension; i++ )
+    {
+      if ( arg[ i ] < 0 ) return false;
+    }
+  }
 
 	/** Return a value. */
 	return true;
   
-} // end ProcessArgument
+} // end ProcessArgument()
 
 
 	/**
@@ -413,16 +425,45 @@ void GetBox( std::vector<int> & pA, std::vector<int> & pB, unsigned int dimensio
 	/** Copy to the input variables. */
 	pA = pa; pB = pb;
 
-} // end GetBox
+} // end GetBox()
+
+
+	/**
+	 * ******************* GetLowerBoundary *******************
+	 */
+
+std::vector<int> GetLowerBoundary( const std::vector<int> & input1,
+	 const unsigned int dimension, const bool force, std::vector<unsigned long> & padLowerBound )
+{
+  /** Create output vector. */
+	std::vector<int> lowerBoundary( input1 );
+  padLowerBound.resize( dimension, 0 );
+  if ( !force ) return lowerBoundary;
+	
+	/** Fill output vector. */
+  for ( unsigned int i = 0; i < dimension; i++ )
+  {
+    if ( input1[ i ] < 0 )
+    {
+      lowerBoundary[ i ] = 0;
+      padLowerBound[ i ] = -input1[ i ];
+    }
+  }
+
+	/** Return output. */
+	return lowerBoundary;
+
+} // end GetLowerBoundary()
+
 
 	/**
 	 * ******************* GetUpperBoundary *******************
 	 */
 
  std::vector<int> GetUpperBoundary( const std::vector<int> & input1,
-	 const std::vector<int> & input2, const std::vector<unsigned int> & imageSize,
-   unsigned int dimension, unsigned int option,
-   bool force, std::vector<unsigned long> & padUpperBound )
+	 const std::vector<int> & input2, const std::vector<int> & imageSize,
+   const unsigned int dimension, const unsigned int option,
+   const bool force, std::vector<unsigned long> & padUpperBound )
 {
 	/** Create output vector. */
 	std::vector<int> upperBoundary( dimension, 0 );
@@ -480,17 +521,14 @@ void GetBox( std::vector<int> & pA, std::vector<int> & pB, unsigned int dimensio
 		for ( unsigned int i = 0; i < dimension; i++ )
 		{
       upperBoundary[ i ] = input2[ i ];
-			if ( imageSize[ i ] < input1[ i ] + input2[ i ] )
+      if ( input2[ i ] < 0 )
+      {
+        upperBoundary[ i ] = 0;
+        padUpperBound[ i ] = -input2[ i ];
+      }
+			if ( imageSize[ i ] < input1[ i ] + input2[ i ] ) // crossing
 			{
-        if ( force )
-        {
-          upperBoundary[ i ] = 0;
-          padUpperBound[ i ] = -input2[ i ];
-        }
-        else
-        {
-          itkGenericExceptionMacro( << "out of bounds." );
-        }
+        itkGenericExceptionMacro( << "out of bounds." );
 			}
 			if ( input1[ i ] + input2[ i ] == imageSize[ i ] )
 			{
@@ -502,5 +540,5 @@ void GetBox( std::vector<int> & pA, std::vector<int> & pB, unsigned int dimensio
 	/** Return output. */
 	return upperBoundary;
 
-} // end GetUpperBoundary
+} // end GetUpperBoundary()
 
