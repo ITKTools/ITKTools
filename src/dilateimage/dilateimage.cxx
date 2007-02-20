@@ -3,6 +3,7 @@
 
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
+#include <itksys/SystemTools.hxx>
 
 #include "itkBinaryBallStructuringElement.h"
 #include "itkGrayscaleDilateImageFilter.h"
@@ -11,18 +12,18 @@
 
 /** run: A macro to call a function. */
 #define run(function,type,dim) \
-if ( PixelType == #type && Dimension == dim ) \
+if ( ComponentType == #type && Dimension == dim ) \
 { \
     typedef itk::Image< type, dim > InputImageType; \
-    function< InputImageType >( inputFileName, outputFileName, Radius ); \
+    function< InputImageType >( inputFileName, outputFileName, Radius, boundaryCondition ); \
 }
 
 //-------------------------------------------------------------------------------------
 
 /** Declare DilateImage. */
 template< class InputImageType >
-void DilateImage( std::string inputFileName, std::string outputFileName,
-	std::vector<unsigned int> radius );
+void DilateImage( const std::string & inputFileName, const std::string & outputFileName,
+                std::vector<unsigned int> radius, const std::string & boundaryCondition );
 
 /** Declare PrintHelp. */
 void PrintHelp(void);
@@ -46,20 +47,20 @@ int main( int argc, char *argv[] )
 	std::string	inputFileName = "";
 	bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
 
-	std::string	outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
-	outputFileName += "DILATED.mhd";
+	std::string	outputFileName = 
+    itksys::SystemTools::GetFilenameWithoutLastExtension(inputFileName);
+  std::string ext =
+    itksys::SystemTools::GetFilenameLastExtension(inputFileName);
+	outputFileName += "DILATED" + ext;
 	bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+
+  std::string boundaryCondition = "";
+	bool retbc = parser->GetCommandLineArgument( "-bc", boundaryCondition );
 
 	std::vector<unsigned int> radius;
 	bool retr = parser->GetCommandLineArgument( "-r", radius );
 
-	unsigned int Dimension = 3;
-	bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
-
-	std::string	PixelType = "short";
-	bool retpt = parser->GetCommandLineArgument( "-pt", PixelType );
-
-	/** Check if the required arguments are given. */
+  /** Check if the required arguments are given. */
 	if ( !retin )
 	{
 		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
@@ -70,11 +71,53 @@ int main( int argc, char *argv[] )
 		std::cerr << "ERROR: You should specify \"-r\"." << std::endl;
 		return 1;
 	}
+  
+  /** Determine image properties. */
+  std::string ComponentType = "short";
+  std::string	PixelType; //we don't use this
+  unsigned int Dimension = 3;
+  unsigned int NumberOfComponents = 1;
+  std::vector<unsigned int> imagesize( Dimension, 0 );
+  int retgip = GetImageProperties(
+    inputFileName,
+    PixelType,
+    ComponentType,
+    Dimension,
+    NumberOfComponents,
+    imagesize );
+  if ( retgip !=0 )
+  {
+    return 1;
+  }
+  std::cout << "The input image has the following properties:" << std::endl;
+  /** Do not bother the user with the difference between pixeltype and componenttype:*/
+  //std::cout << "\tPixelType:          " << PixelType << std::endl;
+  std::cout << "\tPixelType:          " << ComponentType << std::endl;
+  std::cout << "\tDimension:          " << Dimension << std::endl;
+  std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
+  
+  /** Let the user overrule this */
+	bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
+	bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
+  if (retdim | retpt)
+  {
+    std::cout << "The user has overruled this by specifying -pt and/or -dim:" << std::endl;
+    std::cout << "\tPixelType:          " << ComponentType << std::endl;
+    std::cout << "\tDimension:          " << Dimension << std::endl;
+    std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
+  }
 
-	/** Get rid of the possible "_" in PixelType. */
-	ReplaceUnderscoreWithSpace( PixelType );
+  if (NumberOfComponents > 1)
+  { 
+    std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
+    std::cerr << "Vector images are not supported!" << std::endl;
+    return 1; 
+  }
+  
+  /** Get rid of the possible "_" in ComponentType. */
+	ReplaceUnderscoreWithSpace( ComponentType );
 
-	/** Check radius. */
+  /** Check radius. */
 	if ( retr )
 	{
 		if( radius.size() != Dimension && radius.size() != 1 )
@@ -91,19 +134,14 @@ int main( int argc, char *argv[] )
 		for ( unsigned int i = 1; i < Dimension; i++ )
 		{
 			Radius[ i ] = radius[ i ];
+      if ( Radius[ i ] < 1 )
+		  {
+		    std::cout << "ERROR: No nonpositive numbers are allowed in radius." << std::endl;
+		 	  return 1;
+		  }
 		}
 	}
-
-	/** Check Radius for nonpositive numbers. */
-	for ( unsigned int i = 0; i < Dimension; i++ )
-	{
-		if ( Radius[ i ] < 1 )
-		{
-			std::cout << "ERROR: No nonpositive numbers are allowed in radius." << std::endl;
-			return 1;
-		}
-	}
-
+  
 	/** Run the program. */
 	try
 	{
@@ -133,8 +171,11 @@ int main( int argc, char *argv[] )
 	 */
 
 template< class InputImageType >
-void DilateImage( std::string inputFileName, std::string outputFileName,
-	std::vector<unsigned int> radius )
+void DilateImage( 
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+	std::vector<unsigned int> radius,
+  const std::string & boundaryCondition )
 {
 	/** Typedefs. */
 	typedef itk::ImageFileReader< InputImageType >			ReaderType;
@@ -149,6 +190,8 @@ void DilateImage( std::string inputFileName, std::string outputFileName,
 	typedef itk::GrayscaleDilateImageFilter<
 		InputImageType, InputImageType,
 		StructuringElementType >													DilateFilterType;
+  typedef typename  
+    DilateFilterType::DefaultBoundaryConditionType     BoundaryConditionType;
 
 	/** DECLARATION'S. */
 	typename ReaderType::Pointer reader = ReaderType::New();
@@ -172,6 +215,24 @@ void DilateImage( std::string inputFileName, std::string outputFileName,
 	S_ball.CreateStructuringElement();
 	dilation->SetKernel( S_ball );
 
+  /** Set a boundary condition value. This is the value outside the image.
+   * By default it is set to min(PixelType). */
+  BoundaryConditionType bc;
+  PixelType bcValue = itk::NumericTraits<PixelType>::NonpositiveMin();
+  if ( boundaryCondition != "")
+  {
+    if ( itk::NumericTraits<PixelType>::is_integer )
+    {
+      bcValue = static_cast<PixelType>( atoi( boundaryCondition.c_str() ) );
+    }
+    else
+    {
+      bcValue = static_cast<PixelType>( atof( boundaryCondition.c_str() ) );
+    }
+    bc.SetConstant( bcValue );
+    dilation->OverrideBoundaryCondition(&bc);
+  }
+
 	/** Connect the pipeline. */
 	dilation->SetInput( reader->GetOutput() );
 
@@ -189,11 +250,12 @@ void DilateImage( std::string inputFileName, std::string outputFileName,
 void PrintHelp()
 {
 	std::cout << "Usage:" << std::endl << "pxdilateimage" << std::endl;
-	std::cout << "\t-in\tinputFilename" << std::endl;
-	std::cout << "\t[-out]\toutputFilename, default in + DILATED.mhd" << std::endl;
-	std::cout << "\t-r\tradius" << std::endl;
-	std::cout << "\t[-dim]\tdimension, default 3" << std::endl;
-	std::cout << "\t[-pt]\tpixelType, default short" << std::endl;
+	std::cout << "\t-in     inputFilename" << std::endl;
+	std::cout << "\t[-out]  outputFilename, default in + DILATED + extension(inputFilename)" << std::endl;
+	std::cout << "\t-r      radius" << std::endl;
+  std::cout << "\t[-dim]  dimension, default: automatically determined from image" << std::endl;
+  std::cout << "\t[-pt]   pixelType, default: automatically determined from image" << std::endl;
+  std::cout << "\t[-bc]   boundaryCondition; the grey value outside the image; default: min(PixelType)" << std::endl;
 	std::cout << "Supported: 2D, 3D, (unsigned) short, (unsigned) char." << std::endl;
 } // end PrintHelp
 
