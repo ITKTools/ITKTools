@@ -10,7 +10,7 @@ ELSE(ITK_FOUND)
           "Cannot build without ITK.  Please set ITK_DIR.")
 ENDIF(ITK_FOUND)
 
-ADD_EXECUTABLE(pxcomputedifferenceimage)
+ADD_EXECUTABLE(pxcomputedifferenceimage computedifferenceimage.cxx)
 
 TARGET_LINK_LIBRARIES(pxcomputedifferenceimage pxcommon ITKIO ITKCommon ITKBasicFilters)
 
