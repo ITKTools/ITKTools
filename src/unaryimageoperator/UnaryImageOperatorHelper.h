@@ -3,7 +3,7 @@
 
 #include "itkImage.h"
 #include "itkUnaryFunctorImageFilter.h"
-#include <map>
+//#include <map>
 #include <vector>
 #include <itksys/SystemTools.hxx>
 
