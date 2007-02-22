@@ -30,9 +30,9 @@ void RemoveUnsignedFromString( std::string & arg )
 {
   const std::basic_string<char>::size_type npos = std::basic_string<char>::npos;
   std::basic_string<char>::size_type pos = arg.find( "unsigned " );
-	if ( pos != npos ) arg = arg.substr( pos, 9 );
+	if ( pos != npos ) arg = arg.substr( pos + 9 );
   pos = arg.find( "unsigned_" );
-  if ( pos != npos ) arg = arg.substr( pos, 9 );
+  if ( pos != npos ) arg = arg.substr( pos + 9 );
 
 } // end RemoveUnsignedFromString()
 
