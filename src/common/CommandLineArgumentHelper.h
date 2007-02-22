@@ -4,8 +4,11 @@
 #include <string>
 #include <vector>
 
-/** Replace underscores in the input string with spaces */
+/** Replace a underscore in the input string with a space. */
 void ReplaceUnderscoreWithSpace( std::string & arg );
+
+/** Remove "unsigned " or "unsigned_" from the input string. */
+void RemoveUnsignedFromString( std::string & arg );
 
 /** Determine pixeltype (scalar/vector), componenttype (short, float etc),
  * dimension and numberofcomponents from an image
