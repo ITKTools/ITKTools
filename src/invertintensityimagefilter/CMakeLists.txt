@@ -12,7 +12,7 @@ ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxinvertintensityimagefilter invertintensityimagefilter.cxx)
 
-TARGET_LINK_LIBRARIES(pxinvertintensityimagefilter ITKIO ITKBasicFilters ITKCommon)
+TARGET_LINK_LIBRARIES(pxinvertintensityimagefilter pxcommon ITKIO ITKBasicFilters ITKCommon)
 
 INSTALL_TARGETS(/. pxinvertintensityimagefilter)
 

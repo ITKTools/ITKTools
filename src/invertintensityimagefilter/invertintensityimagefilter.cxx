@@ -1,59 +1,156 @@
+#include "itkCommandLineArgumentParser.h"
+#include "CommandLineArgumentHelper.h"
+
 #include "itkImageFileReader.h"
+#include "itkImageFileWriter.h"
+
 #include "itkStatisticsImageFilter.h"
 #include "itkInvertIntensityImageFilter.h"
-#include "itkImageFileWriter.h"
 
 /** This program inverts the intensity of an image:
  * new = max - old,
  * where max is the maximum of an image.
  */
 
+//-------------------------------------------------------------------------------------
+
+/** run: A macro to call a function. */
+#define run( function, type, dim ) \
+if ( ComponentTypeIn == #type && Dimension == dim ) \
+{ \
+    typedef itk::Image< type, dim > InputImageType; \
+    function< InputImageType >( inputFileName, outputFileName ); \
+}
+
+//-------------------------------------------------------------------------------------
+
+/** Declare InvertIntensity. */
+template< class InputImageType >
+void InvertIntensity(
+  const std::string & inputFileName,
+	const std::string & outputFileName );
+
+/** Declare PrintHelp. */
+void PrintHelp( void );
+
+//-------------------------------------------------------------------------------------
+
 int main( int argc, char ** argv )
 {
-	/** Check arguments. */
-	if( ( argc != 2 && argc != 3 ) || argv[ 1 ] == "--help" )
+  /** Check arguments for help. */
+	if ( argc < 3 )
 	{
-		std::cerr << "Usage:" << std::endl;
-		std::cerr << "pxinvertintensityimagefilter image [outputname]" << std::endl;
-		std::cerr << "This program only accepts 2D short images." << std::endl;
+		PrintHelp();
 		return 1;
 	}
 
-	/** Define image type. */
-	const unsigned int Dimension = 2;
-	typedef short PixelType;
+	/** Create a command line argument parser. */
+	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+	parser->SetCommandLineArguments( argc, argv );
 
+	/** Get arguments. */
+	std::string	inputFileName = "";
+	bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  if ( !retin )
+	{
+		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
+		return 1;
+	}
+
+	std::string	outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
+	outputFileName += "INVERTED.mhd";
+	bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+
+  /** Determine image properties. */
+  std::string ComponentTypeIn = "short";
+  std::string	PixelType; //we don't use this
+  unsigned int Dimension = 2;
+  unsigned int NumberOfComponents = 1;
+  std::vector<unsigned int> imagesize( Dimension, 0 );
+  int retgip = GetImageProperties(
+    inputFileName,
+    PixelType,
+    ComponentTypeIn,
+    Dimension,
+    NumberOfComponents,
+    imagesize );
+  if ( retgip != 0 )
+  {
+    return 1;
+  }
+
+  /** Check for vector images. */
+  if ( NumberOfComponents > 1 )
+  { 
+    std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
+    std::cerr << "Vector images are not supported." << std::endl;
+    return 1; 
+  }
+
+	/** Get rid of the possible "_" in ComponentType. */
+  ReplaceUnderscoreWithSpace( ComponentTypeIn );
+	
+	/** Run the program. */
+	try
+	{
+    /** 2D. */
+    run( InvertIntensity, char, 2 );
+    run( InvertIntensity, unsigned char, 2 );
+		run( InvertIntensity, short, 2 );
+    run( InvertIntensity, unsigned short, 2 );
+    run( InvertIntensity, float, 2 );
+    run( InvertIntensity, double, 2 );
+
+    /** 3D. */
+    run( InvertIntensity, char, 3 );
+    run( InvertIntensity, unsigned char, 3 );
+		run( InvertIntensity, short, 3 );
+    run( InvertIntensity, unsigned short, 3 );
+    run( InvertIntensity, float, 3 );
+    run( InvertIntensity, double, 3 );
+
+	} // end run
+  	catch ( itk::ExceptionObject &e )
+	{
+		std::cerr << "Caught ITK exception: " << e << std::endl;
+		return 1;
+	}
+	
+	/** End program. */
+	return 0;
+
+} // end main
+
+
+	/**
+	 * ******************* InvertIntensity *******************
+	 *
+	 * The resize function templated over the input pixel type.
+	 */
+
+template< class InputImageType >
+void InvertIntensity( const std::string & inputFileName,
+  const std::string & outputFileName )
+{
 	/** Some typedef's. */
-	typedef itk::Image<PixelType, Dimension>						ImageType;
-	typedef itk::ImageFileReader< ImageType >						ReaderType;
-	typedef itk::ImageFileWriter< ImageType >						WriterType;
-	typedef itk::StatisticsImageFilter< ImageType >			StatisticsFilterType;
-	typedef StatisticsFilterType::RealType							RealType;
-	typedef itk::InvertIntensityImageFilter<ImageType>	InvertIntensityFilterType;
+  typedef typename InputImageType::PixelType                InputPixelType;
+	typedef itk::ImageFileReader< InputImageType >						ReaderType;
+	typedef itk::ImageFileWriter< InputImageType >						WriterType;
+	typedef itk::StatisticsImageFilter< InputImageType >			StatisticsFilterType;
+	typedef StatisticsFilterType::RealType							      RealType;
+	typedef itk::InvertIntensityImageFilter< InputImageType >	InvertIntensityFilterType;
 	
 	/** Create reader. */
-	std::string imageFileName = argv[ 1 ];
 	ReaderType::Pointer reader = ReaderType::New();
-	reader->SetFileName( imageFileName.c_str() );
+	reader->SetFileName( inputFileName.c_str() );
 
 	/** Create statistics filter. */
 	StatisticsFilterType::Pointer statistics = StatisticsFilterType::New();
 	statistics->SetInput( reader->GetOutput() );
-
-	/** Update. */
-	try
-	{
-		statistics->Update();
-	}
-	catch ( itk::ExceptionObject & err )
-	{
-		std::cerr << "ERROR occured." << std::endl;
-		std::cerr << err << std::endl;
-		return 1;
-	}
+	statistics->Update();
 
 	/** Get all the output stuff. */
-	PixelType max = statistics->GetMaximum();
+	InputPixelType max = statistics->GetMaximum();
 
 	/** Create invert filter. */
 	InvertIntensityFilterType::Pointer invertFilter = InvertIntensityFilterType::New();
@@ -62,35 +159,21 @@ int main( int argc, char ** argv )
 
 	/** Create writer. */
 	WriterType::Pointer writer = WriterType::New();
+  writer->SetFileName( outputFileName.c_str() );
 	writer->SetInput( invertFilter->GetOutput() );
+  writer->Update();
 
-	/** Create and set filename. */
-	if ( argc == 3 )
-	{
-		writer->SetFileName( argv[ 2 ] );
-	}
-	else
-	{
-		std::ostringstream outputFileNameSS("");
-    outputFileNameSS << imageFileName.substr( 0, imageFileName.rfind( "." ) )
-			<< "INVERTED.mhd";
-		writer->SetFileName( outputFileNameSS.str().c_str() );
-	}
+} // end InvertIntensity()
 
-	/** Write output image. */
-	try
-	{
-		writer->Update();
-	}
-	catch( itk::ExceptionObject &e )
-	{
-		std::cerr << "Caught ITK exception: " << e << std::endl;
-		return 1;
-	}
-
-	/** Return a value. */
-	return 0;
-
-} // end main
-
+	/**
+	 * ******************* PrintHelp *******************
+	 */
+void PrintHelp()
+{
+	std::cout << "This program inverts the intensities of an image." << std::endl;
+	std::cout << "Usage:" << std::endl << "pxinvertintensityimagefilter" << std::endl;
+	std::cout << "  -in     inputFilename" << std::endl;
+	std::cout << "  [-out]  outputFilename; default: in + INVERTED.mhd" << std::endl;
+	std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double." << std::endl;
+} // end PrintHelp()
 
