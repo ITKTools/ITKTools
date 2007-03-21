@@ -3,6 +3,8 @@
 
 #include "itkImage.h"
 #include "itkResampleImageFilter.h"
+#include "itkNearestNeighborInterpolateImageFunction.h"
+#include "itkBSplineInterpolateImageFunction.h"
 
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
@@ -14,7 +16,7 @@
 if ( PixelType == #type && Dimension == dim ) \
 { \
     typedef itk::Image< type, dim > InputImageType; \
-    function< InputImageType >( inputFileName, outputFileName, factorOrSpacing, isFactor ); \
+    function< InputImageType >( inputFileName, outputFileName, factorOrSpacing, isFactor, interpolationOrder ); \
 }
 
 //-------------------------------------------------------------------------------------
@@ -22,7 +24,8 @@ if ( PixelType == #type && Dimension == dim ) \
 /** Declare ResizeImage. */
 template< class InputImageType >
 void ResizeImage( std::string inputFileName, std::string outputFileName,
-	std::vector<double> factorOrSpacing, bool isFactor );
+	std::vector<double> factorOrSpacing, bool isFactor,
+  unsigned int interpolationOrder );
 
 /** Declare PrintHelp. */
 void PrintHelp(void);
@@ -62,6 +65,9 @@ int main( int argc, char **argv )
 
 	std::string	PixelType = "short";
 	bool retpt = parser->GetCommandLineArgument( "-pt", PixelType );
+
+  unsigned int interpolationOrder = 1;
+  bool retio = parser->GetCommandLineArgument( "-io", interpolationOrder );
 
 	/** Check if the required arguments are given. */
 	if ( !retin )
@@ -128,13 +134,15 @@ int main( int argc, char **argv )
 	try
 	{
 		run(ResizeImage,unsigned char,2);
-		run(ResizeImage,unsigned char,3);
 		run(ResizeImage,char,2);
-		run(ResizeImage,char,3);
 		run(ResizeImage,unsigned short,2);
-		run(ResizeImage,unsigned short,3);
 		run(ResizeImage,short,2);
+
+    run(ResizeImage,unsigned char,3);
+		run(ResizeImage,char,3);
+		run(ResizeImage,unsigned short,3);
 		run(ResizeImage,short,3);
+
 	}
 	catch( itk::ExceptionObject &e )
 	{
@@ -156,12 +164,17 @@ int main( int argc, char **argv )
 
 template< class InputImageType >
 void ResizeImage( std::string inputFileName, std::string outputFileName,
-	std::vector<double> factorOrSpacing, bool isFactor )
+	std::vector<double> factorOrSpacing, bool isFactor,
+  unsigned int interpolationOrder )
 {
 	/** Typedefs. */
 	typedef itk::ResampleImageFilter< InputImageType, InputImageType >	ResamplerType;
 	typedef itk::ImageFileReader< InputImageType >			ReaderType;
 	typedef itk::ImageFileWriter< InputImageType >			WriterType;
+  typedef itk::NearestNeighborInterpolateImageFunction<
+    InputImageType, double >                          NNInterpolatorType;
+  typedef itk::BSplineInterpolateImageFunction<
+    InputImageType >                                  BSplineInterpolatorType;
 
 	typedef typename InputImageType::SizeType					SizeType;
 	typedef typename InputImageType::SpacingType			SpacingType;
@@ -173,6 +186,10 @@ void ResizeImage( std::string inputFileName, std::string outputFileName,
 	typename ResamplerType::Pointer resampler = ResamplerType::New();
 	typename ReaderType::Pointer reader = ReaderType::New();
 	typename WriterType::Pointer writer = WriterType::New();
+  typename NNInterpolatorType::Pointer nnInterpolator
+    = NNInterpolatorType::New();
+  typename BSplineInterpolatorType::Pointer bsInterpolator
+    = BSplineInterpolatorType::New();
 
 	/** Read in the inputImage. */
 	reader->SetFileName( inputFileName.c_str() );
@@ -201,16 +218,24 @@ void ResizeImage( std::string inputFileName, std::string outputFileName,
 		}
 	}
 
-	/** Setup the pipeline.
-	 * The resampler has by default an IdentityTransform as transform, and
-	 * a LinearInterpolateImageFunction as interpolator.
-	 */
+	/** Setup the pipeline. */
 	resampler->SetInput( inputImage );
 	resampler->SetSize( outputSize );
 	resampler->SetDefaultPixelValue( 0 );
 	resampler->SetOutputStartIndex( inputImage->GetLargestPossibleRegion().GetIndex() );
 	resampler->SetOutputSpacing( outputSpacing );
 	resampler->SetOutputOrigin( inputImage->GetOrigin() );
+  /* The interpolator: the resampler has by default a LinearInterpolateImageFunction
+   * as interpolator. */
+  if ( interpolationOrder == 0 )
+  {
+    resampler->SetInterpolator( nnInterpolator );
+  }
+  else if ( interpolationOrder > 1 )
+  {
+    bsInterpolator->SetSplineOrder( interpolationOrder );
+    resampler->SetInterpolator( bsInterpolator );
+  }
 
 	/** Write the output image. */
 	writer->SetFileName( outputFileName.c_str() );
@@ -230,6 +255,7 @@ void PrintHelp()
 	std::cout << "\t[-out]\toutputFilename, default in + RESIZED.mhd" << std::endl;
 	std::cout << "\t[-f]\tfactor" << std::endl;
 	std::cout << "\t[-sp]\tspacing" << std::endl;
+  std::cout << "\t[-io]\tinterpolation order, default 1" << std::endl;
 	std::cout << "\t[-dim]\tdimension, default 3" << std::endl;
 	std::cout << "\t[-pt]\tpixelType, default short" << std::endl;
 	std::cout << "One of -f and -sp should be given." << std::endl;
