@@ -65,6 +65,14 @@ do
 	ptype=${ptype/ElementType = }
 	# Translate it to vpx language
 	outputtype="unknown"
+	if [ "$ptype" = "MET_CHAR" ]
+	then
+		outputtype="bit8"
+	fi
+	if [ "$ptype" = "MET_UCHAR" ]
+	then
+		outputtype="ubit8"
+	fi
 	if [ "$ptype" = "MET_SHORT" ]
 	then
 		outputtype="bit16"
@@ -73,13 +81,13 @@ do
 	then
 		outputtype="ubit16"
 	fi
-	if [ "$ptype" = "MET_CHAR" ]
+	if [ "$ptype" = "MET_INT" ]
 	then
-		outputtype="bit8"
+		outputtype="bit32"
 	fi
-	if [ "$ptype" = "MET_UCHAR" ]
+	if [ "$ptype" = "MET_UINT" ]
 	then
-		outputtype="ubit8"
+		outputtype="ubit32"
 	fi
 	if [ "$ptype" = "MET_LONG" ]
 	then

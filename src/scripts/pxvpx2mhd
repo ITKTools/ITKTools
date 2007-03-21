@@ -68,29 +68,37 @@ vpxElementType=`header -type $vpximage`
 #nrofbits=`echo $vpxpixeltype|cut -f2 -d"Bit"`
 
 metaElementType="unknown"
-if [ "$vpxElementType" = "VpxBit16" ]
-then
-	metaElementType="MET_SHORT"
-fi
-
-if [ "$vpxElementType" = "VpxUbit16" ]
-then
-	metaElementType="MET_USHORT"
-fi
-
 if [ "$vpxElementType" = "VpxBit8" ]
 then
 	metaElementType="MET_CHAR"
 fi
-
 if [ "$vpxElementType" = "VpxUbit8" ]
 then
 	metaElementType="MET_UCHAR"
 fi
-
+if [ "$vpxElementType" = "VpxBit16" ]
+then
+	metaElementType="MET_SHORT"
+fi
+if [ "$vpxElementType" = "VpxUbit16" ]
+then
+	metaElementType="MET_USHORT"
+fi
+if [ "$vpxElementType" = "VpxBit32" ]
+then
+	metaElementType="MET_INT"
+fi
+if [ "$vpxElementType" = "VpxUbit32" ]
+then
+	metaElementType="MET_UINT"
+fi
 if [ "$vpxElementType" = "VpxFloat" ]
 then
 	metaElementType="MET_FLOAT"
+fi
+if [ "$vpxElementType" = "VpxDouble" ]
+then
+	metaElementType="MET_DOUBLE"
 fi
 
 if [ "$metaElementType" = "unknown" ]
