@@ -137,15 +137,15 @@ void InvertIntensity( const std::string & inputFileName,
 	typedef itk::ImageFileReader< InputImageType >						ReaderType;
 	typedef itk::ImageFileWriter< InputImageType >						WriterType;
 	typedef itk::StatisticsImageFilter< InputImageType >			StatisticsFilterType;
-	typedef StatisticsFilterType::RealType							      RealType;
+	typedef typename StatisticsFilterType::RealType							      RealType;
 	typedef itk::InvertIntensityImageFilter< InputImageType >	InvertIntensityFilterType;
 	
 	/** Create reader. */
-	ReaderType::Pointer reader = ReaderType::New();
+	typename ReaderType::Pointer reader = ReaderType::New();
 	reader->SetFileName( inputFileName.c_str() );
 
 	/** Create statistics filter. */
-	StatisticsFilterType::Pointer statistics = StatisticsFilterType::New();
+	typename StatisticsFilterType::Pointer statistics = StatisticsFilterType::New();
 	statistics->SetInput( reader->GetOutput() );
 	statistics->Update();
 
@@ -153,12 +153,12 @@ void InvertIntensity( const std::string & inputFileName,
 	InputPixelType max = statistics->GetMaximum();
 
 	/** Create invert filter. */
-	InvertIntensityFilterType::Pointer invertFilter = InvertIntensityFilterType::New();
+	typename InvertIntensityFilterType::Pointer invertFilter = InvertIntensityFilterType::New();
 	invertFilter->SetInput( reader->GetOutput() );
 	invertFilter->SetMaximum( max );
 
 	/** Create writer. */
-	WriterType::Pointer writer = WriterType::New();
+	typename WriterType::Pointer writer = WriterType::New();
   writer->SetFileName( outputFileName.c_str() );
 	writer->SetInput( invertFilter->GetOutput() );
   writer->Update();
