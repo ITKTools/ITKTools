@@ -12,7 +12,7 @@
 
 /** run: A macro to call a function. */
 #define run(function,type,dim) \
-if ( PixelType == #type && Dimension == dim ) \
+if ( ComponentTypeIn == #type && Dimension == dim ) \
 { \
     typedef itk::Image< type, dim > InputImageType; \
     function< InputImageType >( inputFileName, outputFileName, input1, input2, option, force ); \
@@ -49,7 +49,7 @@ std::vector<int> GetUpperBoundary( const std::vector<int> & input1,
 int main( int argc, char **argv )
 {
 	/** Check arguments for help. */
-	if ( argc < 5 || argc > 17 )
+	if ( argc < 5 || argc > 13 )
 	{
 		PrintHelp();
 		return 1;
@@ -82,16 +82,7 @@ int main( int argc, char **argv )
 	std::vector<int> upBound;
 	bool retub = parser->GetCommandLineArgument( "-ub", upBound );
 
-	unsigned int Dimension = 3;
-	bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
-
-	std::string	PixelType = "short";
-	bool retpt = parser->GetCommandLineArgument( "-pt", PixelType );
-
 	bool force = parser->ArgumentExists( "-force" );
-
-	/** Get rid of the possible "_" in PixelType. */
-	ReplaceUnderscoreWithSpace( PixelType );
 
 	/** Check if the required arguments are given. */
 	if ( !retin )
@@ -99,6 +90,35 @@ int main( int argc, char **argv )
 		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
 		return 1;
 	}
+
+  /** Determine image properties. */
+  std::string ComponentTypeIn = "short";
+  std::string	PixelType; //we don't use this
+  unsigned int Dimension = 3;
+  unsigned int NumberOfComponents = 1;
+  std::vector<unsigned int> imagesize( Dimension, 0 );
+  int retgip = GetImageProperties(
+    inputFileName,
+    PixelType,
+    ComponentTypeIn,
+    Dimension,
+    NumberOfComponents,
+    imagesize );
+  if ( retgip != 0 )
+  {
+    return 1;
+  }
+
+  /** Check for vector images. */
+  if ( NumberOfComponents > 1 )
+  { 
+    std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
+    std::cerr << "Vector images are not supported." << std::endl;
+    return 1; 
+  }
+
+	/** Get rid of the possible "_" in ComponentType. */
+  ReplaceUnderscoreWithSpace( ComponentTypeIn );
 
 	/** Check which input option is used:
 	 * 1: supply two points with -pA and -pB
@@ -184,27 +204,27 @@ int main( int argc, char **argv )
 	/** Run the program. */
 	try
 	{
-		run(CropImage,unsigned char,2);
-		run(CropImage,char,2);
-		run(CropImage,unsigned short,2);
-		run(CropImage,short,2);
-    /*run(CropImage,unsigned int,2);
-		run(CropImage,int,2);
-    run(CropImage,unsigned long,2);
-		run(CropImage,long,2);
-    run(CropImage,float,2);
-		run(CropImage,double,2);*/
+		run( CropImage, unsigned char, 2 );
+		run( CropImage, char, 2 );
+		run( CropImage, unsigned short, 2 );
+		run( CropImage, short, 2 );
+    run( CropImage, unsigned int, 2 );
+		run( CropImage, int, 2 );
+    run( CropImage, unsigned long, 2 );
+		run( CropImage, long, 2 );
+    run( CropImage, float, 2 );
+		run( CropImage, double, 2 );
 
-    run(CropImage,unsigned char,3);
-		run(CropImage,char,3);
-		run(CropImage,unsigned short,3);
-		run(CropImage,short,3);
-    /*run(CropImage,unsigned int,3);
-		run(CropImage,int,3);
-    run(CropImage,unsigned long,3);
-		run(CropImage,long,3);
-    run(CropImage,float,3);
-		run(CropImage,double,3);*/
+    run( CropImage, unsigned char, 3 );
+		run( CropImage, char, 3 );
+		run( CropImage, unsigned short, 3 );
+		run( CropImage, short, 3 );
+    run( CropImage, unsigned int, 3 );
+		run( CropImage, int, 3 );
+    run( CropImage, unsigned long, 3 );
+		run( CropImage, long, 3 );
+    run( CropImage, float, 3 );
+		run( CropImage, double, 3 );
 	}
 	catch( itk::ExceptionObject &e )
 	{
@@ -312,20 +332,18 @@ void CropImage( const std::string & inputFileName, const std::string & outputFil
 void PrintHelp( void )
 {
 	std::cout << "Usage:" << std::endl << "pxcropimage" << std::endl;
-	std::cout << "\t-in\tinputFilename" << std::endl;
-	std::cout << "\t[-out]\toutputFilename, default in + CROPPED.mhd" << std::endl;
-	std::cout << "\t[-pA]\ta point A" << std::endl;
-	std::cout << "\t[-pB]\ta point B" << std::endl;
-	std::cout << "\t[-sz]\tsize" << std::endl;
-	std::cout << "\t[-lb]\tlower bound" << std::endl;
-	std::cout << "\t[-ub]\tupper bound" << std::endl;
-	std::cout << "\t[-dim]\tdimension, default 3" << std::endl;
-	std::cout << "\t[-pt]\tpixelType, default short" << std::endl;
+	std::cout << "  -in     inputFilename" << std::endl;
+	std::cout << "  [-out]  outputFilename, default in + CROPPED.mhd" << std::endl;
+	std::cout << "  [-pA]   a point A" << std::endl;
+	std::cout << "  [-pB]   a point B" << std::endl;
+	std::cout << "  [-sz]   size" << std::endl;
+	std::cout << "  [-lb]   lower bound" << std::endl;
+	std::cout << "  [-ub]   upper bound" << std::endl;
 	std::cout << "pxcropimage can be called in different ways:" << std::endl;
-	std::cout << "\t1: supply two points with \"-pA\" and \"-pB\"." << std::endl;
-	std::cout << "\t2: supply a points and a size with \"-pA\" and \"-sz\"." << std::endl;
-	std::cout << "\t3: supply a lower and an upper bound with \"-lb\" and \"-ub\"." << std::endl;
-	std::cout << "Supported: 2D, 3D, (unsigned) short, (unsigned) char." << std::endl;
+	std::cout << "  1: supply two points with \"-pA\" and \"-pB\"." << std::endl;
+	std::cout << "  2: supply a points and a size with \"-pA\" and \"-sz\"." << std::endl;
+	std::cout << "  3: supply a lower and an upper bound with \"-lb\" and \"-ub\"." << std::endl;
+	std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
 } // end PrintHelp()
 
 
