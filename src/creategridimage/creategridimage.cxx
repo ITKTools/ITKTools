@@ -128,8 +128,8 @@ void CreateGridImage( const std::string & outputFileName,
 	typedef typename ImageType::SpacingType	SpacingType;
 
 	/* Create image and writer. */
-	ImageType::Pointer  image  = ImageType::New();
-  WriterType::Pointer writer = WriterType::New();
+	typename ImageType::Pointer  image  = ImageType::New();
+  typename WriterType::Pointer writer = WriterType::New();
 
   /** Allocate image. */
 	SizeType	  size;
