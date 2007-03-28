@@ -1,132 +1,193 @@
+#include "itkCommandLineArgumentParser.h"
+#include "CommandLineArgumentHelper.h"
+
 #include "itkImage.h"
 #include "itkImageRegionIteratorWithIndex.h"
 #include "itkImageFileWriter.h"
 
-#include <map>
-#include <string>
+//-------------------------------------------------------------------------------------
+
+/** run: A macro to call a function. */
+#define run( function, dim ) \
+if ( imageDimension == dim ) \
+{ \
+    function< dim >( outputFileName, imageSize, imageSpacing, distance ); \
+}
+
+//-------------------------------------------------------------------------------------
+
+/** Declare functions. */
+void PrintHelp( void );
+
+template<unsigned int Dimension>
+void CreateGridImage( const std::string & outputFileName,
+  const std::vector<unsigned int> & imageSize,
+  const std::vector<float> & imageSpacing,
+  const std::vector<unsigned int> & distance );
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char *argv[] )
 {
-	/** Check number of arguments. */
-	if ( argc < 2 || argc > 8 || argv[ 1 ] == "--help" )
+  /** Check arguments for help. */
+	if ( argc < 7 || argc > 17 )
 	{
-		std::cout << "Usage:" << std::endl;
-		std::cout << "\tpxreategridimage filename [-s imagesize] [-sp spacing] [-d distance]" << std::endl;
-		std::cout << "\tDefaults: -s = 256, -sp = 1.0, -d = 16" << std::endl;
-		std::cout << "\tThis program only creates 2D short grid images." << std::endl;
+		PrintHelp();
 		return 1;
 	}
 
-	/** Some consts. */
-	const unsigned int	Dimension = 2;
-	typedef short				PixelType;
+	/** Create a command line argument parser. */
+	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+	parser->SetCommandLineArguments( argc, argv );
 
+	/** Get arguments. */
+	std::string	outputFileName = "";
+	bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+
+  unsigned int imageDimension = 2;
+  bool retdim = parser->GetCommandLineArgument( "-dim", imageDimension );
+
+  std::vector<unsigned int> imageSize( imageDimension );
+	bool retsz = parser->GetCommandLineArgument( "-sz", imageSize );
+
+  std::vector<float> imageSpacing( imageDimension, 1.0 );
+	bool retsp = parser->GetCommandLineArgument( "-sp", imageSpacing );
+
+  std::vector<unsigned int> distance( imageDimension, 1 );
+	bool retd = parser->GetCommandLineArgument( "-d", distance );
+
+  /** Check if the required arguments are given. */
+	if ( !retout )
+	{
+		std::cerr << "ERROR: You should specify \"-out\"." << std::endl;
+		return 1;
+	}
+  if ( !retsz )
+	{
+		std::cerr << "ERROR: You should specify \"-sz\"." << std::endl;
+		return 1;
+	}
+  if ( !retd )
+	{
+		std::cerr << "ERROR: You should specify \"-d\"." << std::endl;
+		return 1;
+	}
+
+  /** Check arguments. */
+  if ( imageDimension < 2 || imageDimension > 3 )
+  {
+    std::cerr << "ERROR: Only image dimensions of 2 or 3 are supported." << std::endl;
+		return 1;
+  }
+  for ( unsigned int i = 0; i < imageDimension; ++i )
+  {
+    if ( imageSize[ i ] == 0 )
+    {
+      std::cerr << "ERROR: image size[" << i << "] = 0." << std::endl;
+      return 1;
+    }
+    if ( distance[ i ] == 0 ) distance[ i ] = 1;
+  }
+
+  /** Run the program. */
+	try
+	{
+    run( CreateGridImage, 2 );
+    run( CreateGridImage, 3 );
+  }
+	catch( itk::ExceptionObject &e )
+	{
+		std::cerr << "Caught ITK exception: " << e << std::endl;
+		return 1;
+	}
+
+  /** End program. */
+	return 0;
+
+} // end main
+
+	
+/**
+ * ******************* CreateGridImage *******************
+ */
+
+template< unsigned int Dimension >
+void CreateGridImage( const std::string & outputFileName,
+  const std::vector<unsigned int> & imageSize,
+  const std::vector<float> & imageSpacing,
+  const std::vector<unsigned int> & distance )
+{
 	/** Typedef's. */
+  typedef short				                                    PixelType;
 	typedef itk::Image< PixelType, Dimension >							ImageType;
 	typedef itk::ImageRegionIteratorWithIndex< ImageType >	IteratorType;
 	typedef itk::ImageFileWriter< ImageType >								WriterType;
 
-	typedef ImageType::RegionType		RegionType;
-	typedef ImageType::SizeType			SizeType;
-	typedef ImageType::IndexType		IndexType;
-	typedef ImageType::SpacingType	SpacingType;
-	typedef ImageType::PointType		OriginType;
+	typedef typename ImageType::SizeType			SizeType;
+	typedef typename ImageType::IndexType		IndexType;
+	typedef typename ImageType::SpacingType	SpacingType;
 
-	typedef std::map<std::string, std::string>					ArgMapType;
+	/* Create image and writer. */
+	ImageType::Pointer  image  = ImageType::New();
+  WriterType::Pointer writer = WriterType::New();
 
-	/*
-	 * Get command line arguments.
-	 */
-	ArgMapType argmap;
-	for ( unsigned int i = 2; i < argc; i += 2 )
-	{
-		std::string key = argv[ i ];
-		std::string value = "";
-		if ( ( i + 1 ) < argc )
-		{
-		  value = argv[ i + 1 ];
-		}
-		argmap[ key ] = value;
-	}
-
-	/** Defaults. */
-	std::string filename = argv[ 1 ];
-	unsigned int imagesize = 256;
-	unsigned int distance = 16;
-	float spacing1D = 1.0;
-	/** User specified. */
-	if ( argmap.count("-s") ) imagesize = atoi( argmap["-s"].c_str() );
-	if ( argmap.count("-d") ) distance = atoi( argmap["-d"].c_str() );
-	if ( argmap.count("-sp") ) spacing1D = atof( argmap["-sp"].c_str() );
-
-	/*
-	 * Create an image.
-	 */
-	ImageType::Pointer image = ImageType::New();
-	SizeType	size;
-	IndexType index;
-	RegionType region;
-	size.Fill( imagesize );
-	index.Fill(0);
-	region.SetIndex(index);
-	region.SetSize(size);
-
-	OriginType origin;
-	origin.Fill( 0.0 );
-	SpacingType spacing;
-	spacing.Fill( spacing1D );
-
-  image->SetRegions( region );
-	image->SetOrigin( origin );
+  /** Allocate image. */
+	SizeType	  size;
+  SpacingType spacing;
+  for ( unsigned int i = 0; i < Dimension; ++i )
+  {
+    size[ i ] = imageSize[ i ];
+    spacing[ i ] = imageSpacing[ i ];
+  }
+  image->SetRegions( size );
 	image->SetSpacing( spacing );
 	image->Allocate();
 
-	/*
-	 * ********************** Fill the image ********************
-	 */
-
-	/** Declare and initialize iterators. */
-	IteratorType	it( image, region );
-
-	/** Loop over the image and fill it. */
+	/* Fill the image. */
+  IteratorType	it( image, image->GetLargestPossibleRegion() );
 	it.GoToBegin();
 	IndexType ind;
 	while ( !it.IsAtEnd() )
 	{
+    /** Check if on grid. */
 		ind = it.GetIndex();
-		/** The if() defines a grid. */
-		if ( ind[ 0 ] % distance == 0 || ind[ 1 ] % distance == 0 )
-		{
-			it.Set( 1 );
-		}
-		else
-		{
-			it. Set( 0 );
-		}
-		/** Increase iterator. */
+    bool onGrid = false;
+    onGrid |= ind[ 0 ] % distance[ 0 ] == 0;
+    onGrid |= ind[ 1 ] % distance[ 1 ] == 0;
+    if ( Dimension == 3 )
+    {
+      if ( ind[ 2 ] % distance[ 2 ] != 0 )
+      {
+        onGrid = ind[ 0 ] % distance[ 0 ] == 0;
+        onGrid &= ind[ 1 ] % distance[ 1 ] == 0;
+      }
+    }
+    /** Set the value and continue. */
+		if ( onGrid ) it.Set( 1 );
+    else it.Set( 0 );
 		++it;
 	} // end while
 
-	/*
-	 * Write result to file.
-	 */
-	WriterType::Pointer writer = WriterType::New();
-	writer->SetFileName( filename.c_str() );
+	/* Write result to file. */
+	writer->SetFileName( outputFileName.c_str() );
 	writer->SetInput( image );
-	try
-	{
-		writer->Update();
-	}
-	catch ( itk::ExceptionObject & excp )
-	{
-		std::cerr << excp << std::endl;
-		return 1;
-	}
-	
-	/** End program. */
-	return 0;
+  writer->Update();
 
-} // end main
+} // end CreateGridImage()
+
+
+	/**
+	 * ******************* PrintHelp *******************
+	 */
+void PrintHelp( void )
+{
+	std::cout << "Usage:" << std::endl << "pxreategridimage" << std::endl;
+	std::cout << "  -out    outputFilename" << std::endl;
+  std::cout << "  [-dim]  image dimension, default 2" << std::endl;
+  std::cout << "  -sz     image size" << std::endl;
+  std::cout << "  [-sp]   image spacing, default 1.0" << std::endl;
+  std::cout << "  -d      distance in pixels between two gridlines" << std::endl;
+	std::cout << "Supported: 2D, 3D, short." << std::endl;
+  std::cout << "In 3D simply a stack of 2D grid image is created." << std::endl;
+} // end PrintHelp()
 
