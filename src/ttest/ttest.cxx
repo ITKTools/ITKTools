@@ -27,7 +27,7 @@ void PrintHelp( void );
 int main( int argc, char **argv )
 {
   /** Check arguments for help. */
-	if ( argc < 5 || argc > 13 )
+	if ( argc < 6 || argc > 12 )
 	{
 		PrintHelp();
 		return 1;
