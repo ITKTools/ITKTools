@@ -13,11 +13,17 @@ bool ReadInputData( const std::string & filename, std::vector<std::vector<double
 
 /** Declare ComputeTValue. */
 bool ComputeTValue( const std::vector<double> & samples1,
-    const std::vector<double> & samples2, const unsigned int type, double & tValue );
+    const std::vector<double> & samples2, const unsigned int type,
+    double & tValue,
+    double & mean1, double & mean2, double & meandiff,
+    double & std1, double & std2, double & stddiff );
 
 /** Declare ComputeMeanAndStandardDeviation. */
-void ComputeMeanAndStandardDeviation( const std::vector<double> & vec,
-  double & mean, double & std );
+void ComputeMeanAndStandardDeviation(
+  const std::vector<double> & samples1,
+  const std::vector<double> & samples2,
+  double & mean1, double & mean2, double & meandiff,
+  double & std1, double & std2, double & stddiff );
 
 /** Declare PrintHelp. */
 void PrintHelp( void );
@@ -27,7 +33,7 @@ void PrintHelp( void );
 int main( int argc, char **argv )
 {
   /** Check arguments for help. */
-	if ( argc < 6 || argc > 12 )
+	if ( argc < 6 || argc > 14 )
 	{
 		PrintHelp();
 		return 1;
@@ -40,6 +46,9 @@ int main( int argc, char **argv )
 	/** Get arguments. */
 	std::string	inputFileName = "";
 	bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+
+  std::string	output = "p";
+	bool retout = parser->GetCommandLineArgument( "-out", output );
 
   std::vector<unsigned int> columns( 2, 0 );
   bool retc = parser->GetCommandLineArgument( "-c", columns );
@@ -74,6 +83,11 @@ int main( int argc, char **argv )
   if ( columns[ 0 ] == columns[ 1 ] )
   {
     std::cerr << "ERROR: You should specify two different columns with \"-c\"." << std::endl;
+		return 1;
+  }
+  if ( output != "p" && output != "all" )
+  {
+    std::cerr << "ERROR: output should be one of \"p\" or \"all\"." << std::endl;
 		return 1;
   }
 
@@ -113,8 +127,11 @@ int main( int argc, char **argv )
   }
 
   /** Compute the t value. */
-  double tValue;
-  bool retctv = ComputeTValue( samples1, samples2, type, tValue );
+  double tValue = 0.0;
+  double mean1, mean2, meandiff, std1, std2, stddiff;
+  mean1 = mean2 = meandiff = std1 = std2 = stddiff = 0.0;
+  bool retctv = ComputeTValue( samples1, samples2, type, tValue,
+    mean1, mean2, meandiff, std1, std2, stddiff );
   if ( !retctv ) return 1;
   //std::cout << "t: " << tValue << std::endl;
 
@@ -129,7 +146,20 @@ int main( int argc, char **argv )
 
   /** Print the p-value to screen. */
   std::cout << std::fixed << std::showpoint << std::setprecision( precision );
-  std::cout << pValue << std::endl;
+  if ( output == "p" )
+  {
+    std::cout << pValue << std::endl;
+  }
+  else if ( output == "all" )
+  {
+    std::cout << "            mean +/- std" << std::endl;
+    std::cout << "samples 1:  " << mean1 << " " << std1 << std::endl;
+    std::cout << "samples 2:  " << mean2 << " " << std2 << std::endl;
+    std::cout << "difference: " << meandiff << " " << stddiff << std::endl;
+    std::cout << "dof = " << samples1.size() - 1
+      << ", t = " << tValue
+      << ", p = " << pValue << std::endl;
+  }
 
 	/** End program. */
 	return 0;
@@ -212,7 +242,9 @@ bool ReadInputData( const std::string & filename, std::vector<std::vector<double
 bool ComputeTValue( const std::vector<double> & samples1,
     const std::vector<double> & samples2,
     const unsigned int type,
-    double & tValue )
+    double & tValue,
+    double & mean1, double & mean2, double & meandiff,
+    double & std1, double & std2, double & stddiff )
 {
   /** Which type of t-test is requested? */
   if ( type == 1 )
@@ -228,19 +260,14 @@ bool ComputeTValue( const std::vector<double> & samples1,
       return false;
     }
 
-    /** Compute the difference. */
-    std::vector<double> diff( samples1.size() );
-    for ( unsigned int i = 0; i < diff.size(); ++i )
-    {
-      diff[ i ] = samples1[ i ] - samples2[ i ];
-    }
-
     /** ComputeMeanAndStandardDeviation. */
-    double mean, std;
-    ComputeMeanAndStandardDeviation( diff, mean, std );
+    ComputeMeanAndStandardDeviation(
+      samples1, samples2,
+      mean1, mean2, meandiff,
+      std1, std2, stddiff );
 
     /** Compute the t-value. */
-    tValue = mean * vcl_sqrt( static_cast<double>( diff.size() ) ) / std;
+    tValue = meandiff * vcl_sqrt( static_cast<double>( samples1.size() ) ) / stddiff;
   }
   else
   {
@@ -258,8 +285,10 @@ bool ComputeTValue( const std::vector<double> & samples1,
 	 */
 
 void ComputeMeanAndStandardDeviation(
-  const std::vector<double> & vec,
-  double & mean, double & std )
+  const std::vector<double> & samples1,
+  const std::vector<double> & samples2,
+  double & mean1, double & mean2, double & meandiff,
+  double & std1, double & std2, double & stddiff )
 {
   /** The slow way: two loops. *
   mean = std = 0.0;
@@ -276,15 +305,25 @@ void ComputeMeanAndStandardDeviation(
   std = vcl_sqrt( std );
 
   /** Compute mean and std fast, using one loop. */
-  double s = 0.0, ss = 0.0;
-  for ( unsigned int i = 0; i < vec.size(); ++i )
+  double N = static_cast<double>( samples1.size() );
+  double s1 = 0.0, ss1 = 0.0;
+  double s2 = 0.0, ss2 = 0.0;
+  double sd = 0.0, ssd = 0.0;
+  for ( unsigned int i = 0; i < static_cast<unsigned int>( N ); ++i )
   {
-    s += vec[ i ];
-    ss += vec[ i ] * vec[ i ];
+    s1  += samples1[ i ];
+    ss1 += samples1[ i ] * samples1[ i ];
+    s2  += samples2[ i ];
+    ss2 += samples2[ i ] * samples2[ i ];
+    sd  += samples1[ i ] - samples2[ i ];
+    ssd += ( samples1[ i ] - samples2[ i ] ) * ( samples1[ i ] - samples2[ i ] );
   }
-  mean = s / vec.size();
-  std = ( ss * vec.size() - s * s ) / ( vec.size() * ( vec.size() - 1.0 ) );
-  std = vcl_sqrt( std );
+  mean1 = s1 / N;
+  std1 = vcl_sqrt( ( ss1 * N - s1 * s1 ) / ( N * ( N - 1.0 ) ) );
+  mean2 = s2 / N;
+  std2 = vcl_sqrt( ( ss2 * N - s2 * s2 ) / ( N * ( N - 1.0 ) ) );
+  meandiff = sd / N;
+  stddiff = vcl_sqrt( ( ssd * N - sd * sd ) / ( N * ( N - 1.0 ) ) );
 
 } // end ComputeMeanAndStandardDeviation()
 
@@ -297,6 +336,9 @@ void PrintHelp( void )
 {
 	std::cout << "Usage:" << std::endl << "pxttest" << std::endl;
 	std::cout << "  -in     inputFilename" << std::endl;
+  std::cout << "  [-out]  output, choose one of {p,all}, default p" << std::endl;
+  std::cout << "            p: only print the p-value" << std::endl;
+  std::cout << "            all: print all" << std::endl;
   std::cout << "  -c      the two data sample columns" << std::endl;
 	std::cout << "  [-tail] one or two tailed, defauls = 2" << std::endl;
   std::cout << "  [-type] the type of the t-test, default = 1:" << std::endl;
