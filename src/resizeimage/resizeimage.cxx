@@ -251,13 +251,13 @@ void ResizeImage( std::string inputFileName, std::string outputFileName,
 void PrintHelp()
 {
 	std::cout << "Usage:" << std::endl << "pxresizeimage" << std::endl;
-	std::cout << "\t-in\tinputFilename" << std::endl;
-	std::cout << "\t[-out]\toutputFilename, default in + RESIZED.mhd" << std::endl;
-	std::cout << "\t[-f]\tfactor" << std::endl;
-	std::cout << "\t[-sp]\tspacing" << std::endl;
-  std::cout << "\t[-io]\tinterpolation order, default 1" << std::endl;
-	std::cout << "\t[-dim]\tdimension, default 3" << std::endl;
-	std::cout << "\t[-pt]\tpixelType, default short" << std::endl;
+	std::cout << "  -in     inputFilename" << std::endl;
+	std::cout << "  [-out]  outputFilename, default in + RESIZED.mhd" << std::endl;
+	std::cout << "  [-f]    factor" << std::endl;
+	std::cout << "  [-sp]   spacing" << std::endl;
+  std::cout << "  [-io]   interpolation order, default 1" << std::endl;
+	std::cout << "  [-dim]  dimension, default 3" << std::endl;
+	std::cout << "  [-pt]   pixelType, default short" << std::endl;
 	std::cout << "One of -f and -sp should be given." << std::endl;
 	std::cout << "Supported: 2D, 3D, (unsigned) short, (unsigned) char." << std::endl;
 } // end PrintHelp
