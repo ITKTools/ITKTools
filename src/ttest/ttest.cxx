@@ -304,4 +304,7 @@ void PrintHelp( void )
   std::cout << "            2: two-sample equal variance" << std::endl;
   std::cout << "            3: two-sample unequal variance" << std::endl;
   std::cout << "  [-p]    the output precision, default = 8:" << std::endl;
+  std::cout << "The input file should be in a certain format. No text is allowed." << std::endl;
+  std::cout << "No headers are allowed. The data samples should be displayed in columns." << std::endl;
+  std::cout << "Columns should be separated by a single space or tab." << std::endl;
 } // end PrintHelp()
