@@ -1,5 +1,5 @@
 # This project is intended to be built outside the Insight source tree
-PROJECT(pxttest)
+PROJECT(ttest)
 
 # Find ITK.
 FIND_PACKAGE(ITK)
@@ -11,5 +11,7 @@ ELSE(ITK_FOUND)
 ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxttest ttest.cxx)
+
+INSTALL_TARGETS(/. pxttest)
 
 TARGET_LINK_LIBRARIES(pxttest pxcommon ITKStatistics)
