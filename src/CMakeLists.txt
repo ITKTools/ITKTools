@@ -53,6 +53,7 @@ SUBDIRS(
  segmentationdistance
  statisticsonimage
  tileimages
+ ttest
  thresholdimage
  unaryimageoperator)
 
