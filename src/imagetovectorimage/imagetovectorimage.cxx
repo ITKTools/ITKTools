@@ -143,7 +143,7 @@ void ComposeVectorImage( const std::vector<std::string> & inputFileNames,
 	typedef itk::ImageFileWriter< OutputImageType >			    WriterType;
 
 	/**	Read in the input images. */
-  std::vector<ReaderType::Pointer> readers( inputFileNames.size() );
+  std::vector<typename ReaderType::Pointer> readers( inputFileNames.size() );
   for ( unsigned int i = 0; i < inputFileNames.size(); ++i )
   {
     readers[ i ] = ReaderType::New();
