@@ -32,6 +32,7 @@ SUBDIRS(
  extracteveryotherslice
  extractindexfromvectorimage
  extractslice
+ gaussianimagefilter
  getdicominformation
  getDICOMseriesUIDs
  getimageinformation

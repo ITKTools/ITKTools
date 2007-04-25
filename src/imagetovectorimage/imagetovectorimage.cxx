@@ -5,9 +5,6 @@
 #include "itkImageToVectorImageFilter.h"
 #include "itkImageFileWriter.h"
 
-#include "itkImage.h"
-#include "itkVector.h"
-
 //-------------------------------------------------------------------------------------
 
 /** run: A macro to call a function. */
@@ -21,7 +18,7 @@ if ( ComponentTypeIn == #type && Dimension == dim ) \
 
 //-------------------------------------------------------------------------------------
 
-/** Declare ResizeImage. */
+/** Declare ComposeVectorImage. */
 template< class InputImageType, class OutputImageType >
 void ComposeVectorImage( const std::vector<std::string> & inputFileNames,
   const std::string & outputFileName );
