@@ -72,7 +72,7 @@ fi
 if [ -e $tparchive ]
 then
 	echo "The following archive already exists:"
-	echo "  $tparchive"
+	echo "  $indir/$tparchive"
 	echo "Zipping is skipped"
 	exit 66
 fi
