@@ -3,6 +3,7 @@ PROJECT(praxix)
 
 SUBDIRS(
  averagevectormagnitude
+ binarythinning
  castconvert
  closestversor3Dtransform
  common
