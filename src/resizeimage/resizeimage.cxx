@@ -133,15 +133,27 @@ int main( int argc, char **argv )
 	/** Run the program. */
 	try
 	{
-		run(ResizeImage,unsigned char,2);
-		run(ResizeImage,char,2);
-		run(ResizeImage,unsigned short,2);
-		run(ResizeImage,short,2);
+		run( ResizeImage, unsigned char, 2 );
+		run( ResizeImage, char, 2 );
+		run( ResizeImage, unsigned short, 2 );
+		run( ResizeImage, short, 2 );
+    run( ResizeImage, unsigned int, 2 );
+		run( ResizeImage, int, 2 );
+    run( ResizeImage, unsigned long, 2 );
+		run( ResizeImage, long, 2 );
+    run( ResizeImage, float, 2 );
+    run( ResizeImage, double, 2 );
 
-    run(ResizeImage,unsigned char,3);
-		run(ResizeImage,char,3);
-		run(ResizeImage,unsigned short,3);
-		run(ResizeImage,short,3);
+    run( ResizeImage, unsigned char, 3 );
+		run( ResizeImage, char, 3 );
+		run( ResizeImage, unsigned short, 3 );
+		run( ResizeImage, short, 3 );
+    run( ResizeImage, unsigned int, 3 );
+		run( ResizeImage, int, 3 );
+    run( ResizeImage, unsigned long, 3 );
+		run( ResizeImage, long, 3 );
+    run( ResizeImage, float, 3 );
+    run( ResizeImage, double, 3 );
 
 	}
 	catch( itk::ExceptionObject &e )
@@ -259,6 +271,6 @@ void PrintHelp()
 	std::cout << "  [-dim]  dimension, default 3" << std::endl;
 	std::cout << "  [-pt]   pixelType, default short" << std::endl;
 	std::cout << "One of -f and -sp should be given." << std::endl;
-	std::cout << "Supported: 2D, 3D, (unsigned) short, (unsigned) char." << std::endl;
+	std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
 } // end PrintHelp
 
