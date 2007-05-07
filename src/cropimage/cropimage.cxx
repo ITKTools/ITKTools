@@ -49,7 +49,7 @@ std::vector<int> GetUpperBoundary( const std::vector<int> & input1,
 int main( int argc, char **argv )
 {
 	/** Check arguments for help. */
-	if ( argc < 5 || argc > 13 )
+	if ( argc < 5 || argc > 14 )
 	{
 		PrintHelp();
 		return 1;
@@ -332,13 +332,14 @@ void CropImage( const std::string & inputFileName, const std::string & outputFil
 void PrintHelp( void )
 {
 	std::cout << "Usage:" << std::endl << "pxcropimage" << std::endl;
-	std::cout << "  -in     inputFilename" << std::endl;
-	std::cout << "  [-out]  outputFilename, default in + CROPPED.mhd" << std::endl;
-	std::cout << "  [-pA]   a point A" << std::endl;
-	std::cout << "  [-pB]   a point B" << std::endl;
-	std::cout << "  [-sz]   size" << std::endl;
-	std::cout << "  [-lb]   lower bound" << std::endl;
-	std::cout << "  [-ub]   upper bound" << std::endl;
+	std::cout << "  -in      inputFilename" << std::endl;
+	std::cout << "  [-out]   outputFilename, default in + CROPPED.mhd" << std::endl;
+	std::cout << "  [-pA]    a point A" << std::endl;
+	std::cout << "  [-pB]    a point B" << std::endl;
+	std::cout << "  [-sz]    size" << std::endl;
+	std::cout << "  [-lb]    lower bound" << std::endl;
+	std::cout << "  [-ub]    upper bound" << std::endl;
+  std::cout << "  [-force] force to extract a region of size sz, pad if necessary" << std::endl;
 	std::cout << "pxcropimage can be called in different ways:" << std::endl;
 	std::cout << "  1: supply two points with \"-pA\" and \"-pB\"." << std::endl;
 	std::cout << "  2: supply a points and a size with \"-pA\" and \"-sz\"." << std::endl;
