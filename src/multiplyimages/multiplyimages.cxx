@@ -164,10 +164,10 @@ void MultiplyImages( std::string inputFileName1, std::string inputFileName2,
 void PrintHelp()
 {
 	std::cout << "Usage:" << std::endl << "pxmultiplyimages" << std::endl;
-	std::cout << "\t-in\tinputFilename1 inputFilename2" << std::endl;
-	std::cout << "\t[-out]\toutputFilename, default in1 + TIMES + in2 + .mhd" << std::endl;
-	std::cout << "\t[-dim]\tdimension, default 3" << std::endl;
-	std::cout << "\t[-pt]\tpixelType, default short" << std::endl;
+	std::cout << "  -in      inputFilename1 inputFilename2" << std::endl;
+	std::cout << "  [-out]   outputFilename, default in1 + TIMES + in2 + .mhd" << std::endl;
+	std::cout << "  [-dim]   dimension, default 3" << std::endl;
+	std::cout << "  [-pt]    pixelType, default short" << std::endl;
 	std::cout << "Supported: 2D, 3D, (unsigned) short, (unsigned) char." << std::endl;
 } // end PrintHelp
 

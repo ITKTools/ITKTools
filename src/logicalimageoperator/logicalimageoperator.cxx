@@ -382,26 +382,26 @@ void PrintHelp()
 {
   std::cout << "Logical operations on one or two images." << std::endl;
 	std::cout << "Usage:" << std::endl << "pxlogicalimageoperator" << std::endl;
-	std::cout << "\t-in\tinputFilename1 [inputFilename2]" << std::endl;
-  std::cout << "\t-ops\tLogicalOperator of the following form:\n"
-            << "\t    \t  [!]( ([!] A) [{&,|,^} ([!] B])] )\n"
-            << "\t    \tnotation:\n"
-            << "\t    \t  [NOT_][NOT][{AND,OR,XOR}[NOT]]\n"
-            << "\t    \tnotation examples:\n"
-            << "\t    \t  ANDNOT = A & (!B)\n" 
-            << "\t    \t  NOTAND = (!A) & B\n" 
-            << "\t    \t  NOTANDNOT = (!A) & (!B)\n" 
-            << "\t    \t  NOT_NOTANDNOT = !( (!A) & (!B) )\n" 
-            << "\t    \t  NOT_AND = !(A & B)\n"
-            << "\t    \t  OR = A | B\n" 
-            << "\t    \t  XOR = A ^ B\n" 
-            << "\t    \t  NOT = !A \n" 
-            << "\t    \t  NOT_NOT = A \n" 
-            << "\t    \tInternally this expression is simplified.\n"
+	std::cout << "  -in      inputFilename1 [inputFilename2]" << std::endl;
+  std::cout << "  -ops     LogicalOperator of the following form:\n"
+            << "             [!]( ([!] A) [{&,|,^} ([!] B])] )\n"
+            << "           notation:\n"
+            << "             [NOT_][NOT][{AND,OR,XOR}[NOT]]\n"
+            << "           notation examples:\n"
+            << "             ANDNOT = A & (!B)\n" 
+            << "             NOTAND = (!A) & B\n" 
+            << "             NOTANDNOT = (!A) & (!B)\n" 
+            << "             NOT_NOTANDNOT = !( (!A) & (!B) )\n" 
+            << "             NOT_AND = !(A & B)\n"
+            << "             OR = A | B\n" 
+            << "             XOR = A ^ B\n" 
+            << "             NOT = !A \n" 
+            << "             NOT_NOT = A \n" 
+            << "           Internally this expression is simplified.\n"
             << std::endl;
-	std::cout << "\t[-out]\toutputFilename, default in1 + <ops> + in2 + .mhd" << std::endl;
-  std::cout << "\t[-dim]\tdimension, default: automatically determined from inputimage1" << std::endl;
-  std::cout << "\t[-pt]\tpixelType, default: automatically determined from inputimage1" << std::endl;
+	std::cout << "  [-out]   outputFilename, default in1 + <ops> + in2 + .mhd" << std::endl;
+  std::cout << "  [-dim]   dimension, default: automatically determined from inputimage1" << std::endl;
+  std::cout << "  [-pt]    pixelType, default: automatically determined from inputimage1" << std::endl;
 	std::cout << "Supported: 2D, 3D, (unsigned) short, (unsigned) char." << std::endl;
 } // end PrintHelp
 

@@ -182,11 +182,11 @@ void CreateGridImage( const std::string & outputFileName,
 void PrintHelp( void )
 {
 	std::cout << "Usage:" << std::endl << "pxreategridimage" << std::endl;
-	std::cout << "  -out    outputFilename" << std::endl;
-  std::cout << "  [-dim]  image dimension, default 2" << std::endl;
-  std::cout << "  -sz     image size" << std::endl;
-  std::cout << "  [-sp]   image spacing, default 1.0" << std::endl;
-  std::cout << "  -d      distance in pixels between two gridlines" << std::endl;
+	std::cout << "  -out     outputFilename" << std::endl;
+  std::cout << "  [-dim]   image dimension, default 2" << std::endl;
+  std::cout << "  -sz      image size" << std::endl;
+  std::cout << "  [-sp]    image spacing, default 1.0" << std::endl;
+  std::cout << "  -d       distance in pixels between two gridlines" << std::endl;
 	std::cout << "Supported: 2D, 3D, short." << std::endl;
   std::cout << "In 3D simply a stack of 2D grid image is created." << std::endl;
 } // end PrintHelp()

@@ -158,8 +158,8 @@ void BinaryThinning( const std::string & inputFileName,
 void PrintHelp()
 {
 	std::cout << "Usage:" << std::endl << "pxbinarythinning" << std::endl;
-	std::cout << "  -in     inputFilename" << std::endl;
-	std::cout << "  [-out]  outputFilename, default in + THINNED.mhd" << std::endl;
+	std::cout << "  -in      inputFilename" << std::endl;
+	std::cout << "  [-out]   outputFilename, default in + THINNED.mhd" << std::endl;
 	std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
   std::cout << "Note that the thinning algorithm used here is really a 2D thinning algortihm." << std::endl;
   std::cout << "In 3D the thinning is performed slice by slice." << std::endl;

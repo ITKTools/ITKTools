@@ -227,12 +227,12 @@ void ExtractEveryOtherSlice( std::string inputFileName, std::string outputFileNa
 void PrintHelp()
 {
 	std::cout << "Usage:" << std::endl << "pxextracteveryotherslice" << std::endl;
-	std::cout << "\t-in\tinputFilename" << std::endl;
-	std::cout << "\t[-out]\toutputFilename, default in + EveryOtherKExtracted.mhd" << std::endl;
-	std::cout << "\t-K\tevery other slice K" << std::endl;
-	std::cout << "\t[-d]\tdirection, default is z-axes" << std::endl;
-	std::cout << "\t[-dim]\tdimension, default 3" << std::endl;
-	std::cout << "\t[-pt]\tpixelType, default short" << std::endl;
+	std::cout << "  -in      inputFilename" << std::endl;
+	std::cout << "  [-out]   outputFilename, default in + EveryOtherKExtracted.mhd" << std::endl;
+	std::cout << "  -K       every other slice K" << std::endl;
+	std::cout << "  [-d]     direction, default is z-axes" << std::endl;
+	std::cout << "  [-dim]   dimension, default 3" << std::endl;
+	std::cout << "  [-pt]    pixelType, default short" << std::endl;
 	std::cout << "Supported: 3D, (unsigned) short, (unsigned) char." << std::endl;
 } // end PrintHelp
 

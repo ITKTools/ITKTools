@@ -192,12 +192,12 @@ void ComputeBoundingBox( std::string inputFileName )
 void PrintHelp()
 {
   std::cout << "This program computes the bounding box of an image." << std::endl;
-  std::cout << "Every pixel >0 is considered to be within the bounding box." << std::endl;
+  std::cout << "Every pixel > 0 is considered to be within the bounding box." << std::endl;
   std::cout << "Returns the minimum and maximum indices/points that lie within the bounding box." << std::endl;
   std::cout << "Usage:" << std::endl << "pxcomputeboundingbox" << std::endl;
-  std::cout << "\t-in\tinputFilename" << std::endl;
-  std::cout << "\t[-dim]\tdimension, default 3" << std::endl;
-	std::cout << "\t[-pt]\tpixelType, default short" << std::endl;
+  std::cout << "  -in      inputFilename" << std::endl;
+  std::cout << "  [-dim]   dimension, default 3" << std::endl;
+	std::cout << "  [-pt]    pixelType, default short" << std::endl;
 	std::cout << "Supported: 2D, 3D, short. Images with PixelType other than short are automatically converted. " << std::endl;
 } // end PrintHelp
 

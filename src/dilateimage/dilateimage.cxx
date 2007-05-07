@@ -250,12 +250,12 @@ void DilateImage(
 void PrintHelp()
 {
 	std::cout << "Usage:" << std::endl << "pxdilateimage" << std::endl;
-	std::cout << "\t-in     inputFilename" << std::endl;
-	std::cout << "\t[-out]  outputFilename, default in + DILATED + extension(inputFilename)" << std::endl;
-	std::cout << "\t-r      radius" << std::endl;
-  std::cout << "\t[-dim]  dimension, default: automatically determined from image" << std::endl;
-  std::cout << "\t[-pt]   pixelType, default: automatically determined from image" << std::endl;
-  std::cout << "\t[-bc]   boundaryCondition; the grey value outside the image; default: min(PixelType)" << std::endl;
+	std::cout << "  -in      inputFilename" << std::endl;
+	std::cout << "  [-out]   outputFilename, default in + DILATED + extension(inputFilename)" << std::endl;
+	std::cout << "  -r       radius" << std::endl;
+  std::cout << "  [-dim]   dimension, default: automatically determined from image" << std::endl;
+  std::cout << "  [-pt]    pixelType, default: automatically determined from image" << std::endl;
+  std::cout << "  [-bc]    boundaryCondition; the grey value outside the image; default: min(PixelType)" << std::endl;
 	std::cout << "Supported: 2D, 3D, (unsigned) short, (unsigned) char." << std::endl;
 } // end PrintHelp
 

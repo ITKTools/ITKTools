@@ -194,12 +194,12 @@ void CreateZeroImage( std::string fileName, std::vector<unsigned int> size,
 void PrintHelp()
 {
 	std::cout << "Usage:" << std::endl << "pxcreatezeroimage" << std::endl;
-	std::cout << "  -out    outputFilename" << std::endl;
-  std::cout << "  -sz     size" << std::endl;
-	std::cout << "  [-sp]   spacing" << std::endl;
-  std::cout << "  [-o]    origin" << std::endl;
-	std::cout << "  [-dim]  dimension, default 3" << std::endl;
-	std::cout << "  [-pt]   pixelType, default short" << std::endl;
+	std::cout << "  -out     outputFilename" << std::endl;
+  std::cout << "  -sz      size" << std::endl;
+	std::cout << "  [-sp]    spacing" << std::endl;
+  std::cout << "  [-o]     origin" << std::endl;
+	std::cout << "  [-dim]   dimension, default 3" << std::endl;
+	std::cout << "  [-pt]    pixelType, default short" << std::endl;
 	std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double." << std::endl;
 } // end PrintHelp
 

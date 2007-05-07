@@ -178,10 +178,10 @@ void PrintHelp()
 {
 	std::cout << "This program thresholds an image." << std::endl;
 	std::cout << "Usage:" << std::endl << "pxthresholdimage" << std::endl;
-	std::cout << "  -in     inputFilename" << std::endl;
-	std::cout << "  [-out]  outputFilename; default: in + THRESHOLDED.mhd" << std::endl;
-	std::cout << "  [-t1]   lower threshold; default: -infinity" << std::endl;
-	std::cout << "  [-t2]   upper threshold; everything >t2 will get a value 1 default: 1.0" << std::endl;
+	std::cout << "  -in      inputFilename" << std::endl;
+	std::cout << "  [-out]   outputFilename; default: in + THRESHOLDED.mhd" << std::endl;
+	std::cout << "  [-t1]    lower threshold; default: -infinity" << std::endl;
+	std::cout << "  [-t2]    upper threshold; everything >t2 will get a value 1 default: 1.0" << std::endl;
 	std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double." << std::endl;
 } // end PrintHelp()
 

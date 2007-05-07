@@ -177,16 +177,16 @@ int main( int argc, char **argv )
 void PrintHelp()
 {
 	std::cout << "Usage:" << std::endl << "pxgetimageinformation" << std::endl;
-	std::cout << "  -in     inputFileName" << std::endl;
-	std::cout << "  [-dim]  dimension" << std::endl;
-	std::cout << "  [-pt]   pixelType" << std::endl;
-  std::cout << "  [-ct]   componentType" << std::endl;
-  std::cout << "  [-noc]  #components" << std::endl;
-  std::cout << "  [-sz]   size" << std::endl;
-  std::cout << "  [-sp]   spacing" << std::endl;
-  std::cout << "  [-o]    origin" << std::endl;
+	std::cout << "  -in      inputFileName" << std::endl;
+	std::cout << "  [-dim]   dimension" << std::endl;
+	std::cout << "  [-pt]    pixelType" << std::endl;
+  std::cout << "  [-ct]    componentType" << std::endl;
+  std::cout << "  [-noc]   #components" << std::endl;
+  std::cout << "  [-sz]    size" << std::endl;
+  std::cout << "  [-sp]    spacing" << std::endl;
+  std::cout << "  [-o]     origin" << std::endl;
   std::cout << "Image information about the inputFileName is printed to screen." << std::endl;
   std::cout << "Only one option should be given, e.g. -sp, then the spacing is printed." << std::endl;
-  std::cout << "  [-i]    index, if this option is given only e.g. spacing[index] is printed." << std::endl;
+  std::cout << "  [-i]     index, if this option is given only e.g. spacing[index] is printed." << std::endl;
 } // end PrintHelp
 

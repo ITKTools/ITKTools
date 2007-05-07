@@ -14,21 +14,21 @@ void PrintHelp()
 {
   std::cout << "Unary operations on one image." << std::endl;
 	std::cout << "Usage:" << std::endl << "pxunaryimageoperator" << std::endl;
-	std::cout << "\t-in\tinputFilename" << std::endl;
-  std::cout << "\t-ops\tUnaryOperator of the following form:\n"
-    << "\t\t  {+,-,*,/,^,%}\n"
-    << "\t\tnotation:\n"
-    << "\t\t  {PLUS,{R,L}MINUS,TIMES,{R,L}DIVIDE,{R,L}POWER,{R,L}MOD,\n"
-    << "\t\t  NEG,SIGN,ABS,FLOOR,CEIL,ROUND,\n"
-    << "\t\t  LN,10LOG,NLOG,EXP,[ARC]SIN,[ARC]COS,[ARC]TAN}\n"
-    << "\t\tnotation examples:\n"
-    << "\t\t  RMINUS = A - arg\n"
-    << "\t\t  LMINUS = arg - A\n"
-    << "\t\t  SIN = sin(A)\n"
-    << "\t\t  RPOWER = A ^ arg\n";
-  std::cout << "\t[-arg]\targument, necessary for some ops" << std::endl;
-	std::cout << "\t[-out]\toutputFilename, default in + <ops> + <arg> + .mhd" << std::endl;
-  std::cout << "\t[-pto]\toutputPixelType, default: same as inputimage" << std::endl;
+	std::cout << "  -in      inputFilename" << std::endl;
+  std::cout << "  -ops     UnaryOperator of the following form:\n"
+            << "           {+,-,*,/,^,%}\n"
+            << "           notation:\n"
+            << "             {PLUS,{R,L}MINUS,TIMES,{R,L}DIVIDE,{R,L}POWER,{R,L}MOD,\n"
+            << "             NEG,SIGN,ABS,FLOOR,CEIL,ROUND,\n"
+            << "             LN,10LOG,NLOG,EXP,[ARC]SIN,[ARC]COS,[ARC]TAN}\n"
+            << "           notation examples:\n"
+            << "             RMINUS = A - arg\n"
+            << "             LMINUS = arg - A\n"
+            << "             SIN = sin(A)\n"
+            << "             RPOWER = A ^ arg\n";
+  std::cout << "  [-arg]   argument, necessary for some ops" << std::endl;
+	std::cout << "  [-out]   outputFilename, default in + <ops> + <arg> + .mhd" << std::endl;
+  std::cout << "  [-pto]   outputPixelType, default: same as inputimage" << std::endl;
 	std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, float." << std::endl;
 } // end PrintHelp
 

@@ -293,20 +293,20 @@ void PrintHelp(void)
   std::cout << "otherwise 2D-2D or 3D-3D tiling is performed.\n" << std::endl;
 
   std::cout << "Usage:  \npxtileimages" << std::endl;
-  std::cout << "\t-in   \tinput image filenames, at least 2" << std::endl;
-  std::cout << "\t-out  \toutput image filename" << std::endl;
-  std::cout << "\t[-pt] \tpixel type of input and output images" << std::endl;
-  std::cout << "\t      \tdefault: automatically determined from the first input image" << std::endl;
-  std::cout << "\t[-sp] \tspacing in z-direction for 2D-3D tiling [double];" << std::endl;
-  std::cout << "\t      \tif omitted, the origins of the 2d images are used to find the spacing;" << std::endl;
-  std::cout << "\t      \tif these are identical, a spacing of 1.0 is assumed" << std::endl;
-  std::cout << "\t[-ly] \tlayout of the nD-nD tiling" << std::endl;
-  std::cout << "\t      \texample: in 2D for 4 images \"-ly 2 2\" results in" << std::endl;
-  std::cout << "\t      \t\t im1 im2" << std::endl;
-  std::cout << "\t      \t\t im3 im4" << std::endl;
-  std::cout << "\t      \texample: in 2D for 4 images \"-ly 4 1\" (or \"-ly 0 1\") results in" << std::endl;
-  std::cout << "\t      \t\t im1 im2 im3 im4" << std::endl;
-  std::cout << "\t[-d]  \tdefault value, by default 0." << std::endl;
+  std::cout << "  -in      input image filenames, at least 2" << std::endl;
+  std::cout << "  -out     output image filename" << std::endl;
+  std::cout << "  [-pt]    pixel type of input and output images" << std::endl;
+  std::cout << "           default: automatically determined from the first input image" << std::endl;
+  std::cout << "  [-sp]    spacing in z-direction for 2D-3D tiling [double];" << std::endl;
+  std::cout << "           if omitted, the origins of the 2d images are used to find the spacing;" << std::endl;
+  std::cout << "           if these are identical, a spacing of 1.0 is assumed" << std::endl;
+  std::cout << "  [-ly]    layout of the nD-nD tiling" << std::endl;
+  std::cout << "           example: in 2D for 4 images \"-ly 2 2\" results in" << std::endl;
+  std::cout << "             im1 im2" << std::endl;
+  std::cout << "             im3 im4" << std::endl;
+  std::cout << "           example: in 2D for 4 images \"-ly 4 1\" (or \"-ly 0 1\") results in" << std::endl;
+  std::cout << "             im1 im2 im3 im4" << std::endl;
+  std::cout << "  [-d]     default value, by default 0." << std::endl;
   std::cout << "Supported pixel types: (unsigned) char, (unsigned) short, float.\n" << std::endl; 
 
 } // end PrintHelp

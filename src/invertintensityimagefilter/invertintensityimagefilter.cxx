@@ -172,8 +172,8 @@ void PrintHelp()
 {
 	std::cout << "This program inverts the intensities of an image." << std::endl;
 	std::cout << "Usage:" << std::endl << "pxinvertintensityimagefilter" << std::endl;
-	std::cout << "  -in     inputFilename" << std::endl;
-	std::cout << "  [-out]  outputFilename; default: in + INVERTED.mhd" << std::endl;
+	std::cout << "  -in      inputFilename" << std::endl;
+	std::cout << "  [-out]   outputFilename; default: in + INVERTED.mhd" << std::endl;
 	std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double." << std::endl;
 } // end PrintHelp()
 

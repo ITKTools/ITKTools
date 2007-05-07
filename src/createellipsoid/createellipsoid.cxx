@@ -49,7 +49,7 @@ int main( int argc, char *argv[] )
 	bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
 
   std::vector<unsigned int> size;
-	bool rets = parser->GetCommandLineArgument( "-s", size );
+	bool retsz = parser->GetCommandLineArgument( "-sz", size );
   
   std::vector<double> center;
 	bool retc = parser->GetCommandLineArgument( "-c", center );
@@ -75,9 +75,9 @@ int main( int argc, char *argv[] )
 		std::cerr << "ERROR: You should specify \"-out\"." << std::endl;
 		return 1;
 	}
-  if ( !rets )
+  if ( !retsz )
 	{
-		std::cerr << "ERROR: You should specify \"-s\"." << std::endl;
+		std::cerr << "ERROR: You should specify \"-sz\"." << std::endl;
 		return 1;
 	}
   if ( !retc )
@@ -104,18 +104,19 @@ int main( int argc, char *argv[] )
   /** Run the program. */
 	try
 	{
-		run(CreateEllipsoid,unsigned char,2);
-		run(CreateEllipsoid,unsigned char,3);
-		run(CreateEllipsoid,char,2);
-		run(CreateEllipsoid,char,3);
-		run(CreateEllipsoid,unsigned short,2);
-		run(CreateEllipsoid,unsigned short,3);
-		run(CreateEllipsoid,short,2);
-		run(CreateEllipsoid,short,3);
-    run(CreateEllipsoid,float,2);
-		run(CreateEllipsoid,float,3);
-    run(CreateEllipsoid,double,2);
-		run(CreateEllipsoid,double,3);
+		run( CreateEllipsoid, unsigned char, 2 );
+		run( CreateEllipsoid, char, 2 );
+		run( CreateEllipsoid, unsigned short, 2 );
+		run( CreateEllipsoid, short, 2 );
+    run( CreateEllipsoid, float, 2 );
+    run( CreateEllipsoid, double, 2 );
+
+    run( CreateEllipsoid, unsigned char, 3 );
+		run( CreateEllipsoid, char, 3 );
+		run( CreateEllipsoid, unsigned short, 3 );
+		run( CreateEllipsoid, short, 3 );
+    run( CreateEllipsoid, float, 3 );
+    run( CreateEllipsoid, double, 3 );
 	}
 	catch( itk::ExceptionObject &e )
 	{
@@ -219,14 +220,14 @@ void CreateEllipsoid( std::string filename,
 void PrintHelp()
 {
 	std::cout << "Usage:" << std::endl << "pxcreateellipsoid" << std::endl;
-	std::cout << "\t-out\toutputFilename" << std::endl;
-  std::cout << "\t-s\timage size (voxels)" << std::endl;
-  std::cout << "\t[-sp]\timage spacing (mm)" << std::endl;
-  std::cout << "\t-c\tcenter (mm)" << std::endl;
-	std::cout << "\t-r\tradii (mm)" << std::endl;
-  std::cout << "\t[-o]\torientation, default xyz" << std::endl;
-	std::cout << "\t[-dim]\tdimension, default 3" << std::endl;
-	std::cout << "\t[-pt]\tpixelType, default short" << std::endl;
+	std::cout << "  -out     outputFilename" << std::endl;
+  std::cout << "  -sz      image size (voxels)" << std::endl;
+  std::cout << "  [-sp]    image spacing (mm)" << std::endl;
+  std::cout << "  -c       center (mm)" << std::endl;
+	std::cout << "  -r       radii (mm)" << std::endl;
+  std::cout << "  [-o]     orientation, default xyz" << std::endl;
+	std::cout << "  [-dim]   dimension, default 3" << std::endl;
+	std::cout << "  [-pt]    pixelType, default short" << std::endl;
   std::cout << "The orientation is a dim*dim matrix, specified in row order." << std::endl;
   std::cout << "The user should take care of supplying an orthogonal matrix." << std::endl;
 	std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double." << std::endl;

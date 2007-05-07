@@ -189,11 +189,11 @@ void GrayscaleMorphologicalOpening( std::string inputFileName, std::string outpu
 void PrintHelp()
 {
 	std::cout << "Usage:" << std::endl << "pxmorphologicalopeningimage" << std::endl;
-	std::cout << "\t-in\tinputFilename" << std::endl;
-	std::cout << "\t[-out]\toutputFilename, default in + OPENED.mhd" << std::endl;
-	std::cout << "\t-r\tradius" << std::endl;
-	std::cout << "\t[-dim]\tdimension, default 3" << std::endl;
-	std::cout << "\t[-pt]\tpixelType, default short" << std::endl;
+	std::cout << "  -in      inputFilename" << std::endl;
+	std::cout << "  [-out]   outputFilename, default in + OPENED.mhd" << std::endl;
+	std::cout << "  -r       radius" << std::endl;
+	std::cout << "  [-dim]   dimension, default 3" << std::endl;
+	std::cout << "  [-pt]    pixelType, default short" << std::endl;
 	std::cout << "Supported: 2D, 3D, (unsigned) short, (unsigned) char." << std::endl;
 } // end PrintHelp
 

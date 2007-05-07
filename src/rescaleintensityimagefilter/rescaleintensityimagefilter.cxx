@@ -190,11 +190,11 @@ void RescaleIntensity( std::string inputFileName, std::string outputFileName, do
 void PrintHelp()
 {
 	std::cout << "Usage:" << std::endl << "pxrescaleintensityimagefilter" << std::endl;
-	std::cout << "\t-in   \tinputFilename" << std::endl;
-	std::cout << "\t[-out]\toutputFilename, default in + INTENSITYRESCALED.mhd" << std::endl;
-	std::cout << "\t[-mm] \tminimum maximum, default range of pixeltype" << std::endl;
-  std::cout << "\t[-pt] \tpixel type of input and output images;" << std::endl;
-  std::cout << "\t      \tdefault: automatically determined from the first input image." << std::endl;
+	std::cout << "  -in      inputFilename" << std::endl;
+	std::cout << "  [-out]   outputFilename, default in + INTENSITYRESCALED.mhd" << std::endl;
+	std::cout << "  [-mm]    minimum maximum, default range of pixeltype" << std::endl;
+  std::cout << "  [-pt]    pixel type of input and output images;" << std::endl;
+  std::cout << "           default: automatically determined from the first input image." << std::endl;
   std::cout << "Supported: 2D, 3D, (unsigned) short, (unsigned) char, float." << std::endl;
 
 } // end PrintHelp

@@ -60,7 +60,7 @@ int main(int argc, char** argv)
 	bool retsp = parser->GetCommandLineArgument( "-sp", spacing );
 
   std::vector<unsigned int> size( Dimension );
-	bool rets = parser->GetCommandLineArgument( "-s", size );
+	bool retsz = parser->GetCommandLineArgument( "-sz", size );
   
   std::vector<double> center( Dimension );
 	bool retc = parser->GetCommandLineArgument( "-c", center );
@@ -83,9 +83,9 @@ int main(int argc, char** argv)
 		std::cerr << "ERROR: You should specify \"-out\"." << std::endl;
 		return 1;
 	}
-  if ( !rets )
+  if ( !retsz )
 	{
-		std::cerr << "ERROR: You should specify \"-s\"." << std::endl;
+		std::cerr << "ERROR: You should specify \"-sz\"." << std::endl;
 		return 1;
 	}
   if ( ( !retc | !retr | retcp1 | retcp2 ) && ( retc | retr | !retcp1 | !retcp2 ) )
@@ -118,18 +118,19 @@ int main(int argc, char** argv)
   /** Run the program. */
 	try
 	{
-		run(CreateBox,unsigned char,2);
-		run(CreateBox,unsigned char,3);
-		run(CreateBox,char,2);
-		run(CreateBox,char,3);
-		run(CreateBox,unsigned short,2);
-		run(CreateBox,unsigned short,3);
-		run(CreateBox,short,2);
-		run(CreateBox,short,3);
-    run(CreateBox,float,2);
-		run(CreateBox,float,3);
-    run(CreateBox,double,2);
-		run(CreateBox,double,3);
+		run( CreateBox, unsigned char, 2 );
+		run( CreateBox, char, 2 );
+		run( CreateBox, unsigned short, 2 );
+		run( CreateBox, short, 2 );
+    run( CreateBox, float, 2 );
+    run( CreateBox, double, 2 );
+
+    run( CreateBox, unsigned char, 3 );
+		run( CreateBox, char, 3 );
+		run( CreateBox, unsigned short, 3 );
+		run( CreateBox, short, 3 );
+    run( CreateBox, float, 3 );
+    run( CreateBox, double, 3 );
 	}
 	catch( itk::ExceptionObject &e )
 	{
@@ -228,16 +229,16 @@ void CreateBox( std::string filename,
 void PrintHelp()
 {
 	std::cout << "Usage:" << std::endl << "pxcreatebox" << std::endl;
-	std::cout << "\t-out\toutputFilename" << std::endl;
-  std::cout << "\t-s\timage size (voxels)" << std::endl;
-  std::cout << "\t[-sp]\timage spacing (mm)" << std::endl;
-  std::cout << "\t[-c]\tcenter (mm)" << std::endl;
-	std::cout << "\t[-r]\tradii (mm)" << std::endl;
-  std::cout << "\t[-cp1]\tcornerpoint 1 (mm)" << std::endl;
-	std::cout << "\t[-cp2]\tcornerpoint 2 (mm)" << std::endl;
-  std::cout << "\t[-o]\torientation, default xyz" << std::endl;
-	std::cout << "\t[-dim]\tdimension, default 3" << std::endl;
-	std::cout << "\t[-pt]\tpixelType, default short" << std::endl;
+	std::cout << "  -out     outputFilename" << std::endl;
+  std::cout << "  -sz      image size (voxels)" << std::endl;
+  std::cout << "  [-sp]    image spacing (mm)" << std::endl;
+  std::cout << "  [-c]     center (mm)" << std::endl;
+	std::cout << "  [-r]     radii (mm)" << std::endl;
+  std::cout << "  [-cp1]   cornerpoint 1 (mm)" << std::endl;
+	std::cout << "  [-cp2]   cornerpoint 2 (mm)" << std::endl;
+  std::cout << "  [-o]     orientation, default xyz" << std::endl;
+	std::cout << "  [-dim]   dimension, default 3" << std::endl;
+	std::cout << "  [-pt]    pixelType, default short" << std::endl;
   std::cout << "The user should EITHER specify the center and the radius," << std::endl;
   std::cout << "OR the positions of two opposite corner points." << std::endl;
   std::cout << "The orientation is a vector with the Euler angles (rad)." << std::endl;

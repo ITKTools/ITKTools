@@ -336,17 +336,17 @@ void ComputeMeanAndStandardDeviation(
 void PrintHelp( void )
 {
 	std::cout << "Usage:" << std::endl << "pxttest" << std::endl;
-	std::cout << "  -in     inputFilename" << std::endl;
-  std::cout << "  [-out]  output, choose one of {p,all}, default p" << std::endl;
-  std::cout << "            p: only print the p-value" << std::endl;
-  std::cout << "            all: print all" << std::endl;
-  std::cout << "  -c      the two data sample columns" << std::endl;
-	std::cout << "  [-tail] one or two tailed, defauls = 2" << std::endl;
-  std::cout << "  [-type] the type of the t-test, default = 1:" << std::endl;
-  std::cout << "            1: paired" << std::endl;
-  std::cout << "            2: two-sample equal variance" << std::endl;
-  std::cout << "            3: two-sample unequal variance" << std::endl;
-  std::cout << "  [-p]    the output precision, default = 8:" << std::endl;
+	std::cout << "  -in      inputFilename" << std::endl;
+  std::cout << "  [-out]   output, choose one of {p,all}, default p" << std::endl;
+  std::cout << "             p: only print the p-value" << std::endl;
+  std::cout << "             all: print all" << std::endl;
+  std::cout << "  -c       the two data sample columns" << std::endl;
+	std::cout << "  [-tail]  one or two tailed, defauls = 2" << std::endl;
+  std::cout << "  [-type]  the type of the t-test, default = 1:" << std::endl;
+  std::cout << "             1: paired" << std::endl;
+  std::cout << "             2: two-sample equal variance" << std::endl;
+  std::cout << "             3: two-sample unequal variance" << std::endl;
+  std::cout << "  [-p]     the output precision, default = 8:" << std::endl;
   std::cout << "The input file should be in a certain format. No text is allowed." << std::endl;
   std::cout << "No headers are allowed. The data samples should be displayed in columns." << std::endl;
   std::cout << "Columns should be separated by a single space or tab." << std::endl;

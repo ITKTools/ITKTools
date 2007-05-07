@@ -218,10 +218,10 @@ void PrintHelp()
 {
   std::cout << "This program converts gipls that cannot be converted by pxcastconvert." << std::endl;
   std::cout << "Usage:" << std::endl << "pxgiplconvert" << std::endl;
-  std::cout << "\t-in\tinputFilename" << std::endl;
-	std::cout << "\t[-out]\toutputFilename, default in + .mhd" << std::endl;
-	std::cout << "\t[-dim]\tdimension, default 3" << std::endl;
-	std::cout << "\t[-pt]\tpixelType, default short" << std::endl;
+  std::cout << "  -in      inputFilename" << std::endl;
+	std::cout << "  [-out]   outputFilename, default in + .mhd" << std::endl;
+	std::cout << "  [-dim]   dimension, default 3" << std::endl;
+	std::cout << "  [-pt]    pixelType, default short" << std::endl;
 	std::cout << "Supported: 3D, (unsigned) short, (unsigned) char." << std::endl;
 } // end PrintHelp
 

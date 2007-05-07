@@ -292,23 +292,23 @@ void PrintHelp()
 {
 	std::cout << "This program creates a mask for mr_bffe images of the prostate that contains gold marker seeds." << std::endl;
 	std::cout << "The program computes the following:\n"
-		<< "\t Laplacian at scale 'sigma' (L_xx(sigma) + L_yy(sigma) + L_zz(sigma)),\n"
-		<< "\t A highpass filtered version of the original image. (L - L(sigma)),\n"
-		<< "\t BlurAbsHighPass = Gaussian(sigma)[ abs(highpass) ];\n"
-		<< "\t FeatureImage = Laplacian times BlurAbsHighPass;\n"
-		<< "\t Histogram of FeatureImage; the quantile 'threshold' is used to determine a threshold value,\n"
-		<< "\t Threshold of the FeatureImage;\n"
-		<< "\t Dilation of the Threshold FeatureImage with binary ball with specified 'radius';\n"
-		<< "\t A Not-filter to make the gold markers 0 and the rest 1.\n" << std::endl;
+		<< "  Laplacian at scale 'sigma' (L_xx(sigma) + L_yy(sigma) + L_zz(sigma)),\n"
+		<< "  A highpass filtered version of the original image. (L - L(sigma)),\n"
+		<< "  BlurAbsHighPass = Gaussian(sigma)[ abs(highpass) ];\n"
+		<< "  FeatureImage = Laplacian times BlurAbsHighPass;\n"
+		<< "  Histogram of FeatureImage; the quantile 'threshold' is used to determine a threshold value,\n"
+		<< "  Threshold of the FeatureImage;\n"
+		<< "  Dilation of the Threshold FeatureImage with binary ball with specified 'radius';\n"
+		<< "  A Not-filter to make the gold markers 0 and the rest 1.\n" << std::endl;
 
 	std::cout << "Usage:" << std::endl << "pxdetectgoldmarkers" << std::endl;
-	std::cout << "\t-in\tinputFilename" << std::endl;
-	std::cout << "\t[-out]\toutputFilename, default in + MASK.mhd" << std::endl;
-	std::cout << "\t[-r]\tradius [voxels, unsigned int]; radius of ball structuring element used for dilation; default: 7." << std::endl;
-	std::cout << "\t[-s]\tsigma [voxels, double]; standard deviation of the gaussian used to compute the Laplacian and the blurring; default 4.0." << std::endl;
-	std::cout << "\t[-t]\tthreshold (0,1); before dilation, a threshold is done; default: 0.9999" << std::endl;
-	std::cout << "\t[-dim]\tdimension, default 3" << std::endl;
-	std::cout << "\t[-pt]\tpixelType, default short" << std::endl;
+	std::cout << "  -in      inputFilename" << std::endl;
+	std::cout << "  [-out]   outputFilename, default in + MASK.mhd" << std::endl;
+	std::cout << "  [-r]     radius [voxels, unsigned int]; radius of ball structuring element used for dilation; default: 7." << std::endl;
+	std::cout << "  [-s]     sigma [voxels, double]; standard deviation of the gaussian used to compute the Laplacian and the blurring; default 4.0." << std::endl;
+	std::cout << "  [-t]     threshold (0,1); before dilation, a threshold is done; default: 0.9999" << std::endl;
+	std::cout << "  [-dim]   dimension, default 3" << std::endl;
+	std::cout << "  [-pt]    pixelType, default short" << std::endl;
 	std::cout << "Supported: 3D, short." << std::endl;
 } // end PrintHelp
 

@@ -170,8 +170,8 @@ void ComposeVectorImage( const std::vector<std::string> & inputFileNames,
 void PrintHelp()
 {
 	std::cout << "Usage:" << std::endl << "pximagetovectorimage" << std::endl;
-	std::cout << "  -in     inputFilenames, at least 2" << std::endl;
-	std::cout << "  [-out]  outputFilename, default VECTOR.mhd" << std::endl;
+	std::cout << "  -in      inputFilenames, at least 2" << std::endl;
+	std::cout << "  [-out]   outputFilename, default VECTOR.mhd" << std::endl;
 	std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
   std::cout << "Note: make sure that the input images are of the same type, size, etc." << std::endl;
 } // end PrintHelp()

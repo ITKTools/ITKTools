@@ -189,14 +189,14 @@ void GaussianImageFilter( const std::string & inputFileName,
 void PrintHelp()
 {
 	std::cout << "Usage:" << std::endl << "pxgaussianimagefilter" << std::endl;
-	std::cout << "  -in     inputFilename" << std::endl;
-	std::cout << "  [-out]  outputFilename, default in + BLURRED.mhd" << std::endl;
-  std::cout << "  [-std]  sigma, default 1.0" << std::endl;
-  std::cout << "  [-ord]  order, default zero" << std::endl;
-  std::cout << "            0: zero order = blurring" << std::endl;
-  std::cout << "            1: first order = gradient" << std::endl;
-  std::cout << "            2: second order derivative" << std::endl;
-  std::cout << "  [-pt]   output pixel type, default equal to input" << std::endl;
+	std::cout << "  -in      inputFilename" << std::endl;
+	std::cout << "  [-out]   outputFilename, default in + BLURRED.mhd" << std::endl;
+  std::cout << "  [-std]   sigma, default 1.0" << std::endl;
+  std::cout << "  [-ord]   order, default zero" << std::endl;
+  std::cout << "             0: zero order = blurring" << std::endl;
+  std::cout << "             1: first order = gradient" << std::endl;
+  std::cout << "             2: second order derivative" << std::endl;
+  std::cout << "  [-pt]    output pixel type, default equal to input" << std::endl;
 	std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
 } // end PrintHelp()
 

@@ -15,9 +15,9 @@ void PrintHelp()
   std::cout << "Calculates the closest rigid transform (VersorRigid3D) between" << std::endl;
   std::cout << "two sets of landmarks. The two sets should be of equal size." << std::endl;
 	std::cout << "Usage:" << std::endl << "pxclosestversor3Dtransform" << std::endl;
-	std::cout << "\t-f\tthe file containing the fixed landmarks" << std::endl;
-  std::cout << "\t-m\tthe file containing the moving landmarks" << std::endl;
-  std::cout << "\t[-c]\tthe center of rotation, default (0,0,0)" << std::endl;
+	std::cout << "  -f       the file containing the fixed landmarks" << std::endl;
+  std::cout << "  -m       the file containing the moving landmarks" << std::endl;
+  std::cout << "  [-c]     the center of rotation, default (0,0,0)" << std::endl;
 
 } // end PrintHelp
 

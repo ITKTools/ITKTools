@@ -211,11 +211,11 @@ int main( int argc, char *argv[] )
 void PrintHelp()
 {
 	std::cout << "Usage:" << std::endl << "pxcomputemean" << std::endl;
-	std::cout << "\t-in\tinput text file" << std::endl;
-  std::cout << "\t[-m]\twhat kind of mean" << std::endl;
-  std::cout << "\t[-c]\tcolumn of which the mean is taken" << std::endl;
-  std::cout << "\t[-s]\tskip: how many rows are skipped" << std::endl;
-  std::cout << "\t[-p]\toutput precision" << std::endl;
+	std::cout << "  -in      input text file" << std::endl;
+  std::cout << "  [-m]     what kind of mean" << std::endl;
+  std::cout << "  [-c]     column of which the mean is taken" << std::endl;
+  std::cout << "  [-s]     skip: how many rows are skipped" << std::endl;
+  std::cout << "  [-p]     output precision" << std::endl;
   std::cout << "-m should be \"arithmetic\", \"geometric\" or \"median\", the default is \"arithmetic\"." << std::endl;
   std::cout << "The default output precision is 6." << std::endl;
   std::cout << "The output for median is: minimum, first quartile, median, third quartile, maximum." << std::endl;

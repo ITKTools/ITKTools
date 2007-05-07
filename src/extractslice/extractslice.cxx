@@ -220,12 +220,12 @@ void PrintHelp(void)
 {
   std::cout << "pxextractslice extracts a 2D slice from a 3D image." << std::endl;
   std::cout << "Usage:  \npxextractslice" << std::endl;
-  std::cout << "\t-in   \tinput image filename" << std::endl;
-  std::cout << "\t[-out]\toutput image filename" << std::endl;
-  std::cout << "\t[-pt] \tpixel type of input and output images;" << std::endl;
-  std::cout << "\t      \tdefault: automatically determined from the first input image." << std::endl;
-  std::cout << "\t-sn   \tslice number" << std::endl;
-  std::cout << "\t[-d]  \tthe dimension from which a slice is extracted, default the z dimension" << std::endl;
+  std::cout << "  -in      input image filename" << std::endl;
+  std::cout << "  [-out]   output image filename" << std::endl;
+  std::cout << "  [-pt]    pixel type of input and output images;" << std::endl;
+  std::cout << "           default: automatically determined from the first input image." << std::endl;
+  std::cout << "  -sn      slice number" << std::endl;
+  std::cout << "  [-d]     the dimension from which a slice is extracted, default the z dimension" << std::endl;
   std::cout << "Supported pixel types: (unsigned) char, (unsigned) short, float.\n" << std::endl; 
 
 } // end PrintHelp

@@ -114,15 +114,15 @@ void PrintHelp()
 {
   std::cout << "Compute statistics on an image. For vector images, the magnitude is used." << std::endl;
   std::cout << "Usage:" << std::endl << "pxstatisticonimage" << std::endl;
-	std::cout << "\t-in\tInputFilename" << std::endl;
-  std::cout << "\t[-out]\tOutputFileName for histogram;\n";
-  std::cout << "\t      \tif omitted, no histogram is written; default: <empty>" << std::endl;
-  std::cout << "\t[-mask]\tMaskFileName, mask should have the same size as the input image\n";
-  std::cout << "\t       \tand be of pixeltype (convertable to) unsigned char,\n";
-  std::cout << "\t       \t1 = within mask, 0 = outside mask;" << std::endl;
-  std::cout << "\t[-b]\tNumberOfBins to use for histogram, default: 100;\n";
-  std::cout << "\t    \tfor an accurate estimate of median and quartiles\n";
-  std::cout << "\t    \tfor integer images, choose the number of bins\n";
-  std::cout << "\t    \tmuch larger (~100x) than the number of gray values." << std::endl;
+	std::cout << "  -in      inputFilename" << std::endl;
+  std::cout << "  [-out]   outputFileName for histogram;\n";
+  std::cout << "           if omitted, no histogram is written; default: <empty>" << std::endl;
+  std::cout << "  [-mask]  MaskFileName, mask should have the same size as the input image\n";
+  std::cout << "           and be of pixeltype (convertable to) unsigned char,\n";
+  std::cout << "           1 = within mask, 0 = outside mask;" << std::endl;
+  std::cout << "  [-b]     NumberOfBins to use for histogram, default: 100;\n";
+  std::cout << "           for an accurate estimate of median and quartiles\n";
+  std::cout << "           for integer images, choose the number of bins\n";
+  std::cout << "           much larger (~100x) than the number of gray values." << std::endl;
   std::cout << "Supported: 2D, 3D, float, (unsigned) short, (unsigned) char, 1, 2 or 3 components per pixel." << std::endl;
 } // end PrintHelp
