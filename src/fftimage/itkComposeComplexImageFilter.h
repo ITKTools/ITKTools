@@ -3,8 +3,8 @@
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: itkComposeComplexImageFilter.h,v $
   Language:  C++
-  Date:      $Date: 2007-05-09 09:08:34 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-05-09 09:58:04 $
+  Version:   $Revision: 1.2 $
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -40,7 +40,7 @@ template< class TInput, class TOutputComponentType >
 class ComposeComplex
 {
 public:
-  typedef std::complex<TTOutputComponentType> OutputType;
+  typedef std::complex<TOutputComponentType> OutputType;
   ComposeComplex() {}
   ~ComposeComplex() {}
   bool operator!=( const ComposeComplex & ) const

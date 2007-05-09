@@ -21,7 +21,7 @@ if ( componentType == #type && Dimension == dim ) \
   { \
     FFTImage< type, dim >( inputFileNames[ 0 ], outputFileNames ); \
   } \
-  else
+  else \
   { \
     IFFTImage< type, dim >( inputFileNames, outputFileNames[ 0 ] ); \
   } \
