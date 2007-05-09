@@ -23,7 +23,7 @@ if ( componentType == #type && Dimension == dim ) \
   } \
   else \
   { \
-    IFFTImage< type, dim >( inputFileNames, outputFileNames[ 0 ] ); \
+    IFFTImage< type, dim >( inputFileNames, outputFileNames[ 0 ], xdim ); \
   } \
 }
 
@@ -37,7 +37,8 @@ void FFTImage( const std::string & inputFileName,
 /** Declare IFFTImage. */
 template< class PixelType, unsigned int Dimension >
 void IFFTImage( const std::vector<std::string> & inputFileNames,
-  const std::string & outputFileName );
+  const std::string & outputFileName,
+  const std::string & xdim );
 
 /** Declare other functions. */
 void PrintHelp( void );
@@ -74,6 +75,9 @@ int main( int argc, char **argv )
   std::string	componentType = "float";
 	bool retopct = parser->GetCommandLineArgument( "-opct", componentType );
 
+  std::string	xdim = "even";
+	bool retxdim = parser->GetCommandLineArgument( "-xdim", xdim );
+
 	/** Check if the required arguments are given. */
 	if ( !retin )
 	{
@@ -105,6 +109,14 @@ int main( int argc, char **argv )
   {
     std::cerr << "ERROR: Only one or two input files are expected." << std::endl;
 		return 1;
+  }
+  if ( op == "backward" && retxdim )
+  {
+    if ( xdim != "odd" && xdim != "even" )
+    {
+      std::cerr << "ERROR: \"-xdim\" should be one of {odd, even}." << std::endl;
+      return 1;
+    }
   }
 
   /** Determine image properties. */
@@ -237,7 +249,7 @@ void FFTImage( const std::string & inputFileName,
 
 template< class PixelType, unsigned int Dimension >
 void IFFTImage( const std::vector<std::string> & inputFileNames,
-  const std::string & outputFileName )
+  const std::string & outputFileName, const std::string & xdim )
 {
   /** Typedefs. */
   typedef itk::Image< PixelType, Dimension >            ImageType;
@@ -274,6 +286,16 @@ void IFFTImage( const std::vector<std::string> & inputFileNames,
     ifftFilter->SetInput( composer->GetOutput() );
   }
 
+  /** Setup IFFT filter. */
+  if ( xdim == "odd" )
+  {
+    ifftFilter->SetActualXDimensionIsOdd( true );
+  }
+  else
+  {
+    ifftFilter->SetActualXDimensionIsOdd( false );
+  }
+
   /** Write the output image. */
   typename WriterType::Pointer writer = WriterType::New();
   writer->SetFileName( outputFileNames[ 0 ].c_str() );
@@ -302,7 +324,9 @@ void PrintHelp( void )
   std::cout << "               3: write the complex, real and imaginary images\n";
   std::cout << "             backward: only one output" << std::endl;
   std::cout << "  [-opct]  the output type\n";
-  std::cout << "             either float or double, default float" << std::endl;
+  std::cout << "             choose from {float, double}, default float" << std::endl;
+  std::cout << "  [-xdim]  the backward transform needs to know if the actual x-dimension was odd or even.\n";
+  std::cout << "             choose from {odd, even}, default even" << std::endl;
 	std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
 
 } // end PrintHelp()
