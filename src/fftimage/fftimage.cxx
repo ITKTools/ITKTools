@@ -59,17 +59,17 @@ int main( int argc, char **argv )
   parser->SetCommandLineArguments( argc, argv );
 
   /** Get arguments: op: forward or backward */
-  std::string	op = "";
+  std::string op = "";
   bool retop = parser->GetCommandLineArgument( "-op", op );
   op = itksys::SystemTools::LowerCase( op );
   if ( op == "inverse" ) op = "backward";
 
   /** Get arguments: in */
-  std::vector<std::string>	inputFileNames;
+  std::vector<std::string>  inputFileNames;
   bool retin = parser->GetCommandLineArgument( "-in", inputFileNames );
 
   /** Get arguments: out */
-  std::vector<std::string>	outputFileNames( 3 );
+  std::vector<std::string>  outputFileNames( 3 );
   std::string inputpart = "";
   if ( retin )
   {
@@ -77,13 +77,13 @@ int main( int argc, char **argv )
   }
   if ( op == "forward" )
   {
-	outputFileNames[ 0 ] = inputpart + "Complex.mhd";
-	outputFileNames[ 0 ] = inputpart + "Real.mhd";
-	outputFileNames[ 1 ] = inputpart + "Imaginary.mhd";
+  outputFileNames[ 0 ] = inputpart + "Complex.mhd";
+  outputFileNames[ 0 ] = inputpart + "Real.mhd";
+  outputFileNames[ 1 ] = inputpart + "Imaginary.mhd";
   }
   else if ( op == "backward" )
   {
-	outputFileNames[ 0 ] = inputpart + "IFFT.mhd";
+  outputFileNames[ 0 ] = inputpart + "IFFT.mhd";
   }
   bool retout = parser->GetCommandLineArgument( "-out", outputFileNames );
 
@@ -95,35 +95,35 @@ int main( int argc, char **argv )
   std::string xdim = "even";
   bool retxdim = parser->GetCommandLineArgument( "-xdim", xdim );
 
-	/** Check if the required arguments are given. */
-	if ( !retin )
-	{
-		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-		return 1;
-	}
+  /** Check if the required arguments are given. */
+  if ( !retin )
+  {
+    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
+    return 1;
+  }
   if ( !retop )
-	{
-		std::cerr << "ERROR: You should specify \"-op\"." << std::endl;
-		return 1;
-	}
+  {
+    std::cerr << "ERROR: You should specify \"-op\"." << std::endl;
+    return 1;
+  }
 
   /** Check operator. */
   if ( op != "forward" && op != "backward" )
   {
     std::cerr << "ERROR: \"-op\" should be one of {forward, backward}." << std::endl;
-		return 1;
+    return 1;
   }
   
   /** Check input. */
   if ( op == "forward" && inputFileNames.size() > 1 )
   {
     std::cerr << "ERROR: Only one input file is expected." << std::endl;
-		return 1;
+    return 1;
   }
   if ( op == "backward" && inputFileNames.size() > 2 )
   {
     std::cerr << "ERROR: Only one or two input files are expected." << std::endl;
-		return 1;
+    return 1;
   }
   if ( op == "backward" && retxdim )
   {
@@ -136,7 +136,7 @@ int main( int argc, char **argv )
 
   /** Determine image properties. */
   std::string ComponentTypeIn = "short";
-  std::string	PixelType; //we don't use this
+  std::string PixelType; //we don't use this
   unsigned int Dimension = 3;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
@@ -173,30 +173,30 @@ int main( int argc, char **argv )
     return 1; 
   }
 
-	/** Run the program. */
-	try
-	{
+  /** Run the program. */
+  try
+  {
     run( float, 2 );
-		run( double, 2 );
+    run( double, 2 );
 
     run( float, 3 );
-		run( double, 3 );
-	}
-	catch( itk::ExceptionObject &e )
-	{
-		std::cerr << "Caught ITK exception: " << e << std::endl;
-		return 1;
-	}
-	
-	/** End program. */
-	return 0;
+    run( double, 3 );
+  }
+  catch( itk::ExceptionObject &e )
+  {
+    std::cerr << "Caught ITK exception: " << e << std::endl;
+    return 1;
+  }
+  
+  /** End program. */
+  return 0;
 
 } // end main()
 
 
-	/**
-	 * ******************* FFTImage *******************
-	 */
+  /**
+   * ******************* FFTImage *******************
+   */
 
 template< class PixelType, unsigned int Dimension >
 void FFTImage( const std::string & inputFileName,
@@ -248,15 +248,15 @@ void FFTImage( const std::string & inputFileName,
     typename WriterType::Pointer writer2 = WriterType::New();
 
     if ( outputFileNames.size() == 2 )
-	{
+  {
       writer1->SetFileName( outputFileNames[ 0 ].c_str() );
       writer2->SetFileName( outputFileNames[ 1 ].c_str() );
-	}
-	else
-	{
+  }
+  else
+  {
       writer1->SetFileName( outputFileNames[ 1 ].c_str() );
       writer2->SetFileName( outputFileNames[ 2 ].c_str() );
-	}
+  }
     writer1->SetInput( realFilter->GetOutput() );
     writer1->SetFileName( outputFileNames[ 1 ].c_str() );
     writer1->Update();
@@ -265,13 +265,13 @@ void FFTImage( const std::string & inputFileName,
     writer2->SetFileName( outputFileNames[ 2 ].c_str() );
     writer2->Update();
   }
-	
+  
 } // end FFTImage()
 
 
-	/**
-	 * ******************* IFFTImage *******************
-	 */
+  /**
+   * ******************* IFFTImage *******************
+   */
 
 template< class PixelType, unsigned int Dimension >
 void IFFTImage( const std::vector<std::string> & inputFileNames,
@@ -327,23 +327,23 @@ void IFFTImage( const std::vector<std::string> & inputFileNames,
   writer->SetFileName( outputFileName.c_str() );
   writer->SetInput( ifftFilter->GetOutput() );
   writer->Update();
-	
+  
 } // end IFFTImage()
 
 
-	/**
-	 * ******************* PrintHelp *******************
-	 */
+  /**
+   * ******************* PrintHelp *******************
+   */
 void PrintHelp( void )
 {
-	std::cout << "Usage:" << std::endl << "pxfftimage" << std::endl;
-	std::cout << "  -in      inputFilenames\n";
+  std::cout << "Usage:" << std::endl << "pxfftimage" << std::endl;
+  std::cout << "  -in      inputFilenames\n";
   std::cout << "             forward: only one input\n";
   std::cout << "             backward, # given:\n";
   std::cout << "               1: a complex image\n";
   std::cout << "               2: a real and imaginary part" << std::endl;
   std::cout << "  -op      operator, {forward, backward} FFT" << std::endl;
-	std::cout << "  [-out]   outputFilenames\n";
+  std::cout << "  [-out]   outputFilenames\n";
   std::cout << "             forward, # given:\n";
   std::cout << "               1: write the complex image, default in + Complex.mhd\n";
   std::cout << "               2: write the real and imaginary images, default in + Real.mhd and in + Imaginary.mhd\n";
@@ -353,6 +353,6 @@ void PrintHelp( void )
   std::cout << "             choose from {float, double}, default float" << std::endl;
   std::cout << "  [-xdim]  the backward transform needs to know if the actual x-dimension was odd or even.\n";
   std::cout << "             choose from {odd, even}, default even" << std::endl;
-	std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
+  std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
 
 } // end PrintHelp()
