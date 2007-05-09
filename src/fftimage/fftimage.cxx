@@ -47,36 +47,53 @@ void PrintHelp( void );
 
 int main( int argc, char **argv )
 {
-	/** Check arguments for help. */
-	if ( argc < 5 || argc > 14 )
-	{
-		PrintHelp();
-		return 1;
-	}
+  /** Check arguments for help. */
+  if ( argc < 5 || argc > 14 )
+  {
+    PrintHelp();
+    return 1;
+  }
 
-	/** Create a command line argument parser. */
-	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
-	parser->SetCommandLineArguments( argc, argv );
+  /** Create a command line argument parser. */
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
 
-	/** Get arguments. */
-  std::vector<std::string>	inputFileNames;
-	bool retin = parser->GetCommandLineArgument( "-in", inputFileNames );
-
-  std::vector<std::string>	outputFileNames( 3 );
-  std::string inputpart = inputFileName.substr( 0, inputFileName.rfind( "." ) );
-  outputFileNames[ 0 ] = inputpart + "Complex.mhd";
-  outputFileNames[ 1 ] = inputpart + "Real.mhd";
-  outputFileNames[ 2 ] = inputpart + "Imaginary.mhd";
-	bool retout = parser->GetCommandLineArgument( "-out", outputFileNames );
-
+  /** Get arguments: op: forward or backward */
   std::string	op = "";
-	bool retop = parser->GetCommandLineArgument( "-op", op );
+  bool retop = parser->GetCommandLineArgument( "-op", op );
+  op = itksys::SystemTools::LowerCase( op );
+  if ( op == "inverse" ) op = "backward";
 
-  std::string	componentType = "float";
-	bool retopct = parser->GetCommandLineArgument( "-opct", componentType );
+  /** Get arguments: in */
+  std::vector<std::string>	inputFileNames;
+  bool retin = parser->GetCommandLineArgument( "-in", inputFileNames );
 
-  std::string	xdim = "even";
-	bool retxdim = parser->GetCommandLineArgument( "-xdim", xdim );
+  /** Get arguments: out */
+  std::vector<std::string>	outputFileNames( 3 );
+  std::string inputpart = "";
+  if ( retin )
+  {
+    inputpart = inputFileNames[ 0 ].substr( 0, inputFileNames[ 0 ].rfind( "." ) );
+  }
+  if ( op == "forward" )
+  {
+	outputFileNames[ 0 ] = inputpart + "Complex.mhd";
+	outputFileNames[ 0 ] = inputpart + "Real.mhd";
+	outputFileNames[ 1 ] = inputpart + "Imaginary.mhd";
+  }
+  else if ( op == "backward" )
+  {
+	outputFileNames[ 0 ] = inputpart + "IFFT.mhd";
+  }
+  bool retout = parser->GetCommandLineArgument( "-out", outputFileNames );
+
+  /** Get arguments: opct */
+  std::string componentType = "float";
+  bool retopct = parser->GetCommandLineArgument( "-opct", componentType );
+
+  /** Get arguments: xdim */
+  std::string xdim = "even";
+  bool retxdim = parser->GetCommandLineArgument( "-xdim", xdim );
 
 	/** Check if the required arguments are given. */
 	if ( !retin )
@@ -91,8 +108,6 @@ int main( int argc, char **argv )
 	}
 
   /** Check operator. */
-  op = itksys::SystemTools::LowerCase( op );
-  if ( op == "inverse" ) op = "backward";
   if ( op != "forward" && op != "backward" )
   {
     std::cerr << "ERROR: \"-op\" should be one of {forward, backward}." << std::endl;
@@ -100,12 +115,12 @@ int main( int argc, char **argv )
   }
   
   /** Check input. */
-  if ( op == "forward" && inputFileNames > 1 )
+  if ( op == "forward" && inputFileNames.size() > 1 )
   {
     std::cerr << "ERROR: Only one input file is expected." << std::endl;
 		return 1;
   }
-  if ( op == "backward" && inputFileNames > 2 )
+  if ( op == "backward" && inputFileNames.size() > 2 )
   {
     std::cerr << "ERROR: Only one or two input files are expected." << std::endl;
 		return 1;
@@ -126,7 +141,7 @@ int main( int argc, char **argv )
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
   int retgip = GetImageProperties(
-    inputFileName,
+    inputFileNames[ 0 ],
     PixelType,
     ComponentTypeIn,
     Dimension,
@@ -221,7 +236,7 @@ void FFTImage( const std::string & inputFileName,
     complexWriter->SetInput( fftFilter->GetOutput() );
     complexWriter->Update();
   }
-  else if ( outputFileNames.size() > 1 )
+  if ( outputFileNames.size() > 1 )
   {
     typename RealFilterType::Pointer realFilter = RealFilterType::New();
     realFilter->SetInput( fftFilter->GetOutput() );
@@ -229,15 +244,26 @@ void FFTImage( const std::string & inputFileName,
     typename ImaginaryFilterType::Pointer imaginaryFilter = ImaginaryFilterType::New();
     imaginaryFilter->SetInput( fftFilter->GetOutput() );
 
-    typename WriterType::Pointer writer = WriterType::New();
+    typename WriterType::Pointer writer1 = WriterType::New();
+    typename WriterType::Pointer writer2 = WriterType::New();
 
-    writer->SetInput( realFilter->GetOutput() );
-    writer->SetFileName( outputFileNames[ 1 ].c_str() );
-    writer->Update();
+    if ( outputFileNames.size() == 2 )
+	{
+      writer1->SetFileName( outputFileNames[ 0 ].c_str() );
+      writer2->SetFileName( outputFileNames[ 1 ].c_str() );
+	}
+	else
+	{
+      writer1->SetFileName( outputFileNames[ 1 ].c_str() );
+      writer2->SetFileName( outputFileNames[ 2 ].c_str() );
+	}
+    writer1->SetInput( realFilter->GetOutput() );
+    writer1->SetFileName( outputFileNames[ 1 ].c_str() );
+    writer1->Update();
 
-    writer->SetInput( imaginaryFilter->GetOutput() );
-    writer->SetFileName( outputFileNames[ 2 ].c_str() );
-    writer->Update();
+    writer2->SetInput( imaginaryFilter->GetOutput() );
+    writer2->SetFileName( outputFileNames[ 2 ].c_str() );
+    writer2->Update();
   }
 	
 } // end FFTImage()
@@ -298,7 +324,7 @@ void IFFTImage( const std::vector<std::string> & inputFileNames,
 
   /** Write the output image. */
   typename WriterType::Pointer writer = WriterType::New();
-  writer->SetFileName( outputFileNames[ 0 ].c_str() );
+  writer->SetFileName( outputFileName.c_str() );
   writer->SetInput( ifftFilter->GetOutput() );
   writer->Update();
 	
@@ -322,7 +348,7 @@ void PrintHelp( void )
   std::cout << "               1: write the complex image, default in + Complex.mhd\n";
   std::cout << "               2: write the real and imaginary images, default in + Real.mhd and in + Imaginary.mhd\n";
   std::cout << "               3: write the complex, real and imaginary images\n";
-  std::cout << "             backward: only one output" << std::endl;
+  std::cout << "             backward: only one output, default in + IFFT" << std::endl;
   std::cout << "  [-opct]  the output type\n";
   std::cout << "             choose from {float, double}, default float" << std::endl;
   std::cout << "  [-xdim]  the backward transform needs to know if the actual x-dimension was odd or even.\n";

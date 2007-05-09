@@ -17,6 +17,6 @@ IF( USE_FFTIMAGE )
 
 	INSTALL_TARGETS(/. pxfftimage)
 
-	TARGET_LINK_LIBRARIES(pxfftimage ITKCommon ITKBasicFilters ITKIO ITKAlgorithms)
+	TARGET_LINK_LIBRARIES(pxfftimage pxcommon ITKCommon ITKBasicFilters ITKIO ITKAlgorithms)
 ENDIF( USE_FFTIMAGE )
 
