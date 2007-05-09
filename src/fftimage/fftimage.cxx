@@ -248,15 +248,15 @@ void FFTImage( const std::string & inputFileName,
     typename WriterType::Pointer writer2 = WriterType::New();
 
     if ( outputFileNames.size() == 2 )
-  {
+    {
       writer1->SetFileName( outputFileNames[ 0 ].c_str() );
       writer2->SetFileName( outputFileNames[ 1 ].c_str() );
-  }
-  else
-  {
+    }
+    else
+    {
       writer1->SetFileName( outputFileNames[ 1 ].c_str() );
       writer2->SetFileName( outputFileNames[ 2 ].c_str() );
-  }
+    }
     writer1->SetInput( realFilter->GetOutput() );
     writer1->SetFileName( outputFileNames[ 1 ].c_str() );
     writer1->Update();
