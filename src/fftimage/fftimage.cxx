@@ -58,40 +58,19 @@ int main( int argc, char **argv )
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
 
-  /** Get arguments: op: forward or backward */
-  std::string op = "";
-  bool retop = parser->GetCommandLineArgument( "-op", op );
-  op = itksys::SystemTools::LowerCase( op );
-  if ( op == "inverse" ) op = "backward";
-
-  /** Get arguments: in */
+  /** Get arguments. */
   std::vector<std::string>  inputFileNames;
   bool retin = parser->GetCommandLineArgument( "-in", inputFileNames );
 
-  /** Get arguments: out */
-  std::vector<std::string>  outputFileNames( 3 );
-  std::string inputpart = "";
-  if ( retin )
-  {
-    inputpart = inputFileNames[ 0 ].substr( 0, inputFileNames[ 0 ].rfind( "." ) );
-  }
-  if ( op == "forward" )
-  {
-  outputFileNames[ 0 ] = inputpart + "Complex.mhd";
-  outputFileNames[ 0 ] = inputpart + "Real.mhd";
-  outputFileNames[ 1 ] = inputpart + "Imaginary.mhd";
-  }
-  else if ( op == "backward" )
-  {
-  outputFileNames[ 0 ] = inputpart + "IFFT.mhd";
-  }
+  std::vector<std::string>  outputFileNames;
   bool retout = parser->GetCommandLineArgument( "-out", outputFileNames );
-
-  /** Get arguments: opct */
+  
+  std::string op = "";
+  bool retop = parser->GetCommandLineArgument( "-op", op );
+  
   std::string componentType = "float";
   bool retopct = parser->GetCommandLineArgument( "-opct", componentType );
 
-  /** Get arguments: xdim */
   std::string xdim = "even";
   bool retxdim = parser->GetCommandLineArgument( "-xdim", xdim );
 
@@ -108,6 +87,8 @@ int main( int argc, char **argv )
   }
 
   /** Check operator. */
+  op = itksys::SystemTools::LowerCase( op );
+  if ( op == "inverse" ) op = "backward";
   if ( op != "forward" && op != "backward" )
   {
     std::cerr << "ERROR: \"-op\" should be one of {forward, backward}." << std::endl;
@@ -125,6 +106,8 @@ int main( int argc, char **argv )
     std::cerr << "ERROR: Only one or two input files are expected." << std::endl;
     return 1;
   }
+
+  /** Check xdim. */
   if ( op == "backward" && retxdim )
   {
     if ( xdim != "odd" && xdim != "even" )
@@ -134,6 +117,24 @@ int main( int argc, char **argv )
     }
   }
 
+  /** Check output names. */
+  if ( outputFileNames.size() == 0 )
+  {
+    std::string inputpart = inputFileNames[ 0 ].substr( 0, inputFileNames[ 0 ].rfind( "." ) );
+    if ( op == "forward" )
+    {
+	  outputFileNames.resize( 3 );
+      outputFileNames[ 0 ] = inputpart + "Complex.mhd";
+      outputFileNames[ 1 ] = inputpart + "Real.mhd";
+      outputFileNames[ 2 ] = inputpart + "Imaginary.mhd";
+    }
+    else if ( op == "backward" )
+    {
+	  outputFileNames.resize( 1 );
+      outputFileNames[ 0 ] = inputpart + "IFFT.mhd";
+    }
+  }
+  
   /** Determine image properties. */
   std::string ComponentTypeIn = "short";
   std::string PixelType; //we don't use this
@@ -258,11 +259,9 @@ void FFTImage( const std::string & inputFileName,
       writer2->SetFileName( outputFileNames[ 2 ].c_str() );
     }
     writer1->SetInput( realFilter->GetOutput() );
-    writer1->SetFileName( outputFileNames[ 1 ].c_str() );
     writer1->Update();
 
     writer2->SetInput( imaginaryFilter->GetOutput() );
-    writer2->SetFileName( outputFileNames[ 2 ].c_str() );
     writer2->Update();
   }
   
