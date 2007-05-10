@@ -3,8 +3,8 @@
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: itkSmoothingRecursiveGaussianImageFilter2.txx,v $
   Language:  C++
-  Date:      $Date: 2007-04-25 13:52:19 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-05-10 09:37:46 $
+  Version:   $Revision: 1.2 $
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -32,38 +32,44 @@ template <typename TInputImage, typename TOutputImage >
 SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
 ::SmoothingRecursiveGaussianImageFilter2()
 {
+  /** Initialize variables. */
+  this->m_NormalizeAcrossScale = false;
 
-  m_NormalizeAcrossScale = false;
+  /** Setup the first smoothing filter. */
+  this->m_FirstSmoothingFilter = FirstGaussianFilterType::New();
+  this->m_FirstSmoothingFilter->SetOrder( FirstGaussianFilterType::ZeroOrder );
+  this->m_FirstSmoothingFilter->SetDirection( 0 );
+  this->m_FirstSmoothingFilter->SetNormalizeAcrossScale( this->m_NormalizeAcrossScale );
+  this->m_FirstSmoothingFilter->ReleaseDataFlagOn();
 
-  m_FirstSmoothingFilter = FirstGaussianFilterType::New();
-  m_FirstSmoothingFilter->SetOrder( FirstGaussianFilterType::ZeroOrder );
-  m_FirstSmoothingFilter->SetDirection( 0 );
-  m_FirstSmoothingFilter->SetNormalizeAcrossScale( m_NormalizeAcrossScale );
-  m_FirstSmoothingFilter->ReleaseDataFlagOn();
+  /** Setup the remaining smoothing filters. */
+  for ( unsigned int i = 0; i < ImageDimension - 1; i++ )
+  {
+    this->m_SmoothingFilters[ i ] = InternalGaussianFilterType::New();
+    this->m_SmoothingFilters[ i ]->SetOrder( InternalGaussianFilterType::ZeroOrder );
+    this->m_SmoothingFilters[ i ]->SetNormalizeAcrossScale( this->m_NormalizeAcrossScale );
+    this->m_SmoothingFilters[ i ]->SetDirection( i + 1 );
+    this->m_SmoothingFilters[ i ]->ReleaseDataFlagOn();
+  }
 
-  for( unsigned int i = 0; i<ImageDimension-1; i++ )
-    {
-    m_SmoothingFilters[ i ] = InternalGaussianFilterType::New();
-    m_SmoothingFilters[ i ]->SetOrder( InternalGaussianFilterType::ZeroOrder );
-    m_SmoothingFilters[ i ]->SetNormalizeAcrossScale( m_NormalizeAcrossScale );
-    m_SmoothingFilters[ i ]->SetDirection( i+1 );
-    m_SmoothingFilters[ i ]->ReleaseDataFlagOn();
-    }
+  /** Connect the pipeline. */
+  this->m_SmoothingFilters[ 0 ]->SetInput( this->m_FirstSmoothingFilter->GetOutput() );
+  for ( unsigned int i = 1; i < ImageDimension - 1; i++ )
+  {
+    this->m_SmoothingFilters[ i ]->SetInput( 
+      this->m_SmoothingFilters[ i - 1 ]->GetOutput() );
+  }
 
+  /** And finally a cast to the desired output type. */
+  this->m_CastingFilter = CastingFilterType::New();
+  this->m_CastingFilter->SetInput( 
+    this->m_SmoothingFilters[ ImageDimension - 2 ]->GetOutput() );
 
-  m_SmoothingFilters[0]->SetInput( m_FirstSmoothingFilter->GetOutput() );
-  for( unsigned int i = 1; i<ImageDimension-1; i++ )
-    {
-    m_SmoothingFilters[ i ]->SetInput( 
-      m_SmoothingFilters[i-1]->GetOutput() );
-    }
-  
-  m_CastingFilter = CastingFilterType::New();
-  m_CastingFilter->SetInput(m_SmoothingFilters[ImageDimension-2]->GetOutput());
-  
+  /** Initialize variables. */
   this->SetSigma( 1.0 );
-}
+  this->SetOrder( 0 );
 
+} // end Constructor
 
 
 /**
@@ -72,19 +78,36 @@ SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
 template <typename TInputImage, typename TOutputImage>
 void 
 SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
-::SetSigma( ScalarRealType sigma )
+::SetSigma( const ScalarRealType sigma )
 {
+  SigmaType sigmaFA;
+  sigmaFA.Fill( sigma );
+  this->SetSigma( sigmaFA );
+} // end SetSigma()
 
-  for( unsigned int i = 0; i<ImageDimension-1; i++ )
+
+/**
+ * Set value of Sigma
+ */
+template <typename TInputImage, typename TOutputImage>
+void 
+SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
+::SetSigma( const SigmaType sigma )
+{
+  if ( this->m_Sigma != sigma )
+  {
+    this->m_Sigma = sigma;
+    this->Modified();
+
+    /** Pass on the sigma. */
+    this->m_FirstSmoothingFilter->SetSigma( sigma[ 0 ] );
+    for ( unsigned int i = 0; i < ImageDimension - 1; i++ )
     {
-    m_SmoothingFilters[ i ]->SetSigma( sigma );
+      this->m_SmoothingFilters[ i ]->SetSigma( sigma[ i + 1 ] );
     }
-  m_FirstSmoothingFilter->SetSigma( sigma );
+  } // end if
 
-  this->Modified();
-
-}
-
+} // end SetSigma()
 
 
 /**
@@ -93,20 +116,36 @@ SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
 template <typename TInputImage, typename TOutputImage>
 void 
 SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
-::SetNormalizeAcrossScale( bool normalize )
+::SetNormalizeAcrossScale( const bool arg )
 {
+  if ( this->m_NormalizeAcrossScale != arg )
+  {
+    this->m_NormalizeAcrossScale = arg;
+    this->Modified();
 
-  m_NormalizeAcrossScale = normalize;
-
-  for( unsigned int i = 0; i<ImageDimension-1; i++ )
+    /** Pass on the argument. */
+    this->m_FirstSmoothingFilter->SetNormalizeAcrossScale( arg );
+    for( unsigned int i = 0; i < ImageDimension - 1; i++ )
     {
-    m_SmoothingFilters[ i ]->SetNormalizeAcrossScale( normalize );
+      this->m_SmoothingFilters[ i ]->SetNormalizeAcrossScale( arg );
     }
-  m_FirstSmoothingFilter->SetNormalizeAcrossScale( normalize );
+  } // end if
+} // end SetNormalizeAcrossScale()
 
-  this->Modified();
 
-}
+/**
+ * Set value of Order
+ */
+template <typename TInputImage, typename TOutputImage>
+void 
+SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
+::SetOrder( const unsigned int order )
+{
+  OrderType orderFA;
+  orderFA.Fill( order );
+  this->SetOrder( orderFA );
+} // end SetOrder()
+
 
 /**
  * Set Order
@@ -114,41 +153,47 @@ SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
 template <typename TInputImage, typename TOutputImage>
 void 
 SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
-::SetOrder( const unsigned int order )
+::SetOrder( const OrderType order )
 {
   if ( this->m_Order != order )
   {
     this->m_Order = order;
     this->Modified();
 
-    for ( unsigned int i = 0; i < ImageDimension - 1; i++ )
-    {
-      if ( order == 0 )
-      {
-        m_SmoothingFilters[ i ]->SetOrder( InternalGaussianFilterType::ZeroOrder );
-      }
-      else if ( order == 1 )
-      {
-        m_SmoothingFilters[ i ]->SetOrder( InternalGaussianFilterType::FirstOrder );
-      }
-      else if ( order == 2 )
-      {
-        m_SmoothingFilters[ i ]->SetOrder( InternalGaussianFilterType::SecondOrder );
-      }
-    }
-    if ( order == 0 )
+    /** Set the order for the first smoothing filter. */
+    if ( order[ 0 ] == 0 )
     {
       m_FirstSmoothingFilter->SetOrder( FirstGaussianFilterType::ZeroOrder );
     }
-    else if ( order == 1 )
+    else if ( order[ 0 ] == 1 )
     {
       m_FirstSmoothingFilter->SetOrder( FirstGaussianFilterType::FirstOrder );
     }
-    else if ( order == 2 )
+    else if ( order[ 0 ] == 2 )
     {
       m_FirstSmoothingFilter->SetOrder( FirstGaussianFilterType::SecondOrder );
     }
-  }
+    //else warning??
+
+    /** Set the order for the last smoothing filters. */
+    for ( unsigned int i = 0; i < ImageDimension - 1; i++ )
+    {
+      if ( order[ i + 1 ] == 0 )
+      {
+        m_SmoothingFilters[ i ]->SetOrder( InternalGaussianFilterType::ZeroOrder );
+      }
+      else if ( order[ i + 1 ] == 1 )
+      {
+        m_SmoothingFilters[ i ]->SetOrder( InternalGaussianFilterType::FirstOrder );
+      }
+      else if ( order[ i + 1 ] == 2 )
+      {
+        m_SmoothingFilters[ i ]->SetOrder( InternalGaussianFilterType::SecondOrder );
+      }
+      //else warning??
+    } // end for
+    
+  } // end if
 
 } // end SetOrder()
 

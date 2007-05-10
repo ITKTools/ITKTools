@@ -20,7 +20,9 @@ if ( componentType == #type && Dimension == dim ) \
 /** Declare GaussianImageFilter. */
 template< class OutputImageType >
 void GaussianImageFilter( const std::string & inputFileName,
-  const std::string & outputFileName, const float & sigma, const unsigned int & order );
+  const std::string & outputFileName,
+  const std::vector<float> & sigma,
+  const std::vector<unsigned int> & order );
 
 /** Declare PrintHelp. */
 void PrintHelp( void );
@@ -44,10 +46,10 @@ int main( int argc, char ** argv )
   std::string inputFileName = "";
 	bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
 
-  double sigma = 1.0;
+  std::vector<float> sigma;
   bool retstd = parser->GetCommandLineArgument( "-std", sigma );
 
-  unsigned int order = 0;
+  std::vector<unsigned int> order;
   bool retord = parser->GetCommandLineArgument( "-ord", order );
 
   std::string	outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
@@ -65,11 +67,14 @@ int main( int argc, char ** argv )
 	}
 
   /** Check options. */
-  if ( order > 2 )
+  for ( unsigned int i = 0; i < order.size(); ++i )
   {
-    std::cerr << "ERROR: The order should not be higher than 2." << std::endl;
-    std::cerr << "Only zeroth, first and second order derivatives are supported." << std::endl;
-		return 1;
+    if ( order[ i ] > 2 )
+    {
+      std::cerr << "ERROR: The order should not be higher than 2." << std::endl;
+      std::cerr << "Only zeroth, first and second order derivatives are supported." << std::endl;
+      return 1;
+    }
   }
  
   /** Determine image properties. */
@@ -97,7 +102,7 @@ int main( int argc, char ** argv )
 
   /** Check for vector images. */
   if ( NumberOfComponents > 1 )
-  { 
+  {
     std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
     std::cerr << "Cannot make vector of vector images." << std::endl;
     return 1; 
@@ -105,6 +110,20 @@ int main( int argc, char ** argv )
 
 	/** Get rid of the possible "_" in ComponentType. */
   ReplaceUnderscoreWithSpace( ComponentTypeIn );
+
+  /** Check order. */
+  if ( order.size() != Dimension )
+  {
+    std::cerr << "ERROR: the # of orders should be equal to the image dimension!" << std::endl;
+    return 1; 
+  }
+
+  /** Check sigma. */
+  if ( sigma.size() != 1 && sigma.size() != Dimension )
+  {
+    std::cerr << "ERROR: the # of sigmas should be equal to 1 or the image dimension!" << std::endl;
+    return 1; 
+  }
 
   /** Run the program. */
 	try
@@ -151,8 +170,8 @@ int main( int argc, char ** argv )
 template< class OutputImageType >
 void GaussianImageFilter( const std::string & inputFileName,
   const std::string & outputFileName,
-  const float & sigma,
-  const unsigned int & order )
+  const std::vector<float> & sigma,
+  const std::vector<unsigned int> & order )
 {
   /** Typedef's. */
   const unsigned int Dimension = OutputImageType::ImageDimension;
@@ -161,18 +180,30 @@ void GaussianImageFilter( const std::string & inputFileName,
 	typedef itk::ImageFileReader< InputImageType >			    ReaderType;
 	typedef itk::SmoothingRecursiveGaussianImageFilter2<
     InputImageType, OutputImageType >                     FilterType;
+  typedef typename FilterType::OrderType                  OrderType;
+  typedef typename FilterType::SigmaType                  SigmaType;
 	typedef itk::ImageFileWriter< OutputImageType >			    WriterType;
 
 	/**	Read in the input image. */
   typename ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName( inputFileName );
 
+  /** Setup the order and sigma. */
+  OrderType orderFA;
+  SigmaType sigmaFA;
+  sigmaFA.Fill( sigma[ 0 ] );
+  for ( unsigned int i = 0; i < Dimension; ++i )
+  {
+    orderFA[ i ] = order[ i ];
+    if ( sigma.size() == Dimension ) sigmaFA[ i ] = sigma[ i ];
+  }
+
   /** Setup the smoothing filter. */
   typename FilterType::Pointer filter = FilterType::New();
   filter->SetNormalizeAcrossScale( false );
   filter->SetInput( reader->GetOutput() );
-  filter->SetSigma( sigma );
-  filter->SetOrder( order );
+  filter->SetSigma( sigmaFA );
+  filter->SetOrder( orderFA );
 
   /** Write image. */
   typename WriterType::Pointer writer = WriterType::New();
@@ -191,10 +222,10 @@ void PrintHelp()
 	std::cout << "Usage:" << std::endl << "pxgaussianimagefilter" << std::endl;
 	std::cout << "  -in      inputFilename" << std::endl;
 	std::cout << "  [-out]   outputFilename, default in + BLURRED.mhd" << std::endl;
-  std::cout << "  [-std]   sigma, default 1.0" << std::endl;
-  std::cout << "  [-ord]   order, default zero" << std::endl;
-  std::cout << "             0: zero order = blurring" << std::endl;
-  std::cout << "             1: first order = gradient" << std::endl;
+  std::cout << "  [-std]   sigma, for each dimension, default 1.0" << std::endl;
+  std::cout << "  [-ord]   order, for each dimension, default zero\n";
+  std::cout << "             0: zero order = blurring\n";
+  std::cout << "             1: first order = gradient\n";
   std::cout << "             2: second order derivative" << std::endl;
   std::cout << "  [-pt]    output pixel type, default equal to input" << std::endl;
 	std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;

@@ -3,8 +3,8 @@
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: itkSmoothingRecursiveGaussianImageFilter2.h,v $
   Language:  C++
-  Date:      $Date: 2007-04-25 13:52:19 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-05-10 09:37:46 $
+  Version:   $Revision: 1.2 $
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -22,6 +22,7 @@
 #include "itkImage.h"
 #include "itkPixelTraits.h"
 #include "itkCommand.h"
+#include "itkFixedArray.h"
 
 
 namespace itk
@@ -46,50 +47,40 @@ class ITK_EXPORT SmoothingRecursiveGaussianImageFilter2:
 {
 public:
   /** Standard class typedefs. */
-  typedef SmoothingRecursiveGaussianImageFilter2  Self;
-  typedef ImageToImageFilter<TInputImage,TOutputImage> Superclass;
-  typedef SmartPointer<Self>                   Pointer;
-  typedef SmartPointer<const Self>        ConstPointer;
+  typedef SmoothingRecursiveGaussianImageFilter2            Self;
+  typedef ImageToImageFilter<TInputImage,TOutputImage>      Superclass;
+  typedef SmartPointer<Self>                                Pointer;
+  typedef SmartPointer<const Self>                          ConstPointer;
   
   
   /** Pixel Type of the input image */
-  typedef TInputImage                                    InputImageType;
-  typedef TOutputImage                                   OutputImageType;
-  typedef typename TInputImage::PixelType                PixelType;
-  typedef typename NumericTraits<PixelType>::RealType    RealType;
+  typedef TInputImage                                       InputImageType;
+  typedef TOutputImage                                      OutputImageType;
+  typedef typename TInputImage::PixelType                   PixelType;
+  typedef typename NumericTraits<PixelType>::RealType       RealType;
   typedef typename NumericTraits<PixelType>::ScalarRealType ScalarRealType;
 
-
   /** Image dimension. */
-  itkStaticConstMacro(ImageDimension, unsigned int,
-                      TInputImage::ImageDimension);
+  itkStaticConstMacro( ImageDimension, unsigned int, TInputImage::ImageDimension);
 
   /** Define the image type for internal computations 
       RealType is usually 'double' in NumericTraits. 
       Here we prefer float in order to save memory.  */
-
-  typedef typename NumericTraits< PixelType >::FloatType   InternalRealType;
-  typedef Image<InternalRealType, 
-                itkGetStaticConstMacro(ImageDimension) >   RealImageType;
+  typedef typename NumericTraits< PixelType >::FloatType    InternalRealType;
+  typedef Image<InternalRealType,
+    itkGetStaticConstMacro(ImageDimension) >      RealImageType;
 
   /**  The first in the pipeline  */
   typedef RecursiveGaussianImageFilter<
-    InputImageType,
-    RealImageType
-    >    FirstGaussianFilterType;
+    InputImageType, RealImageType >               FirstGaussianFilterType;
 
   /**  Smoothing filter type */
   typedef RecursiveGaussianImageFilter<
-    RealImageType,
-    RealImageType
-    >    InternalGaussianFilterType;
+    RealImageType, RealImageType >                InternalGaussianFilterType;
 
   /**  The last in the pipeline  */
   typedef CastImageFilter<
-    RealImageType,
-    OutputImageType
-    >    CastingFilterType;
-
+    RealImageType, OutputImageType >              CastingFilterType;
 
   /**  Pointer to a gaussian filter.  */
   typedef typename InternalGaussianFilterType::Pointer    InternalGaussianFilterPointer;
@@ -101,16 +92,20 @@ public:
   typedef typename CastingFilterType::Pointer             CastingFilterPointer;
 
   /**  Pointer to the Output Image */
-  typedef typename OutputImageType::Pointer                  OutputImagePointer;                                  
+  typedef typename OutputImageType::Pointer               OutputImagePointer;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Set Sigma value. Sigma is measured in the units of image spacing.  */
-  void SetSigma( ScalarRealType sigma );
+  typedef FixedArray< ScalarRealType,
+    itkGetStaticConstMacro(ImageDimension) >              SigmaType;
+  virtual void SetSigma( const ScalarRealType sigma );
+  virtual void SetSigma( const SigmaType sigma );
+  itkGetMacro( Sigma, SigmaType );
 
-  /** Define which normalization factor will be used for the Gaussian */
-  void SetNormalizeAcrossScale( bool normalizeInScaleSpace );
+  /** Define which normalization factor will be used for the Gaussian. */
+  virtual void SetNormalizeAcrossScale( const bool arg );
   itkGetMacro( NormalizeAcrossScale, bool );
 
   /** Set/Get the Order of the Gaussian to convolve with. 
@@ -120,20 +115,23 @@ public:
       \li SecondOrder is equivalent to convolving with the second derivative of a Gaussian.
     */
   typedef typename InternalGaussianFilterType::OrderEnumType OrderEnumType;
+  typedef FixedArray< unsigned int,
+    itkGetStaticConstMacro(ImageDimension) >              OrderType;
   virtual void SetOrder( const unsigned int order );
-  itkGetMacro( Order, unsigned int );
+  virtual void SetOrder( const OrderType order );
+  itkGetMacro( Order, OrderType );
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
-  itkConceptMacro(InputHasNumericTraitsCheck,
-                  (Concept::HasNumericTraits<PixelType>));
+  itkConceptMacro( InputHasNumericTraitsCheck,
+    (Concept::HasNumericTraits<PixelType>) );
   /** End concept checking */
 #endif
 
 protected:
   SmoothingRecursiveGaussianImageFilter2();
   virtual ~SmoothingRecursiveGaussianImageFilter2() {};
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf( std::ostream& os, Indent indent ) const;
   
   /** Generate Data */
   void GenerateData( void );
@@ -143,10 +141,10 @@ protected:
    * an implementation for GenerateInputRequestedRegion in order to inform
    * the pipeline execution model.
    * \sa ImageToImageFilter::GenerateInputRequestedRegion() */
-  virtual void GenerateInputRequestedRegion() throw(InvalidRequestedRegionError);
+  virtual void GenerateInputRequestedRegion() throw( InvalidRequestedRegionError );
 
   // Override since the filter produces the entire dataset
-  void EnlargeOutputRequestedRegion(DataObject *output);
+  void EnlargeOutputRequestedRegion( DataObject *output );
 
 private:
   SmoothingRecursiveGaussianImageFilter2(const Self&); //purposely not implemented
@@ -157,11 +155,12 @@ private:
   CastingFilterPointer                  m_CastingFilter;
 
   /** Normalize the image across scale space */
-  bool m_NormalizeAcrossScale; 
+  bool m_NormalizeAcrossScale;
 
-  unsigned int m_Order;
+  OrderType m_Order;
+  SigmaType m_Sigma;
 
-};
+}; // end class SmoothingRecursiveGaussianImageFilter2
 
 } // end namespace itk
 
@@ -170,7 +169,4 @@ private:
 #endif
 
 #endif
-
-
-
 
