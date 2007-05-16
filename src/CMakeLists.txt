@@ -8,9 +8,7 @@ SUBDIRS(
  castconvert
  closestversor3Dtransform
  common
- computeadditionimage
  computeboundingbox
- computedifferenceimage
  computedifferenceimageBIG
  computedistances
  computemean
@@ -47,11 +45,8 @@ SUBDIRS(
  intensitywindowing
  invertintensityimagefilter
  logicalimageoperator
- maximumimagefilter
- minimumimagefilter
  morphologicalclosingimage
  morphologicalopeningimage
- multiplyimages
  rescaleintensityimagefilter
  resizeimage
  scripts
