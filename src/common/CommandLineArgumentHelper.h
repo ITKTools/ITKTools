@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 /** Replace a underscore in the input string with a space. */
 void ReplaceUnderscoreWithSpace( std::string & arg );
@@ -21,6 +22,13 @@ int GetImageProperties(
   unsigned int & dimension,
   unsigned int & numberofcomponents,
   std::vector<unsigned int> & imagesize );
+
+/** Selects the largest type of the two. The order is:
+ * char < short < int < long < float < double.
+ */
+std::string GetLargestComponentType(
+  const std::string & type1, const std::string & type2 );
+
 
 #endif // end #ifndef __CommandLineArgumentHelper_h
 

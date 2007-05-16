@@ -19,7 +19,7 @@ void ReplaceUnderscoreWithSpace( std::string & arg )
 		arg.replace( pos, 1, " " );
 	}
 	
-} // end ReplaceUnderscoreWithSpace
+} // end ReplaceUnderscoreWithSpace()
 
 
 /** 
@@ -118,7 +118,51 @@ int GetImageProperties(
 
   return 0;
   
-} // end GetImageProperties
+} // end GetImageProperties()
+
+
+/** 
+ * *************** GetLargestComponentType ***********************
+ */
+
+std::string GetLargestComponentType(
+  const std::string & type1, const std::string & type2 )
+{
+  /** Typedef's. */
+  typedef std::map< std::string, unsigned int > RankingType;
+  typedef RankingType::value_type					      EntryType;
+
+  /** Define the ranking. */
+  RankingType ranking;
+  ranking.insert( EntryType( "char",   1 ) );
+  ranking.insert( EntryType( "short",  2 ) );
+  ranking.insert( EntryType( "int",    3 ) );
+  ranking.insert( EntryType( "long",   4 ) );
+  ranking.insert( EntryType( "float",  5 ) );
+  ranking.insert( EntryType( "double", 6 ) );
+
+  /** Remove unsigned. */
+  std::string Type1 = type1;
+  std::string Type2 = type2;
+  RemoveUnsignedFromString( Type1 );
+  RemoveUnsignedFromString( Type2 );
+
+  /** Determine which one is the largest. */
+  std::string output = "";
+  if ( Type1 == Type2 )
+  {
+    output = type1;
+  }
+  else
+  {
+    output = ranking[ Type1 ] > ranking[ Type2 ]
+    ? type1 : type2;
+  }
+
+  /** Return a value. */
+  return output;
+
+} // end GetTheLargestComponentType()
 
 
 #endif // end #ifndef __CommandLineArgumentHelper_h
