@@ -168,6 +168,8 @@ public:
 	bool GetCommandLineArgument( const std::string & key, std::vector<std::string> & arg );
 
 	/** Specialisations for Integer type. */
+  bool GetCommandLineArgument( const std::string & key, std::vector<char> & arg );
+	bool GetCommandLineArgument( const std::string & key, std::vector<unsigned char> & arg );
 	bool GetCommandLineArgument( const std::string & key, std::vector<int> & arg );
 	bool GetCommandLineArgument( const std::string & key, std::vector<unsigned int> & arg );
 	bool GetCommandLineArgument( const std::string & key, std::vector<short> & arg );

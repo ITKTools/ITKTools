@@ -7,6 +7,7 @@ SUBDIRS(
  binarythinning
  castconvert
  closestversor3Dtransform
+ combinesegmentations
  common
  computeboundingbox
  computedifferenceimageBIG

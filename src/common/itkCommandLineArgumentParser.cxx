@@ -133,6 +133,18 @@ namespace itk
 	 * Different specialisations for Integer types.
 	 */
 
+  bool CommandLineArgumentParser::
+		GetCommandLineArgument( const std::string & key, std::vector<char> & arg )
+	{
+		return this->GetCommandLineArgumentInteger( key, arg );
+	}
+
+	bool CommandLineArgumentParser::
+		GetCommandLineArgument( const std::string & key, std::vector<unsigned char> & arg )
+	{
+		return this->GetCommandLineArgumentInteger( key, arg );
+	}
+
 	bool CommandLineArgumentParser::
 		GetCommandLineArgument( const std::string & key, std::vector<int> & arg )
 	{
