@@ -295,8 +295,8 @@ void CombineSegmentations(
 {
   const unsigned int Dimension = NDimensions;
   typedef unsigned char   LabelPixelType;
-  typedef double         ProbPixelType;
-  typedef double         ConfusionMatrixPixelType;
+  typedef float           ProbPixelType;
+  typedef float           ConfusionMatrixPixelType;
 
   typedef itk::Image< LabelPixelType, Dimension >   LabelImageType;
   typedef itk::Image< ProbPixelType, Dimension >    ProbImageType;
