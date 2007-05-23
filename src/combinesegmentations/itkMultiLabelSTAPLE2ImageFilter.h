@@ -301,6 +301,11 @@ namespace itk
     itkSetObjectMacro( MaskImage, MaskImageType );
     itkGetObjectMacro( MaskImage, MaskImageType );
 
+    /** Set whether a majority voting step should be used
+     * to initialize the confusion matrix */
+    itkSetMacro( InitializeWithMajorityVoting, bool)
+    itkGetConstMacro( InitializeWithMajorityVoting, bool)
+
     /** Setting: turn on/off to whether a probabilistic segmentation
      * is generated; default: false */
     itkSetMacro(GenerateProbabilisticSegmentations, bool);
@@ -338,6 +343,7 @@ namespace itk
 
     /** Get the number of elapsed iterations */
     itkGetConstMacro( ElapsedIterations, unsigned int );
+  
 
   protected:
     /** Constructor */
@@ -397,6 +403,7 @@ namespace itk
     bool m_GenerateProbabilisticSegmentations;
     WeightsType m_TerminationUpdateThreshold;
     MaskImagePointer m_MaskImage;
+    bool m_InitializeWithMajorityVoting;
     
 
   };

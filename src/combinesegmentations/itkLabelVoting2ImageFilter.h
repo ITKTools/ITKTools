@@ -9,6 +9,7 @@
 
 #include <vector>
 #include "itkArray.h"
+#include "itkArray2D.h"
 
 namespace itk
 {
@@ -95,6 +96,7 @@ namespace itk
 
     /** Various typedefs */
     typedef TWeights WeightsType;
+    typedef Array2D<WeightsType>                    ConfusionMatrixType;
     typedef Image<
       WeightsType,
       ::itk::GetImageDimension<
@@ -105,11 +107,17 @@ namespace itk
     typedef std::vector<ProbabilityImagePointer>    ProbabilisticSegmentationArrayType;
     typedef Array<OutputPixelType>                  PriorPreferenceType;
 
+    /** Typedefs for mask support */
+    typedef InputImageType                          MaskImageType;
+    typedef typename MaskImageType::Pointer         MaskImagePointer;
+    typedef typename MaskImageType::PixelType       MaskPixelType;
+
     /** Iterator types. */
     typedef ImageRegionConstIterator< InputImageType >  InputConstIteratorType;
     typedef ImageRegionIterator< OutputImageType >      OutputIteratorType;
     typedef ImageRegionIterator< 
       ProbabilityImageType >                            ProbIteratorType;
+    typedef ImageRegionConstIterator< MaskImageType >   MaskConstIteratorType;
 
     /** Set/get/unset prior preference; a scalar for each class indicating
     * the preference in case of undecided pixels. The lower the number,
@@ -200,7 +208,23 @@ namespace itk
       }
     }
 
+    /** Set/Get a mask image; If a mask is supplied, only pixels that are
+     * within the mask are used in the staple procedure. The output
+     * at pixels outside the mask will be equal to that of the first
+     * observer */
+    itkSetObjectMacro( MaskImage, MaskImageType );
+    itkGetObjectMacro( MaskImage, MaskImageType );
 
+    /** Setting: turn on/off to whether a confusion matrix
+     * is generated; default: false */
+    itkSetMacro(GenerateConfusionMatrix, bool);
+    itkGetConstMacro(GenerateConfusionMatrix, bool);
+
+    /** Get confusion matrix for the i-th input segmentation. */
+    virtual const ConfusionMatrixType & GetConfusionMatrix( const unsigned int i ) const
+    {
+      return this->m_ConfusionMatrixArray[i];
+    }
 
 #ifdef ITK_USE_CONCEPT_CHECKING
     /** Begin concept checking */
@@ -229,6 +253,7 @@ namespace itk
 
     /** Determine maximum label value in all input images and initialize global data.*/
     void BeforeThreadedGenerateData ();
+    void AfterThreadedGenerateData ();
     void ThreadedGenerateData
       ( const OutputImageRegionType &outputRegionForThread, int threadId);
 
@@ -246,14 +271,24 @@ namespace itk
     bool m_HasNumberOfClasses;
     bool m_HasPriorPreference;
 
+    typedef std::vector<ConfusionMatrixType> ConfusionMatrixArrayType;
+    typedef std::vector<ConfusionMatrixArrayType> ConfusionMatrixArrayArrayType;
+
     /** These variables could in principle be accessed via the member functions,
     * but for inheriting classes this would be annoying. So, make them protected. */
     ObserverTrustType                  m_ObserverTrust;
     ProbabilisticSegmentationArrayType m_ProbabilisticSegmentationArray;
     PriorPreferenceType                m_PriorPreference;
+    ConfusionMatrixArrayType           m_ConfusionMatrixArray;
 
+    /** For multithreading: */
+    ConfusionMatrixArrayArrayType      m_ConfusionMatrixArrays;
+    
     /** Determine maximum value among all input images' pixels */
     virtual InputPixelType ComputeMaximumInputValue();
+
+    /** Allocate confusion matrix array(s) */
+    virtual void AllocateConfusionMatrixArray();
 
   private:
     LabelVoting2ImageFilter(const Self&); //purposely not implemented
@@ -261,6 +296,8 @@ namespace itk
 
     /** Settings that can be accessed via the set/get member functions */
     bool m_GenerateProbabilisticSegmentations;
+    bool m_GenerateConfusionMatrix;
+    MaskImagePointer m_MaskImage;
 
 
   };

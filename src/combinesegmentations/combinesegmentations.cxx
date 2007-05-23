@@ -552,7 +552,7 @@ void CombineSegmentations(
       } // end while
     } // end if confusion
   } // end if MULTISTAPLE
-  else if ( combinationMethod == "MULTISTAPLE2" )
+  else if ( ( combinationMethod == "MULTISTAPLE2" ) || ( combinationMethod == "VOTE_MULTISTAPLE2" ) )
   {
     /** Run the MultiLabelSTAPLE algorithm */
     typename MultiLabelSTAPLE2Type::Pointer multistaple2 = MultiLabelSTAPLE2Type::New();
@@ -630,6 +630,8 @@ void CombineSegmentations(
       multistaple2->SetObserverTrust( observerTrustCast );
     }
 
+    multistaple2->SetInitializeWithMajorityVoting( ( combinationMethod == "VOTE_MULTISTAPLE2" ) );
+    
     /** Set whether soft segmentations are required */
     if ( softOutputFileNames.size() > 0 )
     {
@@ -694,11 +696,14 @@ void CombineSegmentations(
         }
       } // end while
     } // end if confusion
+
   } // end if MULTISTAPLE2
   else if ( combinationMethod == "VOTE" )
   {
     /** Run the LabelVoting2 algorithm */
     typename LabelVotingType::Pointer voting = LabelVotingType::New();
+    typename MaskGeneratorType::Pointer maskGenerator = MaskGeneratorType::New();
+    typename DilateFilterType::Pointer dilater = DilateFilterType::New();
     segmentationCombiner = voting;
     
     /** Set the number of classes */
@@ -708,8 +713,29 @@ void CombineSegmentations(
     for (unsigned int i = 0; i < numberOfObservers; ++i )
     {
       voting->SetInput(i, labelImageArray[i]);
+      maskGenerator->SetInput(i, labelImageArray[i]);      
     }
-    
+
+    /** Set the mask */
+    if ( useMask )
+    {
+      StructuringElementType kernel;
+      KernelRadiusType radius;
+      radius.Fill(maskDilationRadius);
+      kernel.SetRadius(radius);
+      kernel.CreateStructuringElement();
+      dilater->SetKernel(kernel);
+      dilater->SetForegroundValue( itk::NumericTraits<MaskPixelType>::One );
+      dilater->SetBackgroundValue( itk::NumericTraits<MaskPixelType>::Zero );
+      dilater->SetInput( maskGenerator->GetOutput() );
+      std::cout << "Creating mask (maskDilationRadius = " << maskDilationRadius << ")..." << std::endl;
+      dilater->Update();
+      voting->SetMaskImage( dilater->GetOutput() );
+      std::cout << "Done creating mask." << std::endl;
+    }
+
+    voting->SetGenerateConfusionMatrix( (confusionOutputFileName != "") );    
+ 
     /** Set the prior preferences. They are given as a list of labels in prefOrder.
      * The staple class expects a 'preference'-number for each class; 
      * the lower the more preference. The code below does the conversion. */
@@ -759,10 +785,29 @@ void CombineSegmentations(
       }
     }   
 
-    /** Generating the confusion matrix is not (yet) supported for VOTE*/
+    /** Generate the confusion matrix */
     if ( confusionOutputFileName != "" )
     {
-      confusionMatrixImage = 0;
+      ConfusionIndexType cindex;
+      ConfusionMatrixImageIteratorType cit( confusionMatrixImage,
+        confusionMatrixImage->GetLargestPossibleRegion() );
+      cit.GoToBegin();
+      while ( !cit.IsAtEnd() )
+      {
+        cindex = cit.GetIndex();
+        MultiSTAPLEConfusionMatrixType confmat = 
+          voting->GetConfusionMatrix( cindex[2] );
+        /** In multiSTAPLE2 the first index corresponds to applied class, and the
+         * second index to the real class, so just different than in our definition. */
+        for (unsigned int i = 0; i < numberOfClasses; ++i)
+        {
+          for ( unsigned int j = 0; j < numberOfClasses; ++j)
+          {
+            cit.Value() = confmat[i][j];
+            ++cit;
+          }
+        }
+      } // end while
     } // end if confusion
 
   } // end if VOTE
@@ -839,8 +884,9 @@ void PrintHelp()
 {
 	std::cout << "This program combines multiple segmentations into one.\n" << std::endl;
 	std::cout << "Usage:\npxcombinesegmentations" << std::endl;
-  std::cout << "  [-m]     {STAPLE, VOTE, MULTISTAPLE, MULTISTAPLE2}:\n"
-            << "           the method used to combine the segmentations. default: MULTISTAPLE2" << std::endl;
+  std::cout << "  [-m]     {STAPLE, VOTE, MULTISTAPLE, MULTISTAPLE2, VOTE_MULTISTAPLE2}:\n"
+            << "           the method used to combine the segmentations. default: MULTISTAPLE2.\n"
+            << "           VOTE_MULTISTAPLE2 is in fact just VOTE followed by MULTISTAPLE2." << std::endl;
   std::cout << "  -in      inputFilename0 [inputFileName1 ... ]: the input segmentations,\n"
             << "           as unsigned char images. More than 2 labels are allowed, but\n"
             << "           with some restrictions: {0,1,2}=ok, {0,3,4}=bad, {1,2,3}=bad." << std::endl;
@@ -848,16 +894,16 @@ void PrintHelp()
             << "           default: 2 (so, 0 and 1)." << std::endl;
   std::cout << "  [-P]     priorProbImageFilename0 priorProbImageFilename1 [...]:\n"
             << "           the names of the prior probabilities for each class, stored as float images.\n"
-            << "           This has only effect when using MULTISTAPLE2." << std::endl;
+            << "           This has only effect when using [VOTE_]MULTISTAPLE2." << std::endl;
   std::cout << "  [-p]     priorProb0 priorProb1 [...]:\n"
             << "           the prior probabilities for each class, independent of x, so a floating point\n"
             << "           number for each class. This parameter is ignored when \"-P\" is provided as well.\n"
             << "           For VOTE this parameter is ignored. For STAPLE, this number is considered\n"
             << "           as a factor which is multiplied with the estimated prior probability.\n"
             << "           For MULTISTAPLE[2], the number is really the prior probability.\n" 
-            << "           If -p and -P are not provided, the prior probs are estimated from the data.\n" << std::endl;
+            << "           If -p and -P are not provided, the prior probs are estimated from the data." << std::endl;
   std::cout << "  [-t]     trust0 [trust1 ...]: a factor between 0 and 1 indicating the 'trust' in each observer;\n"
-            << "           default: 0.99999 for each observer for MULTISTAPLE2. 1.0 for VOTE.\n"
+            << "           default: 0.99999 for each observer for [VOTE_]MULTISTAPLE2. 1.0 for VOTE.\n"
             << "           Ignored by STAPLE and MULTISTAPLE; they estimate it by majority voting." << std::endl;
   std::cout << "  [-e]     termination threshold: a small float. the smaller the more accurate the solution;\n"
             << "           default: 1e-5. Ignored by STAPLE and VOTE." << std::endl;
@@ -869,13 +915,13 @@ void PrintHelp()
             << "           are exactly equally likely)." << std::endl;
   std::cout << "  [-outc]  confusionImageFileName: 3d float image, in which each slice resembles\n"
             << "           the confusion matrix for each observer. The x-axis corresponds to the\n"
-            << "           real label, the y-axis corresponds to the label given by the observer.\n"
-            << "           VOTE does not produce a confusion matrix image." << std::endl;
-  std::cout << "  [-mask]  [maskDilationRadius]: Use a mask if this flag is provided. Only taken into account by MULTISTAPLE2.\n"
+            << "           real label, the y-axis corresponds to the label given by the observer." << std::endl;            
+  std::cout << "  [-mask]  [maskDilationRadius]: Use a mask if this flag is provided.\n"
+            << "           Only taken into account by [VOTE_]MULTISTAPLE2 and VOTE.\n"
             << "           The mask is 0 at those pixels were the decision is unanymous, and 1 elsewhere.\n"
             << "           A dilation is performed with a kernel with radius maskDilationRadius (default:1)\n"
             << "           Pixels that are outside the mask, will have class of the first observer.\n"
-            << "           Other pixels are passed through the MULTISTAPLE2 algorithm.\n" 
+            << "           Other pixels are passed through the combination algorithm.\n" 
             << "           The confusion matrix will be only based on the pixels within the mask." << std::endl;
   std::cout << "  [-ord]   The order of preferred classes, in cases of undecided pixels. Default: 0 1 2...\n"
             << "           Ignored by STAPLE and MULTISTAPLE. In the default case, class 0 will be\n"

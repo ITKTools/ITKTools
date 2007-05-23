@@ -2,6 +2,7 @@
 #define _itkMultiLabelSTAPLE2ImageFilter_txx
 
 #include "itkMultiLabelSTAPLE2ImageFilter.h"
+#include "itkLabelVoting2ImageFilter.h"
 
 #include "vnl/vnl_math.h"
 
@@ -25,6 +26,7 @@ namespace itk
     this->m_GenerateProbabilisticSegmentations = false;
     this->m_NumberOfClasses = 2;
     this->m_MaskImage = 0;
+    bool m_InitializeWithMajorityVoting = false;
   } // end constructor
 
 
@@ -96,29 +98,54 @@ namespace itk
   {
     const unsigned int numberOfInputs = this->GetNumberOfInputs();
    
-    /** Set the trust factor on the diagonal.
-     * All off-diagonal elements get an equal value,
-     * such that the columns are normalized */
-    for ( unsigned int k = 0; k < numberOfInputs; ++k )
+    if ( this->GetInitializeWithMajorityVoting() )
     {
-      this->m_ConfusionMatrixArray[k].Fill( 0.0 );
-      const WeightsType trust = this->m_ObserverTrust[k];
-      const WeightsType invtrust = ( 1.0 - trust ) / static_cast<WeightsType>(this->m_NumberOfClasses-1);
-      for ( InputPixelType inLabel = 0; inLabel < this->m_NumberOfClasses; ++inLabel )
+      typedef itk::LabelVoting2ImageFilter<
+        InputImageType, OutputImageType, WeightsType>  VotingFilterType;
+      typename VotingFilterType::Pointer voting = VotingFilterType::New();
+      for (unsigned int i = 0; i < numberOfInputs; ++i)
       {
-        for ( OutputPixelType outLabel = 0; outLabel < this->m_NumberOfClasses; ++outLabel )
+        voting->SetInput( i, this->GetInput(i) );
+      }
+      voting->SetNumberOfClasses( this->GetNumberOfClasses() );
+      voting->SetObserverTrust( this->GetObserverTrust() );
+      voting->SetMaskImage( this->GetMaskImage() );
+      voting->SetPriorPreference( this->GetPriorPreference() );
+      voting->SetGenerateConfusionMatrix( true );      
+      voting->SetGenerateProbabilisticSegmentations( false );
+      voting->Update();
+      for (unsigned int i = 0; i < numberOfInputs; ++i)
+      {
+        this->m_ConfusionMatrixArray[i] = voting->GetConfusionMatrix(i);
+      }
+
+    }
+    else
+    {
+      /** Set the trust factor on the diagonal.
+      * All off-diagonal elements get an equal value,
+      * such that the columns are normalized */
+      for ( unsigned int k = 0; k < numberOfInputs; ++k )
+      {
+        this->m_ConfusionMatrixArray[k].Fill( 0.0 );
+        const WeightsType trust = this->m_ObserverTrust[k];
+        const WeightsType invtrust = ( 1.0 - trust ) / static_cast<WeightsType>(this->m_NumberOfClasses-1);
+        for ( InputPixelType inLabel = 0; inLabel < this->m_NumberOfClasses; ++inLabel )
         {
-          if ( outLabel == inLabel )
+          for ( OutputPixelType outLabel = 0; outLabel < this->m_NumberOfClasses; ++outLabel )
           {
-            this->m_ConfusionMatrixArray[k][inLabel][outLabel] = trust;
-          }
-          else
-          {
-            this->m_ConfusionMatrixArray[k][inLabel][outLabel] = invtrust;
-          }
-        } // end for outLabel
-      } // end for inLabel
-    } // end for k
+            if ( outLabel == inLabel )
+            {
+              this->m_ConfusionMatrixArray[k][inLabel][outLabel] = trust;
+            }
+            else
+            {
+              this->m_ConfusionMatrixArray[k][inLabel][outLabel] = invtrust;
+            }
+          } // end for outLabel
+        } // end for inLabel
+      } // end for k
+    }
   } // end InitializeConfusionMatrixArray
 
 
