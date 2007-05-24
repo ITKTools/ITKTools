@@ -10,7 +10,7 @@ echo
 echo "A wrap around bc (the linux calculator)."
 echo 
 echo "bc-syntax:"
-echo "echo \"3+4\" |bc"
+echo "echo \"3+4\" |bc -l"
 echo
 echo "corresponding calc syntax:"
 echo "calc \"3+4\""
@@ -20,5 +20,5 @@ echo
 exit 64
 fi
 
-echo $* |bc
+echo $* |bc -l
 
