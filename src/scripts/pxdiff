@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# a shortcut for pxbinaryimageoperator -ops MINUS
+
+pxbinaryimageoperator -ops MINUS $*
+
