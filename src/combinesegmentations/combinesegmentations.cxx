@@ -19,6 +19,7 @@
 #include "itkNaryUnequalityTestImageFilter.h"
 #include "itkBinaryDilateImageFilter.h"
 #include "itkBinaryBallStructuringElement.h"
+#include "itkChangeLabelImageFilter.h"
 
 
 /** Declare CombineSegmentations. */
@@ -36,7 +37,9 @@ void CombineSegmentations(
   const std::string & combinationMethod,
   bool useMask,
   unsigned int maskDilationRadius,
-  const std::vector<unsigned int> & prefOrder);
+  const std::vector<unsigned int> & prefOrder,
+  const std::vector<unsigned int> & inValues,
+  const std::vector<unsigned int> & outValues);
 
 /** Declare PrintHelp. */
 void PrintHelp(void);
@@ -68,6 +71,17 @@ int main( int argc, char **argv )
 		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
     return 1;
 	}
+
+  /** Get the settings for the change label image filter (not mandatory) */
+  std::vector<unsigned int>  inValues;
+  std::vector<unsigned int>  outValues;
+  bool retiv = parser->GetCommandLineArgument( "-iv", inValues );
+  bool retov = parser->GetCommandLineArgument( "-ov", outValues );
+  if ( inValues.size() != outValues.size() )
+  {
+    std::cerr << "ERROR: Number of values following after \"-iv\" and \"-ov\" should be equal." << std::endl;
+    return 1;
+  }
 
   /** Get the number of classes to segment (not mandatory) */
   unsigned char numberOfClasses = 2;
@@ -235,7 +249,9 @@ int main( int argc, char **argv )
         combinationMethod,
         useMask,
         maskDilationRadius,
-        prefOrder);
+        prefOrder,
+        inValues,
+        outValues);
     }
     if (Dimension==3)
     {
@@ -252,7 +268,9 @@ int main( int argc, char **argv )
         combinationMethod,
         useMask,
         maskDilationRadius,
-        prefOrder);
+        prefOrder,
+        inValues,
+        outValues);
     }
     
   }
@@ -291,7 +309,9 @@ void CombineSegmentations(
   const std::string & combinationMethod,
   bool useMask,
   unsigned int maskDilationRadius,
-  const std::vector<unsigned int> & prefOrder)
+  const std::vector<unsigned int> & prefOrder,
+  const std::vector<unsigned int> & inValues,
+  const std::vector<unsigned int> & outValues)
 {
   const unsigned int Dimension = NDimensions;
   typedef unsigned char   LabelPixelType;
@@ -314,6 +334,9 @@ void CombineSegmentations(
   typedef itk::ImageFileWriter< ProbImageType >     ProbImageWriterType;
   typedef itk::ImageFileWriter<
     ConfusionMatrixImageType >                      ConfusionMatrixImageWriterType;
+
+  typedef itk::ChangeLabelImageFilter<
+    LabelImageType, LabelImageType >                RelabelFilterType;
   
   typedef itk::ProcessObject                        SegmentationCombinerType;
   typedef itk::STAPLEImageFilter< 
@@ -382,16 +405,33 @@ void CombineSegmentations(
   labelImageArray.resize( numberOfObservers );
   softSegmentationArray.resize( numberOfClasses );
   priorProbImageArray.resize( numberOfClasses );
-    
+
   /** Read the input label images */
-  std::cout << "Reading input segmentations..." << std::endl;
+  bool relabel = (inValues.size() > 0 );
+  std::cout << "Reading (and possibly relabeling) input segmentations..." << std::endl;
   for (unsigned int i = 0; i < numberOfObservers; ++i )
   {
     typename LabelImageReaderType::Pointer labelImageReader =
       LabelImageReaderType::New();
     labelImageReader->SetFileName( inputSegmentationFileNames[i].c_str() );
     labelImageReader->Update();
-    labelImageArray[i] = labelImageReader->GetOutput();
+    if ( relabel ) 
+    {
+      typename RelabelFilterType::Pointer relabeler = RelabelFilterType::New();
+      relabeler->SetInput( labelImageReader->GetOutput() );
+      for ( unsigned int lab = 0; lab < inValues.size(); ++lab)
+      {
+        LabelPixelType labin = static_cast<LabelPixelType>( inValues[lab] );
+        LabelPixelType labout = static_cast<LabelPixelType>( outValues[lab] );
+        relabeler->SetChange( labin, labout);
+      }
+      relabeler->Update();
+      labelImageArray[i] = relabeler->GetOutput();
+    } // end relabel
+    else
+    {
+      labelImageArray[i] = labelImageReader->GetOutput();
+    }    
   }
   std::cout << "Done reading input segmentations." << std::endl; 
 
@@ -572,7 +612,7 @@ void CombineSegmentations(
     }
 
     /** Set the mask */
-    if ( useMask )
+    if ( useMask && ( numberOfObservers > 1 ) )
     {
       StructuringElementType kernel;
       KernelRadiusType radius;
@@ -717,7 +757,7 @@ void CombineSegmentations(
     }
 
     /** Set the mask */
-    if ( useMask )
+    if ( useMask  && ( numberOfObservers > 1) )
     {
       StructuringElementType kernel;
       KernelRadiusType radius;
@@ -926,6 +966,10 @@ void PrintHelp()
   std::cout << "  [-ord]   The order of preferred classes, in cases of undecided pixels. Default: 0 1 2...\n"
             << "           Ignored by STAPLE and MULTISTAPLE. In the default case, class 0 will be\n"
             << "           preferred over class 1, for example." << std::endl;
+  std::cout << "  [-iv]    inputlabels for relabeling" << std::endl;
+  std::cout << "  [-ov]    outputlabels for relabeling. Each input label is replaced by the corresponding\n"
+            << "           output label, before the combinationMethod is invoked. NumberOfClasses should be\n"
+            << "           valid for the situation after relabeling!" << std::endl;
   std::cout << "Supported: 2D/3D." << std::endl;
 } // end PrintHelp
 
