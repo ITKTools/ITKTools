@@ -643,9 +643,9 @@ void CombineSegmentations(
     multistaple2->SetTerminationUpdateThreshold( terminationThreshold );
 
     /** Run!! */
-    std::cout << "Performing MULTISTAPLE2 algorithm..." << std::endl;
+    std::cout << "Performing " << combinationMethod << " algorithm..." << std::endl;
     multistaple2->Update();
-    std::cout << "Done performing MULTISTAPLE2 algorithm." << std::endl;
+    std::cout << "Done performing " << combinationMethod << " algorithm." << std::endl;
     if ( priorProbImageFileNames.size() != numberOfClasses )
     {
       std::cout 

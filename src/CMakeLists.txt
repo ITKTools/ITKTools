@@ -43,6 +43,7 @@ SUBDIRS(
  histogramequalizeimage
  imagecompare
  imagetovectorimage
+ intensityreplace
  intensitywindowing
  invertintensityimagefilter
  logicalimageoperator
