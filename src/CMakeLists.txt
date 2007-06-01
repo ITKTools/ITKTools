@@ -46,6 +46,7 @@ SUBDIRS(
  intensityreplace
  intensitywindowing
  invertintensityimagefilter
+ kappastatistic
  logicalimageoperator
  morphologicalclosingimage
  morphologicalopeningimage
