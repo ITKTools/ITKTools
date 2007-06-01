@@ -13,6 +13,7 @@ then
   echo
   echo "If the input is an uncompressed mhd, the raw file is deleted."
   echo
+  exit 64
 fi
 
 inputimage="$1"

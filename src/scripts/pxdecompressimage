@@ -11,6 +11,7 @@ then
   echo
   echo "If the input is a compressed mhd, the zraw file is deleted."
   echo
+  exit 64
 fi
 
 inputimage="$1"
