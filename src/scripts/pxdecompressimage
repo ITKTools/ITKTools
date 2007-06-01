@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# decompress an image, and remove the .zraw if it was an mhd.
+# 
+
+if [ $# = 0 ]
+then
+  echo "pxdecompressimage"
+  echo
+  echo "Usage: pxdecompressimage <inputfilename>"
+  echo
+  echo "If the input is a compressed mhd, the zraw file is deleted."
+  echo
+fi
+
+inputimage="$1"
+
+pxcastconvert -in "$inputimage" -out "$inputimage"
+
+ext=`expr match "$inputimage" '.*\([.][mM][hH][dD]\)'`
+ismhd="$?"
+
+if [ "$ismhd" = "0" ]
+then
+  inputimageraw="${inputimage/%$ext/.zraw}"
+
+  if [ -e "$inputimageraw" ]
+  then
+    rm "$inputimageraw"
+  fi
+fi
+  
