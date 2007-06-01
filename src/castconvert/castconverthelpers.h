@@ -3,8 +3,8 @@
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: castconverthelpers.h,v $
   Language:  C++
-  Date:      $Date: 2006-06-09 09:26:41 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2007-06-01 13:00:06 $
+  Version:   $Revision: 1.4 $
 
   Copyright (c) 2002 Insight Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -65,6 +65,11 @@ void PrintInfo( ReaderType reader, WriterType writer )
   std::string componentTypeOut = imageIOBaseOut->GetComponentTypeAsString( imageIOBaseOut->GetComponentType() );
   unsigned int dimensionOut = imageIOBaseOut->GetNumberOfDimensions();
   SizeType sizeOut = iORegionOut.GetSize();
+  std::string useCompression = "false";
+  if ( imageIOBaseOut->GetUseCompression() )
+  {
+    useCompression = "true";
+  }
 
   /** Print information. */
   std::cout << "Information about the input image \"" << fileNameIn << "\":" << std::endl;
@@ -83,9 +88,11 @@ void PrintInfo( ReaderType reader, WriterType writer )
   std::cout << "\tpixel type:\t\t" << pixelTypeOut << std::endl;
   std::cout << "\tnumber of components:\t" << nocOut << std::endl;
   std::cout << "\tcomponent type:\t\t" << componentTypeOut << std::endl;
+  std::cout << "\tuse compression:\t" << useCompression << std::endl;
   std::cout << "\tsize:\t\t\t";
   for ( unsigned int i = 0; i < dimensionOut; i++ ) std::cout << sizeOut[ i ] << " ";
   std::cout << std::endl;
+
 
 }  // end PrintInfo
 
@@ -95,7 +102,7 @@ void PrintInfo( ReaderType reader, WriterType writer )
  */
 template< class InputImageType, class OutputImageType >
 void ReadDicomSeriesCastWriteImage( std::string inputDirectoryName,
-	std::string outputFileName, std::string seriesUID )
+	std::string outputFileName, std::string seriesUID, bool useCompression )
 {
   /** Typedef the correct reader, caster and writer. */
   typedef typename itk::ImageSeriesReader< InputImageType >     SeriesReaderType;
@@ -132,11 +139,12 @@ void ReadDicomSeriesCastWriteImage( std::string inputDirectoryName,
   caster->SetShift( 0.0 );
   caster->SetScale( 1.0 );
   writer->SetFileName( outputFileName.c_str()  );
+  writer->SetUseCompression( useCompression );
 
   /** Connect the pipeline. */
   caster->SetInput(  seriesReader->GetOutput()  );
   writer->SetInput(  caster->GetOutput()  );
-
+  
   /**  Do the actual  conversion.  */
   writer->Update();
 
@@ -151,7 +159,7 @@ void ReadDicomSeriesCastWriteImage( std::string inputDirectoryName,
  * we have to make sure to call the right instantiation.
  */
 template< class InputImageType, class OutputImageType >
-void ReadCastWriteImage( std::string inputFileName, std::string outputFileName )
+void ReadCastWriteImage( std::string inputFileName, std::string outputFileName, bool useCompression )
 {
   /**  Typedef the correct reader, caster and writer. */
   typedef typename itk::ImageFileReader< InputImageType >     ImageReaderType;
@@ -172,6 +180,7 @@ void ReadCastWriteImage( std::string inputFileName, std::string outputFileName )
   caster->SetShift( 0.0 );
   caster->SetScale( 1.0 );
   writer->SetFileName( outputFileName.c_str() );
+  writer->SetUseCompression( useCompression );
 
   /** Connect the pipeline. */
   caster->SetInput( reader->GetOutput() );
@@ -191,7 +200,7 @@ void ReadCastWriteImage( std::string inputFileName, std::string outputFileName )
  * we have to make sure to call the right instantiation.
  */
 template< class InputImageType, class OutputImageType >
-void ReadCastWriteVectorImage( std::string inputFileName, std::string outputFileName )
+void ReadCastWriteVectorImage( std::string inputFileName, std::string outputFileName, bool useCompression )
 {
   /**  Typedef the correct reader, caster and writer. */
   typedef typename itk::ImageFileReader< InputImageType >     ImageReaderType;
@@ -208,6 +217,7 @@ void ReadCastWriteVectorImage( std::string inputFileName, std::string outputFile
 	reader->SetFileName( inputFileName.c_str() );
 	//caster->InPlaceOn();
   writer->SetFileName( outputFileName.c_str() );
+  writer->SetUseCompression( useCompression );
 
   /** Connect the pipeline. */
   caster->SetInput( reader->GetOutput() );
@@ -232,7 +242,7 @@ void ReadCastWriteVectorImage( std::string inputFileName, std::string outputFile
 { \
   typedef  itk::Image< typeIn, 3 >    InputImageType; \
   typedef  itk::Image< typeOut, 3 >  OutputImageType; \
-  ReadDicomSeriesCastWriteImage< InputImageType, OutputImageType >( inputDirectoryName, outputFileName, seriesUID ); \
+  ReadDicomSeriesCastWriteImage< InputImageType, OutputImageType >( inputDirectoryName, outputFileName, seriesUID, useCompression ); \
 }
 
 /** callCorrectReadWriterMacro:
@@ -243,7 +253,7 @@ void ReadCastWriteVectorImage( std::string inputFileName, std::string outputFile
 { \
   typedef  itk::Image< typeIn, dim >    InputImageType; \
   typedef  itk::Image< typeOut, dim >  OutputImageType; \
-  ReadCastWriteImage< InputImageType, OutputImageType >( inputFileName, outputFileName ); \
+  ReadCastWriteImage< InputImageType, OutputImageType >( inputFileName, outputFileName, useCompression ); \
 }
 
 /** callCorrectReadWriterMultiComponentMacro:
@@ -256,7 +266,7 @@ void ReadCastWriteVectorImage( std::string inputFileName, std::string outputFile
   typedef itk::Vector< typeOut, vecDim >       OutputVectorType; \
   typedef itk::Image< InputVectorType, dim >   InputImageType; \
   typedef itk::Image< OutputVectorType, dim >  OutputImageType; \
-  ReadCastWriteVectorImage< InputImageType, OutputImageType >( inputFileName, outputFileName ); \
+  ReadCastWriteVectorImage< InputImageType, OutputImageType >( inputFileName, outputFileName, useCompression ); \
 }
 
 

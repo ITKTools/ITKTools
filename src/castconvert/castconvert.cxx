@@ -3,8 +3,8 @@
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: castconvert.cxx,v $
   Language:  C++
-  Date:      $Date: 2006-06-28 15:09:16 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2007-06-01 13:00:06 $
+  Version:   $Revision: 1.10 $
 
   Copyright (c) 2002 Insight Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -77,10 +77,10 @@
 #include "itkGDCMImageIO.h"
 
 /** Functions to do the actual conversion. */
-extern int FileConverterScalar( const std::string &inputPixelComponentType, const std::string &outputPixelComponentType, const std::string &inputFileName, const std::string &outputFileName, const unsigned int inputDimension );
-extern int DicomFileConverterScalarA( const std::string &inputPixelComponentType, const std::string &outputPixelComponentType, const std::string &inputDirectoryName, const std::string &seriesUID, const std::string &outputFileName, const unsigned int inputDimension );
-extern int DicomFileConverterScalarB( const std::string &inputPixelComponentType, const std::string &outputPixelComponentType, const std::string &inputDirectoryName, const std::string &seriesUID, const std::string &outputFileName, const unsigned int inputDimension );
-extern int FileConverterMultiComponent( const std::string &inputPixelComponentType, const std::string &outputPixelComponentType, const unsigned int numberOfComponents, const std::string &inputFileName, const std::string &outputFileName, const unsigned int inputDimension );
+extern int FileConverterScalar( const std::string &inputPixelComponentType, const std::string &outputPixelComponentType, const std::string &inputFileName, const std::string &outputFileName, const unsigned int inputDimension, bool useCompression );
+extern int DicomFileConverterScalarA( const std::string &inputPixelComponentType, const std::string &outputPixelComponentType, const std::string &inputDirectoryName, const std::string &seriesUID, const std::string &outputFileName, const unsigned int inputDimension, bool useCompression );
+extern int DicomFileConverterScalarB( const std::string &inputPixelComponentType, const std::string &outputPixelComponentType, const std::string &inputDirectoryName, const std::string &seriesUID, const std::string &outputFileName, const unsigned int inputDimension, bool useCompression );
+extern int FileConverterMultiComponent( const std::string &inputPixelComponentType, const std::string &outputPixelComponentType, const unsigned int numberOfComponents, const std::string &inputFileName, const std::string &outputFileName, const unsigned int inputDimension, bool useCompression );
 
 //-------------------------------------------------------------------------------------
 
@@ -102,8 +102,9 @@ int main( int argc, char **argv )
   std::string outputPixelComponentType = "";
 	std::string seriesUID = "";
 	std::string errorMessage = "";
+  bool useCompression = false;
 	int returnValue1 = GetCommandLineArguments( argc, argv, errorMessage,
-		input, outputFileName, outputPixelComponentType, seriesUID );
+		input, outputFileName, outputPixelComponentType, seriesUID, useCompression );
 	if ( returnValue1 )
 	{
 		std::cout << errorMessage << std::endl;
@@ -252,7 +253,7 @@ int main( int argc, char **argv )
       {
         const int ret_value = FileConverterScalar(
           inputPixelComponentType, outputPixelComponentType,
-					inputFileName, outputFileName, inputDimension );
+					inputFileName, outputFileName, inputDimension, useCompression );
         if ( ret_value != 0 )
         {
           return ret_value;
@@ -265,7 +266,7 @@ int main( int argc, char **argv )
 			{
 				const int ret_value = FileConverterMultiComponent(
           inputPixelComponentType, outputPixelComponentType, numberOfComponents,
-					inputFileName, outputFileName, inputDimension );
+					inputFileName, outputFileName, inputDimension, useCompression );
         if ( ret_value != 0 )
         {
           return ret_value;
@@ -294,10 +295,10 @@ int main( int argc, char **argv )
       {
         const int ret_value = DicomFileConverterScalarA(
           inputPixelComponentType, outputPixelComponentType,
-          inputDirectoryName, seriesUID, outputFileName, inputDimension )
+          inputDirectoryName, seriesUID, outputFileName, inputDimension, useCompression )
 					|| DicomFileConverterScalarB(
 					inputPixelComponentType, outputPixelComponentType,
-          inputDirectoryName, seriesUID, outputFileName, inputDimension );
+          inputDirectoryName, seriesUID, outputFileName, inputDimension, useCompression );
         if ( ret_value != 0 )
         {
           return ret_value;

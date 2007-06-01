@@ -3,8 +3,8 @@
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: castconverthelpers2.h,v $
   Language:  C++
-  Date:      $Date: 2006-11-03 12:58:27 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007-06-01 13:00:06 $
+  Version:   $Revision: 1.3 $
 
   Copyright (c) 2002 Insight Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -36,12 +36,15 @@ void PrintHelp()
 	std::cout << "\t-out\toutputfilename" << std::endl;
 	std::cout << "\t[-opct]\toutputPixelComponentType" << std::endl;
 	std::cout << "\t[-s]\tseriesUID" << std::endl;
+  std::cout << "\t[-z]\tcompression flag; if provided, the output image is compressed" << std::endl;
 	std::cout << "where outputPixelComponentType is one of:" << std::endl;
 	std::cout << "\tunsigned_char, char, unsigned_short, short, unsigned_int, int," << std::endl;
 	std::cout << "\tunsigned_long, long, float, double," << std::endl;
 	std::cout << "provided that the outputPixelComponentType is supported by the output file format." << std::endl;
-	std::cout << "By default the outputPixelComponentType is set to the inputPixelComponentType." << std::endl;
+  std::cout << "By default the outputPixelComponentType is set to the inputPixelComponentType." << std::endl;
 	std::cout << "By default the seriesUID is the first UID found." << std::endl;
+  std::cout << "The compression flag \"-z\" may be ignored by some output image formats." << std::endl;
+
 
 } // end PrintHelp
 
@@ -52,7 +55,7 @@ void PrintHelp()
 
 int GetCommandLineArguments( int argc, char **argv, std::string & errorMessage,
 	std::string & input, std::string & outputFileName,
-	std::string & outputPixelComponentType, std::string & seriesUID )
+	std::string & outputPixelComponentType, std::string & seriesUID, bool & useCompression )
 {
 	/** Create a command line argument parser. */
 	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
@@ -63,6 +66,7 @@ int GetCommandLineArguments( int argc, char **argv, std::string & errorMessage,
 	bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
 	bool retopct = parser->GetCommandLineArgument( "-opct", outputPixelComponentType );
 	bool rets = parser->GetCommandLineArgument( "-s", seriesUID );
+  useCompression = parser->ArgumentExists( "-z" );
 
 	/** Check if necessary command line arguments are available. */
 	if ( !retin )

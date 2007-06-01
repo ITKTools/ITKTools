@@ -3,8 +3,8 @@
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: castconvertScalar3DB.cxx,v $
   Language:  C++
-  Date:      $Date: 2006-05-23 12:17:42 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-06-01 13:00:06 $
+  Version:   $Revision: 1.2 $
 
   Copyright (c) 2002 Insight Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -18,7 +18,7 @@
 
 int FileConverterScalar3DB( const std::string &inputPixelComponentType,
   const std::string &outputPixelComponentType, const std::string &inputFileName,
-  const std::string &outputFileName, const unsigned int inputDimension )
+  const std::string &outputFileName, const unsigned int inputDimension, bool useCompression )
 {
   enum { ImageDims = 3 };
 

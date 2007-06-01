@@ -3,8 +3,8 @@
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: castconvertMultiComponent3D4CA.cxx,v $
   Language:  C++
-  Date:      $Date: 2006-05-23 12:17:42 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-06-01 13:00:06 $
+  Version:   $Revision: 1.2 $
 
   Copyright (c) 2002 Insight Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -19,7 +19,7 @@
 int FileConverterMultiComponent3D4CA( const std::string &inputPixelComponentType,
   const std::string &outputPixelComponentType, const unsigned int numberOfComponents,
   const std::string &inputFileName, const std::string &outputFileName,
-  const unsigned int inputDimension )
+  const unsigned int inputDimension, bool useCompression )
 {
   enum { ImageDims = 3 };
 	enum { VecDims = 4 };
