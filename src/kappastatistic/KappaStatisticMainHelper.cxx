@@ -142,3 +142,4 @@ bool GetInputData( const std::string & fileName,
 } // end GetInputData()
 
 #endif // end #ifndef __KappaStatisticMainHelper_cxx
+

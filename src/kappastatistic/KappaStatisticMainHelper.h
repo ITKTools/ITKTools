@@ -24,3 +24,4 @@ bool ReadInputData( const std::string & filename,
   std::vector<std::vector<double> > & matrix );
 
 #endif // end #ifndef __KappaStatisticMainHelper_h
+

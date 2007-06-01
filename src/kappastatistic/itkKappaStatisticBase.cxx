@@ -178,3 +178,4 @@ void KappaStatisticBase
 
 } // end of namespace Statistics
 } // end namespace itk
+
