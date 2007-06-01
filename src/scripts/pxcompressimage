@@ -19,6 +19,10 @@ fi
 inputimage="$1"
 
 pxcastconvert -in "$inputimage" -out "$inputimage" -z
+if [ "$?" != "0" ]
+then
+  exit 65
+fi
 
 ext=`expr match "$inputimage" '.*\([.][mM][hH][dD]\)'`
 ismhd="$?"
