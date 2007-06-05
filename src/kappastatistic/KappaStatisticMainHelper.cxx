@@ -16,6 +16,10 @@ void PrintHelp( void )
   std::cout << "             fleiss: unweighted, for many observers\n";
   std::cout << "             cohen: weighted, for two observers only" << std::endl;
   std::cout << "  -c       the data columns on which the kappa test is performed" << std::endl;
+  std::cout << "  [-w]     the weights used in the Cohen kappa test, default linear:\n";
+  std::cout << "             linear:    1 - | i - j | / ( k - 1 )\n";
+  std::cout << "             quadratic: 1 - [ (i - j ) / ( k - 1 ) ]^2\n";
+  std::cout << "             identity:  I_k, the identity matrix" << std::endl;
   std::cout << "  [-out]   output, choose one of {kappa,all,ALL}, default all\n";
   std::cout << "             kappa: only print the kappa-value\n";
   std::cout << "             all: print all\n";

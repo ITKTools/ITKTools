@@ -191,8 +191,9 @@ void CohenWeightedKappaStatistic
    */
   for ( unsigned int i = 0; i < N; ++i )
   {
-    this->m_ConfusionMatrix[ this->m_Observations[ 0 ][ i ] ]
-      [ this->m_Observations[ 1 ][ i ] ]++;
+    unsigned int ind0 = this->m_Indices[ this->m_Observations[ 0 ][ i ] ];
+    unsigned int ind1 = this->m_Indices[ this->m_Observations[ 1 ][ i ] ];
+    this->m_ConfusionMatrix[ ind0 ][ ind1 ]++;
   }
 
 } // end ComputeConfusionMatrix()
