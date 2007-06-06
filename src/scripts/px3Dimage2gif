@@ -1,0 +1,69 @@
+#!/bin/bash
+
+# This script converts a 3D image to a stack of 2D images,
+# or ectually to an animated gif.
+# This script depends on some praxix programs and on
+# the `convert' program of Image Magic.
+
+#############################################################################
+
+# Argument parsing
+if [ "$#" -lt "4" ] || [ "$#" -gt "6" ] || [ "$1" == "--help" ]
+then
+  echo "Usage: px3Dimage2gif"
+  echo "  -i    file name of the 3D image"
+  echo "  -o    output name of gif"
+  echo "  [-d]  direction, default z"
+  echo "warnings..."
+  exit 1
+fi
+
+direction=2
+while getopts "i:o:d:" argje
+do
+  case $argje in
+    i ) input="$OPTARG";;
+    o ) output="$OPTARG";;
+    d ) direction="$OPTARG";;
+    * ) echo "ERROR: Wrong arguments"; exit 1;;
+  esac
+done
+
+if [ "$input" == "" ]
+then
+	echo "ERROR: -i is required"; exit 1;
+fi
+if [ "$output" == "" ]
+then
+	echo "ERROR: -o is required"; exit 1;
+fi
+
+# maybe some checks: is input indeed 3D with at least 2 slices, is output indeed *.gif, is convert available on this system
+
+# Some names for temporary files.
+out1="tmpout3Duc14031977.mhd"
+out1r="tmpout3Duc14031977.raw"
+tmpbase="tmpout2Duc14031977"
+
+# A gif needs unsigned char images so we brutely convert to that pixel type.
+# If you want to do rescaling to the range [0 255] do it yourself beforehand.
+pxcastconvert -in $input -out $out1 -opct unsigned_char >> dev
+
+# We extract all slices from the image
+outslices=""
+slices=`pxgetimageinformation -in $input -sz -i $direction`
+for (( i = 0; i < $slices; i++ ))
+do
+  pxextractslice -in $out1 -out $tmpbase"_"$i".bmp" -sn $i -d $direction
+  outslices=$outslices" "$tmpbase"_"$i".bmp"
+done
+
+# Combine all slices into one gif
+convert $outslices $output
+
+# Remove all temporary files
+rm $outslices $out1 $out1r
+
+# exit the script
+exit 0
+
