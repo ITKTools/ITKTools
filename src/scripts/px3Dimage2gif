@@ -47,14 +47,14 @@ tmpbase="tmpout2Duc14031977"
 
 # A gif needs unsigned char images so we brutely convert to that pixel type.
 # If you want to do rescaling to the range [0 255] do it yourself beforehand.
-pxcastconvert -in $input -out $out1 -opct unsigned_char >> dev
+pxcastconvert -in $input -out $out1 -opct unsigned_char >> /dev/null
 
 # We extract all slices from the image
 outslices=""
 slices=`pxgetimageinformation -in $input -sz -i $direction`
 for (( i = 0; i < $slices; i++ ))
 do
-  pxextractslice -in $out1 -out $tmpbase"_"$i".bmp" -sn $i -d $direction
+  pxextractslice -in $out1 -out $tmpbase"_"$i".bmp" -sn $i -d $direction >> /dev/null
   outslices=$outslices" "$tmpbase"_"$i".bmp"
 done
 
