@@ -78,7 +78,7 @@ int DetermineImageProperties(
   std::string & ComponentTypeIn1,
   std::string & ComponentTypeIn2,
   std::string & ComponentTypeOut,
-  unsigned int inputDimension )
+  unsigned int & inputDimension )
 {
   /** Determine image properties of image 1. */
   std::string	inputPixelType1 = "";
