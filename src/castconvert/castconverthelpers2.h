@@ -3,8 +3,8 @@
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: castconverthelpers2.h,v $
   Language:  C++
-  Date:      $Date: 2007-06-01 13:00:06 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2007-06-16 17:00:49 $
+  Version:   $Revision: 1.4 $
 
   Copyright (c) 2002 Insight Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -31,6 +31,7 @@ void PrintHelp()
 	std::cout << "\t-in\tinputfilename" << std::endl;
 	std::cout << "\t-out\toutputfilename" << std::endl;
 	std::cout << "\t[-opct]\toutputPixelComponentType" << std::endl;
+  std::cout << "\t[-z]\tcompression flag; if provided, the output image is compressed" << std::endl;
 	std::cout << "OR pxcastconvert" << std::endl;
 	std::cout << "\t-in\tdicomDirectory" << std::endl;
 	std::cout << "\t-out\toutputfilename" << std::endl;

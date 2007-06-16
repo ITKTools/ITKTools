@@ -32,7 +32,7 @@ void PrintHelp( void );
 int main( int argc, char ** argv )
 {
  	/** Check arguments for help. */
-	if ( argc < 3 || argc > 11 )
+	if ( argc < 3 || argc > 15 )
 	{
 		PrintHelp();
 		return 1;
@@ -47,6 +47,7 @@ int main( int argc, char ** argv )
 	bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
 
   std::vector<float> sigma;
+  sigma.push_back(1.0); // default 1.0 for each resolution 
   bool retstd = parser->GetCommandLineArgument( "-std", sigma );
 
   std::vector<unsigned int> order;
