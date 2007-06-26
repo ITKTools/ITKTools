@@ -8,6 +8,9 @@
 /** Replace a underscore in the input string with a space. */
 void ReplaceUnderscoreWithSpace( std::string & arg );
 
+/** Replace a space in the input string with an underscore. */
+void ReplaceSpaceWithUnderscore( std::string & arg );
+
 /** Remove "unsigned " or "unsigned_" from the input string. */
 void RemoveUnsignedFromString( std::string & arg );
 

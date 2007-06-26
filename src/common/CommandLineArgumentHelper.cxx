@@ -23,6 +23,23 @@ void ReplaceUnderscoreWithSpace( std::string & arg )
 
 
 /** 
+ * *************** ReplaceSpaceWithUnderscore ***********************
+ */
+
+void ReplaceSpaceWithUnderscore( std::string & arg )
+{
+	/** Get rid of the possible " " in arg. */
+	std::basic_string<char>::size_type pos = arg.find( " " );
+	const std::basic_string<char>::size_type npos = std::basic_string<char>::npos;
+	if ( pos != npos )
+	{
+		arg.replace( pos, 1, "_" );
+	}
+	
+} // end ReplaceSpaceWithUnderscore()
+
+
+/** 
  * *************** RemoveUnsignedFromString ***********************
  */
 
