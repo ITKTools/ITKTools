@@ -55,6 +55,35 @@ void RemoveUnsignedFromString( std::string & arg )
 
 
 /** 
+ * *************** CheckForValidComponentType ***********************
+ */
+
+bool CheckForValidComponentType( const std::string & arg )
+{
+  std::string componenttype = arg;
+  ReplaceUnderscoreWithSpace( componenttype );
+
+  /** Check argument. */
+  bool out = true;
+  if ( componenttype != "unsigned char"
+    && componenttype != "char"
+    && componenttype != "unsigned short"
+    && componenttype != "short"
+    && componenttype != "unsigned int"
+    && componenttype != "int"
+    && componenttype != "unsigned long"
+    && componenttype != "long"
+    && componenttype != "float"
+    && componenttype != "double" )
+  {
+    out = false;
+  }
+
+  return out;
+
+} // end CheckForValidComponentType()
+
+/** 
  * ***************** GetImageProperties ************************
  */
 

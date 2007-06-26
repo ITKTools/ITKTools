@@ -14,6 +14,9 @@ void ReplaceSpaceWithUnderscore( std::string & arg );
 /** Remove "unsigned " or "unsigned_" from the input string. */
 void RemoveUnsignedFromString( std::string & arg );
 
+/** Check for a valid component type. */
+bool CheckForValidComponentType( const std::string & arg );
+
 /** Determine pixeltype (scalar/vector), componenttype (short, float etc),
  * dimension and numberofcomponents from an image
  * returns 0 when successful. 0 otherwise.
