@@ -1,10 +1,11 @@
-#ifndef __UnaryImageOperatorMainHelper_h
-#define __UnaryImageOperatorMainHelper_h
+#ifndef __BinaryImageOperatorMainHelper_h
+#define __BinaryImageOperatorMainHelper_h
 
 #include <map>
 #include <utility> // for pair
 #include <string>
 #include <itksys/SystemTools.hxx>
+#include "CommandLineArgumentHelper.h"
 
   /**
 	 * ******************* Macro *******************
@@ -56,12 +57,16 @@ void PrintHelp()
 
 bool TypeIsInteger( const std::string & componentType )
 {
+  /** Make sure the input has "_" instead of " ". */
+  std::string compType = componentType;
+  ReplaceSpaceWithUnderscore( compType );
+
   /** Check if the input image is of integer type. */
   bool typeIsInteger = false;
-  if ( componentType == "unsigned_char" || componentType == "char"
-    || componentType == "unsigned_short" || componentType == "short"
-    || componentType == "unsigned_int" || componentType == "int"
-    || componentType == "unsigned_long" || componentType == "long" )
+  if ( compType == "unsigned_char" || compType == "char"
+    || compType == "unsigned_short" || compType == "short"
+    || compType == "unsigned_int" || compType == "int"
+    || compType == "unsigned_long" || compType == "long" )
   {
     typeIsInteger = true;
   }
@@ -367,4 +372,4 @@ bool CheckOperatorAndArgument( const std::string & operatoR,
 } // end CheckOperatorAndArgument()
 
 
-#endif //#ifndef __UnaryImageOperatorMainHelper_h
+#endif //#ifndef __BinaryImageOperatorMainHelper_h
