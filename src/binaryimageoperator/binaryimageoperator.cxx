@@ -32,6 +32,9 @@ int main( int argc, char **argv )
   std::string argument = "0";
   bool retarg = parser->GetCommandLineArgument( "-arg", argument );
 
+  std::string opct = "";
+  bool retopct = parser->GetCommandLineArgument( "-opct", opct );
+
   /** Check if the required arguments are given. */
   if ( !retin )
 	{
@@ -66,6 +69,18 @@ int main( int argc, char **argv )
     ComponentTypeIn1, ComponentTypeIn2, ComponentTypeOut,
     inputDimension );
   if ( retdip ) return 1;
+
+  /** Let the user override the output component type. */
+  if ( retopct )
+  {
+    if ( !CheckForValidComponentType( opct ) )
+    {
+      std::cerr << "ERROR: the you specified a wrong opct." << std::endl;
+      return 1;
+    }
+    ComponentTypeOut = opct;
+    ReplaceUnderscoreWithSpace( ComponentTypeOut );
+  }
 
   /** Check if a valid operator is given. */
   std::string opsCopy = ops;

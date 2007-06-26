@@ -46,6 +46,8 @@ void PrintHelp()
   std::cout << "  [-arg]   argument, necessary for some ops\n"
             << "             WEIGHTEDADDITION: 0.0 < weight alpha < 1.0\n"
             << "             MASK[NEG]: background value, e.g. 0." << std::endl;
+  std::cout << "  [-opct]  output component type, by default the largest of the two input images\n"
+            << "             choose one of: {[unsigned_]{char,short,int,long},float,double}" << std::endl;
 	std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
 
 } // end PrintHelp()
