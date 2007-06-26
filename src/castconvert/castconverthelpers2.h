@@ -3,8 +3,8 @@
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: castconverthelpers2.h,v $
   Language:  C++
-  Date:      $Date: 2007-06-16 17:00:49 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2007-06-26 14:23:26 $
+  Version:   $Revision: 1.5 $
 
   Copyright (c) 2002 Insight Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -28,19 +28,19 @@
 void PrintHelp()
 {
 	std::cout << "Usage:" << std::endl << "pxcastconvert" << std::endl;
-	std::cout << "\t-in\tinputfilename" << std::endl;
-	std::cout << "\t-out\toutputfilename" << std::endl;
-	std::cout << "\t[-opct]\toutputPixelComponentType" << std::endl;
-  std::cout << "\t[-z]\tcompression flag; if provided, the output image is compressed" << std::endl;
+	std::cout << "  -in      inputfilename" << std::endl;
+	std::cout << "  -out     outputfilename" << std::endl;
+	std::cout << "  [-opct]  outputPixelComponentType" << std::endl;
+  std::cout << "  [-z]     compression flag; if provided, the output image is compressed" << std::endl;
 	std::cout << "OR pxcastconvert" << std::endl;
-	std::cout << "\t-in\tdicomDirectory" << std::endl;
-	std::cout << "\t-out\toutputfilename" << std::endl;
-	std::cout << "\t[-opct]\toutputPixelComponentType" << std::endl;
-	std::cout << "\t[-s]\tseriesUID" << std::endl;
-  std::cout << "\t[-z]\tcompression flag; if provided, the output image is compressed" << std::endl;
+	std::cout << "  -in      dicomDirectory" << std::endl;
+	std::cout << "  -out     outputfilename" << std::endl;
+	std::cout << "  [-opct]  outputPixelComponentType" << std::endl;
+	std::cout << "  [-s]     seriesUID" << std::endl;
+  std::cout << "  [-z]     compression flag; if provided, the output image is compressed" << std::endl;
 	std::cout << "where outputPixelComponentType is one of:" << std::endl;
-	std::cout << "\tunsigned_char, char, unsigned_short, short, unsigned_int, int," << std::endl;
-	std::cout << "\tunsigned_long, long, float, double," << std::endl;
+	std::cout << "  [unsigned_]char, [unsigned_]short, [unsigned_]int," << std::endl;
+	std::cout << "  [unsigned_]long, float, double," << std::endl;
 	std::cout << "provided that the outputPixelComponentType is supported by the output file format." << std::endl;
   std::cout << "By default the outputPixelComponentType is set to the inputPixelComponentType." << std::endl;
 	std::cout << "By default the seriesUID is the first UID found." << std::endl;
