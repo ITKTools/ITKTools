@@ -123,7 +123,7 @@ bool GetInputData( const std::string & fileName,
     if ( inputMatrix[ 0 ].size() - 1 < columns[ i ] )
     {
       std::cerr << "ERROR: Requesting an unexisting column. There are only "
-        << inputMatrix.size() << " columns." << std::endl;
+        << inputMatrix[ 0 ].size() << " columns." << std::endl;
       return false;
     }
   }
