@@ -1,6 +1,5 @@
 #include "itkCohenWeightedKappaStatistic.h"
 
-#include "vnl/vnl_math.h"
 
 namespace itk {
 namespace Statistics {
@@ -271,6 +270,101 @@ void CohenWeightedKappaStatistic
   kappa = ( Po - Pe ) / ( 1.0 - Pe );
 
 } // end ComputeKappaStatisticValue()
+
+
+/**
+ * *************** ComputeKappaStatisticValueAndStandardDeviation ****************
+ */
+
+void CohenWeightedKappaStatistic
+::ComputeKappaStatisticValueAndStandardDeviation(
+  double & Po, double & Pe, double & kappa, double & std )
+{
+  /** The observations has to be set previously by the user. */
+  this->CheckObservations( this->m_Observations );
+
+  /** Get some numbers. */
+  unsigned int n = this->GetNumberOfObservers();
+  unsigned int N = this->GetNumberOfObservations();
+  unsigned int k = this->GetNumberOfCategories();
+
+  /** Check if the weights are set. */
+  if ( this->m_WeightsName == "" )
+  {
+    InvalidArgumentError exp(__FILE__, __LINE__);
+    ::itk::OStringStream message;
+    message << "itk::ERROR: " << this->GetNameOfClass()
+      << "(" << this << "): "
+      << "Weights not initialized.";
+    exp.SetDescription( message.str() );
+    exp.SetLocation( ITK_LOCATION );
+    throw exp;
+  }
+
+  /** Compute the weights if only the weights name is set. */
+  if ( this->m_WeightsName != "user_defined" )
+  {
+    this->InitializeWeights( this->m_WeightsName, k );
+  }
+
+  /** Compute the observation matrix. */
+  this->ComputeConfusionMatrix( N, k );
+
+  /** We are ready to compute the kappa statistic.
+   * This is done in parts:
+   * - calculate the row and column totals of the confusion matrix
+   * - calculate Po and Pe
+   */
+  std::vector< double > row( k, 0.0 );
+  std::vector< double > col( k, 0.0 );
+  Po = Pe = kappa = std = 0.0;
+  std::vector< double > barwi( k, 0.0 );
+  std::vector< double > barwj( k, 0.0 );
+  for ( unsigned int i = 0; i < k; ++i )
+  {
+    for ( unsigned int j = 0; j < k; ++j )
+    {
+      row[ i ] += this->m_ConfusionMatrix[ i ][ j ];
+      col[ j ] += this->m_ConfusionMatrix[ i ][ j ];
+    }
+  }
+
+  for ( unsigned int i = 0; i < k; ++i )
+  {
+    for ( unsigned int j = 0; j < k; ++j )
+    {
+      Po += this->m_Weights[ i ][ j ] * this->m_ConfusionMatrix[ i ][ j ];
+      Pe += this->m_Weights[ i ][ j ] * row[ i ] * col[ j ];
+      barwi[ i ] += this->m_Weights[ i ][ j ] * row[ i ];
+      barwj[ i ] += this->m_Weights[ i ][ j ] * col[ i ];
+    }
+  }
+  Po /= N;
+  Pe /= N * N;
+
+  // the above can probably be done in one loop over i and j,
+  // but this is much better readable.
+
+  /** Compute the standard deviation. */
+  //std = ( Po * ( 1.0 - Po ) ) / ( N * ( 1.0 - Pe ) * ( 1.0 - Pe ) );
+  double tmp = 0.0;
+  for ( unsigned int i = 0; i < k; ++i )
+  {
+    for ( unsigned int j = 0; j < k; ++j )
+    {
+      tmp += row[ i ] * col[ j ] * ( this->m_Weights[ i ][ j ] - barwi[ i ] - barwj[ j ] )
+        * ( this->m_Weights[ i ][ j ] - barwi[ i ] - barwj[ j ] );
+    }
+  }
+  std = tmp / N / N;
+  std -= Pe * Pe;
+  std /= N * ( 1.0 - Pe ) * ( 1.0 - Pe );
+  std = vcl_sqrt( std );
+
+  /** Compute kappa. */
+  kappa = ( Po - Pe ) / ( 1.0 - Pe );
+
+} // end ComputeKappaStatisticValueAndStandardDeviation()
 
 
 /**

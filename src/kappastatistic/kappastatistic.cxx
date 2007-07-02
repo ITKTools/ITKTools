@@ -9,7 +9,7 @@
 int main( int argc, char **argv )
 {
   /** Check arguments for help. */
-	if ( argc < 6 || argc > 14 )
+	if ( argc < 6 || argc > 15 )
 	{
 		PrintHelp();
 		return 1;
@@ -37,6 +37,8 @@ int main( int argc, char **argv )
 
   unsigned int precision = 8;
   bool retp = parser->GetCommandLineArgument( "-p", precision );
+
+  bool exstd = parser->ArgumentExists( "-std" );
 
   /** Check if the required arguments are given. */
 	if ( !retin )
@@ -90,7 +92,7 @@ int main( int argc, char **argv )
   FleissType::Pointer fleiss = FleissType::New();
   CohenType::Pointer cohen = CohenType::New();
   unsigned int n = 0, N = 0, k = 0;
-  double Po, Pe, kappa;
+  double Po, Pe, kappa, std;
 
   /** Compute kappa. */
   try
@@ -103,7 +105,14 @@ int main( int argc, char **argv )
       N = fleiss->GetNumberOfObservations();
       k = fleiss->GetNumberOfCategories();
 
-      fleiss->ComputeKappaStatisticValue( Po, Pe, kappa );
+      if ( exstd )
+      {
+        fleiss->ComputeKappaStatisticValueAndStandardDeviation( Po, Pe, kappa, std );
+      }
+      else
+      {
+        fleiss->ComputeKappaStatisticValue( Po, Pe, kappa );
+      }
     }
     else if ( type == "cohen" )
     {
@@ -114,7 +123,14 @@ int main( int argc, char **argv )
       k = cohen->GetNumberOfCategories();
 
       cohen->SetWeights( weights );
-      cohen->ComputeKappaStatisticValue( Po, Pe, kappa );
+      if ( exstd )
+      {
+        cohen->ComputeKappaStatisticValueAndStandardDeviation( Po, Pe, kappa, std );
+      }
+      else
+      {
+        cohen->ComputeKappaStatisticValue( Po, Pe, kappa );
+      }
     }
   }
   catch( itk::ExceptionObject &e )
@@ -141,6 +157,11 @@ int main( int argc, char **argv )
     std::cout << "Observed agreement Po: " << Po << std::endl;
     std::cout << "Expected agreement Pe: " << Pe << std::endl;
     std::cout << "kappa:                 " << kappa << std::endl;
+
+    if ( exstd )
+    {
+      std::cout << "standard deviation:    " << std << std::endl;
+    }
 
     if ( output == "ALL" )
     {

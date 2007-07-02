@@ -20,6 +20,7 @@ void PrintHelp( void )
   std::cout << "             linear:    1 - | i - j | / ( k - 1 )\n";
   std::cout << "             quadratic: 1 - [ (i - j ) / ( k - 1 ) ]^2\n";
   std::cout << "             identity:  I_k, the identity matrix" << std::endl;
+  std::cout << "  [-std]   use this option to calculate the standard deviation" << std::endl;
   std::cout << "  [-out]   output, choose one of {kappa,all,ALL}, default all\n";
   std::cout << "             kappa: only print the kappa-value\n";
   std::cout << "             all: print all\n";

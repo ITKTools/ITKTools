@@ -50,12 +50,10 @@ public:
   virtual void ComputeKappaStatisticValue( double & Po, double & Pe,
     double & kappa );
 
-  /** The function that computes the kappa statistic value
-   * and its standard deviation.
-   *
-  virtual void ComputeKappaStatisticValue( double & Po, double & Pe,
-    double & kappa, double & std );*/
-
+  /** The function that computes the kappa statistic value and standard deviation. */
+  virtual void ComputeKappaStatisticValueAndStandardDeviation(
+    double & Po, double & Pe, double & kappa, double & std );
+  
 protected:
   FleissKappaStatistic() {}; 
   virtual ~FleissKappaStatistic() {};

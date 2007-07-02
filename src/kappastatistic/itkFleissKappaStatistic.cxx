@@ -114,6 +114,72 @@ void FleissKappaStatistic
 
 
 /**
+ * *************** ComputeKappaStatisticValueAndStandardDeviation ****************
+ */
+
+void FleissKappaStatistic
+::ComputeKappaStatisticValueAndStandardDeviation(
+  double & Po, double & Pe, double & kappa, double & std )
+{
+  /** The observations has to be set previously by the user. */
+  this->CheckObservations( this->m_Observations );
+
+  /** Get some numbers. */
+  unsigned int n = this->GetNumberOfObservers();
+  unsigned int N = this->GetNumberOfObservations();
+  unsigned int k = this->GetNumberOfCategories();
+
+  /** Compute the observation matrix. */
+  this->ComputeObservationMatrix( n, N, k );
+
+  /** We are ready to compute the kappa statistic.
+   * This is done in parts:
+   * - calculate p[ j ] and Pe
+   * - calculate P[ i ] and Po
+   */
+  std::vector< double > p( k, 0.0 );
+  std::vector< double > P( N, 0.0 );
+  double p3 = 0.0;
+  Po = Pe = kappa = std = 0.0;
+  for ( unsigned int j = 0; j < k; ++j )
+  {
+    for ( unsigned int i = 0; i < N; ++i )
+    {
+      p[ j ] += static_cast<double>( this->m_ObservationMatrix[ i ][ j ] );
+    }
+    p[ j ] /= static_cast<double>( n * N );
+    Pe += p[ j ] * p[ j ];
+    p3 += p[ j ] * p[ j ] * p[ j ];
+  }
+
+  for ( unsigned int i = 0; i < N; ++i )
+  {
+    for ( unsigned int j = 0; j < k; ++j )
+    {
+      double nij = static_cast<double>( this->m_ObservationMatrix[ i ][ j ] );
+      P[ i ] += nij * nij - nij;
+    }
+    P[ i ] /= n * ( n - 1.0 );
+    Po += P[ i ];
+  }
+  Po /= N;
+
+  // the above can probably be done in one loop over i and j,
+  // but this is much better readable.
+
+  /** Compute the standard deviation. */
+  std = Pe - ( 2.0 * n - 3.0 ) * Pe * Pe + 2.0 * ( n - 2.0 ) * p3;
+  std /= Pe * Pe;
+  std *= 2.0 / ( N * n * ( n - 1.0 ) );
+  std = vcl_sqrt( std );
+
+  /** Compute kappa. */
+  kappa = ( Po - Pe ) / ( 1.0 - Pe );
+
+} // end ComputeKappaStatisticValueAndStandardDeviation()
+
+
+/**
  * *************** PrintSelf ****************
  */
 

@@ -5,6 +5,7 @@
 #include "itkObjectFactory.h"
 #include <vector>
 #include <map>
+#include "vnl/vnl_math.h"
 
 namespace itk {
 namespace Statistics {
@@ -65,11 +66,9 @@ public:
   virtual void ComputeKappaStatisticValue( double & Po, double & Pe,
     double & kappa ) = 0;
 
-  /** The function that computes the kappa statistic value
-   * and its standard deviation.
-   *
-  virtual void ComputeKappaStatisticValue( double & Po, double & Pe,
-    double & kappa, double & std ) = 0; */
+  /** The function that computes the kappa statistic value. */
+  virtual void ComputeKappaStatisticValueAndStandardDeviation(
+    double & Po, double & Pe, double & kappa, double & std ) = 0;
 
 protected:
   KappaStatisticBase();
