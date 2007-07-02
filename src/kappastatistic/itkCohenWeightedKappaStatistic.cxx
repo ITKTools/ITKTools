@@ -335,9 +335,11 @@ void CohenWeightedKappaStatistic
     {
       Po += this->m_Weights[ i ][ j ] * this->m_ConfusionMatrix[ i ][ j ];
       Pe += this->m_Weights[ i ][ j ] * row[ i ] * col[ j ];
-      barwi[ i ] += this->m_Weights[ i ][ j ] * row[ i ];
-      barwj[ i ] += this->m_Weights[ i ][ j ] * col[ i ];
+      barwi[ i ] += this->m_Weights[ i ][ j ] * col[ j ];
+      barwj[ i ] += this->m_Weights[ i ][ j ] * row[ j ];
     }
+    barwi[ i ] /= N;
+    barwj[ i ] /= N;
   }
   Po /= N;
   Pe /= N * N;

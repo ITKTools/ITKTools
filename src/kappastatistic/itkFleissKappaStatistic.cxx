@@ -169,7 +169,7 @@ void FleissKappaStatistic
 
   /** Compute the standard deviation. */
   std = Pe - ( 2.0 * n - 3.0 ) * Pe * Pe + 2.0 * ( n - 2.0 ) * p3;
-  std /= Pe * Pe;
+  std /= ( 1.0 - Pe ) * ( 1.0 - Pe );
   std *= 2.0 / ( N * n * ( n - 1.0 ) );
   std = vcl_sqrt( std );
 
