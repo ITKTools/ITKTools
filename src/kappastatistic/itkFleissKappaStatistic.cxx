@@ -119,7 +119,7 @@ void FleissKappaStatistic
 
 void FleissKappaStatistic
 ::ComputeKappaStatisticValueAndStandardDeviation(
-  double & Po, double & Pe, double & kappa, double & std )
+  double & Po, double & Pe, double & kappa, double & std, const bool & compare )
 {
   /** The observations has to be set previously by the user. */
   this->CheckObservations( this->m_Observations );

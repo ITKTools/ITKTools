@@ -278,7 +278,7 @@ void CohenWeightedKappaStatistic
 
 void CohenWeightedKappaStatistic
 ::ComputeKappaStatisticValueAndStandardDeviation(
-  double & Po, double & Pe, double & kappa, double & std )
+  double & Po, double & Pe, double & kappa, double & std, const bool & compare )
 {
   /** The observations has to be set previously by the user. */
   this->CheckObservations( this->m_Observations );
@@ -347,24 +347,41 @@ void CohenWeightedKappaStatistic
   // the above can probably be done in one loop over i and j,
   // but this is much better readable.
 
+  /** Compute kappa. */
+  kappa = ( Po - Pe ) / ( 1.0 - Pe );
+
   /** Compute the standard deviation. */
-  //std = ( Po * ( 1.0 - Po ) ) / ( N * ( 1.0 - Pe ) * ( 1.0 - Pe ) );
   double tmp = 0.0;
   for ( unsigned int i = 0; i < k; ++i )
   {
     for ( unsigned int j = 0; j < k; ++j )
     {
-      tmp += row[ i ] * col[ j ] * ( this->m_Weights[ i ][ j ] - barwi[ i ] - barwj[ j ] )
-        * ( this->m_Weights[ i ][ j ] - barwi[ i ] - barwj[ j ] );
+      if ( compare )
+      {
+        tmp += this->m_ConfusionMatrix[ i ][ j ]
+          * ( this->m_Weights[ i ][ j ] - ( barwi[ i ] + barwj[ j ] ) * ( 1.0 - kappa ) )
+          * ( this->m_Weights[ i ][ j ] - ( barwi[ i ] + barwj[ j ] ) * ( 1.0 - kappa ) );
+      }
+      else
+      {
+        tmp += row[ i ] * col[ j ]
+          * ( this->m_Weights[ i ][ j ] - ( barwi[ i ] + barwj[ j ] ) )
+          * ( this->m_Weights[ i ][ j ] - ( barwi[ i ] + barwj[ j ] ) );
+      }
     }
   }
-  std = tmp / N / N;
-  std -= Pe * Pe;
+  if ( compare )
+  {
+    std = tmp / N;
+    std -= ( kappa - Pe * ( 1.0 - kappa ) ) * ( kappa - Pe * ( 1.0 - kappa ) );
+  }
+  else
+  {
+    std = tmp / N / N;
+    std -= Pe * Pe;
+  }
   std /= N * ( 1.0 - Pe ) * ( 1.0 - Pe );
   std = vcl_sqrt( std );
-
-  /** Compute kappa. */
-  kappa = ( Po - Pe ) / ( 1.0 - Pe );
 
 } // end ComputeKappaStatisticValueAndStandardDeviation()
 

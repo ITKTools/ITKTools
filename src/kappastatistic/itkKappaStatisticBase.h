@@ -68,7 +68,7 @@ public:
 
   /** The function that computes the kappa statistic value. */
   virtual void ComputeKappaStatisticValueAndStandardDeviation(
-    double & Po, double & Pe, double & kappa, double & std ) = 0;
+    double & Po, double & Pe, double & kappa, double & std, const bool & compare ) = 0;
 
 protected:
   KappaStatisticBase();

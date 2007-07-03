@@ -40,6 +40,9 @@ int main( int argc, char **argv )
 
   bool exstd = parser->ArgumentExists( "-std" );
 
+  double kappacmp = 0.0;
+  bool retcmp = parser->GetCommandLineArgument( "-cmp", kappacmp );
+
   /** Check if the required arguments are given. */
 	if ( !retin )
 	{
@@ -78,6 +81,8 @@ int main( int argc, char **argv )
 		return 1;
   }
 
+  if ( retcmp ) exstd = true;
+
   /** Read the input file. */
   std::vector< std::vector<unsigned int> > matrix;
   retin = GetInputData( inputFileName, columns, matrix );
@@ -107,7 +112,7 @@ int main( int argc, char **argv )
 
       if ( exstd )
       {
-        fleiss->ComputeKappaStatisticValueAndStandardDeviation( Po, Pe, kappa, std );
+        fleiss->ComputeKappaStatisticValueAndStandardDeviation( Po, Pe, kappa, std, retcmp );
       }
       else
       {
@@ -125,7 +130,7 @@ int main( int argc, char **argv )
       cohen->SetWeights( weights );
       if ( exstd )
       {
-        cohen->ComputeKappaStatisticValueAndStandardDeviation( Po, Pe, kappa, std );
+        cohen->ComputeKappaStatisticValueAndStandardDeviation( Po, Pe, kappa, std, retcmp );
       }
       else
       {

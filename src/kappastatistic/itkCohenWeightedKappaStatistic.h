@@ -58,7 +58,7 @@ public:
 
   /** The function that computes the kappa statistic value and standard deviation. */
   virtual void ComputeKappaStatisticValueAndStandardDeviation(
-    double & Po, double & Pe, double & kappa, double & std );
+    double & Po, double & Pe, double & kappa, double & std, const bool & compare );
 
 protected:
   CohenWeightedKappaStatistic();
