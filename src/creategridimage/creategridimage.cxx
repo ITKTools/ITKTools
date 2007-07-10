@@ -181,7 +181,7 @@ void CreateGridImage( const std::string & outputFileName,
 	 */
 void PrintHelp( void )
 {
-	std::cout << "Usage:" << std::endl << "pxreategridimage" << std::endl;
+	std::cout << "Usage:" << std::endl << "pxcreategridimage" << std::endl;
 	std::cout << "  -out     outputFilename" << std::endl;
   std::cout << "  [-dim]   image dimension, default 2" << std::endl;
   std::cout << "  -sz      image size" << std::endl;
