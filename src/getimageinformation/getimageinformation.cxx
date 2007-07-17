@@ -37,6 +37,7 @@ int main( int argc, char **argv )
   bool exsz = parser->ArgumentExists( "-sz" );
 	bool exsp = parser->ArgumentExists( "-sp" );
 	bool exo = parser->ArgumentExists( "-o" );
+  bool exall = parser->ArgumentExists( "-all" );
 
 	/** Check if the required arguments are given. */
 	if ( !retin )
@@ -77,93 +78,142 @@ int main( int argc, char **argv )
     return 1;
   }
 
-  /** Print image dimension. */
-  if ( exdim )
-  {
-    std::cout << dim;
-    return 0;
-  }
-  
-  /** Print image pixel type. */
-  if ( expt )
-  {
-    //ReplaceUnderscoreWithSpace( PixelType );
-    std::cout << testImageIOBase->GetPixelTypeAsString(
-      testImageIOBase->GetPixelType() );
-    return 0;
-  }
+  /**
+   * ************************ Print image information ***************
+   */
 
-  /** Print image component type. */
-  if ( exct )
+  if ( !exall )
   {
-    std::cout << testImageIOBase->GetComponentTypeAsString(
-      testImageIOBase->GetComponentType() );
-    return 0;
-  }
-
-  /** Print image number of components. */
-  if ( exnoc )
-  {
-    std::cout << testImageIOBase->GetNumberOfComponents();
-    return 0;
-  }
-
-  /** Print image size. */
-  if ( exsz )
-  {
-    if ( reti )
+    /** Print image dimension. */
+    if ( exdim )
     {
-      std::cout << testImageIOBase->GetDimensions( index );
+      std::cout << dim;
+      return 0;
     }
-    else
+
+    /** Print image pixel type. */
+    if ( expt )
     {
-      for ( unsigned int i = 0; i < dim - 1; i++ )
+      //ReplaceUnderscoreWithSpace( PixelType );
+      std::cout << testImageIOBase->GetPixelTypeAsString(
+        testImageIOBase->GetPixelType() );
+      return 0;
+    }
+
+    /** Print image component type. */
+    if ( exct )
+    {
+      std::cout << testImageIOBase->GetComponentTypeAsString(
+        testImageIOBase->GetComponentType() );
+      return 0;
+    }
+
+    /** Print image number of components. */
+    if ( exnoc )
+    {
+      std::cout << testImageIOBase->GetNumberOfComponents();
+      return 0;
+    }
+
+    /** Print image size. */
+    if ( exsz )
+    {
+      if ( reti )
       {
-        std::cout << testImageIOBase->GetDimensions( i ) << " ";
+        std::cout << testImageIOBase->GetDimensions( index );
       }
-      std::cout << testImageIOBase->GetDimensions( dim - 1 );
-    }
-    return 0;
-  }
-
-  /** Print image spacing. */
-  std::cout << std::fixed;
-  std::cout << std::setprecision( 6 );
-  if ( exsp )
-  {
-    if ( reti )
-    {
-      std::cout << testImageIOBase->GetSpacing( index );
-    }
-    else
-    {
-      for ( unsigned int i = 0; i < dim - 1; i++ )
+      else
       {
-        std::cout << testImageIOBase->GetSpacing( i ) << " ";
+        for ( unsigned int i = 0; i < dim - 1; i++ )
+        {
+          std::cout << testImageIOBase->GetDimensions( i ) << " ";
+        }
+        std::cout << testImageIOBase->GetDimensions( dim - 1 );
       }
-      std::cout << testImageIOBase->GetSpacing( dim - 1 );
+      return 0;
     }
-    return 0;
-  }
 
-  /** Print image origin. */
-  if ( exo )
-  {
-    if ( reti )
+    /** Print image spacing. */
+    std::cout << std::fixed;
+    std::cout << std::setprecision( 6 );
+    if ( exsp )
     {
-      std::cout << testImageIOBase->GetOrigin( index );
-    }
-    else
-    {
-      for ( unsigned int i = 0; i < dim - 1; i++ )
+      if ( reti )
       {
-        std::cout << testImageIOBase->GetOrigin( i ) << " ";
+        std::cout << testImageIOBase->GetSpacing( index );
       }
-      std::cout << testImageIOBase->GetOrigin( dim - 1 );
+      else
+      {
+        for ( unsigned int i = 0; i < dim - 1; i++ )
+        {
+          std::cout << testImageIOBase->GetSpacing( i ) << " ";
+        }
+        std::cout << testImageIOBase->GetSpacing( dim - 1 );
+      }
+      return 0;
     }
+
+    /** Print image origin. */
+    if ( exo )
+    {
+      if ( reti )
+      {
+        std::cout << testImageIOBase->GetOrigin( index );
+      }
+      else
+      {
+        for ( unsigned int i = 0; i < dim - 1; i++ )
+        {
+          std::cout << testImageIOBase->GetOrigin( i ) << " ";
+        }
+        std::cout << testImageIOBase->GetOrigin( dim - 1 );
+      }
+      return 0;
+    }
+
+  } // end don't print all
+
+  /** Print all image information, i.e. all of the above. */
+  else
+  {
+    std::cout << inputFileName << ":\n";
+
+    std::cout << "dimension:      " << dim << "\n";
+
+    std::cout << "pixel type:     " << testImageIOBase
+      ->GetPixelTypeAsString( testImageIOBase->GetPixelType() ) << "\n";
+
+    std::cout << "component type: " << testImageIOBase
+      ->GetComponentTypeAsString( testImageIOBase->GetComponentType() ) << "\n";
+
+    std::cout << "# components:   " << testImageIOBase
+      ->GetNumberOfComponents() << "\n";
+
+    std::cout << "size:           (";
+    for ( unsigned int i = 0; i < dim - 1; i++ )
+    {
+      std::cout << testImageIOBase->GetDimensions( i ) << ", ";
+    }
+    std::cout << testImageIOBase->GetDimensions( dim - 1 ) << ")\n";
+
+    std::cout << "spacing:        (";
+    for ( unsigned int i = 0; i < dim - 1; i++ )
+    {
+      std::cout << testImageIOBase->GetSpacing( i ) << ", ";
+    }
+    std::cout << testImageIOBase->GetSpacing( dim - 1 ) << ")\n";
+
+    std::cout << "origin:         (";
+    for ( unsigned int i = 0; i < dim - 1; i++ )
+    {
+      std::cout << testImageIOBase->GetOrigin( i ) << ", ";
+    }
+    std::cout << testImageIOBase->GetOrigin( dim - 1 ) << ")\n";
+
     return 0;
-  }
-	
+
+  } // end print all information
+
 	/** End program. */
 	return 1;
 
@@ -185,6 +235,7 @@ void PrintHelp()
   std::cout << "  [-sz]    size" << std::endl;
   std::cout << "  [-sp]    spacing" << std::endl;
   std::cout << "  [-o]     origin" << std::endl;
+  std::cout << "  [-all]   all of the above" << std::endl;
   std::cout << "Image information about the inputFileName is printed to screen." << std::endl;
   std::cout << "Only one option should be given, e.g. -sp, then the spacing is printed." << std::endl;
   std::cout << "  [-i]     index, if this option is given only e.g. spacing[index] is printed." << std::endl;
