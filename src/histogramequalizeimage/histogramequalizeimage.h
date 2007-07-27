@@ -22,7 +22,7 @@ void PrintUsageString(void)
 		<< "\t-in    \tInputImageFileName\t\n"
 		<< "\t-out   \tOutputImageFileName\n"
 		<< "\t-pt    \tPixelType <FLOAT, SHORT, USHORT, INT, UINT, CHAR, UCHAR>\n"
-		<< "\t\tCurrently only char, uchar and short are supported.\n"
+		<< "\t\tCurrently only char, uchar, short, and ushort are supported.\n"
 		<< "\t-id    \tImageDimension <2,3>\n"
 		<< std::endl;
 } // end PrintUsageString
@@ -182,6 +182,8 @@ class ptswrap
 		{
 		case eSHORT : 
 			return  runwrap<ImageDimension, short>::run_cri(argmap);
+    case eUSHORT : 
+			return  runwrap<ImageDimension, unsigned short>::run_cri(argmap);
 		case eCHAR : 
 			return  runwrap<ImageDimension, char>::run_cri(argmap);
 		case eUCHAR : 

@@ -32,6 +32,13 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);  
 
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(HistogramEqualizationImageFilter, ImageToImageFilter);
+
+    /** Image related typedefs. */
+  itkStaticConstMacro(ImageDimension, unsigned int,
+                      TImage::ImageDimension ) ;
+
   /** Typedef to describe the input/output image types. */  
   typedef TImage					InputImageType;
   typedef TImage				  OutputImageType;
@@ -55,15 +62,16 @@ public:
   typedef typename OutputImageType::IndexType OutputImageIndexType;
   typedef typename OutputImageType::SizeType OutputImageSizeType;
   typedef typename OutputImageType::OffsetType OutputImageOffsetType;
-  
-	/** Image related typedefs. */
-  itkStaticConstMacro(ImageDimension, unsigned int,
-                      TImage::ImageDimension ) ;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(HistogramEqualizationImageFilter, ImageToImageFilter);
+  /** Typedefs for mask support */
+  typedef unsigned char                           MaskPixelType;
+  typedef Image< MaskPixelType, ImageDimension>   MaskImageType;
+  typedef typename MaskImageType::Pointer         MaskImagePointer;
 
-
+  /** Set/Get mask */
+  itkSetObjectMacro( Mask, MaskImageType );
+  itkGetObjectMacro( Mask, MaskImageType );
+	
 protected:
   HistogramEqualizationImageFilter();
   ~HistogramEqualizationImageFilter();
@@ -78,7 +86,7 @@ protected:
 	InputImagePixelType m_Min;
 	InputImagePixelType m_Max;
 	double m_MeanFrequency;
-
+  MaskImagePointer m_Mask;
 
   /** Initialize some accumulators before the threads run.
 	 * Create a LUT */

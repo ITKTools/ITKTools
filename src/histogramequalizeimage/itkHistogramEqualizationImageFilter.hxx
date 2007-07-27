@@ -32,27 +32,52 @@ void
 HistogramEqualizationImageFilter<TImage>
 ::BeforeThreadedGenerateData ()
 {
+  typedef ImageRegionConstIterator<InputImageType>   ImageIteratorType;
+  typedef ImageRegionConstIterator<MaskImageType>    MaskIteratorType;
+
+  /** Use a mask or not */
+  bool useMask = false;
+  if ( this->GetMask() )
+  {
+    useMask = true;
+  }
 
 	/** Compute minimum and maximum of the input image */
-	ImageRegionConstIterator<InputImageType>  it( this->GetInput(), 
-		this->GetOutput()->GetRequestedRegion() );
+	ImageIteratorType it( this->GetInput(), this->GetOutput()->GetRequestedRegion() );
+  MaskIteratorType maskIt;
+  if ( useMask )
+  {
+    maskIt = MaskIteratorType( this->GetMask(), this->GetOutput()->GetRequestedRegion() );
+    maskIt.GoToBegin();
+  }
 
 	InputImagePixelType tempmin = itk::NumericTraits<InputImagePixelType>::max();
 	InputImagePixelType tempmax = 
 		itk::NumericTraits<InputImagePixelType>::NonpositiveMin();
 
+  unsigned long numberOfValidPixels = 0;
 	it.GoToBegin();
 	while ( !it.IsAtEnd() )
 	{
-		const InputImagePixelType & current = it.Value();
-		if ( current < tempmin )
-		{
-			tempmin = current;
-		}
-		if ( current > tempmax )
-		{
-			tempmax = current;
-		}
+    bool validPixel = true;
+    if ( useMask )
+    {
+      validPixel = static_cast<bool>( maskIt.Value() );
+      ++maskIt;
+    }
+    if ( validPixel )
+    {
+      ++numberOfValidPixels;
+      const InputImagePixelType & current = it.Value();
+      if ( current < tempmin )
+      {
+        tempmin = current;
+      }
+      if ( current > tempmax )
+      {
+        tempmax = current;
+      }
+    }
 		++it;
 	}
 
@@ -63,7 +88,7 @@ HistogramEqualizationImageFilter<TImage>
 	 * should occur in the image */
   this->m_NumberOfBins = tempmax - tempmin + 1;  
 	this->m_MeanFrequency = 
-		static_cast<double>( this->GetOutput()->GetRequestedRegion().GetNumberOfPixels() ) /
+		static_cast<double>( numberOfValidPixels ) /
 		static_cast<double>( this->m_NumberOfBins );
 
 	/** Compute the histogram of the input image */
@@ -71,9 +96,22 @@ HistogramEqualizationImageFilter<TImage>
 	HistogramType hist( this->m_NumberOfBins );
 	hist.Fill( 0 );
 	it.GoToBegin();
+  if ( useMask )
+  {
+    maskIt.GoToBegin();
+  }
 	while ( !it.IsAtEnd() )
 	{
-    ( hist[ static_cast<unsigned int>( it.Value() - tempmin ) ] )++;
+    bool validPixel = true;
+    if ( useMask )
+    {
+      validPixel = static_cast<bool>( maskIt.Value() );
+      ++maskIt;
+    }
+    if ( validPixel )
+    {
+      ( hist[ static_cast<unsigned int>( it.Value() - tempmin ) ] )++;
+    }
 		++it;
 	}
 
@@ -111,8 +149,25 @@ HistogramEqualizationImageFilter<TImage>
                        int threadId) 
 {
 
-  ImageRegionConstIterator<InputImageType>  it (this->GetInput(), outputRegionForThread);
-  ImageRegionIterator<OutputImageType> ot (this->GetOutput(), outputRegionForThread);
+  typedef ImageRegionConstIterator<InputImageType>   InputImageIteratorType;
+  typedef ImageRegionIterator<OutputImageType>       OutputImageIteratorType;
+  typedef ImageRegionConstIterator<MaskImageType>    MaskIteratorType;
+
+  /** Use a mask or not */
+  bool useMask = false;
+  if ( this->GetMask() )
+  {
+    useMask = true;
+  }
+
+  InputImageIteratorType  it (this->GetInput(), outputRegionForThread);
+  OutputImageIteratorType ot (this->GetOutput(), outputRegionForThread);
+  MaskIteratorType maskIt;
+  if ( useMask )
+  {
+    maskIt = MaskIteratorType( this->GetMask(), outputRegionForThread );
+    maskIt.GoToBegin();
+  }
   
   // support progress methods/callbacks
   ProgressReporter progress(this, threadId, outputRegionForThread.GetNumberOfPixels());
@@ -123,7 +178,20 @@ HistogramEqualizationImageFilter<TImage>
   // shift and scale the input pixels
   while (!it.IsAtEnd())
   {
-    ot.Set( lut[ static_cast<unsigned int>( it.Value() - tempmin ) ] );
+    bool validPixel = true;
+    if ( useMask )
+    {
+      validPixel = static_cast<bool>( maskIt.Value() );
+      ++maskIt;
+    }
+    if ( validPixel )
+    {
+      ot.Set( lut[ static_cast<unsigned int>( it.Value() - tempmin ) ] );
+    }
+    else
+    {
+      ot.Set( it.Value() );
+    }
     ++it;
 		++ot;
     progress.CompletedPixel();
