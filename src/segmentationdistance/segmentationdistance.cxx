@@ -4,6 +4,7 @@
 #include "itkImage.h"
 #include "itkExceptionObject.h"
 #include "itkImageFileReader.h"
+#include "itkConstantPadImageFilter.h"
 #include "itkSignedMaurerDistanceMapImageFilter.h"
 #include "itkBinaryThresholdImageFilter.h"
 #include "itkSubtractImageFilter.h"
@@ -405,6 +406,10 @@ void SegmentationDistance(
 
   typedef itk::ImageFileReader<InputImageType1>       ReaderType1;
   typedef itk::ImageFileReader<InputImageType2>       ReaderType2;
+  typedef itk::ConstantPadImageFilter<
+    InputImageType1, InputImageType1>                 PadderType1;
+  typedef itk::ConstantPadImageFilter<
+    InputImageType2, InputImageType2>                 PadderType2;
   typedef itk::AddImageFilter<
     ImageType, ImageType, ImageType>                  AdderType;
   typedef itk::SubtractImageFilter<
@@ -436,6 +441,8 @@ void SegmentationDistance(
   /** Instantiate filters */
   typename ReaderType1::Pointer reader1 = ReaderType1::New();
   typename ReaderType2::Pointer reader2 = ReaderType2::New();
+  typename PadderType1::Pointer padder1 = PadderType1::New();
+  typename PadderType2::Pointer padder2 = PadderType2::New();
   typename AdderType::Pointer adder = AdderType::New();
   typename AdderType::Pointer adderEdgeCartesian = AdderType::New();
   typename SubtracterType::Pointer subtracter = SubtracterType::New();
@@ -454,6 +461,24 @@ void SegmentationDistance(
   reader2->Update();
 	std::cout << "Input images read." << std::endl;
 
+  /** Pad them with zeros, to make sure the edges of objects facing the boundary
+   * of the image are counted as edges */
+  padder1->SetInput( reader1->GetOutput() );
+  padder2->SetInput( reader2->GetOutput() );
+  unsigned long padsize[Dimension];
+  for (unsigned int i = 0; i < Dimension; ++i)
+  {
+    padsize[i] = 1;
+  }
+  padder1->SetPadUpperBound(padsize);
+  padder1->SetPadLowerBound(padsize);
+  padder2->SetPadUpperBound(padsize);
+  padder2->SetPadLowerBound(padsize);
+  std::cout << "Padding input images with zeros..." << std::endl;
+  padder1->Update();
+  padder2->Update();
+  std::cout << "Done padding." << std::endl;
+
   /** Compute the distance */
   typename ImageType::Pointer accum1 = 0;
   typename ImageType::Pointer accum2 = 0;
@@ -463,23 +488,23 @@ void SegmentationDistance(
   std::vector<double> cor = mancor;
 
   SegmentationDistanceHelper<InputImageType1, InputImageType2, ImageType>(
-    reader1->GetOutput(), reader2->GetOutput(), accum1, accum2, dist, edge, 
+    padder1->GetOutput(), padder2->GetOutput(), accum1, accum2, dist, edge, 
     cor, samples, thetasize, phisize, cartesianonly, false);
 
   /** Compute 1 minus the input images */
   typename InputImageType1::Pointer invInputImage1 = InputImageType1::New();
   typename InputImageType2::Pointer invInputImage2 = InputImageType2::New();
-  invInputImage1->SetRegions( reader1->GetOutput()->GetLargestPossibleRegion() );
-  invInputImage2->SetRegions( reader2->GetOutput()->GetLargestPossibleRegion() );
-  invInputImage1->SetSpacing( reader1->GetOutput()->GetSpacing() );
-  invInputImage2->SetSpacing( reader2->GetOutput()->GetSpacing() );
-  invInputImage1->SetOrigin( reader1->GetOutput()->GetOrigin() );
-  invInputImage2->SetOrigin( reader2->GetOutput()->GetOrigin() );
+  invInputImage1->SetRegions( padder1->GetOutput()->GetLargestPossibleRegion() );
+  invInputImage2->SetRegions( padder2->GetOutput()->GetLargestPossibleRegion() );
+  invInputImage1->SetSpacing( padder1->GetOutput()->GetSpacing() );
+  invInputImage2->SetSpacing( padder2->GetOutput()->GetSpacing() );
+  invInputImage1->SetOrigin( padder1->GetOutput()->GetOrigin() );
+  invInputImage2->SetOrigin( padder2->GetOutput()->GetOrigin() );
   invInputImage1->Allocate();
   invInputImage2->Allocate();
 
-  ConstInputIteratorType1 init1( reader1->GetOutput(), reader1->GetOutput()->GetLargestPossibleRegion() );
-  ConstInputIteratorType2 init2( reader2->GetOutput(), reader2->GetOutput()->GetLargestPossibleRegion() );
+  ConstInputIteratorType1 init1( padder1->GetOutput(), padder1->GetOutput()->GetLargestPossibleRegion() );
+  ConstInputIteratorType2 init2( padder2->GetOutput(), padder2->GetOutput()->GetLargestPossibleRegion() );
   InputIteratorType1 invinit1( invInputImage1, invInputImage1->GetLargestPossibleRegion() );
   InputIteratorType2 invinit2( invInputImage2, invInputImage2->GetLargestPossibleRegion() );
   init1.GoToBegin();
