@@ -50,6 +50,7 @@ SUBDIRS(
  logicalimageoperator
  morphologicalclosingimage
  morphologicalopeningimage
+ replacevoxel
  rescaleintensityimagefilter
  resizeimage
  scripts
