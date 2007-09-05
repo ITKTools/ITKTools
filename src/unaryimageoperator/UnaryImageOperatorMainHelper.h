@@ -105,6 +105,8 @@ int CheckOps( std::string & ops, bool isInteger )
   operatorMap["ARCCOS"]   = false;
   operatorMap["ARCTAN"]   = false;
 
+  operatorMap["EQUAL"]    = false;
+
   /** Append with INT or DOUBLE if necessary. */
   if ( operatorMap.count( ops ) ) // the operator exists
   {
@@ -162,6 +164,8 @@ bool OperatorNeedsArgument( std::string & ops )
   operatorMap["ARCCOS"]  = false;
   operatorMap["ARCTAN"]  = false;
 
+  operatorMap["EQUAL"]   = true;
+
   return operatorMap[ ops ];
 
 } // end OperatorNeedsArgument
@@ -205,6 +209,8 @@ void CreateOutputFileName( const std::string & inputFileName, std::string & outp
   operatorMap["ARCSIN"] = PairPairType( true, PairType( false, true ) );
   operatorMap["ARCCOS"] = PairPairType( true, PairType( false, true ) );
   operatorMap["ARCTAN"] = PairPairType( true, PairType( false, true ) );
+
+  operatorMap["EQUAL"]  = PairPairType( false, PairType( true, false ) );
 
 	/** Get parts of file name. */
   std::string path =

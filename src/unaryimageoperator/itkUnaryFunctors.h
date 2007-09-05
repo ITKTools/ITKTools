@@ -36,6 +36,8 @@ itkUnaryFunctorMacro( RMODDOUBLE, vcl_fmod( static_cast<double>( A ), static_cas
 itkUnaryFunctorMacro( LMODINT,    static_cast<int>( this->m_Argument ) % static_cast<int>( A ) );
 itkUnaryFunctorMacro( LMODDOUBLE, vcl_fmod( static_cast<double>( this->m_Argument ), static_cast<double>( A ) ) );
 
+itkUnaryFunctorMacro( EQUAL,      A == this->m_Argument );
+
 /** Funtions that don't use m_Argument. */
 itkUnaryFunctorMacro( NEG,        -A );//==RMINUS 0-A
 itkUnaryFunctorMacro( SIGNINT,    vnl_math_sgn( A ) );
