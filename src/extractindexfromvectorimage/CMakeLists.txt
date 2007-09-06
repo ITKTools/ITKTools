@@ -12,7 +12,7 @@ ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxextractindexfromvectorimage extractindexfromvectorimage.cxx)
 
-TARGET_LINK_LIBRARIES(pxextractindexfromvectorimage ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxextractindexfromvectorimage pxcommon ITKIO ITKCommon)
 
 INSTALL_TARGETS(/. pxextractindexfromvectorimage)
 
