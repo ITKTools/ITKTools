@@ -178,7 +178,7 @@ void ExtractIndex(
 	typedef itk::ImageFileWriter< ImageType >						ImageWriterType;
 
 	/**	Read input image. */
-	ImageReaderType::Pointer reader = ImageReaderType::New();
+	typename ImageReaderType::Pointer reader = ImageReaderType::New();
 	reader->SetFileName( inputFileName );
 	
 	/** Extract index. */
