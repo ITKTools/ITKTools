@@ -17,7 +17,7 @@ if ( componentType == #type && Dimension == dim ) \
 
 //-------------------------------------------------------------------------------------
 
-/** Declare GaussianImageFilter. */
+/** Declare IntensityReplaceImageFilter. */
 template< class TOutputPixel, unsigned int NDimension >
 void IntensityReplaceImageFilter( const std::string & inputFileName,
   const std::string & outputFileName,
