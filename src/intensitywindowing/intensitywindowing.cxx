@@ -12,19 +12,22 @@
 #define run(function,type,dim) \
 if ( ComponentType == #type && Dimension == dim ) \
 { \
-    typedef itk::Image< type, dim > InputImageType; \
-    function< InputImageType >( inputFileName, outputFileName, window ); \
+  typedef itk::Image< type, dim > InputImageType; \
+  function< InputImageType >( inputFileName, outputFileName, window ); \
+  supported = true; \
 }
 
 //-------------------------------------------------------------------------------------
 
 /** Declare IntensityWindowing. */
 template< class InputImageType >
-void IntensityWindowing( std::string inputFileName, std::string outputFileName,
-	std::vector<double> window );
+void IntensityWindowing(
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+	const std::vector<double> & window );
 
 /** Declare PrintHelp. */
-void PrintHelp(void);
+void PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -120,24 +123,34 @@ int main( int argc, char **argv )
 	ReplaceUnderscoreWithSpace( ComponentType );
 
 	/** Run the program. */
+  bool supported = false;
 	try
 	{
-		run(IntensityWindowing,unsigned char,2);
-		run(IntensityWindowing,unsigned char,3);
-		run(IntensityWindowing,char,2);
-		run(IntensityWindowing,char,3);
-		run(IntensityWindowing,unsigned short,2);
-		run(IntensityWindowing,unsigned short,3);
-		run(IntensityWindowing,short,2);
-		run(IntensityWindowing,short,3);
-    run(IntensityWindowing,float,2);
-		run(IntensityWindowing,float,3);
+		run( IntensityWindowing, unsigned char, 2 );
+		run( IntensityWindowing, unsigned char, 3 );
+		run( IntensityWindowing, char, 2 );
+		run( IntensityWindowing, char, 3 );
+		run( IntensityWindowing, unsigned short, 2 );
+		run( IntensityWindowing, unsigned short, 3 );
+		run( IntensityWindowing, short, 2 );
+		run( IntensityWindowing, short, 3 );
+    run( IntensityWindowing, float, 2 );
+		run( IntensityWindowing, float, 3 );
 	}
 	catch( itk::ExceptionObject &e )
 	{
 		std::cerr << "Caught ITK exception: " << e << std::endl;
 		return 1;
 	}
+  if ( !supported )
+  {
+    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+    std::cerr <<
+      "pixel (component) type = " << ComponentType <<
+      " ; dimension = " << Dimension 
+      << std::endl;
+    return 1;
+  }
 	
 	/** End program. */
 	return 0;
@@ -150,8 +163,10 @@ int main( int argc, char **argv )
 	 */
 
 template< class InputImageType >
-void IntensityWindowing( std::string inputFileName, std::string outputFileName,
-	std::vector<double> window )
+void IntensityWindowing(
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+	const std::vector<double> & window )
 {
 	/** Typedefs. */
 	typedef itk::IntensityWindowingImageFilter<

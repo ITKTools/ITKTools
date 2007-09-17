@@ -14,17 +14,22 @@
 #define run(function,type,dim) \
 if ( ComponentTypeIn == #type && Dimension == dim ) \
 { \
-    typedef itk::Image< type, dim > InputImageType; \
-    function< InputImageType >( inputFileName, outputFileName, input1, input2, option, force ); \
+  typedef itk::Image< type, dim > InputImageType; \
+  function< InputImageType >( inputFileName, outputFileName, input1, input2, option, force ); \
+  supported = true; \
 }
 
 //-------------------------------------------------------------------------------------
 
 /** Declare CropImage. */
 template< class InputImageType >
-void CropImage( const std::string & inputFileName, const std::string & outputFileName,
-	const std::vector<int> & input1, const std::vector<int> & input2,
-  const unsigned int option, const bool force );
+void CropImage(
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+	const std::vector<int> & input1,
+  const std::vector<int> & input2,
+  const unsigned int option,
+  const bool force );
 
 /** Declare other functions. */
 void PrintHelp( void );
@@ -202,6 +207,7 @@ int main( int argc, char **argv )
 	}
 
 	/** Run the program. */
+  bool supported = false;
 	try
 	{
 		run( CropImage, unsigned char, 2 );
@@ -231,6 +237,15 @@ int main( int argc, char **argv )
 		std::cerr << "Caught ITK exception: " << e << std::endl;
 		return 1;
 	}
+  if ( !supported )
+  {
+    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+    std::cerr <<
+      "pixel (component) type = " << ComponentTypeIn <<
+      " ; dimension = " << Dimension 
+      << std::endl;
+    return 1;
+  }
 	
 	/** End program. */
 	return 0;

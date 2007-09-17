@@ -29,6 +29,7 @@ if ( Dimension == dim ) \
       outputImageFileName, \
       kernelName,          \
       stiffness );        \
+    supported = true; \
 }
 
 //-------------------------------------------------------------------------------------
@@ -135,16 +136,26 @@ int main( int argc, char **argv )
   }
  	
 	/** Run the program for 2D and 3D. */
+  bool supported = false;
 	try
 	{
-		run(DeformationFieldGenerator, 3);
-    run(DeformationFieldGenerator, 2);
+		run( DeformationFieldGenerator, 3 );
+    run( DeformationFieldGenerator, 2 );
   }
 	catch( itk::ExceptionObject &e )
 	{
 		std::cerr << "Caught ITK exception: " << e << std::endl;
 		return 1;
 	}
+  if ( !supported )
+  {
+    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+    std::cerr <<
+      "pixel (component) type = " << ComponentType <<
+      " ; dimension = " << Dimension 
+      << std::endl;
+    return 1;
+  }
 	
 	/** End program. */
 	return 0;

@@ -14,12 +14,13 @@
 #define run(function,type,dim,nrofcomp) \
 if ( ComponentType == #type && Dimension == dim && NumberOfComponents == nrofcomp) \
 { \
-    function< type, dim, nrofcomp >( inputFileName, maskFileName, histogramOutputFileName,\
+  function< type, dim, nrofcomp >( inputFileName, maskFileName, histogramOutputFileName,\
     numberOfBins ); \
+  supported = true; \
 }
 
 /** Declare PrintHelp, implemented at the bottom of this file. */
-void PrintHelp(void);
+void PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -82,20 +83,30 @@ int main( int argc, char ** argv )
 	ComponentType = "float";
 		
 	/** Run the program. */
+  bool supported = false;
 	try
 	{
-    run(StatisticsOnImage, float, 2, 1);
-    run(StatisticsOnImage, float, 2, 2);
-    run(StatisticsOnImage, float, 2, 3);
-    run(StatisticsOnImage, float, 3, 1);
-    run(StatisticsOnImage, float, 3, 2);
-    run(StatisticsOnImage, float, 3, 3);
+    run( StatisticsOnImage, float, 2, 1 );
+    run( StatisticsOnImage, float, 2, 2 );
+    run( StatisticsOnImage, float, 2, 3 );
+    run( StatisticsOnImage, float, 3, 1 );
+    run( StatisticsOnImage, float, 3, 2 );
+    run( StatisticsOnImage, float, 3, 3 );
   }
 	catch( itk::ExceptionObject &e )
 	{
 		std::cerr << "Caught ITK exception: " << e << std::endl;
 		return 1;
 	}
+  if ( !supported )
+  {
+    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+    std::cerr <<
+      "pixel (component) type = " << ComponentType <<
+      " ; dimension = " << Dimension 
+      << std::endl;
+    return 1;
+  }
 	
 	/** End program. */
 	return 0;

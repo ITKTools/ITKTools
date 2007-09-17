@@ -19,7 +19,8 @@ if ( componentType == #type && Dimension == dim ) \
 
 /** Declare IntensityReplaceImageFilter. */
 template< class TOutputPixel, unsigned int NDimension >
-void IntensityReplaceImageFilter( const std::string & inputFileName,
+void IntensityReplaceImageFilter(
+  const std::string & inputFileName,
   const std::string & outputFileName,
   const std::vector<std::string> & inValues,
   const std::vector<std::string> & outValues );

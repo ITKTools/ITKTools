@@ -12,18 +12,23 @@
 #define run(function,type,dim) \
 if ( ComponentType == #type && Dimension == dim ) \
 { \
-    typedef  itk::Image< type, dim >   InputImageType; \
-    function< InputImageType >( inputFileName, outputFileName, minimum, maximum ); \
+  typedef  itk::Image< type, dim >   InputImageType; \
+  function< InputImageType >( inputFileName, outputFileName, minimum, maximum ); \
+  supported = true; \
 }
 
 //-------------------------------------------------------------------------------------
 
 /** Declare RescaleIntensity. */
 template< class InputImageType >
-void RescaleIntensity( std::string inputFileName, std::string outputFileName, double minimum, double maximum );
+void RescaleIntensity(
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+  const double & minimum,
+  const double & maximum );
 
 /** Declare PrintHelp. */
-void PrintHelp(void);
+void PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -113,24 +118,34 @@ int main( int argc, char **argv )
 	ReplaceUnderscoreWithSpace( ComponentType );
 
 	/** Run the program. */
+  bool supported = false;
 	try
 	{
-		run(RescaleIntensity,unsigned char,2);
-		run(RescaleIntensity,unsigned char,3);
-		run(RescaleIntensity,char,2);
-		run(RescaleIntensity,char,3);
-		run(RescaleIntensity,unsigned short,2);
-		run(RescaleIntensity,unsigned short,3);
-		run(RescaleIntensity,short,2);
-		run(RescaleIntensity,short,3);
-    run(RescaleIntensity,float,2);
-		run(RescaleIntensity,float,3);
+		run( RescaleIntensity, unsigned char, 2 );
+		run( RescaleIntensity, unsigned char, 3 );
+		run( RescaleIntensity, char, 2 );
+		run( RescaleIntensity, char, 3 );
+		run( RescaleIntensity, unsigned short, 2 );
+		run( RescaleIntensity, unsigned short, 3 );
+		run( RescaleIntensity, short, 2 );
+		run( RescaleIntensity, short, 3 );
+    run( RescaleIntensity, float, 2 );
+		run( RescaleIntensity, float, 3 );
 	}
 	catch( itk::ExceptionObject &e )
 	{
 		std::cerr << "Caught ITK exception: " << e << std::endl;
 		return 1;
 	}
+  if ( !supported )
+  {
+    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+    std::cerr <<
+      "pixel (component) type = " << ComponentType <<
+      " ; dimension = " << Dimension 
+      << std::endl;
+    return 1;
+  }
 	
 	/** End program. */
 	return 0;
@@ -143,7 +158,11 @@ int main( int argc, char **argv )
  */
 
 template< class InputImageType >
-void RescaleIntensity( std::string inputFileName, std::string outputFileName, double minimum, double maximum )
+void RescaleIntensity(
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+  const double & minimum,
+  const double & maximum )
 {
 	/** TYPEDEF's. */
 	typedef itk::RescaleIntensityImageFilter< InputImageType, InputImageType >	RescalerType;

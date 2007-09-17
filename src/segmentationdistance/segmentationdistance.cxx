@@ -28,9 +28,10 @@
 #define run(function,type,dim) \
 if ( PixelType == #type && Dimension == dim ) \
 { \
-    typedef itk::Image< type, dim > InputImageType; \
-    function< InputImageType >( inputFileName1, inputFileName2, outputFileName,\
+  typedef itk::Image< type, dim > InputImageType; \
+  function< InputImageType >( inputFileName1, inputFileName2, outputFileName,\
     manualcor, samples, thetasize, phisize, cartesianonly ); \
+  supported = true; \
 }
 
 //-------------------------------------------------------------------------------------
@@ -48,7 +49,7 @@ void SegmentationDistance(
   bool cartesianonly );
 
 /** Declare PrintHelp. */
-void PrintHelp(void);
+void PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -126,18 +127,28 @@ int main( int argc, char **argv )
   std::string PixelType = "float";
 	
 	/** Get rid of the possible "_" in PixelType. */
-	ReplaceUnderscoreWithSpace(PixelType);
+	ReplaceUnderscoreWithSpace( PixelType );
 	
 	/** Run the program. */
+  bool supported = false;
 	try
 	{
-		run(SegmentationDistance, float, 3);
+		run( SegmentationDistance, float, 3 );
   }
 	catch( itk::ExceptionObject &e )
 	{
 		std::cerr << "Caught ITK exception: " << e << std::endl;
 		return 1;
 	}
+  if ( !supported )
+  {
+    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+    std::cerr <<
+      "pixel (component) type = " << PixelType <<
+      " ; dimension = " << Dimension 
+      << std::endl;
+    return 1;
+  }
 	
 	/** End program. */
 	return 0;

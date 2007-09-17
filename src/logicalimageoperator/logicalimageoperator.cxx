@@ -21,8 +21,9 @@
 #define run(function,type,dim) \
 if ( ComponentType == #type && Dimension == dim ) \
 { \
-    typedef itk::Image< type, dim > InputImageType; \
-    function< InputImageType >( inputFileName1, inputFileName2, outputFileName, ops ); \
+  typedef itk::Image< type, dim > InputImageType; \
+  function< InputImageType >( inputFileName1, inputFileName2, outputFileName, ops ); \
+  supported = true; \
 }
 
 //-------------------------------------------------------------------------------------
@@ -36,7 +37,7 @@ void LogicalImageOperator(
   const std::string & ops );
 
 /** Declare PrintHelp. */
-void PrintHelp(void);
+void PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -152,24 +153,34 @@ int main( int argc, char **argv )
 	}
 
 	/** Run the program. */
+  bool supported = false;
 	try
 	{
     /** NB: do not add floating point support, since logical operators are
      * not defined on those types */
-		run(LogicalImageOperator,unsigned char,2);
-		run(LogicalImageOperator,unsigned char,3);
-		run(LogicalImageOperator,char,2);
-		run(LogicalImageOperator,char,3);
-		run(LogicalImageOperator,unsigned short,2);
-		run(LogicalImageOperator,unsigned short,3);
-		run(LogicalImageOperator,short,2);
-		run(LogicalImageOperator,short,3);
+		run( LogicalImageOperator, unsigned char, 2 );
+		run( LogicalImageOperator, unsigned char, 3 );
+		run( LogicalImageOperator, char, 2 );
+		run( LogicalImageOperator, char, 3 );
+		run( LogicalImageOperator, unsigned short, 2 );
+		run( LogicalImageOperator, unsigned short, 3 );
+		run( LogicalImageOperator, short, 2 );
+		run( LogicalImageOperator, short, 3 );
 	}
 	catch( itk::ExceptionObject &e )
 	{
 		std::cerr << "Caught ITK exception: " << e << std::endl;
 		return 1;
 	}
+  if ( !supported )
+  {
+    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+    std::cerr <<
+      "pixel (component) type = " << ComponentType <<
+      " ; dimension = " << Dimension 
+      << std::endl;
+    return 1;
+  }
 	
 	/** End program. */
 	return 0;

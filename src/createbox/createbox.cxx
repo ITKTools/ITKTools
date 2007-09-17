@@ -12,8 +12,9 @@
 #define run(function,type,dim) \
 if ( PixelType == #type && Dimension == dim ) \
 { \
-    typedef itk::Image< type, dim > ImageType; \
-    function< ImageType >( outputFileName, size, spacing, center, radius, orientation ); \
+  typedef itk::Image< type, dim > ImageType; \
+  function< ImageType >( outputFileName, size, spacing, center, radius, orientation ); \
+  supported = true; \
 }
 
 //-------------------------------------------------------------------------------------
@@ -28,7 +29,7 @@ void CreateBox( std::string outputFileName,
   std::vector<double> orientation );
 
 /** Declare PrintHelp. */
-void PrintHelp(void);
+void PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -116,6 +117,7 @@ int main(int argc, char** argv)
   }
 
   /** Run the program. */
+  bool supported = false;
 	try
 	{
 		run( CreateBox, unsigned char, 2 );
@@ -137,6 +139,15 @@ int main(int argc, char** argv)
 		std::cerr << "Caught ITK exception: " << e << std::endl;
 		return 1;
 	}
+  if ( !supported )
+  {
+    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+    std::cerr <<
+      "pixel (component) type = " << PixelType <<
+      " ; dimension = " << Dimension 
+      << std::endl;
+    return 1;
+  }
 
  	/** End program. Return a value. */
 	return 0;

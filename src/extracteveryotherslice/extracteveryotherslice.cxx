@@ -13,19 +13,23 @@
 #define run(function,type,dim) \
 if ( PixelType == #type && Dimension == dim ) \
 { \
-    typedef itk::Image< type, dim > InputImageType; \
-    function< InputImageType >( inputFileName, outputFileName, everyOther, direction ); \
+  typedef itk::Image< type, dim > InputImageType; \
+  function< InputImageType >( inputFileName, outputFileName, everyOther, direction ); \
+  supported = true; \
 }
 
 //-------------------------------------------------------------------------------------
 
 /** Declare ExtractEveryOtherSlice. */
 template< class InputImageType >
-void ExtractEveryOtherSlice( std::string inputFileName, std::string outputFileName,
-	unsigned int everyOther, unsigned int direction );
+void ExtractEveryOtherSlice(
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+	const unsigned int & everyOther,
+  const unsigned int & direction );
 
 /** Declare PrintHelp. */
-void PrintHelp(void);
+void PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -92,18 +96,28 @@ int main( int argc, char **argv )
 	}
 
 	/** Run the program. */
+  bool supported = false;
 	try
 	{
-		run(ExtractEveryOtherSlice,unsigned char,3);
-		run(ExtractEveryOtherSlice,char,3);
-		run(ExtractEveryOtherSlice,unsigned short,3);
-		run(ExtractEveryOtherSlice,short,3);
+		run( ExtractEveryOtherSlice, unsigned char, 3 );
+		run( ExtractEveryOtherSlice, char, 3 );
+		run( ExtractEveryOtherSlice, unsigned short, 3 );
+		run( ExtractEveryOtherSlice, short, 3 );
 	}
 	catch( itk::ExceptionObject &e )
 	{
 		std::cerr << "Caught ITK exception: " << e << std::endl;
 		return 1;
 	}
+  if ( !supported )
+  {
+    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+    std::cerr <<
+      "pixel (component) type = " << PixelType <<
+      " ; dimension = " << Dimension 
+      << std::endl;
+    return 1;
+  }
 	
 	/** End program. */
 	return 0;
@@ -118,8 +132,11 @@ int main( int argc, char **argv )
 	 */
 
 template< class InputImageType >
-void ExtractEveryOtherSlice( std::string inputFileName, std::string outputFileName,
-	unsigned int everyOther, unsigned int direction )
+void ExtractEveryOtherSlice(
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+	const unsigned int & everyOther,
+  const unsigned int & direction )
 {
 	/** TYPEDEF's. */
 	typedef itk::ImageSliceConstIteratorWithIndex<
@@ -224,7 +241,7 @@ void ExtractEveryOtherSlice( std::string inputFileName, std::string outputFileNa
 	/**
 	 * ******************* PrintHelp *******************
 	 */
-void PrintHelp()
+void PrintHelp( void )
 {
 	std::cout << "Usage:" << std::endl << "pxextracteveryotherslice" << std::endl;
 	std::cout << "  -in      inputFilename" << std::endl;

@@ -10,16 +10,20 @@
 #define run(function,type,dim) \
 if ( PixelType == #type && Dimension == dim ) \
 { \
-    typedef itk::Image< type, dim > ImageType; \
-    function< ImageType >( fileName, size, spacing, origin ); \
+  typedef itk::Image< type, dim > ImageType; \
+  function< ImageType >( fileName, size, spacing, origin ); \
+  supported = true; \
 }
 
 //-------------------------------------------------------------------------------------
 
 /** Declare CreateZeroImage. */
 template< class InputImageType >
-void CreateZeroImage( std::string fileName, std::vector<unsigned int> size,
-  std::vector<double> spacing, std::vector<double> origin );
+void CreateZeroImage(
+  const std::string & fileName,
+  const std::vector<unsigned int> & size,
+  const std::vector<double> & spacing,
+  const std::vector<double> & origin );
 
 /** Declare PrintHelp. */
 void PrintHelp( void );
@@ -115,26 +119,36 @@ int main( int argc, char **argv )
 	}
 
 	/** Run the program. */
+  bool supported = false;
 	try
 	{
-		run(CreateZeroImage,unsigned char,2);
-		run(CreateZeroImage,unsigned char,3);
-		run(CreateZeroImage,char,2);
-		run(CreateZeroImage,char,3);
-		run(CreateZeroImage,unsigned short,2);
-		run(CreateZeroImage,unsigned short,3);
-		run(CreateZeroImage,short,2);
-		run(CreateZeroImage,short,3);
-    run(CreateZeroImage,float,2);
-		run(CreateZeroImage,float,3);
-		run(CreateZeroImage,double,2);
-		run(CreateZeroImage,double,3);
+		run( CreateZeroImage, unsigned char, 2 );
+		run( CreateZeroImage, unsigned char, 3 );
+		run( CreateZeroImage, char, 2 );
+		run( CreateZeroImage, char, 3 );
+		run( CreateZeroImage, unsigned short, 2 );
+		run( CreateZeroImage, unsigned short, 3 );
+		run( CreateZeroImage, short, 2 );
+		run( CreateZeroImage, short, 3 );
+    run( CreateZeroImage, float, 2 );
+		run( CreateZeroImage, float, 3 );
+		run( CreateZeroImage, double, 2 );
+		run( CreateZeroImage, double, 3 );
 	}
 	catch( itk::ExceptionObject &e )
 	{
 		std::cerr << "Caught ITK exception: " << e << std::endl;
 		return 1;
 	}
+  if ( !supported )
+  {
+    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+    std::cerr <<
+      "pixel (component) type = " << PixelType <<
+      " ; dimension = " << Dimension 
+      << std::endl;
+    return 1;
+  }
 	
 	/** End program. */
 	return 0;
@@ -149,8 +163,11 @@ int main( int argc, char **argv )
 	 */
 
 template< class ImageType >
-void CreateZeroImage( std::string fileName, std::vector<unsigned int> size,
-  std::vector<double> spacing, std::vector<double> origin )
+void CreateZeroImage(
+  const std::string & fileName,
+  const std::vector<unsigned int> & size,
+  const std::vector<double> & spacing,
+  const std::vector<double> & origin )
 {
 	/** Typedefs. */
 	typedef itk::ImageFileWriter< ImageType >			WriterType;
@@ -191,7 +208,7 @@ void CreateZeroImage( std::string fileName, std::vector<unsigned int> size,
 	/**
 	 * ******************* PrintHelp *******************
 	 */
-void PrintHelp()
+void PrintHelp( void )
 {
 	std::cout << "Usage:" << std::endl << "pxcreatezeroimage" << std::endl;
 	std::cout << "  -out     outputFilename" << std::endl;

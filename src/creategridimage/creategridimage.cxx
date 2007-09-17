@@ -11,7 +11,8 @@
 #define run( function, dim ) \
 if ( imageDimension == dim ) \
 { \
-    function< dim >( outputFileName, imageSize, imageSpacing, distance ); \
+  function< dim >( outputFileName, imageSize, imageSpacing, distance ); \
+  supported = true; \
 }
 
 //-------------------------------------------------------------------------------------
@@ -20,7 +21,8 @@ if ( imageDimension == dim ) \
 void PrintHelp( void );
 
 template<unsigned int Dimension>
-void CreateGridImage( const std::string & outputFileName,
+void CreateGridImage(
+  const std::string & outputFileName,
   const std::vector<unsigned int> & imageSize,
   const std::vector<float> & imageSpacing,
   const std::vector<unsigned int> & distance );
@@ -90,6 +92,7 @@ int main( int argc, char *argv[] )
   }
 
   /** Run the program. */
+  bool supported = false;
 	try
 	{
     run( CreateGridImage, 2 );
@@ -100,6 +103,14 @@ int main( int argc, char *argv[] )
 		std::cerr << "Caught ITK exception: " << e << std::endl;
 		return 1;
 	}
+  if ( !supported )
+  {
+    std::cerr << "ERROR: this dimension is not supported!" << std::endl;
+    std::cerr <<
+      " ; dimension = " << imageDimension 
+      << std::endl;
+    return 1;
+  }
 
   /** End program. */
 	return 0;
@@ -112,7 +123,8 @@ int main( int argc, char *argv[] )
  */
 
 template< unsigned int Dimension >
-void CreateGridImage( const std::string & outputFileName,
+void CreateGridImage(
+  const std::string & outputFileName,
   const std::vector<unsigned int> & imageSize,
   const std::vector<float> & imageSpacing,
   const std::vector<unsigned int> & distance )

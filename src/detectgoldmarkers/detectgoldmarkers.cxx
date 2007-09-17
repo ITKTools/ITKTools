@@ -18,16 +18,15 @@
 #include "itkNotImageFilter.h"
 
 
-
-
 //-------------------------------------------------------------------------------------
 
 /** run: A macro to call a function. */
 #define run(function,type,dim) \
 if ( PixelType == #type && Dimension == dim ) \
 { \
-    typedef itk::Image< type, dim > InputImageType; \
-    function< InputImageType >( inputFileName, outputFileName, sigma, threshold, radius ); \
+  typedef itk::Image< type, dim > InputImageType; \
+  function< InputImageType >( inputFileName, outputFileName, sigma, threshold, radius ); \
+  supported = true; \
 }
 
 //-------------------------------------------------------------------------------------
@@ -37,12 +36,12 @@ template< class InputImageType >
 void DetectGoldMarkers(
   const std::string & inputFileName,
 	const std::string & outputFileName,
-  double sigma,
-	double threshold,
-	unsigned int radius);
+  const double & sigma,
+	const double & threshold,
+	const unsigned int & radius );
 
 /** Declare PrintHelp. */
-void PrintHelp(void);
+void PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -93,15 +92,25 @@ int main( int argc, char **argv )
 	ReplaceUnderscoreWithSpace(PixelType);
 	
 	/** Run the program. */
+  bool supported = false;
 	try
 	{
-		run(DetectGoldMarkers,short,3);
+		run( DetectGoldMarkers, short, 3 );
 	}
 	catch( itk::ExceptionObject &e )
 	{
 		std::cerr << "Caught ITK exception: " << e << std::endl;
 		return 1;
 	}
+  if ( !supported )
+  {
+    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+    std::cerr <<
+      "pixel (component) type = " << PixelType <<
+      " ; dimension = " << Dimension 
+      << std::endl;
+    return 1;
+  }
 	
 	/** End program. */
 	return 0;
@@ -116,8 +125,12 @@ int main( int argc, char **argv )
 	 */
 
 template< class InputImageType >
-void DetectGoldMarkers( const std::string & inputFileName, const std::string & outputFileName, 
-											 double sigma, double threshold, unsigned int radius )
+void DetectGoldMarkers(
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+  const double & sigma,
+  const double & threshold,
+  const unsigned int & radius )
 {
 	
 	/** constants */
@@ -288,7 +301,7 @@ void DetectGoldMarkers( const std::string & inputFileName, const std::string & o
 	/**
 	 * ******************* PrintHelp *******************
 	 */
-void PrintHelp()
+void PrintHelp( void )
 {
 	std::cout << "This program creates a mask for mr_bffe images of the prostate that contains gold marker seeds." << std::endl;
 	std::cout << "The program computes the following:\n"

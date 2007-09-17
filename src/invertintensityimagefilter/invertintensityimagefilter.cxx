@@ -18,8 +18,9 @@
 #define run( function, type, dim ) \
 if ( ComponentTypeIn == #type && Dimension == dim ) \
 { \
-    typedef itk::Image< type, dim > InputImageType; \
-    function< InputImageType >( inputFileName, outputFileName ); \
+  typedef itk::Image< type, dim > InputImageType; \
+  function< InputImageType >( inputFileName, outputFileName ); \
+  supported = true; \
 }
 
 //-------------------------------------------------------------------------------------
@@ -91,6 +92,7 @@ int main( int argc, char ** argv )
   ReplaceUnderscoreWithSpace( ComponentTypeIn );
 	
 	/** Run the program. */
+  bool supported = false;
 	try
 	{
     /** 2D. */
@@ -115,6 +117,15 @@ int main( int argc, char ** argv )
 		std::cerr << "Caught ITK exception: " << e << std::endl;
 		return 1;
 	}
+  if ( !supported )
+  {
+    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+    std::cerr <<
+      "pixel (component) type = " << ComponentTypeIn <<
+      " ; dimension = " << Dimension 
+      << std::endl;
+    return 1;
+  }
 	
 	/** End program. */
 	return 0;

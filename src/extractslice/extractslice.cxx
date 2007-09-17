@@ -19,6 +19,7 @@
 if ( ComponentType == #type ) \
 { \
   function< type >( inputFileName, outputFileName, slicenumber, which_dimension ); \
+  supported = true; \
 }
 
 //-------------------------------------------------------------------------------------
@@ -28,11 +29,11 @@ template< class PixelType >
 void ExtractSlice(
   const std::string & inputFileName,
   const std::string & outputFileName,
-  unsigned int slicenumber,
-  unsigned int which_dimension );
+  const unsigned int & slicenumber,
+  const unsigned int & which_dimension );
 
 /** Declare PrintHelp function. */
-void PrintHelp(void);
+void PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -139,6 +140,7 @@ int main( int argc, char ** argv )
 	bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
 
   /** Run the program. */
+  bool supported = false;
   try
 	{
     run( ExtractSlice, unsigned char );
@@ -152,6 +154,15 @@ int main( int argc, char ** argv )
 		std::cerr << "Caught ITK exception: " << e << std::endl;
 		return 1;
 	}
+  if ( !supported )
+  {
+    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+    std::cerr <<
+      "pixel (component) type = " << ComponentType <<
+      " ; dimension = " << Dimension 
+      << std::endl;
+    return 1;
+  }
 
 	/** Return a value. */
 	return 0;
@@ -166,8 +177,8 @@ template< class PixelType >
 void ExtractSlice(
   const std::string & inputFileName,
   const std::string & outputFileName,
-  unsigned int slicenumber,
-  unsigned int which_dimension )
+  const unsigned int & slicenumber,
+  const unsigned int & which_dimension )
 {
 	/** Some typedef's. */
 	typedef itk::Image<PixelType, 3>							Image3DType;
@@ -216,7 +227,7 @@ void ExtractSlice(
 //-------------------------------------------------------------------------------------
 
 /** Define PrintHelp. */
-void PrintHelp(void)
+void PrintHelp( void )
 {
   std::cout << "pxextractslice extracts a 2D slice from a 3D image." << std::endl;
   std::cout << "Usage:  \npxextractslice" << std::endl;

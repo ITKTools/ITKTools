@@ -11,8 +11,9 @@
 #define run(function,type,dim) \
 if ( ComponentType == #type && Dimension == dim ) \
 { \
-    typedef itk::Image< type, dim > InputImageType; \
-    function< InputImageType >( inputFileName ); \
+  typedef itk::Image< type, dim > InputImageType; \
+  function< InputImageType >( inputFileName ); \
+  supported = true; \
 }
 
 //-------------------------------------------------------------------------------------
@@ -22,7 +23,7 @@ template< class InputImageType >
 void ComputeBoundingBox( std::string inputFileName );
 
 /** Declare other functions. */
-void PrintHelp(void);
+void PrintHelp( void );
 
 
 //-------------------------------------------------------------------------------------
@@ -104,6 +105,7 @@ int main( int argc, char **argv )
     std::cout << "WARNING: the image will be converted to short!" << std::endl;
   }
 	/** Run the program. */
+  bool supported = false;
 	try
 	{
 		run(ComputeBoundingBox, short, 3);
@@ -114,6 +116,15 @@ int main( int argc, char **argv )
 		std::cerr << "Caught ITK exception: " << e << std::endl;
 		return 1;
 	}
+  if ( !supported )
+  {
+    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+    std::cerr <<
+      "pixel (component) type = " << ComponentType <<
+      " ; dimension = " << Dimension 
+      << std::endl;
+    return 1;
+  }
 	
 	/** End program. */
 	return 0;

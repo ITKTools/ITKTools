@@ -18,12 +18,14 @@
 if ( ComponentType == #type ) \
 { \
   function< type >( inputFileNames, outputFileName, zspacing ); \
+  supported = true; \
 }
 
 #define runB(function,type,dim) \
 if ( ComponentType == #type && Dimension == dim ) \
 { \
   function< type, dim >( inputFileNames, outputFileName, layout, defaultvalue ); \
+  supported = true; \
 }
 
 //-------------------------------------------------------------------------------------
@@ -33,7 +35,7 @@ template< class PixelType >
 void TileImages2D3D(
   const std::vector<std::string> & inputFileNames,
   const std::string & outputFileName,
-  double zspacing );
+  const double & zspacing );
 
 /** Declare TileImages. */
 template< class PixelType, unsigned int Dimension >
@@ -41,10 +43,10 @@ void TileImages(
   const std::vector<std::string> & inputFileNames,
   const std::string & outputFileName,
   const std::vector<unsigned int> & layout,
-  double defaultvalue );
+  const double & defaultvalue );
 
 /** Declare PrintHelp function. */
-void PrintHelp(void);
+void PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -141,7 +143,8 @@ int main( int argc, char ** argv )
 	/** Get rid of the possible "_" in ComponentType. */
 	ReplaceUnderscoreWithSpace( ComponentType );
 	
-	/** Run the program. */	
+	/** Run the program. */
+  bool supported = false;
   try
 	{
     if ( !retly )
@@ -173,6 +176,15 @@ int main( int argc, char ** argv )
 		std::cerr << "Caught ITK exception: " << e << std::endl;
 		return 1;
 	}
+  if ( !supported )
+  {
+    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+    std::cerr <<
+      "pixel (component) type = " << ComponentType <<
+      " ; dimension = " << Dimension 
+      << std::endl;
+    return 1;
+  }
 
 	/** Return a value. */
 	return 0;
@@ -186,7 +198,7 @@ template< class PixelType >
 void TileImages2D3D(
   const std::vector<std::string> & inputFileNames,
   const std::string & outputFileName,
-  double zspacing )
+  const double & zspacing )
 {
  	/** Define image type. */
 	const unsigned int Dimension = 3;
@@ -236,7 +248,7 @@ void TileImages(
   const std::vector<std::string> & inputFileNames,
   const std::string & outputFileName,
   const std::vector<unsigned int> & layout,
-  double defaultvalue )
+  const double & defaultvalue )
 {
 	/** Some typedef's. */
   typedef itk::Image<PixelType, Dimension>						ImageType;
@@ -283,7 +295,7 @@ void TileImages(
 //-------------------------------------------------------------------------------------
 
 /** Define PrintHelp. */
-void PrintHelp(void)
+void PrintHelp( void )
 {
   std::cout << "pxtileimages EITHER tiles a stack of 2D images into a 3D image," << std::endl;
   std::cout << "OR tiles nD images to form another nD image." << std::endl;

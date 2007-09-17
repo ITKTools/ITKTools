@@ -13,12 +13,13 @@
 if ( ComponentType == #type && Dimension == dim ) \
 { \
   function< type, dim >( inputFileName, outputFileName, ops ); \
+  supported = true; \
 }
 
 //-------------------------------------------------------------------------------------
 
 /** Declare PrintHelp. */
-void PrintHelp(void);
+void PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -96,16 +97,26 @@ int main( int argc, char **argv )
 	ReplaceUnderscoreWithSpace( ComponentType );
 	
 	/** Run the program. */
+  bool supported = false;
 	try
 	{
-    run(DeformationFieldOperator,float,2);
-    run(DeformationFieldOperator,float,3);
+    run( DeformationFieldOperator, float, 2 );
+    run( DeformationFieldOperator, float, 3 );
 	}
 	catch( itk::ExceptionObject &e )
 	{
 		std::cerr << "Caught ITK exception: " << e << std::endl;
 		return 1;
 	}
+  if ( !supported )
+  {
+    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+    std::cerr <<
+      "pixel (component) type = " << ComponentType <<
+      " ; dimension = " << Dimension 
+      << std::endl;
+    return 1;
+  }
 	
 	/** End program. */
 	return 0;

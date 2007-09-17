@@ -13,19 +13,22 @@
 #define run(function,type,dim) \
 if ( PixelType == #type && Dimension == dim ) \
 { \
-    typedef itk::Image< type, dim > InputImageType; \
-    function< InputImageType >( inputFileName, outputFileName, Radius ); \
+  typedef itk::Image< type, dim > InputImageType; \
+  function< InputImageType >( inputFileName, outputFileName, Radius ); \
+  supported = true; \
 }
 
 //-------------------------------------------------------------------------------------
 
 /** Declare GrayscaleMorphologicalOpening. */
 template< class InputImageType >
-void GrayscaleMorphologicalOpening( std::string inputFileName, std::string outputFileName,
-	std::vector<unsigned int> radius );
+void GrayscaleMorphologicalOpening(
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+	const std::vector<unsigned int> & radius );
 
 /** Declare PrintHelp. */
-void PrintHelp(void);
+void PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -105,22 +108,32 @@ int main( int argc, char *argv[] )
 	}
 
 	/** Run the program. */
+  bool supported = false;
 	try
 	{
-		run(GrayscaleMorphologicalOpening,unsigned char,2);
-		run(GrayscaleMorphologicalOpening,unsigned char,3);
-		run(GrayscaleMorphologicalOpening,char,2);
-		run(GrayscaleMorphologicalOpening,char,3);
-		run(GrayscaleMorphologicalOpening,unsigned short,2);
-		run(GrayscaleMorphologicalOpening,unsigned short,3);
-		run(GrayscaleMorphologicalOpening,short,2);
-		run(GrayscaleMorphologicalOpening,short,3);
+		run( GrayscaleMorphologicalOpening, unsigned char, 2 );
+		run( GrayscaleMorphologicalOpening, unsigned char, 3 );
+		run( GrayscaleMorphologicalOpening, char, 2 );
+		run( GrayscaleMorphologicalOpening, char, 3 );
+		run( GrayscaleMorphologicalOpening, unsigned short, 2 );
+		run( GrayscaleMorphologicalOpening, unsigned short, 3 );
+		run( GrayscaleMorphologicalOpening, short, 2 );
+		run( GrayscaleMorphologicalOpening, short, 3 );
 	}
 	catch( itk::ExceptionObject &e )
 	{
 		std::cerr << "Caught ITK exception: " << e << std::endl;
 		return 1;
 	}
+  if ( !supported )
+  {
+    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+    std::cerr <<
+      "pixel (component) type = " << PixelType <<
+      " ; dimension = " << Dimension 
+      << std::endl;
+    return 1;
+  }
 	
 	/** End program. */
 	return 0;
@@ -133,8 +146,10 @@ int main( int argc, char *argv[] )
 	 */
 
 template< class InputImageType >
-void GrayscaleMorphologicalOpening( std::string inputFileName, std::string outputFileName,
-	std::vector<unsigned int> radius )
+void GrayscaleMorphologicalOpening(
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+	const std::vector<unsigned int> & radius )
 {
 	/** Typedefs. */
 	typedef itk::ImageFileReader< InputImageType >			ReaderType;
@@ -186,7 +201,7 @@ void GrayscaleMorphologicalOpening( std::string inputFileName, std::string outpu
 	/**
 	 * ******************* PrintHelp *******************
 	 */
-void PrintHelp()
+void PrintHelp( void )
 {
 	std::cout << "Usage:" << std::endl << "pxmorphologicalopeningimage" << std::endl;
 	std::cout << "  -in      inputFilename" << std::endl;

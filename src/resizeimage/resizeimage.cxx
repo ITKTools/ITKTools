@@ -15,20 +15,24 @@
 #define run(function,type,dim) \
 if ( PixelType == #type && Dimension == dim ) \
 { \
-    typedef itk::Image< type, dim > InputImageType; \
-    function< InputImageType >( inputFileName, outputFileName, factorOrSpacing, isFactor, interpolationOrder ); \
+  typedef itk::Image< type, dim > InputImageType; \
+  function< InputImageType >( inputFileName, outputFileName, factorOrSpacing, isFactor, interpolationOrder ); \
+  supported = true; \
 }
 
 //-------------------------------------------------------------------------------------
 
 /** Declare ResizeImage. */
 template< class InputImageType >
-void ResizeImage( std::string inputFileName, std::string outputFileName,
-	std::vector<double> factorOrSpacing, bool isFactor,
-  unsigned int interpolationOrder );
+void ResizeImage(
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+	const std::vector<double> & factorOrSpacing,
+  const bool & isFactor,
+  const unsigned int & interpolationOrder );
 
 /** Declare PrintHelp. */
-void PrintHelp(void);
+void PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -131,6 +135,7 @@ int main( int argc, char **argv )
 	}
 
 	/** Run the program. */
+  bool supported = false;
 	try
 	{
 		run( ResizeImage, unsigned char, 2 );
@@ -161,6 +166,15 @@ int main( int argc, char **argv )
 		std::cerr << "Caught ITK exception: " << e << std::endl;
 		return 1;
 	}
+  if ( !supported )
+  {
+    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+    std::cerr <<
+      "pixel (component) type = " << PixelType <<
+      " ; dimension = " << Dimension 
+      << std::endl;
+    return 1;
+  }
 	
 	/** End program. */
 	return 0;
@@ -175,9 +189,12 @@ int main( int argc, char **argv )
 	 */
 
 template< class InputImageType >
-void ResizeImage( std::string inputFileName, std::string outputFileName,
-	std::vector<double> factorOrSpacing, bool isFactor,
-  unsigned int interpolationOrder )
+void ResizeImage(
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+	const std::vector<double> & factorOrSpacing,
+  const bool & isFactor,
+  const unsigned int & interpolationOrder )
 {
 	/** Typedefs. */
 	typedef itk::ResampleImageFilter< InputImageType, InputImageType >	ResamplerType;
@@ -254,13 +271,13 @@ void ResizeImage( std::string inputFileName, std::string outputFileName,
 	writer->SetInput( resampler->GetOutput() );
 	writer->Update();
 
-} // end ResizeImage
+} // end ResizeImage()
 
 
 	/**
 	 * ******************* PrintHelp *******************
 	 */
-void PrintHelp()
+void PrintHelp( void )
 {
 	std::cout << "Usage:" << std::endl << "pxresizeimage" << std::endl;
 	std::cout << "  -in      inputFilename" << std::endl;
@@ -272,5 +289,5 @@ void PrintHelp()
 	std::cout << "  [-pt]    pixelType, default short" << std::endl;
 	std::cout << "One of -f and -sp should be given." << std::endl;
 	std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
-} // end PrintHelp
+} // end PrintHelp()
 

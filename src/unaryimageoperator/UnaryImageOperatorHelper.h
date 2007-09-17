@@ -19,9 +19,9 @@
 #define run(function,typeIn,typeOut,dim) \
 if ( ComponentTypeIn == #typeIn && ComponentTypeOut == #typeOut && inputDimension == dim ) \
 { \
-    typedef itk::Image< typeIn, dim > InputImageType; \
-    typedef itk::Image< typeOut, dim > OutputImageType; \
-    function< InputImageType, OutputImageType >( inputFileName, outputFileName, ops, argument ); \
+  typedef itk::Image< typeIn, dim > InputImageType; \
+  typedef itk::Image< typeOut, dim > OutputImageType; \
+  function< InputImageType, OutputImageType >( inputFileName, outputFileName, ops, argument ); \
 }
 
 //-------------------------------------------------------------------------------------

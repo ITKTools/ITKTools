@@ -11,16 +11,18 @@
 #define run( function, type, dim ) \
 if ( ComponentTypeIn == #type && Dimension == dim ) \
 { \
-    typedef itk::Image< type, dim >       InputImageType; \
-    typedef itk::VectorImage< type, dim > OutputImageType; \
-    function< InputImageType, OutputImageType >( inputFileNames, outputFileName ); \
+  typedef itk::Image< type, dim >       InputImageType; \
+  typedef itk::VectorImage< type, dim > OutputImageType; \
+  function< InputImageType, OutputImageType >( inputFileNames, outputFileName ); \
+  supported = true; \
 }
 
 //-------------------------------------------------------------------------------------
 
 /** Declare ComposeVectorImage. */
 template< class InputImageType, class OutputImageType >
-void ComposeVectorImage( const std::vector<std::string> & inputFileNames,
+void ComposeVectorImage(
+  const std::vector<std::string> & inputFileNames,
   const std::string & outputFileName );
 
 /** Declare PrintHelp. */
@@ -90,6 +92,7 @@ int main( int argc, char ** argv )
   ReplaceUnderscoreWithSpace( ComponentTypeIn );
 
   /** Run the program. */
+  bool supported = false;
 	try
 	{
     run( ComposeVectorImage, char, 2 );
@@ -119,6 +122,15 @@ int main( int argc, char ** argv )
 		std::cerr << "Caught ITK exception: " << e << std::endl;
 		return 1;
 	}
+  if ( !supported )
+  {
+    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+    std::cerr <<
+      "pixel (component) type = " << ComponentTypeIn <<
+      " ; dimension = " << Dimension 
+      << std::endl;
+    return 1;
+  }
 	
 	/** End program. */
 	return 0;

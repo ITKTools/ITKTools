@@ -12,8 +12,9 @@
 #define run( function, type, dim ) \
 if ( ComponentTypeIn == #type && Dimension == dim ) \
 { \
-    typedef itk::Image< type, dim > InputImageType; \
-    function< InputImageType >( inputFileName, outputFileName, threshold1, threshold2 ); \
+  typedef itk::Image< type, dim > InputImageType; \
+  function< InputImageType >( inputFileName, outputFileName, threshold1, threshold2 ); \
+  supported = true; \
 }
 
 //-------------------------------------------------------------------------------------
@@ -23,8 +24,8 @@ template< class InputImageType >
 void ThresholdImage(
   const std::string & inputFileName,
 	const std::string & outputFileName,
-	double threshold1,
-	double threshold2 );
+	const double & threshold1,
+	const double & threshold2 );
 
 /** Declare PrintHelp. */
 void PrintHelp( void );
@@ -93,6 +94,7 @@ int main( int argc, char **argv )
   ReplaceUnderscoreWithSpace( ComponentTypeIn );
 	
 	/** Run the program. */
+  bool supported = false;
 	try
 	{
     /** 2D. */
@@ -117,6 +119,15 @@ int main( int argc, char **argv )
 		std::cerr << "Caught ITK exception: " << e << std::endl;
 		return 1;
 	}
+  if ( !supported )
+  {
+    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+    std::cerr <<
+      "pixel (component) type = " << ComponentTypeIn <<
+      " ; dimension = " << Dimension 
+      << std::endl;
+    return 1;
+  }
 	
 	/** End program. */
 	return 0;
@@ -131,9 +142,11 @@ int main( int argc, char **argv )
 	 */
 
 template< class InputImageType >
-void ThresholdImage( const std::string & inputFileName,
-  const std::string & outputFileName,
-  double threshold1, double threshold2 )
+void ThresholdImage(
+  const std::string & inputFileName,
+	const std::string & outputFileName,
+	const double & threshold1,
+	const double & threshold2 )
 {
 	/** Typedef's. */
   typedef typename InputImageType::PixelType          InputPixelType;

@@ -11,22 +11,24 @@
 #define run(function,type,dim) \
 if ( PixelType == #type && Dimension == dim ) \
 { \
-    typedef itk::Image< type, dim > ImageType; \
-    function< ImageType >( outputFileName, size, spacing, center, radius ); \
+  typedef itk::Image< type, dim > ImageType; \
+  function< ImageType >( outputFileName, size, spacing, center, radius ); \
+  supported = true; \
 }
 
 //-------------------------------------------------------------------------------------
 
 /** Declare CreateSphere. */
 template< class ImageType >
-void CreateSphere( std::string outputFileName,
-  std::vector<unsigned int> size,
-  std::vector<double> spacing,
-  std::vector<double> center,
-	double radius );
+void CreateSphere(
+  const std::string & outputFileName,
+  const std::vector<unsigned int> & size,
+  const std::vector<double> & spacing,
+  const std::vector<double> & center,
+	const double & radius );
 
 /** Declare PrintHelp. */
-void PrintHelp(void);
+void PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -91,6 +93,7 @@ int main( int argc, char *argv[] )
 	ReplaceUnderscoreWithSpace( PixelType );
 
   /** Run the program. */
+  bool supported = false;
 	try
 	{
     run( CreateSphere, unsigned char, 2 );
@@ -112,6 +115,15 @@ int main( int argc, char *argv[] )
 		std::cerr << "Caught ITK exception: " << e << std::endl;
 		return 1;
 	}
+  if ( !supported )
+  {
+    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+    std::cerr <<
+      "pixel (component) type = " << PixelType <<
+      " ; dimension = " << Dimension 
+      << std::endl;
+    return 1;
+  }
 
  	/** End program. Return a value. */
 	return 0;
@@ -123,11 +135,12 @@ int main( int argc, char *argv[] )
 	 */
 
 template< class ImageType >
-void CreateSphere( std::string filename,
-  std::vector<unsigned int> size,
-  std::vector<double> spacing,
-  std::vector<double> center,
-	double radius )
+void CreateSphere(
+  const std::string & filename,
+  const std::vector<unsigned int> & size,
+  const std::vector<double> & spacing,
+  const std::vector<double> & center,
+	const double & radius )
 {
   /** Typedefs. */
   const unsigned int Dimension = ImageType::ImageDimension;
@@ -194,7 +207,7 @@ void CreateSphere( std::string filename,
 	/**
 	 * ******************* PrintHelp *******************
 	 */
-void PrintHelp()
+void PrintHelp( void )
 {
 	std::cout << "Usage:" << std::endl << "pxcreatesphere" << std::endl;
 	std::cout << "  -out     outputFilename" << std::endl;

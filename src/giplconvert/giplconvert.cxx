@@ -12,18 +12,21 @@
 #define run(function,type,dim) \
 if ( ComponentType == #type && Dimension == dim ) \
 { \
-    typedef itk::Image< type, dim > InputImageType; \
-    function< InputImageType >( inputFileName, outputFileName); \
+  typedef itk::Image< type, dim > InputImageType; \
+  function< InputImageType >( inputFileName, outputFileName); \
+  supported = true; \
 }
 
 //-------------------------------------------------------------------------------------
 
 /** Declare CropImage. */
 template< class InputImageType >
-void GiplConvert( std::string inputFileName, std::string outputFileName);
+void GiplConvert(
+  const std::string & inputFileName,
+  const std::string & outputFileName );
 
 /** Declare other functions. */
-void PrintHelp(void);
+void PrintHelp( void );
 
 
 //-------------------------------------------------------------------------------------
@@ -157,18 +160,28 @@ int main( int argc, char **argv )
 	ReplaceUnderscoreWithSpace( ComponentType );
 
 	/** Run the program. */
+  bool supported = false;
 	try
 	{
-		run(GiplConvert, short, 3);
-		run(GiplConvert, unsigned short, 3);
-		run(GiplConvert, char, 3);
-		run(GiplConvert, unsigned char, 3);
+		run( GiplConvert, short, 3 );
+		run( GiplConvert, unsigned short, 3 );
+		run( GiplConvert, char, 3 );
+		run( GiplConvert, unsigned char, 3 );
   }
 	catch( itk::ExceptionObject &e )
 	{
 		std::cerr << "Caught ITK exception: " << e << std::endl;
 		return 1;
 	}
+  if ( !supported )
+  {
+    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+    std::cerr <<
+      "pixel (component) type = " << ComponentType <<
+      " ; dimension = " << Dimension 
+      << std::endl;
+    return 1;
+  }
 	
 	/** End program. */
 	return 0;
@@ -181,7 +194,9 @@ int main( int argc, char **argv )
 	 */
 
 template< class InputImageType >
-void GiplConvert( std::string inputFileName, std::string outputFileName)
+void GiplConvert(
+  const std::string & inputFileName,
+  const std::string & outputFileName )
 {
 	/** Typedefs. */
 	typedef itk::ImageFileReader< InputImageType >			ReaderType;

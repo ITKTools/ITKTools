@@ -14,19 +14,23 @@
 #define run(function,type,dim) \
 if ( ComponentType == #type && Dimension == dim ) \
 { \
-    typedef itk::Image< type, dim > InputImageType; \
-    function< InputImageType >( inputFileName, outputFileName, Radius, boundaryCondition ); \
+  typedef itk::Image< type, dim > InputImageType; \
+  function< InputImageType >( inputFileName, outputFileName, Radius, boundaryCondition ); \
+  supported = true; \
 }
 
 //-------------------------------------------------------------------------------------
 
 /** Declare ErodeImage. */
 template< class InputImageType >
-void ErodeImage( const std::string & inputFileName, const std::string & outputFileName,
-                std::vector<unsigned int> radius, const std::string & boundaryCondition );
+void ErodeImage(
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+  const std::vector<unsigned int> & radius,
+  const std::string & boundaryCondition );
 
 /** Declare PrintHelp. */
-void PrintHelp(void);
+void PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -143,22 +147,32 @@ int main( int argc, char *argv[] )
 	}
   
 	/** Run the program. */
+  bool supported = false;
 	try
 	{
-		run(ErodeImage,unsigned char,2);
-		run(ErodeImage,unsigned char,3);
-		run(ErodeImage,char,2);
-		run(ErodeImage,char,3);
-		run(ErodeImage,unsigned short,2);
-		run(ErodeImage,unsigned short,3);
-		run(ErodeImage,short,2);
-		run(ErodeImage,short,3);
+		run( ErodeImage, unsigned char, 2 );
+		run( ErodeImage, unsigned char, 3 );
+		run( ErodeImage, char, 2 );
+		run( ErodeImage, char, 3 );
+		run( ErodeImage, unsigned short, 2 );
+		run( ErodeImage, unsigned short, 3 );
+		run( ErodeImage, short, 2 );
+		run( ErodeImage, short, 3 );
 	}
 	catch( itk::ExceptionObject &e )
 	{
 		std::cerr << "Caught ITK exception: " << e << std::endl;
 		return 1;
 	}
+  if ( !supported )
+  {
+    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+    std::cerr <<
+      "pixel (component) type = " << ComponentType <<
+      " ; dimension = " << Dimension 
+      << std::endl;
+    return 1;
+  }
 	
 	/** End program. */
 	return 0;
@@ -174,7 +188,7 @@ template< class InputImageType >
 void ErodeImage( 
   const std::string & inputFileName,
   const std::string & outputFileName,
-	std::vector<unsigned int> radius,
+	const std::vector<unsigned int> & radius,
   const std::string & boundaryCondition )
 {
 	/** Typedefs. */
@@ -247,7 +261,7 @@ void ErodeImage(
 	/**
 	 * ******************* PrintHelp *******************
 	 */
-void PrintHelp()
+void PrintHelp( void )
 {
 	std::cout << "Usage:" << std::endl << "pxerodeimage" << std::endl;
 	std::cout << "  -in      inputFilename" << std::endl;
