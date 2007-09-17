@@ -16,11 +16,12 @@
 if ( ComponentTypeIn1 == #typeIn1 && ComponentTypeIn2 == #typeIn2 \
   && ComponentTypeOut == #typeOut && inputDimension == dim ) \
 { \
-    typedef itk::Image< typeIn1, dim > InputImage1Type; \
-    typedef itk::Image< typeIn2, dim > InputImage2Type; \
-    typedef itk::Image< typeOut, dim > OutputImageType; \
-    function< InputImage1Type, InputImage2Type, OutputImageType >( \
-      inputFileNames[ 0 ], inputFileNames[ 1 ], outputFileName, ops, argument ); \
+  typedef itk::Image< typeIn1, dim > InputImage1Type; \
+  typedef itk::Image< typeIn2, dim > InputImage2Type; \
+  typedef itk::Image< typeOut, dim > OutputImageType; \
+  function< InputImage1Type, InputImage2Type, OutputImageType >( \
+    inputFileNames[ 0 ], inputFileNames[ 1 ], outputFileName, ops, argument ); \
+  supported = true; \
 }
 
 	/**

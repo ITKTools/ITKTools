@@ -92,6 +92,7 @@ int main( int argc, char **argv )
   if ( !retCOA ) return 1;
 
   /** Run the program. */
+  bool supported = false;
   try
 	{
     run( BinaryImageOperator, long, long, char, 2 );
@@ -122,6 +123,15 @@ int main( int argc, char **argv )
 		std::cerr << "Caught ITK exception: " << e << std::endl;
 		return 1;
 	}
+  if ( !supported )
+  {
+    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+    std::cerr <<
+      "pixel (component) type = " << ComponentTypeOut <<
+      " ; dimension = " << inputDimension 
+      << std::endl;
+    return 1;
+  }
 		
 	/** End program. */
 	return 0;
