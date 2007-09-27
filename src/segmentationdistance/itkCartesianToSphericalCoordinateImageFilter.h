@@ -36,22 +36,20 @@ class CartesianToSphericalCoordinateImageFilter :
 {
 public:
   /** Standard class typedefs. */
-  typedef CartesianToSphericalCoordinateImageFilter         Self;
+  typedef CartesianToSphericalCoordinateImageFilter     Self;
   typedef ImageToImageFilter<TInputImage,TOutputImage>  Superclass;
-  typedef SmartPointer<Self>        Pointer;
-  typedef SmartPointer<const Self>  ConstPointer;
+  typedef SmartPointer<Self>                            Pointer;
+  typedef SmartPointer<const Self>                      ConstPointer;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);  
+  itkNewMacro( Self );
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(CartesianToSphericalCoordinateImageFilter, ImageToImageFilter);
+  itkTypeMacro( CartesianToSphericalCoordinateImageFilter, ImageToImageFilter );
 
   /** Number of dimensions. */
-  itkStaticConstMacro(ImageDimension, unsigned int,
-                      TOutputImage::ImageDimension);
-  itkStaticConstMacro(InputImageDimension, unsigned int,
-                      TInputImage::ImageDimension);
+  itkStaticConstMacro( ImageDimension, unsigned int, TOutputImage::ImageDimension );
+  itkStaticConstMacro( InputImageDimension, unsigned int, TInputImage::ImageDimension );
   
   typedef TInputImage                           InputImageType;
   typedef TOutputImage                          OutputImageType;
@@ -70,13 +68,13 @@ public:
   typedef typename OutputImageType::IndexType   IndexType;
   typedef ContinuousIndex<
     double,
-    itkGetStaticConstMacro(InputImageDimension)> ContinuousIndexType;
+    itkGetStaticConstMacro( InputImageDimension )> ContinuousIndexType;
   typedef typename OutputImageType::PointType   PointType;
   typedef typename OutputImageType::SpacingType SpacingType;
   typedef typename OutputImageType::PointType   OriginPointType;
   typedef Vector<
     double, 
-    itkGetStaticConstMacro(InputImageDimension)> VectorType;
+    itkGetStaticConstMacro( InputImageDimension )> VectorType;
   typedef typename PointType::CoordRepType      CoordRepType;
 
   typedef typename OutputImageType::PixelType   OutputPixelType;
@@ -85,7 +83,7 @@ public:
     NumericTraits<InputPixelType>::RealType     InternalPixelType;
   typedef Image<
     InternalPixelType,
-    itkGetStaticConstMacro(InputImageDimension)> InternalImageType;
+    itkGetStaticConstMacro( InputImageDimension )> InternalImageType;
   
   /** The random number generator used to generate random coordinates. */
   typedef itk::Statistics::MersenneTwisterRandomVariateGenerator RandomGeneratorType;
@@ -95,27 +93,27 @@ public:
   
   /** Set/Get an interpolator; not mandatory. Implicitly, nearest
    * neighbor interpolation is used if you don't set it.  */
-  itkSetObjectMacro(Interpolator, InterpolatorType);
-  itkGetObjectMacro(Interpolator, InterpolatorType);
+  itkSetObjectMacro( Interpolator, InterpolatorType );
+  itkGetObjectMacro( Interpolator, InterpolatorType );
 
   /** Set/Get a mask. Only that part of the input image is transformed
    * that has a nonzero mask-value.
    * It is assumed that the supplied mask image has the same size as the
    * the input image */
-  itkSetObjectMacro(MaskImage, MaskImageType);
-  itkGetObjectMacro(MaskImage, MaskImageType);
+  itkSetObjectMacro( MaskImage, MaskImageType );
+  itkGetObjectMacro( MaskImage, MaskImageType );
 
   /** Set/Get the size of the output image. [r, theta, phi]. */
   itkSetMacro( OutputSize, SizeType );
   itkGetConstReferenceMacro( OutputSize, SizeType );
 
   /** Set/Get the center of rotation */
-  itkSetMacro(CenterOfRotation, PointType);
-  itkGetConstReferenceMacro( CenterOfRotation, PointType);
+  itkSetMacro( CenterOfRotation, PointType );
+  itkGetConstReferenceMacro( CenterOfRotation, PointType );
 
   /** Set the maximum number of random samples per pixel */
-  itkSetMacro(MaximumNumberOfSamplesPerVoxel, unsigned int);
-  itkGetConstMacro(MaximumNumberOfSamplesPerVoxel, unsigned int);
+  itkSetMacro( MaximumNumberOfSamplesPerVoxel, unsigned int );
+  itkGetConstMacro( MaximumNumberOfSamplesPerVoxel, unsigned int );
     
   /** CartesianToSphericalCoordinateImageFilter produces an image which is a different size
    * than its input.  As such, it needs to provide an implementation
@@ -132,12 +130,12 @@ public:
   virtual void GenerateInputRequestedRegion();
 
   /** Get the random generator; useful to set its seed */
-  itkGetObjectMacro(RandomGenerator, RandomGeneratorType);
+  itkGetObjectMacro( RandomGenerator, RandomGeneratorType );
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
-  itkConceptMacro(OutputHasNumericTraitsCheck,
-                  (Concept::HasNumericTraits<PixelType>));
+  itkConceptMacro( OutputHasNumericTraitsCheck,
+    (Concept::HasNumericTraits<OutputPixelType>) );
   /** End concept checking */
 #endif
 
@@ -146,17 +144,17 @@ protected:
   ~CartesianToSphericalCoordinateImageFilter() {};
   void PrintSelf(std::ostream& os, Indent indent) const;
 
-  typedef BSplineKernelFunction<1>     KernelType;
+  typedef BSplineKernelFunction<1>            KernelType;
   typedef Matrix<double,
-    itkGetStaticConstMacro(ImageDimension),2> ParzenWeightContainerType;
+    itkGetStaticConstMacro( ImageDimension ), 2> ParzenWeightContainerType;
 
   /** Function that does the work */
-  virtual void GenerateData(void);
+  virtual void GenerateData( void );
 
   /** Generate a point randomly in a bounding box. */
   inline void GenerateRandomCoordinate(
     const PointType & inputPoint,
-    PointType &       randomPoint);
+    PointType & randomPoint );
   
   typename RandomGeneratorType::Pointer m_RandomGenerator;
 
@@ -176,7 +174,7 @@ private:
   MaskImagePointer        m_MaskImage; 
   typename InterpolatorType::Pointer m_Interpolator;
 
-};
+}; // end class
 
   
 } // end namespace itk
@@ -185,4 +183,4 @@ private:
 #include "itkCartesianToSphericalCoordinateImageFilter.txx"
 #endif
   
-#endif
+#endif // end #ifndef __itkCartesianToSphericalCoordinateImageFilter_h
