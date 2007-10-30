@@ -13,15 +13,13 @@ echo "Usage:"
 echo 
 echo "vpx2mhd <image.vpx>"
 echo
-echo "The result is saved as image.mhd and image.raw"
+echo "The result is saved as image.mhd and image.raw. Wildcards are supported."
 echo
-echo "Currently only signed/unsigned short/char images are supported, but"
-echo "extension to long,  float and double would be easy."
-echo "Extension to vector images is more difficult, and i don't need it now..."
+echo "Currently signed/unsigned char/short/int/float/double images are"
+echo "supported. Vector images are more difficult, and i don't need it now..."
 echo
-echo "The voxelspacing is not written, because it's not stored in the vpx."
-echo "However, it is stored in a .vhd, which is not used in iX, but Koen"
-echo "uses it. You can make a .vhd with the following command:"
+echo "The voxelspacing is not written, unless a vhd file exists, because it's"
+echo "not stored in the vpx. You can make a .vhd with the following command:"
 echo
 echo "chunk im.vpx im.vpx"
 echo "which generates im.vhd"
@@ -30,15 +28,9 @@ echo "then with the command:"
 echo "add_pixelinfo pixelsize slicethickness im"
 echo "the pixelsize and slicethickness are written to im.vhd."
 echo
-echo "So, in fact, this script could be extended by letting it search"
-echo "for the .vhd and try to read the pixelspacings."
-echo
 echo "See the following link for a description of the .mhd header format."
 echo "http://caddlab.rad.unc.edu/software/MetaIO/MetaIO-Introduction.htm"
-echo "The fields ElementSize and HeaderSize are not used in this script."
-echo
-echo "NB: Currently only shorts, unsigned shorts, chars and unsigned chars, float"
-echo "are supported. Extension to other types would be easy though, I guess."
+echo "The field HeaderSize is not supported by this script."
 echo
 exit 64
 fi
@@ -54,6 +46,7 @@ echo "Vpx-image to convert: $vpximage"
 metaHeaderFile=${vpximage/%vpx/mhd}
 metaElementDataFile=${vpximage/%vpx/raw}
 metaElementDataFileWithoutPath=${metaElementDataFile##*/}
+vhdFile=${vpximage/%vpx/vhd}
 
 metaObjectType="Image"
 metaNDims=`header -nrdims $vpximage`
@@ -101,6 +94,44 @@ then
 	metaElementType="MET_DOUBLE"
 fi
 
+# read the element spacing, if the vhd exists
+validspacing="true"
+if [ -e "$vhdFile" ]
+then
+  pixspac=`less $vhdFile | grep "PIXEL_SIZE" | cut -d= -f2`
+
+  if [ "$pixspac" = "" ]
+  then 
+    validspacing="false"
+  fi
+
+  metaElementSpacing="$pixspac $pixspac"  
+  if [ "$metaNDims" = "3" ]
+  then
+    zspac=`less $vhdFile | grep "SLICE_THICKNESS" | cut -d= -f2`
+    
+    if [ "$zspac" = "" ]
+    then 
+      validspacing="false"
+    fi
+
+    metaElementSpacing="$metaElementSpacing $zspac"
+  fi  
+  
+  # for anything other than 2/3 dimensions i don't know how to handle spacing
+  if [ "$metaNDims" != 2 ]
+  then
+    if [ "$metaNDims" != 3 ]
+    then
+      validspacing="false"
+    fi
+  fi
+
+else
+  validspacing="false";
+fi
+
+# convert!
 if [ "$metaElementType" = "unknown" ]
 then
 
@@ -117,7 +148,12 @@ else
 	echo "NDims = $metaNDims"  >> $metaHeaderFile
 	echo "BinaryData = $metaBinaryData " >> $metaHeaderFile
 	echo "DimSize = $metaDimSize " >> $metaHeaderFile
-#	echo "ElementSpacing = " $metaElementSpacing >> $metaHeaderFile
+  
+  if [ "$validspacing" = "true" ]
+  then
+  	echo "ElementSpacing = $metaElementSpacing" >> $metaHeaderFile
+  fi
+
 	echo "ElementNumberOfChannels = $metaElementNumberOfChannels " >> $metaHeaderFile
 	echo "ElementType = $metaElementType " >> $metaHeaderFile
 	echo "ElementDataFile = $metaElementDataFileWithoutPath " >> $metaHeaderFile
