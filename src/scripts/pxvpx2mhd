@@ -146,17 +146,17 @@ else
 	>$metaHeaderFile
 	echo "ObjectType = $metaObjectType" >> $metaHeaderFile
 	echo "NDims = $metaNDims"  >> $metaHeaderFile
-	echo "BinaryData = $metaBinaryData " >> $metaHeaderFile
-	echo "DimSize = $metaDimSize " >> $metaHeaderFile
+	echo "BinaryData = $metaBinaryData" >> $metaHeaderFile
+	echo "DimSize = $metaDimSize" >> $metaHeaderFile
   
   if [ "$validspacing" = "true" ]
   then
   	echo "ElementSpacing = $metaElementSpacing" >> $metaHeaderFile
   fi
 
-	echo "ElementNumberOfChannels = $metaElementNumberOfChannels " >> $metaHeaderFile
-	echo "ElementType = $metaElementType " >> $metaHeaderFile
-	echo "ElementDataFile = $metaElementDataFileWithoutPath " >> $metaHeaderFile
+	echo "ElementNumberOfChannels = $metaElementNumberOfChannels" >> $metaHeaderFile
+	echo "ElementType = $metaElementType" >> $metaHeaderFile
+	echo "ElementDataFile = $metaElementDataFileWithoutPath" >> $metaHeaderFile
 	echo >> $metaHeaderFile
 	
 	echo "Done!"
