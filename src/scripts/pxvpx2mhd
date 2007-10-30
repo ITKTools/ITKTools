@@ -98,7 +98,7 @@ fi
 validspacing="true"
 if [ -e "$vhdFile" ]
 then
-  pixspac=`less $vhdFile | grep "PIXEL_SIZE" | cut -d= -f2`
+  pixspac=`less $vhdFile | grep -m 1 "PIXEL_SIZE" | cut -d= -f2`
 
   if [ "$pixspac" = "" ]
   then 
@@ -108,7 +108,7 @@ then
   metaElementSpacing="$pixspac $pixspac"  
   if [ "$metaNDims" = "3" ]
   then
-    zspac=`less $vhdFile | grep "SLICE_THICKNESS" | cut -d= -f2`
+    zspac=`less $vhdFile | grep -m 1 "SLICE_THICKNESS" | cut -d= -f2`
     
     if [ "$zspac" = "" ]
     then 
