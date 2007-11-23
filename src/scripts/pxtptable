@@ -36,9 +36,10 @@ then
 fi
 
 # Check for the number of arguments
-if [ "$#" -lt "2" ] | [ "$#" -gt "8" ]
+if [ $# -lt 2 ] || [ $# -gt 8 ]
 then
   echo "ERROR: not enough arguments!"
+  echo "Call \"pxtptable --help\" for help."
   exit 64
 fi
 
