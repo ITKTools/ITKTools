@@ -90,6 +90,12 @@ else
 	Rarray=$R
 fi
 
+if [[ "$Rarray" == "" ]]
+then
+	echo "ERROR: no (finished) resolution information."
+	exit 65;
+fi
+
 # Loop over all resolutions.
 for R in $Rarray
 do
