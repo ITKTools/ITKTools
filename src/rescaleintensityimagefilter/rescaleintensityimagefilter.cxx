@@ -3,8 +3,11 @@
 #include "CommandLineArgumentHelper.h"
 #include "itkImage.h"
 #include "itkRescaleIntensityImageFilter.h"
+#include "itkStatisticsImageFilter.h"
+#include "itkShiftScaleImageFilter.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
+#include "vnl/vnl_math.h"
 
 //-------------------------------------------------------------------------------------
 
@@ -13,7 +16,7 @@
 if ( ComponentType == #type && Dimension == dim ) \
 { \
   typedef  itk::Image< type, dim >   InputImageType; \
-  function< InputImageType >( inputFileName, outputFileName, minimum, maximum ); \
+  function< InputImageType >( inputFileName, outputFileName, values, valuesAreExtrema ); \
   supported = true; \
 }
 
@@ -24,8 +27,8 @@ template< class InputImageType >
 void RescaleIntensity(
   const std::string & inputFileName,
   const std::string & outputFileName,
-  const double & minimum,
-  const double & maximum );
+  const std::vector<double> & values,
+  const bool & valuesAreExtrema );
 
 /** Declare PrintHelp. */
 void PrintHelp( void );
@@ -45,14 +48,68 @@ int main( int argc, char **argv )
 	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
 	parser->SetCommandLineArguments( argc, argv );
 
-	/** Get input file name. */
+	/** Get arguments. */
 	std::string	inputFileName = "";
 	bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+
+  std::string	outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
+	outputFileName += "INTENSITYRESCALED.mhd";
+	bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+
+ 	std::vector<double> extrema( 2, 0.0 );
+	bool retmm = parser->GetCommandLineArgument( "-mm", extrema );
+
+ 	std::vector<double> meanvariance( 2, 0.0 );
+  meanvariance[ 1 ] = 1.0;
+	bool retmv = parser->GetCommandLineArgument( "-mv", meanvariance );
+
+  /** Check if the required arguments are given. */
   if ( !retin )
 	{
 		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
 		return 1;
 	}
+
+  if ( retmm && retmv )
+  {
+    std::cerr << "ERROR: you should specify either \"-mm\" or \"-mv\"" << std::endl;
+    return 1;
+  }
+
+  /** Check if the extrema are given (correctly). */
+	if ( retmm )
+	{
+		if ( extrema.size() != 2 )
+		{
+			std::cerr << "ERROR: You should specify \"-mm\" with two values." << std::endl;
+			return 1;
+		}
+		if ( extrema[ 1 ] <= extrema[ 0 ] )
+		{
+			std::cerr << "ERROR: You should specify \"-mm\" with two values:" << std::endl;
+			std::cerr << "minimum maximum, where it should hold that maximum > minimum." << std::endl;
+			return 1;
+		}
+	}
+
+  /** Check if the mean and variance are given correctly. */
+  if ( retmv )
+  {
+    if ( meanvariance.size() != 2 )
+		{
+			std::cerr << "ERROR: You should specify \"-mv\" with two values." << std::endl;
+			return 1;
+		}
+		if ( meanvariance[ 1 ] <= 1e-5 )
+		{
+			std::cerr << "ERROR: The variance should be strictly positive." << std::endl;
+			return 1;
+		}
+  }
+
+  /** Check which option is selected. */
+  bool valuesAreExtrema = true;
+  if ( retmv ) valuesAreExtrema = false;
 
   /** Determine input image properties. */
   std::string ComponentType = "short";
@@ -73,7 +130,14 @@ int main( int argc, char **argv )
   }
 
   /** Let the user overrule this. */
+  if ( retmv )
+  {
+    ComponentType = "float";
+  }
 	bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
+
+  /** Get rid of the possible "_" in ComponentType. */
+	ReplaceUnderscoreWithSpace( ComponentType );
   
   /** Error checking. */
   if ( NumberOfComponents > 1 )
@@ -82,40 +146,17 @@ int main( int argc, char **argv )
     std::cerr << "Vector images are not supported!" << std::endl;
     return 1;
   }
-
-  /** Get the output file name. */
-	std::string	outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
-	outputFileName += "INTENSITYRESCALED.mhd";
-	bool ret2 = parser->GetCommandLineArgument( "-out", outputFileName );
-
-  /** Get the extrema. */
-	std::vector<double> extrema(2);
-	extrema[ 0 ] = 0.0; extrema[ 1 ] = 0.0;
-	bool ret3 = parser->GetCommandLineArgument( "-mm", extrema );
-	double minimum = extrema[ 0 ];
-	double maximum = extrema[ 1 ];
-
-	//std::string	Dimension = "2";
-	//bool ret4 = parser->GetCommandLineArgument( "-dim", Dimension );
-
-	/** Check if the extrema are given (correctly). */
-	if ( ret3 )
-	{
-		if ( extrema.size() != 2 )
-		{
-			std::cerr << "ERROR: You should specify \"-mm\" with two values." << std::endl;
-			return 1;
-		}
-		if ( extrema[ 1 ] <= extrema[ 0 ] )
-		{
-			std::cerr << "ERROR: You should specify \"-mm\" with two values:" << std::endl;
-			std::cerr << "minimum maximum, where it should hold that maximum > minimum." << std::endl;
-			return 1;
-		}
-	}
-
-	/** Get rid of the possible "_" in ComponentType. */
-	ReplaceUnderscoreWithSpace( ComponentType );
+  
+  /** Get the values. */
+  std::vector<double> values;
+  if ( valuesAreExtrema )
+  {
+    values = extrema;
+  }
+  else
+  {
+    values = meanvariance;
+  }
 
 	/** Run the program. */
   bool supported = false;
@@ -150,7 +191,7 @@ int main( int argc, char **argv )
 	/** End program. */
 	return 0;
 
-} // end main
+} // end main()
 
 
 /**
@@ -161,47 +202,91 @@ template< class InputImageType >
 void RescaleIntensity(
   const std::string & inputFileName,
   const std::string & outputFileName,
-  const double & minimum,
-  const double & maximum )
+  const std::vector<double> & values,
+  const bool & valuesAreExtrema )
 {
 	/** TYPEDEF's. */
-	typedef itk::RescaleIntensityImageFilter< InputImageType, InputImageType >	RescalerType;
-	typedef itk::ImageFileReader< InputImageType >			ReaderType;
-	typedef itk::ImageFileWriter< InputImageType >			WriterType;
-	typedef typename InputImageType::PixelType					PixelType;
+	typedef itk::ImageFileReader< InputImageType >			  ReaderType;
+  typedef itk::RescaleIntensityImageFilter<
+    InputImageType, InputImageType >	                  RescalerType;
+  typedef itk::StatisticsImageFilter< InputImageType >  StatisticsType;
+  typedef itk::ShiftScaleImageFilter<
+    InputImageType, InputImageType >	                  ShiftScalerType;
+	typedef itk::ImageFileWriter< InputImageType >			  WriterType;
+	typedef typename InputImageType::PixelType					  PixelType;
+  typedef typename StatisticsType::RealType             RealType;
 
 	/** DECLARATION'S. */
-	typename RescalerType::Pointer rescaler = RescalerType::New();
 	typename ReaderType::Pointer reader = ReaderType::New();
 	typename WriterType::Pointer writer = WriterType::New();
+  typename RescalerType::Pointer    rescaler;
+  typename StatisticsType::Pointer  statistics;
+  typename ShiftScalerType::Pointer shiftscaler;
 
-	/** Define the extrema. */
-	PixelType min, max;
-	if ( minimum == 0.0 && maximum == 0.0 )
-	{
-		min = itk::NumericTraits<PixelType>::NonpositiveMin();
-		max = itk::NumericTraits<PixelType>::max();
-	}
-	else
-	{
-		min = static_cast<PixelType>( minimum );
-		max = static_cast<PixelType>( maximum );
-	}
-
-	/** Read in the inputImage. */
+  /** Read in the inputImage. */
 	reader->SetFileName( inputFileName.c_str() );
 
-	/** Setup the rescaler. */
-	rescaler->SetInput( reader->GetOutput() );
-	rescaler->SetOutputMinimum( min );
-	rescaler->SetOutputMaximum( max );
+  /** If the input values are extrema (minimum and maximum),
+   * then an IntensityRescaler is used. Otherwise, the values represent
+   * the desired mean and variance and a ShiftScaler is used.
+   */
+  if ( valuesAreExtrema )
+  {
+    /** Create instance. */
+    rescaler = RescalerType::New();
+
+    /** Define the extrema. */
+    PixelType min, max;
+    if ( values[ 0 ] == 0.0 && values[ 1 ] == 0.0 )
+    {
+      min = itk::NumericTraits<PixelType>::NonpositiveMin();
+      max = itk::NumericTraits<PixelType>::max();
+    }
+    else
+    {
+      min = static_cast<PixelType>( values[ 0 ] );
+      max = static_cast<PixelType>( values[ 1 ] );
+    }
+
+    /** Setup the rescaler. */
+    rescaler->SetInput( reader->GetOutput() );
+    rescaler->SetOutputMinimum( min );
+    rescaler->SetOutputMaximum( max );
+
+    /** Setup the writer. */
+    writer->SetInput( rescaler->GetOutput() );
+
+  } // end if values are extrema
+  else
+  {
+    /** Create instances. */
+    statistics = StatisticsType::New();
+    shiftscaler = ShiftScalerType::New();
+
+    /** Calculate image statistics. */
+    statistics->SetInput( reader->GetOutput() );
+    statistics->Update();
+
+    /** Get mean and variance of input image. */
+    RealType mean = statistics->GetMean();
+    RealType sigma = statistics->GetSigma();
+
+    /** Setup the shiftscaler. */
+    shiftscaler->SetInput( reader->GetOutput() );
+    shiftscaler->SetShift( values[ 0 ] * sigma / vcl_sqrt( values[ 1 ] ) - mean );
+    shiftscaler->SetScale( vcl_sqrt( values[ 1 ] ) / sigma );
+    
+    /** Setup the writer. */
+    writer->SetInput( shiftscaler->GetOutput() );
+
+  } // end if values are mean and variance
 
 	/** Write the output image. */
 	writer->SetFileName( outputFileName.c_str() );
-	writer->SetInput( rescaler->GetOutput() );
 	writer->Update();
 
-} // end RescaleIntensity
+} // end RescaleIntensity()
+
 
 /**
  * ******************* PrintHelp *******************
@@ -211,9 +296,11 @@ void PrintHelp()
 	std::cout << "Usage:" << std::endl << "pxrescaleintensityimagefilter" << std::endl;
 	std::cout << "  -in      inputFilename" << std::endl;
 	std::cout << "  [-out]   outputFilename, default in + INTENSITYRESCALED.mhd" << std::endl;
-	std::cout << "  [-mm]    minimum maximum, default range of pixeltype" << std::endl;
+  std::cout << "  [-mm]    minimum maximum, default: range of pixeltype" << std::endl;
+  std::cout << "  [-mv]    mean variance, default: 0.0 1.0" << std::endl;
   std::cout << "  [-pt]    pixel type of input and output images;" << std::endl;
   std::cout << "           default: automatically determined from the first input image." << std::endl;
+  std::cout << "Either \"-mm\" or \"-mv\" need to be specified." << std::endl;
   std::cout << "Supported: 2D, 3D, (unsigned) short, (unsigned) char, float." << std::endl;
 
-} // end PrintHelp
+} // end PrintHelp()
