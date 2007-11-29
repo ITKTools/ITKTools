@@ -1,19 +1,29 @@
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 
+#include "itkImageDuplicator.h"
 #include "itkBoxSpatialFunction.h"
 #include "itkImageRegionIterator.h"
+#include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "vnl/vnl_math.h"
 
 //-------------------------------------------------------------------------------------
 
 /** run: A macro to call a function. */
-#define run(function,type,dim) \
-if ( PixelType == #type && Dimension == dim ) \
+#define run1(function,type,dim) \
+if ( ComponentType == #type && Dimension == dim ) \
 { \
   typedef itk::Image< type, dim > ImageType; \
   function< ImageType >( outputFileName, size, spacing, center, radius, orientation ); \
+  supported = true; \
+}
+
+#define run2(function,type,dim) \
+if ( ComponentType == #type && Dimension == dim ) \
+{ \
+  typedef itk::Image< type, dim > ImageType; \
+  function< ImageType >( inputFileName, outputFileName, center, radius, orientation ); \
   supported = true; \
 }
 
@@ -21,9 +31,18 @@ if ( PixelType == #type && Dimension == dim ) \
 
 /** Declare CreateBox. */
 template< class ImageType >
-void CreateBox( std::string outputFileName,
+void CreateBox(
+  std::string outputFileName,
   std::vector<unsigned int> size,
   std::vector<double> spacing,
+  std::vector<double> center,
+	std::vector<double> radius,
+  std::vector<double> orientation );
+
+template< class ImageType >
+void CreateBox(
+  std::string inputFileName,
+  std::string outputFileName,
   std::vector<double> center,
 	std::vector<double> radius,
   std::vector<double> orientation );
@@ -34,7 +53,7 @@ void PrintHelp( void );
 //-------------------------------------------------------------------------------------
 
 
-int main(int argc, char** argv)
+int main( int argc, char** argv )
 {
   /** Check arguments for help. */
 	if ( argc < 5 )
@@ -48,11 +67,11 @@ int main(int argc, char** argv)
 	parser->SetCommandLineArguments( argc, argv );
 
   /** Get arguments. */
+  std::string	inputFileName = "";
+	bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+
  	std::string	outputFileName = "";
 	bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
-
-  std::string	PixelType = "short";
-	bool retpt = parser->GetCommandLineArgument( "-pt", PixelType );
 
  	unsigned int Dimension = 3;
 	bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
@@ -84,9 +103,9 @@ int main(int argc, char** argv)
 		std::cerr << "ERROR: You should specify \"-out\"." << std::endl;
 		return 1;
 	}
-  if ( !retsz )
+  if ( ( retin && retsz ) || ( !retin && !retsz ) )
 	{
-		std::cerr << "ERROR: You should specify \"-sz\"." << std::endl;
+		std::cerr << "ERROR: You should specify either \"-in\" or \"-sz\"." << std::endl;
 		return 1;
 	}
   if ( ( !retc | !retr | retcp1 | retcp2 ) && ( retc | retr | !retcp1 | !retcp2 ) )
@@ -103,8 +122,27 @@ int main(int argc, char** argv)
     }
   }
 
-  /** Get rid of the possible "_" in PixelType. */
-	ReplaceUnderscoreWithSpace( PixelType );
+  /** Determine input image properties. */
+  std::string	ComponentType = "short";
+  std::string	PixelType; //we don't use this
+  unsigned int NumberOfComponents = 1;
+  int retgip = GetImageProperties(
+    inputFileName,
+    PixelType,
+    ComponentType,
+    Dimension,
+    NumberOfComponents,
+    size );
+  if ( retgip != 0 )
+  {
+    return 1;
+  }
+
+  /** Let the user overrule this. */
+	bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
+
+  /** Get rid of the possible "_" in ComponentType. */
+	ReplaceUnderscoreWithSpace( ComponentType );
 
   /** Translate input of two opposite corners to center + radius input. */
   if ( retcp1 )
@@ -120,19 +158,38 @@ int main(int argc, char** argv)
   bool supported = false;
 	try
 	{
-		run( CreateBox, unsigned char, 2 );
-		run( CreateBox, char, 2 );
-		run( CreateBox, unsigned short, 2 );
-		run( CreateBox, short, 2 );
-    run( CreateBox, float, 2 );
-    run( CreateBox, double, 2 );
+    if ( retin )
+    {
+      run2( CreateBox, unsigned char, 2 );
+      run2( CreateBox, char, 2 );
+      run2( CreateBox, unsigned short, 2 );
+      run2( CreateBox, short, 2 );
+      run2( CreateBox, float, 2 );
+      run2( CreateBox, double, 2 );
 
-    run( CreateBox, unsigned char, 3 );
-		run( CreateBox, char, 3 );
-		run( CreateBox, unsigned short, 3 );
-		run( CreateBox, short, 3 );
-    run( CreateBox, float, 3 );
-    run( CreateBox, double, 3 );
+      run2( CreateBox, unsigned char, 3 );
+      run2( CreateBox, char, 3 );
+      run2( CreateBox, unsigned short, 3 );
+      run2( CreateBox, short, 3 );
+      run2( CreateBox, float, 3 );
+      run2( CreateBox, double, 3 );
+    }
+    else if ( retsz )
+    {
+      run1( CreateBox, unsigned char, 2 );
+      run1( CreateBox, char, 2 );
+      run1( CreateBox, unsigned short, 2 );
+      run1( CreateBox, short, 2 );
+      run1( CreateBox, float, 2 );
+      run1( CreateBox, double, 2 );
+
+      run1( CreateBox, unsigned char, 3 );
+      run1( CreateBox, char, 3 );
+      run1( CreateBox, unsigned short, 3 );
+      run1( CreateBox, short, 3 );
+      run1( CreateBox, float, 3 );
+      run1( CreateBox, double, 3 );
+    }
 	}
 	catch( itk::ExceptionObject &e )
 	{
@@ -204,7 +261,7 @@ void CreateBox( std::string filename,
 	image->SetSpacing( Spacing );
 	image->Allocate();
 
-	/** Create and initialize ellipsoid. */
+	/** Create and initialize box. */
 	typename BoxSpatialFunctionType::Pointer box = BoxSpatialFunctionType::New();
 	box->SetCenter( Center );
 	box->SetRadius( Radius );
@@ -231,17 +288,96 @@ void CreateBox( std::string filename,
 	writer->SetInput( image );
 	writer->Update();
 
-} // end CreateBox
+} // end CreateBox()
+
+
+  /**
+	 * ******************* CreateBox *******************
+	 */
+
+template< class ImageType >
+void CreateBox(
+  std::string inputFileName,
+  std::string outputFileName,
+  std::vector<double> center,
+	std::vector<double> radius,
+  std::vector<double> orientation )
+{
+  /** Typedefs. */
+  typedef itk::ImageFileReader< ImageType > 				  ImageReaderType;
+  typedef itk::ImageDuplicator< ImageType >           DuplicatorType;
+	typedef itk::ImageFileWriter< ImageType > 				  ImageWriterType;
+
+  const unsigned int Dimension = ImageType::ImageDimension;
+	typedef itk::BoxSpatialFunction< Dimension >        BoxSpatialFunctionType;
+  typedef typename BoxSpatialFunctionType::InputType  InputType;
+  typedef itk::ImageRegionIterator< ImageType >		    IteratorType;
+
+	typedef typename ImageType::PointType			          PointType;
+	typedef typename ImageType::IndexType			          IndexType;
+
+  /** Parse the arguments. */
+  InputType   Center;
+  InputType   Radius;
+  InputType   Orientation;
+  for ( unsigned int i = 0; i < Dimension; i++ )
+  {
+    Center[ i ] = center[ i ];
+    Radius[ i ] = radius[ i ];
+    Orientation[ i ] = orientation[ i ];
+  }
+
+  /** Read input image. */
+  typename ImageReaderType::Pointer reader = ImageReaderType::New();
+  reader->SetFileName( inputFileName.c_str() );
+  reader->Update();
+
+  /** Copy input image. */
+  typename DuplicatorType::Pointer duplicator = DuplicatorType::New();
+  duplicator->SetInputImage( reader->GetOutput() );
+  duplicator->Update();
+  typename ImageType::Pointer image = duplicator->GetOutput();
+
+	/** Create and initialize box. */
+	typename BoxSpatialFunctionType::Pointer box = BoxSpatialFunctionType::New();
+	box->SetCenter( Center );
+	box->SetRadius( Radius );
+  box->SetOrientation( Orientation );
+
+	/** Create iterator, index and point. */
+	IteratorType it( image, image->GetLargestPossibleRegion() );
+	it.GoToBegin();
+	PointType point;
+	IndexType index;
+
+	/** Walk over the image. */
+	while ( !it.IsAtEnd() )
+	{
+		index = it.GetIndex();
+		image->TransformIndexToPhysicalPoint( index, point );
+		it.Set( box->Evaluate( point ) );
+		++it;
+	} // end while
+
+	/** Write image. */
+	typename ImageWriterType::Pointer writer = ImageWriterType::New();
+	writer->SetFileName( outputFileName.c_str() );
+	writer->SetInput( image );
+	writer->Update();
+
+} // end CreateBox()
 
 
 	/**
 	 * ******************* PrintHelp *******************
 	 */
+
 void PrintHelp()
 {
 	std::cout << "Usage:" << std::endl << "pxcreatebox" << std::endl;
+  std::cout << "  [-in]    inputFilename, to copy image information from" << std::endl;
 	std::cout << "  -out     outputFilename" << std::endl;
-  std::cout << "  -sz      image size (voxels)" << std::endl;
+  std::cout << "  [-sz]    image size (voxels)" << std::endl;
   std::cout << "  [-sp]    image spacing (mm)" << std::endl;
   std::cout << "  [-c]     center (mm)" << std::endl;
 	std::cout << "  [-r]     radii (mm)" << std::endl;
@@ -250,9 +386,10 @@ void PrintHelp()
   std::cout << "  [-o]     orientation, default xyz" << std::endl;
 	std::cout << "  [-dim]   dimension, default 3" << std::endl;
 	std::cout << "  [-pt]    pixelType, default short" << std::endl;
+  std::cout << "The user should EITHER specify the input filename OR the output image size." << std::endl;
   std::cout << "The user should EITHER specify the center and the radius," << std::endl;
   std::cout << "OR the positions of two opposite corner points." << std::endl;
-  std::cout << "The orientation is a vector with the Euler angles (rad)." << std::endl;
+  std::cout << "The orientation is a vector with Euler angles (rad)." << std::endl;
 	std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double." << std::endl;
-} // end PrintHelp
+} // end PrintHelp()
 
