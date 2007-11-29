@@ -15,7 +15,7 @@
 if ( ComponentType == #type && Dimension == dim ) \
 { \
   typedef itk::Image< type, dim > ImageType; \
-  function< ImageType >( outputFileName, size, spacing, center, radius, orientation ); \
+  function< ImageType >( outputFileName, size, spacing, input1, input2, input, orientation ); \
   supported = true; \
 }
 
@@ -23,7 +23,7 @@ if ( ComponentType == #type && Dimension == dim ) \
 if ( ComponentType == #type && Dimension == dim ) \
 { \
   typedef itk::Image< type, dim > ImageType; \
-  function< ImageType >( inputFileName, outputFileName, center, radius, orientation ); \
+  function< ImageType >( inputFileName, outputFileName, input1, input2, input, orientation ); \
   supported = true; \
 }
 
@@ -35,16 +35,18 @@ void CreateBox(
   std::string outputFileName,
   std::vector<unsigned int> size,
   std::vector<double> spacing,
-  std::vector<double> center,
-	std::vector<double> radius,
+  std::vector<double> input1,
+	std::vector<double> input2,
+  std::string input,
   std::vector<double> orientation );
 
 template< class ImageType >
 void CreateBox(
   std::string inputFileName,
   std::string outputFileName,
-  std::vector<double> center,
-	std::vector<double> radius,
+  std::vector<double> input1,
+	std::vector<double> input2,
+  std::string input,
   std::vector<double> orientation );
 
 /** Declare PrintHelp. */
@@ -94,7 +96,13 @@ int main( int argc, char** argv )
   std::vector<double> corner2( Dimension );
 	bool retcp2 = parser->GetCommandLineArgument( "-cp2", corner2 );
 
-  std::vector<double> orientation( Dimension * Dimension, 0.0 );
+  std::vector<double> cornerindex1( Dimension );
+	bool retci1 = parser->GetCommandLineArgument( "-ci1", cornerindex1 );
+
+  std::vector<double> cornerindex2( Dimension );
+	bool retci2 = parser->GetCommandLineArgument( "-ci2", cornerindex2 );
+
+  std::vector<double> orientation( Dimension, 0.0 );
 	bool reto = parser->GetCommandLineArgument( "-o", orientation );
 
 	/** Check if the required arguments are given. */
@@ -108,34 +116,28 @@ int main( int argc, char** argv )
 		std::cerr << "ERROR: You should specify either \"-in\" or \"-sz\"." << std::endl;
 		return 1;
 	}
-  if ( ( !retc | !retr | retcp1 | retcp2 ) && ( retc | retr | !retcp1 | !retcp2 ) )
+  if ( ( !retc | !retr | retcp1 | retcp2 | retci1 | retci2 )
+    && ( retc | retr | !retcp1 | !retcp2 | retci1 | retci2 )
+    && ( retc | retr | retcp1 | retcp2 | !retci1 | !retci2 ) )
 	{
 		std::cerr << "ERROR: Either you should specify \"-c\" and \"-r\"." << std::endl;
     std::cerr << "ERROR: Or you should specify \"-cp1\" and \"-cp2\"." << std::endl;
+    std::cerr << "ERROR: Or you should specify \"-ci1\" and \"-ci2\"." << std::endl;
 		return 1;
 	}
-  if ( !reto )
-  {
-    for ( unsigned int i = 0; i < Dimension; i++ )
-    {
-      orientation[ i * ( Dimension + 1 ) ] = 1.0;
-    }
-  }
-
+  
   /** Determine input image properties. */
   std::string	ComponentType = "short";
   std::string	PixelType; //we don't use this
   unsigned int NumberOfComponents = 1;
-  int retgip = GetImageProperties(
-    inputFileName,
-    PixelType,
-    ComponentType,
-    Dimension,
-    NumberOfComponents,
-    size );
-  if ( retgip != 0 )
+  if ( retin )
   {
-    return 1;
+    int retgip = GetImageProperties(
+      inputFileName, PixelType, ComponentType, Dimension, NumberOfComponents, size );
+    if ( retgip != 0 )
+    {
+      return 1;
+    }
   }
 
   /** Let the user overrule this. */
@@ -144,14 +146,26 @@ int main( int argc, char** argv )
   /** Get rid of the possible "_" in ComponentType. */
 	ReplaceUnderscoreWithSpace( ComponentType );
 
-  /** Translate input of two opposite corners to center + radius input. */
-  if ( retcp1 )
+  /** How was the input supplied by the user? */
+  std::vector<double> input1, input2;
+  std::string input = "";
+  if ( retc )
   {
-    for ( unsigned int i = 0; i < Dimension; i++ )
-    {
-      center[ i ] = ( corner1[ i ] + corner2[ i ] ) / 2.0;
-      radius[ i ] = vcl_abs( corner1[ i ] - center[ i ] );
-    }
+    input = "CenterRadius";
+    input1 = center;
+    input2 = radius;
+  }
+  else if ( retcp1 )
+  {
+    input = "CornersAsPoints";
+    input1 = corner1;
+    input2 = corner2;
+  }
+  else if ( retci1 )
+  {
+    input = "CornersAsIndices";
+    input1 = cornerindex1;
+    input2 = cornerindex2;
   }
 
   /** Run the program. */
@@ -220,36 +234,35 @@ template< class ImageType >
 void CreateBox( std::string filename,
   std::vector<unsigned int> size,
   std::vector<double> spacing,
-  std::vector<double> center,
-	std::vector<double> radius,
+  std::vector<double> input1,
+	std::vector<double> input2,
+  std::string input,
   std::vector<double> orientation )
 {
   /** Typedefs. */
-  const unsigned int Dimension = ImageType::ImageDimension;
-	typedef itk::ImageRegionIterator<ImageType>		  IteratorType;
-	typedef itk::BoxSpatialFunction<Dimension>      BoxSpatialFunctionType;
-  typedef typename BoxSpatialFunctionType::InputType       InputType;
-	typedef itk::ImageFileWriter<ImageType> 				ImageWriterType;
+  typedef itk::ImageFileReader< ImageType > 				  ImageReaderType;
+	typedef itk::ImageFileWriter< ImageType > 				  ImageWriterType;
 
-	typedef typename ImageType::RegionType			RegionType;
-	typedef typename RegionType::SizeType			SizeType;
-  typedef typename RegionType::SizeValueType	SizeValueType;
-	typedef typename ImageType::PointType			PointType;
-	typedef typename ImageType::IndexType			IndexType;
-	typedef typename ImageType::SpacingType		SpacingType;
+  const unsigned int Dimension = ImageType::ImageDimension;
+	typedef itk::BoxSpatialFunction< Dimension >        BoxSpatialFunctionType;
+  typedef typename BoxSpatialFunctionType::InputType  InputType;
+  typedef itk::ImageRegionIterator< ImageType >		    IteratorType;
+
+  typedef typename ImageType::RegionType			        RegionType;
+	typedef typename RegionType::SizeType			          SizeType;
+  typedef typename RegionType::SizeValueType	        SizeValueType;
+	typedef typename ImageType::PointType			          PointType;
+	typedef typename ImageType::IndexType			          IndexType;
+	typedef typename ImageType::SpacingType		          SpacingType;
 
   /** Parse the arguments. */
   SizeType    Size;
   SpacingType Spacing;
-  InputType   Center;
-  InputType   Radius;
   InputType   Orientation;
   for ( unsigned int i = 0; i < Dimension; i++ )
   {
     Size[ i ] = static_cast<SizeValueType>( size[ i ] );
     Spacing[ i ] = spacing[ i ];
-    Center[ i ] = center[ i ];
-    Radius[ i ] = radius[ i ];
     Orientation[ i ] = orientation[ i ];
   }
 
@@ -260,6 +273,49 @@ void CreateBox( std::string filename,
 	image->SetRegions( region );
 	image->SetSpacing( Spacing );
 	image->Allocate();
+
+  /** Translate input of two opposite corners to center + radius input. */
+  InputType Center, Radius;
+  PointType point1, point2;
+	IndexType index1, index2;
+  if ( input == "CornersAsPoints" )
+  {
+    /** The input is points, copy it. */
+    for ( unsigned int i = 0; i < Dimension; i++ )
+    {
+      point1[ i ] = input1[ i ];
+      point2[ i ] = input2[ i ];
+    }
+  }
+  else if ( input == "CornersAsIndices" )
+  {
+    /** The input is indices, copy and transform to the point. */
+    for ( unsigned int i = 0; i < Dimension; i++ )
+    {
+      index1[ i ] = static_cast<unsigned int>( input1[ i ] );
+      index2[ i ] = static_cast<unsigned int>( input2[ i ] );
+    }
+    image->TransformIndexToPhysicalPoint( index1, point1 );
+    image->TransformIndexToPhysicalPoint( index2, point2 );
+  }
+
+  /** Compute the center and radius. */
+  if ( input != "CenterRadius" )
+  {
+    for ( unsigned int i = 0; i < Dimension; i++ )
+    {
+      Center[ i ] = ( point1[ i ] + point2[ i ] ) / 2.0;
+      Radius[ i ] = 1.0 + vcl_abs( point1[ i ] - Center[ i ] );
+    }
+  }
+  else
+  {
+    for ( unsigned int i = 0; i < Dimension; i++ )
+    {
+      Center[ i ] = point1[ i ];
+      Radius[ i ] = point2[ i ];
+    }
+  }
 
 	/** Create and initialize box. */
 	typename BoxSpatialFunctionType::Pointer box = BoxSpatialFunctionType::New();
@@ -299,8 +355,9 @@ template< class ImageType >
 void CreateBox(
   std::string inputFileName,
   std::string outputFileName,
-  std::vector<double> center,
-	std::vector<double> radius,
+  std::vector<double> input1,
+	std::vector<double> input2,
+  std::string input,
   std::vector<double> orientation )
 {
   /** Typedefs. */
@@ -317,13 +374,9 @@ void CreateBox(
 	typedef typename ImageType::IndexType			          IndexType;
 
   /** Parse the arguments. */
-  InputType   Center;
-  InputType   Radius;
   InputType   Orientation;
   for ( unsigned int i = 0; i < Dimension; i++ )
   {
-    Center[ i ] = center[ i ];
-    Radius[ i ] = radius[ i ];
     Orientation[ i ] = orientation[ i ];
   }
 
@@ -337,6 +390,49 @@ void CreateBox(
   duplicator->SetInputImage( reader->GetOutput() );
   duplicator->Update();
   typename ImageType::Pointer image = duplicator->GetOutput();
+
+  /** Translate input of two opposite corners to center + radius input. */
+  InputType Center, Radius;
+  PointType point1, point2;
+	IndexType index1, index2;
+  if ( input == "CornersAsPoints" )
+  {
+    /** The input is points, copy it. */
+    for ( unsigned int i = 0; i < Dimension; i++ )
+    {
+      point1[ i ] = input1[ i ];
+      point2[ i ] = input2[ i ];
+    }
+  }
+  else if ( input == "CornersAsIndices" )
+  {
+    /** The input is indices, copy and transform to the point. */
+    for ( unsigned int i = 0; i < Dimension; i++ )
+    {
+      index1[ i ] = static_cast<unsigned int>( input1[ i ] );
+      index2[ i ] = static_cast<unsigned int>( input2[ i ] );
+    }
+    image->TransformIndexToPhysicalPoint( index1, point1 );
+    image->TransformIndexToPhysicalPoint( index2, point2 );
+  }
+
+  /** Compute the center and radius. */
+  if ( input != "CenterRadius" )
+  {
+    for ( unsigned int i = 0; i < Dimension; i++ )
+    {
+      Center[ i ] = ( point1[ i ] + point2[ i ] ) / 2.0;
+      Radius[ i ] = vcl_abs( point1[ i ] - Center[ i ] );
+    }
+  }
+  else
+  {
+    for ( unsigned int i = 0; i < Dimension; i++ )
+    {
+      Center[ i ] = point1[ i ];
+      Radius[ i ] = point2[ i ];
+    }
+  }
 
 	/** Create and initialize box. */
 	typename BoxSpatialFunctionType::Pointer box = BoxSpatialFunctionType::New();
@@ -383,12 +479,15 @@ void PrintHelp()
 	std::cout << "  [-r]     radii (mm)" << std::endl;
   std::cout << "  [-cp1]   cornerpoint 1 (mm)" << std::endl;
 	std::cout << "  [-cp2]   cornerpoint 2 (mm)" << std::endl;
+  std::cout << "  [-ci1]   cornerindex 1" << std::endl;
+	std::cout << "  [-ci2]   cornerindex 2" << std::endl;
   std::cout << "  [-o]     orientation, default xyz" << std::endl;
 	std::cout << "  [-dim]   dimension, default 3" << std::endl;
 	std::cout << "  [-pt]    pixelType, default short" << std::endl;
   std::cout << "The user should EITHER specify the input filename OR the output image size." << std::endl;
   std::cout << "The user should EITHER specify the center and the radius," << std::endl;
   std::cout << "OR the positions of two opposite corner points." << std::endl;
+  std::cout << "OR the positions of two opposite corner indices." << std::endl;
   std::cout << "The orientation is a vector with Euler angles (rad)." << std::endl;
 	std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double." << std::endl;
 } // end PrintHelp()
