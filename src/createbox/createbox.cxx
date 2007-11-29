@@ -422,7 +422,7 @@ void CreateBox(
     for ( unsigned int i = 0; i < Dimension; i++ )
     {
       Center[ i ] = ( point1[ i ] + point2[ i ] ) / 2.0;
-      Radius[ i ] = vcl_abs( point1[ i ] - Center[ i ] );
+      Radius[ i ] = 1.0 + vcl_abs( point1[ i ] - Center[ i ] );
     }
   }
   else
