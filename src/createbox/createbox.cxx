@@ -305,7 +305,7 @@ void CreateBox( std::string filename,
     for ( unsigned int i = 0; i < Dimension; i++ )
     {
       Center[ i ] = ( point1[ i ] + point2[ i ] ) / 2.0;
-      Radius[ i ] = 1.0 + vcl_abs( point1[ i ] - Center[ i ] );
+      Radius[ i ] = Spacing[ i ] + vcl_abs( point1[ i ] - Center[ i ] );
     }
   }
   else
@@ -372,6 +372,7 @@ void CreateBox(
 
 	typedef typename ImageType::PointType			          PointType;
 	typedef typename ImageType::IndexType			          IndexType;
+  typedef typename ImageType::SpacingType		          SpacingType;
 
   /** Parse the arguments. */
   InputType   Orientation;
@@ -392,6 +393,7 @@ void CreateBox(
   typename ImageType::Pointer image = duplicator->GetOutput();
 
   /** Translate input of two opposite corners to center + radius input. */
+  SpacingType Spacing = image->GetSpacing();
   InputType Center, Radius;
   PointType point1, point2;
 	IndexType index1, index2;
@@ -422,7 +424,7 @@ void CreateBox(
     for ( unsigned int i = 0; i < Dimension; i++ )
     {
       Center[ i ] = ( point1[ i ] + point2[ i ] ) / 2.0;
-      Radius[ i ] = 1.0 + vcl_abs( point1[ i ] - Center[ i ] );
+      Radius[ i ] = Spacing[ i ] + vcl_abs( point1[ i ] - Center[ i ] );
     }
   }
   else
