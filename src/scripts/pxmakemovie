@@ -1,0 +1,177 @@
+#!/bin/bash
+
+# pxmakemovie
+#
+# Generate a 3D image of a stack of 2D images
+#
+# Usage:
+# 
+# pxmakemovie -d <dirname> -E <?> -R <?> -I <?> [-F]
+#
+#   -d: the directory name containing the tp-files
+#   -E: the elastix level for which a tptable is desired
+#   -R: the resolution for which a tptable is desired
+#   -I: every I iterations an image is taken
+#		-i: input file, the moving image
+#   -F: force (default false): if set, old results are overwritten
+#
+# The result is an image:  <dirname>/stack.<E>.R<R>.txt
+#
+#
+functionname="pxmakemovie"
+
+function PrintHelp()
+{
+  echo "Usage:"
+	echo $functionname
+	echo "  -d      directory"
+	echo "  -i      input file"
+	echo "  [-E]    elastix level, default 0"
+	echo "  [-R]    resolution level, default all"
+	echo "  [-I]    each I-th iteration, default 1"
+	echo "  [-F]    force to overwrite old results, default false"
+}
+
+# Check for PrintHelp
+if [[ $1 == "--help" ]]
+then
+	PrintHelp
+	exit 64
+fi
+
+# Check for the number of arguments
+if [ $# -lt 2 ] || [ $# -gt 8 ]
+then
+  echo "ERROR: not enough arguments!"
+  echo "Call \""$functionname" --help\" for help."
+  exit 64
+fi
+
+# Default values.
+elastixlevel=0
+resolution=99
+iter=1
+force="false"
+in=""
+
+# Get the command line arguments.
+while getopts "d:i:E:R:I:F" argje
+do
+  case $argje in 
+    d) tpdir="$OPTARG";;
+    i) in="$OPTARG";;
+    E) elastixlevel="$OPTARG";;
+    R) resolution="$OPTARG";;
+		I) iter="$OPTARG";;
+    F) force="true";;
+    *) echo "ERROR: Wrong arguments!"; exit 65;;
+  esac
+done
+
+# Some shortcuts.
+E="$elastixlevel"
+R="$resolution"
+I=$iter
+
+# Check the command line arguments.
+if [ ! -e "$tpdir" ]
+then
+  echo "ERROR: $tpdir does not exist. Quitting "$functionname"."
+  exit 66
+fi
+
+if [ ! -e "$in" ]
+then
+  echo "ERROR: $in does not exist. Quitting "$functionname"."
+  exit 66
+fi
+
+# Check which resolution levels are required.
+if [ "$R" -eq "99" ]
+then
+	i=0; Rarray="";
+	while [ 1 ]
+	do
+		file=$tpdir"/TransformParameters."$E".R"$i".txt"
+		if [ -e $file ]
+		then
+			Rarray=$Rarray" "$i
+			let "i+=1"
+		else
+			break
+		fi
+	done
+else
+	Rarray=$R
+fi
+
+if [[ "$Rarray" == "" ]]
+then
+	echo "ERROR: no (finished) resolution information."
+	exit 65;
+fi
+
+# Loop over all resolutions.
+for R in $Rarray
+do
+	# Get the current output file.
+	outfile="$tpdir/stack.$E.R$R.mhd"
+	infiles=""; indirs=""
+
+	# Check for the existence of this file.
+	if [ ! -e "$outfile" ]
+	then
+  	# create, to avoid that another thread starts to work on this one.
+	  > $outfile
+	else
+  	# If the file exists, quit, unless -F was used.
+	  if [ "$force" = "true" ]
+  	then
+    	# Overwrite old results.
+	    > $outfile
+	  else
+  	  # Quit.
+	    echo "ERROR: $outfile already exists. Quitting tptable."
+  	  exit 67
+	  fi
+	fi
+
+	# Collect all information
+	itnr="0"
+	tpfile=$tpdir"/TransformParameters."$E".R"$R".It0000000.txt"
+	tmpoutdir=$tpdir"/tmp0000000"
+
+	# For all iterations, look for the Transformparameters file
+	while [ -e "$tpfile" ]
+	do
+		# Inform the user
+		echo -n $itnr" "
+
+		# Deform input image.
+		mkdir -p $tmpoutdir
+		transformix -in $in -tp $tpfile -out $tmpoutdir > /dev/null
+
+		# Remember output
+		indirs=$indirs" "$tmpoutdir
+		infiles=$infiles" "$tmpoutdir"/result.mhd"
+
+	  # Determine next tpfile name and outdir.
+  	let "itnr = itnr + $I"
+	  itstring=`printf '%07d' $itnr`
+  	tpfile="$tpdir/TransformParameters.$E.R$R.It$itstring.txt"
+		tmpoutdir=$tpdir"/tmp"$itstring
+
+	done
+	echo
+
+	# Create the image stack
+	pxtileimages -in $infiles -out $outfile
+
+	# Clean up
+	rm -rf $indirs
+
+done
+
+# Exit function, return success
+exit 0
+
