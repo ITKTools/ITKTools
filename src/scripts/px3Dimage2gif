@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # This script converts a 3D image to a stack of 2D images,
-# or ectually to an animated gif.
+# or actually to an animated gif.
 # This script depends on some praxix programs and on
 # the `convert' program of Image Magic.
 
@@ -14,7 +14,14 @@ then
   echo "  -i    file name of the 3D image"
   echo "  -o    output name of gif"
   echo "  [-d]  direction, default z"
-  echo "warnings..."
+  echo
+  echo "This script converts a 3D image to a stack of 2D images,"
+  echo "or actually to an animated gif."
+  echo
+  echo "WARNING: This script depends on some praxix programs and on"
+  echo "the \"convert\" program of Image Magic."
+  echo
+  echo "WARNING: this script is not thread safe!"
   exit 1
 fi
 

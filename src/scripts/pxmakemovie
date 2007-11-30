@@ -2,26 +2,32 @@
 
 # pxmakemovie
 #
-# Generate a 3D image of a stack of 2D images
+# Generate a movie of deformed images resulting from elastix
 #
 # Usage:
 # 
-# pxmakemovie -d <dirname> -E <?> -R <?> -I <?> [-F]
+# pxmakemovie -d <dirname> -i <inputfile> -E <?> -R <?> -I <?> [-F]
 #
 #   -d: the directory name containing the tp-files
 #   -E: the elastix level for which a tptable is desired
 #   -R: the resolution for which a tptable is desired
 #   -I: every I iterations an image is taken
 #		-i: input file, the moving image
-#   -F: force (default false): if set, old results are overwritten
+#   -G: flag: save output also as animated gif, besides as 3d mhd file.
+#   -F: flag: force (default false): if set, old results are overwritten
 #
-# The result is an image:  <dirname>/stack.<E>.R<R>.txt
-#
+# The result is an image:  <dirname>/movie.<E>.R<R>.{mhd,gif}
+# WARNING: this script is not threadsafe!
+# 
+# Hint: use "convert -delay <time> moviein.gif movieout.gif" to change
+# the speed of the animated gif. the time should be given in centiseconds.
 #
 functionname="pxmakemovie"
 
 function PrintHelp()
 {
+  echo "Generate a movie of deformed images resulting from elastix"
+  echo
   echo "Usage:"
 	echo $functionname
 	echo "  -d      directory"
@@ -29,7 +35,14 @@ function PrintHelp()
 	echo "  [-E]    elastix level, default 0"
 	echo "  [-R]    resolution level, default all"
 	echo "  [-I]    each I-th iteration, default 1"
-	echo "  [-F]    force to overwrite old results, default false"
+  echo "  [-G]    flag: save output also as animated gif, besides as 3d mhd file"
+	echo "  [-F]    flag: force to overwrite old results, default false"
+  echo
+  echo "The result is an image:  <dirname>/movie.<E>.R<R>.{mhd,gif}"
+  echo "WARNING: this script is not threadsafe!"
+  echo 
+  echo "Hint: use \"convert -delay <time> moviein.gif movieout.gif\" to change"
+  echo "the speed of the animated gif. the time should be given in centiseconds."
 }
 
 # Check for PrintHelp
@@ -40,7 +53,7 @@ then
 fi
 
 # Check for the number of arguments
-if [ $# -lt 2 ] || [ $# -gt 8 ]
+if [ $# -lt 4 ] || [ $# -gt 12 ]
 then
   echo "ERROR: not enough arguments!"
   echo "Call \""$functionname" --help\" for help."
@@ -51,11 +64,12 @@ fi
 elastixlevel=0
 resolution=99
 iter=1
+asgif="false"
 force="false"
 in=""
 
 # Get the command line arguments.
-while getopts "d:i:E:R:I:F" argje
+while getopts "d:i:E:R:I:GF" argje
 do
   case $argje in 
     d) tpdir="$OPTARG";;
@@ -63,6 +77,7 @@ do
     E) elastixlevel="$OPTARG";;
     R) resolution="$OPTARG";;
 		I) iter="$OPTARG";;
+    G) asgif="true";;
     F) force="true";;
     *) echo "ERROR: Wrong arguments!"; exit 65;;
   esac
@@ -92,7 +107,7 @@ then
 	i=0; Rarray="";
 	while [ 1 ]
 	do
-		file=$tpdir"/TransformParameters."$E".R"$i".txt"
+		file=$tpdir"/TransformParameters."$E".R"$i".It0000000.txt"
 		if [ -e $file ]
 		then
 			Rarray=$Rarray" "$i
@@ -115,7 +130,8 @@ fi
 for R in $Rarray
 do
 	# Get the current output file.
-	outfile="$tpdir/stack.$E.R$R.mhd"
+	outfile="$tpdir/movie.$E.R$R.mhd"
+  outfilegif="$tpdir/movie.$E.R$R.gif"    
 	infiles=""; indirs=""
 
 	# Check for the existence of this file.
@@ -131,11 +147,32 @@ do
 	    > $outfile
 	  else
   	  # Quit.
-	    echo "ERROR: $outfile already exists. Quitting tptable."
+	    echo "ERROR: $outfile already exists. Quitting $functionname."
   	  exit 67
 	  fi
 	fi
 
+	# Check for the existence of this file.
+  if [ "$asgif" = "true" ]
+  then
+	  if [ ! -e "$outfilegif" ]
+  	then
+    	# create, to avoid that another thread starts to work on this one.
+  	  > $outfilegif
+  	else
+    	# If the file exists, quit, unless -F was used.
+  	  if [ "$force" = "true" ]
+    	then
+      	# Overwrite old results.
+  	    > $outfilegif
+  	  else
+    	  # Quit.
+  	    echo "ERROR: $outfilegif already exists. Quitting $functionname."
+    	  exit 67
+  	  fi
+  	fi
+  fi
+  
 	# Collect all information
 	itnr="0"
 	tpfile=$tpdir"/TransformParameters."$E".R"$R".It0000000.txt"
@@ -153,7 +190,10 @@ do
 
 		# Remember output
 		indirs=$indirs" "$tmpoutdir
-		infiles=$infiles" "$tmpoutdir"/result.mhd"
+    infile="$tmpoutdir/result.mhd"
+
+    # add to list of deformed images
+		infiles="$infiles $infile"
 
 	  # Determine next tpfile name and outdir.
   	let "itnr = itnr + $I"
@@ -164,9 +204,18 @@ do
 	done
 	echo
 
-	# Create the image stack
-	pxtileimages -in $infiles -out $outfile
+	# Create the movie as mhd
+  pxtileimages -in $infiles -out $outfile
 
+  if [ "$asgif" = "true" ]
+  then
+    mkdir -p $tmpoutdir
+    indirs="$indirs $tmpoutdir"
+    # create the movie as animated gif
+    pxrescaleintensityimagefilter -in $outfile -out $tmpoutdir/rescaled.mhd -mm 0 255
+    px3dimage2gif -i $tmpoutdir/rescaled.mhd -o $outfilegif
+  fi
+  
 	# Clean up
 	rm -rf $indirs
 
