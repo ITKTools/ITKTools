@@ -77,7 +77,7 @@ then
 	i=0; Rarray="";
 	while [ 1 ]
 	do
-		file=$tpdir"/TransformParameters."$E".R"$i".txt"
+		file=$tpdir"/TransformParameters."$E".R"$i".It0000001.txt"
 		if [ -e $file ]
 		then
 			Rarray=$Rarray" "$i
