@@ -9,7 +9,7 @@
 int main( int argc, char **argv )
 {
   /** Check arguments for help. */
-	if ( argc < 6 || argc > 15 )
+	if ( argc < 6 )
 	{
 		PrintHelp();
 		return 1;
