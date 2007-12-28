@@ -344,6 +344,7 @@ void CropImage( const std::string & inputFileName, const std::string & outputFil
 	/**
 	 * ******************* PrintHelp *******************
 	 */
+
 void PrintHelp( void )
 {
 	std::cout << "Usage:" << std::endl << "pxcropimage" << std::endl;
@@ -359,6 +360,7 @@ void PrintHelp( void )
 	std::cout << "  1: supply two points with \"-pA\" and \"-pB\"." << std::endl;
 	std::cout << "  2: supply a points and a size with \"-pA\" and \"-sz\"." << std::endl;
 	std::cout << "  3: supply a lower and an upper bound with \"-lb\" and \"-ub\"." << std::endl;
+  std::cout << "The points are supplied in index coordinates." << std::endl;
 	std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
 } // end PrintHelp()
 
@@ -405,7 +407,7 @@ bool CheckWhichInputOption( const bool pAGiven, const bool pBGiven, const bool s
 bool ProcessArgument( std::vector<int> & arg, const unsigned int dimension, const bool positive )
 {
 	/** Check if arg is of the right size. */
-	if( arg.size() != dimension && arg.size() != 1 )
+	if ( arg.size() != dimension && arg.size() != 1 )
 	{	
 		return false;
 	}
