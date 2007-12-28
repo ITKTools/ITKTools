@@ -486,11 +486,11 @@ void PrintHelp()
   std::cout << "  [-o]     orientation, default xyz" << std::endl;
 	std::cout << "  [-dim]   dimension, default 3" << std::endl;
 	std::cout << "  [-pt]    pixelType, default short" << std::endl;
-  std::cout << "The user should EITHER specify the input filename OR the output image size." << std::endl;
-  std::cout << "The user should EITHER specify the center and the radius," << std::endl;
-  std::cout << "OR the positions of two opposite corner points." << std::endl;
-  std::cout << "OR the positions of two opposite corner indices." << std::endl;
-  std::cout << "The orientation is a vector with Euler angles (rad)." << std::endl;
-	std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double." << std::endl;
+  std::cout << "- The user should EITHER specify the input filename OR the output image size." << std::endl;
+  std::cout << "- The user should EITHER specify the center and the radius," << std::endl;
+  std::cout << "  OR the positions of two opposite corner points." << std::endl;
+  std::cout << "  OR the positions of two opposite corner indices." << std::endl;
+  std::cout << "- The orientation is a vector with Euler angles (rad)." << std::endl;
+	std::cout << "- Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double." << std::endl;
 } // end PrintHelp()
 
