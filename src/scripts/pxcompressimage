@@ -9,31 +9,42 @@ if [ $# = 0 ]
 then
   echo "pxcompressimage"
   echo
-  echo "Usage: pxcompressimage <inputfilename>"
+  echo "Usage: pxcompressimage <inputfilename1> ..."
   echo
   echo "If the input is an uncompressed mhd, the raw file is deleted."
   echo
   exit 64
 fi
 
-inputimage="$1"
+# The list of input images
+inputimages="$*"
 
-pxcastconvert -in "$inputimage" -out "$inputimage" -z
-if [ "$?" != "0" ]
-then
-  exit 65
-fi
+for inputimage in $inputimages
+do
+  # Compress image
+  pxcastconvert -in "$inputimage" -out "$inputimage" -z
 
-ext=`expr match "$inputimage" '.*\([.][mM][hH][dD]\)'`
-ismhd="$?"
-
-if [ "$ismhd" = "0" ]
-then
-  inputimageraw="${inputimage/%$ext/.raw}"
-
-  if [ -e "$inputimageraw" ]
+  # Check for success
+  if [ "$?" != "0" ]
   then
-    rm "$inputimageraw"
+    exit 65
   fi
-fi
-  
+
+  # Check for mhd
+  ext=`expr match "$inputimage" '.*\([.][mM][hH][dD]\)'`
+  ismhd="$?"
+
+  # If so. remove .raw file
+  if [ "$ismhd" = "0" ]
+  then
+    inputimageraw="${inputimage/%$ext/.raw}"
+    if [ -e "$inputimageraw" ]
+    then
+      rm "$inputimageraw"
+    fi
+  fi
+done
+
+# return a value
+exit 0
+
