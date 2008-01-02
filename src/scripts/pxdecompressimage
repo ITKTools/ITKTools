@@ -7,31 +7,43 @@ if [ $# = 0 ]
 then
   echo "pxdecompressimage"
   echo
-  echo "Usage: pxdecompressimage <inputfilename>"
+  echo "Usage: pxdecompressimage <inputfilename1> ..."
   echo
   echo "If the input is a compressed mhd, the zraw file is deleted."
   echo
   exit 64
 fi
 
-inputimage="$1"
+# the list of input images
+inputimages="$*"
 
-pxcastconvert -in "$inputimage" -out "$inputimage"
-if [ "$?" != "0" ]
-then
-  exit 65
-fi
+for inputimage in $inputimages
+do
 
-ext=`expr match "$inputimage" '.*\([.][mM][hH][dD]\)'`
-ismhd="$?"
-
-if [ "$ismhd" = "0" ]
-then
-  inputimageraw="${inputimage/%$ext/.zraw}"
-
-  if [ -e "$inputimageraw" ]
+  # decompress
+  pxcastconvert -in "$inputimage" -out "$inputimage"
+  if [ "$?" != "0" ]
   then
-    rm "$inputimageraw"
+    exit 65
   fi
-fi
+
+  # check for .mhd
+  ext=`expr match "$inputimage" '.*\([.][mM][hH][dD]\)'`
+  ismhd="$?"
+
+  # if so, remove the .zraw file, if it exists
+  if [ "$ismhd" = "0" ]
+  then
+    inputimageraw="${inputimage/%$ext/.zraw}"
+
+    if [ -e "$inputimageraw" ]
+    then
+      rm "$inputimageraw"
+    fi
+  fi
   
+done
+
+# return a value
+exit 0
+
