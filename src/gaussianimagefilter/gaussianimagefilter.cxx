@@ -5,6 +5,8 @@
 #include "itkSmoothingRecursiveGaussianImageFilter2.h"
 #include "itkImageToVectorImageFilter.h"
 #include "itkGradientToMagnitudeImageFilter.h"
+#include "itkImageRegionConstIterator.h"
+#include "itkImageRegionIterator.h"
 #include "itkImageFileWriter.h"
 
 //-------------------------------------------------------------------------------------
@@ -14,13 +16,17 @@
 if ( componentType == #type && Dimension == dim ) \
 { \
   typedef itk::Image< type, dim >  OutputImageType; \
-  if ( retmag == false ) \
+  if ( retmag ) \
+  { \
+    function##Magnitude< OutputImageType >( inputFileName, outputFileName, sigma, order ); \
+  } \
+  if ( retlap ) \
+  { \
+    function##Laplacian< OutputImageType >( inputFileName, outputFileName, sigma ); \
+  } \
+  if ( !retmag && !retlap ) \
   { \
     function< OutputImageType >( inputFileName, outputFileName, sigma, order ); \
-  } \
-  else \
-  { \
-  function##Magnitude< OutputImageType >( inputFileName, outputFileName, sigma, order ); \
   } \
   supported = true; \
 }
@@ -35,13 +41,18 @@ void GaussianImageFilter(
   const std::vector<float> & sigma,
   const std::vector<unsigned int> & order );
 
-/** Declare GaussianImageFilter. */
 template< class OutputImageType >
 void GaussianImageFilterMagnitude(
   const std::string & inputFileName,
   const std::string & outputFileName,
   const std::vector<float> & sigma,
   const std::vector<unsigned int> & order );
+
+template< class OutputImageType >
+void GaussianImageFilterLaplacian(
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+  const std::vector<float> & sigma );
 
 /** Declare PrintHelp. */
 void PrintHelp( void );
@@ -77,6 +88,7 @@ int main( int argc, char ** argv )
 	bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
 
 	bool retmag = parser->ArgumentExists( "-mag" );
+  bool retlap = parser->ArgumentExists( "-lap" );
 
   std::string componentType = "";
 	bool retpt = parser->GetCommandLineArgument( "-pt", componentType );
@@ -97,6 +109,13 @@ int main( int argc, char ** argv )
       std::cerr << "Only zeroth, first and second order derivatives are supported." << std::endl;
       return 1;
     }
+  }
+
+  /** Check that not both mag and lap are given. */
+  if ( retmag && retlap )
+  {
+    std::cerr << "ERROR: only one of \"-mag\" and \"-lap\" should be given!" << std::endl;
+    return 1;
   }
  
   /** Determine image properties. */
@@ -291,29 +310,27 @@ void GaussianImageFilterMagnitude(
   }
 
   /** Setup filters. */
-  typename ImageToVectorImageFilterType::Pointer imageToVectorImageFilter
+  std::vector< SmoothingFilterPointer > smoothingFilter( Dimension );
+  typename ImageToVectorImageFilterType::Pointer composeFilter
     = ImageToVectorImageFilterType::New();
   typename MagnitudeFilterType::Pointer magnitudeFilter = MagnitudeFilterType::New();
-
-  /** Setup and run the smoothing filters. */
-  std::vector< SmoothingFilterPointer > filter( Dimension );
   for ( unsigned int i = 0; i < Dimension; ++i )
   {
-    filter[ i ] = SmoothingFilterType::New();
-    filter[ i ]->SetNormalizeAcrossScale( false );
-    filter[ i ]->SetInput( reader->GetOutput() );
-    SigmaType sigma2; sigma2.Fill( 0.0 ); sigma2[ i ] = sigmaFA[ i ];
-    OrderType order2; order2.Fill( 0.0 ); order2[ i ] = orderFA[ i ];
-    filter[ i ]->SetSigma( sigma2 );
-    filter[ i ]->SetOrder( order2 );
-    filter[ i ]->Update();
+    /** Setup smoothing filter. */
+    smoothingFilter[ i ] = SmoothingFilterType::New();
+    smoothingFilter[ i ]->SetInput( reader->GetOutput() );
+    smoothingFilter[ i ]->SetNormalizeAcrossScale( false );
+    OrderType order2; order2.Fill( 0 ); order2[ i ] = orderFA[ i ];
+    smoothingFilter[ i ]->SetSigma( sigmaFA );
+    smoothingFilter[ i ]->SetOrder( order2 );
+    smoothingFilter[ i ]->Update();
 
     /** Setup composition filter. */
-    imageToVectorImageFilter->SetNthInput( i, filter[ i ]->GetOutput() );
+    composeFilter->SetNthInput( i, smoothingFilter[ i ]->GetOutput() );
   }
 
   /** Compose vector image and compute magnitude. */
-  magnitudeFilter->SetInput( imageToVectorImageFilter->GetOutput() );
+  magnitudeFilter->SetInput( composeFilter->GetOutput() );
   magnitudeFilter->Update();
 
   /** Write image. */
@@ -323,6 +340,98 @@ void GaussianImageFilterMagnitude(
   writer->Update();
 
 } // end GaussianImageFilterMagnitude()
+
+
+  /**
+	 * ******************* GaussianImageFilterLaplacian *******************
+	 */
+
+template< class OutputImageType >
+void GaussianImageFilterLaplacian(
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+  const std::vector<float> & sigma )
+{
+  /** Typedef's. */
+  const unsigned int Dimension = OutputImageType::ImageDimension;
+  typedef typename OutputImageType::PixelType             OutputPixelType;
+  typedef float                                           InputPixelType;
+  typedef itk::Image< InputPixelType, Dimension >         InputImageType;
+	typedef itk::ImageFileReader< InputImageType >			    ReaderType;
+	typedef itk::SmoothingRecursiveGaussianImageFilter2<
+    InputImageType, InputImageType >                      SmoothingFilterType;
+  typedef typename SmoothingFilterType::Pointer           SmoothingFilterPointer;
+  typedef typename SmoothingFilterType::OrderType         OrderType;
+  typedef typename SmoothingFilterType::SigmaType         SigmaType;
+  typedef itk::ImageRegionConstIterator< InputImageType > ConstIteratorType;
+  typedef itk::ImageRegionIterator< OutputImageType >     IteratorType;
+	typedef itk::ImageFileWriter< OutputImageType >			    WriterType;
+
+	/**	Read in the input image. */
+  typename ReaderType::Pointer reader = ReaderType::New();
+  reader->SetFileName( inputFileName );
+
+  /** Setup sigma. */
+  SigmaType sigmaFA; sigmaFA.Fill( sigma[ 0 ] );
+  if ( sigma.size() == Dimension )
+  {
+    for ( unsigned int i = 0; i < Dimension; ++i )
+    {
+      sigmaFA[ i ] = sigma[ i ];
+    }
+  }
+
+  /** Setup filters. */
+  std::vector< SmoothingFilterPointer > smoothingFilter( Dimension );
+  for ( unsigned int i = 0; i < Dimension; ++i )
+  {
+    /** Setup smoothing filter. */
+    smoothingFilter[ i ] = SmoothingFilterType::New();
+    smoothingFilter[ i ]->SetInput( reader->GetOutput() );
+    smoothingFilter[ i ]->SetNormalizeAcrossScale( false );
+    OrderType order; order.Fill( 0 ); order[ i ] = 2;
+    smoothingFilter[ i ]->SetSigma( sigmaFA );
+    smoothingFilter[ i ]->SetOrder( order );
+    smoothingFilter[ i ]->Update();
+  }
+
+  /** Create output image. */
+  typename OutputImageType::Pointer outputImage = OutputImageType::New();
+  outputImage->CopyInformation( reader->GetOutput() );
+  outputImage->SetRegions( reader->GetOutput()->GetLargestPossibleRegion() );
+  outputImage->Allocate();
+
+  /** Setup iterators. */
+  std::vector< ConstIteratorType > itIn( Dimension );
+  for ( unsigned int i = 0; i < Dimension; ++i )
+  {
+    itIn[ i ] = ConstIteratorType( smoothingFilter[ i ]->GetOutput(),
+      smoothingFilter[ i ]->GetOutput()->GetLargestPossibleRegion() );
+    itIn[ i ].GoToBegin();
+  }
+  IteratorType itOut( outputImage, outputImage->GetLargestPossibleRegion() );
+  itOut.GoToBegin();
+
+  /** Fill the output image by adding the second order derivatives. */
+  while ( !itOut.IsAtEnd() )
+  {
+    InputPixelType value = itk::NumericTraits<InputPixelType>::Zero;
+    for ( unsigned int i = 0; i < Dimension; ++i )
+    {
+      value += itIn[ i ].Get();
+      ++itIn[ i ];
+    }
+    itOut.Set( static_cast<OutputPixelType>( value ) );
+    ++itOut;
+  }
+
+  /** Write image. */
+  typename WriterType::Pointer writer = WriterType::New();
+	writer->SetFileName( outputFileName );
+	writer->SetInput( outputImage );
+  writer->Update();
+
+} // end GaussianImageFilterLaplacian()
 
 
 	/**
@@ -339,6 +448,7 @@ void PrintHelp()
   std::cout << "             1: first order = gradient\n";
   std::cout << "             2: second order derivative" << std::endl;
   std::cout << "  [-mag]   compute the magnitude of the separate blurrings, default false" << std::endl;
+  std::cout << "  [-lap]   compute the laplacian, default false" << std::endl;
   std::cout << "  [-pt]    output pixel type, default equal to input" << std::endl;
 	std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
 } // end PrintHelp()
