@@ -3,6 +3,8 @@
 
 #include "itkImageFileReader.h"
 #include "itkSmoothingRecursiveGaussianImageFilter2.h"
+#include "itkImageToVectorImageFilter.h"
+#include "itkGradientToMagnitudeImageFilter.h"
 #include "itkImageFileWriter.h"
 
 //-------------------------------------------------------------------------------------
@@ -12,7 +14,14 @@
 if ( componentType == #type && Dimension == dim ) \
 { \
   typedef itk::Image< type, dim >  OutputImageType; \
-  function< OutputImageType >( inputFileName, outputFileName, sigma, order ); \
+  if ( retmag == false ) \
+  { \
+    function< OutputImageType >( inputFileName, outputFileName, sigma, order ); \
+  } \
+  else \
+  { \
+  function##Magnitude< OutputImageType >( inputFileName, outputFileName, sigma, order ); \
+  } \
   supported = true; \
 }
 
@@ -21,6 +30,14 @@ if ( componentType == #type && Dimension == dim ) \
 /** Declare GaussianImageFilter. */
 template< class OutputImageType >
 void GaussianImageFilter(
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+  const std::vector<float> & sigma,
+  const std::vector<unsigned int> & order );
+
+/** Declare GaussianImageFilter. */
+template< class OutputImageType >
+void GaussianImageFilterMagnitude(
   const std::string & inputFileName,
   const std::string & outputFileName,
   const std::vector<float> & sigma,
@@ -58,6 +75,8 @@ int main( int argc, char ** argv )
   std::string	outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
 	outputFileName += "BLURRED.mhd";
 	bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+
+	bool retmag = parser->ArgumentExists( "-mag" );
 
   std::string componentType = "";
 	bool retpt = parser->GetCommandLineArgument( "-pt", componentType );
@@ -181,7 +200,8 @@ int main( int argc, char ** argv )
 	 */
 
 template< class OutputImageType >
-void GaussianImageFilter( const std::string & inputFileName,
+void GaussianImageFilter(
+  const std::string & inputFileName,
   const std::string & outputFileName,
   const std::vector<float> & sigma,
   const std::vector<unsigned int> & order )
@@ -227,6 +247,84 @@ void GaussianImageFilter( const std::string & inputFileName,
 } // end GaussianImageFilter()
 
 
+  /**
+	 * ******************* GaussianImageFilterMagnitude *******************
+	 */
+
+template< class OutputImageType >
+void GaussianImageFilterMagnitude(
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+  const std::vector<float> & sigma,
+  const std::vector<unsigned int> & order )
+{
+  /** Typedef's. */
+  const unsigned int Dimension = OutputImageType::ImageDimension;
+  typedef float                                           InputPixelType;
+  typedef itk::Image< InputPixelType, Dimension >         InputImageType;
+	typedef itk::ImageFileReader< InputImageType >			    ReaderType;
+	typedef itk::SmoothingRecursiveGaussianImageFilter2<
+    InputImageType, InputImageType >                      SmoothingFilterType;
+  typedef typename SmoothingFilterType::Pointer           SmoothingFilterPointer;
+  typedef typename SmoothingFilterType::OrderType         OrderType;
+  typedef typename SmoothingFilterType::SigmaType         SigmaType;
+  typedef itk::ImageToVectorImageFilter<
+    InputImageType >                                      ImageToVectorImageFilterType;
+  typedef typename ImageToVectorImageFilterType
+    ::OutputImageType                                     VectorImageType;
+  typedef itk::GradientToMagnitudeImageFilter<
+    VectorImageType, OutputImageType >                    MagnitudeFilterType;
+	typedef itk::ImageFileWriter< OutputImageType >			    WriterType;
+
+	/**	Read in the input image. */
+  typename ReaderType::Pointer reader = ReaderType::New();
+  reader->SetFileName( inputFileName );
+
+  /** Setup the order and sigma. */
+  OrderType orderFA;
+  SigmaType sigmaFA;
+  sigmaFA.Fill( sigma[ 0 ] );
+  for ( unsigned int i = 0; i < Dimension; ++i )
+  {
+    orderFA[ i ] = order[ i ];
+    if ( sigma.size() == Dimension ) sigmaFA[ i ] = sigma[ i ];
+  }
+
+  /** Setup filters. */
+  typename ImageToVectorImageFilterType::Pointer imageToVectorImageFilter
+    = ImageToVectorImageFilterType::New();
+  typename MagnitudeFilterType::Pointer magnitudeFilter = MagnitudeFilterType::New();
+
+  /** Setup and run the smoothing filters. */
+  std::vector< SmoothingFilterPointer > filter( Dimension );
+  for ( unsigned int i = 0; i < Dimension; ++i )
+  {
+    filter[ i ] = SmoothingFilterType::New();
+    filter[ i ]->SetNormalizeAcrossScale( false );
+    filter[ i ]->SetInput( reader->GetOutput() );
+    SigmaType sigma2; sigma2.Fill( 0.0 ); sigma2[ i ] = sigmaFA[ i ];
+    OrderType order2; order2.Fill( 0.0 ); order2[ i ] = orderFA[ i ];
+    filter[ i ]->SetSigma( sigma2 );
+    filter[ i ]->SetOrder( order2 );
+    filter[ i ]->Update();
+
+    /** Setup composition filter. */
+    imageToVectorImageFilter->SetNthInput( i, filter[ i ]->GetOutput() );
+  }
+
+  /** Compose vector image and compute magnitude. */
+  magnitudeFilter->SetInput( imageToVectorImageFilter->GetOutput() );
+  magnitudeFilter->Update();
+
+  /** Write image. */
+  typename WriterType::Pointer writer = WriterType::New();
+	writer->SetFileName( outputFileName );
+	writer->SetInput( magnitudeFilter->GetOutput() );
+  writer->Update();
+
+} // end GaussianImageFilterMagnitude()
+
+
 	/**
 	 * ******************* PrintHelp *******************
 	 */
@@ -240,6 +338,7 @@ void PrintHelp()
   std::cout << "             0: zero order = blurring\n";
   std::cout << "             1: first order = gradient\n";
   std::cout << "             2: second order derivative" << std::endl;
+  std::cout << "  [-mag]   compute the magnitude of the separate blurrings, default false" << std::endl;
   std::cout << "  [-pt]    output pixel type, default equal to input" << std::endl;
 	std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
 } // end PrintHelp()
