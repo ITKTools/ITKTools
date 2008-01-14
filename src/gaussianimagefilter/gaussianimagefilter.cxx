@@ -153,10 +153,13 @@ int main( int argc, char ** argv )
   ReplaceUnderscoreWithSpace( ComponentTypeIn );
 
   /** Check order. */
-  if ( order.size() != Dimension )
+  if ( !retlap )
   {
-    std::cerr << "ERROR: the # of orders should be equal to the image dimension!" << std::endl;
-    return 1; 
+    if ( order.size() != Dimension )
+    {
+      std::cerr << "ERROR: the # of orders should be equal to the image dimension!" << std::endl;
+      return 1;
+    }
   }
 
   /** Check sigma. */
