@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 
 //-------------------------------------------------------------------------------------
 
@@ -82,7 +83,11 @@ int main( int argc, char *argv[] )
   ConvertVersorToEuler( parVersor, parEuler );
 
   /** Print. */
+  std::cout << std::fixed;
+  std::cout << std::showpoint;
+  std::cout << std::setprecision( 6 );
   unsigned int nop = parVersor.size();
+
   std::cout << "versor: ";
   for ( unsigned int i = 0; i < nop - 1; i++ )
   {
