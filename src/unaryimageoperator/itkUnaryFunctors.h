@@ -48,6 +48,8 @@ itkUnaryFunctorMacro( FLOOR,      vcl_floor( static_cast<double>( A ) ) );
 itkUnaryFunctorMacro( CEIL,       vcl_ceil( static_cast<double>( A ) ) );
 itkUnaryFunctorMacro( ROUND,      vnl_math_rnd( static_cast<double>( A ) ) );
 
+itkUnaryFunctorMacro( SQR,    vcl_sqr( static_cast<double>( A ) ) );
+itkUnaryFunctorMacro( SQRT,   vcl_sqrt( static_cast<double>( A ) ) );
 itkUnaryFunctorMacro( LN,     vcl_log( static_cast<double>( A ) ) );
 itkUnaryFunctorMacro( LOG10,  vcl_log10( static_cast<double>( A ) ) );
 itkUnaryFunctorMacro( NLOG,   vcl_log( static_cast<double>( A ) ) / vcl_log( static_cast<double>( this->m_Argument ) ) );
