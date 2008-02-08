@@ -111,42 +111,45 @@ int main( int argc, char **argv )
     return 1; 
   }
 
-  /** The default output is equal to the input, but can be overridden by   * specifying -pt in the command line.   */  if ( !retpt ) componentType = ComponentTypeIn;
+  /** The default output is equal to the input, but can be overridden by
+   * specifying -pt in the command line.
+   */
+  if ( !retpt ) componentType = ComponentTypeIn;
 
-	/** Get rid of the possible "_" in ComponentType. */
+  /** Get rid of the possible "_" in ComponentType. */
   ReplaceUnderscoreWithSpace( componentType );
 
-	/** Run the program. */
+  /** Run the program. */
   bool supported = false;
-	try
-	{
-		run( PerformPCA, unsigned char, 2 );
-		run( PerformPCA, char, 2 );
-		run( PerformPCA, unsigned short, 2 );
-		run( PerformPCA, short, 2 );
+  try
+  {
+    run( PerformPCA, unsigned char, 2 );
+    run( PerformPCA, char, 2 );
+    run( PerformPCA, unsigned short, 2 );
+    run( PerformPCA, short, 2 );
     run( PerformPCA, unsigned int, 2 );
-		run( PerformPCA, int, 2 );
+    run( PerformPCA, int, 2 );
     run( PerformPCA, unsigned long, 2 );
-		run( PerformPCA, long, 2 );
+    run( PerformPCA, long, 2 );
     run( PerformPCA, float, 2 );
-		run( PerformPCA, double, 2 );
+    run( PerformPCA, double, 2 );
 
     run( PerformPCA, unsigned char, 3 );
-		run( PerformPCA, char, 3 );
-		run( PerformPCA, unsigned short, 3 );
-		run( PerformPCA, short, 3 );
+    run( PerformPCA, char, 3 );
+    run( PerformPCA, unsigned short, 3 );
+    run( PerformPCA, short, 3 );
     run( PerformPCA, unsigned int, 3 );
-		run( PerformPCA, int, 3 );
+    run( PerformPCA, int, 3 );
     run( PerformPCA, unsigned long, 3 );
-		run( PerformPCA, long, 3 );
+    run( PerformPCA, long, 3 );
     run( PerformPCA, float, 3 );
-		run( PerformPCA, double, 3 );
-	}
-	catch( itk::ExceptionObject &e )
-	{
-		std::cerr << "Caught ITK exception: " << e << std::endl;
-		return 1;
-	}
+    run( PerformPCA, double, 3 );
+  }
+  catch( itk::ExceptionObject &e )
+  {
+    std::cerr << "Caught ITK exception: " << e << std::endl;
+    return 1;
+  }
   if ( !supported )
   {
     std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
@@ -163,9 +166,9 @@ int main( int argc, char **argv )
 } // end main()
 
 
-	/**
-	 * ******************* PerformPCA *******************
-	 */
+  /**
+   * ******************* PerformPCA *******************
+   */
 
 template< class OutputImageType >
 void PerformPCA(
@@ -175,15 +178,15 @@ void PerformPCA(
 {
   const unsigned int Dimension = OutputImageType::ImageDimension;
 
-	/** Typedefs. */
+  /** Typedefs. */
   typedef itk::Image< double, Dimension >               DoubleImageType;
   typedef itk::PCAImageToImageFilter<
     DoubleImageType, OutputImageType >                  PCAEstimatorType;
   typedef typename PCAEstimatorType::VectorOfDoubleType VectorOfDoubleType;
   typedef typename PCAEstimatorType::MatrixOfDoubleType MatrixOfDoubleType;
-	typedef itk::ImageFileReader< DoubleImageType >			  ReaderType;
+  typedef itk::ImageFileReader< DoubleImageType >       ReaderType;
   typedef typename ReaderType::Pointer                  ReaderPointer;
-	typedef itk::ImageFileWriter< OutputImageType >			  WriterType;
+  typedef itk::ImageFileWriter< OutputImageType >       WriterType;
   typedef typename WriterType::Pointer                  WriterPointer;
 
   /** Get some sizes. */
@@ -242,17 +245,18 @@ void PerformPCA(
 } // end PerformPCA()
 
 
-	/**
-	 * ******************* PrintHelp *******************
-	 */
+  /**
+   * ******************* PrintHelp *******************
+   */
 
 void PrintHelp( void )
 {
-	std::cout << "Usage:" << std::endl << "pxpca" << std::endl;
-	std::cout << "  -in      inputFilenames" << std::endl;
-	std::cout << "  [-out]   outputFilenames, default pc<i>.mhd" << std::endl;
+  std::cout << "Usage:" << std::endl << "pxpca" << std::endl;
+  std::cout << "  -in      inputFilenames" << std::endl;
+  std::cout << "  [-out]   outputFilenames, default pc<i>.mhd" << std::endl;
   std::cout << "  [-opc]   the number of principal components that you want to output, default all" << std::endl;
-	std::cout << "  [-opct]  output pixel component type, default derived from the input image" << std::endl;
-	std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
+  std::cout << "  [-opct]  output pixel component type, default derived from the input image" << std::endl;
+  std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
 
 } // end PrintHelp()
+
