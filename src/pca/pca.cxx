@@ -35,20 +35,20 @@ void PrintHelp( void );
 
 int main( int argc, char **argv )
 {
-	/** Check arguments for help. */
-	if ( argc < 4 )
-	{
-		PrintHelp();
-		return 1;
-	}
+  /** Check arguments for help. */
+  if ( argc < 4 )
+  {
+    PrintHelp();
+    return 1;
+  }
 
-	/** Create a command line argument parser. */
-	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
-	parser->SetCommandLineArguments( argc, argv );
+  /** Create a command line argument parser. */
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
 
-	/** Get arguments. */
-  std::vector<std::string>	inputFileNames( 0, "" );
-	bool retin = parser->GetCommandLineArgument( "-in", inputFileNames );
+  /** Get arguments. */
+  std::vector<std::string>  inputFileNames( 0, "" );
+  bool retin = parser->GetCommandLineArgument( "-in", inputFileNames );
 
   std::string base = itksys::SystemTools::GetFilenamePath( inputFileNames[ 0 ] );
   if ( base != "" ) base = base + "/";
@@ -59,20 +59,23 @@ int main( int argc, char **argv )
     makeFileName << base << "pc" << i << ".mhd";
     outputFileNames[ i ] = makeFileName.str();
   }
-	bool retout = parser->GetCommandLineArgument( "-out", outputFileNames );
+  bool retout = parser->ArgumentExists( "-out" );
+  if ( retout ) outputFileNames.resize( 0 );
+  // This is needed, so that the outputFileNames is not of size inputFileNames
+  parser->GetCommandLineArgument( "-out", outputFileNames );
 
   unsigned int numberOfPCs = outputFileNames.size();
   bool retnpc = parser->GetCommandLineArgument( "-npc", numberOfPCs );
 
   std::string componentType = "";
-	bool retpt = parser->GetCommandLineArgument( "-opct", componentType );
+  bool retpt = parser->GetCommandLineArgument( "-opct", componentType );
 
-	/** Check if the required arguments are given. */
-	if ( !retin )
-	{
-		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-		return 1;
-	}
+  /** Check if the required arguments are given. */
+  if ( !retin )
+  {
+    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
+    return 1;
+  }
 
   /** Check if enough output file names are specified. */
   if ( numberOfPCs > outputFileNames.size() )
@@ -87,7 +90,7 @@ int main( int argc, char **argv )
 
   /** Determine image properties. */
   std::string ComponentTypeIn = "short";
-  std::string	PixelType; //we don't use this
+  std::string PixelType; //we don't use this
   unsigned int Dimension = 3;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
@@ -159,9 +162,9 @@ int main( int argc, char **argv )
       << std::endl;
     return 1;
   }
-	
-	/** End program. */
-	return 0;
+  
+  /** End program. */
+  return 0;
 
 } // end main()
 
@@ -230,8 +233,8 @@ void PerformPCA(
   {
     std::cout << mat.get_row( i ) << std::endl;
   }
-	
-	/** Setup and process the pipeline. */
+  
+  /** Setup and process the pipeline. */
   unsigned int noo = pcaEstimator->GetNumberOfOutputs();
   std::vector<WriterPointer> writers( noo );
   for ( unsigned int i = 0; i < noo; ++i )
