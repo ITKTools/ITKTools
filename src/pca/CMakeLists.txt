@@ -14,5 +14,5 @@ ADD_EXECUTABLE(pxpca pca.cxx)
 
 INSTALL_TARGETS(/. pxpca)
 
-TARGET_LINK_LIBRARIES(pxpca pxcommon ITKBasicFilters ITKIO ITKCommon ITKAlgorithms)
+TARGET_LINK_LIBRARIES(pxpca pxcommon ITKBasicFilters ITKIO ITKCommon)
 
