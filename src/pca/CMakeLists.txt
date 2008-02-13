@@ -10,7 +10,10 @@ ELSE(ITK_FOUND)
           "Cannot build without ITK.  Please set ITK_DIR.")
 ENDIF(ITK_FOUND)
 
-ADD_EXECUTABLE(pxpca pca.cxx)
+ADD_EXECUTABLE(pxpca
+ pca.cxx
+ itkPCAImageToImageFilter.h
+ itkPCAImageToImageFilter.txx )
 
 INSTALL_TARGETS(/. pxpca)
 
