@@ -57,6 +57,7 @@ SUBDIRS(
  scripts
  segmentationdistance
  statisticsonimage
+ texture
  tileimages
  ttest
  thresholdimage
