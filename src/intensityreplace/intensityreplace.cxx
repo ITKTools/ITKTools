@@ -9,7 +9,7 @@
 
 /** run: A macro to call a function. */
 #define run( function, type, dim ) \
-if ( componentType == #type && Dimension == dim ) \
+if ( ComponentType == #type && Dimension == dim ) \
 { \
   function< type, dim >( inputFileName, outputFileName, inValues, outValues ); \
   supported = true; \
@@ -58,8 +58,8 @@ int main( int argc, char ** argv )
 	outputFileName += "LUTAPPLIED.mhd";
 	bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
 
-  std::string componentType = "";
-	bool retpt = parser->GetCommandLineArgument( "-pt", componentType );
+  std::string ComponentType = "";
+	bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
 
  	/** Check if the required arguments are given. */
 	if ( !retin )
@@ -104,7 +104,7 @@ int main( int argc, char ** argv )
 
   /** The default output is equal to the input, but can be overridden by
    * specifying -pt in the command line.   */
-  if ( !retpt ) componentType = ComponentTypeIn;
+  if ( !retpt ) ComponentType = ComponentTypeIn;
 
   /** Check for vector images. */
   if ( NumberOfComponents > 1 )
@@ -115,7 +115,7 @@ int main( int argc, char ** argv )
   }
 
 	/** Get rid of the possible "_" in ComponentType. */
-  ReplaceUnderscoreWithSpace( componentType );
+  ReplaceUnderscoreWithSpace( ComponentType );
 
 
   /** Run the program. */
@@ -153,9 +153,9 @@ int main( int argc, char ** argv )
   if ( !supported )
   {
     std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-    std::cerr <<
-      "pixel (component) type = " << componentType <<
-      " ; dimension = " << Dimension 
+    std::cerr
+      << "pixel (component) type = " << ComponentType
+      << " ; dimension = " << Dimension
       << std::endl;
     return 1;
   }

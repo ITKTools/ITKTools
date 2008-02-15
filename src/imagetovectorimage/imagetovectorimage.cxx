@@ -125,9 +125,9 @@ int main( int argc, char ** argv )
   if ( !supported )
   {
     std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-    std::cerr <<
-      "pixel (component) type = " << ComponentTypeIn <<
-      " ; dimension = " << Dimension 
+    std::cerr
+      << "pixel (component) type = " << ComponentTypeIn
+      << " ; dimension = " << Dimension
       << std::endl;
     return 1;
   }
