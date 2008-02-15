@@ -259,6 +259,7 @@ namespace itk
           100.0 * static_cast<float>( currentVoxel ) /
           static_cast<float>( totalNumberOfVoxels ) );
         std::cout << "\rProgress: " << progress << "%";
+        std::cout << std::flush;
       }
 
     } // end while
