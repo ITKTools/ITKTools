@@ -3,8 +3,8 @@
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: itkGrayLevelCooccurrenceMatrixTextureCoefficientsCalculator.txx,v $
   Language:  C++
-  Date:      $Date: 2008-02-13 16:02:16 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-02-15 12:09:28 $
+  Version:   $Revision: 1.2 $
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -23,184 +23,209 @@
 #include "vnl/vnl_math.h"
 
 namespace itk {
-  namespace Statistics {
-    
-    template< class THistogram >
-    void
-    GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator< THistogram >::
-    Compute( void )
-      {
-      typedef typename HistogramType::Iterator HistogramIterator;
-      
-      // First, normalize the histogram if it doesn't look normalized.
-      // This is one pass through the histogram.
-      FrequencyType totalFrequency = m_Histogram->GetTotalFrequency();
-      if ( (totalFrequency - NumericTraits<MeasurementType>::One) > 0.0001 )
-        {
-        // Doesn't look normalized:
-        this->NormalizeHistogram();
-        }
-      
-      // Now get the various means and variances. This is takes two passes
-      // through the histogram.
-      double pixelMean, marginalMean, marginalDevSquared, pixelVariance;
-      this->ComputeMeansAndVariances(pixelMean, marginalMean, marginalDevSquared,
-                                     pixelVariance);
-      
-            
-      // Finally compute the texture features. Another one pass.
-      m_Energy = m_Entropy = m_Correlation = m_InverseDifferenceMoment =
-        m_Inertia = m_ClusterShade = m_ClusterProminence = m_HaralickCorrelation = 0;
-      
-      double pixelVarianceSquared = pixelVariance * pixelVariance;
-      double log2 = vcl_log(2.);
-      for (HistogramIterator hit = m_Histogram->Begin();
-           hit != m_Histogram->End(); ++hit)
-        {
-        MeasurementType frequency = hit.GetFrequency();
-        if (frequency == 0)
-          {
-          continue; // no use doing these calculations if we're just multiplying by zero.
-          }
-        
-        IndexType index = m_Histogram->GetIndex(hit.GetInstanceIdentifier());
-        m_Energy += frequency * frequency;
-        m_Entropy -= (frequency > 0.0001) ? frequency * vcl_log(frequency) / log2 : 0;
-        m_Correlation += ( (index[0] - pixelMean) * (index[1] - pixelMean) * frequency)
-          / pixelVarianceSquared;
-        m_InverseDifferenceMoment += frequency /
-          (1.0 + (index[0] - index[1]) * (index[0] - index[1]) );
-        m_Inertia += (index[0] - index[1]) * (index[0] - index[1]) * frequency;
-        m_ClusterShade += vcl_pow((index[0] - pixelMean) + (index[1] - pixelMean), 3) *
-          frequency;
-        m_ClusterProminence += vcl_pow((index[0] - pixelMean) + (index[1] - pixelMean), 4) *
-          frequency;
-        m_HaralickCorrelation += index[0] * index[1] * frequency;
-        }
-      
-      m_HaralickCorrelation = (m_HaralickCorrelation - marginalMean * marginalMean) /
-        marginalDevSquared;
-      }
-  
+namespace Statistics {
 
-    template< class THistogram >
-    void
-    GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator< THistogram >::
-    NormalizeHistogram( void )
-      {
-        typename HistogramType::Iterator hit;
-        typename HistogramType::FrequencyType totalFrequency = 
-          m_Histogram->GetTotalFrequency();
-        
-        for (hit = m_Histogram->Begin(); hit != m_Histogram->End(); ++hit)
-          {
-          hit.SetFrequency(hit.GetFrequency() / totalFrequency);
-          }
-      }
-      
-    template< class THistogram >
-    void
-    GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator< THistogram >::
-    ComputeMeansAndVariances( double &pixelMean, double &marginalMean, 
-                              double &marginalDevSquared, double &pixelVariance )
-      {
-      // This function takes two passes through the histogram and two passes through
-      // an array of the same length as a histogram axis. This could probably be
-      // cleverly compressed to one pass, but it's not clear that that's necessary.
-      
-      typedef typename HistogramType::Iterator HistogramIterator;
-      
-      // Initialize everything
-      typename HistogramType::SizeValueType binsPerAxis = m_Histogram->GetSize(0);
-      double *marginalSums = new double[binsPerAxis];
-      for (double *ms_It = marginalSums; 
-           ms_It < marginalSums + binsPerAxis; ms_It++)
-        {
-        *ms_It = 0;
-        }
-      pixelMean = 0;
-      
-      // Ok, now do the first pass through the histogram to get the marginal sums
-      // and compute the pixel mean
-      HistogramIterator hit;
-      for (hit = m_Histogram->Begin(); hit != m_Histogram->End(); ++hit)
-        {
-        MeasurementType frequency = hit.GetFrequency();
-        IndexType index = m_Histogram->GetIndex(hit.GetInstanceIdentifier());
-        pixelMean += index[0] * frequency;
-        marginalSums[index[0]] += frequency;
-        }
-      
-      /*  Now get the mean and deviaton of the marginal sums.
-          Compute incremental mean and SD, a la Knuth, "The  Art of Computer 
-          Programming, Volume 2: Seminumerical Algorithms",  section 4.2.2. 
-          Compute mean and standard deviation using the recurrence relation:
-          M(1) = x(1), M(k) = M(k-1) + (x(k) - M(k-1) ) / k
-          S(1) = 0, S(k) = S(k-1) + (x(k) - M(k-1)) * (x(k) - M(k))
-          for 2 <= k <= n, then
-          sigma = vcl_sqrt(S(n) / n) (or divide by n-1 for sample SD instead of
-          population SD).
-      */
-      marginalMean = marginalSums[0];
-      marginalDevSquared = 0;
-      for (unsigned int arrayIndex = 1 ; arrayIndex < binsPerAxis; arrayIndex++)
-        {
-        int k = arrayIndex + 1;
-        double M_k_minus_1 = marginalMean;
-        double S_k_minus_1 = marginalDevSquared;
-        double x_k = marginalSums[arrayIndex];
-        
-        double M_k = M_k_minus_1 + (x_k - M_k_minus_1) / k;
-        double S_k = S_k_minus_1 + (x_k - M_k_minus_1) * (x_k - M_k);
-        
-        marginalMean = M_k;
-        marginalDevSquared = S_k;
-        }
-      marginalDevSquared = marginalDevSquared / binsPerAxis;
-      
-      // OK, now compute the pixel variances.
-      pixelVariance = 0;
-      for (hit = m_Histogram->Begin(); hit != m_Histogram->End(); ++hit)
-        {
-        MeasurementType frequency = hit.GetFrequency();
-        IndexType index = m_Histogram->GetIndex(hit.GetInstanceIdentifier());
-        pixelVariance += (index[0] - pixelMean) * (index[0] - pixelMean) * frequency;
-        }      
-      delete [] marginalSums;
-      }
+
+  /**
+   * ********************* Constructor ****************************
+   */
+  
+  template< class THistogram >
+    GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator< THistogram >
+    ::GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator()
+  {
+    this->m_Histogram = 0;
+    this->ResetFeatureValues();
     
-    template< class THistogram >
+  } // end Constructor()
+  
+  /**
+   * ********************* ResetFeatureValues ****************************
+   */
+  
+  template< class THistogram >
+    void
+    GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator< THistogram >
+    ::ResetFeatureValues( void )
+  {
+    this->m_Energy = 0.0;
+    this->m_Entropy = 0.0;
+    this->m_Correlation = 0.0;
+    this->m_InverseDifferenceMoment = 0.0;
+    this->m_Inertia = 0.0;
+    this->m_ClusterShade = 0.0;
+    this->m_ClusterProminence = 0.0;
+    this->m_HaralickCorrelation = 0.0;
+
+  } // end ResetFeatureValues()
+
+
+  /**
+   * ********************* Compute ****************************
+   */
+  
+  template< class THistogram >
+    void
+    GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator< THistogram >
+    ::Compute( void )
+  {
+    /** Reset the feature values. */
+    this->ResetFeatureValues();
+
+    /** Get the total histogram frequency and size. */
+    double totalFrequency = this->m_Histogram->GetTotalFrequency();
+    typename HistogramType::SizeValueType binsPerAxis = this->m_Histogram->GetSize( 0 );
+
+    /** Temporary variables. */
+    double pixelSum_0, pixelSum_1, pixelSum_00, pixelSum_01, pixelSum_11,
+      pixelSum_000, pixelSum_001, pixelSum_011, pixelSum_111,
+      pixelSum_0000, pixelSum_0001, pixelSum_0011, pixelSum_0111, pixelSum_1111;
+    pixelSum_0 = pixelSum_1
+      = pixelSum_00 = pixelSum_01 = pixelSum_11
+      = pixelSum_000 = pixelSum_001 = pixelSum_011 = pixelSum_111
+      = pixelSum_0000 = pixelSum_0001 = pixelSum_0011
+      = pixelSum_0111 = pixelSum_1111 = 0.0;
+    std::vector<double> marginalSums( binsPerAxis, 0.0 );
+
+    /** Walk over the histogram. Only once instead of 4! */
+    double log2 = vcl_log(2.);
+    HistogramIterator hit;
+    for ( hit = this->m_Histogram->Begin(); hit != this->m_Histogram->End(); ++hit )
+    {
+      /** Get the frequency of this histogram entry. */
+      MeasurementType frequency = hit.GetFrequency();
+
+      /** No use doing these calculations if we're just multiplying by zero. */
+      if ( frequency == 0 ) continue;
+
+      /** Normalize frequency and get the index of this histogram entry. */
+      frequency /= totalFrequency;
+      IndexType index = this->m_Histogram->GetIndex( hit.GetInstanceIdentifier() );
+
+      /** Compute values that are needed later for the feature computation. */
+      pixelSum_0     += index[ 0 ] * frequency;
+      pixelSum_1     += index[ 1 ] * frequency;
+      pixelSum_00    += index[ 0 ] * index[ 0 ] * frequency;
+      pixelSum_01    += index[ 0 ] * index[ 1 ] * frequency;
+      pixelSum_11    += index[ 1 ] * index[ 1 ] * frequency;
+      pixelSum_000   += index[ 0 ] * index[ 0 ] * index[ 0 ] * frequency;
+      pixelSum_001   += index[ 0 ] * index[ 0 ] * index[ 1 ] * frequency;
+      pixelSum_011   += index[ 0 ] * index[ 1 ] * index[ 1 ] * frequency;
+      pixelSum_111   += index[ 1 ] * index[ 1 ] * index[ 1 ] * frequency;
+      pixelSum_0000  += index[ 0 ] * index[ 0 ] * index[ 0 ] * index[ 0 ] * frequency;
+      pixelSum_0001  += index[ 0 ] * index[ 0 ] * index[ 0 ] * index[ 1 ] * frequency;
+      pixelSum_0011  += index[ 0 ] * index[ 0 ] * index[ 1 ] * index[ 1 ] * frequency;
+      pixelSum_0111  += index[ 0 ] * index[ 1 ] * index[ 1 ] * index[ 1 ] * frequency;
+      pixelSum_1111  += index[ 1 ] * index[ 1 ] * index[ 1 ] * index[ 1 ] * frequency;
+
+      /** For the HaralickCorrelation. */
+      marginalSums[ index[ 0 ] ] += frequency;
+
+      /** Compute the features that can be computed in this loop immediately. */
+      this->m_Energy += frequency * frequency;
+      this->m_Entropy -= ( frequency > 0.0001 ) ? frequency * vcl_log( frequency ) / log2 : 0.0;
+      this->m_InverseDifferenceMoment += frequency /
+        ( 1.0 + ( index[ 0 ] - index[ 1 ] ) * ( index[ 0 ] - index[ 1 ] ) );
+      this->m_Inertia += ( index[ 0 ] - index[ 1 ] ) * ( index[ 0 ] - index[ 1 ] ) * frequency;
+      this->m_HaralickCorrelation += index[ 0 ] * index[ 1 ] * frequency;
+    }
+
+    /** Compute intermediate values. */
+    double pixelMean = pixelSum_0;
+    double pixelMean2 = pixelMean * pixelMean;
+    double pixelMean3 = pixelMean2 * pixelMean;
+    double pixelMean4 = pixelMean3 * pixelMean;
+    double pixelVariance = pixelSum_00 - pixelMean * pixelMean; //( N -1 ) ????
+
+    /** Compute marginal mean and variance needed for the HaralickCorrelation. */
+    double marginalMean = 0.0;
+    double marginalSquareMean = 0.0;
+    for ( unsigned int i = 0; i < binsPerAxis; ++i )
+    {
+      marginalMean += marginalSums[ i ];
+      marginalSquareMean += marginalSums[ i ] * marginalSums[ i ];
+    }
+    double marginalVariance = marginalSquareMean - marginalMean * marginalMean / binsPerAxis;
+    marginalVariance /= binsPerAxis; // why not (binsPerAxis-1)?
+    marginalMean /= binsPerAxis;
+
+    /** Compute the remaining features. */
+    this->m_Correlation = ( pixelSum_01 - pixelMean * pixelMean )
+      / ( pixelVariance * pixelVariance );
+
+    this->m_ClusterShade =
+      + 16 * pixelMean3
+      -  6 * pixelMean * pixelSum_00
+      +      pixelSum_000
+      - 12 * pixelMean * pixelSum_01
+      +  3 * pixelSum_001
+      -  6 * pixelMean * pixelSum_11
+      +  3 * pixelSum_011
+      + pixelSum_111;
+
+    this->m_ClusterProminence =
+      - 48 * pixelMean4
+      + 24 * pixelMean2 * pixelSum_00
+      -  8 * pixelMean  * pixelSum_000
+      +      pixelSum_0000
+      + 48 * pixelMean2 * pixelSum_01
+      - 24 * pixelMean  * pixelSum_001
+      +  4 * pixelSum_0001
+      + 24 * pixelMean2 * pixelSum_11
+      - 24 * pixelMean  * pixelSum_011
+      +  6 * pixelSum_0011
+      -  8 * pixelMean  * pixelSum_111
+      +  4 * pixelSum_0111
+      +      pixelSum_1111;
+    
+    this->m_HaralickCorrelation -= marginalMean * marginalMean;
+    this->m_HaralickCorrelation /= marginalVariance;
+
+  } // end ComputeFast()
+
+
+  /**
+   * ********************* GetFeature ****************************
+   */
+  
+  template< class THistogram >
     double
-    GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator< THistogram >::
-    GetFeature(TextureFeatureName feature)
-      {
-      switch(feature)
-        {
-        case Energy:
-          return this->GetEnergy();
-        case Entropy:
-          return this->GetEntropy();
-        case Correlation:
-          return this->GetCorrelation();
-        case InverseDifferenceMoment:
-          return this->GetInverseDifferenceMoment();
-        case Inertia:
-          return this->GetInertia();
-        case ClusterShade:
-          return this->GetClusterShade();
-        case ClusterProminence:
-          return this->GetClusterProminence();
-        case HaralickCorrelation:
-          return this->GetHaralickCorrelation();
-        default:
-          return 0;
-        }
-      }
+    GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator< THistogram >
+    ::GetFeature( TextureFeatureName feature )
+  {
+    switch( feature )
+    {
+    case Energy:
+      return this->GetEnergy();
+    case Entropy:
+      return this->GetEntropy();
+    case Correlation:
+      return this->GetCorrelation();
+    case InverseDifferenceMoment:
+      return this->GetInverseDifferenceMoment();
+    case Inertia:
+      return this->GetInertia();
+    case ClusterShade:
+      return this->GetClusterShade();
+    case ClusterProminence:
+      return this->GetClusterProminence();
+    case HaralickCorrelation:
+      return this->GetHaralickCorrelation();
+    default:
+      return 0;
+    }
+
+  } // end GetFeature()
+
+
+  /**
+   * ********************* GetFeature ****************************
+   */
 
   template< class THistogram >
     double
-    GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator< THistogram >::
-    GetFeature( unsigned int feature )
+    GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator< THistogram >
+    ::GetFeature( unsigned int feature )
   {
     if ( feature == 0 ) return this->GetEnergy();
     else if ( feature == 1 ) return this->GetEntropy();
@@ -211,17 +236,28 @@ namespace itk {
     else if ( feature == 6 ) return this->GetClusterProminence();
     else if ( feature == 7 ) return this->GetHaralickCorrelation();
     else return 0.0;
+
   } // end GetFeature()
-      
-    template< class THistogram >
+
+
+  /**
+   * ********************* PrintSelf ****************************
+   */
+  
+  template< class THistogram >
     void
-    GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator< THistogram >::    
-    PrintSelf(std::ostream& os, Indent indent) const
-      {
-      Superclass::PrintSelf(os,indent);
-      }
-    
-  } // end of namespace Statistics 
+    GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator< THistogram >
+    ::PrintSelf( std::ostream& os, Indent indent ) const
+  {
+    /** Call the superclass implementation. */
+    Superclass::PrintSelf( os, indent );
+
+    /** Print the member variables. */
+
+  } // end PrintSelf()
+
+
+} // end of namespace Statistics 
 } // end of namespace itk 
 
 

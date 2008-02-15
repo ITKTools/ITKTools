@@ -15,7 +15,7 @@
 if ( componentType == #type && Dimension == dim ) \
 { \
   typedef itk::Image< type, dim > OutputImageType; \
-  function< OutputImageType >( inputFileName, outputFileNames, \
+  function< OutputImageType >( inputFileName, outputDirectory, \
   neighborhoodRadius, offsetScales, numberOfBins, numberOfOutputs ); \
   supported = true; \
 }
@@ -26,7 +26,7 @@ if ( componentType == #type && Dimension == dim ) \
 template< class InputImageType >
 void PerformTextureAnalysis(
   const std::string & inputFileName,
-  const std::vector< std::string > & outputFileNames,
+  const std::string & outputDirectory,
   unsigned int neighborhoodRadius,
   const std::vector< unsigned int > & offsetScales,
   unsigned int numberOfBins,
@@ -56,19 +56,8 @@ int main( int argc, char **argv )
 
   std::string base = itksys::SystemTools::GetFilenamePath( inputFileName );
   if ( base != "" ) base = base + "/";
-  std::vector<std::string> outputFileNames( 8, "" );
-  outputFileNames[ 0 ] = base + "energy.mhd";
-  outputFileNames[ 1 ] = base + "entropy.mhd";
-  outputFileNames[ 2 ] = base + "correlation.mhd";
-  outputFileNames[ 3 ] = base + "inverseDifferenceMoment.mhd";
-  outputFileNames[ 4 ] = base + "inertia.mhd";
-  outputFileNames[ 5 ] = base + "clusterShade.mhd";
-  outputFileNames[ 6 ] = base + "clusterProminence.mhd";
-  outputFileNames[ 7 ] = base + "HaralickCorrelation.mhd";
-  bool retout = parser->ArgumentExists( "-out" );
-  if ( retout ) outputFileNames.resize( 0 );
-  // This is needed, so that the outputFileNames is not of size inputFileNames
-  parser->GetCommandLineArgument( "-out", outputFileNames );
+  std::string outputDirectory = base;
+  bool retout = parser->GetCommandLineArgument( "-out", outputDirectory );
 
   unsigned int neighborhoodRadius = 3;
   bool retr = parser->GetCommandLineArgument( "-r", neighborhoodRadius );
@@ -90,17 +79,6 @@ int main( int argc, char **argv )
   {
     std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
     return 1;
-  }
-
-  /** Check if enough output file names are specified. */
-  if ( numberOfOutputs > outputFileNames.size() )
-  {
-    std::cerr << "ERROR: you should specify " << numberOfOutputs << " output file names." << std::endl;
-    return 1;
-  }
-  else
-  {
-    outputFileNames.resize( numberOfOutputs );
   }
 
   /** Check that numberOfOutputs <= 8. */
@@ -179,9 +157,9 @@ int main( int argc, char **argv )
   if ( !supported )
   {
     std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-    std::cerr <<
-      "pixel (component) type = " << ComponentTypeIn <<
-      " ; dimension = " << Dimension 
+    std::cerr
+      << "pixel (component) type = " << ComponentTypeIn
+      << " ; dimension = " << Dimension
       << std::endl;
     return 1;
   }
@@ -199,7 +177,7 @@ int main( int argc, char **argv )
 template< class InputImageType >
 void PerformTextureAnalysis(
   const std::string & inputFileName,
-  const std::vector< std::string > & outputFileNames,
+  const std::string & outputDirectory,
   unsigned int neighborhoodRadius,
   const std::vector< unsigned int > & offsetScales,
   unsigned int numberOfBins,
@@ -229,7 +207,18 @@ void PerformTextureAnalysis(
   textureFilter->SetNumberOfHistogramBins( numberOfBins );
   textureFilter->SetNormalizeHistogram( false );
   textureFilter->SetNumberOfRequestedOutputs( numberOfOutputs );
-  
+
+  /** Create the output file names. */
+  std::vector< std::string > outputFileNames( 8, "" );
+  outputFileNames[ 0 ] = outputDirectory + "energy.mhd";
+  outputFileNames[ 1 ] = outputDirectory + "entropy.mhd";
+  outputFileNames[ 2 ] = outputDirectory + "correlation.mhd";
+  outputFileNames[ 3 ] = outputDirectory + "inverseDifferenceMoment.mhd";
+  outputFileNames[ 4 ] = outputDirectory + "inertia.mhd";
+  outputFileNames[ 5 ] = outputDirectory + "clusterShade.mhd";
+  outputFileNames[ 6 ] = outputDirectory + "clusterProminence.mhd";
+  outputFileNames[ 7 ] = outputDirectory + "HaralickCorrelation.mhd";
+
   /** Setup and process the pipeline. */
   for ( unsigned int i = 0; i < numberOfOutputs; ++i )
   {
@@ -250,8 +239,8 @@ void PrintHelp( void )
 {
   std::cout << "Usage:" << std::endl << "pxtexture" << std::endl;
   std::cout << "This program computes texture features based on the gray-level co-occurence matrix (GLCM)." << std::endl;
-  std::cout << "  -in      inputFilenames" << std::endl;
-  std::cout << "  [-out]   outputFilenames, default pc<i>.mhd" << std::endl;
+  std::cout << "  -in      inputFilename" << std::endl;
+  std::cout << "  [-out]   outputDirectory, default equal to the inputFilename directory" << std::endl;
   std::cout << "  [-r]     the radius of the neighborhood on which to construct the GLCM, default 3" << std::endl;
   std::cout << "  [-os]    the desired offset scales to compute the GLCM, default 1, but can be e.g. 1 2 4" << std::endl;
   std::cout << "  [-b]     the number of bins of the GLCM, default 128" << std::endl;

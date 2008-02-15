@@ -8,6 +8,7 @@
 #include "itkConstNeighborhoodIterator.h"
 #include "itkImageRegionIterator.h"
 
+
 namespace itk
 {
 
@@ -17,7 +18,7 @@ namespace itk
   
   template< class TInputImage, class TOutputImage >
     TextureImageToImageFilter< TInputImage, TOutputImage >
-    ::TextureImageToImageFilter( void )
+    ::TextureImageToImageFilter()
   {
     this->m_NumberOfRequestedOutputs = 8;
     this->m_NeighborhoodRadius = 3;
@@ -168,6 +169,11 @@ namespace itk
     TextureImageToImageFilter< TInputImage, TOutputImage >
     ::GenerateData( void )
   {
+    /** Make sure that the input image is completely up-to-date. */
+    InputImagePointer inputPtr = const_cast< InputImageType * > ( this->GetInput() );
+    if ( !inputPtr ) return;
+    inputPtr->Update();
+
     /** Create outputs. */
     this->SetAndCreateOutputs( this->m_NumberOfRequestedOutputs );
 
@@ -180,6 +186,7 @@ namespace itk
     /** Setup local co-occurrence matrix generator. */
     typename CooccurrenceMatrixGeneratorType::Pointer cmGenerator
       = CooccurrenceMatrixGeneratorType::New();
+    cmGenerator->SetInput( inputPtr );
     cmGenerator->SetOffsets( this->m_Offsets );
     cmGenerator->SetNumberOfBinsPerAxis( this->m_NumberOfHistogramBins );
     cmGenerator->SetPixelValueMinMax( this->m_HistogramMinimum, this->m_HistogramMaximum );
@@ -190,10 +197,9 @@ namespace itk
       = TextureCalculatorType::New();
     
     /** Typedefs. */
-    typedef itk::ConstNeighborhoodIterator< InputImageType >    ConstNeighborhoodIteratorType;
+    typedef ConstNeighborhoodIterator< InputImageType >         ConstNeighborhoodIteratorType;
     typedef typename ConstNeighborhoodIteratorType::RadiusType  RadiusType;
-    typedef itk::ImageRegionIterator< InputImageType >          InputIteratorType;
-    typedef itk::ImageRegionIterator< OutputImageType >         OutputIteratorType;
+    typedef ImageRegionIterator< OutputImageType >              OutputIteratorType;
 
     /** Setup a neigborhood iterator over the input image. */
     RadiusType radius;
@@ -214,49 +220,30 @@ namespace itk
       outputIterators[ i ].GoToBegin();
     }
 
-    /** Get the size of a neighborhood. */
-    InputImageSizeType nSize;
-    nSize.Fill( 2 * this->m_NeighborhoodRadius + 1 );
-
-    /** Construct a local neighborhood image. */
-    InputImagePointer tmpImage = InputImageType::New();
-    tmpImage->SetRegions( nSize );
-    tmpImage->Allocate();
-
-    InputIteratorType it( tmpImage, tmpImage->GetLargestPossibleRegion() );
+    /** Printing progress. */
+    const unsigned long totalNumberOfVoxels = inputPtr->GetBufferedRegion().GetNumberOfPixels();
+    const unsigned long numberOfUpdates = 100;
+    const unsigned long frac =
+      static_cast<unsigned long>( totalNumberOfVoxels / numberOfUpdates );
+    unsigned long currentVoxel = 0;
+    std::cout << "Progress: 0%";
 
     /** Loop over the input image. */
-    unsigned int qqtmp = 0;
     while ( !nit.IsAtEnd() )
     {
-      /** Copy neighborhood to tmpImage. */
-      it.GoToBegin();
-      unsigned int i = 0;
-      while ( !it.IsAtEnd() )
-      {
-        it.Set( nit.GetPixel( i ) );
-        ++i;
-        ++it;
-      }
-
-      /** Construct a local neighborhood. *
+      /** Construct a local neighborhood. */
       InputImageRegionType localRegion = nit.GetBoundingBoxAsImageRegion();
-      //localRegion.SetIndex( nit.GetIndex( 0 ) );
-      //localRegion.SetSize(  );*/
+      localRegion.Crop( inputPtr->GetBufferedRegion() );
 
       /** Generate the co-occurrence over a local region only. */
-      //this->GetInput()->SetRequestedRegion( localRegion );
-      //cmGenerator->SetInput( this->GetInput() );
-      cmGenerator->SetInput( tmpImage );
-      cmGenerator->Modified();
+      inputPtr->SetRequestedRegion( localRegion );
       cmGenerator->Compute();
 
       /** Compute texture features from this co-occurrence matrix. */
       cmCalculator->SetHistogram( cmGenerator->GetOutput() );
-      cmCalculator->Modified();
       cmCalculator->Compute();
 
-      /** Copy the requested texture features to the output. And update iterators. */
+      /** Copy the requested texture features to the outputs. And update iterators. */
       for ( unsigned int ii = 0; ii < noo; ++ii )
       {
         outputIterators[ ii ].Set( cmCalculator->GetFeature( ii ) );
@@ -264,10 +251,18 @@ namespace itk
       }
       ++nit;
 
-      ++qqtmp;
-      if ( qqtmp % 100 == 0 ) std::cout << qqtmp << " ";
+      /** Print progress. */
+      ++currentVoxel;
+      if ( currentVoxel % frac == 0 )
+      {
+        unsigned int progress = static_cast<unsigned int>(
+          100.0 * static_cast<float>( currentVoxel ) /
+          static_cast<float>( totalNumberOfVoxels ) );
+        std::cout << "\rProgress: " << progress << "%";
+      }
 
     } // end while
+    std::cout << "\rProgress: 100%" << std::endl;
 
   } // end GenerateData()
 

@@ -3,8 +3,8 @@
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: itkGrayLevelCooccurrenceMatrixTextureCoefficientsCalculator.h,v $
   Language:  C++
-  Date:      $Date: 2008-02-13 16:02:16 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-02-15 12:09:28 $
+  Version:   $Revision: 1.2 $
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -115,24 +115,27 @@ class GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator : public Object
     /** standard New() method support */
     itkNewMacro( Self ) ;
     
+    /** Typedefs. */
     typedef THistogram                                      HistogramType;
     typedef typename HistogramType::Pointer                 HistogramPointer;
     typedef typename HistogramType::ConstPointer            HistogramConstPointer;
+    typedef typename HistogramType::Iterator                HistogramIterator;
     typedef typename HistogramType::MeasurementType         MeasurementType;
     typedef typename HistogramType::MeasurementVectorType   MeasurementVectorType;
     typedef typename HistogramType::IndexType               IndexType;
     typedef typename HistogramType::FrequencyType           FrequencyType;
     
-    /** Triggers the Computation of the histogram */
-    void Compute( void );
+    /** Triggers the computation of the histogram. */
+    virtual void Compute( void );
     
-    /** Connects the GLCM histogram over which the features are going to be computed */
+    /** Connects the GLCM histogram over which the features are going to be computed. */
     itkSetObjectMacro( Histogram, HistogramType );
     itkGetObjectMacro( Histogram, HistogramType );
 
     /** Methods to return the feature values.
-      \warning These outputs are only valid after the Compute() method has been invoked 
-      \sa Compute */
+     * \warning These outputs are only valid after the Compute() method has been invoked.
+     * \sa Compute()
+     */
     double GetFeature( TextureFeatureName feature );
     double GetFeature( unsigned int feature );
     
@@ -148,7 +151,7 @@ class GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator : public Object
   protected:
 
     /** Constructor. */
-    GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator() {};
+    GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator();
 
     /** Destructor. */
     virtual ~GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator() {};
@@ -161,14 +164,12 @@ class GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator : public Object
      GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator( const Self& ); // purposely not implemented
      void operator=( const Self& );            // purposely not implemented
 
-     void NormalizeHistogram( void );
-     void ComputeMeansAndVariances(
-       double & pixelMean,
-       double & marginalMean,
-       double & marginalDevSquared,
-       double & pixelVariance );
+     virtual void ResetFeatureValues( void );
 
+     /** The member variables: input histogram. */
      HistogramPointer  m_Histogram;
+
+     /** The member variables: output feature values. */
      double            m_Energy;
      double            m_Entropy;
      double            m_Correlation;
