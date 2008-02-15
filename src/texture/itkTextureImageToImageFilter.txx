@@ -227,6 +227,7 @@ namespace itk
       static_cast<unsigned long>( totalNumberOfVoxels / numberOfUpdates );
     unsigned long currentVoxel = 0;
     std::cout << "Progress: 0%";
+    std::cout << std::flush;
 
     /** Loop over the input image. */
     while ( !nit.IsAtEnd() )
