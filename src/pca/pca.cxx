@@ -15,7 +15,7 @@
 if ( componentType == #type && Dimension == dim ) \
 { \
   typedef itk::Image< type, dim > OutputImageType; \
-  function< OutputImageType >( inputFileNames, outputFileNames, numberOfPCs ); \
+  function< OutputImageType >( inputFileNames, outputDirectory, numberOfPCs ); \
   supported = true; \
 }
 
@@ -25,7 +25,7 @@ if ( componentType == #type && Dimension == dim ) \
 template< class OutputImageType >
 void PerformPCA(
   const std::vector< std::string > & inputFileNames,
-  const std::vector< std::string > & outputFileNames,
+  const std::string & outputDirectory,
   unsigned int numberOfPCs );
 
 /** Declare other functions. */
@@ -52,19 +52,12 @@ int main( int argc, char **argv )
 
   std::string base = itksys::SystemTools::GetFilenamePath( inputFileNames[ 0 ] );
   if ( base != "" ) base = base + "/";
-  std::vector<std::string> outputFileNames( inputFileNames.size(), "" );
-  for ( unsigned int i = 0; i < inputFileNames.size(); ++i )
-  {
-    std::ostringstream makeFileName( "" );
-    makeFileName << base << "pc" << i << ".mhd";
-    outputFileNames[ i ] = makeFileName.str();
-  }
-  bool retout = parser->ArgumentExists( "-out" );
-  if ( retout ) outputFileNames.resize( 0 );
-  // This is needed, so that the outputFileNames is not of size inputFileNames
-  parser->GetCommandLineArgument( "-out", outputFileNames );
+  std::string outputDirectory = base;
+  bool retout = parser->GetCommandLineArgument( "-out", outputDirectory );
+  bool endslash = itksys::SystemTools::StringEndsWith( outputDirectory.c_str(), "/" );
+  if ( !endslash ) outputDirectory += "/";
 
-  unsigned int numberOfPCs = outputFileNames.size();
+  unsigned int numberOfPCs = inputFileNames.size();
   bool retnpc = parser->GetCommandLineArgument( "-npc", numberOfPCs );
 
   std::string componentType = "";
@@ -77,15 +70,11 @@ int main( int argc, char **argv )
     return 1;
   }
 
-  /** Check if enough output file names are specified. */
-  if ( numberOfPCs > outputFileNames.size() )
+  /** Check that numberOfOutputs <= numberOfInputs. */
+  if ( numberOfPCs > inputFileNames.size() )
   {
-    std::cerr << "ERROR: you should specify " << numberOfPCs << " output file names." << std::endl;
+    std::cerr << "ERROR: you should specify less than " << inputFileNames.size() << " output pc's." << std::endl;
     return 1;
-  }
-  else
-  {
-    outputFileNames.resize( numberOfPCs );
   }
 
   /** Determine image properties. */
@@ -176,7 +165,7 @@ int main( int argc, char **argv )
 template< class OutputImageType >
 void PerformPCA(
   const std::vector< std::string > & inputFileNames,
-  const std::vector< std::string > & outputFileNames,
+  const std::string & outputDirectory,
   unsigned int numberOfPCs )
 {
   const unsigned int Dimension = OutputImageType::ImageDimension;
@@ -233,14 +222,19 @@ void PerformPCA(
   {
     std::cout << mat.get_row( i ) << std::endl;
   }
-  
+
   /** Setup and process the pipeline. */
   unsigned int noo = pcaEstimator->GetNumberOfOutputs();
   std::vector<WriterPointer> writers( noo );
   for ( unsigned int i = 0; i < noo; ++i )
   {
+    /** Create output filename. */
+    std::ostringstream makeFileName( "" );
+    makeFileName << outputDirectory << "pc" << i << ".mhd";
+
+    /** Write principal components. */
     writers[ i ] = WriterType::New();
-    writers[ i ]->SetFileName( outputFileNames[ i ].c_str() );
+    writers[ i ]->SetFileName( makeFileName.str().c_str() );
     writers[ i ]->SetInput( pcaEstimator->GetOutput( i ) );
     writers[ i ]->Update();
   }
@@ -256,7 +250,7 @@ void PrintHelp( void )
 {
   std::cout << "Usage:" << std::endl << "pxpca" << std::endl;
   std::cout << "  -in      inputFilenames" << std::endl;
-  std::cout << "  [-out]   outputFilenames, default pc<i>.mhd" << std::endl;
+  std::cout << "  [-out]   outputDirectory, default equal to the inputFilename directory" << std::endl;
   std::cout << "  [-opc]   the number of principal components that you want to output, default all" << std::endl;
   std::cout << "  [-opct]  output pixel component type, default derived from the input image" << std::endl;
   std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
