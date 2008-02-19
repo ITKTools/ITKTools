@@ -58,6 +58,8 @@ int main( int argc, char **argv )
   if ( base != "" ) base = base + "/";
   std::string outputDirectory = base;
   bool retout = parser->GetCommandLineArgument( "-out", outputDirectory );
+  bool endslash = itksys::SystemTools::StringEndsWith( outputDirectory.c_str(), "/" );
+  if ( !endslash ) outputDirectory += "/";
 
   unsigned int neighborhoodRadius = 3;
   bool retr = parser->GetCommandLineArgument( "-r", neighborhoodRadius );
