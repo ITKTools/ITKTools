@@ -452,6 +452,13 @@ namespace itk
       << this->m_NumberOfFeatureImages << std::endl;
     os << indent << "NumberOfPixels: "
       << this->m_NumberOfPixels << std::endl;
+
+    os << indent << "CovarianceMatrix: " << std::endl;
+    for( unsigned int i = 0; i < this->m_CovarianceMatrix.size(); i++ )
+    {
+      os << indent << this->m_CovarianceMatrix.get_row( i ) << std::endl;
+    }
+
     os << indent << "EigenValues: "
       << this->m_EigenValues << std::endl;
     os << indent << "NormalisedEigenValues: "
