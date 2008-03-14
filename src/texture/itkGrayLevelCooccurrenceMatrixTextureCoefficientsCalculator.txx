@@ -3,8 +3,8 @@
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: itkGrayLevelCooccurrenceMatrixTextureCoefficientsCalculator.txx,v $
   Language:  C++
-  Date:      $Date: 2008-02-15 12:09:28 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2008-03-14 09:44:02 $
+  Version:   $Revision: 1.3 $
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -181,7 +181,7 @@ namespace Statistics {
     this->m_HaralickCorrelation -= marginalMean * marginalMean;
     this->m_HaralickCorrelation /= marginalVariance;
 
-  } // end ComputeFast()
+  } // end Compute()
 
 
   /**
