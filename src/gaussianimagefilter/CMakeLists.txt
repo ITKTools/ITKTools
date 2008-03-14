@@ -16,6 +16,8 @@ ADD_EXECUTABLE(pxgaussianimagefilter
  itkSmoothingRecursiveGaussianImageFilter2.txx
  itkHessianRecursiveGaussianImageFilter2.h
  itkHessianRecursiveGaussianImageFilter2.txx
+ itkGaussianInvariantsImageFilter.h
+ itkGaussianInvariantsImageFilter.txx
 )
 
 TARGET_LINK_LIBRARIES(pxgaussianimagefilter pxcommon ITKIO ITKBasicFilters ITKCommon)

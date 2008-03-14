@@ -260,14 +260,12 @@ GaussianInvariantsImageFilter<TInputImage,TOutputImage >
     else if ( this->m_Invariant == "LiLijLj" )
     {
       /** LiLijLj = g^T H g */
-      vnl_vector< ScalarRealType > tmp = gradient * H;
-      for ( unsigned int i = 0; i < ImageDimension; ++i ) outValue += tmp[ i ] * gradient[ i ];
+      outValue = dot_product( gradient * H, gradient );
     }
     else if ( this->m_Invariant == "LiLijLjkLk" )
     {
       /** LiLijLjkLk = g^T H H g */
-      vnl_vector< ScalarRealType > tmp = ( H * H ) * gradient;
-      for ( unsigned int i = 0; i < ImageDimension; ++i ) outValue += tmp[ i ] * gradient[ i ];
+      outValue = dot_product( gradient * ( H * H ), gradient );
     }
     else if ( this->m_Invariant == "Lii" )
     {
