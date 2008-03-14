@@ -3,8 +3,8 @@
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: itkSmoothingRecursiveGaussianImageFilter2.txx,v $
   Language:  C++
-  Date:      $Date: 2007-05-10 09:37:46 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2008-03-14 09:45:07 $
+  Version:   $Revision: 1.3 $
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -130,6 +130,7 @@ SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
       this->m_SmoothingFilters[ i ]->SetNormalizeAcrossScale( arg );
     }
   } // end if
+
 } // end SetNormalizeAcrossScale()
 
 

@@ -10,7 +10,13 @@ ELSE(ITK_FOUND)
           "Cannot build without ITK.  Please set ITK_DIR.")
 ENDIF(ITK_FOUND)
 
-ADD_EXECUTABLE(pxgaussianimagefilter gaussianimagefilter.cxx)
+ADD_EXECUTABLE(pxgaussianimagefilter
+ gaussianimagefilter.cxx
+ itkSmoothingRecursiveGaussianImageFilter2.h
+ itkSmoothingRecursiveGaussianImageFilter2.txx
+ itkHessianRecursiveGaussianImageFilter2.h
+ itkHessianRecursiveGaussianImageFilter2.txx
+)
 
 TARGET_LINK_LIBRARIES(pxgaussianimagefilter pxcommon ITKIO ITKBasicFilters ITKCommon)
 
