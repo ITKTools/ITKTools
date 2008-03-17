@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # to calculate something.
-# test line
+# test line2
 
 if [ $# = 0 ]
 then
