@@ -53,6 +53,7 @@ SUBDIRS(
  pca
  replacevoxel
  rescaleintensityimagefilter
+ reshape
  resizeimage
  scripts
  segmentationdistance
