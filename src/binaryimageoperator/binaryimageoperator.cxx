@@ -80,6 +80,7 @@ int main( int argc, char **argv )
     }
     ComponentTypeOut = opct;
     ReplaceUnderscoreWithSpace( ComponentTypeOut );
+	if ( !TypeIsInteger( opct ) ) ComponentTypeIn1 = ComponentTypeIn2 = "double";
   }
 
   /** Check if a valid operator is given. */
