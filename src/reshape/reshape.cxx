@@ -3,7 +3,7 @@
 
 #include <itksys/SystemTools.hxx>
 #include <sstream>
-#include "itkPCAImageToImageFilter.h"
+//#include "itkPCAImageToImageFilter.h"
 
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
@@ -115,7 +115,7 @@ int main( int argc, char **argv )
   bool supported = false;
   try
   {
-    run( PerformPCA, unsigned char, 2 );
+   /* run( PerformPCA, unsigned char, 2 );
     run( PerformPCA, char, 2 );
     run( PerformPCA, unsigned short, 2 );
     run( PerformPCA, short, 2 );
@@ -135,7 +135,7 @@ int main( int argc, char **argv )
     run( PerformPCA, unsigned long, 3 );
     run( PerformPCA, long, 3 );
     run( PerformPCA, float, 3 );
-    run( PerformPCA, double, 3 );
+    run( PerformPCA, double, 3 );*/
   }
   catch( itk::ExceptionObject &e )
   {
