@@ -53,6 +53,7 @@ SUBDIRS(
  morphologicalclosingimage
  morphologicalopeningimage
  pca
+ reflect
  replacevoxel
  rescaleintensityimagefilter
  #reshape
