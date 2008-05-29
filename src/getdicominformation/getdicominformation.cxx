@@ -94,8 +94,8 @@ int main( int argc, char **argv )
   
   /** Create a test reader. */
   SeriesReaderType::Pointer testReader = SeriesReaderType::New();
-  GDCMImageIOType::Pointer dicomIO = GDCMImageIOType::New();
-  testReader->SetImageIO( dicomIO );
+  GDCMImageIOType::Pointer gdcmIO = GDCMImageIOType::New();
+  testReader->SetImageIO( gdcmIO );
   testReader->SetFileNames( fileNames );
   
   /** Try reading image information. */
@@ -111,74 +111,55 @@ int main( int argc, char **argv )
   }
   
   /** Get general image information from the dicomIO. */
-  unsigned int inputDimension = dicomIO->GetNumberOfDimensions();
-  unsigned int numberOfComponents = dicomIO->GetNumberOfComponents();
-  std::string inputPixelComponentType = dicomIO->GetComponentTypeAsString(
-    dicomIO->GetComponentType() );
-  std::string pixelType = dicomIO->GetPixelTypeAsString(
-    dicomIO->GetPixelType() );
-  unsigned int sizeX = dicomIO->GetDimensions( 0 );
-  unsigned int sizeY = dicomIO->GetDimensions( 1 );
-  unsigned int sizeZ = dicomIO->GetDimensions( 2 );
-  double spacingX = dicomIO->GetSpacing( 0 );
-  double spacingY = dicomIO->GetSpacing( 1 );
-  double spacingZ = dicomIO->GetSpacing( 2 );
-  double originX = dicomIO->GetOrigin( 0 );
-  double originY = dicomIO->GetOrigin( 1 );
-  double originZ = dicomIO->GetOrigin( 2 );
+  unsigned int sizeX = gdcmIO->GetDimensions( 0 );
+  unsigned int sizeY = gdcmIO->GetDimensions( 1 );
+  unsigned int sizeZ = gdcmIO->GetDimensions( 2 );
+  double spacingX = gdcmIO->GetSpacing( 0 );
+  double spacingY = gdcmIO->GetSpacing( 1 );
+  double spacingZ = gdcmIO->GetSpacing( 2 );
+  double originX = gdcmIO->GetOrigin( 0 );
+  double originY = gdcmIO->GetOrigin( 1 );
+  double originZ = gdcmIO->GetOrigin( 2 );
+  std::string orientation = "";
+  gdcmIO->GetValueFromTag( "0020|0037", orientation );
 
   /** Print the general image information. */
   std::cout << "General image information:" << std::endl;
-  std::cout << "dimension:        " << inputDimension << std::endl;
-  std::cout << "# components:     " << numberOfComponents << std::endl;
-  std::cout << "pixel type:       " << pixelType << ", " << inputPixelComponentType << std::endl;
+  std::cout << "dimension:        " << gdcmIO->GetNumberOfDimensions() << std::endl;
+  std::cout << "# components:     " << gdcmIO->GetNumberOfComponents() << std::endl;
+  std::cout << "pixel type:       "
+    << gdcmIO->GetPixelTypeAsString( gdcmIO->GetPixelType() )
+    << ", "
+    << gdcmIO->GetComponentTypeAsString( gdcmIO->GetComponentType() )
+    << std::endl;
   std::cout << "size:             " << sizeX << " " << sizeY << " " << sizeZ << std::endl;
   std::cout << "spacing:          " << spacingX << " " << spacingY << " " << spacingZ << std::endl;
   std::cout << "origin:           " << originX << " " << originY << " " << originZ << std::endl;
+  std::cout << "image orientation:" << orientation << std::endl;
+  std::cout << "rescale intercept:" << gdcmIO->GetRescaleIntercept() << std::endl;
+  std::cout << "rescale slope:    " << gdcmIO->GetRescaleSlope() << std::endl;
+  std::cout << "use compression:  " << gdcmIO->GetUseCompression() << std::endl;
 
   /** Get patient information from the dicomIO. */
   const unsigned int maxSize = 255;
   char patientName[maxSize];
-  dicomIO->GetPatientName( patientName );
+  gdcmIO->GetPatientName( patientName );
   char patientAge[maxSize];
-  dicomIO->GetPatientAge( patientAge );
+  gdcmIO->GetPatientAge( patientAge );
   char patientSex[maxSize];
-  dicomIO->GetPatientSex( patientSex );
+  gdcmIO->GetPatientSex( patientSex );
   char patientDOB[maxSize];
-  dicomIO->GetPatientDOB( patientDOB );
+  gdcmIO->GetPatientDOB( patientDOB );
   char patientID[maxSize];
-  dicomIO->GetPatientID( patientID );
+  gdcmIO->GetPatientID( patientID );
   char bodypart[maxSize];
-  dicomIO->GetBodyPart( bodypart );
+  gdcmIO->GetBodyPart( bodypart );
+  std::string position = "";
+  gdcmIO->GetValueFromTag( "0018|5100", position );
+  std::string viewPosition = "";
+  gdcmIO->GetValueFromTag( "0018|5101", viewPosition );
 
-  /** Get study information from the dicomIO. */
-  char noSeries[maxSize];
-  dicomIO->GetNumberOfSeriesInStudy( noSeries );
-  char noRelatedSeries[maxSize];
-  dicomIO->GetNumberOfStudyRelatedSeries( noRelatedSeries );
-  char studyDate[maxSize];
-  dicomIO->GetStudyDate( studyDate );
-  char studyDesc[maxSize];
-  dicomIO->GetStudyDescription( studyDesc );
-  char studyID[maxSize];
-  dicomIO->GetStudyID( studyID );
-  std::string protocoltag = "0018|1030";
-  std::string protocolvalue;
-  dicomIO->GetValueFromTag( protocoltag, protocolvalue );
-
-  /** Get scanner information from the dicomIO. */
-  char modality[maxSize];
-  dicomIO->GetModality( modality );
-  char manufacturer[maxSize];
-  dicomIO->GetManufacturer( manufacturer );
-  char model[maxSize];
-  dicomIO->GetModel( model );
-  char scanOptions[maxSize];
-  dicomIO->GetScanOptions( scanOptions );
-  char institution[maxSize];
-  dicomIO->GetInstitution( institution );
-
-  /** Print patient and study information. */
+  /** Print patient information. */
   std::cout << std::endl;
   std::cout << "Patient information:" << std::endl;
   std::cout << "patient name:     " << patientName << std::endl;
@@ -187,10 +168,28 @@ int main( int argc, char **argv )
   std::cout << "DOB:              " << patientDOB << std::endl;
   std::cout << "ID:               " << patientID << std::endl;
   std::cout << "body part:        " << bodypart << std::endl;
+  std::cout << "position:         " << position << std::endl;
+
+  /** Get study information from the dicomIO. */
+  char noSeries[maxSize];
+  gdcmIO->GetNumberOfSeriesInStudy( noSeries );
+  char noRelatedSeries[maxSize];
+  gdcmIO->GetNumberOfStudyRelatedSeries( noRelatedSeries );
+  char studyDate[maxSize];
+  gdcmIO->GetStudyDate( studyDate );
+  char studyDesc[maxSize];
+  gdcmIO->GetStudyDescription( studyDesc );
+  char studyID[maxSize];
+  gdcmIO->GetStudyID( studyID );
+  std::string protocolvalue = "";
+  gdcmIO->GetValueFromTag( "0018|1030", protocolvalue );
 
   /** Print study information. */
   std::cout << std::endl;
   std::cout << "Study information:" << std::endl;
+  std::cout << "study UID:        " << gdcmIO->GetStudyInstanceUID() << std::endl;
+  std::cout << "UID prefix:       " << gdcmIO->GetUIDPrefix() << std::endl;
+  std::cout << "series UID:       " << gdcmIO->GetSeriesInstanceUID() << std::endl;
   std::cout << "# series:         " << noSeries << std::endl;
   std::cout << "# related series: " << noSeries << std::endl;
   std::cout << "date:             " << studyDate << std::endl;
@@ -198,6 +197,18 @@ int main( int argc, char **argv )
   std::cout << "ID:               " << studyID << std::endl;
   std::cout << "protocol name:    " << protocolvalue << std::endl;
 
+  /** Get scanner information from the dicomIO. */
+  char modality[maxSize];
+  gdcmIO->GetModality( modality );
+  char manufacturer[maxSize];
+  gdcmIO->GetManufacturer( manufacturer );
+  char model[maxSize];
+  gdcmIO->GetModel( model );
+  char scanOptions[maxSize];
+  gdcmIO->GetScanOptions( scanOptions );
+  char institution[maxSize];
+  gdcmIO->GetInstitution( institution );
+ 
   /** Print scanner information. */
   std::cout << std::endl;
   std::cout << "Scanner information:" << std::endl;
@@ -207,7 +218,10 @@ int main( int argc, char **argv )
   std::cout << "scan options:     " << scanOptions << std::endl;
   std::cout << "institution:      " << institution << std::endl;
 
-  /** End  program. Return succes. */
+//  GetLabelFromTag(const std::string &tag, std::string &labelId)
+  //  GetValueFromTag(const std::string &tag, std::string &value)
+
+  /** End  program. Return success. */
   return 0;
 
 }  // end main
