@@ -39,7 +39,7 @@ namespace itk {
  * StatisticsImageFilter computes the minimum, maximum, sum, mean, variance
  * sigma of an image.  The filter needs all of its input image.  It
  * behaves as a filter with an input and output. Thus it can be inserted
- * in a pipline with other filters and the statistics will only be
+ * in a pipeline with other filters and the statistics will only be
  * recomputed if a downstream filter changes.
  *
  * The filter passes its input through unmodified.  The filter is
