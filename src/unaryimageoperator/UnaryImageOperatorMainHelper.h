@@ -20,7 +20,7 @@ void PrintHelp()
             << "           notation:\n"
             << "             {PLUS,{R,L}MINUS,TIMES,{R,L}DIVIDE,{R,L}POWER,{R,L}MOD,\n"
             << "             NEG,SIGN,ABS,FLOOR,CEIL,ROUND,\n"
-            << "             LN,10LOG,NLOG,EXP,[ARC]SIN,[ARC]COS,[ARC]TAN}\n"
+            << "             LN,LOG10,NLOG,EXP,[ARC]SIN,[ARC]COS,[ARC]TAN}\n"
             << "           notation examples:\n"
             << "             RMINUS = A - arg\n"
             << "             LMINUS = arg - A\n"
