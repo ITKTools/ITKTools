@@ -35,7 +35,16 @@ then
 fi
 
 # Get a list of all series in this directory
-serieslist=`pxgetDICOMseriesUIDs $dicomDir`
+# We cannot use the following line on windows, because it gives anoying ^M carriage returns:
+#serieslist=`pxgetDICOMseriesUIDs $dicomDir`
+# Therefore, we use the following 5 lines:
+tmpout="out_tmp14031977.txt"
+pxgetDICOMseriesUIDs $dicomDir &> $tmpout
+dos2unix $tmpout
+serieslist=`less $tmpout`
+rm $tmpout
+
+# Check if not an empty list
 if [ "$serieslist" == "" ]
 then
 	exit 1;
@@ -47,8 +56,10 @@ for series in $serieslist
 do
 	# Create a number
 	number=`printf "%03d" $i`
+
 	# Create an outputname
 	out=$outbase$number".mhd"
+
 	# Get the DICOM series and write to $out
 	if [ "$opct" == "" ]
 	then
@@ -56,9 +67,11 @@ do
 	else
 		pxcastconvert -in $dicomDir -out $out -opct $opct -s $series
 	fi
+
 	# Increase iteration number
 	let "i += 1"
 	echo "--------------------------------------------------"
+
 done
 
 # exit the script
