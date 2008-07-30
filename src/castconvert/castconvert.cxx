@@ -76,6 +76,12 @@
 #include "itkImageFileReader.h"
 #include "itkGDCMImageIO.h"
 
+// Some non-standard IO Factories
+#include "itkGE4ImageIOFactory.h"
+#include "itkGE5ImageIOFactory.h"
+#include "itkGEAdwImageIOFactory.h"
+#include "itkBrains2MaskImageIOFactory.h"
+
 /** Functions to do the actual conversion. */
 extern int FileConverterScalar( const std::string &inputPixelComponentType, const std::string &outputPixelComponentType, const std::string &inputFileName, const std::string &outputFileName, const unsigned int inputDimension, bool useCompression );
 extern int DicomFileConverterScalarA( const std::string &inputPixelComponentType, const std::string &outputPixelComponentType, const std::string &inputDirectoryName, const std::string &seriesUID, const std::string &outputFileName, const unsigned int inputDimension, bool useCompression );
@@ -95,6 +101,14 @@ int main( int argc, char **argv )
     PrintHelp();
     return 1;
   }
+
+  /** Register some non-standard IO Factories to make the tool more useful.
+   * Copied from the Insight Applications.
+   */
+  itk::Brains2MaskImageIOFactory::RegisterOneFactory();
+  itk::GE4ImageIOFactory::RegisterOneFactory();
+  itk::GE5ImageIOFactory::RegisterOneFactory();
+  itk::GEAdwImageIOFactory::RegisterOneFactory();
 
   /** Get the command line arguments. */
   std::string input = "";
@@ -317,14 +331,14 @@ int main( int argc, char **argv )
  
   } // end try
   /** If any errors have occurred, catch and print the exception and return false. */
-  catch( itk::ExceptionObject  &  err  )
+  catch ( itk::ExceptionObject & err )
   {
-    std::cerr  << "ExceptionObject caught !"  << std::endl;
-    std::cerr  << err <<  std::endl;
+    std::cerr << "ExceptionObject caught !" << std::endl;
+    std::cerr << err << std::endl;
     return 1;
   }
 
-  /** End  program. Return succes. */
+  /** End  program. Return success. */
   return 0;
 
 }  // end main
