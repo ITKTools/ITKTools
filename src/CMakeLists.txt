@@ -52,6 +52,7 @@ SUBDIRS(
  logicalimageoperator
  morphologicalclosingimage
  morphologicalopeningimage
+ morphology
  pca
  reflect
  replacevoxel
