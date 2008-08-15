@@ -25,7 +25,7 @@ int main( int argc, char *argv[] )
   parser->SetCommandLineArguments( argc, argv );
 
   /** Get arguments. */
-  std::string	inputFileName = "";
+  std::string inputFileName = "";
   bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
 
   std::string operation = "";
@@ -42,7 +42,7 @@ int main( int argc, char *argv[] )
   std::vector<unsigned int> radius;
   bool retr = parser->GetCommandLineArgument( "-r", radius );
 
-  std::string	outputFileName =
+  std::string outputFileName =
     itksys::SystemTools::GetFilenameWithoutLastExtension( inputFileName );
   std::string ext =
     itksys::SystemTools::GetFilenameLastExtension( inputFileName );
@@ -92,7 +92,7 @@ int main( int argc, char *argv[] )
   
   /** Determine image properties. */
   std::string ComponentType = "short";
-  std::string	PixelType; //we don't use this
+  std::string PixelType; //we don't use this
   unsigned int Dimension = 3;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );

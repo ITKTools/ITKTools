@@ -61,12 +61,12 @@ void dilationGrayscale(
   }
 
   /** Create the structuring element. */
-  RadiusType	radiusarray;
+  RadiusType  radiusarray;
   for ( unsigned int i = 0; i < Dimension; i++ )
   {
     radiusarray.SetElement( i, radius[ i ] );
   }
-  StructuringElementType	S_ball;
+  StructuringElementType  S_ball;
   S_ball.SetRadius( radiusarray );
   S_ball.CreateStructuringElement();
 
@@ -94,15 +94,15 @@ void dilationBinary(
   const std::vector<std::string> & bin )
 {
   /** Typedefs. */
-  typedef typename ImageType::PixelType					      PixelType;
+  typedef typename ImageType::PixelType               PixelType;
   const unsigned int Dimension = ImageType::ImageDimension;
-  typedef itk::ImageFileReader< ImageType >			      ReaderType;
-  typedef itk::ImageFileWriter< ImageType >			      WriterType;
+  typedef itk::ImageFileReader< ImageType >           ReaderType;
+  typedef itk::ImageFileWriter< ImageType >           WriterType;
   typedef itk::BinaryBallStructuringElement<
-    PixelType, Dimension >											      StructuringElementType;
+    PixelType, Dimension >                            StructuringElementType;
   typedef typename StructuringElementType::RadiusType RadiusType;
   typedef itk::BinaryDilateImageFilter<
-    ImageType, ImageType, StructuringElementType >	  DilateFilterType;
+    ImageType, ImageType, StructuringElementType >    DilateFilterType;
   
   /** Declarations. */
   typename ReaderType::Pointer reader = ReaderType::New();
@@ -133,12 +133,12 @@ void dilationBinary(
   }
 
   /** Create the structuring element. */
-  RadiusType	radiusarray;
+  RadiusType  radiusarray;
   for ( unsigned int i = 0; i < Dimension; i++ )
   {
     radiusarray.SetElement( i, radius[ i ] );
   }
-  StructuringElementType	S_ball;
+  StructuringElementType  S_ball;
   S_ball.SetRadius( radiusarray );
   S_ball.CreateStructuringElement();
 
@@ -193,7 +193,7 @@ void dilationBinaryObject(
   reader->SetFileName( inputFileName.c_str() );
 
   /** Create and fill the radius. *
-  RadiusType	radiusarray;
+  RadiusType  radiusarray;
   radiusarray.Fill( 1 );
   for ( unsigned int i = 0; i < Dimension; i++ )
   {
@@ -201,7 +201,7 @@ void dilationBinaryObject(
   }
 
   /** Create the structuring element and set it into the dilation filter. *
-  StructuringElementType	S_ball;
+  StructuringElementType  S_ball;
   S_ball.SetRadius( radiusarray );
   S_ball.CreateStructuringElement();
   dilation->SetKernel( S_ball );

@@ -48,29 +48,29 @@ void PrintHelp(void);
 
 int main( int argc, char **argv )
 {
-	/** Check arguments for help. */
-	if ( argc < 3 )
-	{
+  /** Check arguments for help. */
+  if ( argc < 3 )
+  {
     PrintHelp();
-		return 1;
-	}
+    return 1;
+  }
 
-	/** Create a command line argument parser. */
-	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
-	parser->SetCommandLineArguments( argc, argv );
+  /** Create a command line argument parser. */
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
 
     /** Get the combination method (mandatory) */
   std::string combinationMethod = "MULTISTAPLE2";
   bool retm = parser->GetCommandLineArgument( "-m", combinationMethod );
   
   /** Get the input segmentation file names (mandatory). */
-	std::vector< std::string >	inputSegmentationFileNames;
-	bool retin = parser->GetCommandLineArgument( "-in", inputSegmentationFileNames );
+  std::vector< std::string >  inputSegmentationFileNames;
+  bool retin = parser->GetCommandLineArgument( "-in", inputSegmentationFileNames );
   if ( !retin )
-	{
-		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
+  {
+    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
     return 1;
-	}
+  }
 
   /** Get the settings for the change label image filter (not mandatory) */
   std::vector<unsigned int>  inValues;
@@ -88,8 +88,8 @@ int main( int argc, char **argv )
   bool retn = parser->GetCommandLineArgument( "-n", numberOfClasses );
   
   /** Get the prior probability images (not mandatory) */
-  std::vector< std::string >	priorProbImageFileNames;
-	bool retP = parser->GetCommandLineArgument( "-P", priorProbImageFileNames );
+  std::vector< std::string >  priorProbImageFileNames;
+  bool retP = parser->GetCommandLineArgument( "-P", priorProbImageFileNames );
   if (retP)
   {
     if ( priorProbImageFileNames.size() != numberOfClasses )
@@ -108,8 +108,8 @@ int main( int argc, char **argv )
   }
 
   /** Get the prior probabilities (not mandatory) */
-  std::vector< float >	priorProbs(0);
-	bool retp = parser->GetCommandLineArgument( "-p", priorProbs );
+  std::vector< float >  priorProbs(0);
+  bool retp = parser->GetCommandLineArgument( "-p", priorProbs );
   if (retp && !retP)
   {
     if ( priorProbs.size() != numberOfClasses )
@@ -156,9 +156,9 @@ int main( int argc, char **argv )
   
   /** Get the outputFileNames */
   std::vector< std::string > softOutputFileNames;
-  std::string	hardOutputFileName = "";
-  std::string	confusionOutputFileName = "";
-	bool retouts = parser->GetCommandLineArgument( "-outs", softOutputFileNames );
+  std::string hardOutputFileName = "";
+  std::string confusionOutputFileName = "";
+  bool retouts = parser->GetCommandLineArgument( "-outs", softOutputFileNames );
   if ( retouts )
   {
     if ( softOutputFileNames.size() != numberOfClasses  &&
@@ -194,7 +194,7 @@ int main( int argc, char **argv )
   
   /** Determine image properties. */
   std::string ComponentType = "unsigned char";
-  std::string	PixelType; //we don't use this
+  std::string PixelType; //we don't use this
   unsigned int Dimension = 3;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
@@ -230,13 +230,13 @@ int main( int argc, char **argv )
       << std::endl;
     return 1;
   }
-  	
-	/** Run the program. */
-	try
-	{
+    
+  /** Run the program. */
+  try
+  {
     if (Dimension==2)
     {
-		  CombineSegmentations<2>(
+      CombineSegmentations<2>(
         inputSegmentationFileNames,
         priorProbImageFileNames,
         softOutputFileNames,
@@ -255,7 +255,7 @@ int main( int argc, char **argv )
     }
     if (Dimension==3)
     {
-		  CombineSegmentations<3>(
+      CombineSegmentations<3>(
         inputSegmentationFileNames,
         priorProbImageFileNames,
         softOutputFileNames,
@@ -274,16 +274,16 @@ int main( int argc, char **argv )
     }
     
   }
-	catch( itk::ExceptionObject &e )
-	{
-		std::cerr << "Caught ITK exception: " << e << std::endl;
-		return 1;
-	}
+  catch( itk::ExceptionObject &e )
+  {
+    std::cerr << "Caught ITK exception: " << e << std::endl;
+    return 1;
+  }
 
   std::cout << "pxcombinesegmentations has finished!" << std::endl;
-	
-	/** End program. */
-	return 0;
+  
+  /** End program. */
+  return 0;
 
 } // end main
 
@@ -380,13 +380,13 @@ void CombineSegmentations(
     LabelImageType, MaskImageType>                 MaskGeneratorType; 
 
   typedef itk::BinaryBallStructuringElement<
-		MaskPixelType, Dimension >                     StructuringElementType;
-	typedef typename 
-    StructuringElementType::RadiusType		         KernelRadiusType;
+    MaskPixelType, Dimension >                     StructuringElementType;
+  typedef typename 
+    StructuringElementType::RadiusType             KernelRadiusType;
   typedef itk::BinaryDilateImageFilter<
-		MaskImageType,
-		MaskImageType,
-		StructuringElementType >					             DilateFilterType;
+    MaskImageType,
+    MaskImageType,
+    StructuringElementType >                       DilateFilterType;
   
   typedef std::vector< LabelImagePointer >         LabelImageArrayType;
   typedef std::vector< ProbImagePointer >          ProbImageArrayType;
@@ -502,10 +502,10 @@ void CombineSegmentations(
        * applies a > operator, and we would like to apply >= on the soft 
        * segmentation of class 1  */
       typename ThresholderType::Pointer thresholder = ThresholderType::New();
-     	thresholder->SetLowerThreshold( itk::NumericTraits<ProbPixelType>::NonpositiveMin() );
-	    thresholder->SetUpperThreshold( static_cast<ProbPixelType>( 0.5 )  );
+      thresholder->SetLowerThreshold( itk::NumericTraits<ProbPixelType>::NonpositiveMin() );
+      thresholder->SetUpperThreshold( static_cast<ProbPixelType>( 0.5 )  );
       thresholder->SetInsideValue( itk::NumericTraits<LabelPixelType>::One );
-	    thresholder->SetOutsideValue( itk::NumericTraits<LabelPixelType>::Zero );
+      thresholder->SetOutsideValue( itk::NumericTraits<LabelPixelType>::Zero );
       thresholder->SetInput( softSegmentationArray[0] );
       std::cout << "Generating hard segmentation..." << std::endl;
       thresholder->Update();
@@ -922,8 +922,8 @@ void CombineSegmentations(
 
 void PrintHelp()
 {
-	std::cout << "This program combines multiple segmentations into one.\n" << std::endl;
-	std::cout << "Usage:\npxcombinesegmentations" << std::endl;
+  std::cout << "This program combines multiple segmentations into one.\n" << std::endl;
+  std::cout << "Usage:\npxcombinesegmentations" << std::endl;
   std::cout << "  [-m]     {STAPLE, VOTE, MULTISTAPLE, MULTISTAPLE2, VOTE_MULTISTAPLE2}:\n"
             << "           the method used to combine the segmentations. default: MULTISTAPLE2.\n"
             << "           VOTE_MULTISTAPLE2 is in fact just VOTE followed by MULTISTAPLE2." << std::endl;

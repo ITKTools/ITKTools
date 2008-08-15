@@ -32,51 +32,51 @@ void PrintHelp( void );
 
 int main( int argc, char ** argv )
 {
- 	/** Check arguments for help. */
-	if ( argc < 7 )
-	{
-		PrintHelp();
-		return 1;
-	}
+  /** Check arguments for help. */
+  if ( argc < 7 )
+  {
+    PrintHelp();
+    return 1;
+  }
 
-	/** Create a command line argument parser. */
-	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
-	parser->SetCommandLineArguments( argc, argv );
+  /** Create a command line argument parser. */
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
 
-	/** Get arguments. */
+  /** Get arguments. */
   std::string inputFileName = "";
-	bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
 
-  std::string	outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
-	outputFileName += "VOXELREPLACED.mhd";
-	bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  std::string outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
+  outputFileName += "VOXELREPLACED.mhd";
+  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
 
   std::vector< unsigned int > voxel;
-	bool retvox = parser->GetCommandLineArgument( "-vox", voxel );
+  bool retvox = parser->GetCommandLineArgument( "-vox", voxel );
 
   double value;
-	bool retval = parser->GetCommandLineArgument( "-val", value );
+  bool retval = parser->GetCommandLineArgument( "-val", value );
 
- 	/** Check if the required arguments are given. */
-	if ( !retin )
-	{
-		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-		return 1;
-	}
+  /** Check if the required arguments are given. */
+  if ( !retin )
+  {
+    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
+    return 1;
+  }
   if ( !retvox )
-	{
-		std::cerr << "ERROR: You should specify \"-vox\"." << std::endl;
-		return 1;
-	}
+  {
+    std::cerr << "ERROR: You should specify \"-vox\"." << std::endl;
+    return 1;
+  }
   if ( !retval )
-	{
-		std::cerr << "ERROR: You should specify \"-val\"." << std::endl;
-		return 1;
-	}
+  {
+    std::cerr << "ERROR: You should specify \"-val\"." << std::endl;
+    return 1;
+  }
 
   /** Determine image properties. */
   std::string ComponentTypeIn = "short";
-  std::string	PixelType; //we don't use this
+  std::string PixelType; //we don't use this
   unsigned int Dimension = 3;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
@@ -105,7 +105,7 @@ int main( int argc, char ** argv )
     return 1; 
   }
 
-	/** Get rid of the possible "_" in ComponentType. */
+  /** Get rid of the possible "_" in ComponentType. */
   ReplaceUnderscoreWithSpace( ComponentTypeIn );
 
   /** Check if the specified voxel-size has Dimension number of components. */
@@ -114,41 +114,41 @@ int main( int argc, char ** argv )
     std::cerr << "ERROR: You should specify "
       << Dimension
       << " numbers with \"-vox\"." << std::endl;
-		return 1;
+    return 1;
   }
 
   /** Run the program. */
   bool supported = false;
-	try
-	{
+  try
+  {
     run( ReplaceVoxel, char, 2 );
-		run( ReplaceVoxel, unsigned char, 2 );
+    run( ReplaceVoxel, unsigned char, 2 );
     run( ReplaceVoxel, short, 2 );
-		run( ReplaceVoxel, unsigned short, 2 );
+    run( ReplaceVoxel, unsigned short, 2 );
     run( ReplaceVoxel, int, 2 );
-		run( ReplaceVoxel, unsigned int, 2 );
+    run( ReplaceVoxel, unsigned int, 2 );
     run( ReplaceVoxel, long, 2 );
-		run( ReplaceVoxel, unsigned long, 2 );
+    run( ReplaceVoxel, unsigned long, 2 );
     run( ReplaceVoxel, float, 2 );
-		run( ReplaceVoxel, double, 2 );
+    run( ReplaceVoxel, double, 2 );
 
     run( ReplaceVoxel, char, 3 );
-		run( ReplaceVoxel, unsigned char, 3 );
+    run( ReplaceVoxel, unsigned char, 3 );
     run( ReplaceVoxel, short, 3 );
-		run( ReplaceVoxel, unsigned short, 3 );
+    run( ReplaceVoxel, unsigned short, 3 );
     run( ReplaceVoxel, int, 3 );
-		run( ReplaceVoxel, unsigned int, 3 );
+    run( ReplaceVoxel, unsigned int, 3 );
     run( ReplaceVoxel, long, 3 );
-		run( ReplaceVoxel, unsigned long, 3 );
+    run( ReplaceVoxel, unsigned long, 3 );
     run( ReplaceVoxel, float, 3 );
-		run( ReplaceVoxel, double, 3 );
+    run( ReplaceVoxel, double, 3 );
 
-	}
-	catch( itk::ExceptionObject &e )
-	{
-		std::cerr << "Caught ITK exception: " << e << std::endl;
-		return 1;
-	}
+  }
+  catch( itk::ExceptionObject &e )
+  {
+    std::cerr << "Caught ITK exception: " << e << std::endl;
+    return 1;
+  }
   if ( !supported )
   {
     std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
@@ -158,9 +158,9 @@ int main( int argc, char ** argv )
       << std::endl;
     return 1;
   }
- 	
-	/** End program. */
-	return 0;
+  
+  /** End program. */
+  return 0;
 
 } // end main
 
@@ -182,10 +182,10 @@ void ReplaceVoxel( const std::string & inputFileName,
   typedef itk::Image< PixelType, Dimension >    ImageType;
   typedef typename ImageType::SizeType          SizeType;
   typedef typename ImageType::IndexType         IndexType;
-	typedef itk::ImageFileReader< ImageType >	    ReaderType;
-  typedef itk::ImageFileWriter< ImageType >			WriterType;
+  typedef itk::ImageFileReader< ImageType >     ReaderType;
+  typedef itk::ImageFileWriter< ImageType >     WriterType;
 
-	/**	Read in the input image. */
+  /** Read in the input image. */
   typename ReaderType::Pointer reader = ReaderType::New();
   typename WriterType::Pointer writer = WriterType::New();
 
@@ -213,8 +213,8 @@ void ReplaceVoxel( const std::string & inputFileName,
   image->SetPixel( index, static_cast<PixelType>( value ) );
   
   /** Write output image. */
-	writer->SetFileName( outputFileName );
-	writer->SetInput( image );
+  writer->SetFileName( outputFileName );
+  writer->SetInput( image );
   writer->Update();
 
 } // end ReplaceVoxel()
@@ -226,13 +226,13 @@ void ReplaceVoxel( const std::string & inputFileName,
 void PrintHelp()
 {
   std::cout << "This program replaces the value of a user specified voxel.\n";
-	std::cout << "Usage:\n"
+  std::cout << "Usage:\n"
             << "pxreplacevoxel\n";
   std::cout << "  -in      inputFilename\n";
-	std::cout << "  [-out]   outputFilename, default in + VOXELREPLACED.mhd\n";
+  std::cout << "  [-out]   outputFilename, default in + VOXELREPLACED.mhd\n";
   std::cout << "  -vox     input voxel index\n";
   std::cout << "  -val     value that replaces the voxel\n";
-	std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int,\n"
+  std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int,\n"
             << "(unsigned) long, float, double.\n";
   std::cout << std::endl;
 } // end PrintHelp()

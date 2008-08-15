@@ -53,16 +53,16 @@ void PrintHelp(void);
 
 int main( int argc, char **argv )
 {
-	/** Check arguments for help. */
-	if ( argc < 9 || argc > 15 )
-	{
-		PrintHelp();
-		return 1;
-	}
+  /** Check arguments for help. */
+  if ( argc < 9 || argc > 15 )
+  {
+    PrintHelp();
+    return 1;
+  }
 
-	/** Create a command line argument parser. */
-	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
-	parser->SetCommandLineArguments( argc, argv );
+  /** Create a command line argument parser. */
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
 
   std::string inputImage1FileName = "";
   std::string inputImage2FileName = "";
@@ -71,42 +71,42 @@ int main( int argc, char **argv )
   std::string outputImageFileName = "";
   std::string kernelName = "TPS"; 
   double stiffness = 0.0;
-	
+  
   /** Get arguments. */
-	
-	bool retin1  = parser->GetCommandLineArgument( "-in1", inputImage1FileName );
+  
+  bool retin1  = parser->GetCommandLineArgument( "-in1", inputImage1FileName );
   bool retin2  = parser->GetCommandLineArgument( "-in2", inputImage2FileName );
   bool retipp1 = parser->GetCommandLineArgument( "-ipp1", inputPoints1FileName );
   bool retipp2 = parser->GetCommandLineArgument( "-ipp2", inputPoints2FileName );
   bool retout  = parser->GetCommandLineArgument( "-out", outputImageFileName );
   bool retk    = parser->GetCommandLineArgument( "-k", kernelName );
   bool retstif = parser->GetCommandLineArgument( "-s", stiffness );
-	
-	/** Check if the required arguments are given. */
-	if ( !retin1 )
-	{
-		std::cerr << "ERROR: You should specify \"-in1\"." << std::endl;
-		return 1;
-	}
+  
+  /** Check if the required arguments are given. */
+  if ( !retin1 )
+  {
+    std::cerr << "ERROR: You should specify \"-in1\"." << std::endl;
+    return 1;
+  }
   if ( !retipp1 )
-	{
-		std::cerr << "ERROR: You should specify \"-ipp1\"." << std::endl;
-		return 1;
-	}
+  {
+    std::cerr << "ERROR: You should specify \"-ipp1\"." << std::endl;
+    return 1;
+  }
   if ( !retipp2 )
-	{
-		std::cerr << "ERROR: You should specify \"-ipp2\"." << std::endl;
-		return 1;
-	}
+  {
+    std::cerr << "ERROR: You should specify \"-ipp2\"." << std::endl;
+    return 1;
+  }
   if ( !retout )
-	{
-		std::cerr << "ERROR: You should specify \"-out\"." << std::endl;
-		return 1;
-	}
+  {
+    std::cerr << "ERROR: You should specify \"-out\"." << std::endl;
+    return 1;
+  }
 
   /** Determine image properties. */
   std::string ComponentType = "short";
-  std::string	PixelType; //we don't use this
+  std::string PixelType; //we don't use this
   unsigned int Dimension = 2;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
@@ -134,19 +134,19 @@ int main( int argc, char **argv )
     std::cerr << "Vector images are not supported!" << std::endl;
     return 1; 
   }
- 	
-	/** Run the program for 2D and 3D. */
+  
+  /** Run the program for 2D and 3D. */
   bool supported = false;
-	try
-	{
-		run( DeformationFieldGenerator, 3 );
+  try
+  {
+    run( DeformationFieldGenerator, 3 );
     run( DeformationFieldGenerator, 2 );
   }
-	catch( itk::ExceptionObject &e )
-	{
-		std::cerr << "Caught ITK exception: " << e << std::endl;
-		return 1;
-	}
+  catch( itk::ExceptionObject &e )
+  {
+    std::cerr << "Caught ITK exception: " << e << std::endl;
+    return 1;
+  }
   if ( !supported )
   {
     std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
@@ -156,16 +156,16 @@ int main( int argc, char **argv )
       << std::endl;
     return 1;
   }
-	
-	/** End program. */
-	return 0;
+  
+  /** End program. */
+  return 0;
 
 } // end main
 
 
-	/**
-	 * ***************** DeformationFieldGenerator ****************
-	 */
+  /**
+   * ***************** DeformationFieldGenerator ****************
+   */
 
 template< unsigned int Dimension >
 void DeformationFieldGenerator(
@@ -177,13 +177,13 @@ void DeformationFieldGenerator(
   const std::string & kernelName,
   double stiffness)
 {
-	/** Typedefs. */
+  /** Typedefs. */
   typedef short InputPixelType;
   typedef float DeformationVectorValueType;
   typedef double CoordRepType;
   
   typedef itk::Image<InputPixelType, Dimension>       InputImageType;
-  typedef itk::ImageFileReader< InputImageType >	    InputImageReaderType;
+  typedef itk::ImageFileReader< InputImageType >      InputImageReaderType;
   
   typedef itk::Vector<
     DeformationVectorValueType, Dimension>            DeformationVectorType; 
@@ -194,7 +194,7 @@ void DeformationFieldGenerator(
   typedef typename DeformationFieldType::IndexType    IndexType;
   typedef typename DeformationFieldType::PointType    PointType;
 
-  typedef typename DeformationFieldType::RegionType		RegionType;
+  typedef typename DeformationFieldType::RegionType   RegionType;
   typedef typename DeformationFieldType::PointType    OriginType;
   typedef typename DeformationFieldType::SpacingType  SpacingType;
   typedef typename DeformationFieldType::IndexType    IndexType;
@@ -218,7 +218,7 @@ void DeformationFieldGenerator(
     PointSetType >                                    IPPReaderType;
   
   /** Declarations */
-	typename InputImageReaderType::Pointer reader1 = InputImageReaderType::New();
+  typename InputImageReaderType::Pointer reader1 = InputImageReaderType::New();
   typename InputImageReaderType::Pointer reader2 = InputImageReaderType::New();
   typename IPPReaderType::Pointer ipp1Reader = IPPReaderType::New();
   typename IPPReaderType::Pointer ipp2Reader = IPPReaderType::New();
@@ -281,7 +281,7 @@ void DeformationFieldGenerator(
     itkGenericExceptionMacro( << "Number of input points does not equal number of output points!" );
   }
   const unsigned int nrofpoints = nrofpoints1;
-  		
+      
 
   /** Read input images */
   std::cout << "Reading Input image(s)." << std::endl;
@@ -304,50 +304,50 @@ void DeformationFieldGenerator(
 
 
   /** Convert from index to point, if necessary */
-	if ( ipp1Reader->GetPointsAreIndices() )
-	{
+  if ( ipp1Reader->GetPointsAreIndices() )
+  {
     typename DeformationFieldType::Pointer dummyImage = DeformationFieldType::New();
     dummyImage->SetSpacing( reader1->GetOutput()->GetSpacing() );
     dummyImage->SetOrigin( reader1->GetOutput()->GetOrigin() );
     dummyImage->SetRegions( reader1->GetOutput()->GetLargestPossibleRegion() );
     typename PointSetType::Pointer tempPointSet = PointSetType::New();
     for ( unsigned int j = 0; j < nrofpoints; j++ )
-		{
+    {
       PointType point;
       IndexType index;
-			inputPointSet1->GetPoint(j, &point);
+      inputPointSet1->GetPoint(j, &point);
       for ( unsigned int i = 0; i < Dimension; i++ )
-			{
-				index[i] = static_cast< IndexValueType >( vnl_math_rnd( point[i] ) );
-			}
-			dummyImage->TransformIndexToPhysicalPoint( index, point );					
+      {
+        index[i] = static_cast< IndexValueType >( vnl_math_rnd( point[i] ) );
+      }
+      dummyImage->TransformIndexToPhysicalPoint( index, point );          
       tempPointSet->SetPoint(j, point);
-		} 
+    } 
     inputPointSet1 = tempPointSet;
-	} 
+  } 
 
   /** Convert from index to point, if necessary */
-	if ( ipp2Reader->GetPointsAreIndices() )
-	{
+  if ( ipp2Reader->GetPointsAreIndices() )
+  {
     typename DeformationFieldType::Pointer dummyImage = DeformationFieldType::New();
     dummyImage->SetSpacing( reader2->GetOutput()->GetSpacing() );
     dummyImage->SetOrigin( reader2->GetOutput()->GetOrigin() );
     dummyImage->SetRegions( reader2->GetOutput()->GetLargestPossibleRegion() );
     typename PointSetType::Pointer tempPointSet = PointSetType::New();
     for ( unsigned int j = 0; j < nrofpoints; j++ )
-		{
+    {
       PointType point;
       IndexType index;
       inputPointSet2->GetPoint(j, &point);
       for ( unsigned int i = 0; i < Dimension; i++ )
-			{
-				index[i] = static_cast< IndexValueType >( vnl_math_rnd( point[i] ) );
-			}
-			dummyImage->TransformIndexToPhysicalPoint( index, point );					
+      {
+        index[i] = static_cast< IndexValueType >( vnl_math_rnd( point[i] ) );
+      }
+      dummyImage->TransformIndexToPhysicalPoint( index, point );          
       tempPointSet->SetPoint(j, point);
-		} 
+    } 
     inputPointSet2 = tempPointSet;
-	} 
+  } 
 
   if ( kernelName == "TPS" )
   {  
@@ -410,9 +410,9 @@ void DeformationFieldGenerator(
 } // end DeformationFieldGenerator
 
 
-	/**
-	 * ******************* PrintHelp *******************
-	 */
+  /**
+   * ******************* PrintHelp *******************
+   */
 void PrintHelp()
 {
   std::cout << "This program generates a deformation field (from fixed " << std::endl;
@@ -443,7 +443,7 @@ void PrintHelp()
   std::cout << "            for more information on these methods." << std::endl;
   std::cout << "  -out     outputFilename: the name of the resulting deformation field," << std::endl;
   std::cout << "            which is written as a vector<float,dim> image." << std::endl;
-	std::cout << "Supported: 2D, 3D, any scalar pixeltype." << std::endl;
+  std::cout << "Supported: 2D, 3D, any scalar pixeltype." << std::endl;
 } // end PrintHelp
 
 

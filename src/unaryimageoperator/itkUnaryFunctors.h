@@ -19,9 +19,9 @@ public:\
   {\
     return static_cast<TOutput>( ops );\
   }\
-	void SetArgument( TArgument arg ){ this->m_Argument = arg; };\
+  void SetArgument( TArgument arg ){ this->m_Argument = arg; };\
 private:\
-	TArgument m_Argument;\
+  TArgument m_Argument;\
 }
 
 /** Arithmetic functors which use m_Argument. */

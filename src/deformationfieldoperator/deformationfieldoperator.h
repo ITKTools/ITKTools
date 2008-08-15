@@ -25,12 +25,12 @@ void Deformation2Transformation(
   const unsigned int Dimension = ImageType::ImageDimension;
   typedef typename ImageType::PixelType               PixelType;
   typedef typename PixelType::ValueType               ComponentType;
-  typedef itk::ImageFileWriter< ImageType >     			WriterType;
+  typedef itk::ImageFileWriter< ImageType >           WriterType;
   typedef itk::ImageRegionIteratorWithIndex<
     ImageType >                                       IteratorType;
   typedef typename ImageType::IndexType               IndexType;
   typedef typename ImageType::PointType               PointType;
-	  
+    
   typename WriterType::Pointer writer = WriterType::New();
 
   /** We are going to change the image, so make sure these changes are not undone */
@@ -61,12 +61,12 @@ void Deformation2Transformation(
   }
   std::cout << "Ready changing image " << message << "." << std::endl;
   
-	/** Write the output image. */
-	writer->SetInput( inputImage );
-	writer->SetFileName( outputFileName.c_str() );
+  /** Write the output image. */
+  writer->SetInput( inputImage );
+  writer->SetFileName( outputFileName.c_str() );
   std::cout << "Saving the resulting image to disk as: " << outputFileName << std::endl;
-	writer->Update();
-	std::cout << "Done." << std::endl;
+  writer->Update();
+  std::cout << "Done." << std::endl;
 
 } // end Deformation2Transformation
 
@@ -83,7 +83,7 @@ void ComputeMagnitude(
 {
   typedef TVectorImage                                InputImageType; 
   typedef TScalarImage                                OutputImageType; 
-  typedef itk::ImageFileWriter< OutputImageType >			WriterType;
+  typedef itk::ImageFileWriter< OutputImageType >     WriterType;
   typedef itk::GradientToMagnitudeImageFilter<
     InputImageType, OutputImageType >                 MagnitudeFilterType;
 
@@ -96,11 +96,11 @@ void ComputeMagnitude(
   std::cout << "Done computing magnitude image." << std::endl;
 
   /** Write the output image. */
-	writer->SetInput( magnitudeFilter->GetOutput() );
-	writer->SetFileName( outputFileName.c_str() );
+  writer->SetInput( magnitudeFilter->GetOutput() );
+  writer->SetFileName( outputFileName.c_str() );
   std::cout << "Saving the resulting image to disk as: " << outputFileName << std::endl;
-	writer->Update();
-	std::cout << "Done." << std::endl;
+  writer->Update();
+  std::cout << "Done." << std::endl;
 
 } // end ComputeMagnitude
 
@@ -118,7 +118,7 @@ void ComputeJacobian(
   typedef TVectorImage                                InputImageType; 
   typedef TScalarImage                                OutputImageType; 
   typedef typename OutputImageType::PixelType         OutputPixelType;
-  typedef itk::ImageFileWriter< OutputImageType >			WriterType;
+  typedef itk::ImageFileWriter< OutputImageType >     WriterType;
   typedef itk::DeformationFieldJacobianDeterminantFilter<
     InputImageType, OutputPixelType >                 JacobianFilterType;
   
@@ -132,11 +132,11 @@ void ComputeJacobian(
   std::cout << "Done computing jacobian image." << std::endl;
 
   /** Write the output image. */
-	writer->SetInput( jacobianFilter->GetOutput() );
-	writer->SetFileName( outputFileName.c_str() );
+  writer->SetInput( jacobianFilter->GetOutput() );
+  writer->SetFileName( outputFileName.c_str() );
   std::cout << "Saving the resulting image to disk as: " << outputFileName << std::endl;
-	writer->Update();
-	std::cout << "Done." << std::endl;
+  writer->Update();
+  std::cout << "Done." << std::endl;
 
 } // end ComputeJacobian
 
@@ -153,34 +153,34 @@ void ComputeJacobian(
 template< class TComponent, unsigned int NDimension >
 void DeformationFieldOperator(
   const std::string & inputFileName,
-	const std::string & outputFileName,
+  const std::string & outputFileName,
   const std::string & ops)
 {
-	/** constants */
-	const unsigned int Dimension = NDimension;
-  	
-	/** TYPEDEF's. */
-	typedef TComponent                         					ComponentType;
+  /** constants */
+  const unsigned int Dimension = NDimension;
+    
+  /** TYPEDEF's. */
+  typedef TComponent                                  ComponentType;
   typedef ComponentType                               ScalarPixelType;
   typedef itk::Vector< ComponentType, Dimension >     VectorPixelType;
 
   typedef itk::Image< ScalarPixelType, Dimension >    ScalarImageType;
-	typedef itk::Image< VectorPixelType, Dimension >    VectorImageType;
-	typedef itk::ImageFileReader< VectorImageType >     ReaderType;
-	
-	/** DECLARATION'S. */
+  typedef itk::Image< VectorPixelType, Dimension >    VectorImageType;
+  typedef itk::ImageFileReader< VectorImageType >     ReaderType;
+  
+  /** DECLARATION'S. */
   typename VectorImageType::Pointer workingImage;
-	typename ReaderType::Pointer reader = ReaderType::New();
-	
+  typename ReaderType::Pointer reader = ReaderType::New();
+  
 
-	/** Read in the inputImage. */
-	reader->SetFileName( inputFileName.c_str() );
-  std::cout << "Reading input image: " << inputFileName << std::endl;		
-	reader->Update();
-	std::cout << "Input image read." << std::endl;
-	
+  /** Read in the inputImage. */
+  reader->SetFileName( inputFileName.c_str() );
+  std::cout << "Reading input image: " << inputFileName << std::endl;   
+  reader->Update();
+  std::cout << "Input image read." << std::endl;
+  
   /** Change to Transformation or Deformation by adding/subtracting pixel coordinates */
-	workingImage = reader->GetOutput();
+  workingImage = reader->GetOutput();
 
   /** Do something with this image and save the result */
   if ( ops == "DEF2TRANS" )

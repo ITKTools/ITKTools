@@ -35,7 +35,7 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro( BoxSpatialFunction, InteriorExteriorSpatialFunction );
 
-	itkStaticConstMacro(ImageDimension, unsigned int, VImageDimension);
+  itkStaticConstMacro(ImageDimension, unsigned int, VImageDimension);
 
   /** Input type for the function. */
   typedef typename Superclass::InputType InputType;
@@ -68,7 +68,7 @@ public:
 
   /** Evaluates the function at a given position */
   OutputType Evaluate(const InputType& position) const;
-	       
+         
 protected:
   BoxSpatialFunction();
   virtual ~BoxSpatialFunction();

@@ -12,39 +12,39 @@ void PrintHelp(void);
 
 int main( int argc, char **argv )
 {
-	/** Check arguments for help. */
-	if ( argc < 4 )
-	{
-		PrintHelp();
-		return 1;
-	}
+  /** Check arguments for help. */
+  if ( argc < 4 )
+  {
+    PrintHelp();
+    return 1;
+  }
 
-	/** Create a command line argument parser. */
-	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
-	parser->SetCommandLineArguments( argc, argv );
+  /** Create a command line argument parser. */
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
 
-	/** Get arguments. */
-	std::string	inputFileName = "";
-	bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  /** Get arguments. */
+  std::string inputFileName = "";
+  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
 
   int index = -1;
   bool reti = parser->GetCommandLineArgument( "-i", index );
 
-	bool exdim = parser->ArgumentExists( "-dim" );
-	bool expt = parser->ArgumentExists( "-pt" );
-	bool exct = parser->ArgumentExists( "-ct" );
-	bool exnoc = parser->ArgumentExists( "-noc" );
+  bool exdim = parser->ArgumentExists( "-dim" );
+  bool expt = parser->ArgumentExists( "-pt" );
+  bool exct = parser->ArgumentExists( "-ct" );
+  bool exnoc = parser->ArgumentExists( "-noc" );
   bool exsz = parser->ArgumentExists( "-sz" );
-	bool exsp = parser->ArgumentExists( "-sp" );
-	bool exo = parser->ArgumentExists( "-o" );
+  bool exsp = parser->ArgumentExists( "-sp" );
+  bool exo = parser->ArgumentExists( "-o" );
   bool exall = parser->ArgumentExists( "-all" );
 
-	/** Check if the required arguments are given. */
-	if ( !retin )
-	{
-		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-		return 1;
-	}
+  /** Check if the required arguments are given. */
+  if ( !retin )
+  {
+    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
+    return 1;
+  }
 
   /** Typedef's. */
   const unsigned int Dimension = 3;
@@ -56,11 +56,11 @@ int main( int argc, char **argv )
   /** Create a testReader and generate all information. */
   ReaderType::Pointer testReader = ReaderType::New();
   testReader->SetFileName( inputFileName.c_str() );
-	try
-	{
-		testReader->GenerateOutputInformation();
-	}
-	catch( itk::ExceptionObject  &  err  )
+  try
+  {
+    testReader->GenerateOutputInformation();
+  }
+  catch( itk::ExceptionObject  &  err  )
   {
     std::cerr  << "ExceptionObject caught !"  << std::endl;
     std::cerr  << err <<  std::endl;
@@ -214,22 +214,22 @@ int main( int argc, char **argv )
 
   } // end print all information
 
-	/** End program. */
-	return 1;
+  /** End program. */
+  return 1;
 
 } // end main
 
 
 
-	/**
-	 * ******************* PrintHelp *******************
-	 */
+  /**
+   * ******************* PrintHelp *******************
+   */
 void PrintHelp()
 {
-	std::cout << "Usage:" << std::endl << "pxgetimageinformation" << std::endl;
-	std::cout << "  -in      inputFileName" << std::endl;
-	std::cout << "  [-dim]   dimension" << std::endl;
-	std::cout << "  [-pt]    pixelType" << std::endl;
+  std::cout << "Usage:" << std::endl << "pxgetimageinformation" << std::endl;
+  std::cout << "  -in      inputFileName" << std::endl;
+  std::cout << "  [-dim]   dimension" << std::endl;
+  std::cout << "  [-pt]    pixelType" << std::endl;
   std::cout << "  [-ct]    componentType" << std::endl;
   std::cout << "  [-noc]   #components" << std::endl;
   std::cout << "  [-sz]    size" << std::endl;

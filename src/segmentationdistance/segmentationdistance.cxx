@@ -41,11 +41,11 @@ template< class InputImageType >
 void SegmentationDistance(
   const std::string & inputFileName1,
   const std::string & inputFileName2,
-	const std::string & outputFileName,
+  const std::string & outputFileName,
   const std::vector<double> & mancor,
   unsigned int samples,
-	unsigned int thetasize,
-	unsigned int phisize,
+  unsigned int thetasize,
+  unsigned int phisize,
   bool cartesianonly );
 
 /** Declare PrintHelp. */
@@ -55,39 +55,39 @@ void PrintHelp( void );
 
 int main( int argc, char **argv )
 {
-	/** Check arguments for help. */
-	if ( argc < 4 || argc > 16 )
-	{
-		PrintHelp();
-		return 1;
-	}
+  /** Check arguments for help. */
+  if ( argc < 4 || argc > 16 )
+  {
+    PrintHelp();
+    return 1;
+  }
 
-	/** Create a command line argument parser. */
-	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
-	parser->SetCommandLineArguments( argc, argv );
+  /** Create a command line argument parser. */
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
 
   /** Get the input file names. */
-	std::vector< std::string >	inputFileNames;
-	bool retin = parser->GetCommandLineArgument( "-in", inputFileNames );
+  std::vector< std::string >  inputFileNames;
+  bool retin = parser->GetCommandLineArgument( "-in", inputFileNames );
   if ( !retin )
-	{
-		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-		return 1;
-	}
+  {
+    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
+    return 1;
+  }
   if( (inputFileNames.size() != 2)  )
-	{
-		std::cout << "ERROR: You should specify two input images." << std::endl;
-		return 1;
-	}
+  {
+    std::cout << "ERROR: You should specify two input images." << std::endl;
+    return 1;
+  }
   std::string inputFileName1 = inputFileNames[ 0 ]; 
   std::string inputFileName2 = inputFileNames[ 1 ];
   
   /** Get the outputFileName */
-  std::string	outputFileName = "";
-	bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
-	if ( outputFileName == "" )
-	{
-		/** get file name without its last (shortest) extension  */
+  std::string outputFileName = "";
+  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  if ( outputFileName == "" )
+  {
+    /** get file name without its last (shortest) extension  */
     std::string part1 =
       itksys::SystemTools::GetFilenameWithoutLastExtension(inputFileName1);
     /** get file name of a full filename (i.e. file name without path) */
@@ -98,19 +98,19 @@ int main( int argc, char **argv )
 
     /** compose outputfilename */
     outputFileName = part1 + ops + part2;
-	}
+  }
 
   std::vector<double> manualcor;
   bool retc = parser->GetCommandLineArgument( "-c", manualcor);
 
   unsigned int samples = 20;
-	bool rets = parser->GetCommandLineArgument( "-s", samples );
+  bool rets = parser->GetCommandLineArgument( "-s", samples );
 
   unsigned int thetasize = 180;
-	bool rett = parser->GetCommandLineArgument( "-t", thetasize );
+  bool rett = parser->GetCommandLineArgument( "-t", thetasize );
   
   unsigned int phisize = 90;
-	bool retp = parser->GetCommandLineArgument( "-p", phisize );
+  bool retp = parser->GetCommandLineArgument( "-p", phisize );
 
   std::string cartesianstr = "false";
   bool cartesianonly = false;
@@ -125,21 +125,21 @@ int main( int argc, char **argv )
    * than short are supported, but automatically converted to short. */
   unsigned int Dimension = 3;
   std::string PixelType = "float";
-	
-	/** Get rid of the possible "_" in PixelType. */
-	ReplaceUnderscoreWithSpace( PixelType );
-	
-	/** Run the program. */
+  
+  /** Get rid of the possible "_" in PixelType. */
+  ReplaceUnderscoreWithSpace( PixelType );
+  
+  /** Run the program. */
   bool supported = false;
-	try
-	{
-		run( SegmentationDistance, float, 3 );
+  try
+  {
+    run( SegmentationDistance, float, 3 );
   }
-	catch( itk::ExceptionObject &e )
-	{
-		std::cerr << "Caught ITK exception: " << e << std::endl;
-		return 1;
-	}
+  catch( itk::ExceptionObject &e )
+  {
+    std::cerr << "Caught ITK exception: " << e << std::endl;
+    return 1;
+  }
   if ( !supported )
   {
     std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
@@ -149,19 +149,19 @@ int main( int argc, char **argv )
       << std::endl;
     return 1;
   }
-	
-	/** End program. */
-	return 0;
+  
+  /** End program. */
+  return 0;
 
 } // end main
 
 
 
-	/**
-	 * ******************* SegmentationDistanceHelper ****************
-	 *
-	 * The function that does the work, templated over the image type.
-	 */
+  /**
+   * ******************* SegmentationDistanceHelper ****************
+   *
+   * The function that does the work, templated over the image type.
+   */
 
 template< class InputImageType1, class InputImageType2, class ImageType >
 void SegmentationDistanceHelper(
@@ -173,15 +173,15 @@ void SegmentationDistanceHelper(
   typename ImageType::Pointer & edgeImage,
   std::vector<double> & mancor,
   unsigned int samples,
-	unsigned int thetasize,
-	unsigned int phisize,
+  unsigned int thetasize,
+  unsigned int phisize,
   bool cartesianonly,
   bool invertedImage  )
 {
-	
-	/** constants */
-	const unsigned int Dimension = ImageType::ImageDimension;
-  typedef typename ImageType::PixelType					      PixelType;
+  
+  /** constants */
+  const unsigned int Dimension = ImageType::ImageDimension;
+  typedef typename ImageType::PixelType               PixelType;
   typedef typename InputImageType1::PixelType         InputPixelType1;
   typedef typename InputImageType2::PixelType         InputPixelType2;
       
@@ -359,11 +359,11 @@ void SegmentationDistanceHelper(
   std::cout << "Spherical transforms computed." << std::endl;
 
   /** Computing DE = S(DistanceMap)*S(EdgeImage) */
-	multiplier->SetInput1( cscFilter1->GetOutput() );
-	multiplier->SetInput2( cscFilter2->GetOutput() );
-	std::cout << "Computing DE = S(D) * S(E)..." << std::endl;
-	multiplier->Update();
-	std::cout << "Multiplying done." << std::endl;
+  multiplier->SetInput1( cscFilter1->GetOutput() );
+  multiplier->SetInput2( cscFilter2->GetOutput() );
+  std::cout << "Computing DE = S(D) * S(E)..." << std::endl;
+  multiplier->Update();
+  std::cout << "Multiplying done." << std::endl;
 
   /** Integrate along r dimension */
   accumulator1->SetInput( multiplier->GetOutput() );
@@ -384,32 +384,32 @@ void SegmentationDistanceHelper(
 
 
 
-	/**
-	 * ******************* SegmentationDistance ****************
-	 *
-	 * The function that does the work, templated over the image type.
-	 */
+  /**
+   * ******************* SegmentationDistance ****************
+   *
+   * The function that does the work, templated over the image type.
+   */
 
 template< class ImageType >
 void SegmentationDistance(
   const std::string & inputFileName1,
   const std::string & inputFileName2,
-	const std::string & outputFileName,
+  const std::string & outputFileName,
   const std::vector<double> & mancor,
   unsigned int samples,
-	unsigned int thetasize,
-	unsigned int phisize,
+  unsigned int thetasize,
+  unsigned int phisize,
   bool cartesianonly)
 {
-	
-	/** constants */
-	const unsigned int Dimension = ImageType::ImageDimension;
+  
+  /** constants */
+  const unsigned int Dimension = ImageType::ImageDimension;
   const unsigned int OutputDimension = Dimension-1;
-  typedef typename ImageType::PixelType					      PixelType;
+  typedef typename ImageType::PixelType               PixelType;
   typedef short                                       InputPixelType1;
   typedef short                                       InputPixelType2;
       
-	/** TYPEDEF's. */
+  /** TYPEDEF's. */
   typedef itk::Image<InputPixelType1, Dimension>      InputImageType1;
   typedef itk::Image<InputPixelType2, Dimension>      InputImageType2;
 
@@ -465,12 +465,12 @@ void SegmentationDistance(
   typename WriterCartesianType::Pointer writerEdgeCartesian = WriterCartesianType::New();
 
    /** Read in the inputImages. */
-	reader1->SetFileName( inputFileName1.c_str() );
+  reader1->SetFileName( inputFileName1.c_str() );
   reader2->SetFileName( inputFileName2.c_str() );
-	std::cout << "Reading input images..." << std::endl;		
-	reader1->Update();
+  std::cout << "Reading input images..." << std::endl;    
+  reader1->Update();
   reader2->Update();
-	std::cout << "Input images read." << std::endl;
+  std::cout << "Input images read." << std::endl;
 
   /** Pad them with zeros, to make sure the edges of objects facing the boundary
    * of the image are counted as edges */
@@ -612,10 +612,10 @@ void SegmentationDistance(
 
   /** Divide the integrated spherical transforms */
   divider->SetInput1( subtracter->GetOutput() );
-	divider->SetInput2( sumEdgeAccums );
-	std::cout << "Dividing the averaged integrated spherical transforms..." << std::endl;
-	divider->Update();
-	std::cout << "Dividing done." << std::endl;
+  divider->SetInput2( sumEdgeAccums );
+  std::cout << "Dividing the averaged integrated spherical transforms..." << std::endl;
+  divider->Update();
+  std::cout << "Dividing done." << std::endl;
 
   /** Collapse to 2d image */
   extracter->SetInput( divider->GetOutput() );
@@ -628,32 +628,32 @@ void SegmentationDistance(
   extracter->Update();
   std::cout << "Done collapsing." << std::endl;
   
-	/** Write the output image. */
-	writer->SetInput( extracter->GetOutput() );
-	writer->SetFileName( outputFileName.c_str() );
+  /** Write the output image. */
+  writer->SetInput( extracter->GetOutput() );
+  writer->SetFileName( outputFileName.c_str() );
   std::cout << "Saving the result to disk as: " << outputFileName << std::endl;
-	writer->Update();
-	std::cout << "Done." << std::endl;
+  writer->Update();
+  std::cout << "Done." << std::endl;
 
 } // end SegmentationDistance
 
 
-	/**
-	 * ******************* PrintHelp *******************
-	 */
+  /**
+   * ******************* PrintHelp *******************
+   */
 void PrintHelp()
 {
-	std::cout << "This program computes a spatial segmentation error map.\n" << std::endl;
-	std::cout << "Usage:" << std::endl << "pxsegmentationdistance" << std::endl;
-	std::cout << "  -in      inputFilename1 inputFileName2" << std::endl;
-	std::cout << "  [-out]   outputFilename, default <in1>DISTANCE<in2>.mhd" << std::endl;
+  std::cout << "This program computes a spatial segmentation error map.\n" << std::endl;
+  std::cout << "Usage:" << std::endl << "pxsegmentationdistance" << std::endl;
+  std::cout << "  -in      inputFilename1 inputFileName2" << std::endl;
+  std::cout << "  [-out]   outputFilename, default <in1>DISTANCE<in2>.mhd" << std::endl;
   std::cout << "  [-c]     Center of rotation, used to compute the spherical transform. In world coordinates." << std::endl;
-	std::cout << "  [-s]     samples [unsigned int]; maximum number of samples per pixel, used to do the spherical transform; default 20." << std::endl;
-	std::cout << "  [-t]     theta size; the size of the theta dimension. default: 180, which yields a spacing of 2 degrees." << std::endl;
+  std::cout << "  [-s]     samples [unsigned int]; maximum number of samples per pixel, used to do the spherical transform; default 20." << std::endl;
+  std::cout << "  [-t]     theta size; the size of the theta dimension. default: 180, which yields a spacing of 2 degrees." << std::endl;
   std::cout << "  [-p]     phi size; the size of the phi dimension. default: 90, which yields a spacing of 2 degrees." << std::endl;
   std::cout << "  [-car]   skip the polar transform and return two output images (outputFileNameDIST and outputFileNameEDGE): true or false; default = false" << std::endl;
   std::cout << "           The EDGE output image is an edge mask for inputfile2. The DIST output image contains the distance at each edge pixel to the first inputFile." << std::endl;
-	std::cout << "Supported: 3D short for inputImage1, and everything convertable to short." << std::endl;
+  std::cout << "Supported: 3D short for inputImage1, and everything convertable to short." << std::endl;
   std::cout << "           3D short for inputImage2, and everything convertable to short." << std::endl;
 } // end PrintHelp
 

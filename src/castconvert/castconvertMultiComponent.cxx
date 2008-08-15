@@ -102,138 +102,138 @@ int FileConverterMultiComponent( const std::string &inputPixelComponentType,
   /** Support for 2D images. */
   if ( inputDimension == 2 )
   {
-		if ( numberOfComponents == 2 )
-		{
-			const int ret_value = 
-				FileConverterMultiComponent2D2CA( inputPixelComponentType, outputPixelComponentType,
-				numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression )
-				|| FileConverterMultiComponent2D2CB( inputPixelComponentType, outputPixelComponentType,
-				numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression );
-			if ( ret_value != 0 )
-			{
-				return ret_value;
-			}
-		}
-		else if ( numberOfComponents == 3 )
-		{
-			const int ret_value = 
-				FileConverterMultiComponent2D3CA( inputPixelComponentType, outputPixelComponentType,
-				numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression )
-				|| FileConverterMultiComponent2D3CB( inputPixelComponentType, outputPixelComponentType,
-				numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression );
-			if ( ret_value != 0 )
-			{
-				return ret_value;
-			}
-		}
-		else if ( numberOfComponents == 4 )
-		{
-			const int ret_value = 
-				FileConverterMultiComponent2D4CA( inputPixelComponentType, outputPixelComponentType,
-				numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression )
-				|| FileConverterMultiComponent2D4CB( inputPixelComponentType, outputPixelComponentType,
-				numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression );
-			if ( ret_value != 0 )
-			{
-				return ret_value;
-			}
-		}
-		else
-		{
-			std::cerr << "numberOfComponents equals " << numberOfComponents << ", which is not supported." << std::endl;
-			std::cerr << "Only 2, 3, and 4 numberOfComponents are supported." << std::endl;
-			return 1;
-		}
+    if ( numberOfComponents == 2 )
+    {
+      const int ret_value = 
+        FileConverterMultiComponent2D2CA( inputPixelComponentType, outputPixelComponentType,
+        numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression )
+        || FileConverterMultiComponent2D2CB( inputPixelComponentType, outputPixelComponentType,
+        numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression );
+      if ( ret_value != 0 )
+      {
+        return ret_value;
+      }
+    }
+    else if ( numberOfComponents == 3 )
+    {
+      const int ret_value = 
+        FileConverterMultiComponent2D3CA( inputPixelComponentType, outputPixelComponentType,
+        numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression )
+        || FileConverterMultiComponent2D3CB( inputPixelComponentType, outputPixelComponentType,
+        numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression );
+      if ( ret_value != 0 )
+      {
+        return ret_value;
+      }
+    }
+    else if ( numberOfComponents == 4 )
+    {
+      const int ret_value = 
+        FileConverterMultiComponent2D4CA( inputPixelComponentType, outputPixelComponentType,
+        numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression )
+        || FileConverterMultiComponent2D4CB( inputPixelComponentType, outputPixelComponentType,
+        numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression );
+      if ( ret_value != 0 )
+      {
+        return ret_value;
+      }
+    }
+    else
+    {
+      std::cerr << "numberOfComponents equals " << numberOfComponents << ", which is not supported." << std::endl;
+      std::cerr << "Only 2, 3, and 4 numberOfComponents are supported." << std::endl;
+      return 1;
+    }
   } // end support for 2D images
   else if ( inputDimension == 3 )
   {
-		if ( numberOfComponents == 2 )
-		{
-			const int ret_value = 
-				FileConverterMultiComponent3D2CA( inputPixelComponentType, outputPixelComponentType,
-				numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression )
-				|| FileConverterMultiComponent3D2CB( inputPixelComponentType, outputPixelComponentType,
-				numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression );
-			if ( ret_value != 0 )
-			{
-				return ret_value;
-			}
-		}
-		else if ( numberOfComponents == 3 )
-		{
-			const int ret_value = 
-				FileConverterMultiComponent3D3CA( inputPixelComponentType, outputPixelComponentType,
-				numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression )
-				|| FileConverterMultiComponent3D3CB( inputPixelComponentType, outputPixelComponentType,
-				numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression );
-			if ( ret_value != 0 )
-			{
-				return ret_value;
-			}
-		}
-		else if ( numberOfComponents == 4 )
-		{
-			const int ret_value = 
-				FileConverterMultiComponent3D4CA( inputPixelComponentType, outputPixelComponentType,
-				numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression )
-				|| FileConverterMultiComponent3D4CB( inputPixelComponentType, outputPixelComponentType,
-				numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression );
-			if ( ret_value != 0 )
-			{
-				return ret_value;
-			}
-		}
-		else
-		{
-			std::cerr << "numberOfComponents equals " << numberOfComponents << ", which is not supported." << std::endl;
-			std::cerr << "Only 2, 3, and 4 numberOfComponents are supported." << std::endl;
-			return 1;
-		}
+    if ( numberOfComponents == 2 )
+    {
+      const int ret_value = 
+        FileConverterMultiComponent3D2CA( inputPixelComponentType, outputPixelComponentType,
+        numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression )
+        || FileConverterMultiComponent3D2CB( inputPixelComponentType, outputPixelComponentType,
+        numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression );
+      if ( ret_value != 0 )
+      {
+        return ret_value;
+      }
+    }
+    else if ( numberOfComponents == 3 )
+    {
+      const int ret_value = 
+        FileConverterMultiComponent3D3CA( inputPixelComponentType, outputPixelComponentType,
+        numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression )
+        || FileConverterMultiComponent3D3CB( inputPixelComponentType, outputPixelComponentType,
+        numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression );
+      if ( ret_value != 0 )
+      {
+        return ret_value;
+      }
+    }
+    else if ( numberOfComponents == 4 )
+    {
+      const int ret_value = 
+        FileConverterMultiComponent3D4CA( inputPixelComponentType, outputPixelComponentType,
+        numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression )
+        || FileConverterMultiComponent3D4CB( inputPixelComponentType, outputPixelComponentType,
+        numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression );
+      if ( ret_value != 0 )
+      {
+        return ret_value;
+      }
+    }
+    else
+    {
+      std::cerr << "numberOfComponents equals " << numberOfComponents << ", which is not supported." << std::endl;
+      std::cerr << "Only 2, 3, and 4 numberOfComponents are supported." << std::endl;
+      return 1;
+    }
   } // end support for 3D images
   else if ( inputDimension == 4 )
   {
-		if ( numberOfComponents == 2 )
-		{
-			const int ret_value = 
-				FileConverterMultiComponent4D2CA( inputPixelComponentType, outputPixelComponentType,
-				numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression )
-				|| FileConverterMultiComponent4D2CB( inputPixelComponentType, outputPixelComponentType,
-				numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression );
-			if ( ret_value != 0 )
-			{
-				return ret_value;
-			}
-		}
-		else if ( numberOfComponents == 3 )
-		{
-			const int ret_value = 
-				FileConverterMultiComponent4D3CA( inputPixelComponentType, outputPixelComponentType,
-				numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression )
-				|| FileConverterMultiComponent4D3CB( inputPixelComponentType, outputPixelComponentType,
-				numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression );
-			if ( ret_value != 0 )
-			{
-				return ret_value;
-			}
-		}
-		else if ( numberOfComponents == 4 )
-		{
-			const int ret_value = 
-				FileConverterMultiComponent4D4CA( inputPixelComponentType, outputPixelComponentType,
-				numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression )
-				|| FileConverterMultiComponent4D4CB( inputPixelComponentType, outputPixelComponentType,
-				numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression );
-			if ( ret_value != 0 )
-			{
-				return ret_value;
-			}
-		}
-		else
-		{
-			std::cerr << "numberOfComponents equals " << numberOfComponents << ", which is not supported." << std::endl;
-			std::cerr << "Only 2, 3, and 4 numberOfComponents are supported." << std::endl;
-			return 1;
-		}
+    if ( numberOfComponents == 2 )
+    {
+      const int ret_value = 
+        FileConverterMultiComponent4D2CA( inputPixelComponentType, outputPixelComponentType,
+        numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression )
+        || FileConverterMultiComponent4D2CB( inputPixelComponentType, outputPixelComponentType,
+        numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression );
+      if ( ret_value != 0 )
+      {
+        return ret_value;
+      }
+    }
+    else if ( numberOfComponents == 3 )
+    {
+      const int ret_value = 
+        FileConverterMultiComponent4D3CA( inputPixelComponentType, outputPixelComponentType,
+        numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression )
+        || FileConverterMultiComponent4D3CB( inputPixelComponentType, outputPixelComponentType,
+        numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression );
+      if ( ret_value != 0 )
+      {
+        return ret_value;
+      }
+    }
+    else if ( numberOfComponents == 4 )
+    {
+      const int ret_value = 
+        FileConverterMultiComponent4D4CA( inputPixelComponentType, outputPixelComponentType,
+        numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression )
+        || FileConverterMultiComponent4D4CB( inputPixelComponentType, outputPixelComponentType,
+        numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression );
+      if ( ret_value != 0 )
+      {
+        return ret_value;
+      }
+    }
+    else
+    {
+      std::cerr << "numberOfComponents equals " << numberOfComponents << ", which is not supported." << std::endl;
+      std::cerr << "Only 2, 3, and 4 numberOfComponents are supported." << std::endl;
+      return 1;
+    }
   } // end support for 4D images
   else
   {

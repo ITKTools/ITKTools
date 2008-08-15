@@ -11,14 +11,14 @@
 
 void ReplaceUnderscoreWithSpace( std::string & arg )
 {
-	/** Get rid of the possible "_" in arg. */
-	std::basic_string<char>::size_type pos = arg.find( "_" );
-	const std::basic_string<char>::size_type npos = std::basic_string<char>::npos;
-	if ( pos != npos )
-	{
-		arg.replace( pos, 1, " " );
-	}
-	
+  /** Get rid of the possible "_" in arg. */
+  std::basic_string<char>::size_type pos = arg.find( "_" );
+  const std::basic_string<char>::size_type npos = std::basic_string<char>::npos;
+  if ( pos != npos )
+  {
+    arg.replace( pos, 1, " " );
+  }
+  
 } // end ReplaceUnderscoreWithSpace()
 
 
@@ -28,14 +28,14 @@ void ReplaceUnderscoreWithSpace( std::string & arg )
 
 void ReplaceSpaceWithUnderscore( std::string & arg )
 {
-	/** Get rid of the possible " " in arg. */
-	std::basic_string<char>::size_type pos = arg.find( " " );
-	const std::basic_string<char>::size_type npos = std::basic_string<char>::npos;
-	if ( pos != npos )
-	{
-		arg.replace( pos, 1, "_" );
-	}
-	
+  /** Get rid of the possible " " in arg. */
+  std::basic_string<char>::size_type pos = arg.find( " " );
+  const std::basic_string<char>::size_type npos = std::basic_string<char>::npos;
+  if ( pos != npos )
+  {
+    arg.replace( pos, 1, "_" );
+  }
+  
 } // end ReplaceSpaceWithUnderscore()
 
 
@@ -47,7 +47,7 @@ void RemoveUnsignedFromString( std::string & arg )
 {
   const std::basic_string<char>::size_type npos = std::basic_string<char>::npos;
   std::basic_string<char>::size_type pos = arg.find( "unsigned " );
-	if ( pos != npos ) arg = arg.substr( pos + 9 );
+  if ( pos != npos ) arg = arg.substr( pos + 9 );
   pos = arg.find( "unsigned_" );
   if ( pos != npos ) arg = arg.substr( pos + 9 );
 
@@ -113,14 +113,14 @@ int GetImageProperties(
   /** Generate all information. */
   try
   {
-   	testReader->GenerateOutputInformation();
+    testReader->GenerateOutputInformation();
   }
-	catch( itk::ExceptionObject &e )
-	{
-		std::cerr << "Caught ITK exception: " << e << std::endl;
-		return 1;
-	}
-  	
+  catch( itk::ExceptionObject &e )
+  {
+    std::cerr << "Caught ITK exception: " << e << std::endl;
+    return 1;
+  }
+    
   /** Extract the ImageIO from the testReader. */
   ImageIOBaseType::Pointer testImageIOBase = testReader->GetImageIO();
 
@@ -176,7 +176,7 @@ std::string GetLargestComponentType(
 {
   /** Typedef's. */
   typedef std::map< std::string, unsigned int > RankingType;
-  typedef RankingType::value_type					      EntryType;
+  typedef RankingType::value_type               EntryType;
 
   /** Define the ranking. */
   RankingType ranking;

@@ -10,8 +10,8 @@
 
 void PrintHelp( void )
 {
-	std::cout << "Usage:" << std::endl << "pxkappastatistic" << std::endl;
-	std::cout << "  -in      inputFilename" << std::endl;
+  std::cout << "Usage:" << std::endl << "pxkappastatistic" << std::endl;
+  std::cout << "  -in      inputFilename" << std::endl;
   std::cout << "  -type    the type of the kappa test:\n";
   std::cout << "             fleiss: unweighted, for many observers\n";
   std::cout << "             cohen: weighted, for two observers only" << std::endl;
@@ -58,7 +58,7 @@ bool ReadInputData( const std::string & filename,
 
   /** Read the file line by line. */
   if ( file.is_open() )
-	{
+  {
     while ( std::getline( file, line ) )
     {
       std::istringstream lineSS( line.c_str() );
@@ -100,17 +100,17 @@ bool GetInputData( const std::string & fileName,
   std::vector< std::vector<double> > inputMatrix;
   bool retin = ReadInputData( fileName, inputMatrix );
   if ( !retin )
-	{
-		std::cerr << "ERROR: Something went wrong reading \""
+  {
+    std::cerr << "ERROR: Something went wrong reading \""
       << fileName << "\"." << std::endl;
-		return 1;
-	}
+    return 1;
+  }
 
   /** Check if there are at least two columns. */
   if ( inputMatrix[ 0 ].size() < 2 )
   {
     std::cerr << "ERROR: The file should contain at least two sample sets." << std::endl;
-		return false;
+    return false;
   }
 
   /** Check that each column contains at least two data points.
@@ -119,7 +119,7 @@ bool GetInputData( const std::string & fileName,
   if ( inputMatrix.size() < 2 )
   {
     std::cerr << "ERROR: The columns should contain at least two samples." << std::endl;
-		return false;
+    return false;
   }
 
   /** Check if the requested columns exists. */

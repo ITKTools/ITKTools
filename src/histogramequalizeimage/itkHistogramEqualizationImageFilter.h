@@ -40,8 +40,8 @@ public:
                       TImage::ImageDimension ) ;
 
   /** Typedef to describe the input/output image types. */  
-  typedef TImage					InputImageType;
-  typedef TImage				  OutputImageType;
+  typedef TImage          InputImageType;
+  typedef TImage          OutputImageType;
 
   /** Typedef to describe the output and input image region types. */
   typedef typename InputImageType::RegionType InputImageRegionType;
@@ -71,25 +71,25 @@ public:
   /** Set/Get mask */
   itkSetObjectMacro( Mask, MaskImageType );
   itkGetObjectMacro( Mask, MaskImageType );
-	
+  
 protected:
   HistogramEqualizationImageFilter();
   ~HistogramEqualizationImageFilter();
   void PrintSelf(std::ostream& os, Indent indent) const;
 
 
-	
-	typedef itk::Array<OutputImagePixelType> LUTType;
-	LUTType m_LUT;
-	
-	unsigned int m_NumberOfBins;
-	InputImagePixelType m_Min;
-	InputImagePixelType m_Max;
-	double m_MeanFrequency;
+  
+  typedef itk::Array<OutputImagePixelType> LUTType;
+  LUTType m_LUT;
+  
+  unsigned int m_NumberOfBins;
+  InputImagePixelType m_Min;
+  InputImagePixelType m_Max;
+  double m_MeanFrequency;
   MaskImagePointer m_Mask;
 
   /** Initialize some accumulators before the threads run.
-	 * Create a LUT */
+   * Create a LUT */
   void BeforeThreadedGenerateData ();
   
   /** Tally accumulated in threads. */

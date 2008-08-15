@@ -27,23 +27,23 @@
 
 void PrintHelp()
 {
-	std::cout << "Usage:" << std::endl << "pxcastconvert" << std::endl;
-	std::cout << "  -in      inputfilename" << std::endl;
-	std::cout << "  -out     outputfilename" << std::endl;
-	std::cout << "  [-opct]  outputPixelComponentType" << std::endl;
+  std::cout << "Usage:" << std::endl << "pxcastconvert" << std::endl;
+  std::cout << "  -in      inputfilename" << std::endl;
+  std::cout << "  -out     outputfilename" << std::endl;
+  std::cout << "  [-opct]  outputPixelComponentType" << std::endl;
   std::cout << "  [-z]     compression flag; if provided, the output image is compressed" << std::endl;
-	std::cout << "OR pxcastconvert" << std::endl;
-	std::cout << "  -in      dicomDirectory" << std::endl;
-	std::cout << "  -out     outputfilename" << std::endl;
-	std::cout << "  [-opct]  outputPixelComponentType" << std::endl;
-	std::cout << "  [-s]     seriesUID" << std::endl;
+  std::cout << "OR pxcastconvert" << std::endl;
+  std::cout << "  -in      dicomDirectory" << std::endl;
+  std::cout << "  -out     outputfilename" << std::endl;
+  std::cout << "  [-opct]  outputPixelComponentType" << std::endl;
+  std::cout << "  [-s]     seriesUID" << std::endl;
   std::cout << "  [-z]     compression flag; if provided, the output image is compressed" << std::endl;
-	std::cout << "where outputPixelComponentType is one of:" << std::endl;
-	std::cout << "  [unsigned_]char, [unsigned_]short, [unsigned_]int," << std::endl;
-	std::cout << "  [unsigned_]long, float, double," << std::endl;
-	std::cout << "provided that the outputPixelComponentType is supported by the output file format." << std::endl;
+  std::cout << "where outputPixelComponentType is one of:" << std::endl;
+  std::cout << "  [unsigned_]char, [unsigned_]short, [unsigned_]int," << std::endl;
+  std::cout << "  [unsigned_]long, float, double," << std::endl;
+  std::cout << "provided that the outputPixelComponentType is supported by the output file format." << std::endl;
   std::cout << "By default the outputPixelComponentType is set to the inputPixelComponentType." << std::endl;
-	std::cout << "By default the seriesUID is the first UID found." << std::endl;
+  std::cout << "By default the seriesUID is the first UID found." << std::endl;
   std::cout << "The compression flag \"-z\" may be ignored by some output image formats." << std::endl;
 
 
@@ -55,33 +55,33 @@ void PrintHelp()
  */
 
 int GetCommandLineArguments( int argc, char **argv, std::string & errorMessage,
-	std::string & input, std::string & outputFileName,
-	std::string & outputPixelComponentType, std::string & seriesUID, bool & useCompression )
+  std::string & input, std::string & outputFileName,
+  std::string & outputPixelComponentType, std::string & seriesUID, bool & useCompression )
 {
-	/** Create a command line argument parser. */
-	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
-	parser->SetCommandLineArguments( argc, argv );
+  /** Create a command line argument parser. */
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
 
-	/** Get arguments. */
-	bool retin = parser->GetCommandLineArgument( "-in", input );
-	bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
-	bool retopct = parser->GetCommandLineArgument( "-opct", outputPixelComponentType );
-	bool rets = parser->GetCommandLineArgument( "-s", seriesUID );
+  /** Get arguments. */
+  bool retin = parser->GetCommandLineArgument( "-in", input );
+  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  bool retopct = parser->GetCommandLineArgument( "-opct", outputPixelComponentType );
+  bool rets = parser->GetCommandLineArgument( "-s", seriesUID );
   useCompression = parser->ArgumentExists( "-z" );
 
-	/** Check if necessary command line arguments are available. */
-	if ( !retin )
-	{
-		errorMessage = "ERROR: You should specify \"-in\".";
-		return 1;
-	}
-	if ( !retout )
-	{
-		errorMessage = "ERROR: You should specify \"-out\".";
-		return 1;
-	}
+  /** Check if necessary command line arguments are available. */
+  if ( !retin )
+  {
+    errorMessage = "ERROR: You should specify \"-in\".";
+    return 1;
+  }
+  if ( !retout )
+  {
+    errorMessage = "ERROR: You should specify \"-out\".";
+    return 1;
+  }
 
-	/** Check outputPixelType. */
+  /** Check outputPixelType. */
   if ( outputPixelComponentType != ""
     && outputPixelComponentType != "unsigned_char"
     && outputPixelComponentType != "char"
@@ -96,12 +96,12 @@ int GetCommandLineArguments( int argc, char **argv, std::string & errorMessage,
   {
     /** In this case an illegal outputPixelComponentType is given. */
     errorMessage = "The given outputPixelComponentType is \""
-			+ outputPixelComponentType + "\", which is not supported.";
+      + outputPixelComponentType + "\", which is not supported.";
     return 1;
   }
 
-	/** Return a value. */
-	return 0;
+  /** Return a value. */
+  return 0;
 
 } // end GetCommandLineArguments
 
@@ -114,7 +114,7 @@ int IsDICOM( std::string & input, std::string & errorMessage, bool & isDICOM )
 {
   /** Make sure last character of input != "/".
    * Otherwise FileIsDirectory() won't work.
-	 */
+   */
   if ( input.rfind( "/" ) == input.size() - 1 )
   {
     input.erase( input.size() - 1, 1 );
@@ -133,8 +133,8 @@ int IsDICOM( std::string & input, std::string & errorMessage, bool & isDICOM )
     return 1;
   }
 
-	/** Return a value. */
-	return 0;
+  /** Return a value. */
+  return 0;
 
 } // end IsDICOM
 
@@ -144,21 +144,21 @@ int IsDICOM( std::string & input, std::string & errorMessage, bool & isDICOM )
  */
 
 int GetFileNameFromDICOMDirectory( std::string & seriesUID, std::string & inputDirectoryName,
-	std::string & errorMessage, std::string & fileName )
+  std::string & errorMessage, std::string & fileName )
 {
-	typedef itk::GDCMSeriesFileNames                GDCMNamesGeneratorType;
+  typedef itk::GDCMSeriesFileNames                GDCMNamesGeneratorType;
   typedef std::vector< std::string >              FileNamesContainerType;
 
-	/** Create vector of filenames from the DICOM directory. */
-	GDCMNamesGeneratorType::Pointer nameGenerator = GDCMNamesGeneratorType::New();
-	nameGenerator->SetUseSeriesDetails( true );
-	nameGenerator->SetInputDirectory( inputDirectoryName.c_str() );
+  /** Create vector of filenames from the DICOM directory. */
+  GDCMNamesGeneratorType::Pointer nameGenerator = GDCMNamesGeneratorType::New();
+  nameGenerator->SetUseSeriesDetails( true );
+  nameGenerator->SetInputDirectory( inputDirectoryName.c_str() );
 
-	/** The short and fast way. */
-	FileNamesContainerType fileNames;
-	if ( seriesUID == "" )
-	{
-		fileNames = nameGenerator->GetInputFileNames();
+  /** The short and fast way. */
+  FileNamesContainerType fileNames;
+  if ( seriesUID == "" )
+  {
+    fileNames = nameGenerator->GetInputFileNames();
     if ( fileNames.size() != 0 )
     {
       fileName = fileNames[ 0 ];
@@ -169,30 +169,30 @@ int GetFileNameFromDICOMDirectory( std::string & seriesUID, std::string & inputD
       std::cerr << "ERROR: No files found in this directory." << std::endl;
       return 1;
     }
-	}
+  }
 
-	/** Get all series in this directory. */
-	FileNamesContainerType seriesNames = nameGenerator->GetSeriesUIDs();
-	if ( !seriesNames.size() )
-	{
-		errorMessage = "ERROR: no DICOM series in directory " + inputDirectoryName + ".";
-		return 1;
-	}
+  /** Get all series in this directory. */
+  FileNamesContainerType seriesNames = nameGenerator->GetSeriesUIDs();
+  if ( !seriesNames.size() )
+  {
+    errorMessage = "ERROR: no DICOM series in directory " + inputDirectoryName + ".";
+    return 1;
+  }
 
-	/** Get a list of files in series. */
-	fileNames = nameGenerator->GetFileNames( seriesUID );
-	if ( !fileNames.size() )
-	{
-		errorMessage = "ERROR: no DICOM series " + seriesUID
-			+ " in directory " + inputDirectoryName + ".";
-		return 1;
-	}
-	
-	/** Get a name of a 2D image. */
-	fileName = fileNames[ 0 ];
+  /** Get a list of files in series. */
+  fileNames = nameGenerator->GetFileNames( seriesUID );
+  if ( !fileNames.size() )
+  {
+    errorMessage = "ERROR: no DICOM series " + seriesUID
+      + " in directory " + inputDirectoryName + ".";
+    return 1;
+  }
+  
+  /** Get a name of a 2D image. */
+  fileName = fileNames[ 0 ];
 
-	/** Return a value. */
-	return 0;
+  /** Return a value. */
+  return 0;
 
 } // end GetFileNameFromDICOMDirectory
 

@@ -8,8 +8,8 @@
 #include "CommandLineArgumentHelper.h"
 
   /**
-	 * ******************* Macro *******************
-	 */
+   * ******************* Macro *******************
+   */
 
 /** run: A macro to call a function. */
 #define run( function, typeIn1, typeIn2, typeOut, dim ) \
@@ -24,14 +24,14 @@ if ( ComponentTypeIn1 == #typeIn1 && ComponentTypeIn2 == #typeIn2 \
   supported = true; \
 }
 
-	/**
-	 * ******************* PrintHelp *******************
-	 */
+  /**
+   * ******************* PrintHelp *******************
+   */
 void PrintHelp()
 {
   std::cout << "Performs binary operations on two images." << std::endl;
-	std::cout << "Usage:\npxbinaryimageoperator" << std::endl;
-	std::cout << "  -in      inputFilenames" << std::endl;
+  std::cout << "Usage:\npxbinaryimageoperator" << std::endl;
+  std::cout << "  -in      inputFilenames" << std::endl;
   std::cout << "  [-out]   outputFilename, default in1 + ops + arg + in2 + .mhd" << std::endl;
   std::cout << "  -ops     binary operator of the following form:\n"
             << "           {+,-,*,/,^,%}\n"
@@ -49,14 +49,14 @@ void PrintHelp()
             << "             MASK[NEG]: background value, e.g. 0." << std::endl;
   std::cout << "  [-opct]  output component type, by default the largest of the two input images\n"
             << "             choose one of: {[unsigned_]{char,short,int,long},float,double}" << std::endl;
-	std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
+  std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
 
 } // end PrintHelp()
 
 
   /**
-	 * ******************* TypeIsInteger *******************
-	 */
+   * ******************* TypeIsInteger *******************
+   */
 
 bool TypeIsInteger( const std::string & componentType )
 {
@@ -78,8 +78,8 @@ bool TypeIsInteger( const std::string & componentType )
 
 
   /**
-	 * ******************* DetermineImageProperties *******************
-	 */
+   * ******************* DetermineImageProperties *******************
+   */
 
 int DetermineImageProperties(
   const std::vector<std::string> & inputFileNames,
@@ -89,7 +89,7 @@ int DetermineImageProperties(
   unsigned int & inputDimension )
 {
   /** Determine image properties of image 1. */
-  std::string	inputPixelType1 = "";
+  std::string inputPixelType1 = "";
   unsigned int inputDimension1 = 2;
   unsigned int numberOfComponents1 = 1;
   std::vector<unsigned int> imagesize1( inputDimension1, 0 );
@@ -103,7 +103,7 @@ int DetermineImageProperties(
   if ( retgip1 ) return retgip1;
 
   /** Determine image properties of image 2. */
-  std::string	inputPixelType2 = "";
+  std::string inputPixelType2 = "";
   unsigned int inputDimension2 = 2;
   unsigned int numberOfComponents2 = 1;
   std::vector<unsigned int> imagesize2( inputDimension1, 0 );
@@ -160,8 +160,8 @@ int DetermineImageProperties(
 
 
   /**
-	 * ******************* CheckOperator *******************
-	 */
+   * ******************* CheckOperator *******************
+   */
 
 int CheckOperator( std::string & operatoR )
 {
@@ -257,8 +257,8 @@ int CheckOperator( std::string & operatoR )
 
 
   /**
-	 * ******************* OperatorNeedsArgument *******************
-	 */
+   * ******************* OperatorNeedsArgument *******************
+   */
 
 bool OperatorNeedsArgument( const std::string & operatoR )
 {
@@ -290,15 +290,15 @@ bool OperatorNeedsArgument( const std::string & operatoR )
 
   
   /**
-	 * ******************* CreateOutputFileName *******************
-	 */
+   * ******************* CreateOutputFileName *******************
+   */
 
 void CreateOutputFileName( const std::vector<std::string> & inputFileNames,
   std::string & outputFileName,
   const std::string & ops,
   const std::string & arg )
 {
-	/** Get parts of file name. */
+  /** Get parts of file name. */
   std::string path =
     itksys::SystemTools::GetFilenamePath( inputFileNames[ 0 ] );
   std::string name1 =
@@ -328,12 +328,12 @@ void CreateOutputFileName( const std::vector<std::string> & inputFileNames,
     /** Example: /path/imageRDIVIDE3.mhd *
     outputFileName = path + name + ops + arg + ext;
   }*/
-	
+  
 } // end CreateOutputFileName
 
   /**
-	 * ******************* CheckOperatorAndArgument *******************
-	 */
+   * ******************* CheckOperatorAndArgument *******************
+   */
 
 bool CheckOperatorAndArgument( const std::string & operatoR,
   const std::string & argument, const bool & retarg )

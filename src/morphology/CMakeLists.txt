@@ -11,10 +11,10 @@ ELSE(ITK_FOUND)
 ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxmorphology
- 	morphology.cxx
-	mainhelper.h
-	Erosion.h
-	Dilation.h
+  morphology.cxx
+  mainhelper.h
+  Erosion.h
+  Dilation.h
 )
 
 INSTALL_TARGETS(/. pxmorphology)

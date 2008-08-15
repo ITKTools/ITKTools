@@ -36,7 +36,7 @@ void CreateBox(
   std::vector<unsigned int> size,
   std::vector<double> spacing,
   std::vector<double> input1,
-	std::vector<double> input2,
+  std::vector<double> input2,
   std::string input,
   std::vector<double> orientation );
 
@@ -45,7 +45,7 @@ void CreateBox(
   std::string inputFileName,
   std::string outputFileName,
   std::vector<double> input1,
-	std::vector<double> input2,
+  std::vector<double> input2,
   std::string input,
   std::vector<double> orientation );
 
@@ -58,77 +58,77 @@ void PrintHelp( void );
 int main( int argc, char** argv )
 {
   /** Check arguments for help. */
-	if ( argc < 5 )
-	{
-		PrintHelp();
-		return 1;
-	}
+  if ( argc < 5 )
+  {
+    PrintHelp();
+    return 1;
+  }
 
   /** Create a command line argument parser. */
-	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
-	parser->SetCommandLineArguments( argc, argv );
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
 
   /** Get arguments. */
-  std::string	inputFileName = "";
-	bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  std::string inputFileName = "";
+  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
 
- 	std::string	outputFileName = "";
-	bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  std::string outputFileName = "";
+  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
 
- 	unsigned int Dimension = 3;
-	bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
+  unsigned int Dimension = 3;
+  bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
 
   std::vector<double> spacing( Dimension, 1.0 );
-	bool retsp = parser->GetCommandLineArgument( "-sp", spacing );
+  bool retsp = parser->GetCommandLineArgument( "-sp", spacing );
 
   std::vector<unsigned int> size( Dimension );
-	bool retsz = parser->GetCommandLineArgument( "-sz", size );
+  bool retsz = parser->GetCommandLineArgument( "-sz", size );
   
   std::vector<double> center( Dimension );
-	bool retc = parser->GetCommandLineArgument( "-c", center );
+  bool retc = parser->GetCommandLineArgument( "-c", center );
 
-	std::vector<double> radius( Dimension );
-	bool retr = parser->GetCommandLineArgument( "-r", radius );
+  std::vector<double> radius( Dimension );
+  bool retr = parser->GetCommandLineArgument( "-r", radius );
 
   std::vector<double> corner1( Dimension );
-	bool retcp1 = parser->GetCommandLineArgument( "-cp1", corner1 );
+  bool retcp1 = parser->GetCommandLineArgument( "-cp1", corner1 );
 
   std::vector<double> corner2( Dimension );
-	bool retcp2 = parser->GetCommandLineArgument( "-cp2", corner2 );
+  bool retcp2 = parser->GetCommandLineArgument( "-cp2", corner2 );
 
   std::vector<double> cornerindex1( Dimension );
-	bool retci1 = parser->GetCommandLineArgument( "-ci1", cornerindex1 );
+  bool retci1 = parser->GetCommandLineArgument( "-ci1", cornerindex1 );
 
   std::vector<double> cornerindex2( Dimension );
-	bool retci2 = parser->GetCommandLineArgument( "-ci2", cornerindex2 );
+  bool retci2 = parser->GetCommandLineArgument( "-ci2", cornerindex2 );
 
   std::vector<double> orientation( Dimension, 0.0 );
-	bool reto = parser->GetCommandLineArgument( "-o", orientation );
+  bool reto = parser->GetCommandLineArgument( "-o", orientation );
 
-	/** Check if the required arguments are given. */
-	if ( !retout )
-	{
-		std::cerr << "ERROR: You should specify \"-out\"." << std::endl;
-		return 1;
-	}
+  /** Check if the required arguments are given. */
+  if ( !retout )
+  {
+    std::cerr << "ERROR: You should specify \"-out\"." << std::endl;
+    return 1;
+  }
   if ( ( retin && retsz ) || ( !retin && !retsz ) )
-	{
-		std::cerr << "ERROR: You should specify either \"-in\" or \"-sz\"." << std::endl;
-		return 1;
-	}
+  {
+    std::cerr << "ERROR: You should specify either \"-in\" or \"-sz\"." << std::endl;
+    return 1;
+  }
   if ( ( !retc | !retr | retcp1 | retcp2 | retci1 | retci2 )
     && ( retc | retr | !retcp1 | !retcp2 | retci1 | retci2 )
     && ( retc | retr | retcp1 | retcp2 | !retci1 | !retci2 ) )
-	{
-		std::cerr << "ERROR: Either you should specify \"-c\" and \"-r\"." << std::endl;
+  {
+    std::cerr << "ERROR: Either you should specify \"-c\" and \"-r\"." << std::endl;
     std::cerr << "ERROR: Or you should specify \"-cp1\" and \"-cp2\"." << std::endl;
     std::cerr << "ERROR: Or you should specify \"-ci1\" and \"-ci2\"." << std::endl;
-		return 1;
-	}
+    return 1;
+  }
   
   /** Determine input image properties. */
-  std::string	ComponentType = "short";
-  std::string	PixelType; //we don't use this
+  std::string ComponentType = "short";
+  std::string PixelType; //we don't use this
   unsigned int NumberOfComponents = 1;
   if ( retin )
   {
@@ -141,10 +141,10 @@ int main( int argc, char** argv )
   }
 
   /** Let the user overrule this. */
-	bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
+  bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
 
   /** Get rid of the possible "_" in ComponentType. */
-	ReplaceUnderscoreWithSpace( ComponentType );
+  ReplaceUnderscoreWithSpace( ComponentType );
 
   /** How was the input supplied by the user? */
   std::vector<double> input1, input2;
@@ -170,8 +170,8 @@ int main( int argc, char** argv )
 
   /** Run the program. */
   bool supported = false;
-	try
-	{
+  try
+  {
     if ( retin )
     {
       run2( CreateBox, unsigned char, 2 );
@@ -204,12 +204,12 @@ int main( int argc, char** argv )
       run1( CreateBox, float, 3 );
       run1( CreateBox, double, 3 );
     }
-	}
-	catch( itk::ExceptionObject &e )
-	{
-		std::cerr << "Caught ITK exception: " << e << std::endl;
-		return 1;
-	}
+  }
+  catch( itk::ExceptionObject &e )
+  {
+    std::cerr << "Caught ITK exception: " << e << std::endl;
+    return 1;
+  }
   if ( !supported )
   {
     std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
@@ -220,40 +220,40 @@ int main( int argc, char** argv )
     return 1;
   }
 
- 	/** End program. Return a value. */
-	return 0;
+  /** End program. Return a value. */
+  return 0;
 
 } // end main 
 
 
   /**
-	 * ******************* CreateBox *******************
-	 */
+   * ******************* CreateBox *******************
+   */
 
 template< class ImageType >
 void CreateBox( std::string filename,
   std::vector<unsigned int> size,
   std::vector<double> spacing,
   std::vector<double> input1,
-	std::vector<double> input2,
+  std::vector<double> input2,
   std::string input,
   std::vector<double> orientation )
 {
   /** Typedefs. */
-  typedef itk::ImageFileReader< ImageType > 				  ImageReaderType;
-	typedef itk::ImageFileWriter< ImageType > 				  ImageWriterType;
+  typedef itk::ImageFileReader< ImageType >           ImageReaderType;
+  typedef itk::ImageFileWriter< ImageType >           ImageWriterType;
 
   const unsigned int Dimension = ImageType::ImageDimension;
-	typedef itk::BoxSpatialFunction< Dimension >        BoxSpatialFunctionType;
+  typedef itk::BoxSpatialFunction< Dimension >        BoxSpatialFunctionType;
   typedef typename BoxSpatialFunctionType::InputType  InputType;
-  typedef itk::ImageRegionIterator< ImageType >		    IteratorType;
+  typedef itk::ImageRegionIterator< ImageType >       IteratorType;
 
-  typedef typename ImageType::RegionType			        RegionType;
-	typedef typename RegionType::SizeType			          SizeType;
-  typedef typename RegionType::SizeValueType	        SizeValueType;
-	typedef typename ImageType::PointType			          PointType;
-	typedef typename ImageType::IndexType			          IndexType;
-	typedef typename ImageType::SpacingType		          SpacingType;
+  typedef typename ImageType::RegionType              RegionType;
+  typedef typename RegionType::SizeType               SizeType;
+  typedef typename RegionType::SizeValueType          SizeValueType;
+  typedef typename ImageType::PointType               PointType;
+  typedef typename ImageType::IndexType               IndexType;
+  typedef typename ImageType::SpacingType             SpacingType;
 
   /** Parse the arguments. */
   SizeType    Size;
@@ -266,18 +266,18 @@ void CreateBox( std::string filename,
     Orientation[ i ] = orientation[ i ];
   }
 
-	/** Create image. */
-	RegionType region;
-	region.SetSize( Size );
-	typename ImageType::Pointer image = ImageType::New();
-	image->SetRegions( region );
-	image->SetSpacing( Spacing );
-	image->Allocate();
+  /** Create image. */
+  RegionType region;
+  region.SetSize( Size );
+  typename ImageType::Pointer image = ImageType::New();
+  image->SetRegions( region );
+  image->SetSpacing( Spacing );
+  image->Allocate();
 
   /** Translate input of two opposite corners to center + radius input. */
   InputType Center, Radius;
   PointType point1, point2;
-	IndexType index1, index2;
+  IndexType index1, index2;
   if ( input == "CornersAsPoints" )
   {
     /** The input is points, copy it. */
@@ -317,62 +317,62 @@ void CreateBox( std::string filename,
     }
   }
 
-	/** Create and initialize box. */
-	typename BoxSpatialFunctionType::Pointer box = BoxSpatialFunctionType::New();
-	box->SetCenter( Center );
-	box->SetRadius( Radius );
+  /** Create and initialize box. */
+  typename BoxSpatialFunctionType::Pointer box = BoxSpatialFunctionType::New();
+  box->SetCenter( Center );
+  box->SetRadius( Radius );
   box->SetOrientation( Orientation );
 
-	/** Create iterator, index and point. */
-	IteratorType it( image, region );
-	it.GoToBegin();
-	PointType point;
-	IndexType index;
+  /** Create iterator, index and point. */
+  IteratorType it( image, region );
+  it.GoToBegin();
+  PointType point;
+  IndexType index;
 
-	/** Walk over the image. */
-	while ( !it.IsAtEnd() )
-	{
-		index = it.GetIndex();
-		image->TransformIndexToPhysicalPoint( index, point );
-		it.Set( box->Evaluate( point ) );
-		++it;
-	} // end while
+  /** Walk over the image. */
+  while ( !it.IsAtEnd() )
+  {
+    index = it.GetIndex();
+    image->TransformIndexToPhysicalPoint( index, point );
+    it.Set( box->Evaluate( point ) );
+    ++it;
+  } // end while
 
-	/** Write image. */
-	typename ImageWriterType::Pointer writer = ImageWriterType::New();
-	writer->SetFileName( filename.c_str() );
-	writer->SetInput( image );
-	writer->Update();
+  /** Write image. */
+  typename ImageWriterType::Pointer writer = ImageWriterType::New();
+  writer->SetFileName( filename.c_str() );
+  writer->SetInput( image );
+  writer->Update();
 
 } // end CreateBox()
 
 
   /**
-	 * ******************* CreateBox *******************
-	 */
+   * ******************* CreateBox *******************
+   */
 
 template< class ImageType >
 void CreateBox(
   std::string inputFileName,
   std::string outputFileName,
   std::vector<double> input1,
-	std::vector<double> input2,
+  std::vector<double> input2,
   std::string input,
   std::vector<double> orientation )
 {
   /** Typedefs. */
-  typedef itk::ImageFileReader< ImageType > 				  ImageReaderType;
+  typedef itk::ImageFileReader< ImageType >           ImageReaderType;
   typedef itk::ImageDuplicator< ImageType >           DuplicatorType;
-	typedef itk::ImageFileWriter< ImageType > 				  ImageWriterType;
+  typedef itk::ImageFileWriter< ImageType >           ImageWriterType;
 
   const unsigned int Dimension = ImageType::ImageDimension;
-	typedef itk::BoxSpatialFunction< Dimension >        BoxSpatialFunctionType;
+  typedef itk::BoxSpatialFunction< Dimension >        BoxSpatialFunctionType;
   typedef typename BoxSpatialFunctionType::InputType  InputType;
-  typedef itk::ImageRegionIterator< ImageType >		    IteratorType;
+  typedef itk::ImageRegionIterator< ImageType >       IteratorType;
 
-	typedef typename ImageType::PointType			          PointType;
-	typedef typename ImageType::IndexType			          IndexType;
-  typedef typename ImageType::SpacingType		          SpacingType;
+  typedef typename ImageType::PointType               PointType;
+  typedef typename ImageType::IndexType               IndexType;
+  typedef typename ImageType::SpacingType             SpacingType;
 
   /** Parse the arguments. */
   InputType   Orientation;
@@ -396,7 +396,7 @@ void CreateBox(
   SpacingType Spacing = image->GetSpacing();
   InputType Center, Radius;
   PointType point1, point2;
-	IndexType index1, index2;
+  IndexType index1, index2;
   if ( input == "CornersAsPoints" )
   {
     /** The input is points, copy it. */
@@ -436,61 +436,61 @@ void CreateBox(
     }
   }
 
-	/** Create and initialize box. */
-	typename BoxSpatialFunctionType::Pointer box = BoxSpatialFunctionType::New();
-	box->SetCenter( Center );
-	box->SetRadius( Radius );
+  /** Create and initialize box. */
+  typename BoxSpatialFunctionType::Pointer box = BoxSpatialFunctionType::New();
+  box->SetCenter( Center );
+  box->SetRadius( Radius );
   box->SetOrientation( Orientation );
 
-	/** Create iterator, index and point. */
-	IteratorType it( image, image->GetLargestPossibleRegion() );
-	it.GoToBegin();
-	PointType point;
-	IndexType index;
+  /** Create iterator, index and point. */
+  IteratorType it( image, image->GetLargestPossibleRegion() );
+  it.GoToBegin();
+  PointType point;
+  IndexType index;
 
-	/** Walk over the image. */
-	while ( !it.IsAtEnd() )
-	{
-		index = it.GetIndex();
-		image->TransformIndexToPhysicalPoint( index, point );
-		it.Set( box->Evaluate( point ) );
-		++it;
-	} // end while
+  /** Walk over the image. */
+  while ( !it.IsAtEnd() )
+  {
+    index = it.GetIndex();
+    image->TransformIndexToPhysicalPoint( index, point );
+    it.Set( box->Evaluate( point ) );
+    ++it;
+  } // end while
 
-	/** Write image. */
-	typename ImageWriterType::Pointer writer = ImageWriterType::New();
-	writer->SetFileName( outputFileName.c_str() );
-	writer->SetInput( image );
-	writer->Update();
+  /** Write image. */
+  typename ImageWriterType::Pointer writer = ImageWriterType::New();
+  writer->SetFileName( outputFileName.c_str() );
+  writer->SetInput( image );
+  writer->Update();
 
 } // end CreateBox()
 
 
-	/**
-	 * ******************* PrintHelp *******************
-	 */
+  /**
+   * ******************* PrintHelp *******************
+   */
 
 void PrintHelp()
 {
-	std::cout << "Usage:" << std::endl << "pxcreatebox" << std::endl;
+  std::cout << "Usage:" << std::endl << "pxcreatebox" << std::endl;
   std::cout << "  [-in]    inputFilename, to copy image information from" << std::endl;
-	std::cout << "  -out     outputFilename" << std::endl;
+  std::cout << "  -out     outputFilename" << std::endl;
   std::cout << "  [-sz]    image size (voxels)" << std::endl;
   std::cout << "  [-sp]    image spacing (mm)" << std::endl;
   std::cout << "  [-c]     center (mm)" << std::endl;
-	std::cout << "  [-r]     radii (mm)" << std::endl;
+  std::cout << "  [-r]     radii (mm)" << std::endl;
   std::cout << "  [-cp1]   cornerpoint 1 (mm)" << std::endl;
-	std::cout << "  [-cp2]   cornerpoint 2 (mm)" << std::endl;
+  std::cout << "  [-cp2]   cornerpoint 2 (mm)" << std::endl;
   std::cout << "  [-ci1]   cornerindex 1" << std::endl;
-	std::cout << "  [-ci2]   cornerindex 2" << std::endl;
+  std::cout << "  [-ci2]   cornerindex 2" << std::endl;
   std::cout << "  [-o]     orientation, default xyz" << std::endl;
-	std::cout << "  [-dim]   dimension, default 3" << std::endl;
-	std::cout << "  [-pt]    pixelType, default short" << std::endl;
+  std::cout << "  [-dim]   dimension, default 3" << std::endl;
+  std::cout << "  [-pt]    pixelType, default short" << std::endl;
   std::cout << "- The user should EITHER specify the input filename OR the output image size." << std::endl;
   std::cout << "- The user should EITHER specify the center and the radius," << std::endl;
   std::cout << "  OR the positions of two opposite corner points." << std::endl;
   std::cout << "  OR the positions of two opposite corner indices." << std::endl;
   std::cout << "- The orientation is a vector with Euler angles (rad)." << std::endl;
-	std::cout << "- Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double." << std::endl;
+  std::cout << "- Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double." << std::endl;
 } // end PrintHelp()
 

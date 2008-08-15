@@ -65,7 +65,7 @@ public: \
   } \
   void SetArgument( double arg ){ this->m_Argument = arg; }; \
 private: \
-	double m_Argument; \
+  double m_Argument; \
 }
 
 /** A macro to write a binary functor class, using an input argument. */
@@ -84,7 +84,7 @@ public: \
   } \
   void SetArgument( double arg ){ this->m_Argument = arg; }; \
 private: \
-	double m_Argument; \
+  double m_Argument; \
 }
 
 /** Arithmetic functors. */

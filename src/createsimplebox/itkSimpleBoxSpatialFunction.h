@@ -31,7 +31,7 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(SimpleBoxSpatialFunction,InteriorExteriorSpatialFunction);
 
-	itkStaticConstMacro(ImageDimension, unsigned int, VImageDimension);
+  itkStaticConstMacro(ImageDimension, unsigned int, VImageDimension);
 
   /** Input type for the function. */
   typedef typename Superclass::InputType InputType;
@@ -49,7 +49,7 @@ public:
   /** Get and set the second point that defines the box */
   itkGetMacro( PointB, InputType);
   itkSetMacro( PointB, InputType);
-	       
+         
 protected:
   SimpleBoxSpatialFunction();
   virtual ~SimpleBoxSpatialFunction();

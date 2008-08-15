@@ -18,9 +18,9 @@
 #include "castconverthelpers.h"
 
 int DicomFileConverterScalarA(
-	const std::string &inputPixelComponentType, const std::string &outputPixelComponentType,
-	const std::string &inputDirectoryName, const std::string &seriesUID,
-	const std::string &outputFileName, const unsigned int inputDimension, bool useCompression )
+  const std::string &inputPixelComponentType, const std::string &outputPixelComponentType,
+  const std::string &inputDirectoryName, const std::string &seriesUID,
+  const std::string &outputFileName, const unsigned int inputDimension, bool useCompression )
 {
   /** Support for 3D images. */
   if ( inputDimension == 3 )

@@ -154,7 +154,7 @@ void StatisticsOnImage(
   const std::string & histogramOutputFileName,
   unsigned int numberOfBins)
 {
-	/** Typedefs. */
+  /** Typedefs. */
   typedef ComponentType ScalarPixelType;
   typedef double InternalPixelType;
   typedef unsigned char MaskPixelType;
@@ -168,8 +168,8 @@ void StatisticsOnImage(
   
   typedef itk::ImageToImageFilter<
     InternalImageType, InternalImageType>             BaseFilterType;
-	typedef itk::ImageFileReader< ScalarImageType >			ScalarReaderType;
-  typedef itk::ImageFileReader< VectorImageType >			VectorReaderType;
+  typedef itk::ImageFileReader< ScalarImageType >     ScalarReaderType;
+  typedef itk::ImageFileReader< VectorImageType >     VectorReaderType;
   typedef itk::ImageFileReader< MaskImageType >       MaskReaderType;
   typedef itk::CastImageFilter<
     ScalarImageType, InternalImageType >              CasterType;

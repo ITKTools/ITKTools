@@ -52,33 +52,33 @@ void PrintHelp( void );
 
 int main( int argc, char ** argv )
 {
-	if ( argc < 6 )
-	{
+  if ( argc < 6 )
+  {
     PrintHelp();
-		return 1;
-	}
+    return 1;
+  }
 
   /** Create a command line argument parser. */
-	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
-	parser->SetCommandLineArguments( argc, argv );
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
 
   /** Get the input file names. */
-	std::vector< std::string >	inputFileNames;
-	bool retin = parser->GetCommandLineArgument( "-in", inputFileNames );
+  std::vector< std::string >  inputFileNames;
+  bool retin = parser->GetCommandLineArgument( "-in", inputFileNames );
   if ( !retin )
-	{
-		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-		return 1;
-	}
-  if ( inputFileNames.size() < 2 )
-	{
-		std::cout << "ERROR: You should specify at least two input images." << std::endl;
+  {
+    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
     return 1;
-	}
+  }
+  if ( inputFileNames.size() < 2 )
+  {
+    std::cout << "ERROR: You should specify at least two input images." << std::endl;
+    return 1;
+  }
 
   /** Get the outputFileName. */
-  std::string	outputFileName = "";
-	bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  std::string outputFileName = "";
+  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
   if ( !retout )
   {
     std::cerr << "ERROR: You should specify \"-out\"." << std::endl;
@@ -87,19 +87,19 @@ int main( int argc, char ** argv )
 
   /** Read the z-spacing. */
   double zspacing = -1.0;
-	bool retsp = parser->GetCommandLineArgument( "-sp", zspacing );
+  bool retsp = parser->GetCommandLineArgument( "-sp", zspacing );
 
   /** Get the layout. */
-	std::vector< unsigned int >	layout;
-	bool retly = parser->GetCommandLineArgument( "-ly", layout );
+  std::vector< unsigned int > layout;
+  bool retly = parser->GetCommandLineArgument( "-ly", layout );
 
   /** Get the layout. */
-	double defaultvalue = 0.0;
-	bool retd = parser->GetCommandLineArgument( "-d", defaultvalue );
+  double defaultvalue = 0.0;
+  bool retd = parser->GetCommandLineArgument( "-d", defaultvalue );
 
   /** Determine image properties. */
   std::string ComponentType = "short";
-  std::string	PixelType; //we don't use this
+  std::string PixelType; //we don't use this
   unsigned int Dimension = 3;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
@@ -124,7 +124,7 @@ int main( int argc, char ** argv )
   std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
   
   /** Let the user overrule this. */
-	bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
+  bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
   if ( retpt )
   {
     std::cout << "The user has overruled this by specifying -pt:" << std::endl;
@@ -140,13 +140,13 @@ int main( int argc, char ** argv )
     return 1;
   }
 
-	/** Get rid of the possible "_" in ComponentType. */
-	ReplaceUnderscoreWithSpace( ComponentType );
-	
-	/** Run the program. */
+  /** Get rid of the possible "_" in ComponentType. */
+  ReplaceUnderscoreWithSpace( ComponentType );
+  
+  /** Run the program. */
   bool supported = false;
   try
-	{
+  {
     if ( !retly )
     {
       runA( TileImages2D3D, unsigned char );
@@ -170,12 +170,12 @@ int main( int argc, char ** argv )
       runB( TileImages, short, 3 );
       runB( TileImages, float, 3 );
     }
-	}
-	catch( itk::ExceptionObject &e )
-	{
-		std::cerr << "Caught ITK exception: " << e << std::endl;
-		return 1;
-	}
+  }
+  catch( itk::ExceptionObject &e )
+  {
+    std::cerr << "Caught ITK exception: " << e << std::endl;
+    return 1;
+  }
   if ( !supported )
   {
     std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
@@ -186,8 +186,8 @@ int main( int argc, char ** argv )
     return 1;
   }
 
-	/** Return a value. */
-	return 0;
+  /** Return a value. */
+  return 0;
 
 } // end main
 
@@ -200,44 +200,44 @@ void TileImages2D3D(
   const std::string & outputFileName,
   const double & zspacing )
 {
- 	/** Define image type. */
-	const unsigned int Dimension = 3;
+  /** Define image type. */
+  const unsigned int Dimension = 3;
 
-	/** Some typedef's. */
-	typedef itk::Image<PixelType, Dimension>						ImageType;
-	typedef typename ImageType::SpacingType					  	SpacingType;
-	typedef itk::ImageSeriesReader<ImageType>	  				ImageSeriesReaderType;
-	typedef itk::ImageFileWriter<ImageType>		  				ImageWriterType;
+  /** Some typedef's. */
+  typedef itk::Image<PixelType, Dimension>            ImageType;
+  typedef typename ImageType::SpacingType             SpacingType;
+  typedef itk::ImageSeriesReader<ImageType>           ImageSeriesReaderType;
+  typedef itk::ImageFileWriter<ImageType>             ImageWriterType;
 
   /** Create reader. */
-	typename ImageSeriesReaderType::Pointer reader = ImageSeriesReaderType::New();
-	reader->SetFileNames( inputFileNames );
+  typename ImageSeriesReaderType::Pointer reader = ImageSeriesReaderType::New();
+  reader->SetFileNames( inputFileNames );
 
-	/** Update the reader. */
+  /** Update the reader. */
   std::cout << "Input images are read..." << std::endl;
-	reader->Update();
+  reader->Update();
   std::cout << "Reading done." << std::endl;
   typename ImageType::Pointer tiledImage = reader->GetOutput();
-	
-	/** Get and set the spacing, if it was set by the user. */
+  
+  /** Get and set the spacing, if it was set by the user. */
   if ( zspacing > 0.0 )
   {
     /** Make sure that changes are not undone */
     tiledImage->DisconnectPipeline();
     /** Set the zspacing */
-	  SpacingType spacing = tiledImage->GetSpacing();
-	  spacing[ 2 ] = zspacing;
-	  tiledImage->SetSpacing( spacing );
+    SpacingType spacing = tiledImage->GetSpacing();
+    spacing[ 2 ] = zspacing;
+    tiledImage->SetSpacing( spacing );
   }
 
-	/** Write to disk. */
-	typename ImageWriterType::Pointer writer = ImageWriterType::New();
-	writer->SetFileName( outputFileName.c_str() );
-	writer->SetInput( tiledImage );
+  /** Write to disk. */
+  typename ImageWriterType::Pointer writer = ImageWriterType::New();
+  writer->SetFileName( outputFileName.c_str() );
+  writer->SetInput( tiledImage );
   std::cout << "Writing tiled image..." << std::endl;
-	writer->Update();
+  writer->Update();
   std::cout << "Ready." << std::endl;
-		
+    
 } // end TileImages2D3D
 
 //-------------------------------------------------------------------------------------
@@ -250,12 +250,12 @@ void TileImages(
   const std::vector<unsigned int> & layout,
   const double & defaultvalue )
 {
-	/** Some typedef's. */
-  typedef itk::Image<PixelType, Dimension>						ImageType;
-  typedef itk::ImageFileReader<ImageType>					    ImageReaderType;
-	typedef itk::TileImageFilter<ImageType, ImageType>  TilerType;
-	typedef itk::ImageFileWriter<ImageType>		  				ImageWriterType;
-  //typedef typename ImageType::SpacingType					    SpacingType;
+  /** Some typedef's. */
+  typedef itk::Image<PixelType, Dimension>            ImageType;
+  typedef itk::ImageFileReader<ImageType>             ImageReaderType;
+  typedef itk::TileImageFilter<ImageType, ImageType>  TilerType;
+  typedef itk::ImageFileWriter<ImageType>             ImageWriterType;
+  //typedef typename ImageType::SpacingType             SpacingType;
 
   /** Copy layout into a fixed array. */
   itk::FixedArray< unsigned int, Dimension > Layout;
@@ -284,12 +284,12 @@ void TileImages(
   /** Do the tiling. */
   tiler->Update();
 
-	/** Write to disk. */
-	typename ImageWriterType::Pointer writer = ImageWriterType::New();
-	writer->SetFileName( outputFileName.c_str() );
-	writer->SetInput( tiler->GetOutput() );
-	writer->Update();
-		
+  /** Write to disk. */
+  typename ImageWriterType::Pointer writer = ImageWriterType::New();
+  writer->SetFileName( outputFileName.c_str() );
+  writer->SetInput( tiler->GetOutput() );
+  writer->Update();
+    
 } // end TileImages
 
 //-------------------------------------------------------------------------------------

@@ -25,7 +25,7 @@
 #define InstantiateBinaryFilterNoArg( name ) \
   typedef itk::BinaryFunctorImageFilter< \
     InputImage1Type, InputImage2Type, OutputImageType, \
-    itk::Functor::name<InputPixel1Type, InputPixel2Type, OutputPixelType> >	name##FilterType; \
+    itk::Functor::name<InputPixel1Type, InputPixel2Type, OutputPixelType> > name##FilterType; \
   if ( binaryOperatorName == #name ) \
   {\
     typename name##FilterType::Pointer tempBinaryFilter = name##FilterType::New(); \
@@ -35,7 +35,7 @@
 #define InstantiateBinaryFilterWithArg( name ) \
   typedef itk::BinaryFunctorImageFilter< \
     InputImage1Type, InputImage2Type, OutputImageType, \
-    itk::Functor::name<InputPixel1Type, InputPixel2Type, OutputPixelType> >	name##FilterType; \
+    itk::Functor::name<InputPixel1Type, InputPixel2Type, OutputPixelType> > name##FilterType; \
   if ( binaryOperatorName == #name ) \
   {\
     typename name##FilterType::Pointer tempBinaryFilter = name##FilterType::New(); \
@@ -45,8 +45,8 @@
  
   
   /**
-	 * ******************* BinaryImageOperator *******************
-	 */
+   * ******************* BinaryImageOperator *******************
+   */
 
 template< class InputImage1Type, class InputImage2Type, class OutputImageType >
 void BinaryImageOperator( 
@@ -56,17 +56,17 @@ void BinaryImageOperator(
   const std::string & ops,
   const std::string & arg )
 {
-	/** Typedefs. */
+  /** Typedefs. */
   typedef typename InputImage1Type::PixelType         InputPixel1Type;
   typedef typename InputImage2Type::PixelType         InputPixel2Type;
   typedef typename OutputImageType::PixelType         OutputPixelType;
   typedef itk::ImageToImageFilter<InputImage1Type, OutputImageType> BaseFilterType;
-  typedef itk::ImageFileReader< InputImage1Type >			Reader1Type;
-  typedef itk::ImageFileReader< InputImage2Type >			Reader2Type;
-	typedef itk::ImageFileWriter< OutputImageType >			WriterType;
+  typedef itk::ImageFileReader< InputImage1Type >     Reader1Type;
+  typedef itk::ImageFileReader< InputImage2Type >     Reader2Type;
+  typedef itk::ImageFileWriter< OutputImageType >     WriterType;
 
-	/** Read the input images. */
-	typename Reader1Type::Pointer reader1 = Reader1Type::New();
+  /** Read the input images. */
+  typename Reader1Type::Pointer reader1 = Reader1Type::New();
   reader1->SetFileName( inputFileName1.c_str() );
   typename Reader2Type::Pointer reader2 = Reader2Type::New();
   reader2->SetFileName( inputFileName2.c_str() );
@@ -101,10 +101,10 @@ void BinaryImageOperator(
   binaryFilter->SetInput( 1, reader2->GetOutput() );
 
   /** Write the image to disk */
-	typename WriterType::Pointer writer = WriterType::New();
-	writer->SetFileName( outputFileName.c_str() );
+  typename WriterType::Pointer writer = WriterType::New();
+  writer->SetFileName( outputFileName.c_str() );
   writer->SetInput( binaryFilter->GetOutput() );
-	writer->Update();
+  writer->Update();
 
 } // end BinaryImageOperator
 

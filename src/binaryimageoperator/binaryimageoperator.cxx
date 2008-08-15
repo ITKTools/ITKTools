@@ -8,23 +8,23 @@
 
 int main( int argc, char **argv )
 {
-	/** Check arguments for help. */
-	if ( argc < 5 || argc > 10 )
-	{
-		PrintHelp();
-		return 1;
-	}
+  /** Check arguments for help. */
+  if ( argc < 5 || argc > 10 )
+  {
+    PrintHelp();
+    return 1;
+  }
 
-	/** Create a command line argument parser. */
-	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
-	parser->SetCommandLineArguments( argc, argv );
+  /** Create a command line argument parser. */
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
 
-	/** Get arguments. */
+  /** Get arguments. */
   std::vector<std::string> inputFileNames;
-	bool retin = parser->GetCommandLineArgument( "-in", inputFileNames );
+  bool retin = parser->GetCommandLineArgument( "-in", inputFileNames );
 
-  std::string	outputFileName = "";
-	bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  std::string outputFileName = "";
+  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
 
   std::string ops = "";
   bool retops = parser->GetCommandLineArgument( "-ops", ops );
@@ -37,21 +37,21 @@ int main( int argc, char **argv )
 
   /** Check if the required arguments are given. */
   if ( !retin )
-	{
-		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-		return 1;
-	}
+  {
+    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
+    return 1;
+  }
   if ( !retops )
-	{
-		std::cerr << "ERROR: You should specify \"-ops\"." << std::endl;
-		return 1;
-	}
+  {
+    std::cerr << "ERROR: You should specify \"-ops\"." << std::endl;
+    return 1;
+  }
 
   /** You should specify two input files. */
   if ( inputFileNames.size() != 2 )
   {
     std::cerr << "ERROR: You should specify two input file names." << std::endl;
-		return 1;
+    return 1;
   }
 
   /** Create outputFileName. */
@@ -80,7 +80,7 @@ int main( int argc, char **argv )
     }
     ComponentTypeOut = opct;
     ReplaceUnderscoreWithSpace( ComponentTypeOut );
-	if ( !TypeIsInteger( opct ) ) ComponentTypeIn1 = ComponentTypeIn2 = "double";
+  if ( !TypeIsInteger( opct ) ) ComponentTypeIn1 = ComponentTypeIn2 = "double";
   }
 
   /** Check if a valid operator is given. */
@@ -95,7 +95,7 @@ int main( int argc, char **argv )
   /** Run the program. */
   bool supported = false;
   try
-	{
+  {
     run( BinaryImageOperator, long, long, char, 2 );
     run( BinaryImageOperator, long, long, unsigned char, 2 );
     run( BinaryImageOperator, long, long, short, 2 );
@@ -120,10 +120,10 @@ int main( int argc, char **argv )
 
   } // end try
   catch ( itk::ExceptionObject &e )
-	{
-		std::cerr << "Caught ITK exception: " << e << std::endl;
-		return 1;
-	}
+  {
+    std::cerr << "Caught ITK exception: " << e << std::endl;
+    return 1;
+  }
   if ( !supported )
   {
     std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
@@ -133,9 +133,9 @@ int main( int argc, char **argv )
       << std::endl;
     return 1;
   }
-		
-	/** End program. */
-	return 0;
+    
+  /** End program. */
+  return 0;
 
 } // end main
 

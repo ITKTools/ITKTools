@@ -102,7 +102,7 @@ void PrintInfo( ReaderType reader, WriterType writer )
  */
 template< class InputImageType, class OutputImageType >
 void ReadDicomSeriesCastWriteImage( std::string inputDirectoryName,
-	std::string outputFileName, std::string seriesUID, bool useCompression )
+  std::string outputFileName, std::string seriesUID, bool useCompression )
 {
   /** Typedef the correct reader, caster and writer. */
   typedef typename itk::ImageSeriesReader< InputImageType >     SeriesReaderType;
@@ -122,10 +122,10 @@ void ReadDicomSeriesCastWriteImage( std::string inputDirectoryName,
 
   /** Get a list of the filenames of the 2D input dicom images. */
   GDCMNamesGeneratorType::Pointer nameGenerator = GDCMNamesGeneratorType::New();
-	nameGenerator->SetUseSeriesDetails( true );
+  nameGenerator->SetUseSeriesDetails( true );
   nameGenerator->SetInputDirectory( inputDirectoryName.c_str() );
   //FileNamesContainerType fileNames = nameGenerator->GetInputFileNames();
-	FileNamesContainerType fileNames = nameGenerator->GetFileNames( seriesUID );
+  FileNamesContainerType fileNames = nameGenerator->GetFileNames( seriesUID );
 
   /** Create and setup the seriesReader. */
   typename SeriesReaderType::Pointer seriesReader = SeriesReaderType::New();
@@ -207,15 +207,15 @@ void ReadCastWriteVectorImage( std::string inputFileName, std::string outputFile
   typedef typename itk::VectorCastImageFilter<
     InputImageType, OutputImageType >                         CasterType;
   typedef typename itk::ImageFileWriter< OutputImageType >    ImageWriterType;
-	
+  
   /** Create reader, caster and writer. */
-	typename ImageReaderType::Pointer reader = ImageReaderType::New();
-	typename CasterType::Pointer      caster = CasterType::New();
+  typename ImageReaderType::Pointer reader = ImageReaderType::New();
+  typename CasterType::Pointer      caster = CasterType::New();
   typename ImageWriterType::Pointer writer = ImageWriterType::New();
 
-	/** Setup reader, caster and writer. */
-	reader->SetFileName( inputFileName.c_str() );
-	//caster->InPlaceOn();
+  /** Setup reader, caster and writer. */
+  reader->SetFileName( inputFileName.c_str() );
+  //caster->InPlaceOn();
   writer->SetFileName( outputFileName.c_str() );
   writer->SetUseCompression( useCompression );
 

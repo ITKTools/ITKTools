@@ -15,22 +15,22 @@ extern int UnaryImageOperatorScalar( const std::string & inputFileName,
 
 int main( int argc, char **argv )
 {
-	/** Check arguments for help. */
-	if ( argc < 5 || argc > 11 )
-	{
-		PrintHelp();
-		return 1;
-	}
+  /** Check arguments for help. */
+  if ( argc < 5 || argc > 11 )
+  {
+    PrintHelp();
+    return 1;
+  }
 
-	/** Create a command line argument parser. */
-	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
-	parser->SetCommandLineArguments( argc, argv );
+  /** Create a command line argument parser. */
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
 
-	/** Get arguments. */
-	std::string inputFileName = "";
-	bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
-  std::string	outputFileName = "";
-	bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  /** Get arguments. */
+  std::string inputFileName = "";
+  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  std::string outputFileName = "";
+  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
   std::string ops = "PLUS";
   bool retops = parser->GetCommandLineArgument( "-ops", ops );
   std::string argument = "1";
@@ -38,15 +38,15 @@ int main( int argc, char **argv )
   
   /** Check if the required arguments are given. */
   if ( !retin )
-	{
-		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-		return 1;
-	}
+  {
+    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
+    return 1;
+  }
   if ( !retops )
-	{
-		std::cerr << "ERROR: You should specify \"-ops\"." << std::endl;
-		return 1;
-	}
+  {
+    std::cerr << "ERROR: You should specify \"-ops\"." << std::endl;
+    return 1;
+  }
 
   /** Create outputFileName. */
   if ( outputFileName == "" )
@@ -56,7 +56,7 @@ int main( int argc, char **argv )
 
   /** Determine image properties. */
   std::string inputComponentType = "short";
-  std::string	inputPixelType = "";
+  std::string inputPixelType = "";
   unsigned int inputDimension = 2;
   unsigned int numberOfComponents = 1;
   std::vector<unsigned int> imagesize( inputDimension, 0 );
@@ -71,7 +71,7 @@ int main( int argc, char **argv )
 
   /** Get the output component type. */
   std::string ComponentTypeOut = inputComponentType;
-	bool retopt = parser->GetCommandLineArgument( "-pto", ComponentTypeOut );
+  bool retopt = parser->GetCommandLineArgument( "-pto", ComponentTypeOut );
   ReplaceUnderscoreWithSpace( ComponentTypeOut );
 
   /** The input is only templated over int and double. */
@@ -115,7 +115,7 @@ int main( int argc, char **argv )
    * Now that we have all arguments available, run!
    */
   try
-	{
+  {
     /** Scalar support. */
     if ( inputPixelType == "scalar" && numberOfComponents == 1 )
     {
@@ -135,13 +135,13 @@ int main( int argc, char **argv )
     }
   } // end try
   catch( itk::ExceptionObject &e )
-	{
-		std::cerr << "Caught ITK exception: " << e << std::endl;
-		return 1;
-	}
-		
-	/** End program. */
-	return 0;
+  {
+    std::cerr << "Caught ITK exception: " << e << std::endl;
+    return 1;
+  }
+    
+  /** End program. */
+  return 0;
 
 } // end main
 

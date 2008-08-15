@@ -27,38 +27,38 @@ void PrintHelp( void );
 
 int main( int argc, char ** argv )
 {
-	
-	if ( argc < 3 )
-	{
-		PrintHelp();
-		return 1;
-	}
+  
+  if ( argc < 3 )
+  {
+    PrintHelp();
+    return 1;
+  }
 
-	/** Create a command line argument parser. */
-	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
-	parser->SetCommandLineArguments( argc, argv );
+  /** Create a command line argument parser. */
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
 
-	/** Get arguments. */
-	std::string	inputFileName = "";
-	bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
-	if ( !retin )
-	{
-		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-		return 1;
-	}
+  /** Get arguments. */
+  std::string inputFileName = "";
+  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  if ( !retin )
+  {
+    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
+    return 1;
+  }
 
-  std::string	maskFileName = "";
-	bool retmask = parser->GetCommandLineArgument( "-mask", maskFileName );
+  std::string maskFileName = "";
+  bool retmask = parser->GetCommandLineArgument( "-mask", maskFileName );
 
-  std::string	histogramOutputFileName = "";
-	bool rethist = parser->GetCommandLineArgument( "-out", histogramOutputFileName );
+  std::string histogramOutputFileName = "";
+  bool rethist = parser->GetCommandLineArgument( "-out", histogramOutputFileName );
 
   unsigned int numberOfBins = 100;
   bool retb = parser->GetCommandLineArgument( "-b", numberOfBins );
   
   /** Determine image properties. */
   std::string ComponentType = "float";
-  std::string	PixelType; //we don't use this
+  std::string PixelType; //we don't use this
   unsigned int Dimension = 2;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
@@ -80,12 +80,12 @@ int main( int argc, char ** argv )
   std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
 
   /** force images to sneaky be converted to doubles */
-	ComponentType = "float";
-		
-	/** Run the program. */
+  ComponentType = "float";
+    
+  /** Run the program. */
   bool supported = false;
-	try
-	{
+  try
+  {
     run( StatisticsOnImage, float, 2, 1 );
     run( StatisticsOnImage, float, 2, 2 );
     run( StatisticsOnImage, float, 2, 3 );
@@ -93,11 +93,11 @@ int main( int argc, char ** argv )
     run( StatisticsOnImage, float, 3, 2 );
     run( StatisticsOnImage, float, 3, 3 );
   }
-	catch( itk::ExceptionObject &e )
-	{
-		std::cerr << "Caught ITK exception: " << e << std::endl;
-		return 1;
-	}
+  catch( itk::ExceptionObject &e )
+  {
+    std::cerr << "Caught ITK exception: " << e << std::endl;
+    return 1;
+  }
   if ( !supported )
   {
     std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
@@ -107,21 +107,21 @@ int main( int argc, char ** argv )
       << std::endl;
     return 1;
   }
-	
-	/** End program. */
-	return 0;
+  
+  /** End program. */
+  return 0;
 
 } // end main
 
 
-	/**
-	 * ******************* PrintHelp *******************
-	 */
+  /**
+   * ******************* PrintHelp *******************
+   */
 void PrintHelp()
 {
   std::cout << "Compute statistics on an image. For vector images, the magnitude is used." << std::endl;
   std::cout << "Usage:" << std::endl << "pxstatisticonimage" << std::endl;
-	std::cout << "  -in      inputFilename" << std::endl;
+  std::cout << "  -in      inputFilename" << std::endl;
   std::cout << "  [-out]   outputFileName for histogram;\n";
   std::cout << "           if omitted, no histogram is written; default: <empty>" << std::endl;
   std::cout << "  [-mask]  MaskFileName, mask should have the same size as the input image\n";

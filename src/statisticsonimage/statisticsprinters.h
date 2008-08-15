@@ -18,9 +18,9 @@ void PrintStatistics( const TStatisticsFilter * statistics )
   std::cout << std::setprecision(10);
   std::cout << "\tmin             : " << statistics->GetMinimum() << std::endl;
   std::cout << "\tmax             : " << statistics->GetMaximum() << std::endl;
-	std::cout << "\tarithmetic mean : " << statistics->GetMean() << std::endl;
-	std::cout << "\tarithmetic stdev: " << statistics->GetSigma() << std::endl;
-	std::cout << "\tarithmetic var  : " << statistics->GetVariance() << std::endl;
+  std::cout << "\tarithmetic mean : " << statistics->GetMean() << std::endl;
+  std::cout << "\tarithmetic stdev: " << statistics->GetSigma() << std::endl;
+  std::cout << "\tarithmetic var  : " << statistics->GetVariance() << std::endl;
   std::cout << "\tsum             : " << statistics->GetSum() << std::endl;
   
 } // end PrintStatistics
@@ -40,8 +40,8 @@ void PrintGeometricStatistics( const TStatisticsFilter * statistics )
   double geometricmean = vcl_exp( statistics->GetMean() );
   double geometricstdev = vcl_exp( statistics->GetSigma() );
   std::cout << "\tgeometric mean : " << geometricmean << std::endl;
-	std::cout << "\tgeometric stdev: " << geometricstdev << std::endl;
-	  
+  std::cout << "\tgeometric stdev: " << geometricstdev << std::endl;
+    
 } // end PrintGeometricStatistics
 
 
@@ -54,7 +54,7 @@ void PrintHistogramStatistics( const THistogram * histogram,
                                const std::string & histogramOutputFileName ) 
 {
   /** Print to screen. */
-	//median, quartiles, histogram, percentiles.
+  //median, quartiles, histogram, percentiles.
 
   typedef typename THistogram::FrequencyType FrequencyType;
   typename THistogram::TotalFrequencyType nrOfPixels = histogram->GetTotalFrequency();
@@ -77,8 +77,8 @@ void PrintHistogramStatistics( const THistogram * histogram,
       histogramOutputFileName << " ..." << std::endl;
     std::ofstream histogramOutputFile;
     histogramOutputFile.open( histogramOutputFileName.c_str() );
-		if ( !histogramOutputFile.is_open() )
-		{
+    if ( !histogramOutputFile.is_open() )
+    {
       itkGenericExceptionMacro(<< "ERROR: Output file for histogram cannot be opened!");
     }
     histogramOutputFile << std::fixed;

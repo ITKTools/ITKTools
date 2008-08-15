@@ -30,31 +30,31 @@ void PrintHelp( void );
 
 int main( int argc, char **argv )
 {
-	/** Check arguments for help. */
-	if ( argc < 3 || argc > 7 )
-	{
-		PrintHelp();
-		return 1;
-	}
+  /** Check arguments for help. */
+  if ( argc < 3 || argc > 7 )
+  {
+    PrintHelp();
+    return 1;
+  }
 
-	/** Create a command line argument parser. */
-	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
-	parser->SetCommandLineArguments( argc, argv );
+  /** Create a command line argument parser. */
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
 
-	/** Get arguments. */
-	std::string	inputFileName = "";
-	bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
-	
-	/** Check if the required arguments are given. */
-	if ( !retin )
-	{
-		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-		return 1;
-	}
+  /** Get arguments. */
+  std::string inputFileName = "";
+  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  
+  /** Check if the required arguments are given. */
+  if ( !retin )
+  {
+    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
+    return 1;
+  }
 
   /** Determine image properties. */
   std::string ComponentType = "short";
-  std::string	PixelType; //we don't use this
+  std::string PixelType; //we don't use this
   unsigned int Dimension = 2;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
@@ -77,8 +77,8 @@ int main( int argc, char **argv )
   std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
   
   /** Let the user overrule this */
-	bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
-	bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
+  bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
+  bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
   if (retdim | retpt)
   {
     std::cout << "The user has overruled this by specifying -pt and/or -dim:" << std::endl;
@@ -94,8 +94,8 @@ int main( int argc, char **argv )
     return 1; 
   }
  
-	/** Get rid of the possible "_" in ComponentType. */
-	ReplaceUnderscoreWithSpace( ComponentType );
+  /** Get rid of the possible "_" in ComponentType. */
+  ReplaceUnderscoreWithSpace( ComponentType );
 
   /** Overrule it, since only short will do something */
   if ( ComponentType != "short" )
@@ -104,18 +104,18 @@ int main( int argc, char **argv )
     ComponentType = "short";
     std::cout << "WARNING: the image will be converted to short!" << std::endl;
   }
-	/** Run the program. */
+  /** Run the program. */
   bool supported = false;
-	try
-	{
-		run(ComputeBoundingBox, short, 3);
+  try
+  {
+    run(ComputeBoundingBox, short, 3);
     run(ComputeBoundingBox, short, 2);
   }
-	catch( itk::ExceptionObject &e )
-	{
-		std::cerr << "Caught ITK exception: " << e << std::endl;
-		return 1;
-	}
+  catch( itk::ExceptionObject &e )
+  {
+    std::cerr << "Caught ITK exception: " << e << std::endl;
+    return 1;
+  }
   if ( !supported )
   {
     std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
@@ -125,31 +125,31 @@ int main( int argc, char **argv )
       << std::endl;
     return 1;
   }
-	
-	/** End program. */
-	return 0;
+  
+  /** End program. */
+  return 0;
 
 } // end main
 
 
-	/**
-	 * ******************* ComputeBoundingBox *******************
-	 */
+  /**
+   * ******************* ComputeBoundingBox *******************
+   */
 
 template< class InputImageType >
 void ComputeBoundingBox( std::string inputFileName )
 {
-	/** Typedefs. */
-	typedef itk::ImageFileReader< InputImageType >			ReaderType;
+  /** Typedefs. */
+  typedef itk::ImageFileReader< InputImageType >      ReaderType;
   typedef itk::ImageRegionConstIteratorWithIndex<
     InputImageType>                                   IteratorType;  
   typedef typename InputImageType::PixelType          PixelType;
   typedef typename InputImageType::IndexType          IndexType;
   typedef typename InputImageType::PointType          PointType;
   const unsigned int dimension = InputImageType::GetImageDimension();
-	
+  
   /** Declarations */
-	typename ReaderType::Pointer reader = ReaderType::New();
+  typename ReaderType::Pointer reader = ReaderType::New();
   typename InputImageType::Pointer image;
   IndexType minIndex;
   IndexType maxIndex;
@@ -197,9 +197,9 @@ void ComputeBoundingBox( std::string inputFileName )
 } // end ComputeBoundingBox
 
 
-	/**
-	 * ******************* PrintHelp *******************
-	 */
+  /**
+   * ******************* PrintHelp *******************
+   */
 void PrintHelp()
 {
   std::cout << "This program computes the bounding box of an image." << std::endl;
@@ -208,8 +208,8 @@ void PrintHelp()
   std::cout << "Usage:" << std::endl << "pxcomputeboundingbox" << std::endl;
   std::cout << "  -in      inputFilename" << std::endl;
   std::cout << "  [-dim]   dimension, default 3" << std::endl;
-	std::cout << "  [-pt]    pixelType, default short" << std::endl;
-	std::cout << "Supported: 2D, 3D, short. Images with PixelType other than short are automatically converted. " << std::endl;
+  std::cout << "  [-pt]    pixelType, default short" << std::endl;
+  std::cout << "Supported: 2D, 3D, short. Images with PixelType other than short are automatically converted. " << std::endl;
 } // end PrintHelp
 
 

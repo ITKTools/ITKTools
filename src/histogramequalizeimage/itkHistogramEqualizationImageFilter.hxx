@@ -15,10 +15,10 @@ template<class TImage>
 HistogramEqualizationImageFilter<TImage>
 ::HistogramEqualizationImageFilter()
 {
-	this->m_Min = itk::NumericTraits<InputImagePixelType>::Zero;
-	this->m_Max = itk::NumericTraits<InputImagePixelType>::One;
-	this->m_MeanFrequency = 1.0;
-	this->m_NumberOfBins = 1;
+  this->m_Min = itk::NumericTraits<InputImagePixelType>::Zero;
+  this->m_Max = itk::NumericTraits<InputImagePixelType>::One;
+  this->m_MeanFrequency = 1.0;
+  this->m_NumberOfBins = 1;
 }
 
 template<class TImage>
@@ -42,8 +42,8 @@ HistogramEqualizationImageFilter<TImage>
     useMask = true;
   }
 
-	/** Compute minimum and maximum of the input image */
-	ImageIteratorType it( this->GetInput(), this->GetOutput()->GetRequestedRegion() );
+  /** Compute minimum and maximum of the input image */
+  ImageIteratorType it( this->GetInput(), this->GetOutput()->GetRequestedRegion() );
   MaskIteratorType maskIt;
   if ( useMask )
   {
@@ -51,14 +51,14 @@ HistogramEqualizationImageFilter<TImage>
     maskIt.GoToBegin();
   }
 
-	InputImagePixelType tempmin = itk::NumericTraits<InputImagePixelType>::max();
-	InputImagePixelType tempmax = 
-		itk::NumericTraits<InputImagePixelType>::NonpositiveMin();
+  InputImagePixelType tempmin = itk::NumericTraits<InputImagePixelType>::max();
+  InputImagePixelType tempmax = 
+    itk::NumericTraits<InputImagePixelType>::NonpositiveMin();
 
   unsigned long numberOfValidPixels = 0;
-	it.GoToBegin();
-	while ( !it.IsAtEnd() )
-	{
+  it.GoToBegin();
+  while ( !it.IsAtEnd() )
+  {
     bool validPixel = true;
     if ( useMask )
     {
@@ -78,30 +78,30 @@ HistogramEqualizationImageFilter<TImage>
         tempmax = current;
       }
     }
-		++it;
-	}
+    ++it;
+  }
 
-	this->m_Min = tempmin;
-	this->m_Max = tempmax;
-	
+  this->m_Min = tempmin;
+  this->m_Max = tempmax;
+  
   /** Compute the number of bins and the ideal number of times a intensity value
-	 * should occur in the image */
+   * should occur in the image */
   this->m_NumberOfBins = tempmax - tempmin + 1;  
-	this->m_MeanFrequency = 
-		static_cast<double>( numberOfValidPixels ) /
-		static_cast<double>( this->m_NumberOfBins );
+  this->m_MeanFrequency = 
+    static_cast<double>( numberOfValidPixels ) /
+    static_cast<double>( this->m_NumberOfBins );
 
-	/** Compute the histogram of the input image */
-	typedef itk::Array<unsigned long> HistogramType;
-	HistogramType hist( this->m_NumberOfBins );
-	hist.Fill( 0 );
-	it.GoToBegin();
+  /** Compute the histogram of the input image */
+  typedef itk::Array<unsigned long> HistogramType;
+  HistogramType hist( this->m_NumberOfBins );
+  hist.Fill( 0 );
+  it.GoToBegin();
   if ( useMask )
   {
     maskIt.GoToBegin();
   }
-	while ( !it.IsAtEnd() )
-	{
+  while ( !it.IsAtEnd() )
+  {
     bool validPixel = true;
     if ( useMask )
     {
@@ -112,23 +112,23 @@ HistogramEqualizationImageFilter<TImage>
     {
       ( hist[ static_cast<unsigned int>( it.Value() - tempmin ) ] )++;
     }
-		++it;
-	}
+    ++it;
+  }
 
-	/** convert it to a cumulative histogram */
-	for (unsigned int i = 1; i< this->m_NumberOfBins; i++)
-	{
-		hist[i] += hist[i-1];
-	}
+  /** convert it to a cumulative histogram */
+  for (unsigned int i = 1; i< this->m_NumberOfBins; i++)
+  {
+    hist[i] += hist[i-1];
+  }
 
-	/** Compute LUT */
-	this->m_LUT.SetSize(this->m_NumberOfBins);
-	for (unsigned int i = 0; i< this->m_NumberOfBins; i++)
-	{
-		this->m_LUT[i] = static_cast<OutputImagePixelType>( vnl_math_max( 
-			static_cast<double>(tempmin), 			
-			-1.0 + tempmin + vcl_floor(	static_cast<double>(hist[i]) / this->m_MeanFrequency + 0.5 ) ) );
-	}
+  /** Compute LUT */
+  this->m_LUT.SetSize(this->m_NumberOfBins);
+  for (unsigned int i = 0; i< this->m_NumberOfBins; i++)
+  {
+    this->m_LUT[i] = static_cast<OutputImagePixelType>( vnl_math_max( 
+      static_cast<double>(tempmin),       
+      -1.0 + tempmin + vcl_floor( static_cast<double>(hist[i]) / this->m_MeanFrequency + 0.5 ) ) );
+  }
 
   
 }
@@ -138,8 +138,8 @@ void
 HistogramEqualizationImageFilter<TImage>
 ::AfterThreadedGenerateData ()
 {
-  //nothing	
-	
+  //nothing 
+  
 }
 
 template<class TImage>
@@ -172,8 +172,8 @@ HistogramEqualizationImageFilter<TImage>
   // support progress methods/callbacks
   ProgressReporter progress(this, threadId, outputRegionForThread.GetNumberOfPixels());
           
-	LUTType & lut = this->m_LUT;
-	InputImagePixelType & tempmin = this->m_Min;
+  LUTType & lut = this->m_LUT;
+  InputImagePixelType & tempmin = this->m_Min;
 
   // shift and scale the input pixels
   while (!it.IsAtEnd())
@@ -193,7 +193,7 @@ HistogramEqualizationImageFilter<TImage>
       ot.Set( it.Value() );
     }
     ++it;
-		++ot;
+    ++ot;
     progress.CompletedPixel();
   }
 }
@@ -207,7 +207,7 @@ HistogramEqualizationImageFilter<TImage>
 
   os << indent << "NumberOfBins: "  << m_NumberOfBins << std::endl;
   os << indent << "Minimum intensity: "  << m_Min << std::endl;
-	os << indent << "Maximum intensity: "  << m_Max << std::endl;
+  os << indent << "Maximum intensity: "  << m_Max << std::endl;
   
 }
 

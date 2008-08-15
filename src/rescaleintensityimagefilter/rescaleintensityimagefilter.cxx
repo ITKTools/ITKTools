@@ -37,38 +37,38 @@ void PrintHelp( void );
 
 int main( int argc, char **argv )
 {
-	/** Check number of arguments. */
-	if ( argc < 3 || argc > 12 )
-	{
-		PrintHelp();
-		return 1;
-	}
+  /** Check number of arguments. */
+  if ( argc < 3 || argc > 12 )
+  {
+    PrintHelp();
+    return 1;
+  }
 
-	/** Create a command line argument parser. */
-	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
-	parser->SetCommandLineArguments( argc, argv );
+  /** Create a command line argument parser. */
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
 
-	/** Get arguments. */
-	std::string	inputFileName = "";
-	bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  /** Get arguments. */
+  std::string inputFileName = "";
+  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
 
-  std::string	outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
-	outputFileName += "INTENSITYRESCALED.mhd";
-	bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  std::string outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
+  outputFileName += "INTENSITYRESCALED.mhd";
+  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
 
- 	std::vector<double> extrema( 2, 0.0 );
-	bool retmm = parser->GetCommandLineArgument( "-mm", extrema );
+  std::vector<double> extrema( 2, 0.0 );
+  bool retmm = parser->GetCommandLineArgument( "-mm", extrema );
 
- 	std::vector<double> meanvariance( 2, 0.0 );
+  std::vector<double> meanvariance( 2, 0.0 );
   meanvariance[ 1 ] = 1.0;
-	bool retmv = parser->GetCommandLineArgument( "-mv", meanvariance );
+  bool retmv = parser->GetCommandLineArgument( "-mv", meanvariance );
 
   /** Check if the required arguments are given. */
   if ( !retin )
-	{
-		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-		return 1;
-	}
+  {
+    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
+    return 1;
+  }
 
   if ( retmm && retmv )
   {
@@ -77,34 +77,34 @@ int main( int argc, char **argv )
   }
 
   /** Check if the extrema are given (correctly). */
-	if ( retmm )
-	{
-		if ( extrema.size() != 2 )
-		{
-			std::cerr << "ERROR: You should specify \"-mm\" with two values." << std::endl;
-			return 1;
-		}
-		if ( extrema[ 1 ] <= extrema[ 0 ] )
-		{
-			std::cerr << "ERROR: You should specify \"-mm\" with two values:" << std::endl;
-			std::cerr << "minimum maximum, where it should hold that maximum > minimum." << std::endl;
-			return 1;
-		}
-	}
+  if ( retmm )
+  {
+    if ( extrema.size() != 2 )
+    {
+      std::cerr << "ERROR: You should specify \"-mm\" with two values." << std::endl;
+      return 1;
+    }
+    if ( extrema[ 1 ] <= extrema[ 0 ] )
+    {
+      std::cerr << "ERROR: You should specify \"-mm\" with two values:" << std::endl;
+      std::cerr << "minimum maximum, where it should hold that maximum > minimum." << std::endl;
+      return 1;
+    }
+  }
 
   /** Check if the mean and variance are given correctly. */
   if ( retmv )
   {
     if ( meanvariance.size() != 2 )
-		{
-			std::cerr << "ERROR: You should specify \"-mv\" with two values." << std::endl;
-			return 1;
-		}
-		if ( meanvariance[ 1 ] <= 1e-5 )
-		{
-			std::cerr << "ERROR: The variance should be strictly positive." << std::endl;
-			return 1;
-		}
+    {
+      std::cerr << "ERROR: You should specify \"-mv\" with two values." << std::endl;
+      return 1;
+    }
+    if ( meanvariance[ 1 ] <= 1e-5 )
+    {
+      std::cerr << "ERROR: The variance should be strictly positive." << std::endl;
+      return 1;
+    }
   }
 
   /** Check which option is selected. */
@@ -113,7 +113,7 @@ int main( int argc, char **argv )
 
   /** Determine input image properties. */
   std::string ComponentType = "short";
-  std::string	PixelType; //we don't use this
+  std::string PixelType; //we don't use this
   unsigned int Dimension = 3;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
@@ -134,10 +134,10 @@ int main( int argc, char **argv )
   {
     ComponentType = "float";
   }
-	bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
+  bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
 
   /** Get rid of the possible "_" in ComponentType. */
-	ReplaceUnderscoreWithSpace( ComponentType );
+  ReplaceUnderscoreWithSpace( ComponentType );
   
   /** Error checking. */
   if ( NumberOfComponents > 1 )
@@ -158,26 +158,26 @@ int main( int argc, char **argv )
     values = meanvariance;
   }
 
-	/** Run the program. */
+  /** Run the program. */
   bool supported = false;
-	try
-	{
-		run( RescaleIntensity, unsigned char, 2 );
-		run( RescaleIntensity, unsigned char, 3 );
-		run( RescaleIntensity, char, 2 );
-		run( RescaleIntensity, char, 3 );
-		run( RescaleIntensity, unsigned short, 2 );
-		run( RescaleIntensity, unsigned short, 3 );
-		run( RescaleIntensity, short, 2 );
-		run( RescaleIntensity, short, 3 );
+  try
+  {
+    run( RescaleIntensity, unsigned char, 2 );
+    run( RescaleIntensity, unsigned char, 3 );
+    run( RescaleIntensity, char, 2 );
+    run( RescaleIntensity, char, 3 );
+    run( RescaleIntensity, unsigned short, 2 );
+    run( RescaleIntensity, unsigned short, 3 );
+    run( RescaleIntensity, short, 2 );
+    run( RescaleIntensity, short, 3 );
     run( RescaleIntensity, float, 2 );
-		run( RescaleIntensity, float, 3 );
-	}
-	catch( itk::ExceptionObject &e )
-	{
-		std::cerr << "Caught ITK exception: " << e << std::endl;
-		return 1;
-	}
+    run( RescaleIntensity, float, 3 );
+  }
+  catch( itk::ExceptionObject &e )
+  {
+    std::cerr << "Caught ITK exception: " << e << std::endl;
+    return 1;
+  }
   if ( !supported )
   {
     std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
@@ -187,9 +187,9 @@ int main( int argc, char **argv )
       << std::endl;
     return 1;
   }
-	
-	/** End program. */
-	return 0;
+  
+  /** End program. */
+  return 0;
 
 } // end main()
 
@@ -205,26 +205,26 @@ void RescaleIntensity(
   const std::vector<double> & values,
   const bool & valuesAreExtrema )
 {
-	/** TYPEDEF's. */
-	typedef itk::ImageFileReader< InputImageType >			  ReaderType;
+  /** TYPEDEF's. */
+  typedef itk::ImageFileReader< InputImageType >        ReaderType;
   typedef itk::RescaleIntensityImageFilter<
-    InputImageType, InputImageType >	                  RescalerType;
+    InputImageType, InputImageType >                    RescalerType;
   typedef itk::StatisticsImageFilter< InputImageType >  StatisticsType;
   typedef itk::ShiftScaleImageFilter<
-    InputImageType, InputImageType >	                  ShiftScalerType;
-	typedef itk::ImageFileWriter< InputImageType >			  WriterType;
-	typedef typename InputImageType::PixelType					  PixelType;
+    InputImageType, InputImageType >                    ShiftScalerType;
+  typedef itk::ImageFileWriter< InputImageType >        WriterType;
+  typedef typename InputImageType::PixelType            PixelType;
   typedef typename StatisticsType::RealType             RealType;
 
-	/** DECLARATION'S. */
-	typename ReaderType::Pointer reader = ReaderType::New();
-	typename WriterType::Pointer writer = WriterType::New();
+  /** DECLARATION'S. */
+  typename ReaderType::Pointer reader = ReaderType::New();
+  typename WriterType::Pointer writer = WriterType::New();
   typename RescalerType::Pointer    rescaler;
   typename StatisticsType::Pointer  statistics;
   typename ShiftScalerType::Pointer shiftscaler;
 
   /** Read in the inputImage. */
-	reader->SetFileName( inputFileName.c_str() );
+  reader->SetFileName( inputFileName.c_str() );
 
   /** If the input values are extrema (minimum and maximum),
    * then an IntensityRescaler is used. Otherwise, the values represent
@@ -281,9 +281,9 @@ void RescaleIntensity(
 
   } // end if values are mean and variance
 
-	/** Write the output image. */
-	writer->SetFileName( outputFileName.c_str() );
-	writer->Update();
+  /** Write the output image. */
+  writer->SetFileName( outputFileName.c_str() );
+  writer->Update();
 
 } // end RescaleIntensity()
 
@@ -293,9 +293,9 @@ void RescaleIntensity(
  */
 void PrintHelp()
 {
-	std::cout << "Usage:" << std::endl << "pxrescaleintensityimagefilter" << std::endl;
-	std::cout << "  -in      inputFilename" << std::endl;
-	std::cout << "  [-out]   outputFilename, default in + INTENSITYRESCALED.mhd" << std::endl;
+  std::cout << "Usage:" << std::endl << "pxrescaleintensityimagefilter" << std::endl;
+  std::cout << "  -in      inputFilename" << std::endl;
+  std::cout << "  [-out]   outputFilename, default in + INTENSITYRESCALED.mhd" << std::endl;
   std::cout << "  [-mm]    minimum maximum, default: range of pixeltype" << std::endl;
   std::cout << "  [-mv]    mean variance, default: 0.0 1.0" << std::endl;
   std::cout << "  [-pt]    pixel type of input and output images;" << std::endl;

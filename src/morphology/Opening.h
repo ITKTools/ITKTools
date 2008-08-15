@@ -7,87 +7,87 @@
 #include "itkBinaryMorphologicalOpeningImageFilter.h"
 
 
-	/**
-	 * ******************* openingGrayscale *******************
-	 */
+  /**
+   * ******************* openingGrayscale *******************
+   */
 
 template< class ImageType >
 void openingGrayscale(
   const std::string & inputFileName,
   const std::string & outputFileName,
-	const std::vector<unsigned int> & radius,
+  const std::vector<unsigned int> & radius,
   const std::string & boundaryCondition )
 {
-	/** Typedefs. */
-  typedef typename ImageType::PixelType					      PixelType;
+  /** Typedefs. */
+  typedef typename ImageType::PixelType               PixelType;
   const unsigned int Dimension = ImageType::ImageDimension;
-	typedef itk::ImageFileReader< ImageType >			      ReaderType;
-	typedef itk::ImageFileWriter< ImageType >			      WriterType;
-	typedef itk::BinaryBallStructuringElement<
-		PixelType, Dimension >														StructuringElementType;
-	typedef typename StructuringElementType::RadiusType	RadiusType;
-	typedef itk::GrayscaleMorphologicalOpeningImageFilter<
-		ImageType, ImageType, StructuringElementType >		OpeningFilterType;
+  typedef itk::ImageFileReader< ImageType >           ReaderType;
+  typedef itk::ImageFileWriter< ImageType >           WriterType;
+  typedef itk::BinaryBallStructuringElement<
+    PixelType, Dimension >                            StructuringElementType;
+  typedef typename StructuringElementType::RadiusType RadiusType;
+  typedef itk::GrayscaleMorphologicalOpeningImageFilter<
+    ImageType, ImageType, StructuringElementType >    OpeningFilterType;
 
-	/** Declarations. */
-	typename ReaderType::Pointer reader = ReaderType::New();
-	typename WriterType::Pointer writer = WriterType::New();
-	typename OpeningFilterType::Pointer opening = OpeningFilterType::New();
-	
-	/** Setup the reader. */
-	reader->SetFileName( inputFileName.c_str() );
+  /** Declarations. */
+  typename ReaderType::Pointer reader = ReaderType::New();
+  typename WriterType::Pointer writer = WriterType::New();
+  typename OpeningFilterType::Pointer opening = OpeningFilterType::New();
+  
+  /** Setup the reader. */
+  reader->SetFileName( inputFileName.c_str() );
 
-	/** Create the structuring element. */
-  RadiusType	radiusarray;
-	for ( unsigned int i = 0; i < Dimension; i++ )
-	{
-		radiusarray.SetElement( i, radius[ i ] );
-	}
-  StructuringElementType	S_ball;
-	S_ball.SetRadius( radiusarray );
-	S_ball.CreateStructuringElement();
-	
-	/** Setup the opening filter. */
+  /** Create the structuring element. */
+  RadiusType  radiusarray;
+  for ( unsigned int i = 0; i < Dimension; i++ )
+  {
+    radiusarray.SetElement( i, radius[ i ] );
+  }
+  StructuringElementType  S_ball;
+  S_ball.SetRadius( radiusarray );
+  S_ball.CreateStructuringElement();
+  
+  /** Setup the opening filter. */
   opening->SetKernel( S_ball );
-	opening->SetInput( reader->GetOutput() );
+  opening->SetInput( reader->GetOutput() );
 
-	/** Write the output image. */
-	writer->SetFileName( outputFileName.c_str() );
-	writer->SetInput( opening->GetOutput() );
-	writer->Update();
+  /** Write the output image. */
+  writer->SetFileName( outputFileName.c_str() );
+  writer->SetInput( opening->GetOutput() );
+  writer->Update();
 
 } // end openingGrayscale()
 
 
   /**
-	 * ******************* openingBinary *******************
-	 */
+   * ******************* openingBinary *******************
+   */
 
 template< class ImageType >
 void openingBinary(
   const std::string & inputFileName,
   const std::string & outputFileName,
-	const std::vector<unsigned int> & radius,
+  const std::vector<unsigned int> & radius,
   const std::vector<std::string> & bin )
 {
-	/** Typedefs. */
-  typedef typename ImageType::PixelType					      PixelType;
+  /** Typedefs. */
+  typedef typename ImageType::PixelType               PixelType;
   const unsigned int Dimension = ImageType::ImageDimension;
-	typedef itk::ImageFileReader< ImageType >			      ReaderType;
-	typedef itk::ImageFileWriter< ImageType >			      WriterType;
-	typedef itk::BinaryBallStructuringElement<
-		PixelType, Dimension >														StructuringElementType;
-	typedef typename StructuringElementType::RadiusType	RadiusType;
-	typedef itk::BinaryMorphologicalOpeningImageFilter<
-		ImageType, ImageType, StructuringElementType >		OpeningFilterType;
+  typedef itk::ImageFileReader< ImageType >           ReaderType;
+  typedef itk::ImageFileWriter< ImageType >           WriterType;
+  typedef itk::BinaryBallStructuringElement<
+    PixelType, Dimension >                            StructuringElementType;
+  typedef typename StructuringElementType::RadiusType RadiusType;
+  typedef itk::BinaryMorphologicalOpeningImageFilter<
+    ImageType, ImageType, StructuringElementType >    OpeningFilterType;
 
-	/** Declarations. */
-	typename ReaderType::Pointer reader = ReaderType::New();
-	typename WriterType::Pointer writer = WriterType::New();
-	typename OpeningFilterType::Pointer opening = OpeningFilterType::New();
-	
-	/** Setup the reader. */
-	reader->SetFileName( inputFileName.c_str() );
+  /** Declarations. */
+  typename ReaderType::Pointer reader = ReaderType::New();
+  typename WriterType::Pointer writer = WriterType::New();
+  typename OpeningFilterType::Pointer opening = OpeningFilterType::New();
+  
+  /** Setup the reader. */
+  reader->SetFileName( inputFileName.c_str() );
 
   /** Get foreground, background and erosion values. */
   std::vector<PixelType> values( 2 );
@@ -108,26 +108,26 @@ void openingBinary(
     }
   }
 
-	/** Create the structuring element. */
-  RadiusType	radiusarray;
-	for ( unsigned int i = 0; i < Dimension; i++ )
-	{
-		radiusarray.SetElement( i, radius[ i ] );
-	}
-  StructuringElementType	S_ball;
-	S_ball.SetRadius( radiusarray );
-	S_ball.CreateStructuringElement();
-	
-	/** Setup the opening filter. */
+  /** Create the structuring element. */
+  RadiusType  radiusarray;
+  for ( unsigned int i = 0; i < Dimension; i++ )
+  {
+    radiusarray.SetElement( i, radius[ i ] );
+  }
+  StructuringElementType  S_ball;
+  S_ball.SetRadius( radiusarray );
+  S_ball.CreateStructuringElement();
+  
+  /** Setup the opening filter. */
   opening->SetForegroundValue( values[ 0 ] );
   opening->SetBackgroundValue( values[ 1 ] );
   opening->SetKernel( S_ball );
-	opening->SetInput( reader->GetOutput() );
+  opening->SetInput( reader->GetOutput() );
 
-	/** Write the output image. */
-	writer->SetFileName( outputFileName.c_str() );
-	writer->SetInput( opening->GetOutput() );
-	writer->Update();
+  /** Write the output image. */
+  writer->SetFileName( outputFileName.c_str() );
+  writer->SetInput( opening->GetOutput() );
+  writer->Update();
 
 } // end openingBinary()
 

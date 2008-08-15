@@ -7,14 +7,14 @@
 #include <itksys/SystemTools.hxx>
 
 
-	/**
-	 * ******************* PrintHelp *******************
-	 */
+  /**
+   * ******************* PrintHelp *******************
+   */
 void PrintHelp()
 {
   std::cout << "Unary operations on one image." << std::endl;
-	std::cout << "Usage:" << std::endl << "pxunaryimageoperator" << std::endl;
-	std::cout << "  -in      inputFilename" << std::endl;
+  std::cout << "Usage:" << std::endl << "pxunaryimageoperator" << std::endl;
+  std::cout << "  -in      inputFilename" << std::endl;
   std::cout << "  -ops     UnaryOperator of the following form:\n"
             << "           {+,-,*,/,^,%}\n"
             << "           notation:\n"
@@ -27,15 +27,15 @@ void PrintHelp()
             << "             SIN = sin(A)\n"
             << "             RPOWER = A ^ arg\n";
   std::cout << "  [-arg]   argument, necessary for some ops" << std::endl;
-	std::cout << "  [-out]   outputFilename, default in + <ops> + <arg> + .mhd" << std::endl;
+  std::cout << "  [-out]   outputFilename, default in + <ops> + <arg> + .mhd" << std::endl;
   std::cout << "  [-pto]   outputPixelType, default: same as inputimage" << std::endl;
-	std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, float." << std::endl;
+  std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, float." << std::endl;
 } // end PrintHelp
 
 
   /**
-	 * ******************* InputIsInteger *******************
-	 */
+   * ******************* InputIsInteger *******************
+   */
 void InputIsInteger( const std::string & inputComponentType,
   bool & inputIsInteger )
 {
@@ -52,15 +52,15 @@ void InputIsInteger( const std::string & inputComponentType,
 
 
   /**
-	 * ******************* ArgumentIsInteger *******************
-	 */
+   * ******************* ArgumentIsInteger *******************
+   */
 void ArgumentIsInteger( const std::string & argument, bool & argumentIsInteger )
 {
   /** Check if the argument is of integer type. */
   argumentIsInteger = false;
   std::basic_string<char>::size_type pos = argument.find( "." );
-	const std::basic_string<char>::size_type npos = std::basic_string<char>::npos;
-	if ( pos == npos )
+  const std::basic_string<char>::size_type npos = std::basic_string<char>::npos;
+  if ( pos == npos )
   {
     argumentIsInteger = true;
   }
@@ -69,8 +69,8 @@ void ArgumentIsInteger( const std::string & argument, bool & argumentIsInteger )
 
 
   /**
-	 * ******************* CheckOps *******************
-	 */
+   * ******************* CheckOps *******************
+   */
 int CheckOps( std::string & ops, bool isInteger )
 {
   /** A map to store if there are integer and double versions
@@ -129,8 +129,8 @@ int CheckOps( std::string & ops, bool isInteger )
 
 
   /**
-	 * ******************* OperatorNeedsArgument *******************
-	 */
+   * ******************* OperatorNeedsArgument *******************
+   */
 bool OperatorNeedsArgument( std::string & ops )
 {
   /** A map to store if OperatorNeedsArgument. */
@@ -172,8 +172,8 @@ bool OperatorNeedsArgument( std::string & ops )
 
   
   /**
-	 * ******************* CreateOutputFileName *******************
-	 */
+   * ******************* CreateOutputFileName *******************
+   */
 void CreateOutputFileName( const std::string & inputFileName, std::string & outputFileName,
   const std::string & ops, const std::string & arg )
 {
@@ -212,7 +212,7 @@ void CreateOutputFileName( const std::string & inputFileName, std::string & outp
 
   operatorMap["EQUAL"]  = PairPairType( false, PairType( true, false ) );
 
-	/** Get parts of file name. */
+  /** Get parts of file name. */
   std::string path =
     itksys::SystemTools::GetFilenamePath( inputFileName );
   std::string name =
@@ -237,7 +237,7 @@ void CreateOutputFileName( const std::string & inputFileName, std::string & outp
     /** Example: /path/imageRDIVIDE3.mhd */
     outputFileName = path + name + ops + arg + ext;
   }
-	
+  
 } // end CreateOutputFileName
 
 #endif //#ifndef __UnaryImageOperatorMainHelper_h

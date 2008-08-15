@@ -32,51 +32,51 @@ void PrintHelp( void );
 
 int main( int argc, char ** argv )
 {
- 	/** Check arguments for help. */
-	if ( argc < 7 )
-	{
-		PrintHelp();
-		return 1;
-	}
+  /** Check arguments for help. */
+  if ( argc < 7 )
+  {
+    PrintHelp();
+    return 1;
+  }
 
-	/** Create a command line argument parser. */
-	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
-	parser->SetCommandLineArguments( argc, argv );
+  /** Create a command line argument parser. */
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
 
-	/** Get arguments. */
+  /** Get arguments. */
   std::string inputFileName = "";
-	bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
 
   /** Read as vector of strings, since we don't know yet if it will be
    * integers or floats */
   std::vector< std::string > inValues;
-	bool reti = parser->GetCommandLineArgument( "-i", inValues );
+  bool reti = parser->GetCommandLineArgument( "-i", inValues );
   std::vector< std::string > outValues;
-	bool reto = parser->GetCommandLineArgument( "-o", outValues );
+  bool reto = parser->GetCommandLineArgument( "-o", outValues );
 
-  std::string	outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
-	outputFileName += "LUTAPPLIED.mhd";
-	bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  std::string outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
+  outputFileName += "LUTAPPLIED.mhd";
+  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
 
   std::string ComponentType = "";
-	bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
+  bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
 
- 	/** Check if the required arguments are given. */
-	if ( !retin )
-	{
-		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-		return 1;
-	}
+  /** Check if the required arguments are given. */
+  if ( !retin )
+  {
+    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
+    return 1;
+  }
   if ( !reti )
-	{
-		std::cerr << "ERROR: You should specify \"-i\"." << std::endl;
-		return 1;
-	}
+  {
+    std::cerr << "ERROR: You should specify \"-i\"." << std::endl;
+    return 1;
+  }
   if ( !reto )
-	{
-		std::cerr << "ERROR: You should specify \"-o\"." << std::endl;
-		return 1;
-	}
+  {
+    std::cerr << "ERROR: You should specify \"-o\"." << std::endl;
+    return 1;
+  }
   if ( inValues.size() != outValues.size() )
   {
     std::cerr << "ERROR: \"-i\" and \"-o\" should be followed by an equal number of values!" << std::endl;
@@ -85,7 +85,7 @@ int main( int argc, char ** argv )
 
   /** Determine image properties. */
   std::string ComponentTypeIn = "short";
-  std::string	PixelType; //we don't use this
+  std::string PixelType; //we don't use this
   unsigned int Dimension = 3;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
@@ -114,42 +114,42 @@ int main( int argc, char ** argv )
     return 1; 
   }
 
-	/** Get rid of the possible "_" in ComponentType. */
+  /** Get rid of the possible "_" in ComponentType. */
   ReplaceUnderscoreWithSpace( ComponentType );
 
 
   /** Run the program. */
   bool supported = false;
-	try
-	{
+  try
+  {
     run( IntensityReplaceImageFilter, char, 2 );
-		run( IntensityReplaceImageFilter, unsigned char, 2 );
+    run( IntensityReplaceImageFilter, unsigned char, 2 );
     run( IntensityReplaceImageFilter, short, 2 );
-		run( IntensityReplaceImageFilter, unsigned short, 2 );
+    run( IntensityReplaceImageFilter, unsigned short, 2 );
     run( IntensityReplaceImageFilter, int, 2 );
-		run( IntensityReplaceImageFilter, unsigned int, 2 );
+    run( IntensityReplaceImageFilter, unsigned int, 2 );
     run( IntensityReplaceImageFilter, long, 2 );
-		run( IntensityReplaceImageFilter, unsigned long, 2 );
+    run( IntensityReplaceImageFilter, unsigned long, 2 );
     run( IntensityReplaceImageFilter, float, 2 );
-		run( IntensityReplaceImageFilter, double, 2 );
+    run( IntensityReplaceImageFilter, double, 2 );
 
     run( IntensityReplaceImageFilter, char, 3 );
-		run( IntensityReplaceImageFilter, unsigned char, 3 );
+    run( IntensityReplaceImageFilter, unsigned char, 3 );
     run( IntensityReplaceImageFilter, short, 3 );
-		run( IntensityReplaceImageFilter, unsigned short, 3 );
+    run( IntensityReplaceImageFilter, unsigned short, 3 );
     run( IntensityReplaceImageFilter, int, 3 );
-		run( IntensityReplaceImageFilter, unsigned int, 3 );
+    run( IntensityReplaceImageFilter, unsigned int, 3 );
     run( IntensityReplaceImageFilter, long, 3 );
-		run( IntensityReplaceImageFilter, unsigned long, 3 );
+    run( IntensityReplaceImageFilter, unsigned long, 3 );
     run( IntensityReplaceImageFilter, float, 3 );
-		run( IntensityReplaceImageFilter, double, 3 );
+    run( IntensityReplaceImageFilter, double, 3 );
 
-	}
-	catch( itk::ExceptionObject &e )
-	{
-		std::cerr << "Caught ITK exception: " << e << std::endl;
-		return 1;
-	}
+  }
+  catch( itk::ExceptionObject &e )
+  {
+    std::cerr << "Caught ITK exception: " << e << std::endl;
+    return 1;
+  }
   if ( !supported )
   {
     std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
@@ -159,9 +159,9 @@ int main( int argc, char ** argv )
       << std::endl;
     return 1;
   }
- 	
-	/** End program. */
-	return 0;
+  
+  /** End program. */
+  return 0;
 
 } // end main
 
@@ -185,12 +185,12 @@ void IntensityReplaceImageFilter( const std::string & inputFileName,
   typedef itk::Image< InputPixelType, Dimension >         InputImageType;
   typedef itk::Image< OutputPixelType, Dimension >        OutputImageType;
 
-	typedef itk::ImageFileReader< InputImageType >			    ReaderType;
-	typedef itk::ChangeLabelImageFilter<
+  typedef itk::ImageFileReader< InputImageType >          ReaderType;
+  typedef itk::ChangeLabelImageFilter<
     InputImageType, OutputImageType >                     ReplaceFilterType;
-  typedef itk::ImageFileWriter< OutputImageType >			    WriterType;
+  typedef itk::ImageFileWriter< OutputImageType >         WriterType;
 
-	/**	Read in the input image. */
+  /** Read in the input image. */
   typename ReaderType::Pointer reader = ReaderType::New();
   typename ReplaceFilterType::Pointer replaceFilter = ReplaceFilterType::New();
   typename WriterType::Pointer writer = WriterType::New();
@@ -224,8 +224,8 @@ void IntensityReplaceImageFilter( const std::string & inputFileName,
   }
     
   /** Set up writer. */
-	writer->SetFileName( outputFileName );
-	writer->SetInput( replaceFilter->GetOutput() );
+  writer->SetFileName( outputFileName );
+  writer->SetInput( replaceFilter->GetOutput() );
   writer->Update();
 
 } // end IntensityReplaceImageFilter()
@@ -237,14 +237,14 @@ void IntensityReplaceImageFilter( const std::string & inputFileName,
 void PrintHelp()
 {
   std::cout << "This program replaces some user specified intensity values in an image.\n";
-	std::cout << "Usage:\n"
+  std::cout << "Usage:\n"
             << "pxintensityreplace\n";
   std::cout << "  -in      inputFilename\n";
-	std::cout << "  [-out]   outputFilename, default in + LUTAPPLIED.mhd\n";
+  std::cout << "  [-out]   outputFilename, default in + LUTAPPLIED.mhd\n";
   std::cout << "  -i       input pixel values that should be replaced\n";
   std::cout << "  -o       output pixel values that replace the corresponding input values\n";
   std::cout << "  [-pt]    output pixel type, default equal to input\n";
-	std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int,\n"
+  std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int,\n"
             << "(unsigned) long, float, double.\n";
   std::cout << "If \"-pt\" is used, the input is immediately converted to that particular\n"
             << "type, after which the intensity replacement is performed.\n";

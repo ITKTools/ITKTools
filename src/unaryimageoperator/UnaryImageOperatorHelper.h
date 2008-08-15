@@ -31,14 +31,14 @@ if ( ComponentTypeIn == #typeIn && ComponentTypeOut == #typeOut && inputDimensio
  * typedef itk::UnaryFunctorImageFilter<
  *   InputImageType,
  *   OutputImageType,
- *   itk::Functor::PLUS<InputPixelType,ArgumentType,OutputPixelType >	PLUSFilterType;
+ *   itk::Functor::PLUS<InputPixelType,ArgumentType,OutputPixelType > PLUSFilterType;
  * unaryFilter = (PLUSFilterType::New()).GetPointer();
  * 
  */
 #define InstantiateUnaryFilter(name,typeArg) \
   typedef itk::UnaryFunctorImageFilter< \
     InputImageType, OutputImageType, \
-    itk::Functor::name<InputPixelType, typeArg, OutputPixelType> >	name##typeArg##FilterType; \
+    itk::Functor::name<InputPixelType, typeArg, OutputPixelType> >  name##typeArg##FilterType; \
   if ( unaryOperatorName == #name && argumentType == #typeArg ) \
   {\
     typename name##typeArg##FilterType::Pointer tempUnaryFilter = name##typeArg##FilterType::New(); \
@@ -49,7 +49,7 @@ if ( ComponentTypeIn == #typeIn && ComponentTypeOut == #typeOut && inputDimensio
 #define InstantiateUnaryFilter2(name) \
   typedef itk::UnaryFunctorImageFilter< \
     InputImageType, OutputImageType, \
-    itk::Functor::name<InputPixelType, double, OutputPixelType> >	name##typeArg##FilterType; \
+    itk::Functor::name<InputPixelType, double, OutputPixelType> > name##typeArg##FilterType; \
   if ( unaryOperatorName == #name ) \
   {\
     typename name##typeArg##FilterType::Pointer tempUnaryFilter = name##typeArg##FilterType::New(); \
@@ -59,8 +59,8 @@ if ( ComponentTypeIn == #typeIn && ComponentTypeOut == #typeOut && inputDimensio
  
   
   /**
-	 * ******************* UnaryImageOperator *******************
-	 */
+   * ******************* UnaryImageOperator *******************
+   */
 
 template< class InputImageType, class OutputImageType >
 void UnaryImageOperator( 
@@ -69,22 +69,22 @@ void UnaryImageOperator(
   const std::string & ops,
   const std::string & arg )
 {
-	/** Typedefs. */
+  /** Typedefs. */
   typedef typename InputImageType::PixelType          InputPixelType;
   typedef typename OutputImageType::PixelType         OutputPixelType;
   typedef itk::ImageToImageFilter<InputImageType, OutputImageType> BaseFilterType;
-  typedef itk::ImageFileReader< InputImageType >			ReaderType;
-	typedef itk::ImageFileWriter< OutputImageType >			WriterType;
+  typedef itk::ImageFileReader< InputImageType >      ReaderType;
+  typedef itk::ImageFileWriter< OutputImageType >     WriterType;
 
-	/** Read the image. */
-	typename ReaderType::Pointer reader = ReaderType::New();
+  /** Read the image. */
+  typename ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName( inputFileName.c_str() );
 
   /** Get the ArgumentType and argument. */
   std::string argumentType = "int";
   std::basic_string<char>::size_type pos = arg.find( "." );
-	const std::basic_string<char>::size_type npos = std::basic_string<char>::npos;
-	if ( pos != npos )
+  const std::basic_string<char>::size_type npos = std::basic_string<char>::npos;
+  if ( pos != npos )
   {
     argumentType = "double";
   }
@@ -139,10 +139,10 @@ void UnaryImageOperator(
   unaryFilter->SetInput( reader->GetOutput() );
 
   /** Write the image to disk */
-	typename WriterType::Pointer writer = WriterType::New();
-	writer->SetFileName( outputFileName.c_str() );
+  typename WriterType::Pointer writer = WriterType::New();
+  writer->SetFileName( outputFileName.c_str() );
   writer->SetInput( unaryFilter->GetOutput() );
-	writer->Update();
+  writer->Update();
 
 } // end UnaryImageOperator
 

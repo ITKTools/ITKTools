@@ -43,49 +43,49 @@ void PrintHelp( void );
 
 int main( int argc, char **argv )
 {
-	/** Check arguments for help. */
-	if ( argc < 5 || argc > 12 )
-	{
-		PrintHelp();
-		return 1;
-	}
+  /** Check arguments for help. */
+  if ( argc < 5 || argc > 12 )
+  {
+    PrintHelp();
+    return 1;
+  }
 
-	/** Create a command line argument parser. */
-	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
-	parser->SetCommandLineArguments( argc, argv );
+  /** Create a command line argument parser. */
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
 
-	/** Get arguments. */
-	std::vector< std::string >	inputFileNames;
-	bool retin = parser->GetCommandLineArgument( "-in", inputFileNames );
+  /** Get arguments. */
+  std::vector< std::string >  inputFileNames;
+  bool retin = parser->GetCommandLineArgument( "-in", inputFileNames );
   std::string ops = "AND";
   bool retops = parser->GetCommandLineArgument( "-ops", ops );
 
   /** Check if the required arguments are given. */
   if ( !retin )
-	{
-		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-		return 1;
-	}
+  {
+    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
+    return 1;
+  }
   if ( !retops )
-	{
-		std::cerr << "ERROR: You should specify \"-ops\"." << std::endl;
-		return 1;
-	}
+  {
+    std::cerr << "ERROR: You should specify \"-ops\"." << std::endl;
+    return 1;
+  }
   if( (inputFileNames.size() != 2) & (ops != "NOT") & (ops != "NOT_NOT") )
-	{
-		std::cout << "ERROR: You should specify two input images." << std::endl;
-		return 1;
-	}
+  {
+    std::cout << "ERROR: You should specify two input images." << std::endl;
+    return 1;
+  }
   std::string inputFileName1 = inputFileNames[ 0 ]; 
   std::string inputFileName2 = "";
-	if( (inputFileNames.size() == 2) & (ops != "NOT") )
+  if( (inputFileNames.size() == 2) & (ops != "NOT") )
   {
-	  inputFileName2 = inputFileNames[ 1 ];
+    inputFileName2 = inputFileNames[ 1 ];
   }
 
   /** Determine image properties. */
   std::string ComponentType = "short";
-  std::string	PixelType; //we don't use this
+  std::string PixelType; //we don't use this
   unsigned int Dimension = 2;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
@@ -109,8 +109,8 @@ int main( int argc, char **argv )
   std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
   
   /** Let the user overrule this */
-	bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
-	bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
+  bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
+  bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
   if ( retdim | retpt )
   {
     std::cout << "The user has overruled this by specifying -pt and/or -dim:" << std::endl;
@@ -127,14 +127,14 @@ int main( int argc, char **argv )
   }
   
   /** Get rid of the possible "_" in ComponentType. */
-	ReplaceUnderscoreWithSpace( ComponentType );
+  ReplaceUnderscoreWithSpace( ComponentType );
 
-	/** outputFileName */
-  std::string	outputFileName = "";
-	bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
-	if ( outputFileName == "" )
-	{
-		/** get file name without its last (shortest) extension  */
+  /** outputFileName */
+  std::string outputFileName = "";
+  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  if ( outputFileName == "" )
+  {
+    /** get file name without its last (shortest) extension  */
     std::string part1 =
       itksys::SystemTools::GetFilenameWithoutLastExtension(inputFileName1);
     /** get file name of a full filename (i.e. file name without path) */
@@ -150,28 +150,28 @@ int main( int argc, char **argv )
     }
     /** compose outputfilename */
     outputFileName = part1 + ops + part2;
-	}
+  }
 
-	/** Run the program. */
+  /** Run the program. */
   bool supported = false;
-	try
-	{
+  try
+  {
     /** NB: do not add floating point support, since logical operators are
      * not defined on those types */
-		run( LogicalImageOperator, unsigned char, 2 );
-		run( LogicalImageOperator, unsigned char, 3 );
-		run( LogicalImageOperator, char, 2 );
-		run( LogicalImageOperator, char, 3 );
-		run( LogicalImageOperator, unsigned short, 2 );
-		run( LogicalImageOperator, unsigned short, 3 );
-		run( LogicalImageOperator, short, 2 );
-		run( LogicalImageOperator, short, 3 );
-	}
-	catch( itk::ExceptionObject &e )
-	{
-		std::cerr << "Caught ITK exception: " << e << std::endl;
-		return 1;
-	}
+    run( LogicalImageOperator, unsigned char, 2 );
+    run( LogicalImageOperator, unsigned char, 3 );
+    run( LogicalImageOperator, char, 2 );
+    run( LogicalImageOperator, char, 3 );
+    run( LogicalImageOperator, unsigned short, 2 );
+    run( LogicalImageOperator, unsigned short, 3 );
+    run( LogicalImageOperator, short, 2 );
+    run( LogicalImageOperator, short, 3 );
+  }
+  catch( itk::ExceptionObject &e )
+  {
+    std::cerr << "Caught ITK exception: " << e << std::endl;
+    return 1;
+  }
   if ( !supported )
   {
     std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
@@ -181,9 +181,9 @@ int main( int argc, char **argv )
       << std::endl;
     return 1;
   }
-	
-	/** End program. */
-	return 0;
+  
+  /** End program. */
+  return 0;
 
 } // end main
 
@@ -194,23 +194,23 @@ int main( int argc, char **argv )
  *   InputImageType,
  *   InputImageType,
  *   InputImageType,
- *   itk::Functor::AND<InputPixelType >	ANDFilterType;
+ *   itk::Functor::AND<InputPixelType > ANDFilterType;
  * logicalFilter = (ANDFilterType::New()).GetPointer();
  * 
  */
 #define InstantiateLogicalFilter(name)\
   typedef itk::BinaryFunctorImageFilter<\
     InputImageType, InputImageType, InputImageType,\
-    itk::Functor::name<InputPixelType> >	name##FilterType;\
+    itk::Functor::name<InputPixelType> >  name##FilterType;\
   if ( logicalOperatorName == #name )\
   {\
     logicalFilter = ( name##FilterType::New() ).GetPointer();\
   }
   
 
-	/**
-	 * ******************* LogicalOps *******************
-	 */
+  /**
+   * ******************* LogicalOps *******************
+   */
 
 template< class InputImageType >
 void LogicalImageOperator( 
@@ -219,24 +219,24 @@ void LogicalImageOperator(
   const std::string & outputFileName,
   const std::string & ops )
 {
-	/** Typedefs. */
+  /** Typedefs. */
   typedef typename InputImageType::PixelType                      InputPixelType;
   typedef itk::ImageToImageFilter<InputImageType, InputImageType> BaseFilterType;
   typedef itk::NotImageFilter<InputImageType, InputImageType>     NotFilterType;
   /** \todo: write a real dummy filter which does really nothing */
   typedef itk::CastImageFilter<InputImageType,InputImageType>     DummyFilterType;
-  typedef itk::ImageFileReader< InputImageType >			ReaderType;
-	typedef itk::ImageFileWriter< InputImageType >			WriterType;
+  typedef itk::ImageFileReader< InputImageType >      ReaderType;
+  typedef itk::ImageFileWriter< InputImageType >      WriterType;
   /**  a pair indicating which functor should be used for an operator,
    * and whether the arguments should be swapped */
   typedef std::pair< std::string, bool >              SimpleOperatorType; 
   typedef std::map<std::string, SimpleOperatorType>   SimplifyMapType;
 
-	/** Declarations. */
-	typename BaseFilterType::Pointer logicalFilter = 0;
-	typename ReaderType::Pointer reader1 = ReaderType::New();
-	typename ReaderType::Pointer reader2 = 0;
-	typename WriterType::Pointer writer = WriterType::New();
+  /** Declarations. */
+  typename BaseFilterType::Pointer logicalFilter = 0;
+  typename ReaderType::Pointer reader1 = ReaderType::New();
+  typename ReaderType::Pointer reader2 = 0;
+  typename WriterType::Pointer writer = WriterType::New();
   SimplifyMapType simpmap;
 
   /** Available SimpleOperatorTypes are defined in itkLogicalFunctors.h:
@@ -286,7 +286,7 @@ void LogicalImageOperator(
   simpmap["NOT_NOTXORNOT"] = SimpleOperatorType("NOT_XOR", false);
 
   /** Read the images. */
-	reader1->SetFileName( inputFileName1.c_str() );
+  reader1->SetFileName( inputFileName1.c_str() );
   std::cout << "Reading image1: " << inputFileName1 << std::endl;
   reader1->Update();
   std::cout << "Done reading image1." << std::endl;
@@ -376,24 +376,24 @@ void LogicalImageOperator(
   std::cout << "Done performing logical operation." << std::endl;
 
   /** Write the image to disk */
-	writer->SetFileName( outputFileName.c_str() );
+  writer->SetFileName( outputFileName.c_str() );
   writer->SetInput( logicalFilter->GetOutput() );
   std::cout << "Writing output to disk as: " << outputFileName << std::endl;
-	writer->Update();
+  writer->Update();
   std::cout << "Done writing output to disk." << std::endl;
-	
+  
 
 } // end LogicalOps
 
 
-	/**
-	 * ******************* PrintHelp *******************
-	 */
+  /**
+   * ******************* PrintHelp *******************
+   */
 void PrintHelp()
 {
   std::cout << "Logical operations on one or two images." << std::endl;
-	std::cout << "Usage:" << std::endl << "pxlogicalimageoperator" << std::endl;
-	std::cout << "  -in      inputFilename1 [inputFilename2]" << std::endl;
+  std::cout << "Usage:" << std::endl << "pxlogicalimageoperator" << std::endl;
+  std::cout << "  -in      inputFilename1 [inputFilename2]" << std::endl;
   std::cout << "  -ops     LogicalOperator of the following form:\n"
             << "             [!]( ([!] A) [{&,|,^} ([!] B])] )\n"
             << "           notation:\n"
@@ -410,9 +410,9 @@ void PrintHelp()
             << "             NOT_NOT = A \n" 
             << "           Internally this expression is simplified.\n"
             << std::endl;
-	std::cout << "  [-out]   outputFilename, default in1 + <ops> + in2 + .mhd" << std::endl;
+  std::cout << "  [-out]   outputFilename, default in1 + <ops> + in2 + .mhd" << std::endl;
   std::cout << "  [-dim]   dimension, default: automatically determined from inputimage1" << std::endl;
   std::cout << "  [-pt]    pixelType, default: automatically determined from inputimage1" << std::endl;
-	std::cout << "Supported: 2D, 3D, (unsigned) short, (unsigned) char." << std::endl;
+  std::cout << "Supported: 2D, 3D, (unsigned) short, (unsigned) char." << std::endl;
 } // end PrintHelp
 

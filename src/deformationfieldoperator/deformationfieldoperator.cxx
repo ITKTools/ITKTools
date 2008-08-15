@@ -25,43 +25,43 @@ void PrintHelp( void );
 
 int main( int argc, char **argv )
 {
-	/** Check arguments for help. */
-	if ( argc < 3 )
-	{
-		PrintHelp();
-		return 1;
-	}
+  /** Check arguments for help. */
+  if ( argc < 3 )
+  {
+    PrintHelp();
+    return 1;
+  }
 
-	/** Create a command line argument parser. */
-	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
-	parser->SetCommandLineArguments( argc, argv );
+  /** Create a command line argument parser. */
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
 
-	/** Get arguments. */
-	std::string	inputFileName = "";
-	bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  /** Get arguments. */
+  std::string inputFileName = "";
+  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
   if ( !retin )
-	{
-		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-		return 1;
-	}
+  {
+    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
+    return 1;
+  }
 
-	std::string ops = "MAGNITUDE";
-	bool retops = parser->GetCommandLineArgument( "-ops", ops );
+  std::string ops = "MAGNITUDE";
+  bool retops = parser->GetCommandLineArgument( "-ops", ops );
   
-	std::string	outputFileName = "";
-	bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
-	if ( outputFileName == "" )
-	{
+  std::string outputFileName = "";
+  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  if ( outputFileName == "" )
+  {
     std::string part1 =
       itksys::SystemTools::GetFilenameWithoutLastExtension(inputFileName);
     std::string ext = 
       itksys::SystemTools::GetFilenameLastExtension(inputFileName);
     outputFileName = part1 + ops + ext;
   }
-	
+  
   /** Determine image properties. */
   std::string ComponentType = "float";
-  std::string	PixelType = "VECTOR";
+  std::string PixelType = "VECTOR";
   unsigned int Dimension = 2;
   unsigned int NumberOfComponents = Dimension;
   std::vector<unsigned int> imagesize( Dimension, 0 );
@@ -93,21 +93,21 @@ int main( int argc, char **argv )
     return 1; 
   }
   
-	/** Get rid of the possible "_" in ComponentType. */
-	ReplaceUnderscoreWithSpace( ComponentType );
-	
-	/** Run the program. */
+  /** Get rid of the possible "_" in ComponentType. */
+  ReplaceUnderscoreWithSpace( ComponentType );
+  
+  /** Run the program. */
   bool supported = false;
-	try
-	{
+  try
+  {
     run( DeformationFieldOperator, float, 2 );
     run( DeformationFieldOperator, float, 3 );
-	}
-	catch( itk::ExceptionObject &e )
-	{
-		std::cerr << "Caught ITK exception: " << e << std::endl;
-		return 1;
-	}
+  }
+  catch( itk::ExceptionObject &e )
+  {
+    std::cerr << "Caught ITK exception: " << e << std::endl;
+    return 1;
+  }
   if ( !supported )
   {
     std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
@@ -117,25 +117,25 @@ int main( int argc, char **argv )
       << std::endl;
     return 1;
   }
-	
-	/** End program. */
-	return 0;
+  
+  /** End program. */
+  return 0;
 
 } // end main
 
 
 
-	/**
-	 * ******************* PrintHelp *******************
-	 */
+  /**
+   * ******************* PrintHelp *******************
+   */
 void PrintHelp()
 {
-	std::cout << "This program converts between deformations (displacement fields) and transformations, and computes the magnitude or jacobian of a deformation field." << std::endl;
-	
-	std::cout << "Usage:" << std::endl << "pxdeformationfieldoperator" << std::endl;
-	std::cout << "\t-in   \tinputFilename" << std::endl;
+  std::cout << "This program converts between deformations (displacement fields) and transformations, and computes the magnitude or jacobian of a deformation field." << std::endl;
+  
+  std::cout << "Usage:" << std::endl << "pxdeformationfieldoperator" << std::endl;
+  std::cout << "\t-in   \tinputFilename" << std::endl;
   std::cout << "\t[-ops]\toperation; options: DEF2TRANS, TRANS2DEF, MAGNITUDE, JACOBIAN. default: MAGNITUDE" << std::endl;
   std::cout << "\t[-out]\toutputFilename; default: in + {operation}.mhd" << std::endl;
-	std::cout << "Supported: 2D, 3D, vector of floats, number of components must equal number of dimensions." << std::endl;
+  std::cout << "Supported: 2D, 3D, vector of floats, number of components must equal number of dimensions." << std::endl;
 } // end PrintHelp
 

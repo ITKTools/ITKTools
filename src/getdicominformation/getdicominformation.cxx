@@ -13,35 +13,35 @@
 int main( int argc, char **argv )
 {
   /** Create a command line argument parser. */
-	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
-	parser->SetCommandLineArguments( argc, argv );
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
 
-	/** Get arguments. */
-	std::string	inputDirectoryName = "";
-	bool retin = parser->GetCommandLineArgument( "-in", inputDirectoryName );
+  /** Get arguments. */
+  std::string inputDirectoryName = "";
+  bool retin = parser->GetCommandLineArgument( "-in", inputDirectoryName );
 
-  std::string	seriesNumber = "";
-	bool rets = parser->GetCommandLineArgument( "-s", seriesNumber );
+  std::string seriesNumber = "";
+  bool rets = parser->GetCommandLineArgument( "-s", seriesNumber );
 
   /** Check arguments. */
-	if ( argc < 3 || argc > 5 )
-	{
+  if ( argc < 3 || argc > 5 )
+  {
     std::cout << "Usage:" << std::endl << "pxgetdicominformation" << std::endl;
     std::cout << "\t-in\tinputDirectoryName" << std::endl;
     std::cout << "\t[-s]\tseriesUID" << std::endl;
     std::cout << "By default the first series encountered is used." << std::endl;
-		return 1;
-	}
+    return 1;
+  }
 
   if ( !retin )
-	{
-		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-		return 1;
-	}
+  {
+    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
+    return 1;
+  }
 
-	/** Make sure last character of inputDirectoryName != "/".
-	 * Otherwise FileIsDirectory() won't work.
-	 */
+  /** Make sure last character of inputDirectoryName != "/".
+   * Otherwise FileIsDirectory() won't work.
+   */
   if ( inputDirectoryName.rfind( "/" ) == inputDirectoryName.size() - 1 )
   {
     inputDirectoryName.erase( inputDirectoryName.size() - 1, 1 );
@@ -50,11 +50,11 @@ int main( int argc, char **argv )
   /** Check if inputDirectoryName is a directory. */
   bool exists = itksys::SystemTools::FileExists( inputDirectoryName.c_str() );
   bool isDir = itksys::SystemTools::FileIsDirectory( inputDirectoryName.c_str() );
-	isDir &= exists;
+  isDir &= exists;
   if ( !isDir )
   {
-		std::cerr << "ERROR: " << inputDirectoryName
-			<< " does not exist or is no directory." << std::endl;
+    std::cerr << "ERROR: " << inputDirectoryName
+      << " does not exist or is no directory." << std::endl;
     return 1;
   }
 
@@ -62,16 +62,16 @@ int main( int argc, char **argv )
   typedef itk::Image< short, 3>               ImageType;
   typedef itk::ImageSeriesReader< ImageType > SeriesReaderType;
   typedef itk::GDCMImageIO                    GDCMImageIOType;
-	typedef itk::GDCMSeriesFileNames            GDCMNamesGeneratorType;
+  typedef itk::GDCMSeriesFileNames            GDCMNamesGeneratorType;
   typedef std::vector< std::string >          FileNamesContainerType;
 
-	/** Get the seriesUIDs from the DICOM directory.
+  /** Get the seriesUIDs from the DICOM directory.
    * With SetUseSeriesDetails( true ) series UIDs are generated that
    * are unique and therefore extra long.
    */
-	GDCMNamesGeneratorType::Pointer nameGenerator = GDCMNamesGeneratorType::New();
-	nameGenerator->SetUseSeriesDetails( true );
-	nameGenerator->SetInputDirectory( inputDirectoryName.c_str() );
+  GDCMNamesGeneratorType::Pointer nameGenerator = GDCMNamesGeneratorType::New();
+  nameGenerator->SetUseSeriesDetails( true );
+  nameGenerator->SetInputDirectory( inputDirectoryName.c_str() );
 
   /** Generate the file names corresponding to the series. */
   FileNamesContainerType fileNames;
@@ -84,13 +84,13 @@ int main( int argc, char **argv )
     fileNames = nameGenerator->GetFileNames( seriesNumber );
   }
 
- 	/** Check if there is at least one dicom file in the directory. */
-	if ( !fileNames.size() )
-	{
-		std::cerr << "ERROR: no DICOM series in directory "
-			<< inputDirectoryName << "." << std::endl;
-		return 1;
-	}
+  /** Check if there is at least one dicom file in the directory. */
+  if ( !fileNames.size() )
+  {
+    std::cerr << "ERROR: no DICOM series in directory "
+      << inputDirectoryName << "." << std::endl;
+    return 1;
+  }
   
   /** Create a test reader. */
   SeriesReaderType::Pointer testReader = SeriesReaderType::New();
@@ -100,10 +100,10 @@ int main( int argc, char **argv )
   
   /** Try reading image information. */
   try
-	{
-		testReader->GenerateOutputInformation();
-	}
-	catch( itk::ExceptionObject  &  err  )
+  {
+    testReader->GenerateOutputInformation();
+  }
+  catch( itk::ExceptionObject  &  err  )
   {
     std::cerr  << "ExceptionObject caught !"  << std::endl;
     std::cerr  << err <<  std::endl;

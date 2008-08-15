@@ -18,22 +18,22 @@ void PrintHelp(void);
 int main( int argc, char *argv[] )
 {
   /** Check arguments for help. */
-	if ( argc < 3 )
-	{
-		PrintHelp();
-		return 1;
-	}
+  if ( argc < 3 )
+  {
+    PrintHelp();
+    return 1;
+  }
 
   /** Create a command line argument parser. */
-	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
-	parser->SetCommandLineArguments( argc, argv );
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
 
   /** Get arguments. */
- 	std::string	inputTextFile = "";
-	bool retin = parser->GetCommandLineArgument( "-in", inputTextFile );
+  std::string inputTextFile = "";
+  bool retin = parser->GetCommandLineArgument( "-in", inputTextFile );
 
-  std::string	whichMean = "arithmetic";
-	bool retm = parser->GetCommandLineArgument( "-m", whichMean );
+  std::string whichMean = "arithmetic";
+  bool retm = parser->GetCommandLineArgument( "-m", whichMean );
 
   unsigned int skiprow = 0;
   bool retsr = parser->GetCommandLineArgument( "-sr", skiprow );
@@ -48,17 +48,17 @@ int main( int argc, char *argv[] )
   bool retp = parser->GetCommandLineArgument( "-p", precision );
 
   /** Check if the required arguments are given. */
-	if ( !retin )
-	{
-		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-		return 1;
-	}
+  if ( !retin )
+  {
+    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
+    return 1;
+  }
   if ( whichMean != "arithmetic" && whichMean != "geometric" && whichMean != "median" )
   {
     std::cerr << "ERROR: \"-m\" should be one of { arithmetic, geometric }." << std::endl;
-		return 1;
+    return 1;
   }
-	
+  
   /** Create file stream. */
   std::ifstream fileIn( inputTextFile.c_str() );
 
@@ -68,7 +68,7 @@ int main( int argc, char *argv[] )
 
   /** Read the values. */
   if ( fileIn.is_open() )
-	{
+  {
     unsigned int l = 0;
     /** Skip some lines. */
     for ( unsigned int i = 0; i < skiprow; i++ )
@@ -199,19 +199,19 @@ int main( int argc, char *argv[] )
       << maximum << std::endl;
   }
 
-	/** Return a value. */
-	return 0;
+  /** Return a value. */
+  return 0;
 
 } // end main
 
 
-	/**
-	 * ******************* PrintHelp *******************
-	 */
+  /**
+   * ******************* PrintHelp *******************
+   */
 void PrintHelp()
 {
-	std::cout << "Usage:" << std::endl << "pxcomputemean" << std::endl;
-	std::cout << "  -in      input text file" << std::endl;
+  std::cout << "Usage:" << std::endl << "pxcomputemean" << std::endl;
+  std::cout << "  -in      input text file" << std::endl;
   std::cout << "  [-m]     what kind of mean" << std::endl;
   std::cout << "  [-c]     column of which the mean is taken" << std::endl;
   std::cout << "  [-s]     skip: how many rows are skipped" << std::endl;

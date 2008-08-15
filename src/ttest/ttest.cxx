@@ -33,22 +33,22 @@ void PrintHelp( void );
 int main( int argc, char **argv )
 {
   /** Check arguments for help. */
-	if ( argc < 6 || argc > 14 )
-	{
-		PrintHelp();
-		return 1;
-	}
+  if ( argc < 6 || argc > 14 )
+  {
+    PrintHelp();
+    return 1;
+  }
 
-	/** Create a command line argument parser. */
-	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
-	parser->SetCommandLineArguments( argc, argv );
+  /** Create a command line argument parser. */
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
 
-	/** Get arguments. */
-	std::string	inputFileName = "";
-	bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  /** Get arguments. */
+  std::string inputFileName = "";
+  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
 
-  std::string	output = "p";
-	bool retout = parser->GetCommandLineArgument( "-out", output );
+  std::string output = "p";
+  bool retout = parser->GetCommandLineArgument( "-out", output );
 
   std::vector<unsigned int> columns( 2, 0 );
   bool retc = parser->GetCommandLineArgument( "-c", columns );
@@ -63,49 +63,49 @@ int main( int argc, char **argv )
   bool retp = parser->GetCommandLineArgument( "-p", precision );
 
   /** Check if the required arguments are given. */
-	if ( !retin )
-	{
-		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-		return 1;
-	}
-	if ( !retc )
-	{
-		std::cerr << "ERROR: You should specify \"-c\"." << std::endl;
-		return 1;
-	}
+  if ( !retin )
+  {
+    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
+    return 1;
+  }
+  if ( !retc )
+  {
+    std::cerr << "ERROR: You should specify \"-c\"." << std::endl;
+    return 1;
+  }
 
   /** Check command line arguments. */
   if ( columns.size() != 2 )
   {
     std::cerr << "ERROR: You should specify two different columns with \"-c\"." << std::endl;
-		return 1;
+    return 1;
   }
   if ( columns[ 0 ] == columns[ 1 ] )
   {
     std::cerr << "ERROR: You should specify two different columns with \"-c\"." << std::endl;
-		return 1;
+    return 1;
   }
   if ( output != "p" && output != "all" )
   {
     std::cerr << "ERROR: output should be one of \"p\" or \"all\"." << std::endl;
-		return 1;
+    return 1;
   }
 
   /** Read the input file. */
   std::vector< std::vector<double> > matrix;
   retin = ReadInputData( inputFileName, matrix );
   if ( !retin )
-	{
-		std::cerr << "ERROR: Something went wrong reading \""
+  {
+    std::cerr << "ERROR: Something went wrong reading \""
       << inputFileName << "\"." << std::endl;
-		return 1;
-	}
+    return 1;
+  }
 
   /** Check if there are at least two data points. */
   if ( matrix.size() < 2 )
   {
     std::cerr << "ERROR: Each column should contain at least two samples." << std::endl;
-		return 1;
+    return 1;
   }
 
   /** Check if the requested columns exists. */
@@ -114,7 +114,7 @@ int main( int argc, char **argv )
   {
     std::cerr << "ERROR: Requesting an unexisting column. There are only "
       << matrix[ 0 ].size() << " columns." << std::endl;
-		return 1;
+    return 1;
   }
 
   /** Extract the two requested columns. */
@@ -162,21 +162,21 @@ int main( int argc, char **argv )
       << ", p = " << pValue << std::endl;
   }
 
-	/** End program. */
-	return 0;
+  /** End program. */
+  return 0;
 
 } // end main
 
 
-	/**
-	 * ******************* ReadInputData *******************
-	 *
-	 * This function reads the specified input text file.
+  /**
+   * ******************* ReadInputData *******************
+   *
+   * This function reads the specified input text file.
    * No error checking is done. Each line of the file should
    * consist of an equal amount of elements. Each column should
    * contain the data samples over which a t-test is performed.
    * The file should not contain text, and no headers.
-	 */
+   */
 
 bool ReadInputData( const std::string & filename, std::vector<std::vector<double> > & matrix )
 {
@@ -186,7 +186,7 @@ bool ReadInputData( const std::string & filename, std::vector<std::vector<double
 
   /** Read the file line by line. */
   if ( file.is_open() )
-	{
+  {
     /** Read the first line to find out how long it is. */
     std::getline( file, line );
 
@@ -237,8 +237,8 @@ bool ReadInputData( const std::string & filename, std::vector<std::vector<double
 
 
   /**
-	 * ******************* ComputeTValue *******************
-	 */
+   * ******************* ComputeTValue *******************
+   */
 
 bool ComputeTValue( const std::vector<double> & samples1,
     const std::vector<double> & samples2,
@@ -282,8 +282,8 @@ bool ComputeTValue( const std::vector<double> & samples1,
 
 
   /**
-	 * ******************* ComputeMeanAndStandardDeviation *******************
-	 */
+   * ******************* ComputeMeanAndStandardDeviation *******************
+   */
 
 void ComputeMeanAndStandardDeviation(
   const std::vector<double> & samples1,
@@ -330,18 +330,18 @@ void ComputeMeanAndStandardDeviation(
 
 
   /**
-	 * ******************* PrintHelp *******************
-	 */
+   * ******************* PrintHelp *******************
+   */
 
 void PrintHelp( void )
 {
-	std::cout << "Usage:" << std::endl << "pxttest" << std::endl;
-	std::cout << "  -in      inputFilename" << std::endl;
+  std::cout << "Usage:" << std::endl << "pxttest" << std::endl;
+  std::cout << "  -in      inputFilename" << std::endl;
   std::cout << "  [-out]   output, choose one of {p,all}, default p" << std::endl;
   std::cout << "             p: only print the p-value" << std::endl;
   std::cout << "             all: print all" << std::endl;
   std::cout << "  -c       the two data sample columns" << std::endl;
-	std::cout << "  [-tail]  one or two tailed, defauls = 2" << std::endl;
+  std::cout << "  [-tail]  one or two tailed, defauls = 2" << std::endl;
   std::cout << "  [-type]  the type of the t-test, default = 1:" << std::endl;
   std::cout << "             1: paired" << std::endl;
   std::cout << "             2: two-sample equal variance" << std::endl;

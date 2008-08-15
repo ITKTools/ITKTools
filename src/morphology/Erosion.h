@@ -26,7 +26,7 @@ void erosionGrayscale(
   typedef itk::ImageFileWriter< ImageType >           WriterType;
   typedef itk::BinaryBallStructuringElement<
     PixelType, Dimension >                            StructuringElementType;
-  typedef typename StructuringElementType::RadiusType	RadiusType;
+  typedef typename StructuringElementType::RadiusType RadiusType;
   typedef itk::GrayscaleErodeImageFilter<
     ImageType, ImageType, StructuringElementType >    ErodeFilterType;
   typedef typename
@@ -61,12 +61,12 @@ void erosionGrayscale(
   }
 
   /** Create the structuring element. */
-  RadiusType	radiusarray;
+  RadiusType  radiusarray;
   for ( unsigned int i = 0; i < Dimension; i++ )
   {
     radiusarray.SetElement( i, radius[ i ] );
   }
-  StructuringElementType	S_ball;
+  StructuringElementType  S_ball;
   S_ball.SetRadius( radiusarray );
   S_ball.CreateStructuringElement();
 
@@ -100,7 +100,7 @@ void erosionBinary(
   typedef itk::ImageFileWriter< ImageType >           WriterType;
   typedef itk::BinaryBallStructuringElement<
     PixelType, Dimension >                            StructuringElementType;
-  typedef typename StructuringElementType::RadiusType	RadiusType;
+  typedef typename StructuringElementType::RadiusType RadiusType;
   typedef itk::BinaryErodeImageFilter<
     ImageType, ImageType, StructuringElementType >    ErodeFilterType;
 
@@ -133,12 +133,12 @@ void erosionBinary(
   }
 
   /** Create the structuring element. */
-  RadiusType	radiusarray;
+  RadiusType  radiusarray;
   for ( unsigned int i = 0; i < Dimension; i++ )
   {
     radiusarray.SetElement( i, radius[ i ] );
   }
-  StructuringElementType	S_ball;
+  StructuringElementType  S_ball;
   S_ball.SetRadius( radiusarray );
   S_ball.CreateStructuringElement();
 
@@ -178,7 +178,7 @@ void erosionBinaryObject(
   typedef itk::ImageFileWriter< ImageType >           WriterType;
   typedef itk::BinaryBallStructuringElement<
     PixelType, Dimension >                            StructuringElementType;
-  typedef typename StructuringElementType::RadiusType	RadiusType;
+  typedef typename StructuringElementType::RadiusType RadiusType;
   typedef itk::ErodeObjectMorphologyImageFilter<
     ImageType, ImageType, StructuringElementType >    ErodeFilterType;
   typedef typename
@@ -193,7 +193,7 @@ void erosionBinaryObject(
   reader->SetFileName( inputFileName.c_str() );
 
   /** Create and fill the radius. *
-  RadiusType	radiusarray;
+  RadiusType  radiusarray;
   //radiusarray.Fill( 1 );
   for ( unsigned int i = 0; i < Dimension; i++ )
   {
@@ -201,7 +201,7 @@ void erosionBinaryObject(
   }
 
   /** Create the structuring element and set it into the erosion filter. *
-  StructuringElementType	S_ball;
+  StructuringElementType  S_ball;
   S_ball.SetRadius( radiusarray );
   S_ball.CreateStructuringElement();
   erosion->SetKernel( S_ball );

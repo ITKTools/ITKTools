@@ -34,35 +34,35 @@ void ConvertVersorToEuler(
 int main( int argc, char *argv[] )
 {
   /** Check arguments for help. */
-	if ( argc < 5 || argc > 5 )
-	{
-		PrintHelp();
-		return 1;
-	}
+  if ( argc < 5 || argc > 5 )
+  {
+    PrintHelp();
+    return 1;
+  }
 
   /** Create a command line argument parser. */
-	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
-	parser->SetCommandLineArguments( argc, argv );
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
 
   /** Get arguments. */
-	std::string fixedLandmarkFileName = "";
-	bool retf = parser->GetCommandLineArgument( "-f", fixedLandmarkFileName );
+  std::string fixedLandmarkFileName = "";
+  bool retf = parser->GetCommandLineArgument( "-f", fixedLandmarkFileName );
 
   std::string movingLandmarkFileName = "";
-	bool retm = parser->GetCommandLineArgument( "-m", movingLandmarkFileName );
+  bool retm = parser->GetCommandLineArgument( "-m", movingLandmarkFileName );
 
   /** Check if the required arguments are given. */
   if ( !retf )
-	{
-		std::cerr << "ERROR: You should specify \"-f\"." << std::endl;
-		return 1;
-	}
+  {
+    std::cerr << "ERROR: You should specify \"-f\"." << std::endl;
+    return 1;
+  }
 
   if ( !retm )
-	{
-		std::cerr << "ERROR: You should specify \"-m\"." << std::endl;
-		return 1;
-	}
+  {
+    std::cerr << "ERROR: You should specify \"-m\"." << std::endl;
+    return 1;
+  }
   
   /** Compute the closest rigid transformation. */
   std::vector<double> parVersor, centerOfRotation;
@@ -73,10 +73,10 @@ int main( int argc, char *argv[] )
       parVersor, centerOfRotation );
   }
   catch( itk::ExceptionObject &excp )
-	{
-		std::cerr << "Caught ITK exception: " << excp << std::endl;
-		return 1;
-	}
+  {
+    std::cerr << "Caught ITK exception: " << excp << std::endl;
+    return 1;
+  }
 
   /** Convert from versor to Euler angles. */
   std::vector<double> parEuler;
@@ -109,8 +109,8 @@ int main( int argc, char *argv[] )
   }
   std::cout << centerOfRotation[ 2 ] << std::endl;
 
-	/** End program. */
-	return 0;
+  /** End program. */
+  return 0;
 
 } // end main
 
@@ -126,11 +126,11 @@ void ComputeClosestVersor(
   std::vector<double> & centerOfRotation )
 {
   /** Some consts. */
-	const unsigned int	Dimension = 3;
-	typedef short	PixelType;
+  const unsigned int  Dimension = 3;
+  typedef short PixelType;
 
-	/** Typedefs. */
-	typedef itk::Image< PixelType, Dimension >					ImageType;
+  /** Typedefs. */
+  typedef itk::Image< PixelType, Dimension >          ImageType;
   typedef itk::VersorRigid3DTransform< double >       TransformType;
   typedef TransformType::ParametersType               ParametersType;
   typedef TransformType::CenterType                   CenterType;
@@ -197,7 +197,7 @@ void ReadLandmarks(
 {
   /** Typedef's. */
   const unsigned int Dimension = 3;
-  typedef itk::Image< short, Dimension >					    ImageType;
+  typedef itk::Image< short, Dimension >              ImageType;
   typedef itk::VersorRigid3DTransform< double >       TransformType;
   typedef TransformType::ParametersType               ParametersType;
   typedef itk::LandmarkBasedTransformInitializer<
@@ -264,8 +264,8 @@ void PrintHelp( void )
 {
   std::cout << "Calculates the closest rigid transform (VersorRigid3D) between" << std::endl;
   std::cout << "two sets of landmarks. The two sets should be of equal size." << std::endl;
-	std::cout << "Usage:" << std::endl << "pxclosestversor3Dtransform" << std::endl;
-	std::cout << "  -f       the file containing the fixed landmarks" << std::endl;
+  std::cout << "Usage:" << std::endl << "pxclosestversor3Dtransform" << std::endl;
+  std::cout << "  -f       the file containing the fixed landmarks" << std::endl;
   std::cout << "  -m       the file containing the moving landmarks" << std::endl;
 
 } // end PrintHelp()

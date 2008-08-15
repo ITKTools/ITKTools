@@ -13,10 +13,10 @@ ENDIF(ITK_FOUND)
 OPTION(USE_FFTIMAGE "Build pxfftimage only if ITK was built with FFTW (float AND double)" OFF)
 
 IF( USE_FFTIMAGE )
-	ADD_EXECUTABLE(pxfftimage fftimage.cxx )
+  ADD_EXECUTABLE(pxfftimage fftimage.cxx )
 
-	INSTALL_TARGETS(/. pxfftimage)
+  INSTALL_TARGETS(/. pxfftimage)
 
-	TARGET_LINK_LIBRARIES(pxfftimage pxcommon ITKCommon ITKBasicFilters ITKIO ITKAlgorithms)
+  TARGET_LINK_LIBRARIES(pxfftimage pxcommon ITKCommon ITKBasicFilters ITKIO ITKAlgorithms)
 ENDIF( USE_FFTIMAGE )
 

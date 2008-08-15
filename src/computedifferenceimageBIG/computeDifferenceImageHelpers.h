@@ -81,90 +81,90 @@ void PrintInfo( ReaderType reader, WriterType writer )
  */
 template< class InputImageType1, class InputImageType2, class OutputImageType >
 void ComputeScalarDifferenceImage( std::string image1FileName,
-	std::string image2FileName, std::string outputFileName )
+  std::string image2FileName, std::string outputFileName )
 {
-	/**  Typedef the correct reader, iterators and writer. */
-	typedef typename itk::ImageFileReader< InputImageType1 >		Image1ReaderType;
-	typedef typename itk::ImageFileReader< InputImageType2 >		Image2ReaderType;
-	typedef itk::ImageRegionConstIterator< InputImageType1 >		ConstIteratorType1;
-	typedef itk::ImageRegionConstIterator< InputImageType2 >		ConstIteratorType2;
-	typedef itk::ImageRegionIterator< OutputImageType >					OutputIteratorType;
-	typedef typename itk::ImageFileWriter< OutputImageType >		ImageWriterType;
-	typedef typename OutputImageType::PixelType									OutputPixelType;
+  /**  Typedef the correct reader, iterators and writer. */
+  typedef typename itk::ImageFileReader< InputImageType1 >    Image1ReaderType;
+  typedef typename itk::ImageFileReader< InputImageType2 >    Image2ReaderType;
+  typedef itk::ImageRegionConstIterator< InputImageType1 >    ConstIteratorType1;
+  typedef itk::ImageRegionConstIterator< InputImageType2 >    ConstIteratorType2;
+  typedef itk::ImageRegionIterator< OutputImageType >         OutputIteratorType;
+  typedef typename itk::ImageFileWriter< OutputImageType >    ImageWriterType;
+  typedef typename OutputImageType::PixelType                 OutputPixelType;
 
   /** Create and setup the readers. */
-	typename Image1ReaderType::Pointer reader1 = Image1ReaderType::New();
-	typename Image2ReaderType::Pointer reader2 = Image2ReaderType::New();
-	reader1->SetFileName( image1FileName.c_str() );
-	reader2->SetFileName( image2FileName.c_str() );
+  typename Image1ReaderType::Pointer reader1 = Image1ReaderType::New();
+  typename Image2ReaderType::Pointer reader2 = Image2ReaderType::New();
+  reader1->SetFileName( image1FileName.c_str() );
+  reader2->SetFileName( image2FileName.c_str() );
 
   /** Read images. */
-	reader1->Update();
-	reader2->Update();
+  reader1->Update();
+  reader2->Update();
 
   /** The sizes of the image1 and image2 must match. */
-	typename InputImageType1::SizeType size1 = reader1->GetOutput()->GetLargestPossibleRegion().GetSize();
-	typename InputImageType2::SizeType size2 = reader2->GetOutput()->GetLargestPossibleRegion().GetSize();
+  typename InputImageType1::SizeType size1 = reader1->GetOutput()->GetLargestPossibleRegion().GetSize();
+  typename InputImageType2::SizeType size2 = reader2->GetOutput()->GetLargestPossibleRegion().GetSize();
 
-	if ( size1 != size2 )
-	{
-		std::cerr << "The size of the two images are "
-			<< size1 << " and "
-			<< size2 << "." << std::endl;
-		std::cerr << "They should match!" << std::endl;
-		/** Create and throw an exception. */
-		//itkException( "ERROR: sizes do not match!" );
-	}
+  if ( size1 != size2 )
+  {
+    std::cerr << "The size of the two images are "
+      << size1 << " and "
+      << size2 << "." << std::endl;
+    std::cerr << "They should match!" << std::endl;
+    /** Create and throw an exception. */
+    //itkException( "ERROR: sizes do not match!" );
+  }
 
-	/** Create an output image. */
-	typename OutputImageType::Pointer outputImage = OutputImageType::New();
-	outputImage->SetRegions( reader1->GetOutput()->GetLargestPossibleRegion() );
-	outputImage->SetSpacing( reader1->GetOutput()->GetSpacing() );
-	outputImage->SetOrigin( reader1->GetOutput()->GetOrigin() );
-	outputImage->Allocate();
+  /** Create an output image. */
+  typename OutputImageType::Pointer outputImage = OutputImageType::New();
+  outputImage->SetRegions( reader1->GetOutput()->GetLargestPossibleRegion() );
+  outputImage->SetSpacing( reader1->GetOutput()->GetSpacing() );
+  outputImage->SetOrigin( reader1->GetOutput()->GetOrigin() );
+  outputImage->Allocate();
 
-	/** Create iterators over the images. */
-	ConstIteratorType1 it1( reader1->GetOutput(),
-		reader1->GetOutput()->GetLargestPossibleRegion() );
-	ConstIteratorType2 it2( reader2->GetOutput(),
-		reader2->GetOutput()->GetLargestPossibleRegion() );
-	OutputIteratorType itout( outputImage, outputImage->GetLargestPossibleRegion() );
-	it1.GoToBegin();
-	it2.GoToBegin();
-	itout.GoToBegin();
+  /** Create iterators over the images. */
+  ConstIteratorType1 it1( reader1->GetOutput(),
+    reader1->GetOutput()->GetLargestPossibleRegion() );
+  ConstIteratorType2 it2( reader2->GetOutput(),
+    reader2->GetOutput()->GetLargestPossibleRegion() );
+  OutputIteratorType itout( outputImage, outputImage->GetLargestPossibleRegion() );
+  it1.GoToBegin();
+  it2.GoToBegin();
+  itout.GoToBegin();
 
-	/** Get the extrema of the pixel type. */
-	OutputPixelType minimum = itk::NumericTraits<OutputPixelType>::NonpositiveMin();
-	OutputPixelType maximum = itk::NumericTraits<OutputPixelType>::max();
-	double min = static_cast<double>( minimum );
-	double max = static_cast<double>( maximum );
+  /** Get the extrema of the pixel type. */
+  OutputPixelType minimum = itk::NumericTraits<OutputPixelType>::NonpositiveMin();
+  OutputPixelType maximum = itk::NumericTraits<OutputPixelType>::max();
+  double min = static_cast<double>( minimum );
+  double max = static_cast<double>( maximum );
 
-	/** Do the actual work. */
-	double diff = 0.0;
-	while ( !it1.IsAtEnd() )
-	{
-		diff = static_cast<double>( it1.Get() ) - static_cast<double>( it2.Get() );
-		if ( diff < min )
-		{
-			itout.Set( minimum );
-		}
-		else if ( diff > max )
-		{
-			itout.Set( maximum );
-		}
-		else
-		{
-			itout.Set( static_cast<OutputPixelType>( diff ) );
-		}
-		/** Increase iterators. */
-		++it1;
-		++it2;
-		++itout;
-	} // end while
+  /** Do the actual work. */
+  double diff = 0.0;
+  while ( !it1.IsAtEnd() )
+  {
+    diff = static_cast<double>( it1.Get() ) - static_cast<double>( it2.Get() );
+    if ( diff < min )
+    {
+      itout.Set( minimum );
+    }
+    else if ( diff > max )
+    {
+      itout.Set( maximum );
+    }
+    else
+    {
+      itout.Set( static_cast<OutputPixelType>( diff ) );
+    }
+    /** Increase iterators. */
+    ++it1;
+    ++it2;
+    ++itout;
+  } // end while
 
   /** Connect the pipeline. */
-	typename ImageWriterType::Pointer writer = ImageWriterType::New();
-	writer->SetFileName( outputFileName.c_str() );
+  typename ImageWriterType::Pointer writer = ImageWriterType::New();
+  writer->SetFileName( outputFileName.c_str() );
   writer->SetInput( outputImage );
 
   /** Do the actual conversion. */
@@ -183,103 +183,103 @@ void ComputeScalarDifferenceImage( std::string image1FileName,
  */
 template< class InputImageType1, class InputImageType2, class OutputImageType >
 void ComputeVectorDifferenceImage( std::string image1FileName,
-	std::string image2FileName, std::string outputFileName )
+  std::string image2FileName, std::string outputFileName )
 {
-	/**  Typedef the correct reader, iterators and writer. */
-	typedef typename itk::ImageFileReader< InputImageType1 >		Image1ReaderType;
-	typedef typename itk::ImageFileReader< InputImageType2 >		Image2ReaderType;
-	typedef itk::ImageRegionConstIterator< InputImageType1 >		ConstIteratorType1;
-	typedef itk::ImageRegionConstIterator< InputImageType2 >		ConstIteratorType2;
-	typedef itk::ImageRegionIterator< OutputImageType >					OutputIteratorType;
-	typedef typename itk::ImageFileWriter< OutputImageType >		ImageWriterType;
+  /**  Typedef the correct reader, iterators and writer. */
+  typedef typename itk::ImageFileReader< InputImageType1 >    Image1ReaderType;
+  typedef typename itk::ImageFileReader< InputImageType2 >    Image2ReaderType;
+  typedef itk::ImageRegionConstIterator< InputImageType1 >    ConstIteratorType1;
+  typedef itk::ImageRegionConstIterator< InputImageType2 >    ConstIteratorType2;
+  typedef itk::ImageRegionIterator< OutputImageType >         OutputIteratorType;
+  typedef typename itk::ImageFileWriter< OutputImageType >    ImageWriterType;
 
-	/** Get the pixeltype (== vector), the valuetype (==short, float, etc.)
-	 * and the vector dimension.
-	 */
-	typedef typename OutputImageType::PixelType				OutputPixelType;
-	typedef typename OutputPixelType::ValueType				OutputValueType;
-	const unsigned int vecDim = OutputPixelType::Dimension;
-	typedef itk::Vector< double, vecDim >							DoubleVectorType;
+  /** Get the pixeltype (== vector), the valuetype (==short, float, etc.)
+   * and the vector dimension.
+   */
+  typedef typename OutputImageType::PixelType       OutputPixelType;
+  typedef typename OutputPixelType::ValueType       OutputValueType;
+  const unsigned int vecDim = OutputPixelType::Dimension;
+  typedef itk::Vector< double, vecDim >             DoubleVectorType;
 
   /** Create and setup the readers. */
-	typename Image1ReaderType::Pointer reader1 = Image1ReaderType::New();
-	typename Image2ReaderType::Pointer reader2 = Image2ReaderType::New();
-	reader1->SetFileName( image1FileName.c_str() );
-	reader2->SetFileName( image2FileName.c_str() );
+  typename Image1ReaderType::Pointer reader1 = Image1ReaderType::New();
+  typename Image2ReaderType::Pointer reader2 = Image2ReaderType::New();
+  reader1->SetFileName( image1FileName.c_str() );
+  reader2->SetFileName( image2FileName.c_str() );
 
   /** Read images. */
-	reader1->Update();
-	reader2->Update();
+  reader1->Update();
+  reader2->Update();
 
   /** The sizes of the image1 and image2 must match. */
-	typename InputImageType1::SizeType size1 = reader1->GetOutput()->GetLargestPossibleRegion().GetSize();
-	typename InputImageType2::SizeType size2 = reader2->GetOutput()->GetLargestPossibleRegion().GetSize();
+  typename InputImageType1::SizeType size1 = reader1->GetOutput()->GetLargestPossibleRegion().GetSize();
+  typename InputImageType2::SizeType size2 = reader2->GetOutput()->GetLargestPossibleRegion().GetSize();
 
-	if ( size1 != size2 )
-	{
-		std::cerr << "The size of the two images are "
-			<< size1 << " and "
-			<< size2 << "." << std::endl;
-		std::cerr << "They should match!" << std::endl;
-		/** Create and throw an exception. */
-		//itkException( "ERROR: sizes do not match!" );
-	}
+  if ( size1 != size2 )
+  {
+    std::cerr << "The size of the two images are "
+      << size1 << " and "
+      << size2 << "." << std::endl;
+    std::cerr << "They should match!" << std::endl;
+    /** Create and throw an exception. */
+    //itkException( "ERROR: sizes do not match!" );
+  }
 
-	/** Create an output image. */
-	typename OutputImageType::Pointer outputImage = OutputImageType::New();
-	outputImage->SetRegions( reader1->GetOutput()->GetLargestPossibleRegion() );
-	outputImage->SetSpacing( reader1->GetOutput()->GetSpacing() );
-	outputImage->SetOrigin( reader1->GetOutput()->GetOrigin() );
-	outputImage->Allocate();
+  /** Create an output image. */
+  typename OutputImageType::Pointer outputImage = OutputImageType::New();
+  outputImage->SetRegions( reader1->GetOutput()->GetLargestPossibleRegion() );
+  outputImage->SetSpacing( reader1->GetOutput()->GetSpacing() );
+  outputImage->SetOrigin( reader1->GetOutput()->GetOrigin() );
+  outputImage->Allocate();
 
-	/** Create iterators over the images. */
-	ConstIteratorType1 it1( reader1->GetOutput(),
-		reader1->GetOutput()->GetLargestPossibleRegion() );
-	ConstIteratorType2 it2( reader2->GetOutput(),
-		reader2->GetOutput()->GetLargestPossibleRegion() );
-	OutputIteratorType itout( outputImage, outputImage->GetLargestPossibleRegion() );
-	it1.GoToBegin();
-	it2.GoToBegin();
-	itout.GoToBegin();
+  /** Create iterators over the images. */
+  ConstIteratorType1 it1( reader1->GetOutput(),
+    reader1->GetOutput()->GetLargestPossibleRegion() );
+  ConstIteratorType2 it2( reader2->GetOutput(),
+    reader2->GetOutput()->GetLargestPossibleRegion() );
+  OutputIteratorType itout( outputImage, outputImage->GetLargestPossibleRegion() );
+  it1.GoToBegin();
+  it2.GoToBegin();
+  itout.GoToBegin();
 
-	/** Get the extrema of the pixel type. */
-	OutputValueType minimum = itk::NumericTraits<OutputValueType>::NonpositiveMin();
-	OutputValueType maximum = itk::NumericTraits<OutputValueType>::max();
-	double min = static_cast<double>( minimum );
-	double max = static_cast<double>( maximum );
+  /** Get the extrema of the pixel type. */
+  OutputValueType minimum = itk::NumericTraits<OutputValueType>::NonpositiveMin();
+  OutputValueType maximum = itk::NumericTraits<OutputValueType>::max();
+  double min = static_cast<double>( minimum );
+  double max = static_cast<double>( maximum );
 
-	/** Do the actual work. */
-	DoubleVectorType diff;
-	OutputPixelType out;
-	while ( !it1.IsAtEnd() )
-	{
-		diff = static_cast<DoubleVectorType>( it1.Get() ) - static_cast<DoubleVectorType>( it2.Get() );
-		for ( unsigned int i = 0; i < vecDim; i++ )
-		{
-			if ( diff[ i ] < min )
-			{
-				out[ i ] = minimum;
-			}
-			else if ( diff[ i ] > max )
-			{
-				out[ i ] = maximum;
-			}
-			else
-			{
-				out[ i ] = static_cast<OutputValueType>( diff[ i ] );
-			}
-		} // end for loop
-		/** Set output. */
-		itout.Set( out );
-		/** Increase iterators. */
-		++it1;
-		++it2;
-		++itout;
-	} // end while
+  /** Do the actual work. */
+  DoubleVectorType diff;
+  OutputPixelType out;
+  while ( !it1.IsAtEnd() )
+  {
+    diff = static_cast<DoubleVectorType>( it1.Get() ) - static_cast<DoubleVectorType>( it2.Get() );
+    for ( unsigned int i = 0; i < vecDim; i++ )
+    {
+      if ( diff[ i ] < min )
+      {
+        out[ i ] = minimum;
+      }
+      else if ( diff[ i ] > max )
+      {
+        out[ i ] = maximum;
+      }
+      else
+      {
+        out[ i ] = static_cast<OutputValueType>( diff[ i ] );
+      }
+    } // end for loop
+    /** Set output. */
+    itout.Set( out );
+    /** Increase iterators. */
+    ++it1;
+    ++it2;
+    ++itout;
+  } // end while
 
   /** Connect the pipeline. */
-	typename ImageWriterType::Pointer writer = ImageWriterType::New();
-	writer->SetFileName( outputFileName.c_str() );
+  typename ImageWriterType::Pointer writer = ImageWriterType::New();
+  writer->SetFileName( outputFileName.c_str() );
   writer->SetInput( outputImage );
 
   /** Do the actual conversion. */
@@ -299,8 +299,8 @@ void ComputeVectorDifferenceImage( std::string image1FileName,
 #define callCorrectScalarDifferenceMacro(typeIn1,typeIn2,typeOut,dim) \
     if ( inputPixelComponentType1 == #typeIn1 && inputPixelComponentType2 == #typeIn2 && outputPixelComponentType == #typeOut && inputDimension == dim) \
 { \
-    typedef itk::Image< typeIn1, dim >	InputImageType1; \
-		typedef itk::Image< typeIn2, dim >	InputImageType2; \
+    typedef itk::Image< typeIn1, dim >  InputImageType1; \
+    typedef itk::Image< typeIn2, dim >  InputImageType2; \
     typedef itk::Image< typeOut, dim >  OutputImageType; \
     ComputeScalarDifferenceImage< InputImageType1, InputImageType2, OutputImageType >( image1FileName, image2FileName, outputFileName ); \
 }
@@ -311,13 +311,13 @@ void ComputeVectorDifferenceImage( std::string image1FileName,
 
 #define callCorrectVectorDifferenceMacro(typeIn1,typeIn2,typeOut,dim,vecDim) \
     if ( inputPixelComponentType1 == #typeIn1 && inputPixelComponentType2 == #typeIn2 \
-		&& outputPixelComponentType == #typeOut && inputDimension == dim && vectorDimension == vecDim ) \
+    && outputPixelComponentType == #typeOut && inputDimension == dim && vectorDimension == vecDim ) \
 { \
-		typedef itk::Vector< typeIn1, vecDim >	VectorType1; \
-		typedef itk::Vector< typeIn2, vecDim >	VectorType2; \
-		typedef itk::Vector< typeOut, vecDim >	OutputVectorType; \
-    typedef itk::Image< VectorType1, dim >	InputImageType1; \
-		typedef itk::Image< VectorType1, dim >	InputImageType2; \
+    typedef itk::Vector< typeIn1, vecDim >  VectorType1; \
+    typedef itk::Vector< typeIn2, vecDim >  VectorType2; \
+    typedef itk::Vector< typeOut, vecDim >  OutputVectorType; \
+    typedef itk::Image< VectorType1, dim >  InputImageType1; \
+    typedef itk::Image< VectorType1, dim >  InputImageType2; \
     typedef itk::Image< OutputVectorType, dim >  OutputImageType; \
     ComputeVectorDifferenceImage< InputImageType1, InputImageType2, OutputImageType >( image1FileName, image2FileName, outputFileName ); \
 }

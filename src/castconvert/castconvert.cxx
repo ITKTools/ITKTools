@@ -114,30 +114,30 @@ int main( int argc, char **argv )
   std::string input = "";
   std::string outputFileName = "";
   std::string outputPixelComponentType = "";
-	std::string seriesUID = "";
-	std::string errorMessage = "";
+  std::string seriesUID = "";
+  std::string errorMessage = "";
   bool useCompression = false;
-	int returnValue1 = GetCommandLineArguments( argc, argv, errorMessage,
-		input, outputFileName, outputPixelComponentType, seriesUID, useCompression );
-	if ( returnValue1 )
-	{
-		std::cout << errorMessage << std::endl;
-		return returnValue1;
-	}
+  int returnValue1 = GetCommandLineArguments( argc, argv, errorMessage,
+    input, outputFileName, outputPixelComponentType, seriesUID, useCompression );
+  if ( returnValue1 )
+  {
+    std::cout << errorMessage << std::endl;
+    return returnValue1;
+  }
 
-	/** Are we dealing with an image or a dicom series? */
-	bool isDICOM = false;
-	int returnValue2 = IsDICOM( input, errorMessage, isDICOM );
-	if ( returnValue2 )
-	{
-		std::cout << errorMessage << std::endl;
-		return returnValue2;
-	}
+  /** Are we dealing with an image or a dicom series? */
+  bool isDICOM = false;
+  int returnValue2 = IsDICOM( input, errorMessage, isDICOM );
+  if ( returnValue2 )
+  {
+    std::cout << errorMessage << std::endl;
+    return returnValue2;
+  }
 
-	/** Get inputFileName or inputDirectoryName. */
-	std::string inputFileName, inputDirectoryName;
-	if ( !isDICOM ) inputFileName = input;
-	else inputDirectoryName = input;
+  /** Get inputFileName or inputDirectoryName. */
+  std::string inputFileName, inputDirectoryName;
+  if ( !isDICOM ) inputFileName = input;
+  else inputDirectoryName = input;
 
   /** TASK 2:
    * Typedefs and test reading to determine correct image types.
@@ -165,14 +165,14 @@ int main( int argc, char **argv )
   }
   else
   {
-		std::string fileName = "";
-		int returnValue3 = GetFileNameFromDICOMDirectory( seriesUID, inputDirectoryName, errorMessage, fileName );
-		if ( returnValue3 )
-		{
-			std::cout << errorMessage << std::endl;
-			return returnValue3;
-		}
-		
+    std::string fileName = "";
+    int returnValue3 = GetFileNameFromDICOMDirectory( seriesUID, inputDirectoryName, errorMessage, fileName );
+    if ( returnValue3 )
+    {
+      std::cout << errorMessage << std::endl;
+      return returnValue3;
+    }
+    
     /** Create a dicom ImageIO and set it in the testReader. */
     GDCMImageIOType::Pointer dicomIO = GDCMImageIOType::New();
     testReader->SetImageIO( dicomIO );
@@ -183,11 +183,11 @@ int main( int argc, char **argv )
   } // end isDICOM
 
   /** Generate all information. */
-	try
-	{
-		testReader->GenerateOutputInformation();
-	}
-	catch( itk::ExceptionObject  &  err  )
+  try
+  {
+    testReader->GenerateOutputInformation();
+  }
+  catch( itk::ExceptionObject  &  err  )
   {
     std::cerr  << "ExceptionObject caught !"  << std::endl;
     std::cerr  << err <<  std::endl;
@@ -261,31 +261,31 @@ int main( int argc, char **argv )
     if ( !isDICOM )
     {
       /**
-			 * ****************** Support for SCALAR pixel types. **********************************
-			 */
+       * ****************** Support for SCALAR pixel types. **********************************
+       */
       if ( pixelType == "scalar" && numberOfComponents == 1 )
       {
         const int ret_value = FileConverterScalar(
           inputPixelComponentType, outputPixelComponentType,
-					inputFileName, outputFileName, inputDimension, useCompression );
+          inputFileName, outputFileName, inputDimension, useCompression );
         if ( ret_value != 0 )
         {
           return ret_value;
         }
       } // end scalar support
-			/**
+      /**
        * ****************** Support for multi-component pixel types. **********************************
        */
-			else if ( numberOfComponents > 1 )
-			{
-				const int ret_value = FileConverterMultiComponent(
+      else if ( numberOfComponents > 1 )
+      {
+        const int ret_value = FileConverterMultiComponent(
           inputPixelComponentType, outputPixelComponentType, numberOfComponents,
-					inputFileName, outputFileName, inputDimension, useCompression );
+          inputFileName, outputFileName, inputDimension, useCompression );
         if ( ret_value != 0 )
         {
           return ret_value;
         }
-			} // end multi-component support
+      } // end multi-component support
       else
       {
         std::cerr << "Pixel type is " << pixelType
@@ -310,8 +310,8 @@ int main( int argc, char **argv )
         const int ret_value = DicomFileConverterScalarA(
           inputPixelComponentType, outputPixelComponentType,
           inputDirectoryName, seriesUID, outputFileName, inputDimension, useCompression )
-					|| DicomFileConverterScalarB(
-					inputPixelComponentType, outputPixelComponentType,
+          || DicomFileConverterScalarB(
+          inputPixelComponentType, outputPixelComponentType,
           inputDirectoryName, seriesUID, outputFileName, inputDimension, useCompression );
         if ( ret_value != 0 )
         {

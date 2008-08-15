@@ -29,7 +29,7 @@ if ( ComponentTypeIn == #type && Dimension == dim ) \
 template< class InputImageType >
 void InvertIntensity(
   const std::string & inputFileName,
-	const std::string & outputFileName );
+  const std::string & outputFileName );
 
 /** Declare PrintHelp. */
 void PrintHelp( void );
@@ -39,32 +39,32 @@ void PrintHelp( void );
 int main( int argc, char ** argv )
 {
   /** Check arguments for help. */
-	if ( argc < 3 )
-	{
-		PrintHelp();
-		return 1;
-	}
+  if ( argc < 3 )
+  {
+    PrintHelp();
+    return 1;
+  }
 
-	/** Create a command line argument parser. */
-	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
-	parser->SetCommandLineArguments( argc, argv );
+  /** Create a command line argument parser. */
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
 
-	/** Get arguments. */
-	std::string	inputFileName = "";
-	bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  /** Get arguments. */
+  std::string inputFileName = "";
+  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
   if ( !retin )
-	{
-		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-		return 1;
-	}
+  {
+    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
+    return 1;
+  }
 
-	std::string	outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
-	outputFileName += "INVERTED.mhd";
-	bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  std::string outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
+  outputFileName += "INVERTED.mhd";
+  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
 
   /** Determine image properties. */
   std::string ComponentTypeIn = "short";
-  std::string	PixelType; //we don't use this
+  std::string PixelType; //we don't use this
   unsigned int Dimension = 2;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
@@ -88,17 +88,17 @@ int main( int argc, char ** argv )
     return 1; 
   }
 
-	/** Get rid of the possible "_" in ComponentType. */
+  /** Get rid of the possible "_" in ComponentType. */
   ReplaceUnderscoreWithSpace( ComponentTypeIn );
-	
-	/** Run the program. */
+  
+  /** Run the program. */
   bool supported = false;
-	try
-	{
+  try
+  {
     /** 2D. */
     run( InvertIntensity, char, 2 );
     run( InvertIntensity, unsigned char, 2 );
-		run( InvertIntensity, short, 2 );
+    run( InvertIntensity, short, 2 );
     run( InvertIntensity, unsigned short, 2 );
     run( InvertIntensity, float, 2 );
     run( InvertIntensity, double, 2 );
@@ -106,17 +106,17 @@ int main( int argc, char ** argv )
     /** 3D. */
     run( InvertIntensity, char, 3 );
     run( InvertIntensity, unsigned char, 3 );
-		run( InvertIntensity, short, 3 );
+    run( InvertIntensity, short, 3 );
     run( InvertIntensity, unsigned short, 3 );
     run( InvertIntensity, float, 3 );
     run( InvertIntensity, double, 3 );
 
-	} // end run
-  	catch ( itk::ExceptionObject &e )
-	{
-		std::cerr << "Caught ITK exception: " << e << std::endl;
-		return 1;
-	}
+  } // end run
+    catch ( itk::ExceptionObject &e )
+  {
+    std::cerr << "Caught ITK exception: " << e << std::endl;
+    return 1;
+  }
   if ( !supported )
   {
     std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
@@ -126,65 +126,65 @@ int main( int argc, char ** argv )
       << std::endl;
     return 1;
   }
-	
-	/** End program. */
-	return 0;
+  
+  /** End program. */
+  return 0;
 
 } // end main
 
 
-	/**
-	 * ******************* InvertIntensity *******************
-	 *
-	 * The resize function templated over the input pixel type.
-	 */
+  /**
+   * ******************* InvertIntensity *******************
+   *
+   * The resize function templated over the input pixel type.
+   */
 
 template< class InputImageType >
 void InvertIntensity( const std::string & inputFileName,
   const std::string & outputFileName )
 {
-	/** Some typedef's. */
+  /** Some typedef's. */
   typedef typename InputImageType::PixelType                InputPixelType;
-	typedef itk::ImageFileReader< InputImageType >						ReaderType;
-	typedef itk::ImageFileWriter< InputImageType >						WriterType;
-	typedef itk::StatisticsImageFilter< InputImageType >			StatisticsFilterType;
-	typedef typename StatisticsFilterType::RealType							      RealType;
-	typedef itk::InvertIntensityImageFilter< InputImageType >	InvertIntensityFilterType;
-	
-	/** Create reader. */
-	typename ReaderType::Pointer reader = ReaderType::New();
-	reader->SetFileName( inputFileName.c_str() );
+  typedef itk::ImageFileReader< InputImageType >            ReaderType;
+  typedef itk::ImageFileWriter< InputImageType >            WriterType;
+  typedef itk::StatisticsImageFilter< InputImageType >      StatisticsFilterType;
+  typedef typename StatisticsFilterType::RealType                   RealType;
+  typedef itk::InvertIntensityImageFilter< InputImageType > InvertIntensityFilterType;
+  
+  /** Create reader. */
+  typename ReaderType::Pointer reader = ReaderType::New();
+  reader->SetFileName( inputFileName.c_str() );
 
-	/** Create statistics filter. */
-	typename StatisticsFilterType::Pointer statistics = StatisticsFilterType::New();
-	statistics->SetInput( reader->GetOutput() );
-	statistics->Update();
+  /** Create statistics filter. */
+  typename StatisticsFilterType::Pointer statistics = StatisticsFilterType::New();
+  statistics->SetInput( reader->GetOutput() );
+  statistics->Update();
 
-	/** Get all the output stuff. */
-	InputPixelType max = statistics->GetMaximum();
+  /** Get all the output stuff. */
+  InputPixelType max = statistics->GetMaximum();
 
-	/** Create invert filter. */
-	typename InvertIntensityFilterType::Pointer invertFilter = InvertIntensityFilterType::New();
-	invertFilter->SetInput( reader->GetOutput() );
-	invertFilter->SetMaximum( max );
+  /** Create invert filter. */
+  typename InvertIntensityFilterType::Pointer invertFilter = InvertIntensityFilterType::New();
+  invertFilter->SetInput( reader->GetOutput() );
+  invertFilter->SetMaximum( max );
 
-	/** Create writer. */
-	typename WriterType::Pointer writer = WriterType::New();
+  /** Create writer. */
+  typename WriterType::Pointer writer = WriterType::New();
   writer->SetFileName( outputFileName.c_str() );
-	writer->SetInput( invertFilter->GetOutput() );
+  writer->SetInput( invertFilter->GetOutput() );
   writer->Update();
 
 } // end InvertIntensity()
 
-	/**
-	 * ******************* PrintHelp *******************
-	 */
+  /**
+   * ******************* PrintHelp *******************
+   */
 void PrintHelp()
 {
-	std::cout << "This program inverts the intensities of an image." << std::endl;
-	std::cout << "Usage:" << std::endl << "pxinvertintensityimagefilter" << std::endl;
-	std::cout << "  -in      inputFilename" << std::endl;
-	std::cout << "  [-out]   outputFilename; default: in + INVERTED.mhd" << std::endl;
-	std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double." << std::endl;
+  std::cout << "This program inverts the intensities of an image." << std::endl;
+  std::cout << "Usage:" << std::endl << "pxinvertintensityimagefilter" << std::endl;
+  std::cout << "  -in      inputFilename" << std::endl;
+  std::cout << "  [-out]   outputFilename; default: in + INVERTED.mhd" << std::endl;
+  std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double." << std::endl;
 } // end PrintHelp()
 

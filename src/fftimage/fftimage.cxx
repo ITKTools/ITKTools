@@ -123,14 +123,14 @@ int main( int argc, char **argv )
     std::string inputpart = inputFileNames[ 0 ].substr( 0, inputFileNames[ 0 ].rfind( "." ) );
     if ( op == "forward" )
     {
-	  outputFileNames.resize( 3 );
+    outputFileNames.resize( 3 );
       outputFileNames[ 0 ] = inputpart + "Complex.mhd";
       outputFileNames[ 1 ] = inputpart + "Real.mhd";
       outputFileNames[ 2 ] = inputpart + "Imaginary.mhd";
     }
     else if ( op == "backward" )
     {
-	  outputFileNames.resize( 1 );
+    outputFileNames.resize( 1 );
       outputFileNames[ 0 ] = inputpart + "IFFT.mhd";
     }
   }

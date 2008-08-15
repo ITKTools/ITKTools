@@ -40,27 +40,27 @@ void PrintHelp( void );
 int main( int argc, char ** argv )
 {
   if ( argc < 5 )
-	{
+  {
     PrintHelp();
-		return 1;
-	}
+    return 1;
+  }
 
   /** Create a command line argument parser. */
-	itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
-	parser->SetCommandLineArguments( argc, argv );
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
 
   /** Get the input file name. */
-	std::string inputFileName;
-	bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  std::string inputFileName;
+  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
   if ( !retin )
-	{
-		std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-		return 1;
-	}
+  {
+    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
+    return 1;
+  }
 
   /** Determine input image properties. */
   std::string ComponentType = "short";
-  std::string	PixelType; //we don't use this
+  std::string PixelType; //we don't use this
   unsigned int Dimension = 3;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
@@ -78,7 +78,7 @@ int main( int argc, char ** argv )
   }
   
   /** Let the user overrule this. */
-	bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
+  bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
   
   /** Error checking. */
   if ( NumberOfComponents > 1 )
@@ -89,44 +89,44 @@ int main( int argc, char ** argv )
   }
 
   /** Get the slicenumber which is to be extracted. */
-	unsigned int slicenumber;
-	bool retsn = parser->GetCommandLineArgument( "-sn", slicenumber );
+  unsigned int slicenumber;
+  bool retsn = parser->GetCommandLineArgument( "-sn", slicenumber );
   if ( !retsn )
-	{
-		std::cerr << "ERROR: You should specify \"-sn\"." << std::endl;
-		return 1;
-	}
+  {
+    std::cerr << "ERROR: You should specify \"-sn\"." << std::endl;
+    return 1;
+  }
   std::string slicenumberstring;
-	bool retsns = parser->GetCommandLineArgument( "-sn", slicenumberstring );
+  bool retsns = parser->GetCommandLineArgument( "-sn", slicenumberstring );
 
   /** Get the dimension in which the slice is to be extracted.
    * The default is the z-direction.
    */
-	unsigned int which_dimension = 2;
+  unsigned int which_dimension = 2;
   bool retd = parser->GetCommandLineArgument( "-d", which_dimension );
 
   /** Sanity check. */
-	if ( slicenumber > imagesize[ which_dimension ] )
-	{
-		std::cerr << "ERROR: You selected slice number "
-			<< slicenumber
+  if ( slicenumber > imagesize[ which_dimension ] )
+  {
+    std::cerr << "ERROR: You selected slice number "
+      << slicenumber
       << ", where the input image only has "
-			<< imagesize[ which_dimension ]
+      << imagesize[ which_dimension ]
       << " slices in dimension "
       << which_dimension << "." << std::endl;
-		return 1;
-	}
+    return 1;
+  }
 
   /** Sanity check. */
-	if ( which_dimension > Dimension - 1 )
-	{
-		std::cerr << "ERROR: You selected to extract a slice from dimension "
-			<< which_dimension + 1
+  if ( which_dimension > Dimension - 1 )
+  {
+    std::cerr << "ERROR: You selected to extract a slice from dimension "
+      << which_dimension + 1
       << ", where the input image is "
-			<< Dimension
+      << Dimension
       << "D." << std::endl;
-		return 1;
-	}
+    return 1;
+  }
 
   /** Get the outputFileName. */
   std::string direction = "z";
@@ -136,24 +136,24 @@ int main( int argc, char ** argv )
       itksys::SystemTools::GetFilenameWithoutLastExtension( inputFileName );
   std::string part2 =
     itksys::SystemTools::GetFilenameLastExtension( inputFileName );
-  std::string	outputFileName = part1 + "_slice_" + direction + "=" + slicenumberstring + part2;
-	bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  std::string outputFileName = part1 + "_slice_" + direction + "=" + slicenumberstring + part2;
+  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
 
   /** Run the program. */
   bool supported = false;
   try
-	{
+  {
     run( ExtractSlice, unsigned char );
     run( ExtractSlice, char );
     run( ExtractSlice, unsigned short );
     run( ExtractSlice, short );
     run( ExtractSlice, float );
   }
-	catch( itk::ExceptionObject &e )
-	{
-		std::cerr << "Caught ITK exception: " << e << std::endl;
-		return 1;
-	}
+  catch( itk::ExceptionObject &e )
+  {
+    std::cerr << "Caught ITK exception: " << e << std::endl;
+    return 1;
+  }
   if ( !supported )
   {
     std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
@@ -164,8 +164,8 @@ int main( int argc, char ** argv )
     return 1;
   }
 
-	/** Return a value. */
-	return 0;
+  /** Return a value. */
+  return 0;
 
 } // end main
 
@@ -180,47 +180,47 @@ void ExtractSlice(
   const unsigned int & slicenumber,
   const unsigned int & which_dimension )
 {
-	/** Some typedef's. */
-	typedef itk::Image<PixelType, 3>							Image3DType;
-	typedef itk::Image<PixelType, 2>							Image2DType;
-	typedef itk::ImageFileReader<Image3DType>			ImageReaderType;
-	typedef itk::ExtractImageFilter<
-		Image3DType, Image2DType >									ExtractFilterType;
-	typedef itk::ImageFileWriter<Image2DType>			ImageWriterType;
+  /** Some typedef's. */
+  typedef itk::Image<PixelType, 3>              Image3DType;
+  typedef itk::Image<PixelType, 2>              Image2DType;
+  typedef itk::ImageFileReader<Image3DType>     ImageReaderType;
+  typedef itk::ExtractImageFilter<
+    Image3DType, Image2DType >                  ExtractFilterType;
+  typedef itk::ImageFileWriter<Image2DType>     ImageWriterType;
 
-	typedef typename Image3DType::RegionType			RegionType;
-	typedef typename Image3DType::SizeType				SizeType;
-	typedef typename Image3DType::IndexType				IndexType;
+  typedef typename Image3DType::RegionType      RegionType;
+  typedef typename Image3DType::SizeType        SizeType;
+  typedef typename Image3DType::IndexType       IndexType;
 
-	/** Create reader. */
+  /** Create reader. */
   typename ImageReaderType::Pointer reader = ImageReaderType::New();
   reader->SetFileName( inputFileName.c_str() );
-	reader->Update();
+  reader->Update();
 
-	/** Create extractor. */
+  /** Create extractor. */
   typename ExtractFilterType::Pointer extractor = ExtractFilterType::New();
-	extractor->SetInput( reader->GetOutput() );
+  extractor->SetInput( reader->GetOutput() );
 
-	/** Get the size and set which_dimension to zero. */
+  /** Get the size and set which_dimension to zero. */
   RegionType inputRegion = reader->GetOutput()->GetLargestPossibleRegion();
-	SizeType size = inputRegion.GetSize();
+  SizeType size = inputRegion.GetSize();
   size[ which_dimension ] = 0;
 
-	/** Get the index and set which_dimension to the correct slice. */
-	IndexType start = inputRegion.GetIndex();
+  /** Get the index and set which_dimension to the correct slice. */
+  IndexType start = inputRegion.GetIndex();
   start[ which_dimension ] = slicenumber;
 
-	/** Create a desired extraction region and set it into the extractor. */
-	RegionType desiredRegion;
+  /** Create a desired extraction region and set it into the extractor. */
+  RegionType desiredRegion;
   desiredRegion.SetSize(  size  );
   desiredRegion.SetIndex( start );
-	extractor->SetExtractionRegion( desiredRegion );
+  extractor->SetExtractionRegion( desiredRegion );
 
   /** Write the 2D output image. */
   typename ImageWriterType::Pointer writer = ImageWriterType::New();
-	writer->SetFileName( outputFileName.c_str() );
-	writer->SetInput( extractor->GetOutput() );
-	writer->Update();
+  writer->SetFileName( outputFileName.c_str() );
+  writer->SetInput( extractor->GetOutput() );
+  writer->Update();
 
 } // end ExtractSlice
 
