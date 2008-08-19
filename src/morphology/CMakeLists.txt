@@ -13,8 +13,10 @@ ENDIF(ITK_FOUND)
 ADD_EXECUTABLE(pxmorphology
   morphology.cxx
   mainhelper.h
-  Erosion.h
-  Dilation.h
+  erosion.h
+  dilation.h
+	opening.h
+	closing.h
 )
 
 INSTALL_TARGETS(/. pxmorphology)
