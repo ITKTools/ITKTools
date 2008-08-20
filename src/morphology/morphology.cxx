@@ -4,10 +4,10 @@
 #include "mainhelper.h"
 #include <itksys/SystemTools.hxx>
 
-#include "Erosion.h"
-#include "Dilation.h"
-#include "Opening.h"
-#include "Closing.h"
+#include "erosion.h"
+#include "dilation.h"
+#include "opening.h"
+#include "closing.h"
 
 //-------------------------------------------------------------------------------------
 
