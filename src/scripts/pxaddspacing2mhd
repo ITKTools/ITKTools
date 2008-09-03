@@ -30,11 +30,11 @@ spacings="$2 $3 $4 $5 $6 $7"
 
 cp $inputmhd $inputmhd~
 
-less $inputmhd~ |grep -v ElementDataFile | grep -v ElementSpacing | sed /^$/d > $inputmhd
+less $inputmhd~ | dos2unix | grep -v ElementDataFile | grep -v ElementSpacing | sed /^$/d > $inputmhd
 echo "Adding the following line to $inputmhd :"
 echo "ElementSpacing = "$spacings 
 echo "ElementSpacing = "$spacings >> $inputmhd
-less $inputmhd~ |grep ElementDataFile >> $inputmhd
+less $inputmhd~ | dos2unix | grep ElementDataFile >> $inputmhd
 
 done
 
