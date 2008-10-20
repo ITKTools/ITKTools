@@ -26,7 +26,7 @@ namespace itk
     this->m_GenerateProbabilisticSegmentations = false;
     this->m_NumberOfClasses = 2;
     this->m_MaskImage = 0;
-    bool m_InitializeWithMajorityVoting = false;
+    this->m_InitializeWithMajorityVoting = false;
   } // end constructor
 
 
@@ -292,6 +292,7 @@ namespace itk
           ProbabilityImageType::New();
         this->m_ProbabilisticSegmentationArray[k]->SetRegions(
           output->GetRequestedRegion() );
+        this->m_ProbabilisticSegmentationArray[k]->CopyInformation( output );
         this->m_ProbabilisticSegmentationArray[k]->Allocate();
       }
     }

@@ -154,6 +154,7 @@ namespace itk
           ProbabilityImageType::New();
         this->m_ProbabilisticSegmentationArray[k]->SetRegions(
           output->GetRequestedRegion() );
+        this->m_ProbabilisticSegmentationArray[k]->CopyInformation( output );
         this->m_ProbabilisticSegmentationArray[k]->Allocate();
       }
     }
