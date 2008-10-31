@@ -6,6 +6,8 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <cstdlib>
+
 
 namespace itk
 {
