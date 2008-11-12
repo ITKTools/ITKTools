@@ -7,6 +7,7 @@ SUBDIRS(
  averagevectormagnitude
  binaryimageoperator
  binarythinning
+ braindistance
  castconvert
  closestversor3Dtransform
  combinesegmentations
