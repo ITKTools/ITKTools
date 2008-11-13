@@ -140,7 +140,7 @@ namespace itk
 
     SubtractSquare() 
     { 
-      this->m_ScalarToSubtract = 0;
+      this->m_ScalarToSubtract = itk::NumericTraits<RealType>::Zero;
     }
     ~SubtractSquare() {}
 
@@ -253,8 +253,7 @@ void ComputeBrainDistance(
   StatFilterType::Pointer statFilterLabelsSpecial = StatFilterType::New();
   MaximumComputerType::Pointer maximumComputer  = MaximumComputerType::New(); 
   SubtractSquareFilterType::Pointer subsqFilter = SubtractSquareFilterType::New();
-  SubtractSquareFunctionType subsqFunction;
-
+  
   /** Read image. We are going to change the image, so make sure these changes are not undone */
   std::cout << "Reading input image..." << std::endl;
   inputReader->SetFileName( inputFileName );
@@ -370,8 +369,7 @@ void ComputeBrainDistance(
 
   /** Compute (Jac - mu_tot)^2 image */
   std::cout << "Compute ( jacobian - mu_tot )^2... " << std::endl;
-  subsqFunction.SetScalarToSubtract( mu_tot );
-  subsqFilter->SetFunctor( subsqFunction );
+  subsqFilter->GetFunctor().SetScalarToSubtract( mu_tot );
   subsqFilter->SetInput( jacobian );
   subsqFilter->Update();
   
