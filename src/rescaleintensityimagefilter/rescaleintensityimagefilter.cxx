@@ -70,7 +70,7 @@ int main( int argc, char **argv )
     return 1;
   }
 
-  if ( retmm && retmv )
+  if ( ( retmm && retmv ) || ( !retmm && !retmv ) )
   {
     std::cerr << "ERROR: you should specify either \"-mm\" or \"-mv\"" << std::endl;
     return 1;
