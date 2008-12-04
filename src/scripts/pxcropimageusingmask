@@ -1,0 +1,94 @@
+#!/bin/bash
+
+# 
+# pxcropimageusingmask
+#
+
+
+functionname=`basename "$0"`
+
+#####################################################################
+
+function PrintHelp()
+{
+  echo "Crop the image using the bounding box of a mask."
+  echo
+  echo "Usage:"
+	echo $functionname
+	echo "  -in      input filename"
+	echo "  [-out]   outputFilename, default in + CROPPED.mhd"
+	echo "  -mask    mask filename"
+	echo "  [-force] force to extract a region of size sz, pad if necessary"
+}
+
+#####################################################################
+
+if [[ $# = 0 || $1 == "--help" ]]
+then
+  PrintHelp
+  exit 64
+fi
+
+argv=($*)
+for (( i = 0; i < $#; ++i ))
+do
+	arg=${argv[$i]}
+	if [[ $arg == "-in" ]]
+	then
+		let i=$i+1
+		in=${argv[$i]}
+	fi
+	if [[ $arg == "-out" ]]
+	then
+		let i=$i+1
+		out=${argv[$i]}
+	fi
+	if [[ $arg == "-mask" ]]
+	then
+		let i=$i+1
+		mask=${argv[$i]}
+	fi
+	if [[ $arg == "-force" ]]
+	then
+		force="true"
+	fi
+done
+
+#####################################################################
+
+# Compute the bounding box
+tmp="temp_1224978y9621.txt"
+pxcomputeboundingbox -in $mask &> $tmp
+if [[ $? != 0 ]]
+then
+	echo "ERROR: pxcomputeboundingbox failed:"
+	echo `less $tmp`
+	exit 1
+fi
+
+# Extract the minimum and maximum
+pA=`less $tmp | grep "MinimumIndex"`
+pA=${pA#MinimumIndex = [}
+pA=${pA/]}; pA=${pA//,/}
+pB=`less $tmp | grep "MaximumIndex"`
+pB=${pB#MaximumIndex = [}
+pB=${pB//]}; pB=${pB//,/}
+rm $tmp
+
+# Construct the arguments for pxcropimage
+args="-in "$in" -pA "$pA" -pB "$pB
+if [[ $out != "" ]]
+then
+	args=$args" -out "$out
+fi
+if [[ $force == "true" ]]
+then
+	args=$args " -force"
+fi
+
+# Crop the image
+pxcropimage $args
+
+# return a value
+exit 0
+
