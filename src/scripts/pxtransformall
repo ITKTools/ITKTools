@@ -1,29 +1,10 @@
 #!/bin/bash
 
-# pxmakemovie
+# Transform the moving image for all resolutions
 #
-# Generate a movie of deformed images resulting from elastix
-#
-# Usage:
-# 
-# pxmakemovie -d <dirname> -i <inputfile> -E <?> -R <?> -I <?> [-F]
-#
-#   -d: the directory name containing the tp-files
-#   -E: the elastix level for which a tptable is desired
-#   -R: the resolution for which a tptable is desired
-#   -I: every I iterations an image is taken
-#		-i: input file, the moving image
-#   -G: flag: save output also as animated gif, besides as 3d mhd file.
-#   -F: flag: force (default false): if set, old results are overwritten
-#
-# The result is an image:  <dirname>/movie.<E>.R<R>.{mhd,gif}
-# WARNING: this script is not threadsafe!
-# 
-# Hint: use "convert -delay <time> moviein.gif movieout.gif" to change
-# the speed of the animated gif. the time should be given in centiseconds.
-#
-functionname=`basename "$0"`
 
+#############################################################################
+functionname=`basename "$0"`
 function PrintHelp()
 {
   echo "Transform the moving image for all resolutions"
@@ -36,6 +17,8 @@ function PrintHelp()
 	echo "  [-R]    resolution level, default all"
 	echo "  [-t]    number of threads, default all"
 }
+
+#############################################################################
 
 # Check for PrintHelp
 if [[ $1 == "--help" ]]
@@ -97,6 +80,8 @@ then
   exit 66
 fi
 
+#############################################################################
+
 # Check which resolution levels are required.
 if [ "$R" -eq "99" ]
 then
@@ -122,11 +107,29 @@ then
 	exit 65;
 fi
 
+#############################################################################
+
+# Transform final result
+echo -n $E" "
+tpfile=$tpdir"/TransformParameters."$E".txt"
+transformix -in $in -tp $tpfile -out $tpdir -threads $threads > /dev/null
+
+# Check for success
+if [[ $? -ne 0 ]]
+then
+	echo "ERROR: \"transformix -in "$in" -tp "$tpfile" -out "$tpdir"\" failed."
+	exit 1
+fi
+
+# Rename
+outfile=$tpdir"/result."$E".mhd"
+pxcastconvert -in $tpdir"/result.mhd" -out $outfile > /dev/null
+
 # Loop over all resolutions.
 for R in $Rarray
 do
 	# Inform the user
-	echo -n $R" "
+	echo -n $E".R"$R" "
 
 	# Deform input image.
 	tpfile=$tpdir"/TransformParameters."$E".R"$R".txt"
