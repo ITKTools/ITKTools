@@ -32,6 +32,7 @@ SUBDIRS(
  deformationfieldoperator
  detectgoldmarkers
  dilateimage
+ distancetransform
  erodeimage
  extracteveryotherslice
  extractindexfromvectorimage
@@ -51,6 +52,7 @@ SUBDIRS(
  invertintensityimagefilter
  kappastatistic
  logicalimageoperator
+ localizedmeanshift
  morphologicalclosingimage
  morphologicalopeningimage
  morphology
