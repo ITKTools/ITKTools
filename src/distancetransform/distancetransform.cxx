@@ -175,7 +175,7 @@ void DistanceTransform(
   
   /** Declare/initialize some variables */
   OutputImagePointer outputImage = 0;
-  DistanceTransformFilterType::Pointer distanceTransform =
+  typename DistanceTransformFilterType::Pointer distanceTransform =
     DistanceTransformFilterType::New();
        
   /** Read the input images */
