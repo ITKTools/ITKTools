@@ -37,7 +37,7 @@ void PrintHelp( void );
 int main( int argc, char **argv )
 {
   /** Check number of arguments. */
-  if ( argc < 3 || argc > 12 )
+  if ( argc < 6 )
   {
     PrintHelp();
     return 1;
