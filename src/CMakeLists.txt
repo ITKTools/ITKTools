@@ -52,7 +52,7 @@ SUBDIRS(
  invertintensityimagefilter
  kappastatistic
  logicalimageoperator
- #localizedmeanshift
+ localizedmeanshift
  morphologicalclosingimage
  morphologicalopeningimage
  morphology
@@ -69,7 +69,8 @@ SUBDIRS(
  tileimages
  ttest
  thresholdimage
- unaryimageoperator)
+ unaryimageoperator
+ weightedaddition )
 
 
 #---------------------------------------------------------------------
