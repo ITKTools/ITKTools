@@ -15,7 +15,7 @@
 if ( ComponentType == #type && Dimension == dim && NumberOfComponents == nrofcomp) \
 { \
   function< type, dim, nrofcomp >( inputFileName, maskFileName, histogramOutputFileName,\
-    numberOfBins ); \
+    numberOfBins, select ); \
   supported = true; \
 }
 
@@ -55,6 +55,18 @@ int main( int argc, char ** argv )
 
   unsigned int numberOfBins = 100;
   bool retb = parser->GetCommandLineArgument( "-b", numberOfBins );
+
+  std::string select = "";
+  bool rets = parser->GetCommandLineArgument( "-s", select );
+
+  /** Check selection. */
+  if ( rets && ( select != "arithmetic" && select != "geometric"
+    && select != "histogram" ) )
+  {
+    std::cerr << "ERROR: -s should be one of {arithmetic, geometric, histogram}"
+      << std::endl;
+    return 1;
+  }
   
   /** Determine image properties. */
   std::string ComponentType = "float";
@@ -131,5 +143,6 @@ void PrintHelp()
   std::cout << "           for an accurate estimate of median and quartiles\n";
   std::cout << "           for integer images, choose the number of bins\n";
   std::cout << "           much larger (~100x) than the number of gray values." << std::endl;
+  std::cout << "  [-s]     select which to compute {arithmetic, geometric, histogram}, default all;\n";
   std::cout << "Supported: 2D, 3D, float, (unsigned) short, (unsigned) char, 1, 2 or 3 components per pixel." << std::endl;
 } // end PrintHelp

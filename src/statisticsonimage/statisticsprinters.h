@@ -50,8 +50,8 @@ void PrintGeometricStatistics( const TStatisticsFilter * statistics )
  */
 
 template<class THistogram>
-void PrintHistogramStatistics( const THistogram * histogram, 
-                               const std::string & histogramOutputFileName ) 
+void PrintHistogramStatistics( const THistogram * histogram,
+  const std::string & histogramOutputFileName ) 
 {
   /** Print to screen. */
   //median, quartiles, histogram, percentiles.
@@ -59,19 +59,21 @@ void PrintHistogramStatistics( const THistogram * histogram,
   typedef typename THistogram::FrequencyType FrequencyType;
   typename THistogram::TotalFrequencyType nrOfPixels = histogram->GetTotalFrequency();
   double median = histogram->Quantile(0, 0.5);
-  double firstquartile = histogram->Quantile(0,0.25);
-  double thirdquartile = histogram->Quantile(0,0.75);
-  double binsize = histogram->GetBinMax(0,0) - histogram->GetBinMin(0,0);
+  double fifteenthpercentile = histogram->Quantile( 0, 0.15 );
+  double firstquartile = histogram->Quantile( 0, 0.25 );
+  double thirdquartile = histogram->Quantile( 0, 0.75 );
+  double binsize = histogram->GetBinMax( 0, 0 ) - histogram->GetBinMin( 0, 0 );
 
-  std::cout << std::setprecision(10);
+  std::cout << std::setprecision( 10 );
   std::cout << "\tnumber of pixels:\t" << nrOfPixels << std::endl;
   std::cout << "\tbinsize:         \t" << binsize << std::endl;
   std::cout << "\tmedian:          \t" << median << std::endl;
   std::cout << "\t1st quartile:    \t" << firstquartile << std::endl;
   std::cout << "\t3rd quartile:    \t" << thirdquartile << std::endl;
+  std::cout << "\t15th percentile: \t" << fifteenthpercentile << std::endl;
 
-  /** print histogram to output file */
-  if (histogramOutputFileName != "")
+  /** Print histogram to output file */
+  if ( histogramOutputFileName != "" )
   {
     std::cout << "Histogram is written to file: " <<
       histogramOutputFileName << " ..." << std::endl;
