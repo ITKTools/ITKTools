@@ -126,7 +126,7 @@ void ComputeStatistics(
       binsize = vnl_math_max( binsize, epsilon );
       double uppermargin = vnl_math_max( epsilon, binsize / marginalScale );
       histogramMax = static_cast<PixelType>(
-        vnl_math_max( binsize * static_cast<double>( numberOfBins ),
+        vnl_math_max( binsize * static_cast<double>( numberOfBins ) + minPixelValue,
         maxPixelValue + uppermargin ) );
     }
     else
