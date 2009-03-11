@@ -31,9 +31,7 @@ SUBDIRS(
  deformationfieldgenerator
  deformationfieldoperator
  detectgoldmarkers
- dilateimage
  distancetransform
- erodeimage
  extracteveryotherslice
  extractindexfromvectorimage
  extractslice
@@ -53,8 +51,6 @@ SUBDIRS(
  kappastatistic
  logicalimageoperator
  #localizedmeanshift
- morphologicalclosingimage
- morphologicalopeningimage
  morphology
  pca
  reflect
