@@ -118,7 +118,7 @@ int CheckOps( std::string & ops, bool isInteger )
   }
   else
   {
-    std::cerr << "ERROR: No such operator." << std::endl;
+    std::cerr << "ERROR: No operator \"" << ops << "\" defined!" << std::endl;
     return 1;
   }
 

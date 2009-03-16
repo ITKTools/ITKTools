@@ -246,7 +246,7 @@ int CheckOperator( std::string & operatoR )
   }
   else
   {
-    std::cerr << "ERROR: No such operator." << std::endl;
+    std::cerr << "ERROR: No operator \"" << operatoR << "\" defined!" << std::endl;
     return 1;
   }
 
