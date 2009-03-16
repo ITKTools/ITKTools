@@ -29,6 +29,20 @@ int GetImageProperties(
   unsigned int & numberofcomponents,
   std::vector<unsigned int> & imagesize );
 
+/** Determine pixeltype (scalar/vector), componenttype (short, float etc),
+ * dimension and numberofcomponents from an image
+ * returns 0 when successful. 0 otherwise.
+ */
+int GetImageProperties(
+  const std::string & filename,
+  std::string & pixeltype,
+  std::string & componenttype,
+  unsigned int & dimension,
+  unsigned int & numberofcomponents,
+  std::vector<unsigned int> & imagesize,
+  std::vector<double> & imagespacing,
+  std::vector<double> & imageoffset );
+
 /** Selects the largest type of the two. The order is:
  * char < short < int < long < float < double.
  */

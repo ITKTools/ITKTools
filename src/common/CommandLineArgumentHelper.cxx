@@ -168,6 +168,96 @@ int GetImageProperties(
 
 
 /** 
+ * ***************** GetImageProperties ************************
+ */
+
+int GetImageProperties(
+  const std::string & filename,
+  std::string & pixeltype,
+  std::string & componenttype,
+  unsigned int & dimension,
+  unsigned int & numberofcomponents,
+  std::vector<unsigned int> & imagesize,
+  std::vector<double> & imagespacing,
+  std::vector<double> & imageoffset )
+{
+  /** Dummy image type. */
+  const unsigned int DummyDimension = 3;
+  typedef short      DummyPixelType;
+  typedef itk::Image< DummyPixelType, DummyDimension >   DummyImageType;
+
+  /** Test reader */
+  typedef itk::ImageFileReader< DummyImageType >     ReaderType;
+
+  /** Image header information class */
+  typedef itk::ImageIOBase                           ImageIOBaseType;
+
+  /** Create a testReader. */
+  ReaderType::Pointer testReader = ReaderType::New();
+  testReader->SetFileName( filename.c_str() );
+
+  /** Generate all information. */
+  try
+  {
+    testReader->GenerateOutputInformation();
+  }
+  catch( itk::ExceptionObject &e )
+  {
+    std::cerr << "Caught ITK exception: " << e << std::endl;
+    return 1;
+  }
+
+  /** Extract the ImageIO from the testReader. */
+  ImageIOBaseType::Pointer testImageIOBase = testReader->GetImageIO();
+
+  /** Get the component type, number of components, dimension and pixel type. */
+  dimension = testImageIOBase->GetNumberOfDimensions();
+  numberofcomponents = testImageIOBase->GetNumberOfComponents();
+  componenttype = testImageIOBase->GetComponentTypeAsString(
+    testImageIOBase->GetComponentType() );
+  ReplaceUnderscoreWithSpace( componenttype );
+  pixeltype = testImageIOBase->GetPixelTypeAsString(
+    testImageIOBase->GetPixelType() );
+
+  /** Get the image size. */
+  imagesize.resize( dimension );
+  imagespacing.resize( dimension );
+  imageoffset.resize( dimension );
+  for ( unsigned int i = 0; i < dimension; i++ )
+  {
+    imagesize[ i ] = testImageIOBase->GetDimensions( i );
+    imagespacing[ i ] = testImageIOBase->GetSpacing( i );
+    imageoffset[ i ] = testImageIOBase->GetOrigin( i );
+  }
+
+  /** Check inputPixelType. */
+  if ( componenttype != "unsigned char"
+    && componenttype != "char"
+    && componenttype != "unsigned short"
+    && componenttype != "short"
+    && componenttype != "unsigned int"
+    && componenttype != "int"
+    && componenttype != "unsigned long"
+    && componenttype != "long"
+    && componenttype != "float"
+    && componenttype != "double" )
+  {
+    /** In this case an illegal pixeltype is found. */
+    std::cerr 
+      << "ERROR while determining image properties!"
+      << "The found componenttype is \""
+      << componenttype
+      << "\", which is not supported." 
+      << std::endl;
+    return 1;
+  }
+
+  return 0;
+
+}
+
+
+/** 
  * *************** GetLargestComponentType ***********************
  */
 
