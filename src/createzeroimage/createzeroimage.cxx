@@ -33,7 +33,7 @@ void PrintHelp( void );
 int main( int argc, char **argv )
 {
   /** Check arguments for help. */
-  if ( argc < 5 || argc > 19 )
+  if ( argc < 2 || argc > 19 )
   {
     PrintHelp();
     return 1;
@@ -44,6 +44,9 @@ int main( int argc, char **argv )
   parser->SetCommandLineArguments( argc, argv );
 
   /** Get arguments. */
+  std::string fileNameIn = "";
+  bool retin = parser->GetCommandLineArgument( "-in", fileNameIn );
+
   std::string fileName = "";
   bool retout = parser->GetCommandLineArgument( "-out", fileName );
 
@@ -68,10 +71,25 @@ int main( int argc, char **argv )
     std::cerr << "ERROR: You should specify \"-out\"." << std::endl;
     return 1;
   }
-  if ( !retsz )
+  if ( (!retsz && !retin ) || ( retsz && retin ) )
   {
-    std::cerr << "ERROR: You should specify \"-sz\"." << std::endl;
+    std::cerr << "ERROR: You should specify either \"-in\" or \"-sz\"." << std::endl;
     return 1;
+  }
+
+  if ( retin )
+  {
+    /** Determine image properties. */
+    std::string dummyPixelType; //we don't use this
+    unsigned int NumberOfComponents = 1;
+    int retgip = GetImageProperties(
+      fileNameIn,
+      dummyPixelType, PixelType, Dimension, NumberOfComponents,
+      size, spacing, origin );
+    if ( retgip != 0 )
+    {
+      return 1;
+    }
   }
 
   /** Get rid of the possible "_" in PixelType. */
@@ -211,6 +229,7 @@ void CreateZeroImage(
 void PrintHelp( void )
 {
   std::cout << "Usage:" << std::endl << "pxcreatezeroimage" << std::endl;
+  std::cout << "  [-in]    inputFilename" << std::endl;
   std::cout << "  -out     outputFilename" << std::endl;
   std::cout << "  -sz      size" << std::endl;
   std::cout << "  [-sp]    spacing" << std::endl;
