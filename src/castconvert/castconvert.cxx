@@ -81,6 +81,7 @@
 #include "itkGE5ImageIOFactory.h"
 #include "itkGEAdwImageIOFactory.h"
 #include "itkBrains2MaskImageIOFactory.h"
+#include "itkPhilipsRECImageIOFactory.h"
 
 /** Functions to do the actual conversion. */
 extern int FileConverterScalar( const std::string &inputPixelComponentType, const std::string &outputPixelComponentType, const std::string &inputFileName, const std::string &outputFileName, const unsigned int inputDimension, bool useCompression );
@@ -109,6 +110,7 @@ int main( int argc, char **argv )
   itk::GE4ImageIOFactory::RegisterOneFactory();
   itk::GE5ImageIOFactory::RegisterOneFactory();
   itk::GEAdwImageIOFactory::RegisterOneFactory();
+  itk::PhilipsRECImageIOFactory::RegisterOneFactory();
 
   /** Get the command line arguments. */
   std::string input = "";
