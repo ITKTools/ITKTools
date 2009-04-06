@@ -1,32 +1,29 @@
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 
-#include <itksys/SystemTools.hxx>
-#include <sstream>
-//#include "itkPCAImageToImageFilter.h"
-
 #include "itkImageFileReader.h"
+#include "itkReshapeImageToImageFilter.h"
 #include "itkImageFileWriter.h"
-
+#include <itksys/SystemTools.hxx>
 //-------------------------------------------------------------------------------------
 
 /** run: A macro to call a function. */
 #define run(function,type,dim) \
-if ( componentType == #type && Dimension == dim ) \
+if ( ComponentTypeIn == #type && Dimension == dim ) \
 { \
-  typedef itk::Image< type, dim > OutputImageType; \
-  function< OutputImageType >( inputFileNames, outputDirectory, numberOfPCs ); \
+  typedef itk::Image< type, dim > ImageType; \
+  function< ImageType >( inputFilename, outputFilename, outputSize ); \
   supported = true; \
 }
 
 //-------------------------------------------------------------------------------------
 
 /** Declare PerformPCA. */
-template< class OutputImageType >
-void PerformPCA(
-  const std::vector< std::string > & inputFileNames,
-  const std::string & outputDirectory,
-  unsigned int numberOfPCs );
+template< class ImageType >
+void Reshape(
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+  const std::vector<unsigned long> & outputSize );
 
 /** Declare other functions. */
 void PrintHelp( void );
@@ -36,7 +33,7 @@ void PrintHelp( void );
 int main( int argc, char **argv )
 {
   /** Check arguments for help. */
-  if ( argc < 4 )
+  if ( argc < 3 )
   {
     PrintHelp();
     return 1;
@@ -47,21 +44,18 @@ int main( int argc, char **argv )
   parser->SetCommandLineArguments( argc, argv );
 
   /** Get arguments. */
-  std::vector<std::string>  inputFileNames( 0, "" );
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileNames );
+  std::string inputFilename = "";
+  bool retin = parser->GetCommandLineArgument( "-in", inputFilename );
 
-  std::string base = itksys::SystemTools::GetFilenamePath( inputFileNames[ 0 ] );
-  if ( base != "" ) base = base + "/";
-  std::string outputDirectory = base;
-  bool retout = parser->GetCommandLineArgument( "-out", outputDirectory );
-  bool endslash = itksys::SystemTools::StringEndsWith( outputDirectory.c_str(), "/" );
-  if ( !endslash ) outputDirectory += "/";
+  std::string base = itksys::SystemTools::GetFilenameWithoutLastExtension(
+    inputFilename );
+  std::string ext  = itksys::SystemTools::GetFilenameLastExtension(
+    inputFilename );
+  std::string outputFilename = base + "_reshaped" + ext;
+  bool retout = parser->GetCommandLineArgument( "-out", outputFilename );
 
-  unsigned int numberOfPCs = inputFileNames.size();
-  bool retnpc = parser->GetCommandLineArgument( "-npc", numberOfPCs );
-
-  std::string componentType = "";
-  bool retpt = parser->GetCommandLineArgument( "-opct", componentType );
+  std::vector<unsigned long> outputSize;
+  bool rets = parser->GetCommandLineArgument( "-s", outputSize );
 
   /** Check if the required arguments are given. */
   if ( !retin )
@@ -69,27 +63,25 @@ int main( int argc, char **argv )
     std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
     return 1;
   }
-
-  /** Check that numberOfOutputs <= numberOfInputs. */
-  if ( numberOfPCs > inputFileNames.size() )
+  if ( !rets )
   {
-    std::cerr << "ERROR: you should specify less than " << inputFileNames.size() << " output pc's." << std::endl;
+    std::cerr << "ERROR: You should specify \"-s\"." << std::endl;
     return 1;
   }
-
+  
   /** Determine image properties. */
   std::string ComponentTypeIn = "short";
   std::string PixelType; //we don't use this
   unsigned int Dimension = 3;
   unsigned int NumberOfComponents = 1;
-  std::vector<unsigned int> imagesize( Dimension, 0 );
+  std::vector<unsigned int> inputSize( Dimension, 0 );
   int retgip = GetImageProperties(
-    inputFileNames[ 0 ],
+    inputFilename,
     PixelType,
     ComponentTypeIn,
     Dimension,
     NumberOfComponents,
-    imagesize );
+    inputSize );
   if ( retgip != 0 )
   {
     return 1;
@@ -99,45 +91,49 @@ int main( int argc, char **argv )
   if ( NumberOfComponents > 1 )
   { 
     std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
-    std::cerr << "Vector images are not supported." << std::endl;
-    return 1; 
+    std::cerr << "  Vector images are not supported." << std::endl;
+    return 1;
   }
 
-  /** The default output is equal to the input, but can be overridden by
-   * specifying -pt in the command line.
-   */
-  if ( !retpt ) componentType = ComponentTypeIn;
-
   /** Get rid of the possible "_" in ComponentType. */
-  ReplaceUnderscoreWithSpace( componentType );
+  ReplaceUnderscoreWithSpace( ComponentTypeIn );
 
+  /** Check dimensions. */
+  if ( inputSize.size() != outputSize.size() )
+  {
+    std::cerr << "ERROR: input and output dimension should be the same.\n";
+    std::cerr << "  Please, specify only " << Dimension
+      << "numbers with \"-s\"." << std::endl;
+    return 1; 
+  }
+  
   /** Run the program. */
   bool supported = false;
   try
   {
-   /* run( PerformPCA, unsigned char, 2 );
-    run( PerformPCA, char, 2 );
-    run( PerformPCA, unsigned short, 2 );
-    run( PerformPCA, short, 2 );
-    run( PerformPCA, unsigned int, 2 );
-    run( PerformPCA, int, 2 );
-    run( PerformPCA, unsigned long, 2 );
-    run( PerformPCA, long, 2 );
-    run( PerformPCA, float, 2 );
-    run( PerformPCA, double, 2 );
+    run( Reshape, unsigned char, 2 );
+    run( Reshape, char, 2 );
+    run( Reshape, unsigned short, 2 );
+    run( Reshape, short, 2 );
+    run( Reshape, unsigned int, 2 );
+    run( Reshape, int, 2 );
+    run( Reshape, unsigned long, 2 );
+    run( Reshape, long, 2 );
+    run( Reshape, float, 2 );
+    run( Reshape, double, 2 );
 
-    run( PerformPCA, unsigned char, 3 );
-    run( PerformPCA, char, 3 );
-    run( PerformPCA, unsigned short, 3 );
-    run( PerformPCA, short, 3 );
-    run( PerformPCA, unsigned int, 3 );
-    run( PerformPCA, int, 3 );
-    run( PerformPCA, unsigned long, 3 );
-    run( PerformPCA, long, 3 );
-    run( PerformPCA, float, 3 );
-    run( PerformPCA, double, 3 );*/
+    /*run( Reshape, unsigned char, 3 );
+    run( Reshape, char, 3 );
+    run( Reshape, unsigned short, 3 );
+    run( Reshape, short, 3 );
+    run( Reshape, unsigned int, 3 );
+    run( Reshape, int, 3 );
+    run( Reshape, unsigned long, 3 );
+    run( Reshape, long, 3 );
+    run( Reshape, float, 3 );
+    run( Reshape, double, 3 );*/
   }
-  catch( itk::ExceptionObject &e )
+  catch ( itk::ExceptionObject & e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
     return 1;
@@ -158,101 +154,59 @@ int main( int argc, char **argv )
 } // end main()
 
 
-  /**
-   * ******************* PerformPCA *******************
-   */
+/**
+ * ******************* Reshape *******************
+ */
 
-template< class OutputImageType >
-void PerformPCA(
-  const std::vector< std::string > & inputFileNames,
-  const std::string & outputDirectory,
-  unsigned int numberOfPCs )
+template< class ImageType >
+void Reshape(
+  const std::string & inputFilename,
+  const std::string & outputFilename,
+  const std::vector<unsigned long> & outputSize )
 {
-  const unsigned int Dimension = OutputImageType::ImageDimension;
-
   /** Typedefs. */
-  typedef itk::Image< double, Dimension >               DoubleImageType;
-  typedef itk::PCAImageToImageFilter<
-    DoubleImageType, OutputImageType >                  PCAEstimatorType;
-  typedef typename PCAEstimatorType::VectorOfDoubleType VectorOfDoubleType;
-  typedef typename PCAEstimatorType::MatrixOfDoubleType MatrixOfDoubleType;
-  typedef itk::ImageFileReader< DoubleImageType >       ReaderType;
-  typedef typename ReaderType::Pointer                  ReaderPointer;
-  typedef itk::ImageFileWriter< OutputImageType >       WriterType;
-  typedef typename WriterType::Pointer                  WriterPointer;
+  typedef itk::ImageFileReader< ImageType >           ReaderType;
+  typedef itk::ReshapeImageToImageFilter< ImageType > ReshapeFilterType;
+  typedef itk::ImageFileWriter< ImageType >           WriterType;
+  typedef typename ReshapeFilterType::SizeType        SizeType;
 
-  /** Get some sizes. */
-  unsigned int noInputs = inputFileNames.size();
-
-  /** Create the PCA estimator. */
-  typename PCAEstimatorType::Pointer pcaEstimator = PCAEstimatorType::New();
-  pcaEstimator->SetNumberOfFeatureImages( noInputs );
-  pcaEstimator->SetNumberOfPrincipalComponentsRequired( numberOfPCs );
-
-  /** For all inputs... */
-  std::vector<ReaderPointer> readers( noInputs );
-  for ( unsigned int i = 0; i < noInputs; ++i )
+  /** Translate vector to SizeType. */
+  SizeType size;
+  for ( unsigned int i = 0; i < outputSize.size(); ++i )
   {
-    /** Read in the input images. */
-    readers[ i ] = ReaderType::New();
-    readers[ i ]->SetFileName( inputFileNames[ i ] );
-    readers[ i ]->Update();
-
-    /** Setup PCA estimator. */
-    pcaEstimator->SetInput( i, readers[ i ]->GetOutput() );
+    size[ i ] = outputSize[ i ];
   }
-
-  /** Do the PCA analysis. */
-  pcaEstimator->Update();
   
-  /** Get eigenvalues and vectors, and print it to screen. */
-  //pcaEstimator->Print( std::cout );
-  VectorOfDoubleType vec = pcaEstimator->GetEigenValues();
-  MatrixOfDoubleType mat = pcaEstimator->GetEigenVectors();
 
-  std::cout << "Eigenvalues: " << std::endl;
-  for ( unsigned int i = 0; i < vec.size(); ++i )
-  {
-    std::cout << vec[ i ] << " ";
-  }
-  std::cout << std::endl;
+  /** Reader. */
+  typename ReaderType::Pointer reader = ReaderType::New();
+  reader->SetFileName( inputFilename.c_str() );
+  
+  /** Reshaper. */
+  typename ReshapeFilterType::Pointer reshaper = ReshapeFilterType::New();
+  reshaper->SetInput( reader->GetOutput() );
+  reshaper->SetOutputSize( size );
+  reshaper->Update();
 
-  std::cout << "Eigenvectors: " << std::endl;
-  for ( unsigned int i = 0; i < vec.size(); ++i )
-  {
-    std::cout << mat.get_row( i ) << std::endl;
-  }
+  /** Writer. */
+  typename WriterType::Pointer writer = WriterType::New();
+  writer->SetFileName( outputFilename.c_str() );
+  writer->SetInput( reshaper->GetOutput() );
+  writer->Update();
 
-  /** Setup and process the pipeline. */
-  unsigned int noo = pcaEstimator->GetNumberOfOutputs();
-  std::vector<WriterPointer> writers( noo );
-  for ( unsigned int i = 0; i < noo; ++i )
-  {
-    /** Create output filename. */
-    std::ostringstream makeFileName( "" );
-    makeFileName << outputDirectory << "pc" << i << ".mhd";
-
-    /** Write principal components. */
-    writers[ i ] = WriterType::New();
-    writers[ i ]->SetFileName( makeFileName.str().c_str() );
-    writers[ i ]->SetInput( pcaEstimator->GetOutput( i ) );
-    writers[ i ]->Update();
-  }
-
-} // end PerformPCA()
+} // end Reshape()
 
 
-  /**
-   * ******************* PrintHelp *******************
-   */
+/**
+ * ******************* PrintHelp *******************
+ */
 
 void PrintHelp( void )
 {
   std::cout << "Usage:" << std::endl << "pxpca" << std::endl;
-  std::cout << "  -in      inputFilenames" << std::endl;
-  std::cout << "  [-out]   outputDirectory, default equal to the inputFilename directory" << std::endl;
-  std::cout << "  [-opc]   the number of principal components that you want to output, default all" << std::endl;
-  std::cout << "  [-opct]  output pixel component type, default derived from the input image" << std::endl;
+  std::cout << "  -in      inputFilename" << std::endl;
+  std::cout << "  [-out]   outputFileName, default inputFileName_reshaped" << std::endl;
+  std::cout << "  -s       size of the output image" << std::endl;
   std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
 
 } // end PrintHelp()

@@ -36,15 +36,34 @@ public:
   /** Image dimension. */
   itkStaticConstMacro( ImageDimension, unsigned int, TInputImage::ImageDimension );
 
-  /** Typedef's. */
-  typedef TInputImage                               InputImageType;
-  typedef typename InputImageType::Pointer          InputImagePointer;
-  typedef typename InputImageType::ConstPointer     InputImageConstPointer;
-  typedef typename InputImageType::PixelType        InputImagePixelType;
-  typedef ImageRegion< ImageDimension >             ImageRegionType;
+  /** Typedefs from Superclass. */
+  typedef typename Superclass::InputImageType         ImageType;
+  typedef typename Superclass::InputImagePointer      ImagePointer;
+  typedef typename Superclass::InputImageConstPointer ImageConstPointer;
+  typedef typename Superclass::InputImageRegionType   ImageRegionType;
+  typedef typename Superclass::InputImagePixelType    ImagePixelType;
+
+  typedef typename ImageRegionType::SizeType          SizeType;
 
   /***/
-  itkSetObjectMacro( OutputRegion );
+  itkSetMacro( OutputSize, SizeType );
+
+  /** FlipImageFilter produces an image with different origin and
+   * direction than the input image. As such, FlipImageFilter needs to
+   * provide an implementation for GenerateOutputInformation() in
+   * order to inform the pipeline execution model.  The original
+   * documentation of this method is below.
+   * \sa ProcessObject::GenerateOutputInformaton()
+   */
+  virtual void GenerateOutputInformation();
+
+  /** FlipImageFilter needs different input requested region than the output
+   * requested region.  As such, FlipImageFilter needs to provide an
+   * implementation for GenerateInputRequestedRegion() in order to inform the
+   * pipeline execution model.
+   * \sa ProcessObject::GenerateInputRequestedRegion()
+   *
+  virtual void GenerateInputRequestedRegion();*/
 
 protected:
 
@@ -60,19 +79,21 @@ protected:
   /** This filter must produce all of the outputs at once, as such it
    * must override the EnlargeOutputRequestedRegion method to enlarge the 
    * output request region.
-   */
+   *
   virtual void EnlargeOutputRequestedRegion( DataObject * );
 
-  /** Starts the image modelling process. */
-  void GenerateData( void );
-
+  /** Performs the image reshaping process. */
+  virtual void GenerateData( void );
+//   virtual void ThreadedGenerateData(
+//     const OutputImageRegionType & outputRegionForThread,
+//     int threadId 
 private:
 
   ReshapeImageToImageFilter( const Self& ); // purposely not implemented
   void operator=( const Self& );        // purposely not implemented
   
   /** Private variables. */
-  ImageRegionType   m_OutputRegion;
+  SizeType  m_OutputSize;
 
 }; // end class ReshapeImageToImageFilter
 
