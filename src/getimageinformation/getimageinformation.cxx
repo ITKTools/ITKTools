@@ -36,6 +36,7 @@ int main( int argc, char **argv )
   bool exnoc = parser->ArgumentExists( "-noc" );
   bool exsz = parser->ArgumentExists( "-sz" );
   bool exsp = parser->ArgumentExists( "-sp" );
+  bool exvol = parser->ArgumentExists( "-vol" );
   bool exo = parser->ArgumentExists( "-o" );
   bool exall = parser->ArgumentExists( "-all" );
 
@@ -153,6 +154,20 @@ int main( int argc, char **argv )
       return 0;
     }
 
+    /** Print image voxel volume. */
+    std::cout << std::fixed;
+    std::cout << std::setprecision( 6 );
+    if ( exvol )
+    {
+      double volume = 1.0;
+      for ( unsigned int i = 0; i < dim; i++ )
+      {
+        volume *= testImageIOBase->GetSpacing( i );
+      }
+      std::cout << volume;
+      return 0;
+    }
+
     /** Print image origin. */
     if ( exo )
     {
@@ -234,6 +249,7 @@ void PrintHelp()
   std::cout << "  [-noc]   #components" << std::endl;
   std::cout << "  [-sz]    size" << std::endl;
   std::cout << "  [-sp]    spacing" << std::endl;
+  std::cout << "  [-vol]   voxel volume" << std::endl;
   std::cout << "  [-o]     origin" << std::endl;
   std::cout << "  [-all]   all of the above" << std::endl;
   std::cout << "Image information about the inputFileName is printed to screen." << std::endl;
