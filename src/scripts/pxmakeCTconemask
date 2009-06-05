@@ -4,14 +4,13 @@
 if [ $# = 0 ]
 then
 echo
-echo "makeCTconemask script" 
+echo "makeCTconemask filename"
 echo
-echo "Make a mask that covers the ct-cone for a specific .vpx or .mhd image."
-echo "The resulting image is saved as filenamemask.vpx/.mhd."
+echo "Make a mask that covers the CT-cone for a specific image."
 echo
 echo "Usage:"
 echo
-echo "makeCTconemask <filename.vpx/mhd>"
+echo "makeCTconemask <filename.mhd>"
 echo
 echo "3D images are expected."
 echo
@@ -22,60 +21,22 @@ images=`ls $*`
 
 for im in $images
 do
+	base=${im%.*}
+	ext=${im##*.}
+	maskname=$base"_mask."$ext
 
+	dimx=`pxgetimageinformation -in $im -sz -i 0`
+	dimy=`pxgetimageinformation -in $im -sz -i 1`
+	dimz=`pxgetimageinformation -in $im -sz -i 2`
+	spx=`pxgetimageinformation -in $im -sp -i 0`
 
-imname=${im%.*}
-extension=${im##*.}
-masknamevpx="$imname""mask.vpx"
-masknamevhd="$imname""mask.vhd"
-masknameshortvpx="$imname""shortmask.vpx"
-masknameshortvhd="$imname""shortmask.vhd"
-masknamemhd="$imname""mask.mhd"
-masknameraw="$imname""mask.raw"
-masknamerawwithoutpath=${masknameraw##*/}
+	centerx=`echo $dimx/2-1 | bc`
+	centery=`echo $dimy/2-1 | bc`
+	centerz=`echo $dimz/2-1 | bc`
+	radius=`echo "($dimx/2-1)*$spx" | bc`
 
-if [ "$extension" = "vpx" ]
-then
-  dimx=`header -dim 0 $im`
-  dimy=`header -dim 1 $im`
-  dimz=`header -dim 2 $im`
-fi
-
-if [ "$extension" = "mhd" ]
-then
-  dimensions=`less $im | grep DimSize |cut -f2 -d"="`
-	dimx=`echo $dimensions | cut -f1 -d" "`
-	dimy=`echo $dimensions | cut -f2 -d" "`
-	dimz=`echo $dimensions | cut -f3 -d" "`
-fi
-
-# we could do this with "let" also
-radius=`echo $dimx/2-1 |bc`
-center=`echo $dimx/2-1 |bc`
-lastslice=`echo $dimz-1 |bc`
-
-things -x $dimx -y $dimy -z $dimz -depth 0 cy=$center:$center:0:$center:$center:$lastslice:$radius:1 $masknameshortvpx
-
-dido -ubit8 $masknameshortvpx $masknamevpx
-rm $masknameshortvpx $masknameshortvhd $masknamevhd
-
-
-if [ "$extension" = "mhd" ]
-then
-	pxvpx2mhd $masknamevpx
-	rm $masknamevpx
-  # added for marius:
-	rm $masknamemhd
-  less $im | grep -v ElementDataFile | grep -v ElementType > $masknamemhd
-  echo "ElementType = MET_UCHAR" >> $masknamemhd
-  echo "ElementDataFile = "$masknamerawwithoutpath >> $masknamemhd
-
-# tot hier
-	echo "Mask saved as $masknamemhd."
-else
-  echo "Mask saved as $masknamevpx."
-fi
-
+	pxcreatecylinder -in $im -out $maskname -c $centerx $centery $centerz -r $radius
+	pxcompressimage $maskname
 
 done
 
