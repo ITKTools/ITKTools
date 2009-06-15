@@ -20,10 +20,12 @@ SUBDIRS(
  contrastenhanceimage
  countnonzerovoxels
  createbox
+ createcylinder
  createellipsoid
  creategridimage
+ # createimage
  createpointsinimage
- createrandomimage
+ #createrandomimage
  createsimplebox
  createsphere
  createzeroimage
@@ -56,7 +58,7 @@ SUBDIRS(
  reflect
  replacevoxel
  rescaleintensityimagefilter
- #reshape
+ reshape
  resizeimage
  scripts
  segmentationdistance
