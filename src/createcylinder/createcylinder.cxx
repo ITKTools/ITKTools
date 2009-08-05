@@ -146,7 +146,7 @@ void CreateCylinder(
   typedef typename OutputImageType::PointType   PointType;
 
   /** Create a testReader. */
-  ReaderType::Pointer testReader = ReaderType::New();
+  typename ReaderType::Pointer testReader = ReaderType::New();
   testReader->SetFileName( inputFileName.c_str() );
   testReader->Update();
 
