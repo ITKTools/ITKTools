@@ -2,23 +2,45 @@
  * from which the seriesUID's are extracted.
  */
 
+#include "itkCommandLineArgumentParser.h"
 #include <iostream>
 #include <itksys/SystemTools.hxx>
 #include "itkGDCMSeriesFileNames.h"
 
+/** PrintHelp. */
+void PrintHelp( void )
+{
+  std::cout << "Usage:\npxgetDICOMseriesUIDs\n";
+  std::cout << "  -in      inputDirectoryName\n";
+  std::cout << "  [-r]     add restrictions to generate a unique seriesUID\n";
+  std::cout << "           e.g. \"0020|0012\" to add a check for acquisition "
+    << "number." << std::endl;
+
+} // end PrintHelp()
+
+
+
+//-------------------------------------------------------------------------------------
+
 int main( int argc, char **argv )
 {
-  std::string firstarg = "";
-  if ( argc > 1 ) firstarg = argv[ 1 ];
-  
-  /** Check arguments. */
-  if ( argc != 2 || firstarg == "--help" )
+  /** Check arguments for help. */
+  if ( argc < 3 )
   {
-    std::cout << "Usage:" << std::endl;
-    std::cout << "pxgetDICOMseriesUIDs inputDirectoryName" << std::endl;
+    PrintHelp();
     return 1;
   }
-  std::string inputDirectoryName = argv[ 1 ];
+
+  /** Create a command line argument parser. */
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
+
+  /** Get arguments. */
+  std::string inputDirectoryName;
+  bool retin = parser->GetCommandLineArgument( "-in", inputDirectoryName );
+
+  std::vector<std::string> restrictions;
+  bool retr = parser->GetCommandLineArgument( "-r", restrictions );
 
   /** Make sure last character of inputDirectoryName != "/".
    * Otherwise FileIsDirectory() won't work.
@@ -45,6 +67,10 @@ int main( int argc, char **argv )
   /** Get the seriesUIDs from the DICOM directory. */
   GDCMNamesGeneratorType::Pointer nameGenerator = GDCMNamesGeneratorType::New();
   nameGenerator->SetUseSeriesDetails( true );
+  for ( unsigned int i = 0; i < restrictions.size(); ++i )
+  {
+    nameGenerator->AddSeriesRestriction( restrictions[ i ] );
+  }
   nameGenerator->SetInputDirectory( inputDirectoryName.c_str() );
   FileNamesContainerType seriesNames = nameGenerator->GetSeriesUIDs();
 
@@ -62,7 +88,7 @@ int main( int argc, char **argv )
     std::cout << seriesNames[ i ] << std::endl;
   }
 
-  /** End  program. Return succes. */
+  /** End  program. Return success. */
   return 0;
 
 }  // end main

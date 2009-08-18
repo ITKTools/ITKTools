@@ -6,21 +6,23 @@
 #############################################################################
 
 # Argument parsing
-if [ "$#" -gt "6" ] || [ "$#" -lt "4" ] || [ "$1" == "--help" ]
+if [ "$#" -gt "8" ] || [ "$#" -lt "4" ] || [ "$1" == "--help" ]
 then
 	echo "Usage: pxgetAllDICOMseries"
-  echo " -i\tdicomDirectoryName"
-	echo " -o\toutputbasename"
-	echo " [-p]\toutputPixelComponentType"
+  echo " -i    dicomDirectoryName"
+	echo " -o    outputbasename"
+	echo " [-p]  outputPixelComponentType"
+	echo " [-r]  restrictions"
 	exit 1
 fi
 
-while getopts "i:o:p:" argje
+while getopts "i:o:p:r:" argje
 do
 	case $argje in
 		i ) dicomDir="$OPTARG";;
 		o ) outbase="$OPTARG";;
 		p ) opct="$OPTARG";;
+		r ) res="$OPTARG";;
 		* ) echo "ERROR: Wrong arguments"; exit 1;;
 	esac
 done
@@ -35,14 +37,12 @@ then
 fi
 
 # Get a list of all series in this directory
-# We cannot use the following line on windows, because it gives anoying ^M carriage returns:
-#serieslist=`pxgetDICOMseriesUIDs $dicomDir`
-# Therefore, we use the following 5 lines:
-tmpout="out_tmp14031977.txt"
-pxgetDICOMseriesUIDs $dicomDir &> $tmpout
-dos2unix $tmpout
-serieslist=`less $tmpout`
-rm $tmpout
+if [[ $res == "" ]]
+then
+	serieslist=`pxgetDICOMseriesUIDs -in $dicomDir | dos2unix`
+else
+	serieslist=`pxgetDICOMseriesUIDs -in $dicomDir -r $res | dos2unix`
+fi
 
 # Check if not an empty list
 if [ "$serieslist" == "" ]
@@ -60,13 +60,13 @@ do
 	# Create an outputname
 	out=$outbase$number".mhd"
 
+	# Get the arguments
+	args="-in "$dicomDir" -out "$out" -s $series"
+	if [ "$opct" != "" ]; then args=$args" -opct "$opct; fi
+	if [ "$res"  != "" ]; then args=$args" -r "$res; fi
+
 	# Get the DICOM series and write to $out
-	if [ "$opct" == "" ]
-	then
-		pxcastconvert -in $dicomDir -out $out -s $series
-	else
-		pxcastconvert -in $dicomDir -out $out -opct $opct -s $series
-	fi
+	pxcastconvert $args
 
 	# Increase iteration number
 	let "i += 1"

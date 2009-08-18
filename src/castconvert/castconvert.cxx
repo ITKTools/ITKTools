@@ -72,6 +72,7 @@
 
 #include <iostream>
 #include "castconverthelpers2.h"
+#include "CommandLineArgumentHelper.h"
 
 #include "itkImageFileReader.h"
 #include "itkGDCMImageIO.h"
@@ -84,10 +85,35 @@
 #include "itkPhilipsRECImageIOFactory.h"
 
 /** Functions to do the actual conversion. */
-extern int FileConverterScalar( const std::string &inputPixelComponentType, const std::string &outputPixelComponentType, const std::string &inputFileName, const std::string &outputFileName, const unsigned int inputDimension, bool useCompression );
-extern int DicomFileConverterScalarA( const std::string &inputPixelComponentType, const std::string &outputPixelComponentType, const std::string &inputDirectoryName, const std::string &seriesUID, const std::string &outputFileName, const unsigned int inputDimension, bool useCompression );
-extern int DicomFileConverterScalarB( const std::string &inputPixelComponentType, const std::string &outputPixelComponentType, const std::string &inputDirectoryName, const std::string &seriesUID, const std::string &outputFileName, const unsigned int inputDimension, bool useCompression );
-extern int FileConverterMultiComponent( const std::string &inputPixelComponentType, const std::string &outputPixelComponentType, const unsigned int numberOfComponents, const std::string &inputFileName, const std::string &outputFileName, const unsigned int inputDimension, bool useCompression );
+extern int FileConverterScalar(
+  const std::string & inputPixelComponentType,
+  const std::string & outputPixelComponentType,
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+  const unsigned int inputDimension, bool useCompression );
+extern int DicomFileConverterScalarA(
+  const std::string & inputPixelComponentType,
+  const std::string & outputPixelComponentType,
+  const std::string & inputDirectoryName,
+  const std::string & seriesUID,
+  const std::vector<std::string> & restrictions,
+  const std::string & outputFileName,
+  const unsigned int inputDimension, bool useCompression );
+extern int DicomFileConverterScalarB(
+  const std::string & inputPixelComponentType,
+  const std::string & outputPixelComponentType,
+  const std::string & inputDirectoryName,
+  const std::string & seriesUID,
+  const std::vector<std::string> & restrictions,
+  const std::string & outputFileName,
+  const unsigned int inputDimension, bool useCompression );
+extern int FileConverterMultiComponent(
+  const std::string & inputPixelComponentType,
+  const std::string & outputPixelComponentType,
+  const unsigned int numberOfComponents,
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+  const unsigned int inputDimension, bool useCompression );
 
 //-------------------------------------------------------------------------------------
 
@@ -117,10 +143,12 @@ int main( int argc, char **argv )
   std::string outputFileName = "";
   std::string outputPixelComponentType = "";
   std::string seriesUID = "";
+  std::vector<std::string> restrictions;
   std::string errorMessage = "";
   bool useCompression = false;
-  int returnValue1 = GetCommandLineArguments( argc, argv, errorMessage,
-    input, outputFileName, outputPixelComponentType, seriesUID, useCompression );
+  int returnValue1 = GetCommandLineArguments( argc, argv,
+    errorMessage, input, outputFileName, outputPixelComponentType,
+    seriesUID, restrictions, useCompression );
   if ( returnValue1 )
   {
     std::cout << errorMessage << std::endl;
@@ -168,7 +196,8 @@ int main( int argc, char **argv )
   else
   {
     std::string fileName = "";
-    int returnValue3 = GetFileNameFromDICOMDirectory( seriesUID, inputDirectoryName, errorMessage, fileName );
+    int returnValue3 = GetFileNameFromDICOMDirectory(
+      inputDirectoryName, fileName, seriesUID, restrictions, errorMessage );
     if ( returnValue3 )
     {
       std::cout << errorMessage << std::endl;
@@ -240,17 +269,8 @@ int main( int argc, char **argv )
   }
 
   /** Get rid of the "_" in inputPixelComponentType and outputPixelComponentType. */
-  std::basic_string<char>::size_type pos = inputPixelComponentType.find( "_" );
-  static const std::basic_string<char>::size_type npos = std::basic_string<char>::npos;
-  if ( pos != npos )
-  {
-    inputPixelComponentType.replace( pos, 1, " " );
-  }
-  pos = outputPixelComponentType.find( "_" );
-  if ( pos != npos )
-  {
-    outputPixelComponentType.replace( pos, 1, " " );
-  }
+  ReplaceUnderscoreWithSpace( inputPixelComponentType );
+  ReplaceUnderscoreWithSpace( outputPixelComponentType );
 
   /** TASK 4:
    * Now we are ready to check on image type and subsequently call the
@@ -311,10 +331,12 @@ int main( int argc, char **argv )
       {
         const int ret_value = DicomFileConverterScalarA(
           inputPixelComponentType, outputPixelComponentType,
-          inputDirectoryName, seriesUID, outputFileName, inputDimension, useCompression )
+          inputDirectoryName, seriesUID, restrictions,
+          outputFileName, inputDimension, useCompression )
           || DicomFileConverterScalarB(
           inputPixelComponentType, outputPixelComponentType,
-          inputDirectoryName, seriesUID, outputFileName, inputDimension, useCompression );
+          inputDirectoryName, seriesUID, restrictions,
+          outputFileName, inputDimension, useCompression );
         if ( ret_value != 0 )
         {
           return ret_value;

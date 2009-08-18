@@ -25,38 +25,49 @@
  * ******************* PrintHelp *******************
  */
 
-void PrintHelp()
+void PrintHelp( void )
 {
-  std::cout << "Usage:" << std::endl << "pxcastconvert" << std::endl;
-  std::cout << "  -in      inputfilename" << std::endl;
-  std::cout << "  -out     outputfilename" << std::endl;
-  std::cout << "  [-opct]  outputPixelComponentType" << std::endl;
-  std::cout << "  [-z]     compression flag; if provided, the output image is compressed" << std::endl;
-  std::cout << "OR pxcastconvert" << std::endl;
-  std::cout << "  -in      dicomDirectory" << std::endl;
-  std::cout << "  -out     outputfilename" << std::endl;
-  std::cout << "  [-opct]  outputPixelComponentType" << std::endl;
-  std::cout << "  [-s]     seriesUID" << std::endl;
-  std::cout << "  [-z]     compression flag; if provided, the output image is compressed" << std::endl;
-  std::cout << "where outputPixelComponentType is one of:" << std::endl;
-  std::cout << "  [unsigned_]char, [unsigned_]short, [unsigned_]int," << std::endl;
-  std::cout << "  [unsigned_]long, float, double," << std::endl;
-  std::cout << "provided that the outputPixelComponentType is supported by the output file format." << std::endl;
-  std::cout << "By default the outputPixelComponentType is set to the inputPixelComponentType." << std::endl;
-  std::cout << "By default the seriesUID is the first UID found." << std::endl;
-  std::cout << "The compression flag \"-z\" may be ignored by some output image formats." << std::endl;
+  std::cout << "Usage:" << std::endl << "pxcastconvert\n";
+  std::cout << "  -in      inputfilename\n";
+  std::cout << "  -out     outputfilename\n";
+  std::cout << "  [-opct]  outputPixelComponentType\n";
+  std::cout << "  [-z]     compression flag; if provided, the output image "
+    << "is compressed\n";
+  std::cout << "OR pxcastconvert\n";
+  std::cout << "  -in      dicomDirectory\n";
+  std::cout << "  -out     outputfilename\n";
+  std::cout << "  [-opct]  outputPixelComponentType\n";
+  std::cout << "  [-s]     seriesUID\n";
+  std::cout << "  [-r]     add restrictions to generate a unique seriesUID\n";
+  std::cout << "           e.g. \"0020|0012\" to add a check for acquisition number.\n";
+  std::cout << "  [-z]     compression flag; if provided, the output image "
+    << "is compressed\n";
+  std::cout << "where outputPixelComponentType is one of:\n";
+  std::cout << "  [unsigned_]char, [unsigned_]short, [unsigned_]int,\n";
+  std::cout << "  [unsigned_]long, float, double,\n";
+  std::cout << "provided that the outputPixelComponentType is supported by "
+    << "the output file format.\n";
+  std::cout << "By default the outputPixelComponentType is set to the "
+    << "inputPixelComponentType.\n";
+  std::cout << "By default the seriesUID is the first UID found.\n";
+  std::cout << "The compression flag \"-z\" may be ignored by some output "
+    << "image formats." << std::endl;
 
-
-} // end PrintHelp
+} // end PrintHelp()
 
 
 /**
  * ******************* GetCommandLineArguments *******************
  */
 
-int GetCommandLineArguments( int argc, char **argv, std::string & errorMessage,
-  std::string & input, std::string & outputFileName,
-  std::string & outputPixelComponentType, std::string & seriesUID, bool & useCompression )
+int GetCommandLineArguments( int argc, char **argv,
+  std::string & errorMessage,
+  std::string & input,
+  std::string & outputFileName,
+  std::string & outputPixelComponentType,
+  std::string & seriesUID,
+  std::vector<std::string> & restrictions,
+  bool & useCompression )
 {
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
@@ -67,6 +78,7 @@ int GetCommandLineArguments( int argc, char **argv, std::string & errorMessage,
   bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
   bool retopct = parser->GetCommandLineArgument( "-opct", outputPixelComponentType );
   bool rets = parser->GetCommandLineArgument( "-s", seriesUID );
+  bool retr = parser->GetCommandLineArgument( "-r", restrictions );
   useCompression = parser->ArgumentExists( "-z" );
 
   /** Check if necessary command line arguments are available. */
@@ -103,7 +115,7 @@ int GetCommandLineArguments( int argc, char **argv, std::string & errorMessage,
   /** Return a value. */
   return 0;
 
-} // end GetCommandLineArguments
+} // end GetCommandLineArguments()
 
 
 /**
@@ -136,15 +148,19 @@ int IsDICOM( std::string & input, std::string & errorMessage, bool & isDICOM )
   /** Return a value. */
   return 0;
 
-} // end IsDICOM
+} // end IsDICOM()
 
 
 /**
  * ******************* GetFileNameFromDICOMDirectory *******************
  */
 
-int GetFileNameFromDICOMDirectory( std::string & seriesUID, std::string & inputDirectoryName,
-  std::string & errorMessage, std::string & fileName )
+int GetFileNameFromDICOMDirectory(
+  const std::string & inputDirectoryName,
+  std::string & fileName,
+  const std::string & seriesUID,
+  const std::vector<std::string> & restrictions,
+  std::string & errorMessage )
 {
   typedef itk::GDCMSeriesFileNames                GDCMNamesGeneratorType;
   typedef std::vector< std::string >              FileNamesContainerType;
@@ -152,6 +168,10 @@ int GetFileNameFromDICOMDirectory( std::string & seriesUID, std::string & inputD
   /** Create vector of filenames from the DICOM directory. */
   GDCMNamesGeneratorType::Pointer nameGenerator = GDCMNamesGeneratorType::New();
   nameGenerator->SetUseSeriesDetails( true );
+  for ( unsigned int i = 0; i < restrictions.size(); ++i )
+  {
+    nameGenerator->AddSeriesRestriction( restrictions[ i ] );
+  }
   nameGenerator->SetInputDirectory( inputDirectoryName.c_str() );
 
   /** The short and fast way. */
@@ -194,7 +214,7 @@ int GetFileNameFromDICOMDirectory( std::string & seriesUID, std::string & inputD
   /** Return a value. */
   return 0;
 
-} // end GetFileNameFromDICOMDirectory
+} // end GetFileNameFromDICOMDirectory()
 
 
 #endif //__castconverthelpers2_h__

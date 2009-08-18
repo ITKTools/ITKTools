@@ -37,7 +37,8 @@
 
 /** Print image information from the reader and the writer. */
 template< class ReaderType, class WriterType >
-void PrintInfo( ReaderType reader, WriterType writer )
+void
+PrintInfo( ReaderType reader, WriterType writer )
 {
   /** Typedef's. */
   typedef itk::ImageIOBase                        ImageIOBaseType;
@@ -49,9 +50,11 @@ void PrintInfo( ReaderType reader, WriterType writer )
   ImageIORegionType iORegionIn = imageIOBaseIn->GetIORegion();
 
   const char * fileNameIn = imageIOBaseIn->GetFileName();
-  std::string pixelTypeIn = imageIOBaseIn->GetPixelTypeAsString( imageIOBaseIn->GetPixelType() );
+  std::string pixelTypeIn = imageIOBaseIn->GetPixelTypeAsString(
+    imageIOBaseIn->GetPixelType() );
   unsigned int nocIn = imageIOBaseIn->GetNumberOfComponents();
-  std::string componentTypeIn = imageIOBaseIn->GetComponentTypeAsString( imageIOBaseIn->GetComponentType() );
+  std::string componentTypeIn = imageIOBaseIn->GetComponentTypeAsString(
+    imageIOBaseIn->GetComponentType() );
   unsigned int dimensionIn = imageIOBaseIn->GetNumberOfDimensions();
   SizeType sizeIn = iORegionIn.GetSize();
 
@@ -60,9 +63,11 @@ void PrintInfo( ReaderType reader, WriterType writer )
   ImageIORegionType iORegionOut = imageIOBaseOut->GetIORegion();
 
   const char * fileNameOut = imageIOBaseOut->GetFileName();
-  std::string pixelTypeOut = imageIOBaseOut->GetPixelTypeAsString( imageIOBaseOut->GetPixelType() );
+  std::string pixelTypeOut = imageIOBaseOut->GetPixelTypeAsString(
+    imageIOBaseOut->GetPixelType() );
   unsigned int nocOut = imageIOBaseOut->GetNumberOfComponents();
-  std::string componentTypeOut = imageIOBaseOut->GetComponentTypeAsString( imageIOBaseOut->GetComponentType() );
+  std::string componentTypeOut = imageIOBaseOut->GetComponentTypeAsString(
+    imageIOBaseOut->GetComponentType() );
   unsigned int dimensionOut = imageIOBaseOut->GetNumberOfDimensions();
   SizeType sizeOut = iORegionOut.GetSize();
   std::string useCompression = "false";
@@ -72,37 +77,43 @@ void PrintInfo( ReaderType reader, WriterType writer )
   }
 
   /** Print information. */
-  std::cout << "Information about the input image \"" << fileNameIn << "\":" << std::endl;
-  std::cout << "\tdimension:\t\t" << dimensionIn << std::endl;
-  std::cout << "\tpixel type:\t\t" << pixelTypeIn << std::endl;
-  std::cout << "\tnumber of components:\t" << nocIn << std::endl;
-  std::cout << "\tcomponent type:\t\t" << componentTypeIn << std::endl;
+  std::cout << "Information about the input image \"" << fileNameIn << "\":\n";
+  std::cout << "\tdimension:\t\t" << dimensionIn << "\n";
+  std::cout << "\tpixel type:\t\t" << pixelTypeIn << "\n";
+  std::cout << "\tnumber of components:\t" << nocIn << "\n";
+  std::cout << "\tcomponent type:\t\t" << componentTypeIn << "\n";
   std::cout << "\tsize:\t\t\t";
   for ( unsigned int i = 0; i < dimensionIn; i++ ) std::cout << sizeIn[ i ] << " ";
   std::cout << std::endl;
 
   /** Print information. */
   std::cout << std::endl;
-  std::cout << "Information about the output image \"" << fileNameOut << "\":" << std::endl;
-  std::cout << "\tdimension:\t\t" << dimensionOut << std::endl;
-  std::cout << "\tpixel type:\t\t" << pixelTypeOut << std::endl;
-  std::cout << "\tnumber of components:\t" << nocOut << std::endl;
-  std::cout << "\tcomponent type:\t\t" << componentTypeOut << std::endl;
-  std::cout << "\tuse compression:\t" << useCompression << std::endl;
+  std::cout << "Information about the output image \"" << fileNameOut << "\":\n";
+  std::cout << "\tdimension:\t\t" << dimensionOut << "\n";
+  std::cout << "\tpixel type:\t\t" << pixelTypeOut << "\n";
+  std::cout << "\tnumber of components:\t" << nocOut << "\n";
+  std::cout << "\tcomponent type:\t\t" << componentTypeOut << "\n";
+  std::cout << "\tuse compression:\t" << useCompression << "\n";
   std::cout << "\tsize:\t\t\t";
   for ( unsigned int i = 0; i < dimensionOut; i++ ) std::cout << sizeOut[ i ] << " ";
   std::cout << std::endl;
 
+}  // end PrintInfo()
 
-}  // end PrintInfo
 
 /** The function that reads the input dicom image and writes the output image.
  * This function is templated over the image types. In the main function
  * we have to make sure to call the right instantiation.
  */
+
 template< class InputImageType, class OutputImageType >
-void ReadDicomSeriesCastWriteImage( std::string inputDirectoryName,
-  std::string outputFileName, std::string seriesUID, bool useCompression )
+void
+ReadDicomSeriesCastWriteImage(
+  const std::string & inputDirectoryName,
+  const std::string & outputFileName,
+  const std::string & seriesUID,
+  const std::vector<std::string> & restrictions,
+  const bool & useCompression )
 {
   /** Typedef the correct reader, caster and writer. */
   typedef typename itk::ImageSeriesReader< InputImageType >     SeriesReaderType;
@@ -123,8 +134,11 @@ void ReadDicomSeriesCastWriteImage( std::string inputDirectoryName,
   /** Get a list of the filenames of the 2D input dicom images. */
   GDCMNamesGeneratorType::Pointer nameGenerator = GDCMNamesGeneratorType::New();
   nameGenerator->SetUseSeriesDetails( true );
+  for ( unsigned int i = 0; i < restrictions.size(); ++i )
+  {
+    nameGenerator->AddSeriesRestriction( restrictions[ i ] );
+  }
   nameGenerator->SetInputDirectory( inputDirectoryName.c_str() );
-  //FileNamesContainerType fileNames = nameGenerator->GetInputFileNames();
   FileNamesContainerType fileNames = nameGenerator->GetFileNames( seriesUID );
 
   /** Create and setup the seriesReader. */
@@ -151,15 +165,20 @@ void ReadDicomSeriesCastWriteImage( std::string inputDirectoryName,
   /**  Print  information. */
   PrintInfo( seriesReader, writer );
 
-}  // end ReadDicomSeriesCastWriteImage
+}  // end ReadDicomSeriesCastWriteImage()
 
 
 /** The function that reads the input image and writes the output image.
  * This function is templated over the image types. In the main function
  * we have to make sure to call the right instantiation.
  */
+
 template< class InputImageType, class OutputImageType >
-void ReadCastWriteImage( std::string inputFileName, std::string outputFileName, bool useCompression )
+void
+ReadCastWriteImage(
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+  const bool & useCompression )
 {
   /**  Typedef the correct reader, caster and writer. */
   typedef typename itk::ImageFileReader< InputImageType >     ImageReaderType;
@@ -192,15 +211,20 @@ void ReadCastWriteImage( std::string inputFileName, std::string outputFileName, 
   /** Print information. */
   PrintInfo( reader, writer );
 
-}  // end ReadWriteImage
+}  // end ReadWriteImage()
 
 
 /** The function that reads the input vector image and writes the vector output image.
  * This function is templated over the image types. In the main function
  * we have to make sure to call the right instantiation.
  */
+
 template< class InputImageType, class OutputImageType >
-void ReadCastWriteVectorImage( std::string inputFileName, std::string outputFileName, bool useCompression )
+void
+ReadCastWriteVectorImage(
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+  const bool & useCompression )
 {
   /**  Typedef the correct reader, caster and writer. */
   typedef typename itk::ImageFileReader< InputImageType >     ImageReaderType;
@@ -229,7 +253,7 @@ void ReadCastWriteVectorImage( std::string inputFileName, std::string outputFile
   /** Print information. */
   PrintInfo( reader, writer );
 
-}  // end ReadWriteImage
+}  // end ReadWriteImage()
 
 
 /** Macros are used in order to make the code in main() look cleaner. */
@@ -242,31 +266,37 @@ void ReadCastWriteVectorImage( std::string inputFileName, std::string outputFile
 { \
   typedef  itk::Image< typeIn, 3 >    InputImageType; \
   typedef  itk::Image< typeOut, 3 >  OutputImageType; \
-  ReadDicomSeriesCastWriteImage< InputImageType, OutputImageType >( inputDirectoryName, outputFileName, seriesUID, useCompression ); \
+  ReadDicomSeriesCastWriteImage< InputImageType, OutputImageType >( \
+    inputDirectoryName, outputFileName, seriesUID, restrictions, useCompression ); \
 }
 
 /** callCorrectReadWriterMacro:
  * A macro to call the conversion function.
  */
 #define callCorrectReadWriterMacro(typeIn,typeOut,dim) \
-    if ( inputPixelComponentType == #typeIn && outputPixelComponentType == #typeOut && inputDimension == dim) \
+    if ( inputPixelComponentType == #typeIn \
+    && outputPixelComponentType == #typeOut && inputDimension == dim ) \
 { \
   typedef  itk::Image< typeIn, dim >    InputImageType; \
   typedef  itk::Image< typeOut, dim >  OutputImageType; \
-  ReadCastWriteImage< InputImageType, OutputImageType >( inputFileName, outputFileName, useCompression ); \
+  ReadCastWriteImage< InputImageType, OutputImageType >( \
+    inputFileName, outputFileName, useCompression ); \
 }
 
 /** callCorrectReadWriterMultiComponentMacro:
  * A macro to call the conversion function for multi-component images.
  */
-#define callCorrectReadWriterMultiComponentMacro(typeIn,typeOut,vecDim,dim) \
-    if ( inputPixelComponentType == #typeIn && outputPixelComponentType == #typeOut && numberOfComponents == vecDim && inputDimension == dim ) \
+#define callCorrectReadWriterMultiComponentMacro( typeIn, typeOut, vecDim, dim ) \
+    if ( inputPixelComponentType == #typeIn \
+      && outputPixelComponentType == #typeOut \
+      && numberOfComponents == vecDim && inputDimension == dim ) \
 { \
   typedef itk::Vector< typeIn, vecDim >        InputVectorType; \
   typedef itk::Vector< typeOut, vecDim >       OutputVectorType; \
   typedef itk::Image< InputVectorType, dim >   InputImageType; \
   typedef itk::Image< OutputVectorType, dim >  OutputImageType; \
-  ReadCastWriteVectorImage< InputImageType, OutputImageType >( inputFileName, outputFileName, useCompression ); \
+  ReadCastWriteVectorImage< InputImageType, OutputImageType >( \
+    inputFileName, outputFileName, useCompression ); \
 }
 
 
