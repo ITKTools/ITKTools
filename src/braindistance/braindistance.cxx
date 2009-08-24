@@ -6,6 +6,7 @@
 #include "itkBinaryThresholdImageFilter.h"
 #include "itkImageRegionIteratorWithIndex.h"
 #include "itkDeformationFieldJacobianDeterminantFilter.h"
+#include "itkDeformationFieldBendingEnergyFilter.h"
 #include "itkLabelStatisticsImageFilter.h"
 #include "itkStatisticsImageFilter.h"
 #include "itkUnaryFunctorImageFilter.h"
@@ -20,7 +21,8 @@
 void ComputeBrainDistance(
   const std::string & inputFileName,
   const std::string & maskFileName,
-  const std::vector<std::string> & outputFileNames );
+  const std::vector<std::string> & outputFileNames,
+  unsigned int method);
 
 /** Declare PrintHelp. */
 void PrintHelp( void );
@@ -43,15 +45,19 @@ int main( int argc, char ** argv )
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
 
-  /** Get arguments: input deformation field */
+  /** Get arguments (mandatory): input deformation field */
   std::string inputFileName = "";
   bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
   
-  /** Get arguments: input deformation field */
+  /** Get arguments (mandatory): input deformation field */
   std::string maskFileName = "";
   bool retmask = parser->GetCommandLineArgument( "-mask", maskFileName );
 
-  /** Get arguments: Output filenames */
+  /** Get arguments (optional): method */
+  unsigned int method = 0;
+  parser->GetCommandLineArgument( "-m", method );
+
+  /** Get arguments (mandatory): Output filenames */
   std::vector< std::string > outputFileNames;
   bool retout = parser->GetCommandLineArgument( "-out", outputFileNames );
   if ( outputFileNames.size() != 2 )
@@ -111,7 +117,7 @@ int main( int argc, char ** argv )
   /** Run the program. */
   try
   {
-    ComputeBrainDistance( inputFileName, maskFileName, outputFileNames );
+    ComputeBrainDistance( inputFileName, maskFileName, outputFileNames, method );
   }
   catch( itk::ExceptionObject &e )
   {
@@ -195,7 +201,8 @@ std::ostream& operator<<(std::ostream& os, std::vector<double>& vec)
 void ComputeBrainDistance(
   const std::string & inputFileName,
   const std::string & maskFileName,
-  const std::vector<std::string> & outputFileNames )
+  const std::vector<std::string> & outputFileNames,
+  unsigned int method )
 {
   /** Typedefs. */
   typedef float                                           InputComponentType;
@@ -217,9 +224,12 @@ void ComputeBrainDistance(
   typedef InputImageType::PointType                       PointType;
   typedef InputImageType::RegionType                      RegionType;
   typedef RegionType::SizeType                            SizeType;
-
-  typedef itk::DeformationFieldJacobianDeterminantFilter<
+  
+  typedef itk::DisplacementFieldJacobianDeterminantFilter<
     InputImageType, InternalPixelType, InternalImageType> JacobianFilterType;  
+  typedef itk::DeformationFieldBendingEnergyFilter<
+    InputImageType, InternalPixelType, InternalImageType> BendingEnergyFilterType;  
+  
   typedef itk::BinaryThresholdImageFilter<
     MaskImageType, MaskImageType >                        ThresholderType;
   typedef itk::LabelStatisticsImageFilter<
@@ -245,7 +255,6 @@ void ComputeBrainDistance(
   MaskImageType::Pointer labelMask = 0;
   MaskImageType::Pointer brainMask = 0;
   InternalImageType::Pointer jacobian = 0;
-  JacobianFilterType::Pointer jacobianFilter = JacobianFilterType::New();
   JacobianCropFilterType::Pointer jacobianCropFilter = JacobianCropFilterType::New();
   ThresholderType::Pointer thresholder = ThresholderType::New();
   StatFilterType::Pointer statFilterBrainMask = StatFilterType::New();
@@ -253,32 +262,25 @@ void ComputeBrainDistance(
   StatFilterType::Pointer statFilterLabelsSpecial = StatFilterType::New();
   MaximumComputerType::Pointer maximumComputer  = MaximumComputerType::New(); 
   SubtractSquareFilterType::Pointer subsqFilter = SubtractSquareFilterType::New();
+
+  /** method 0 or 1 */
+  JacobianFilterType::Pointer jacobianFilter = 0;
+  if ( method==0 )
+  {
+    jacobianFilter = JacobianFilterType::New();
+  }
+  else
+  {
+    jacobianFilter = BendingEnergyFilterType::New();
+  }  
   
-  /** Read image. We are going to change the image, so make sure these changes are not undone */
+  /** Read image. */
   std::cout << "Reading input image..." << std::endl;
   inputReader->SetFileName( inputFileName );
   inputImage = inputReader->GetOutput();
   inputImage->Update();
-  inputImage->DisconnectPipeline();
-
-  /** Convert from deformation field to transformation */
-  std::cout << "Changing image from deformation to transformation..."  << std::endl;
-  IteratorType it(inputImage, inputImage->GetLargestPossibleRegion());
-  it.GoToBegin();    
-  while ( !( it.IsAtEnd() ) )
-  {
-    const IndexType & index = it.GetIndex();
-    InputPixelType & value = it.Value();
-    PointType point;
-    inputImage->TransformIndexToPhysicalPoint(index,point);
-    for (unsigned int i=0; i < Dimension; ++i)
-    {
-      value[i] += static_cast<InputComponentType>( point[i] );
-    }    
-    ++it;
-  }
   
-  /** Compute the jacobian and crop */  
+  /** Compute the 'jacobian' (or bending energy) and crop */  
   std::cout << "Computing jacobian image..." << std::endl;
   jacobianFilter->SetUseImageSpacingOn();    
   jacobianFilter->SetInput( inputImage );  
@@ -428,6 +430,7 @@ void PrintHelp()
   std::cout << "  -in      inputFilename: 3D deformation field \n";
   std::cout << "  -out     outputFilenames: two output filenames. The first one contains mu_tot and sigma_tot. the second one contains mu_i, sigma_i, and sigma_itot.\n";
   std::cout << "  -mask    maskFileName: the name of the label image (deformed HAMMER atlas)\n";
+  std::cout << "  [-m]     method: 0 (jacobian) or 1 (bending energy); default: 0.\n";
   std::cout << "Supported: -in: 3D vector of floats, 3 elements per vector; -mask: 3D unsigned char or anything that is valid after casting to unsigned char\n";  
   std::cout << std::endl;
 } // end PrintHelp()

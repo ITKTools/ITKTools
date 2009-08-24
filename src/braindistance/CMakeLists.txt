@@ -12,6 +12,8 @@ ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxbraindistance
   braindistance.cxx
+	itkDeformationFieldBendingEnergyFilter.h
+	itkDeformationFieldBendingEnergyFilter.txx
 )
 
 INSTALL_TARGETS(/. pxbraindistance)
