@@ -39,11 +39,11 @@ void Deformation2Transformation(
 
   IteratorType it(inputImage, inputImage->GetLargestPossibleRegion());
   it.GoToBegin();
-  double plusormin1 = 1.0;
+  double plusormin = 1.0;
   std::string message = "from deformation to transformation";
   if (!def2trans)
   {
-    plusormin1 = -1.0;
+    plusormin = -1.0;
     message = "from transformation to deformation";
   }
   std::cout << "Changing image " << message << "..." << std::endl;
@@ -55,7 +55,7 @@ void Deformation2Transformation(
     inputImage->TransformIndexToPhysicalPoint(index,point);
     for (unsigned int i=0; i < Dimension; ++i)
     {
-      value[i] += static_cast<ComponentType>( plusormin1 * point[i] );
+      value[i] += static_cast<ComponentType>( plusormin * point[i] );
     }    
     ++it;
   }
@@ -107,7 +107,7 @@ void ComputeMagnitude(
 
 /** 
  * ******************* ComputeJacobian ************************
- * write jacobian of deformation field to disk 
+ * write Jacobian of deformation field to disk 
  */
 
 template<class TVectorImage, class TScalarImage>
@@ -125,7 +125,7 @@ void ComputeJacobian(
   typename JacobianFilterType::Pointer jacobianFilter = JacobianFilterType::New();
   typename WriterType::Pointer writer = WriterType::New();
 
-  jacobianFilter->SetUseImageSpacingOn();    
+  jacobianFilter->SetUseImageSpacingOn();
   jacobianFilter->SetInput( inputImage );
   std::cout << "Computing jacobian image..." << std::endl;
   jacobianFilter->Update();
@@ -149,7 +149,7 @@ void ComputeJacobian(
  * and compute magnitudes/jacobians.
  */
 
-/** Declare ThresholdImage. */
+/** Declare DeformationFieldOperator. */
 template< class TComponent, unsigned int NDimension >
 void DeformationFieldOperator(
   const std::string & inputFileName,
@@ -205,6 +205,6 @@ void DeformationFieldOperator(
   }
   
 
-} // end ThresholdImage
+} // end DeformationFieldOperator
 
 
