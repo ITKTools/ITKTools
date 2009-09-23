@@ -12,6 +12,8 @@
 #include "itkUnaryFunctorImageFilter.h"
 #include "itkCropImageFilter.h"
 #include "itkRegionOfInterestImageFilter.h"
+#include "itkIntensityWindowingImageFilter.h"
+#include "itkLogImageFilter.h"
 #include "vnl/vnl_math.h"
 #include <fstream>
 
@@ -247,6 +249,11 @@ void ComputeBrainDistance(
     InternalImageType, InternalImageType, 
      SubtractSquareFunctionType >                         SubtractSquareFilterType;
 
+  typedef itk::IntensityWindowingImageFilter<
+    InternalImageType, InternalImageType >                WindowFilterType;
+  typedef itk::LogImageFilter<
+    InternalImageType, InternalImageType >                LogFilterType;
+
   /** Instantiate main variables */
   InputReaderType::Pointer inputReader = InputReaderType::New();
   InputImageType::Pointer inputImage = 0;
@@ -262,10 +269,12 @@ void ComputeBrainDistance(
   StatFilterType::Pointer statFilterLabelsSpecial = StatFilterType::New();
   MaximumComputerType::Pointer maximumComputer  = MaximumComputerType::New(); 
   SubtractSquareFilterType::Pointer subsqFilter = SubtractSquareFilterType::New();
+  WindowFilterType::Pointer windowFilter = WindowFilterType::New();
+  LogFilterType::Pointer logFilter = LogFilterType::New();
 
   /** method 0 or 1 */
   JacobianFilterType::Pointer jacobianFilter = 0;
-  if ( method==0 )
+  if ( method==0 || method ==2 )
   {
     jacobianFilter = JacobianFilterType::New();
   }
@@ -300,8 +309,26 @@ void ComputeBrainDistance(
   newregion.SetSize( newsize );  
   jacobianCropFilter->SetRegionOfInterest( newregion );    
   jacobianCropFilter->SetInput( jacobianFilter->GetOutput() );  
-  jacobian = jacobianCropFilter->GetOutput();
-  jacobian->Update();
+  jacobianCropFilter->Update();
+    
+  const double maxJac = 3.0;
+  if ( method ==2 )
+  {
+    /** Clamp and take log */
+    windowFilter->SetInput( jacobianCropFilter->GetOutput() );
+    windowFilter->SetOutputMinimum( 1.0 / maxJac );
+    windowFilter->SetWindowMinimum( 1.0 / maxJac );
+    windowFilter->SetOutputMaximum( maxJac );
+    windowFilter->SetWindowMaximum( maxJac );
+    logFilter->SetInput( windowFilter->GetOutput() );
+    logFilter->Update();
+    jacobian = logFilter->GetOutput();
+  }
+  else
+  {
+    /** Do nothing */
+    jacobian = jacobianCropFilter->GetOutput();
+  }
     
   /** Read the label mask and crop */
   std::cout << "Reading label mask image..." << std::endl;
@@ -430,7 +457,7 @@ void PrintHelp()
   std::cout << "  -in      inputFilename: 3D deformation field \n";
   std::cout << "  -out     outputFilenames: two output filenames. The first one contains mu_tot and sigma_tot. the second one contains mu_i, sigma_i, and sigma_itot.\n";
   std::cout << "  -mask    maskFileName: the name of the label image (deformed HAMMER atlas)\n";
-  std::cout << "  [-m]     method: 0 (jacobian) or 1 (bending energy); default: 0.\n";
+  std::cout << "  [-m]     method: 0 (jacobian), 1 (bending energy), or 2 (log(jacobian)); default: 0.\n";
   std::cout << "Supported: -in: 3D vector of floats, 3 elements per vector; -mask: 3D unsigned char or anything that is valid after casting to unsigned char\n";  
   std::cout << std::endl;
 } // end PrintHelp()
