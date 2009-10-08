@@ -233,14 +233,17 @@ int main( int argc, char **argv )
   gdcmIO->GetScanOptions( scanOptions );
   char institution[maxSize];
   gdcmIO->GetInstitution( institution );
+  std::string convolutionKernel = "";
+  gdcmIO->GetValueFromTag( "0018|1210", convolutionKernel );
  
   /** Print scanner information. */
   std::cout << "\nScanner information:\n";
+  std::cout << "institution:      " << institution << std::endl;
   std::cout << "modality:         " << modality << std::endl;
   std::cout << "manufacturer:     " << manufacturer << std::endl;
   std::cout << "model:            " << model << std::endl;
   std::cout << "scan options:     " << scanOptions << std::endl;
-  std::cout << "institution:      " << institution << std::endl;
+  std::cout << "conv. kernel:     " << convolutionKernel << std::endl;
 
 //  GetLabelFromTag(const std::string &tag, std::string &labelId)
   //  GetValueFromTag(const std::string &tag, std::string &value)
