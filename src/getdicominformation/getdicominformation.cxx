@@ -5,13 +5,22 @@
 #include "itkCommandLineArgumentParser.h"
 
 #include <itksys/SystemTools.hxx>
-
 #include "itkImageSeriesReader.h"
 #include "itkGDCMImageIO.h"
 #include "itkGDCMSeriesFileNames.h"
 
+/** Declare PrintHelp. */
+void PrintHelp( void );
+
 int main( int argc, char **argv )
 {
+  /** Check arguments for help. */
+  if ( argc < 3 || argc > 7 )
+  {
+    PrintHelp();
+    return 1;
+  }
+
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
@@ -23,16 +32,10 @@ int main( int argc, char **argv )
   std::string seriesNumber = "";
   bool rets = parser->GetCommandLineArgument( "-s", seriesNumber );
 
-  /** Check arguments. */
-  if ( argc < 3 || argc > 5 )
-  {
-    std::cout << "Usage:" << std::endl << "pxgetdicominformation" << std::endl;
-    std::cout << "\t-in\tinputDirectoryName" << std::endl;
-    std::cout << "\t[-s]\tseriesUID" << std::endl;
-    std::cout << "By default the first series encountered is used." << std::endl;
-    return 1;
-  }
+  std::vector<std::string> restrictions;
+  parser->GetCommandLineArgument( "-r", restrictions );
 
+  /** Check required input. */
   if ( !retin )
   {
     std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
@@ -71,6 +74,10 @@ int main( int argc, char **argv )
    */
   GDCMNamesGeneratorType::Pointer nameGenerator = GDCMNamesGeneratorType::New();
   nameGenerator->SetUseSeriesDetails( true );
+  for ( unsigned int i = 0; i < restrictions.size(); ++i )
+  {
+    nameGenerator->AddSeriesRestriction( restrictions[ i ] );
+  }
   nameGenerator->SetInputDirectory( inputDirectoryName.c_str() );
 
   /** Generate the file names corresponding to the series. */
@@ -113,7 +120,7 @@ int main( int argc, char **argv )
   /** Get general image information from the dicomIO. */
   unsigned int sizeX = gdcmIO->GetDimensions( 0 );
   unsigned int sizeY = gdcmIO->GetDimensions( 1 );
-  unsigned int sizeZ = gdcmIO->GetDimensions( 2 );
+  unsigned int sizeZ = fileNames.size();//gdcmIO->GetDimensions( 2 );
   double spacingX = gdcmIO->GetSpacing( 0 );
   double spacingY = gdcmIO->GetSpacing( 1 );
   double spacingZ = gdcmIO->GetSpacing( 2 );
@@ -124,7 +131,7 @@ int main( int argc, char **argv )
   gdcmIO->GetValueFromTag( "0020|0037", orientation );
 
   /** Print the general image information. */
-  std::cout << "General image information:" << std::endl;
+  std::cout << "General image information:\n";
   std::cout << "dimension:        " << gdcmIO->GetNumberOfDimensions() << std::endl;
   std::cout << "# components:     " << gdcmIO->GetNumberOfComponents() << std::endl;
   std::cout << "pixel type:       "
@@ -160,8 +167,7 @@ int main( int argc, char **argv )
   gdcmIO->GetValueFromTag( "0018|5101", viewPosition );
 
   /** Print patient information. */
-  std::cout << std::endl;
-  std::cout << "Patient information:" << std::endl;
+  std::cout << "\nPatient information:\n";
   std::cout << "patient name:     " << patientName << std::endl;
   std::cout << "age:              " << patientAge << std::endl;
   std::cout << "sex:              " << patientSex << std::endl;
@@ -175,27 +181,46 @@ int main( int argc, char **argv )
   gdcmIO->GetNumberOfSeriesInStudy( noSeries );
   char noRelatedSeries[maxSize];
   gdcmIO->GetNumberOfStudyRelatedSeries( noRelatedSeries );
-  char studyDate[maxSize];
-  gdcmIO->GetStudyDate( studyDate );
+  std::string studyDate = "";
+  gdcmIO->GetValueFromTag( "0008|0020", studyDate );
+  std::string studyTime = "";
+  gdcmIO->GetValueFromTag( "0008|0030", studyTime );
   char studyDesc[maxSize];
   gdcmIO->GetStudyDescription( studyDesc );
   char studyID[maxSize];
   gdcmIO->GetStudyID( studyID );
-  std::string protocolvalue = "";
-  gdcmIO->GetValueFromTag( "0018|1030", protocolvalue );
+  std::string protocolName = "";
+  gdcmIO->GetValueFromTag( "0018|1030", protocolName );
 
   /** Print study information. */
-  std::cout << std::endl;
-  std::cout << "Study information:" << std::endl;
+  std::cout << "\nStudy information:\n";
   std::cout << "study UID:        " << gdcmIO->GetStudyInstanceUID() << std::endl;
   std::cout << "UID prefix:       " << gdcmIO->GetUIDPrefix() << std::endl;
-  std::cout << "series UID:       " << gdcmIO->GetSeriesInstanceUID() << std::endl;
-  std::cout << "# series:         " << noSeries << std::endl;
-  std::cout << "# related series: " << noSeries << std::endl;
-  std::cout << "date:             " << studyDate << std::endl;
+  std::cout << "study date:       " << studyDate << std::endl;
+  std::cout << "study time:       " << studyTime << std::endl;
   std::cout << "description:      " << studyDesc << std::endl;
   std::cout << "ID:               " << studyID << std::endl;
-  std::cout << "protocol name:    " << protocolvalue << std::endl;
+  std::cout << "protocol name:    " << protocolName << std::endl;
+
+  /** Get series information. */
+  std::string seriesDate = "";
+  gdcmIO->GetValueFromTag( "0008|0021", seriesDate );
+  std::string acquisitionDate = "";
+  gdcmIO->GetValueFromTag( "0008|0022", acquisitionDate );
+  std::string seriesTime = "";
+  gdcmIO->GetValueFromTag( "0008|0031", seriesTime );
+  std::string acquisitionTime = "";
+  gdcmIO->GetValueFromTag( "0008|0032", acquisitionTime );
+
+  /** Print series information. */
+  std::cout << "\nSeries information:\n";
+  std::cout << "series UID:       " << gdcmIO->GetSeriesInstanceUID() << std::endl;
+  std::cout << "# series:         " << noSeries << std::endl;
+  std::cout << "# related series: " << noRelatedSeries << std::endl;
+  std::cout << "series date:      " << seriesDate << std::endl;
+  std::cout << "series time:      " << seriesTime << std::endl;
+  std::cout << "acquisition date: " << acquisitionDate << std::endl;
+  std::cout << "acquisition time: " << acquisitionTime << std::endl;
 
   /** Get scanner information from the dicomIO. */
   char modality[maxSize];
@@ -210,8 +235,7 @@ int main( int argc, char **argv )
   gdcmIO->GetInstitution( institution );
  
   /** Print scanner information. */
-  std::cout << std::endl;
-  std::cout << "Scanner information:" << std::endl;
+  std::cout << "\nScanner information:\n";
   std::cout << "modality:         " << modality << std::endl;
   std::cout << "manufacturer:     " << manufacturer << std::endl;
   std::cout << "model:            " << model << std::endl;
@@ -226,3 +250,16 @@ int main( int argc, char **argv )
 
 }  // end main
 
+/**
+ * ******************* PrintHelp *******************
+ */
+void PrintHelp()
+{
+  std::cout << "Usage:" << std::endl << "pxgetdicominformation" << std::endl;
+  std::cout << "  -in      inputDirectoryName\n";
+  std::cout << "  [-s]     seriesUID\n";
+  std::cout << "  [-r]     add restrictions to generate a unique seriesUID\n";
+  std::cout << "           e.g. \"0020|0012\" to add a check for acquisition number.\n";
+  std::cout << "By default the first series encountered is used." << std::endl;
+
+} // end PrintHelp()
