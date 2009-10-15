@@ -70,6 +70,16 @@ SUBDIRS(
  unaryimageoperator
  weightedaddition )
 
+#---------------------------------------------------------------------
+# Kill the anoying MS VS warning about non-safe functions.
+# They hide real warnings.
+IF( MSVC )
+  ADD_DEFINITIONS(
+    /D_SCL_SECURE_NO_DEPRECATE
+    /D_CRT_SECURE_NO_DEPRECATE
+    /D_CRT_TIME_FUNCTIONS_NO_DEPRECATE
+    )
+ENDIF( MSVC )
 
 #---------------------------------------------------------------------
 # Output directories.

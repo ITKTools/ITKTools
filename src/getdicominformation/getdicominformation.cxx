@@ -205,12 +205,8 @@ int main( int argc, char **argv )
   /** Get series information. */
   std::string seriesDate = "";
   gdcmIO->GetValueFromTag( "0008|0021", seriesDate );
-  std::string acquisitionDate = "";
-  gdcmIO->GetValueFromTag( "0008|0022", acquisitionDate );
   std::string seriesTime = "";
   gdcmIO->GetValueFromTag( "0008|0031", seriesTime );
-  std::string acquisitionTime = "";
-  gdcmIO->GetValueFromTag( "0008|0032", acquisitionTime );
 
   /** Print series information. */
   std::cout << "\nSeries information:\n";
@@ -219,8 +215,6 @@ int main( int argc, char **argv )
   std::cout << "# related series: " << noRelatedSeries << std::endl;
   std::cout << "series date:      " << seriesDate << std::endl;
   std::cout << "series time:      " << seriesTime << std::endl;
-  std::cout << "acquisition date: " << acquisitionDate << std::endl;
-  std::cout << "acquisition time: " << acquisitionTime << std::endl;
 
   /** Get scanner information from the dicomIO. */
   char modality[maxSize];
@@ -244,6 +238,29 @@ int main( int argc, char **argv )
   std::cout << "model:            " << model << std::endl;
   std::cout << "scan options:     " << scanOptions << std::endl;
   std::cout << "conv. kernel:     " << convolutionKernel << std::endl;
+
+  /** Get acquisition information from the dicomIO. */
+  std::string acquisitionDate = "";
+  gdcmIO->GetValueFromTag( "0008|0022", acquisitionDate );
+  std::string acquisitionTime = "";
+  gdcmIO->GetValueFromTag( "0008|0032", acquisitionTime );
+  std::string kvp = "";
+  gdcmIO->GetValueFromTag( "0018|0060", kvp );
+  std::string exposureTime = "";
+  gdcmIO->GetValueFromTag( "0018|1150", exposureTime );
+  std::string xRayTubeCurrent = "";
+  gdcmIO->GetValueFromTag( "0018|1151", xRayTubeCurrent );
+  std::string exposure = "";
+  gdcmIO->GetValueFromTag( "0018|1152", exposure );
+
+  /** Print acquisition information. */
+  std::cout << "\nAcquisition information:\n";
+  std::cout << "acquisition date: " << acquisitionDate << std::endl;
+  std::cout << "acquisition time: " << acquisitionTime << std::endl;
+  std::cout << "KVP:              " << kvp << std::endl;
+  std::cout << "exposure time:    " << exposureTime << std::endl;
+  std::cout << "XRayTubeCurrent:  " << xRayTubeCurrent << std::endl;
+  std::cout << "exposure:         " << exposure << std::endl;
 
 //  GetLabelFromTag(const std::string &tag, std::string &labelId)
   //  GetValueFromTag(const std::string &tag, std::string &value)
