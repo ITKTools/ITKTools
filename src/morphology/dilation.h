@@ -6,11 +6,12 @@
 #include "itkGrayscaleDilateImageFilter.h"
 #include "itkBinaryDilateImageFilter.h"
 #include "itkDilateObjectMorphologyImageFilter.h"
+#include "itkParabolicDilateImageFilter.h"
 
 
-  /**
-   * ******************* dilationGrayscale *******************
-   */
+/**
+ * ******************* dilationGrayscale *******************
+ */
 
 template< class ImageType >
 void dilationGrayscale( 
@@ -180,14 +181,14 @@ void dilationBinaryObject(
     PixelType, Dimension >                            StructuringElementType;
   typedef typename StructuringElementType::RadiusType RadiusType;
   typedef itk::DilateObjectMorphologyImageFilter<
-    ImageType, ImageType, StructuringElementType >    DilateFilterType;
+    ImageType, ImageType, StructuringElementType >    FilterType;
   typedef typename
-    DilateFilterType::DefaultBoundaryConditionType    BoundaryConditionType;
+    FilterType::DefaultBoundaryConditionType    BoundaryConditionType;
 
   /** Declarations. *
   typename ReaderType::Pointer reader = ReaderType::New();
   typename WriterType::Pointer writer = WriterType::New();
-  typename DilateFilterType::Pointer dilation = DilateFilterType::New();
+  typename FilterType::Pointer filter = FilterType::New();
     
   /** Setup the reader. *
   reader->SetFileName( inputFileName.c_str() );
@@ -200,11 +201,11 @@ void dilationBinaryObject(
     radiusarray.SetElement( i, radius[ i ] );
   }
 
-  /** Create the structuring element and set it into the dilation filter. *
+  /** Create the structuring element and set it into the filter filter. *
   StructuringElementType  S_ball;
   S_ball.SetRadius( radiusarray );
   S_ball.CreateStructuringElement();
-  dilation->SetKernel( S_ball );
+  filter->SetKernel( S_ball );
 
   /** Set a boundary condition value. This is the value outside the image.
    * By default it is set to min(PixelType). *
@@ -221,16 +222,69 @@ void dilationBinaryObject(
       bcValue = static_cast<PixelType>( atof( boundaryCondition.c_str() ) );
     }
     bc.SetConstant( bcValue );
-    dilation->OverrideBoundaryCondition(&bc);
+    filter->OverrideBoundaryCondition(&bc);
   }
 
   /** Connect the pipeline. *
-  dilation->SetInput( reader->GetOutput() );
+  filter->SetInput( reader->GetOutput() );
 
   /** Write the output image. *
   writer->SetFileName( outputFileName.c_str() );
-  writer->SetInput( dilation->GetOutput() );
+  writer->SetInput( filter->GetOutput() );
   writer->Update();
 
 } // end dilationBinaryObject
 */
+
+
+/**
+ * ******************* dilationParabolic *******************
+ */
+
+template< class ImageType >
+void dilationParabolic(
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+  const std::vector<unsigned int> & radius )
+{
+  /** Typedefs. */
+  typedef typename ImageType::PixelType               PixelType;
+  const unsigned int Dimension = ImageType::ImageDimension;
+  typedef itk::ImageFileReader< ImageType >           ReaderType;
+  typedef itk::ImageFileWriter< ImageType >           WriterType;
+  typedef itk::ParabolicDilateImageFilter<
+    ImageType, ImageType >                            FilterType;
+  typedef typename FilterType::RadiusType             RadiusType;
+  typedef typename FilterType::ScalarRealType         ScalarRealType;
+
+  /** Declarations. */
+  typename ReaderType::Pointer reader = ReaderType::New();
+  typename WriterType::Pointer writer = WriterType::New();
+  typename FilterType::Pointer filter = FilterType::New();
+
+  /** Setup the reader. */
+  reader->SetFileName( inputFileName.c_str() );
+
+  /** Get the correct radius. */
+  RadiusType      radiusArray;
+  ScalarRealType  radius1D = 0.0;
+  for ( unsigned int i = 0; i < Dimension; ++i )
+  {
+    // Very specific computation for the parabolic filter:
+    radius1D = static_cast<ScalarRealType>( radius[ i ] ) ;//+ 1.0;
+    radius1D = radius1D * radius1D / 2.0 + 1.0;
+    radiusArray.SetElement( i, radius1D );
+  }
+
+  /** Setup the filter. */
+  filter->SetUseImageSpacing( false );
+  filter->SetScale( radiusArray );
+  filter->SetInput( reader->GetOutput() );
+
+  /** Write the output image. */
+  writer->SetFileName( outputFileName.c_str() );
+  writer->SetInput( filter->GetOutput() );
+  writer->Update();
+
+} // end dilationParabolic()
+

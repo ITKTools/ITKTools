@@ -5,11 +5,12 @@
 #include "itkBinaryBallStructuringElement.h"
 #include "itkGrayscaleMorphologicalClosingImageFilter.h"
 #include "itkBinaryMorphologicalClosingImageFilter.h"
+#include "itkParabolicCloseImageFilter.h"
 
 
-  /**
-   * ******************* closingGrayscale *******************
-   */
+/**
+ * ******************* closingGrayscale *******************
+ */
 
 template< class ImageType >
 void closingGrayscale(
@@ -128,4 +129,56 @@ void closingBinary(
   writer->Update();
 
 } // end closingBinary()
+
+
+/**
+ * ******************* closingParabolic *******************
+ */
+
+template< class ImageType >
+void closingParabolic(
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+  const std::vector<unsigned int> & radius )
+{
+  /** Typedefs. */
+  typedef typename ImageType::PixelType               PixelType;
+  const unsigned int Dimension = ImageType::ImageDimension;
+  typedef itk::ImageFileReader< ImageType >           ReaderType;
+  typedef itk::ImageFileWriter< ImageType >           WriterType;
+  typedef itk::ParabolicCloseImageFilter<
+    ImageType, ImageType >                            FilterType;
+  typedef typename FilterType::RadiusType             RadiusType;
+  typedef typename FilterType::ScalarRealType         ScalarRealType;
+
+  /** Declarations. */
+  typename ReaderType::Pointer reader = ReaderType::New();
+  typename WriterType::Pointer writer = WriterType::New();
+  typename FilterType::Pointer filter = FilterType::New();
+
+  /** Setup the reader. */
+  reader->SetFileName( inputFileName.c_str() );
+
+  /** Get the correct radius. */
+  RadiusType      radiusArray;
+  ScalarRealType  radius1D = 0.0;
+  for ( unsigned int i = 0; i < Dimension; ++i )
+  {
+    // Very specific computation for the parabolic filter:
+    radius1D = static_cast<ScalarRealType>( radius[ i ] ) ;//+ 1.0;
+    radius1D = radius1D * radius1D / 2.0 + 1.0;
+    radiusArray.SetElement( i, radius1D );
+  }
+
+  /** Setup the filter. */
+  filter->SetUseImageSpacing( false );
+  filter->SetScale( radiusArray );
+  filter->SetInput( reader->GetOutput() );
+
+  /** Write the output image. */
+  writer->SetFileName( outputFileName.c_str() );
+  writer->SetInput( filter->GetOutput() );
+  writer->Update();
+
+} // end closingParabolic()
 

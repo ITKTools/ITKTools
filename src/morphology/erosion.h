@@ -6,11 +6,12 @@
 #include "itkGrayscaleErodeImageFilter.h"
 #include "itkBinaryErodeImageFilter.h"
 #include "itkErodeObjectMorphologyImageFilter.h"
+#include "itkParabolicErodeImageFilter.h"
 
 
-  /**
-   * ******************* erosionGrayscale *******************
-   */
+/**
+ * ******************* erosionGrayscale *******************
+ */
 
 template< class ImageType >
 void erosionGrayscale( 
@@ -239,3 +240,56 @@ void erosionBinaryObject(
 
 } // end erosionBinaryObject
 */
+
+
+/**
+ * ******************* erosionParabolic *******************
+ */
+
+template< class ImageType >
+void erosionParabolic(
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+  const std::vector<unsigned int> & radius )
+{
+  /** Typedefs. */
+  typedef typename ImageType::PixelType               PixelType;
+  const unsigned int Dimension = ImageType::ImageDimension;
+  typedef itk::ImageFileReader< ImageType >           ReaderType;
+  typedef itk::ImageFileWriter< ImageType >           WriterType;
+  typedef itk::ParabolicErodeImageFilter<
+    ImageType, ImageType >                            ErodeFilterType;
+  typedef typename ErodeFilterType::RadiusType        RadiusType;
+  typedef typename ErodeFilterType::ScalarRealType    ScalarRealType;
+
+  /** Declarations. */
+  typename ReaderType::Pointer reader = ReaderType::New();
+  typename WriterType::Pointer writer = WriterType::New();
+  typename ErodeFilterType::Pointer erosion = ErodeFilterType::New();
+
+  /** Setup the reader. */
+  reader->SetFileName( inputFileName.c_str() );
+
+  /** Get the correct radius. */
+  RadiusType      radiusArray;
+  ScalarRealType  radius1D = 0.0;
+  for ( unsigned int i = 0; i < Dimension; ++i )
+  {
+    // Very specific computation for the parabolic filter:
+    radius1D = static_cast<ScalarRealType>( radius[ i ] ) ;//+ 1.0;
+    radius1D = radius1D * radius1D / 2.0 + 1.0;
+    radiusArray.SetElement( i, radius1D );
+  }
+
+  /** Setup the filter. */
+  erosion->SetUseImageSpacing( false );
+  erosion->SetScale( radiusArray );
+  erosion->SetInput( reader->GetOutput() );
+
+  /** Write the output image. */
+  writer->SetFileName( outputFileName.c_str() );
+  writer->SetInput( erosion->GetOutput() );
+  writer->Update();
+
+} // end erosionParabolic()
+

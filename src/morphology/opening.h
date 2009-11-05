@@ -5,11 +5,12 @@
 #include "itkBinaryBallStructuringElement.h"
 #include "itkGrayscaleMorphologicalOpeningImageFilter.h"
 #include "itkBinaryMorphologicalOpeningImageFilter.h"
+#include "itkParabolicOpenImageFilter.h"
 
 
-  /**
-   * ******************* openingGrayscale *******************
-   */
+/**
+ * ******************* openingGrayscale *******************
+ */
 
 template< class ImageType >
 void openingGrayscale(
@@ -89,7 +90,7 @@ void openingBinary(
   /** Setup the reader. */
   reader->SetFileName( inputFileName.c_str() );
 
-  /** Get foreground, background and erosion values. */
+  /** Get foreground, background and opening values. */
   std::vector<PixelType> values( 2 );
   values[ 0 ] = itk::NumericTraits<PixelType>::One;
   values[ 1 ] = itk::NumericTraits<PixelType>::Zero;
@@ -130,4 +131,56 @@ void openingBinary(
   writer->Update();
 
 } // end openingBinary()
+
+
+/**
+ * ******************* openingParabolic *******************
+ */
+
+template< class ImageType >
+void openingParabolic(
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+  const std::vector<unsigned int> & radius )
+{
+  /** Typedefs. */
+  typedef typename ImageType::PixelType               PixelType;
+  const unsigned int Dimension = ImageType::ImageDimension;
+  typedef itk::ImageFileReader< ImageType >           ReaderType;
+  typedef itk::ImageFileWriter< ImageType >           WriterType;
+  typedef itk::ParabolicOpenImageFilter<
+    ImageType, ImageType >                            FilterType;
+  typedef typename FilterType::RadiusType             RadiusType;
+  typedef typename FilterType::ScalarRealType         ScalarRealType;
+
+  /** Declarations. */
+  typename ReaderType::Pointer reader = ReaderType::New();
+  typename WriterType::Pointer writer = WriterType::New();
+  typename FilterType::Pointer filter = FilterType::New();
+
+  /** Setup the reader. */
+  reader->SetFileName( inputFileName.c_str() );
+
+  /** Get the correct radius. */
+  RadiusType      radiusArray;
+  ScalarRealType  radius1D = 0.0;
+  for ( unsigned int i = 0; i < Dimension; ++i )
+  {
+    // Very specific computation for the parabolic filter:
+    radius1D = static_cast<ScalarRealType>( radius[ i ] ) ;//+ 1.0;
+    radius1D = radius1D * radius1D / 2.0 + 1.0;
+    radiusArray.SetElement( i, radius1D );
+  }
+
+  /** Setup the filter. */
+  filter->SetUseImageSpacing( false );
+  filter->SetScale( radiusArray );
+  filter->SetInput( reader->GetOutput() );
+
+  /** Write the output image. */
+  writer->SetFileName( outputFileName.c_str() );
+  writer->SetInput( filter->GetOutput() );
+  writer->Update();
+
+} // end openingParabolic()
 

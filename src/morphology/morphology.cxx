@@ -78,10 +78,9 @@ int main( int argc, char *argv[] )
     std::cerr << "ERROR: \"-op\" should be one of {erosion, dilation, opening, closing}." << std::endl;
     return 1;
   }
-  if ( type != "grayscale" 
-    && type != "binary" )
+  if ( type != "grayscale" && type != "binary" && type != "parabolic" )
   {
-    std::cerr << "ERROR: \"-type\" should be one of {grayscale, binary}." << std::endl;
+    std::cerr << "ERROR: \"-type\" should be one of {grayscale, binary, parabolic}." << std::endl;
     return 1;
   }
   if ( retbin && bin.size() != 3 )
