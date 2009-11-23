@@ -1,13 +1,29 @@
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 
-#include "mainhelper.h"
+#include "mainhelper1.h"
 #include <itksys/SystemTools.hxx>
 
-#include "erosion.h"
-#include "dilation.h"
-#include "opening.h"
-#include "closing.h"
+extern bool Morphology2D(
+  const std::string & componentType,
+  const unsigned int & Dimension,
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+  const std::string & operation,
+  const std::string & type,
+  const std::string & boundaryCondition,
+  const std::vector<unsigned int> & radius,
+  const std::vector<std::string> & bin );
+extern bool Morphology3D(
+  const std::string & componentType,
+  const unsigned int & Dimension,
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+  const std::string & operation,
+  const std::string & type,
+  const std::string & boundaryCondition,
+  const std::vector<unsigned int> & radius,
+  const std::vector<std::string> & bin );
 
 //-------------------------------------------------------------------------------------
 
@@ -90,17 +106,17 @@ int main( int argc, char *argv[] )
   }
   
   /** Determine image properties. */
-  std::string ComponentType = "short";
-  std::string PixelType; //we don't use this
+  std::string componentType = "short";
+  std::string pixelType; //we don't use this
   unsigned int Dimension = 3;
-  unsigned int NumberOfComponents = 1;
+  unsigned int numberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
   int retgip = GetImageProperties(
     inputFileName,
-    PixelType,
-    ComponentType,
+    pixelType,
+    componentType,
     Dimension,
-    NumberOfComponents,
+    numberOfComponents,
     imagesize );
   if ( retgip !=0 )
   {
@@ -108,17 +124,17 @@ int main( int argc, char *argv[] )
   }
   
   /** Let the user overrule this */
-  bool retopct = parser->GetCommandLineArgument( "-opct", ComponentType );
+  bool retopct = parser->GetCommandLineArgument( "-opct", componentType );
 
-  if ( NumberOfComponents > 1 )
+  if ( numberOfComponents > 1 )
   { 
-    std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
+    std::cerr << "ERROR: The number of components is larger than 1!" << std::endl;
     std::cerr << "Vector images are not supported!" << std::endl;
     return 1;
   }
   
   /** Get rid of the possible "_" in ComponentType. */
-  ReplaceUnderscoreWithSpace( ComponentType );
+  ReplaceUnderscoreWithSpace( componentType );
 
   /** Check radius. */
   if ( retr )
@@ -149,49 +165,18 @@ int main( int argc, char *argv[] )
   bool supported = false;
   try
   {
-    /** Erosion. */
-    run( erosion, unsigned char, 2 );
-    run( erosion, char, 2 );
-    run( erosion, unsigned short, 2 );
-    run( erosion, short, 2 );
-
-    run( erosion, unsigned char, 3 );
-    run( erosion, char, 3 );
-    run( erosion, unsigned short, 3 );
-    run( erosion, short, 3 );
-
-    /** Dilation. */
-    run( dilation, unsigned char, 2 );
-    run( dilation, char, 2 );
-    run( dilation, unsigned short, 2 );
-    run( dilation, short, 2 );
-
-    run( dilation, unsigned char, 3 );
-    run( dilation, char, 3 );
-    run( dilation, unsigned short, 3 );
-    run( dilation, short, 3 );
-
-    /** Opening. */
-    run( opening, unsigned char, 2 );
-    run( opening, char, 2 );
-    run( opening, unsigned short, 2 );
-    run( opening, short, 2 );
-
-    run( opening, unsigned char, 3 );
-    run( opening, char, 3 );
-    run( opening, unsigned short, 3 );
-    run( opening, short, 3 );
-
-    /** Closing. */
-    run( closing, unsigned char, 2 );
-    run( closing, char, 2 );
-    run( closing, unsigned short, 2 );
-    run( closing, short, 2 );
-
-    run( closing, unsigned char, 3 );
-    run( closing, char, 3 );
-    run( closing, unsigned short, 3 );
-    run( closing, short, 3 );
+    if ( Dimension == 2 )
+    {
+      supported = Morphology2D( componentType, Dimension,
+        inputFileName, outputFileName, operation, type,
+        boundaryCondition, Radius, bin );
+    }
+    else if ( Dimension == 3 )
+    {
+      supported = Morphology3D( componentType, Dimension,
+        inputFileName, outputFileName, operation, type,
+        boundaryCondition, Radius, bin );
+    }
   }
   catch( itk::ExceptionObject & e )
   {
@@ -204,7 +189,7 @@ int main( int argc, char *argv[] )
   {
     std::cerr << "ERROR: this combination of pixel type and dimension is not supported!" << std::endl;
     std::cerr
-      << "pixel (component) type = " << ComponentType
+      << "pixel (component) type = " << componentType
       << " ; dimension = " << Dimension
       << std::endl;
     return 1;

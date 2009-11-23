@@ -12,7 +12,10 @@ ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxmorphology
   morphology.cxx
-  mainhelper.h
+  morphology2D.cxx
+  morphology3D.cxx
+  mainhelper1.h
+  mainhelper2.h
   erosion.h
   dilation.h
 	opening.h
