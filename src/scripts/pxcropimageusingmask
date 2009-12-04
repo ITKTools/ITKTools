@@ -52,11 +52,25 @@ do
 	if [[ $arg == "-b0" ]]; then let i=$i+1; b0=${argv[$i]}; fi
 	if [[ $arg == "-b1" ]]; then let i=$i+1; b1=${argv[$i]}; fi
 	if [[ $arg == "-b2" ]]; then let i=$i+1; b2=${argv[$i]}; fi
-	if [[ $arg == "-force" ]]
-	then
-		force="true"
-	fi
+	if [[ $arg == "-force" ]]; then force="true"; fi
+	if [[ $arg == "-z" ]]; then compress="true"; fi
 done
+
+#####################################################################
+
+# Some sanity checks
+
+if [[ ! -e $in ]]
+then
+  echo "ERROR: the input file "$in" does not exist"
+  exit 1;
+fi
+
+if [[ ! -e $mask ]]
+then
+  echo "ERROR: the mask "$mask" does not exist"
+  exit 1;
+fi
 
 #####################################################################
 
@@ -91,16 +105,16 @@ if [[ $b0 != "" ]]
 then
 	let "pA[0] -= $b0"
 	let "pB[0] += $b0"
-	if [ ${pA[0]} -lt 0 ]; then pA[0]=0; fi
-	if [ ${pB[0]} -gt ${sz[0]} ]; then pB[0]=${sz[0]}; fi
+	if [[ ${pA[0]} -lt 0 ]]; then pA[0]=0; fi
+	if [[ ${pB[0]} -gt ${sz[0]} ]]; then pB[0]=${sz[0]}; fi
 fi
 
 if [[ $b1 != "" ]]
 then
 	let "pA[1] -= $b1"
 	let "pB[1] += $b1"
-	if [ ${pA[1]} -lt 0 ]; then pA[1]=0; fi
-	if [ ${pB[1]} -gt ${sz[1]} ]; then pB[1]=${sz[1]}; fi
+	if [[ ${pA[1]} -lt 0 ]]; then pA[1]=0; fi
+	if [[ ${pB[1]} -gt ${sz[1]} ]]; then pB[1]=${sz[1]}; fi
 fi
 
 if [[ $b2 != "" ]]
@@ -109,8 +123,8 @@ then
 	let "pb = ${pB[2]} + $b2"; pB[2]=$pb
 	#let "pA[2] -= $b2"
 	#let "pA[2] += $b2"
-	if [ ${pA[2]} -lt 0 ]; then pA[2]=0; fi
-	if [ ${pB[2]} -gt ${sz[2]} ]; then pB[2]=${sz[2]}; fi
+	if [[ ${pA[2]} -lt 0 ]]; then pA[2]=0; fi
+	if [[ ${pB[2]} -gt ${sz[2]} ]]; then pB[2]=${sz[2]}; fi
 fi
 
 # Convert back to a string
@@ -129,6 +143,12 @@ fi
 
 # Crop the image
 pxcropimage $args
+
+# Compress image
+if [[ $compress == "true" ]]
+then
+	pxcompressimage $out >> /dev/null
+fi
 
 # return a value
 exit 0
