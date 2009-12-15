@@ -35,7 +35,9 @@ int main( int argc, char **argv )
   bool exct = parser->ArgumentExists( "-ct" );
   bool exnoc = parser->ArgumentExists( "-noc" );
   bool exsz = parser->ArgumentExists( "-sz" );
+  //bool exind = parser->ArgumentExists( "-ind" );
   bool exsp = parser->ArgumentExists( "-sp" );
+  bool exdc = parser->ArgumentExists( "-dc" );
   bool exvol = parser->ArgumentExists( "-vol" );
   bool exo = parser->ArgumentExists( "-o" );
   bool exall = parser->ArgumentExists( "-all" );
@@ -134,6 +136,24 @@ int main( int argc, char **argv )
       return 0;
     }
 
+    /** Print image index. *
+    if ( exind )
+    {
+      if ( reti )
+      {
+        std::cout << (testImageIOBase->GetIORegion().GetIndex())[ index ];
+      }
+      else
+      {
+        for ( unsigned int i = 0; i < dim - 1; i++ )
+        {
+          std::cout << (testImageIOBase->GetIORegion().GetIndex())[ i ] << " ";
+        }
+        std::cout << (testImageIOBase->GetIORegion().GetIndex())[ dim - 1 ];
+      }
+      return 0;
+    }
+
     /** Print image spacing. */
     std::cout << std::fixed;
     std::cout << std::setprecision( 6 );
@@ -186,6 +206,32 @@ int main( int argc, char **argv )
       return 0;
     }
 
+    /** Print image direction. */
+    if ( exdc )
+    {
+      if ( reti )
+      {
+        std::vector<double> dir = testImageIOBase->GetDirection( index );
+        for ( unsigned int i = 0; i < dim - 1; i++ )
+        {
+          std::cout << dir[ i ] << " ";
+        }
+        std::cout << dir[ dim - 1 ];
+      }
+      else
+      {
+        for ( unsigned int j = 0; j < dim; ++j )
+        {
+          std::vector<double> dir = testImageIOBase->GetDirection( j );
+          for ( unsigned int i = 0; i < dim; i++ )
+          {
+            std::cout << dir[ i ] << " ";
+          }
+        }
+      }
+      return 0;
+    }
+
   } // end don't print all
 
   /** Print all image information, i.e. all of the above. */
@@ -225,6 +271,22 @@ int main( int argc, char **argv )
     }
     std::cout << testImageIOBase->GetOrigin( dim - 1 ) << ")\n";
 
+    std::cout << "direction:      (";
+    for ( unsigned int j = 0; j < dim - 1; ++j )
+    {
+      std::vector<double> dir = testImageIOBase->GetDirection( j );
+      for ( unsigned int i = 0; i < dim; i++ )
+      {
+        std::cout << dir[ i ] << ", ";
+      }
+    }
+    std::vector<double> dir = testImageIOBase->GetDirection( dim - 1 );
+    for ( unsigned int i = 0; i < dim - 1; i++ )
+    {
+      std::cout << dir[ i ] << ", ";
+    }
+    std::cout << dir[ dim - 1  ] << ")\n";
+
     return 0;
 
   } // end print all information
@@ -241,19 +303,21 @@ int main( int argc, char **argv )
    */
 void PrintHelp()
 {
-  std::cout << "Usage:" << std::endl << "pxgetimageinformation" << std::endl;
-  std::cout << "  -in      inputFileName" << std::endl;
-  std::cout << "  [-dim]   dimension" << std::endl;
-  std::cout << "  [-pt]    pixelType" << std::endl;
-  std::cout << "  [-ct]    componentType" << std::endl;
-  std::cout << "  [-noc]   #components" << std::endl;
-  std::cout << "  [-sz]    size" << std::endl;
-  std::cout << "  [-sp]    spacing" << std::endl;
-  std::cout << "  [-vol]   voxel volume" << std::endl;
-  std::cout << "  [-o]     origin" << std::endl;
-  std::cout << "  [-all]   all of the above" << std::endl;
-  std::cout << "Image information about the inputFileName is printed to screen." << std::endl;
-  std::cout << "Only one option should be given, e.g. -sp, then the spacing is printed." << std::endl;
-  std::cout << "  [-i]     index, if this option is given only e.g. spacing[index] is printed." << std::endl;
-} // end PrintHelp
+  std::cout << "Usage:\n" << "pxgetimageinformation\n";
+  std::cout << "  -in      inputFileName\n";
+  std::cout << "  [-dim]   dimension\n";
+  std::cout << "  [-pt]    pixelType\n";
+  std::cout << "  [-ct]    componentType\n";
+  std::cout << "  [-noc]   #components\n";
+  std::cout << "  [-sz]    size\n";
+  std::cout << "  [-sp]    spacing\n";
+  std::cout << "  [-vol]   voxel volume\n";
+  std::cout << "  [-o]     origin\n";
+  std::cout << "  [-dc]    direction cosines\n";
+  std::cout << "  [-all]   all of the above\n";
+  std::cout << "Image information about the inputFileName is printed to screen.\n";
+  std::cout << "Only one option should be given, e.g. -sp, then the spacing is printed.\n";
+  std::cout << "  [-i]     index, if this option is given only e.g. "
+    << "spacing[index] is printed." << std::endl;
 
+} // end PrintHelp()
