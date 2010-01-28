@@ -102,19 +102,25 @@ int main( int argc, char **argv )
   {
     run( DeformationFieldOperator, float, 2 );
     run( DeformationFieldOperator, float, 3 );
+
+    run( DeformationFieldOperator, double, 2 );
+    run( DeformationFieldOperator, double, 3 );
   }
-  catch( itk::ExceptionObject &e )
+  catch ( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
     return 1;
   }
   if ( !supported )
   {
-    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+    std::cerr << "ERROR: this combination of pixeltype and dimension is not "
+      << "supported!" << std::endl;
     std::cerr
       << "pixel (component) type = " << ComponentType
       << " ; dimension = " << Dimension
       << std::endl;
+    std::cerr << "Call \"pxdeformationfieldoperator --help\" to get a list "
+      << "of supported images." << std::endl;
     return 1;
   }
   
@@ -124,18 +130,21 @@ int main( int argc, char **argv )
 } // end main
 
 
+/**
+ * ******************* PrintHelp *******************
+ */
 
-  /**
-   * ******************* PrintHelp *******************
-   */
 void PrintHelp()
 {
-  std::cout << "This program converts between deformations (displacement fields) and transformations, and computes the magnitude or jacobian of a deformation field." << std::endl;
-  
+  std::cout << "This program converts between deformations (displacement fields) "
+    << "and transformations, and computes the magnitude or Jacobian of a "
+    << "deformation field." << std::endl;
   std::cout << "Usage:" << std::endl << "pxdeformationfieldoperator" << std::endl;
-  std::cout << "\t-in   \tinputFilename" << std::endl;
-  std::cout << "\t[-ops]\toperation; options: DEF2TRANS, TRANS2DEF, MAGNITUDE, JACOBIAN. default: MAGNITUDE" << std::endl;
-  std::cout << "\t[-out]\toutputFilename; default: in + {operation}.mhd" << std::endl;
-  std::cout << "Supported: 2D, 3D, vector of floats, number of components must equal number of dimensions." << std::endl;
-} // end PrintHelp
+  std::cout << "  -in      inputFilename" << std::endl;
+  std::cout << "  [-ops]   operation; options: DEF2TRANS, TRANS2DEF, "
+    << "MAGNITUDE, JACOBIAN. default: MAGNITUDE" << std::endl;
+  std::cout << "  [-out]   outputFilename; default: in + {operation}.mhd" << std::endl;
+  std::cout << "Supported: 2D, 3D, vector of floats, number of components "
+    << "must equal number of dimensions." << std::endl;
 
+} // end PrintHelp()

@@ -32,8 +32,6 @@ void PrintHelp( void );
 //-------------------------------------------------------------------------------------
 
 
-
-
 int main( int argc, char ** argv )
 {
   /** Check arguments for help. */
@@ -44,7 +42,8 @@ int main( int argc, char ** argv )
   }
 
   /** Create a command line argument parser. */
-  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  itk::CommandLineArgumentParser::Pointer parser
+    = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
 
   /** Get arguments (mandatory): input deformation field */
@@ -80,7 +79,8 @@ int main( int argc, char ** argv )
   }
   if ( !retout )
   {
-    std::cerr << "ERROR: You should specify \"-out\", followed by 5 filenames." << std::endl;
+    std::cerr << "ERROR: You should specify \"-out\", followed by 5 filenames."
+      << std::endl;
     return 1;
   }
   
@@ -99,19 +99,22 @@ int main( int argc, char ** argv )
     imagesize );
   if ( retgip != 0 )
   {
-    std::cerr << "ERROR: error while getting image properties of the input image!" << std::endl;
+    std::cerr << "ERROR: error while getting image properties of the input image!"
+      << std::endl;
     return 1;
   }
   if ( (Dimension != 3) || (NumberOfComponents != Dimension) )
   {
-    std::cerr << "ERROR: the input image is not of the right format: 3D, vectors of length 3 it should be!" << std::endl;
+    std::cerr << "ERROR: the input image is not of the right format: 3D, "
+      << "vectors of length 3 it should be!" << std::endl;
     return 1;
   }
   for ( unsigned int i = 0; i < Dimension; ++i )
   {
     if ( imagesize[i] < 3 )
     {
-      std::cerr << "ERROR: the image is too small in one of the dimensions. Minimum size is 3 for each dimension." << std::endl;
+      std::cerr << "ERROR: the image is too small in one of the dimensions. "
+        << "Minimum size is 3 for each dimension." << std::endl;
       return 1;
     }
   }
@@ -364,7 +367,8 @@ void ComputeBrainDistance(
   }
   else
   {
-    itkGenericExceptionMacro( << "ERROR: the thresholded label mask image does not contain any 1's" );
+    itkGenericExceptionMacro( << "ERROR: the thresholded label mask image "
+      << "does not contain any 1's" );
   }
 
   /** Compute maximum label nr */
@@ -374,7 +378,8 @@ void ComputeBrainDistance(
   MaskPixelType maxLabelNr = maximumComputer->GetMaximum();
 
   /** Compute mean_i and sigma_i for each segment_i */
-  std::cout << "Compute mu_i and sigma_i for each brain segment_i in the label image..."  << std::endl;
+  std::cout << "Compute mu_i and sigma_i for each brain segment_i in the "
+    << "label image..."  << std::endl;
   statFilterLabels->SetInput( jacobian );
   statFilterLabels->SetLabelInput( labelMask );
   statFilterLabels->UseHistogramsOff();
@@ -403,7 +408,8 @@ void ComputeBrainDistance(
   subsqFilter->Update();
   
   /** Compute sigma_i,tot for each segment_i */
-  std::cout << "Compute sigma_i,tot = sqrt[ mean[ ( jacobian - mu_tot )^2 ] ] per segment_i... " << std::endl;
+  std::cout << "Compute sigma_i,tot = sqrt[ mean[ ( jacobian - mu_tot )^2 ] ] "
+    << "per segment_i... " << std::endl;
   statFilterLabelsSpecial->SetInput( subsqFilter->GetOutput() );
   statFilterLabelsSpecial->SetLabelInput( labelMask );
   statFilterLabelsSpecial->UseHistogramsOff();
@@ -427,14 +433,16 @@ void ComputeBrainDistance(
   std::ofstream mutotsigmatot( outputFileNames[0].c_str() );
   if ( ! mutotsigmatot.is_open() )
   {
-    itkGenericExceptionMacro( << "The output file " << outputFileNames[0] << " cannot be opened!" )
+    itkGenericExceptionMacro( << "The output file " << outputFileNames[0]
+    << " cannot be opened!" )
   }
   mutotsigmatot << mu_tot << "\t" << sigma_tot << std::endl;
   mutotsigmatot.close();
   std::ofstream musigmaperlabel( outputFileNames[1].c_str() );
   if ( ! musigmaperlabel.is_open() )
   {
-    itkGenericExceptionMacro( << "The output file " << outputFileNames[1] << " cannot be opened!" )
+    itkGenericExceptionMacro( << "The output file " << outputFileNames[1]
+    << " cannot be opened!" )
   }
   musigmaperlabel << mu_i << std::endl;
   musigmaperlabel << sigma_i << std::endl;
@@ -451,14 +459,16 @@ void ComputeBrainDistance(
  */
 void PrintHelp()
 {
-  std::cout << "This program computes the distance between brains, based on a label mask image of one of the brains and a deformation field.\n";
-  std::cout << "Usage:\n"
-            << "pxbraindistance\n";
+  std::cout << "This program computes the distance between brains, based on "
+    << "a label mask image of one of the brains and a deformation field.\n";
+  std::cout << "Usage:\n" << "pxbraindistance\n";
   std::cout << "  -in      inputFilename: 3D deformation field \n";
-  std::cout << "  -out     outputFilenames: two output filenames. The first one contains mu_tot and sigma_tot. the second one contains mu_i, sigma_i, and sigma_itot.\n";
+  std::cout << "  -out     outputFilenames: two output filenames. The first "
+    << "one contains mu_tot and sigma_tot. the second one contains mu_i, sigma_i, and sigma_itot.\n";
   std::cout << "  -mask    maskFileName: the name of the label image (deformed HAMMER atlas)\n";
   std::cout << "  [-m]     method: 0 (jacobian), 1 (bending energy), or 2 (log(jacobian)); default: 0.\n";
-  std::cout << "Supported: -in: 3D vector of floats, 3 elements per vector; -mask: 3D unsigned char or anything that is valid after casting to unsigned char\n";  
+  std::cout << "Supported: -in: 3D vector of floats, 3 elements per vector; "
+    << "-mask: 3D unsigned char or anything that is valid after casting to unsigned char\n";  
   std::cout << std::endl;
-} // end PrintHelp()
 
+} // end PrintHelp()
