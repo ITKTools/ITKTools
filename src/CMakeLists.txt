@@ -14,7 +14,6 @@ SUBDIRS(
  common
  computeboundingbox
  computedifferenceimageBIG
- computedistances
  computemean
  computeoverlap
  contrastenhanceimage
