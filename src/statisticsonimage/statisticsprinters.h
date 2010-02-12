@@ -56,8 +56,8 @@ void PrintHistogramStatistics( const THistogram * histogram,
   /** Print to screen. */
   //median, quartiles, histogram, percentiles.
 
-  typedef typename THistogram::FrequencyType FrequencyType;
-  typename THistogram::TotalFrequencyType nrOfPixels = histogram->GetTotalFrequency();
+  typedef typename THistogram::AbsoluteFrequencyType AbsoluteFrequencyType;
+  typename THistogram::TotalAbsoluteFrequencyType nrOfPixels = histogram->GetTotalFrequency();
   double median = histogram->Quantile(0, 0.5);
   double fifteenthpercentile = histogram->Quantile( 0, 0.15 );
   double firstquartile = histogram->Quantile( 0, 0.25 );
@@ -99,7 +99,7 @@ void PrintHistogramStatistics( const THistogram * histogram,
       << std::endl;
     for (unsigned long i = 0; i < histogram->GetSize(0); ++i)
     {
-      FrequencyType freq = histogram->GetFrequency(i,0);
+      AbsoluteFrequencyType freq = histogram->GetFrequency(i,0);
       double prob = static_cast<double>(freq) / static_cast<double>(nrOfPixels);
       histogramOutputFile 
         << i 

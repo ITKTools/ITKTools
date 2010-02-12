@@ -36,6 +36,11 @@ namespace Statistics {
     ::ScalarImageToGrayLevelCooccurrenceMatrixGenerator() : 
     m_NumberOfBinsPerAxis(itkGetStaticConstMacro(DefaultBinsPerAxis)), m_Normalize(false)
   {
+    //initialize parameters
+    // constant for a coocurrence matrix.
+    const unsigned int measurementVectorSize = 2;
+    this->m_LowerBound.SetSize( measurementVectorSize );
+    this->m_UpperBound.SetSize( measurementVectorSize );
     this->m_LowerBound.Fill( NumericTraits<PixelType>::min() );
     this->m_UpperBound.Fill( NumericTraits<PixelType>::max() + 1 );
     this->m_Min = NumericTraits<PixelType>::min();
@@ -59,8 +64,11 @@ namespace Statistics {
     if ( this->m_Output.IsNull() )
     {
       this->m_Output = HistogramType::New();
+      this->m_Output->SetMeasurementVectorSize(2);
     }
+    
     typename HistogramType::SizeType size;
+    size.SetSize(2);
     size.Fill( m_NumberOfBinsPerAxis );
     // Initialize also calls SetToZero, which is good.
     this->m_Output->Initialize( size, this->m_LowerBound, this->m_UpperBound );
@@ -86,7 +94,7 @@ namespace Statistics {
     // Now fill in the histogram
     this->FillHistogram( radius, this->m_Input->GetRequestedRegion() );
 
-    // Normalizse the histogram if requested
+    // Normalize the histogram if requested
     if ( m_Normalize )
     {
       this->NormalizeHistogram();
@@ -112,6 +120,8 @@ namespace Statistics {
     neighborIt = NeighborhoodIteratorType( radius, m_Input, region );
 
     OffsetType zeroOffset; zeroOffset.Fill( 0 );
+    MeasurementVectorType cooccur;
+    cooccur.SetSize(2);
 
     for ( neighborIt.GoToBegin(); !neighborIt.IsAtEnd(); ++neighborIt )
     {
@@ -149,7 +159,6 @@ namespace Statistics {
 
         // Now make both possible co-occurrence combinations and increment the
         // histogram with them.
-        MeasurementVectorType cooccur;
         cooccur[ 0 ] = centerPixelIntensity;
         cooccur[ 1 ] = pixelIntensity;
         m_Output->IncreaseFrequency( cooccur, 1 );
@@ -171,10 +180,12 @@ namespace Statistics {
       TImageType, THistogramFrequencyContainer >
       ::NormalizeHistogram( void )
   {
-    typename HistogramType::Iterator hit;
-    typename HistogramType::FrequencyType totalFrequency = 
+    typename HistogramType::Iterator hit( this->m_Output );
+    typename HistogramType::TotalAbsoluteFrequencyType totalFrequency = 
       m_Output->GetTotalFrequency();
 
+    /** \todo: this won't work with the new statistics framework, since
+     * frequency are always integer then... */
     for ( hit = m_Output->Begin(); hit != m_Output->End(); ++hit )
     {
       hit.SetFrequency( hit.GetFrequency() / totalFrequency );

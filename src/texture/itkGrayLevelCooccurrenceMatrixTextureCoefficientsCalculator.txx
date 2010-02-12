@@ -89,17 +89,17 @@ namespace Statistics {
 
     /** Walk over the histogram. Only once instead of 4! */
     double log2 = vcl_log(2.);
-    HistogramIterator hit;
+    HistogramConstIterator hit( this->m_Histogram );
     for ( hit = this->m_Histogram->Begin(); hit != this->m_Histogram->End(); ++hit )
     {
       /** Get the frequency of this histogram entry. */
-      MeasurementType frequency = hit.GetFrequency();
-
+      AbsoluteFrequencyType frequencyCount = hit.GetFrequency();
+      
       /** No use doing these calculations if we're just multiplying by zero. */
-      if ( frequency == 0 ) continue;
+      if ( frequencyCount == 0 ) continue;
 
       /** Normalize frequency and get the index of this histogram entry. */
-      frequency /= totalFrequency;
+      double frequency = static_cast<double>(frequencyCount) / totalFrequency;
       IndexType index = this->m_Histogram->GetIndex( hit.GetInstanceIdentifier() );
 
       /** Compute values that are needed later for the feature computation. */

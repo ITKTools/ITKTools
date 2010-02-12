@@ -19,7 +19,7 @@
 
 #include "itkImage.h"
 #include "itkHistogram.h"
-#include "itkDenseFrequencyContainer.h"
+#include "itkDenseFrequencyContainer2.h"
 #include "itkVectorContainer.h"
 #include "itkObject.h"
 #include "itkNumericTraits.h"
@@ -88,7 +88,7 @@ namespace itk {
 */
     
 template< class TImageType,
-          class THistogramFrequencyContainer = DenseFrequencyContainer >
+          class THistogramFrequencyContainer = DenseFrequencyContainer2 >
 class ScalarImageToGrayLevelCooccurrenceMatrixGenerator : public Object
   {
   public:
@@ -117,7 +117,7 @@ class ScalarImageToGrayLevelCooccurrenceMatrixGenerator : public Object
     
     typedef typename NumericTraits<PixelType>::RealType     MeasurementType;
     
-    typedef Histogram< MeasurementType, 2, THistogramFrequencyContainer >
+    typedef Histogram< MeasurementType, THistogramFrequencyContainer >
                                                             HistogramType;
     typedef typename HistogramType::Pointer                 HistogramPointer;
     typedef typename HistogramType::ConstPointer            HistogramConstPointer;

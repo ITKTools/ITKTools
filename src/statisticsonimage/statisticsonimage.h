@@ -41,6 +41,7 @@ void ComputeStatistics(
   typedef THistogramGenerator                         HistogramGeneratorType;
   typedef typename 
     HistogramGeneratorType::HistogramType             HistogramType;
+  typedef typename HistogramGeneratorType::RealPixelType   RealPixelType;
   typedef TStatisticsFilter                           StatisticsFilterType;
   typedef typename StatisticsFilterType::PixelType    PixelType;
   typedef TInputImage                                 InputImageType;
@@ -125,7 +126,7 @@ void ComputeStatistics(
         / static_cast<double>( numberOfBins );
       binsize = vnl_math_max( binsize, epsilon );
       double uppermargin = vnl_math_max( epsilon, binsize / marginalScale );
-      histogramMax = static_cast<PixelType>(
+      histogramMax = static_cast<RealPixelType>(
         vnl_math_max( binsize * static_cast<double>( numberOfBins ) + minPixelValue,
         maxPixelValue + uppermargin ) );
     }
@@ -136,7 +137,7 @@ void ComputeStatistics(
        * future ...
        */
       PixelType uppermargin = itk::NumericTraits<PixelType>::One;
-      histogramMax = static_cast<PixelType>( maxPixelValue + uppermargin );
+      histogramMax = static_cast<RealPixelType>( maxPixelValue + uppermargin );
     }
     if ( histogramMax <= maxPixelValue )
     {
@@ -153,11 +154,11 @@ void ComputeStatistics(
       std::cerr << " pxstatisticsonimage cannot handle this situation." << std::endl;
       itkGenericExceptionMacro( << "Histogram cannot be computed." );
     }
-
+          
     histogramGenerator->SetAutoMinMax(false);
     histogramGenerator->SetNumberOfBins(numberOfBins);
-    histogramGenerator->SetHistogramMin( minPixelValue );
-    histogramGenerator->SetHistogramMax( histogramMax );
+    histogramGenerator->SetHistogramMin( static_cast<RealPixelType>(minPixelValue) );
+    histogramGenerator->SetHistogramMax( histogramMax );    
     histogramGenerator->SetInput( maskerOrCopier->GetOutput() );
     std::cout << "Computing histogram..." << std::endl;
     histogramGenerator->Compute();

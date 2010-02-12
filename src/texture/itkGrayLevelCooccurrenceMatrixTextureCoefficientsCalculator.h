@@ -119,11 +119,13 @@ class GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator : public Object
     typedef THistogram                                      HistogramType;
     typedef typename HistogramType::Pointer                 HistogramPointer;
     typedef typename HistogramType::ConstPointer            HistogramConstPointer;
-    typedef typename HistogramType::Iterator                HistogramIterator;
+    typedef typename HistogramType::ConstIterator           HistogramConstIterator;
     typedef typename HistogramType::MeasurementType         MeasurementType;
     typedef typename HistogramType::MeasurementVectorType   MeasurementVectorType;
     typedef typename HistogramType::IndexType               IndexType;
-    typedef typename HistogramType::FrequencyType           FrequencyType;
+    
+    typedef typename HistogramType::RelativeFrequencyType   RelativeFrequencyType;
+    typedef typename HistogramType::AbsoluteFrequencyType   AbsoluteFrequencyType;
     
     /** Triggers the computation of the histogram. */
     virtual void Compute( void );

@@ -3,8 +3,8 @@
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: itkScalarImageToHistogramGenerator2.txx,v $
   Language:  C++
-  Date:      $Date: 2006-06-19 12:51:56 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2009-08-17 18:29:01 $
+  Version:   $Revision: 1.4 $
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -14,8 +14,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef _itkScalarImageToHistogramGenerator2_txx
-#define _itkScalarImageToHistogramGenerator2_txx
+#ifndef __itkScalarImageToHistogramGenerator2_txx
+#define __itkScalarImageToHistogramGenerator2_txx
 
 #include "itkScalarImageToHistogramGenerator2.h"
 
@@ -30,10 +30,8 @@ ScalarImageToHistogramGenerator2< TImage >
 {
   m_ImageToListAdaptor = AdaptorType::New();
   m_HistogramGenerator = GeneratorType::New();
-  m_HistogramGenerator->SetListSample( m_ImageToListAdaptor );
+  m_HistogramGenerator->SetInput( m_ImageToListAdaptor );
 }
-
-
 
 template < class TImage >
 void
@@ -52,8 +50,6 @@ ScalarImageToHistogramGenerator2< TImage >
   return m_HistogramGenerator->GetOutput();
 }
 
-
-
 template < class TImage >
 void
 ScalarImageToHistogramGenerator2< TImage >
@@ -62,19 +58,40 @@ ScalarImageToHistogramGenerator2< TImage >
   m_HistogramGenerator->Update();
 }
 
-
-
 template < class TImage >
 void
 ScalarImageToHistogramGenerator2< TImage >
 ::SetNumberOfBins( unsigned int numberOfBins ) 
 {
   typename HistogramType::SizeType size;
+  size.SetSize(1);
   size.Fill( numberOfBins );
-  m_HistogramGenerator->SetNumberOfBins( size );
+  m_HistogramGenerator->SetHistogramSize( size );
 }
 
 
+template < class TImage >
+void
+ScalarImageToHistogramGenerator2< TImage >
+::SetHistogramMin( RealPixelType minimumValue ) 
+{
+  typedef typename GeneratorType::HistogramMeasurementVectorType     MeasurementVectorType;
+  MeasurementVectorType minVector(1);
+  minVector[0] = minimumValue;
+  m_HistogramGenerator->SetHistogramBinMinimum( minVector );
+}
+
+
+template < class TImage >
+void
+ScalarImageToHistogramGenerator2< TImage >
+::SetHistogramMax( RealPixelType maximumValue ) 
+{
+  typedef typename GeneratorType::HistogramMeasurementVectorType     MeasurementVectorType;
+  MeasurementVectorType maxVector(1);
+  maxVector[0] = maximumValue;
+  m_HistogramGenerator->SetHistogramBinMaximum( maxVector );
+}
 
 template < class TImage >
 void
@@ -84,8 +101,13 @@ ScalarImageToHistogramGenerator2< TImage >
   m_HistogramGenerator->SetMarginalScale( marginalScale );
 }
 
-
-
+template < class TImage >
+void
+ScalarImageToHistogramGenerator2< TImage >
+::SetAutoMinMax(bool autoMinMax)
+{
+  m_HistogramGenerator->SetAutoMinimumMaximum(autoMinMax);
+}
 
 template < class TImage >
 void
@@ -97,43 +119,7 @@ ScalarImageToHistogramGenerator2< TImage >
   os << "HistogramGenerator = " << m_HistogramGenerator << std::endl;
 }
 
-
-template < class TImage >
-void
-ScalarImageToHistogramGenerator2< TImage >
-::SetHistogramMin(const PixelType & histogramMin)
-{
-  typename HistogramType::MeasurementVectorType hmin;
-  hmin.Fill(histogramMin);
-  m_HistogramGenerator->SetHistogramMin(hmin);
-}
-
-
-template < class TImage >
-void
-ScalarImageToHistogramGenerator2< TImage >
-::SetHistogramMax(const PixelType & histogramMax)
-{
-   typename HistogramType::MeasurementVectorType hmax;
-   hmax.Fill(histogramMax);
-   m_HistogramGenerator->SetHistogramMax(hmax);
-}
-
-
-template < class TImage >
-void
-ScalarImageToHistogramGenerator2< TImage >
-::SetAutoMinMax(bool autoMinMax)
-{
-  m_HistogramGenerator->SetAutoMinMax(autoMinMax);
-}
-
-
-
-
 } // end of namespace Statistics 
 } // end of namespace itk
 
 #endif
-
-
