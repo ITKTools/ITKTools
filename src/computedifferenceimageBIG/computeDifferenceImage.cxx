@@ -16,10 +16,10 @@
  */
 #include <itksys/SystemTools.hxx>
 
-extern int ComputeScalarDifferenceImage( const std::string &inputPixelComponentType1,
-  const std::string &inputPixelComponentType2, const std::string &outputPixelComponentType,
-  const std::string &image1FileName, const std::string &image2FileName,
-  const std::string &outputFileName, int inputDimension);
+// extern int ComputeScalarDifferenceImage( const std::string &inputPixelComponentType1,
+//   const std::string &inputPixelComponentType2, const std::string &outputPixelComponentType,
+//   const std::string &image1FileName, const std::string &image2FileName,
+//   const std::string &outputFileName, int inputDimension);
 
 extern int ComputeVectorDifferenceImage( const std::string &inputPixelComponentType1,
   const std::string &inputPixelComponentType2, const std::string &outputPixelComponentType,
@@ -269,7 +269,7 @@ int  main(  int  argc,  char *argv[] )
   {
     /**
      * ****************** Support for SCALAR pixel types. **********************************
-     */
+     *
     if ( strcmp( pixelType1.c_str(), "scalar" ) == 0 && numberOfComponents1 == 1 )
     {
       const int ret_value = ComputeScalarDifferenceImage(
@@ -280,12 +280,12 @@ int  main(  int  argc,  char *argv[] )
       {
         return ret_value;
       }
-    } // end scalar support
+    } // end scalar support */
     /**
      * ****************** Support for VECTOR pixel types. **********************************
      */
     //else if ( strcmp( pixelType1.c_str(), "vector" ) == 0 )
-    else if ( numberOfComponents1 > 1 )
+    if ( numberOfComponents1 > 1 )
     {
       const int ret_value = ComputeVectorDifferenceImage(
         inputPixelComponentType1, inputPixelComponentType2,
@@ -314,7 +314,7 @@ int  main(  int  argc,  char *argv[] )
     return 1;
   }
 
-  /** End  program. Return succes. */
+  /** End  program. Return success. */
   return 0;
 
 }  // end main

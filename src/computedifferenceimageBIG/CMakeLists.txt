@@ -1,6 +1,12 @@
 # This project is intended to be built outside the Insight source tree
 PROJECT(computeDifferenceImageBIG)
 
+# Increases address capacity
+IF ( WIN32 )
+  SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /bigobj")
+  SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /bigobj")
+ENDIF ( WIN32 )
+
 # Find ITK.
 FIND_PACKAGE(ITK)
 IF(ITK_FOUND)
@@ -10,7 +16,7 @@ ELSE(ITK_FOUND)
           "Cannot build without ITK.  Please set ITK_DIR.")
 ENDIF(ITK_FOUND)
 
-ADD_EXECUTABLE(pxcomputedifferenceimageBIG computeDifferenceImage.cxx computeDifferenceImageScalar.cxx computeDifferenceImageScalar2D.cxx computeDifferenceImageScalar3D.cxx computeDifferenceImageScalar4D.cxx computeDifferenceImageVector.cxx computeDifferenceImageVector2D.cxx computeDifferenceImageVector3D.cxx computeDifferenceImageVector4D.cxx)
+ADD_EXECUTABLE(pxcomputedifferenceimageBIG computeDifferenceImage.cxx computeDifferenceImageVector.cxx computeDifferenceImageVector2D.cxx computeDifferenceImageVector3D.cxx computeDifferenceImageVector4D.cxx)
 
 TARGET_LINK_LIBRARIES(pxcomputedifferenceimageBIG ITKIO ITKCommon)
 
