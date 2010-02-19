@@ -57,10 +57,10 @@ if ( ComponentTypeIn == #typeIn && ComponentTypeOut == #typeOut && inputDimensio
     unaryFilter = tempUnaryFilter.GetPointer(); \
   }
  
-  
-  /**
-   * ******************* UnaryImageOperator *******************
-   */
+
+/**
+ * ******************* UnaryImageOperator *******************
+ */
 
 template< class InputImageType, class OutputImageType >
 void UnaryImageOperator( 
@@ -107,8 +107,6 @@ void UnaryImageOperator(
   InstantiateUnaryFilter( LDIVIDE, double );
   InstantiateUnaryFilter( RDIVIDE, int );
   InstantiateUnaryFilter( RDIVIDE, double );
-  InstantiateUnaryFilter( RPOWER, double );
-  InstantiateUnaryFilter( LPOWER, double );
   InstantiateUnaryFilter( RMODINT, int );
   InstantiateUnaryFilter( RMODDOUBLE, double );
   InstantiateUnaryFilter( LMODINT, int );
@@ -116,6 +114,11 @@ void UnaryImageOperator(
   InstantiateUnaryFilter( NLOG, double );
 
   InstantiateUnaryFilter( EQUAL, int );
+
+  // arg is always double is ok
+  InstantiateUnaryFilter2( RPOWER );
+  InstantiateUnaryFilter2( LPOWER );
+
   // arg is dummy
   InstantiateUnaryFilter2( NEG );
   InstantiateUnaryFilter2( SIGNINT );
