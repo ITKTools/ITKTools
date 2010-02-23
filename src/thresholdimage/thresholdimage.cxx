@@ -7,6 +7,7 @@
 
 #include "itkBinaryThresholdImageFilter.h"
 #include "itkOtsuThresholdWithMaskImageFilter.h"
+#include "itkOtsuMultipleThresholdsImageFilter.h"
 #include "itkAdaptiveOtsuThresholdImageFilter.h"
 #include "itkRobustAutomaticThresholdImageFilter.h"
 #include "itkKappaSigmaThresholdImageFilter.h"
@@ -27,6 +28,12 @@ if ( ComponentTypeIn == #type && Dimension == dim ) \
   else if ( method == "OtsuThreshold" ) \
   { \
     OtsuThresholdImage< InputImageType >( inputFileName, outputFileName, maskFileName, bins ); \
+    supported = true; \
+  } \
+  else if ( method == "OtsuMultipleThreshold" ) \
+  { \
+    OtsuMultipleThresholdImage< InputImageType >( inputFileName, outputFileName, \
+      maskFileName, bins, numThresholds ); \
     supported = true; \
   } \
   else if ( method == "RobustAutomaticThreshold" ) \
@@ -59,6 +66,14 @@ void OtsuThresholdImage(
   const std::string & outputFileName,
   const std::string & maskFileName,
   const unsigned int & bins );
+
+template< class InputImageType >
+void OtsuMultipleThresholdImage(
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+  const std::string & maskFileName,
+  const unsigned int & bins,
+  const unsigned int & numThresholds );
 
 // template< class InputImageType >
 // void AdaptiveOtsuThresholdImage(
@@ -130,6 +145,9 @@ int main( int argc, char **argv )
   unsigned int bins = 128;
   parser->GetCommandLineArgument( "-b", bins );
 
+  unsigned int numThresholds = 1;
+  parser->GetCommandLineArgument( "-t", numThresholds );
+
   unsigned int controlPoints = 50;
   parser->GetCommandLineArgument( "-cp", controlPoints );
 
@@ -162,12 +180,13 @@ int main( int argc, char **argv )
   }
   if ( method != "Threshold"
     && method != "OtsuThreshold"
+    && method != "OtsuMultipleThreshold"
     && method != "AdaptiveOtsuThreshold"
     && method != "RobustAutomaticThreshold"
     && method != "KappaSigmaThreshold" )
   {
     std::cerr << "ERROR: method \"-m\" should be one of { Threshold, "
-      << "OtsuThreshold, AdaptiveOtsuThreshold, "
+      << "OtsuThreshold, OtsuMultipleThreshold, AdaptiveOtsuThreshold, "
       << "RobustAutomaticThreshold, KappaSigmaThreshold }." << std::endl;
     return 1;
   }
@@ -347,6 +366,60 @@ void OtsuThresholdImage(
 } // end OtsuThresholdImage()
 
 
+/**
+ * ******************* OtsuMultipleThresholdImage *******************
+ */
+
+template< class InputImageType >
+void OtsuMultipleThresholdImage(
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+  const std::string & itkNotUsed( maskFileName ),
+  const unsigned int & bins,
+  const unsigned int & numThresholds )
+{
+  /** Typedef's. */
+  const unsigned int ImageDimension = InputImageType::ImageDimension;
+
+  typedef unsigned char                                 OutputPixelType;
+  typedef unsigned char                                 MaskPixelType;
+  typedef itk::Image< MaskPixelType, ImageDimension >   MaskImageType;
+  typedef itk::Image< OutputPixelType, ImageDimension > OutputImageType;
+  typedef itk::ImageFileReader< InputImageType >        ReaderType;
+  typedef itk::ImageFileReader< MaskImageType >         MaskReaderType;
+  typedef itk::OtsuMultipleThresholdsImageFilter<
+    InputImageType, OutputImageType>                    ThresholderType;
+  typedef itk::ImageFileWriter< OutputImageType >       WriterType;
+
+  /** Declarations. */
+  typename ReaderType::Pointer reader1 = ReaderType::New();
+  //typename MaskReaderType::Pointer reader2 = MaskReaderType::New();
+  typename ThresholderType::Pointer thresholder = ThresholderType::New();
+  typename WriterType::Pointer writer = WriterType::New();
+
+  /** Read in the inputImage. */
+  reader1->SetFileName( inputFileName.c_str() );
+  
+  /** Apply the threshold. */
+  thresholder->SetInput( reader1->GetOutput() );
+  thresholder->SetNumberOfHistogramBins( bins );
+  //thresholder->SetInsideValue( 0 );
+  //thresholder->SetOutsideValue( 1 );
+  thresholder->SetNumberOfThresholds( numThresholds );
+//   if ( maskFileName != "" )
+//   {
+//     reader2->SetFileName( maskFileName.c_str() );
+//     thresholder->SetMaskImage( reader2->GetOutput() );
+//   }
+  
+  /** Write the output image. */
+  writer->SetInput( thresholder->GetOutput() );
+  writer->SetFileName( outputFileName.c_str() );
+  writer->Update();
+
+} // end OtsuMultipleThresholdImage()
+
+
 // /**
 //  * ******************* AdaptiveOtsuThresholdImage *******************
 //  */
@@ -511,7 +584,7 @@ void KappaSigmaThresholdImage(
  * ******************* PrintHelp *******************
  */
 
-void PrintHelp()
+void PrintHelp( void )
 {
   std::cout << "This program thresholds an image.\n";
   std::cout << "Usage:\npxthresholdimage\n";
@@ -520,10 +593,11 @@ void PrintHelp()
   std::cout << "  [-mask]  maskFilename, optional for \"OtsuThreshold\", "
     << "required for \"KappaSigmaThreshold\"\n";
   std::cout << "  [-m]     method, choose one of { Threshold, OtsuThreshold, "
-    << "AdaptiveOtsuThreshold, RobustAutomaticThreshold, KappaSigmaThreshold }\n";
+    << "OtsuMultipleThreshold, AdaptiveOtsuThreshold, RobustAutomaticThreshold, KappaSigmaThreshold }\n";
   std::cout << "           default \"Threshold\"\n";
   std::cout << "  [-t1]    lower threshold, for \"Threshold\", default -infinity\n";
   std::cout << "  [-t2]    upper threshold, for \"Threshold\", default 1.0\n";
+  std::cout << "  [-t]     number of thresholds, for \"OtsuMultipleThreshold\", default 1\n";
   std::cout << "  [-b]     number of histogram bins, for \"OtsuThreshold\" "
     << "and \"AdaptiveOtsuThreshold\", default 128\n";
   std::cout << "  [-r]     radius, for \"AdaptiveOtsuThreshold\", default 8\n";
