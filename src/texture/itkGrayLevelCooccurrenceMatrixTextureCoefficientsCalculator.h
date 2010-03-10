@@ -21,7 +21,7 @@
 #include "itkMacro.h"
 
 namespace itk {
-  namespace Statistics {
+namespace Statistics {
 
 /** \class GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator 
 *  \brief This class computes texture feature coefficients from a grey level
@@ -101,90 +101,90 @@ enum TextureFeatureName { Energy, Entropy, Correlation,
     
 template< class THistogram >
 class GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator : public Object
-  {
-  public:
-    /** Standard typedefs */
-    typedef GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator Self;
-    typedef Object                    Superclass;
-    typedef SmartPointer<Self>        Pointer;
-    typedef SmartPointer<const Self>  ConstPointer;
-    
-    /** Run-time type information (and related methods). */
-    itkTypeMacro( GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator, Object );
-    
-    /** standard New() method support */
-    itkNewMacro( Self ) ;
-    
-    /** Typedefs. */
-    typedef THistogram                                      HistogramType;
-    typedef typename HistogramType::Pointer                 HistogramPointer;
-    typedef typename HistogramType::ConstPointer            HistogramConstPointer;
-    typedef typename HistogramType::ConstIterator           HistogramConstIterator;
-    typedef typename HistogramType::MeasurementType         MeasurementType;
-    typedef typename HistogramType::MeasurementVectorType   MeasurementVectorType;
-    typedef typename HistogramType::IndexType               IndexType;
-    
-    typedef typename HistogramType::RelativeFrequencyType   RelativeFrequencyType;
-    typedef typename HistogramType::AbsoluteFrequencyType   AbsoluteFrequencyType;
-    
-    /** Triggers the computation of the histogram. */
-    virtual void Compute( void );
-    
-    /** Connects the GLCM histogram over which the features are going to be computed. */
-    itkSetObjectMacro( Histogram, HistogramType );
-    itkGetObjectMacro( Histogram, HistogramType );
+{
+public:
+  /** Standard typedefs */
+  typedef GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator Self;
+  typedef Object                    Superclass;
+  typedef SmartPointer<Self>        Pointer;
+  typedef SmartPointer<const Self>  ConstPointer;
 
-    /** Methods to return the feature values.
-     * \warning These outputs are only valid after the Compute() method has been invoked.
-     * \sa Compute()
-     */
-    double GetFeature( TextureFeatureName feature );
-    double GetFeature( unsigned int feature );
-    
-    itkGetMacro( Energy, double );
-    itkGetMacro( Entropy, double );
-    itkGetMacro( Correlation, double );
-    itkGetMacro( InverseDifferenceMoment, double );
-    itkGetMacro( Inertia, double );
-    itkGetMacro( ClusterShade, double );
-    itkGetMacro( ClusterProminence, double );
-    itkGetMacro( HaralickCorrelation, double );
-    
-  protected:
+  /** Run-time type information (and related methods). */
+  itkTypeMacro( GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator, Object );
 
-    /** Constructor. */
-    GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator();
+  /** standard New() method support */
+  itkNewMacro( Self ) ;
 
-    /** Destructor. */
-    virtual ~GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator() {};
+  /** Typedefs. */
+  typedef THistogram                                      HistogramType;
+  typedef typename HistogramType::Pointer                 HistogramPointer;
+  typedef typename HistogramType::ConstPointer            HistogramConstPointer;
+  typedef typename HistogramType::ConstIterator           HistogramConstIterator;
+  typedef typename HistogramType::MeasurementType         MeasurementType;
+  typedef typename HistogramType::MeasurementVectorType   MeasurementVectorType;
+  typedef typename HistogramType::IndexType               IndexType;
 
-    /** PrintSelf. */
-    void PrintSelf( std::ostream& os, Indent indent ) const;    
+  typedef typename HistogramType::RelativeFrequencyType   RelativeFrequencyType;
+  typedef typename HistogramType::AbsoluteFrequencyType   AbsoluteFrequencyType;
 
-   private:
+  /** Triggers the computation of the histogram. */
+  virtual void Compute( void );
 
-     GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator( const Self& ); // purposely not implemented
-     void operator=( const Self& );            // purposely not implemented
+  /** Connects the GLCM histogram over which the features are going to be computed. */
+  itkSetObjectMacro( Histogram, HistogramType );
+  itkGetObjectMacro( Histogram, HistogramType );
 
-     virtual void ResetFeatureValues( void );
+  /** Methods to return the feature values.
+   * \warning These outputs are only valid after the Compute() method has been invoked.
+   * \sa Compute()
+   */
+  double GetFeature( TextureFeatureName feature );
+  double GetFeature( unsigned int feature );
 
-     /** The member variables: input histogram. */
-     HistogramPointer  m_Histogram;
+  itkGetMacro( Energy, double );
+  itkGetMacro( Entropy, double );
+  itkGetMacro( Correlation, double );
+  itkGetMacro( InverseDifferenceMoment, double );
+  itkGetMacro( Inertia, double );
+  itkGetMacro( ClusterShade, double );
+  itkGetMacro( ClusterProminence, double );
+  itkGetMacro( HaralickCorrelation, double );
 
-     /** The member variables: output feature values. */
-     double            m_Energy;
-     double            m_Entropy;
-     double            m_Correlation;
-     double            m_InverseDifferenceMoment;
-     double            m_Inertia;
-     double            m_ClusterShade;
-     double            m_ClusterProminence;
-     double            m_HaralickCorrelation;
-    
-  }; // end class GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator
-    
-    
-  } // end of namespace Statistics 
+protected:
+
+  /** Constructor. */
+  GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator();
+
+  /** Destructor. */
+  virtual ~GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator() {};
+
+  /** PrintSelf. */
+  void PrintSelf( std::ostream& os, Indent indent ) const;    
+
+private:
+
+  GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator( const Self& ); // purposely not implemented
+  void operator=( const Self& );            // purposely not implemented
+
+  virtual void ResetFeatureValues( void );
+
+  /** The member variables: input histogram. */
+  HistogramPointer  m_Histogram;
+
+  /** The member variables: output feature values. */
+  double            m_Energy;
+  double            m_Entropy;
+  double            m_Correlation;
+  double            m_InverseDifferenceMoment;
+  double            m_Inertia;
+  double            m_ClusterShade;
+  double            m_ClusterProminence;
+  double            m_HaralickCorrelation;
+
+}; // end class GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator
+
+
+} // end of namespace Statistics 
 } // end of namespace itk 
 
 #ifndef ITK_MANUAL_INSTANTIATION

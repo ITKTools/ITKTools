@@ -26,7 +26,7 @@
 #include "itkMacro.h"
 
 namespace itk {
-  namespace Statistics {
+namespace Statistics {
 
 /** \class ScalarImageToGrayLevelCooccurrenceMatrixGenerator 
 *  \brief This class computes a grey-level co-occurence matrix (histogram) from
@@ -90,114 +90,114 @@ namespace itk {
 template< class TImageType,
           class THistogramFrequencyContainer = DenseFrequencyContainer2 >
 class ScalarImageToGrayLevelCooccurrenceMatrixGenerator : public Object
+{
+public:
+  /** Standard typedefs */
+  typedef ScalarImageToGrayLevelCooccurrenceMatrixGenerator Self;
+  typedef Object Superclass;
+  typedef SmartPointer<Self> Pointer;
+  typedef SmartPointer<const Self> ConstPointer;
+
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(ScalarImageToGrayLevelCooccurrenceMatrixGenerator, Object);
+
+  /** standard New() method support */
+  itkNewMacro(Self) ;
+
+  typedef TImageType                                      ImageType;
+  typedef typename ImageType::Pointer                     ImagePointer;
+  typedef typename ImageType::ConstPointer                ImageConstPointer;
+  typedef typename ImageType::PixelType                   PixelType;
+  typedef typename ImageType::RegionType                  RegionType;
+  typedef typename ImageType::SizeType                    RadiusType;
+  typedef typename ImageType::OffsetType                  OffsetType;
+  typedef VectorContainer<unsigned char, OffsetType>      OffsetVector;
+  typedef typename OffsetVector::Pointer                  OffsetVectorPointer;
+  typedef typename OffsetVector::ConstPointer             OffsetVectorConstPointer;
+
+  typedef typename NumericTraits<PixelType>::RealType     MeasurementType;
+
+  typedef Histogram< MeasurementType, THistogramFrequencyContainer >
+    HistogramType;
+  typedef typename HistogramType::Pointer                 HistogramPointer;
+  typedef typename HistogramType::ConstPointer            HistogramConstPointer;
+  typedef typename HistogramType::MeasurementVectorType   MeasurementVectorType;
+
+
+  itkStaticConstMacro(DefaultBinsPerAxis, unsigned int, 256);
+
+  /** Triggers the Computation of the histogram */
+  void Compute( void );
+
+  /** Connects the input image for which the histogram is going to be computed */
+  itkSetConstObjectMacro( Input, ImageType );
+  itkGetConstObjectMacro( Input, ImageType );
+
+  /** Set the offset or offsets over which the co-occurrence pairs will be computed.
+   * Calling either of these methods clears the previous offsets.
+   */
+  itkSetConstObjectMacro( Offsets, OffsetVector );
+  itkGetConstObjectMacro( Offsets, OffsetVector );
+  void SetOffset( const OffsetType offset )
   {
-  public:
-    /** Standard typedefs */
-    typedef ScalarImageToGrayLevelCooccurrenceMatrixGenerator Self;
-    typedef Object Superclass;
-    typedef SmartPointer<Self> Pointer;
-    typedef SmartPointer<const Self> ConstPointer;
-    
-    /** Run-time type information (and related methods). */
-    itkTypeMacro(ScalarImageToGrayLevelCooccurrenceMatrixGenerator, Object);
-    
-    /** standard New() method support */
-    itkNewMacro(Self) ;
-    
-    typedef TImageType                                      ImageType;
-    typedef typename ImageType::Pointer                     ImagePointer;
-    typedef typename ImageType::ConstPointer                ImageConstPointer;
-    typedef typename ImageType::PixelType                   PixelType;
-    typedef typename ImageType::RegionType                  RegionType;
-    typedef typename ImageType::SizeType                    RadiusType;
-    typedef typename ImageType::OffsetType                  OffsetType;
-    typedef VectorContainer<unsigned char, OffsetType>      OffsetVector;
-    typedef typename OffsetVector::Pointer                  OffsetVectorPointer;
-    typedef typename OffsetVector::ConstPointer             OffsetVectorConstPointer;
-    
-    typedef typename NumericTraits<PixelType>::RealType     MeasurementType;
-    
-    typedef Histogram< MeasurementType, THistogramFrequencyContainer >
-                                                            HistogramType;
-    typedef typename HistogramType::Pointer                 HistogramPointer;
-    typedef typename HistogramType::ConstPointer            HistogramConstPointer;
-    typedef typename HistogramType::MeasurementVectorType   MeasurementVectorType;
-    
-    
-    itkStaticConstMacro(DefaultBinsPerAxis, unsigned int, 256);
-    
-    /** Triggers the Computation of the histogram */
-    void Compute( void );
-    
-    /** Connects the input image for which the histogram is going to be computed */
-    itkSetConstObjectMacro( Input, ImageType );
-    itkGetConstObjectMacro( Input, ImageType );
+    OffsetVectorPointer offsetVector = OffsetVector::New();
+    offsetVector->push_back(offset);
+    this->SetOffsets(offsetVector);
+  }
 
-    /** Set the offset or offsets over which the co-occurrence pairs will be computed.
-     * Calling either of these methods clears the previous offsets.
-     */
-    itkSetConstObjectMacro( Offsets, OffsetVector );
-    itkGetConstObjectMacro( Offsets, OffsetVector );
-    void SetOffset( const OffsetType offset )
-      {
-      OffsetVectorPointer offsetVector = OffsetVector::New();
-      offsetVector->push_back(offset);
-      this->SetOffsets(offsetVector);
-      }
-        
-    /** Return the histogram.
-      \warning This output is only valid after the Compute() method has been invoked 
-      \sa Compute */
-    itkGetObjectMacro( Output, HistogramType );
-    
-    /** Set number of histogram bins along each axis */
-    itkSetMacro( NumberOfBinsPerAxis, unsigned int );
-    itkGetMacro( NumberOfBinsPerAxis, unsigned int );
+  /** Return the histogram.
+  \warning This output is only valid after the Compute() method has been invoked 
+  \sa Compute */
+  itkGetObjectMacro( Output, HistogramType );
 
-    /** Set the min and max (inclusive) pixel value that will be placed in the histogram */
-    void SetPixelValueMinMax( PixelType min, PixelType max );
-    itkGetMacro(Min, PixelType);
-    itkGetMacro(Max, PixelType);
-    
-    /** Set the calculator to normalize the histogram (divide all bins by the 
-      total frequency). Normalization is off by default.*/
-    itkSetMacro(Normalize, bool);
-    itkGetMacro(Normalize, bool);
-    itkBooleanMacro(Normalize);
-    
-  protected:
+  /** Set number of histogram bins along each axis */
+  itkSetMacro( NumberOfBinsPerAxis, unsigned int );
+  itkGetMacro( NumberOfBinsPerAxis, unsigned int );
 
-    /** Constructor. */
-    ScalarImageToGrayLevelCooccurrenceMatrixGenerator();
+  /** Set the min and max (inclusive) pixel value that will be placed in the histogram */
+  void SetPixelValueMinMax( PixelType min, PixelType max );
+  itkGetMacro(Min, PixelType);
+  itkGetMacro(Max, PixelType);
 
-    /** Destructor. */
-    virtual ~ScalarImageToGrayLevelCooccurrenceMatrixGenerator() {};
+  /** Set the calculator to normalize the histogram (divide all bins by the 
+  total frequency). Normalization is off by default.*/
+  itkSetMacro(Normalize, bool);
+  itkGetMacro(Normalize, bool);
+  itkBooleanMacro(Normalize);
 
-    /** PrintSelf. */
-    void PrintSelf(std::ostream& os, Indent indent) const;
+protected:
 
-    virtual void FillHistogram( RadiusType radius, RegionType region );
-        
-   private:
+  /** Constructor. */
+  ScalarImageToGrayLevelCooccurrenceMatrixGenerator();
 
-     ScalarImageToGrayLevelCooccurrenceMatrixGenerator( const Self& ); // purposely not implemented
-     void operator=( const Self& );            // purposely not implemented
+  /** Destructor. */
+  virtual ~ScalarImageToGrayLevelCooccurrenceMatrixGenerator() {};
 
-    void NormalizeHistogram( void );
-  
-    ImageConstPointer        m_Input;
-    HistogramPointer         m_Output;
-    OffsetVectorConstPointer m_Offsets;
-    PixelType                m_Min, m_Max;
+  /** PrintSelf. */
+  void PrintSelf(std::ostream& os, Indent indent) const;
 
-    unsigned int            m_NumberOfBinsPerAxis;
-    MeasurementVectorType   m_LowerBound, m_UpperBound;
-    bool                    m_Normalize;
+  virtual void FillHistogram( RadiusType radius, RegionType region );
 
-  };
-    
-    
-  } // end of namespace Statistics 
+private:
+
+  ScalarImageToGrayLevelCooccurrenceMatrixGenerator( const Self& ); // purposely not implemented
+  void operator=( const Self& );            // purposely not implemented
+
+  void NormalizeHistogram( void );
+
+  ImageConstPointer        m_Input;
+  HistogramPointer         m_Output;
+  OffsetVectorConstPointer m_Offsets;
+  PixelType                m_Min, m_Max;
+
+  unsigned int            m_NumberOfBinsPerAxis;
+  MeasurementVectorType   m_LowerBound, m_UpperBound;
+  bool                    m_Normalize;
+
+};
+
+
+} // end of namespace Statistics 
 } // end of namespace itk 
 
 #ifndef ITK_MANUAL_INSTANTIATION

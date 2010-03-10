@@ -26,232 +26,232 @@
 namespace itk {
 namespace Statistics {
 
-  /**
-   * ********************* Constructor ****************************
-   */
+/**
+ * ********************* Constructor ****************************
+ */
   
-  template< class TImageType, class THistogramFrequencyContainer >
-    ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
-      TImageType, THistogramFrequencyContainer >
-    ::ScalarImageToGrayLevelCooccurrenceMatrixGenerator() : 
-    m_NumberOfBinsPerAxis(itkGetStaticConstMacro(DefaultBinsPerAxis)), m_Normalize(false)
+template< class TImageType, class THistogramFrequencyContainer >
+ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
+  TImageType, THistogramFrequencyContainer >
+::ScalarImageToGrayLevelCooccurrenceMatrixGenerator() :
+m_NumberOfBinsPerAxis(itkGetStaticConstMacro(DefaultBinsPerAxis)), m_Normalize(false)
+{
+  //initialize parameters
+  // constant for a coocurrence matrix.
+  const unsigned int measurementVectorSize = 2;
+  this->m_LowerBound.SetSize( measurementVectorSize );
+  this->m_UpperBound.SetSize( measurementVectorSize );
+  this->m_LowerBound.Fill( NumericTraits<PixelType>::min() );
+  this->m_UpperBound.Fill( NumericTraits<PixelType>::max() + 1 );
+  this->m_Min = NumericTraits<PixelType>::min();
+  this->m_Max = NumericTraits<PixelType>::max();
+
+} // end Constructor()
+
+
+/**
+ * ********************* Compute ****************************
+ */
+
+template< class TImageType, class THistogramFrequencyContainer >
+void
+ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
+  TImageType, THistogramFrequencyContainer >
+::Compute( void )
+{
+  // First, create an appropriate histogram with the right number of bins
+  // and mins and maxes correct for the image type.
+  if ( this->m_Output.IsNull() )
   {
-    //initialize parameters
-    // constant for a coocurrence matrix.
-    const unsigned int measurementVectorSize = 2;
-    this->m_LowerBound.SetSize( measurementVectorSize );
-    this->m_UpperBound.SetSize( measurementVectorSize );
-    this->m_LowerBound.Fill( NumericTraits<PixelType>::min() );
-    this->m_UpperBound.Fill( NumericTraits<PixelType>::max() + 1 );
-    this->m_Min = NumericTraits<PixelType>::min();
-    this->m_Max = NumericTraits<PixelType>::max();
+    this->m_Output = HistogramType::New();
+    this->m_Output->SetMeasurementVectorSize(2);
+  }
 
-  } // end Constructor()
+  typename HistogramType::SizeType size;
+  size.SetSize(2);
+  size.Fill( m_NumberOfBinsPerAxis );
+  // Initialize also calls SetToZero, which is good.
+  this->m_Output->Initialize( size, this->m_LowerBound, this->m_UpperBound );
 
-
-  /**
-   * ********************* Compute ****************************
-   */
-
-  template< class TImageType, class THistogramFrequencyContainer >
-    void
-    ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
-    TImageType, THistogramFrequencyContainer >
-    ::Compute( void )
+  // Next, find the minimum radius that encloses all the offsets.
+  unsigned int minRadius = 0;
+  typename OffsetVector::ConstIterator offsets;
+  for ( offsets = m_Offsets->Begin(); offsets != m_Offsets->End(); offsets++ )
   {
-    // First, create an appropriate histogram with the right number of bins
-    // and mins and maxes correct for the image type.
-    if ( this->m_Output.IsNull() )
+    for ( unsigned int i = 0; i < offsets.Value().GetOffsetDimension(); i++ )
     {
-      this->m_Output = HistogramType::New();
-      this->m_Output->SetMeasurementVectorSize(2);
+      unsigned int distance = vnl_math_abs( offsets.Value()[ i ] );
+      if ( distance > minRadius )
+      {
+        minRadius = distance;
+      }          
     }
-    
-    typename HistogramType::SizeType size;
-    size.SetSize(2);
-    size.Fill( m_NumberOfBinsPerAxis );
-    // Initialize also calls SetToZero, which is good.
-    this->m_Output->Initialize( size, this->m_LowerBound, this->m_UpperBound );
+  }
 
-    // Next, find the minimum radius that encloses all the offsets.
-    unsigned int minRadius = 0;
+  RadiusType radius;
+  radius.Fill( minRadius );
+
+  // Now fill in the histogram
+  this->FillHistogram( radius, this->m_Input->GetRequestedRegion() );
+
+  // Normalize the histogram if requested
+  if ( m_Normalize )
+  {
+    this->NormalizeHistogram();
+  }
+
+} // end Compute()
+
+
+/**
+ * ********************* FillHistogram ****************************
+ */
+
+template< class TImageType, class THistogramFrequencyContainer >
+void
+ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
+  TImageType, THistogramFrequencyContainer >
+::FillHistogram( RadiusType radius, RegionType region )
+{
+  // Iterate over all of those pixels and offsets, adding each 
+  // co-occurrence pair to the histogram
+  typedef ConstNeighborhoodIterator<ImageType> NeighborhoodIteratorType;
+  NeighborhoodIteratorType neighborIt;
+  neighborIt = NeighborhoodIteratorType( radius, m_Input, region );
+
+  OffsetType zeroOffset; zeroOffset.Fill( 0 );
+  MeasurementVectorType cooccur;
+  cooccur.SetSize(2);
+
+  for ( neighborIt.GoToBegin(); !neighborIt.IsAtEnd(); ++neighborIt )
+  {
+    //bool centerPixelInBounds;
+    //const PixelType centerPixelIntensity
+    //= neighborIt.GetPixel( zeroOffset, centerPixelInBounds );
+    const PixelType centerPixelIntensity = neighborIt.GetCenterPixel();
+    //if ( !centerPixelInBounds )
+    //{
+    //continue; // don't put a pixel in the histogram if it's out-of-bounds.
+    //}
+    if ( centerPixelIntensity < this->m_Min || centerPixelIntensity > this->m_Max )
+    {
+      continue; // don't put a pixel in the histogram if the value
+      // is out-of-bounds.
+    }
+
     typename OffsetVector::ConstIterator offsets;
     for ( offsets = m_Offsets->Begin(); offsets != m_Offsets->End(); offsets++ )
     {
-      for ( unsigned int i = 0; i < offsets.Value().GetOffsetDimension(); i++ )
+      bool pixelInBounds;
+      const PixelType pixelIntensity
+        = neighborIt.GetPixel( offsets.Value(), pixelInBounds );
+
+      if ( !pixelInBounds )
       {
-        unsigned int distance = vnl_math_abs( offsets.Value()[ i ] );
-        if ( distance > minRadius )
-        {
-          minRadius = distance;
-        }          
+        continue; // don't put a pixel in the histogram if it's out-of-bounds.
       }
-    }
 
-    RadiusType radius;
-    radius.Fill( minRadius );
-
-    // Now fill in the histogram
-    this->FillHistogram( radius, this->m_Input->GetRequestedRegion() );
-
-    // Normalize the histogram if requested
-    if ( m_Normalize )
-    {
-      this->NormalizeHistogram();
-    }
-
-  } // end Compute()
-
-
-  /**
-   * ********************* FillHistogram ****************************
-   */
-
-  template< class TImageType, class THistogramFrequencyContainer >
-    void
-    ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
-      TImageType, THistogramFrequencyContainer >
-      ::FillHistogram( RadiusType radius, RegionType region )
-  {
-    // Iterate over all of those pixels and offsets, adding each 
-    // co-occurrence pair to the histogram
-    typedef ConstNeighborhoodIterator<ImageType> NeighborhoodIteratorType;
-    NeighborhoodIteratorType neighborIt;
-    neighborIt = NeighborhoodIteratorType( radius, m_Input, region );
-
-    OffsetType zeroOffset; zeroOffset.Fill( 0 );
-    MeasurementVectorType cooccur;
-    cooccur.SetSize(2);
-
-    for ( neighborIt.GoToBegin(); !neighborIt.IsAtEnd(); ++neighborIt )
-    {
-      //bool centerPixelInBounds;
-      //const PixelType centerPixelIntensity
-        //= neighborIt.GetPixel( zeroOffset, centerPixelInBounds );
-      const PixelType centerPixelIntensity = neighborIt.GetCenterPixel();
-      //if ( !centerPixelInBounds )
-      //{
-        //continue; // don't put a pixel in the histogram if it's out-of-bounds.
-      //}
-      if ( centerPixelIntensity < this->m_Min || centerPixelIntensity > this->m_Max )
+      if ( pixelIntensity < this->m_Min || pixelIntensity > this->m_Max )
       {
         continue; // don't put a pixel in the histogram if the value
         // is out-of-bounds.
       }
 
-      typename OffsetVector::ConstIterator offsets;
-      for ( offsets = m_Offsets->Begin(); offsets != m_Offsets->End(); offsets++ )
-      {
-        bool pixelInBounds;
-        const PixelType pixelIntensity
-          = neighborIt.GetPixel( offsets.Value(), pixelInBounds );
-
-        if ( !pixelInBounds )
-        {
-          continue; // don't put a pixel in the histogram if it's out-of-bounds.
-        }
-
-        if ( pixelIntensity < this->m_Min || pixelIntensity > this->m_Max )
-        {
-          continue; // don't put a pixel in the histogram if the value
-          // is out-of-bounds.
-        }
-
-        // Now make both possible co-occurrence combinations and increment the
-        // histogram with them.
-        cooccur[ 0 ] = centerPixelIntensity;
-        cooccur[ 1 ] = pixelIntensity;
-        m_Output->IncreaseFrequency( cooccur, 1 );
-        cooccur[ 1 ] = centerPixelIntensity;
-        cooccur[ 0 ] = pixelIntensity;
-        m_Output->IncreaseFrequency( cooccur, 1 );
-      }
+      // Now make both possible co-occurrence combinations and increment the
+      // histogram with them.
+      cooccur[ 0 ] = centerPixelIntensity;
+      cooccur[ 1 ] = pixelIntensity;
+      m_Output->IncreaseFrequency( cooccur, 1 );
+      cooccur[ 1 ] = centerPixelIntensity;
+      cooccur[ 0 ] = pixelIntensity;
+      m_Output->IncreaseFrequency( cooccur, 1 );
     }
-  } // end FillHistogram()
+  }
+} // end FillHistogram()
 
 
-  /**
-   * ********************* NormalizeHistogram ****************************
-   */
-  
-  template< class TImageType, class THistogramFrequencyContainer >
-    void
-    ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
-      TImageType, THistogramFrequencyContainer >
-      ::NormalizeHistogram( void )
+/**
+ * ********************* NormalizeHistogram ****************************
+ */
+
+template< class TImageType, class THistogramFrequencyContainer >
+void
+ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
+  TImageType, THistogramFrequencyContainer >
+::NormalizeHistogram( void )
+{
+  typename HistogramType::Iterator hit( this->m_Output );
+  typename HistogramType::TotalAbsoluteFrequencyType totalFrequency = 
+    m_Output->GetTotalFrequency();
+
+  /** \todo: this won't work with the new statistics framework, since
+  * frequency are always integer then... */
+  for ( hit = m_Output->Begin(); hit != m_Output->End(); ++hit )
   {
-    typename HistogramType::Iterator hit( this->m_Output );
-    typename HistogramType::TotalAbsoluteFrequencyType totalFrequency = 
-      m_Output->GetTotalFrequency();
+    hit.SetFrequency( hit.GetFrequency() / totalFrequency );
+  }
 
-    /** \todo: this won't work with the new statistics framework, since
-     * frequency are always integer then... */
-    for ( hit = m_Output->Begin(); hit != m_Output->End(); ++hit )
-    {
-      hit.SetFrequency( hit.GetFrequency() / totalFrequency );
-    }
-
-  } // end NormalizeHistogram()
+} // end NormalizeHistogram()
 
 
-  /**
-   * ********************* SetPixelValueMinMax ****************************
-   */
-  
-  template< class TImageType, class THistogramFrequencyContainer >
-    void
-    ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
-      TImageType, THistogramFrequencyContainer >
-      ::SetPixelValueMinMax( PixelType min, PixelType max )
+/**
+ * ********************* SetPixelValueMinMax ****************************
+ */
+
+template< class TImageType, class THistogramFrequencyContainer >
+void
+ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
+  TImageType, THistogramFrequencyContainer >
+::SetPixelValueMinMax( PixelType min, PixelType max )
+{
+  this->m_Min = min;
+  this->m_Max = max;
+  this->m_LowerBound.Fill( min );
+  this->m_UpperBound.Fill( max + 1 );
+  this->Modified();
+
+} // end SetPixelValueMinMax()
+
+
+/**
+ * ********************* PrintSelf ****************************
+ */
+
+template< class TImageType, class THistogramFrequencyContainer >
+void
+ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
+  TImageType, THistogramFrequencyContainer >
+::PrintSelf( std::ostream& os, Indent indent ) const
+{
+  /** Call the superclass implementation. */
+  Superclass::PrintSelf( os, indent );
+
+  /** Print the member variables. */
+  os << indent << "Input: "
+    << this->m_Input.GetPointer() << std::endl;
+  os << indent << "Output: "
+    << this->m_Output.GetPointer() << std::endl;
+  os << indent << "Min: "
+    << this->m_Min << std::endl;
+  os << indent << "Max: "
+    << this->m_Max << std::endl;
+  os << indent << "NumberOfBinsPerAxis: "
+    << this->m_NumberOfBinsPerAxis << std::endl;
+  os << indent << "LowerBound: "
+    << this->m_LowerBound << std::endl;
+  os << indent << "UpperBound: "
+    << this->m_UpperBound << std::endl;
+  os << indent << "Normalize: "
+    << this->m_Normalize << std::endl;
+
+  os << indent << "Offsets: ";
+  for ( unsigned int i = 0; i < this->m_Offsets->Size(); ++i )
   {
-    this->m_Min = min;
-    this->m_Max = max;
-    this->m_LowerBound.Fill( min );
-    this->m_UpperBound.Fill( max + 1 );
-    this->Modified();
+    os << this->m_Offsets->GetElement( i ) << " ";
+  }
+  os << std::endl;
 
-  } // end SetPixelValueMinMax()
-
-
-  /**
-   * ********************* PrintSelf ****************************
-   */
-  
-  template< class TImageType, class THistogramFrequencyContainer >
-    void
-    ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
-      TImageType, THistogramFrequencyContainer >
-      ::PrintSelf( std::ostream& os, Indent indent ) const
-  {
-    /** Call the superclass implementation. */
-    Superclass::PrintSelf( os, indent );
-
-    /** Print the member variables. */
-    os << indent << "Input: "
-      << this->m_Input.GetPointer() << std::endl;
-    os << indent << "Output: "
-      << this->m_Output.GetPointer() << std::endl;
-    os << indent << "Min: "
-      << this->m_Min << std::endl;
-    os << indent << "Max: "
-      << this->m_Max << std::endl;
-    os << indent << "NumberOfBinsPerAxis: "
-      << this->m_NumberOfBinsPerAxis << std::endl;
-    os << indent << "LowerBound: "
-      << this->m_LowerBound << std::endl;
-    os << indent << "UpperBound: "
-      << this->m_UpperBound << std::endl;
-    os << indent << "Normalize: "
-      << this->m_Normalize << std::endl;
-
-    os << indent << "Offsets: ";
-    for ( unsigned int i = 0; i < this->m_Offsets->Size(); ++i )
-    {
-      os << this->m_Offsets->GetElement( i ) << " ";
-    }
-    os << std::endl;
-
-  } // end PrintSelf()
+} // end PrintSelf()
 
 
 } // end of namespace Statistics 
