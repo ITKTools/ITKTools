@@ -328,7 +328,7 @@ namespace itk
     InputImagePixelType min, max;
 
     /** Compute, but only if necessary. */
-    if ( !this->m_HistogramMinimumSetManually || !this->m_HistogramMinimumSetManually )
+    if ( !this->m_HistogramMinimumSetManually || !this->m_HistogramMaximumSetManually )
     {
       stats->SetInput( this->GetInput() );
       stats->Update();
