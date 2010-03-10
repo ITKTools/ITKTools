@@ -29,10 +29,10 @@ namespace itk {
 namespace Statistics {
 
 /** \class ScalarImageToGrayLevelCooccurrenceMatrixGenerator 
-*  \brief This class computes a grey-level co-occurence matrix (histogram) from
+*  \brief This class computes a gray-level co-occurrence matrix (histogram) from
 * a given image. GLCM's are used for image texture description.
 *
-* This generator creates a grey-level co-occurence matrix from a N-D scalar
+* This generator creates a gray-level co-occurrence matrix from a N-D scalar
 * image. This is the first step in texture description a la Haralick. (See
 * Haralick, R.M., K. Shanmugam and I. Dinstein. 1973. Textural Features for
 * Image Classification. IEEE Transactions on Systems, Man and Cybernetics. 
