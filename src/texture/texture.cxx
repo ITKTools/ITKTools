@@ -2,28 +2,46 @@
 #include "CommandLineArgumentHelper.h"
 
 #include <itksys/SystemTools.hxx>
-
 #include "itkTextureImageToImageFilter.h"
-
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
+#include "itkMultiThreader.h"
+
+//-------------------------------------------------------------------------------------
+
+// To print the progress
+class ShowProgressObject
+{
+public:
+  ShowProgressObject( itk::ProcessObject* o )
+  {
+    m_Process = o;
+  }
+  void ShowProgress()
+  {
+    std::cout << "\rProgress: "
+      << static_cast<unsigned int>( 100.0 * m_Process->GetProgress() ) << "%";
+  }
+  itk::ProcessObject::Pointer m_Process;
+};
 
 //-------------------------------------------------------------------------------------
 
 /** run: A macro to call a function. */
-#define run(function,type,dim) \
-if ( componentType == #type && Dimension == dim ) \
+#define run( function, typeIn, typeOut, dim ) \
+if ( componentTypeIn == #typeIn && componentTypeOut == #typeOut && Dimension == dim ) \
 { \
-  typedef itk::Image< type, dim > OutputImageType; \
-  function< OutputImageType >( inputFileName, outputDirectory, \
-  neighborhoodRadius, offsetScales, numberOfBins, numberOfOutputs ); \
+  typedef itk::Image< typeIn,  dim > InputImageType; \
+  typedef itk::Image< typeOut, dim > OutputImageType; \
+  function< InputImageType, OutputImageType >( inputFileName, outputDirectory, \
+    neighborhoodRadius, offsetScales, numberOfBins, numberOfOutputs ); \
   supported = true; \
 }
 
 //-------------------------------------------------------------------------------------
 
 /** Declare PerformTextureAnalysis. */
-template< class InputImageType >
+template< class InputImageType, class OutputImageType >
 void PerformTextureAnalysis(
   const std::string & inputFileName,
   const std::string & outputDirectory,
@@ -73,8 +91,8 @@ int main( int argc, char **argv )
   unsigned int numberOfOutputs = 8;
   bool retnoo = parser->GetCommandLineArgument( "-noo", numberOfOutputs );
 
-  //std::string componentType = "";
-  //bool retpt = parser->GetCommandLineArgument( "-opct", componentType );
+  std::string componentTypeOut = "float";
+  bool retopct = parser->GetCommandLineArgument( "-opct", componentTypeOut );
 
   /** Check if the required arguments are given. */
   if ( !retin )
@@ -86,12 +104,21 @@ int main( int argc, char **argv )
   /** Check that numberOfOutputs <= 8. */
   if ( numberOfOutputs > 8 )
   {
-    std::cerr << "ERROR: The maximum number of outputs is 8. You requested " << numberOfOutputs << "." << std::endl;
+    std::cerr << "ERROR: The maximum number of outputs is 8. You requested "
+      << numberOfOutputs << "." << std::endl;
     return 1;
   }
 
+  /** Threads. */
+  unsigned int maximumNumberOfThreads
+    = itk::MultiThreader::GetGlobalDefaultNumberOfThreads();
+  bool retthreads = parser->GetCommandLineArgument(
+    "-threads", maximumNumberOfThreads );
+  itk::MultiThreader::SetGlobalMaximumNumberOfThreads(
+    maximumNumberOfThreads );
+
   /** Determine image properties. */
-  std::string ComponentTypeIn = "short";
+  std::string componentTypeIn = "short";
   std::string PixelType; //we don't use this
   unsigned int Dimension = 3;
   unsigned int NumberOfComponents = 1;
@@ -99,7 +126,7 @@ int main( int argc, char **argv )
   int retgip = GetImageProperties(
     inputFileName,
     PixelType,
-    ComponentTypeIn,
+    componentTypeIn,
     Dimension,
     NumberOfComponents,
     imagesize );
@@ -116,42 +143,22 @@ int main( int argc, char **argv )
     return 1; 
   }
 
-  /** The default output is equal to the input, but can be overridden by
-   * specifying -pt in the command line.
+  /** Input images are read in as float, always. The default output is float,
+   * but can be overridden by specifying -opct in the command line.
    */
-  //if ( !retpt ) componentType = ComponentTypeIn;
-  std::string componentType = ComponentTypeIn;
-
-  /** Get rid of the possible "_" in ComponentType. */
-  ReplaceUnderscoreWithSpace( componentType );
+  componentTypeIn = "float";
 
   /** Run the program. */
   bool supported = false;
   try
   {
-    run( PerformTextureAnalysis, unsigned char, 2 );
-    run( PerformTextureAnalysis, char, 2 );
-    run( PerformTextureAnalysis, unsigned short, 2 );
-    run( PerformTextureAnalysis, short, 2 );
-    run( PerformTextureAnalysis, unsigned int, 2 );
-    run( PerformTextureAnalysis, int, 2 );
-    run( PerformTextureAnalysis, unsigned long, 2 );
-    run( PerformTextureAnalysis, long, 2 );
-    run( PerformTextureAnalysis, float, 2 );
-    run( PerformTextureAnalysis, double, 2 );
+    run( PerformTextureAnalysis, float, float, 2 );
+    run( PerformTextureAnalysis, float, double, 2 );
 
-    run( PerformTextureAnalysis, unsigned char, 3 );
-    run( PerformTextureAnalysis, char, 3 );
-    run( PerformTextureAnalysis, unsigned short, 3 );
-    run( PerformTextureAnalysis, short, 3 );
-    run( PerformTextureAnalysis, unsigned int, 3 );
-    run( PerformTextureAnalysis, int, 3 );
-    run( PerformTextureAnalysis, unsigned long, 3 );
-    run( PerformTextureAnalysis, long, 3 );
-    run( PerformTextureAnalysis, float, 3 );
-    run( PerformTextureAnalysis, double, 3 );
+    run( PerformTextureAnalysis, float, float, 3 );
+    run( PerformTextureAnalysis, float, double, 3 );
   }
-  catch( itk::ExceptionObject &e )
+  catch ( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
     return 1;
@@ -160,7 +167,7 @@ int main( int argc, char **argv )
   {
     std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
     std::cerr
-      << "pixel (component) type = " << ComponentTypeIn
+      << "pixel (component) type = " << componentTypeIn
       << " ; dimension = " << Dimension
       << std::endl;
     return 1;
@@ -172,11 +179,11 @@ int main( int argc, char **argv )
 } // end main()
 
 
-  /**
-   * ******************* PerformTextureAnalysis *******************
-   */
+/**
+ * ******************* PerformTextureAnalysis *******************
+ */
 
-template< class InputImageType >
+template< class InputImageType, class OutputImageType >
 void PerformTextureAnalysis(
   const std::string & inputFileName,
   const std::string & outputDirectory,
@@ -188,17 +195,13 @@ void PerformTextureAnalysis(
   const unsigned int Dimension = InputImageType::ImageDimension;
 
   /** Typedefs. */
-  typedef itk::Image< double, Dimension >               DoubleImageType;
-  typedef typename DoubleImageType::Pointer             DoubleImagePointer;
   typedef itk::TextureImageToImageFilter<
-    InputImageType, DoubleImageType >                   TextureFilterType;
+    InputImageType, OutputImageType >                   TextureFilterType;
   typedef itk::ImageFileReader< InputImageType >        ReaderType;
-  typedef typename ReaderType::Pointer                  ReaderPointer;
-  typedef itk::ImageFileWriter< DoubleImageType >       WriterType;
-  typedef typename WriterType::Pointer                  WriterPointer;
+  typedef itk::ImageFileWriter< OutputImageType >       WriterType;
 
   /** Read the input. */
-  ReaderPointer reader = ReaderType::New();
+  typename ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName( inputFileName.c_str() );
 
   /** Setup the texture filter. */
@@ -209,6 +212,13 @@ void PerformTextureAnalysis(
   textureFilter->SetNumberOfHistogramBins( numberOfBins );
   textureFilter->SetNormalizeHistogram( false );
   textureFilter->SetNumberOfRequestedOutputs( numberOfOutputs );
+
+  /** Create and attach a progress observer. */
+  ShowProgressObject progressWatch( textureFilter );
+  itk::SimpleMemberCommand<ShowProgressObject>::Pointer command
+    = itk::SimpleMemberCommand<ShowProgressObject>::New();
+  command->SetCallbackFunction( &progressWatch, &ShowProgressObject::ShowProgress );
+  textureFilter->AddObserver( itk::ProgressEvent(), command );
 
   /** Create the output file names. */
   std::vector< std::string > outputFileNames( 8, "" );
@@ -224,7 +234,7 @@ void PerformTextureAnalysis(
   /** Setup and process the pipeline. */
   for ( unsigned int i = 0; i < numberOfOutputs; ++i )
   {
-    WriterPointer writer = WriterType::New();
+    typename WriterType::Pointer writer = WriterType::New();
     writer->SetFileName( outputFileNames[ i ].c_str() );
     writer->SetInput( textureFilter->GetOutput( i ) );
     writer->Update();
@@ -233,23 +243,22 @@ void PerformTextureAnalysis(
 } // end PerformTextureAnalysis()
 
 
-  /**
-   * ******************* PrintHelp *******************
-   */
+/**
+ * ******************* PrintHelp *******************
+ */
 
 void PrintHelp( void )
 {
   std::cout << "Usage:" << std::endl << "pxtexture" << std::endl;
-  std::cout << "This program computes texture features based on the gray-level co-occurence matrix (GLCM)." << std::endl;
-  std::cout << "  -in      inputFilename" << std::endl;
-  std::cout << "  [-out]   outputDirectory, default equal to the inputFilename directory" << std::endl;
-  std::cout << "  [-r]     the radius of the neighborhood on which to construct the GLCM, default 3" << std::endl;
-  std::cout << "  [-os]    the desired offset scales to compute the GLCM, default 1, but can be e.g. 1 2 4" << std::endl;
-  std::cout << "  [-b]     the number of bins of the GLCM, default 128" << std::endl;
-  std::cout << "  [-noo]   the number of texture feature outputs, default all 8" << std::endl;
-  //std::cout << "  [-opct]  output pixel component type, default derived from the input image" << std::endl;
-  std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double ";
-  std::cout << "input image types. Output image type is double." << std::endl;
+  std::cout << "This program computes texture features based on the gray-level co-occurrence matrix (GLCM).\n";
+  std::cout << "  -in      inputFilename\n";
+  std::cout << "  [-out]   outputDirectory, default equal to the inputFilename directory\n";
+  std::cout << "  [-r]     the radius of the neighborhood on which to construct the GLCM, default 3\n";
+  std::cout << "  [-os]    the desired offset scales to compute the GLCM, default 1, but can be e.g. 1 2 4\n";
+  std::cout << "  [-b]     the number of bins of the GLCM, default 128\n";
+  std::cout << "  [-noo]   the number of texture feature outputs, default all 8\n";
+  std::cout << "  [-opct]  output pixel component type, default float\n";
+  std::cout << "Supported: 2D, 3D, any input image type, float or double output type. " << std::endl;
 
 } // end PrintHelp()
 

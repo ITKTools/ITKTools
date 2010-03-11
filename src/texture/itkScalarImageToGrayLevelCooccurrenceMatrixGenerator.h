@@ -99,10 +99,10 @@ public:
   typedef SmartPointer<const Self> ConstPointer;
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ScalarImageToGrayLevelCooccurrenceMatrixGenerator, Object);
+  itkTypeMacro( ScalarImageToGrayLevelCooccurrenceMatrixGenerator, Object );
 
   /** standard New() method support */
-  itkNewMacro(Self) ;
+  itkNewMacro( Self ) ;
 
   typedef TImageType                                      ImageType;
   typedef typename ImageType::Pointer                     ImagePointer;
@@ -123,8 +123,8 @@ public:
   typedef typename HistogramType::ConstPointer            HistogramConstPointer;
   typedef typename HistogramType::MeasurementVectorType   MeasurementVectorType;
 
-
-  itkStaticConstMacro(DefaultBinsPerAxis, unsigned int, 256);
+  /** Set the default number of histogram bins. */
+  itkStaticConstMacro( DefaultBinsPerAxis, unsigned int, 256 );
 
   /** Triggers the Computation of the histogram */
   void Compute( void );
@@ -132,6 +132,9 @@ public:
   /** Connects the input image for which the histogram is going to be computed */
   itkSetConstObjectMacro( Input, ImageType );
   itkGetConstObjectMacro( Input, ImageType );
+
+  /***/
+  itkSetMacro( ComputeRegion, RegionType );
 
   /** Set the offset or offsets over which the co-occurrence pairs will be computed.
    * Calling either of these methods clears the previous offsets.
@@ -141,8 +144,8 @@ public:
   void SetOffset( const OffsetType offset )
   {
     OffsetVectorPointer offsetVector = OffsetVector::New();
-    offsetVector->push_back(offset);
-    this->SetOffsets(offsetVector);
+    offsetVector->push_back( offset );
+    this->SetOffsets( offsetVector );
   }
 
   /** Return the histogram.
@@ -156,14 +159,14 @@ public:
 
   /** Set the min and max (inclusive) pixel value that will be placed in the histogram */
   void SetPixelValueMinMax( PixelType min, PixelType max );
-  itkGetMacro(Min, PixelType);
-  itkGetMacro(Max, PixelType);
+  itkGetMacro( Min, PixelType );
+  itkGetMacro( Max, PixelType );
 
   /** Set the calculator to normalize the histogram (divide all bins by the 
   total frequency). Normalization is off by default.*/
-  itkSetMacro(Normalize, bool);
-  itkGetMacro(Normalize, bool);
-  itkBooleanMacro(Normalize);
+  itkSetMacro( Normalize, bool );
+  itkGetMacro( Normalize, bool );
+  itkBooleanMacro( Normalize );
 
 protected:
 
@@ -174,7 +177,7 @@ protected:
   virtual ~ScalarImageToGrayLevelCooccurrenceMatrixGenerator() {};
 
   /** PrintSelf. */
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf( std::ostream& os, Indent indent ) const;
 
   virtual void FillHistogram( RadiusType radius, RegionType region );
 
@@ -185,10 +188,11 @@ private:
 
   void NormalizeHistogram( void );
 
-  ImageConstPointer        m_Input;
-  HistogramPointer         m_Output;
-  OffsetVectorConstPointer m_Offsets;
-  PixelType                m_Min, m_Max;
+  ImageConstPointer         m_Input;
+  HistogramPointer          m_Output;
+  OffsetVectorConstPointer  m_Offsets;
+  PixelType                 m_Min, m_Max;
+  RegionType                m_ComputeRegion;
 
   unsigned int            m_NumberOfBinsPerAxis;
   MeasurementVectorType   m_LowerBound, m_UpperBound;

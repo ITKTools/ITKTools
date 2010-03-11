@@ -14,11 +14,11 @@ namespace itk
  * \brief TextureImageToImageFilter computes up to 8 texture measures
  * on an image.
  *
- * The operations this filter performes several steps:\n
+ * The operations this filter performs several steps:\n
  * - for each pixel a neighborhood around that pixel is copied to an image \n
  * - from this local image a co-occurrence matrix is constructed, using the
  *   itk::kScalarImageToGreyLevelCooccurrenceMatrixGenerator class \n
- * - from the co-oocurrence matrix several features are computed, using
+ * - from the co-occurrence matrix several features are computed, using
  *   the itk::GreyLevelCooccurrenceMatrixTextureCoefficientsCalculator class \n
  * - each feature value is copied to the corresponding output image.
  *
@@ -154,8 +154,9 @@ protected:
    */
   virtual void EnlargeOutputRequestedRegion( DataObject * );
 
-  /** Starts the image modelling process. */
-  void GenerateData( void );
+  /** Starts the image modeling process. */
+  void BeforeThreadedGenerateData( void );
+  void ThreadedGenerateData( const OutputImageRegionType & region, int threadId );
 
 private:
 
@@ -178,7 +179,7 @@ private:
   bool                      m_OffsetsSetManually;
   std::vector<unsigned int> m_OffsetScales;
 
-  /** Private variables for the co-oocurence matrix (histogram). */
+  /** Private variables for the co-occurrence matrix (histogram). */
   unsigned int              m_NumberOfHistogramBins;
   InputImagePixelType       m_HistogramMinimum;
   InputImagePixelType       m_HistogramMaximum;

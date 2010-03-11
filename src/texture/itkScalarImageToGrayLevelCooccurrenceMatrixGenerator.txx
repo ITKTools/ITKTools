@@ -64,12 +64,12 @@ ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
   if ( this->m_Output.IsNull() )
   {
     this->m_Output = HistogramType::New();
-    this->m_Output->SetMeasurementVectorSize(2);
+    this->m_Output->SetMeasurementVectorSize( 2 );
   }
 
   typename HistogramType::SizeType size;
-  size.SetSize(2);
-  size.Fill( m_NumberOfBinsPerAxis );
+  size.SetSize( 2 );
+  size.Fill( this->m_NumberOfBinsPerAxis );
   // Initialize also calls SetToZero, which is good.
   this->m_Output->Initialize( size, this->m_LowerBound, this->m_UpperBound );
 
@@ -91,8 +91,15 @@ ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
   RadiusType radius;
   radius.Fill( minRadius );
 
+  // Region
+  RegionType region = this->m_Input->GetRequestedRegion();
+  if ( this->m_ComputeRegion.GetNumberOfPixels() != 0 )
+  {
+    region = this->m_ComputeRegion;
+  }
+
   // Now fill in the histogram
-  this->FillHistogram( radius, this->m_Input->GetRequestedRegion() );
+  this->FillHistogram( radius, region );
 
   // Normalize the histogram if requested
   if ( m_Normalize )
@@ -125,18 +132,11 @@ ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
 
   for ( neighborIt.GoToBegin(); !neighborIt.IsAtEnd(); ++neighborIt )
   {
-    //bool centerPixelInBounds;
-    //const PixelType centerPixelIntensity
-    //= neighborIt.GetPixel( zeroOffset, centerPixelInBounds );
     const PixelType centerPixelIntensity = neighborIt.GetCenterPixel();
-    //if ( !centerPixelInBounds )
-    //{
-    //continue; // don't put a pixel in the histogram if it's out-of-bounds.
-    //}
+    // Don't put a pixel in the histogram if the value is out-of-bounds.
     if ( centerPixelIntensity < this->m_Min || centerPixelIntensity > this->m_Max )
     {
-      continue; // don't put a pixel in the histogram if the value
-      // is out-of-bounds.
+      continue;
     }
 
     typename OffsetVector::ConstIterator offsets;
@@ -146,15 +146,16 @@ ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
       const PixelType pixelIntensity
         = neighborIt.GetPixel( offsets.Value(), pixelInBounds );
 
+      // Don't put a pixel in the histogram if it's out-of-bounds.
       if ( !pixelInBounds )
       {
-        continue; // don't put a pixel in the histogram if it's out-of-bounds.
+        continue;
       }
 
+      // don't put a pixel in the histogram if it's value is out-of-bounds.
       if ( pixelIntensity < this->m_Min || pixelIntensity > this->m_Max )
       {
-        continue; // don't put a pixel in the histogram if the value
-        // is out-of-bounds.
+        continue;
       }
 
       // Now make both possible co-occurrence combinations and increment the

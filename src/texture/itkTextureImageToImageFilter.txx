@@ -4,9 +4,9 @@
 #include "itkTextureImageToImageFilter.h"
 
 #include "../statisticsonimage/itkStatisticsImageFilterWithMask.h"
-
 #include "itkConstNeighborhoodIterator.h"
 #include "itkImageRegionIterator.h"
+#include "itkProgressReporter.h"
 
 
 namespace itk
@@ -34,6 +34,12 @@ TextureImageToImageFilter< TInputImage, TOutputImage >
   this->m_HistogramMaximum = NumericTraits< InputImagePixelType >::max();
   this->m_HistogramMinimumSetManually = false;
   this->m_HistogramMaximumSetManually = false;
+
+  this->ProcessObject::SetNumberOfRequiredOutputs( 8 );
+  for ( unsigned int i = 0; i < 8; i++ )
+  {
+    this->SetNthOutput( i, this->MakeOutput( i ) );
+  }
 
 } // end Constructor()
 
@@ -161,17 +167,18 @@ TextureImageToImageFilter< TInputImage, TOutputImage >
 
 
 /**
- * ********************* GenerateData ****************************
+ * ********************* BeforeThreadedGenerateData ****************************
  */
 
 template< class TInputImage, class TOutputImage >
 void 
 TextureImageToImageFilter< TInputImage, TOutputImage >
-::GenerateData( void )
+::BeforeThreadedGenerateData( void )
 {
   /** Make sure that the input image is completely up-to-date. */
   InputImagePointer inputPtr = const_cast< InputImageType * > ( this->GetInput() );
   if ( !inputPtr ) return;
+  inputPtr->SetRegions( inputPtr->GetLargestPossibleRegion() );
   inputPtr->Update();
 
   /** Create outputs. */
@@ -183,10 +190,25 @@ TextureImageToImageFilter< TInputImage, TOutputImage >
   /** Compute the offsets. */
   this->ComputeDefaultOffsets( this->m_OffsetScales );
 
-  /** Setup local co-occurrence matrix generator. */
+} // end BeforeThreadedGenerateData()
+
+
+/**
+ * ********************* ThreadedGenerateData ****************************
+ */
+
+template< class TInputImage, class TOutputImage >
+void 
+TextureImageToImageFilter< TInputImage, TOutputImage >
+::ThreadedGenerateData( const OutputImageRegionType & regionForThread, int threadId )
+{
+  /** Support for progress methods/callbacks. */
+  ProgressReporter progress( this, threadId, regionForThread.GetNumberOfPixels() );
+
+  /** Setup the local co-occurrence matrix generator. */
   typename CooccurrenceMatrixGeneratorType::Pointer cmGenerator
     = CooccurrenceMatrixGeneratorType::New();
-  cmGenerator->SetInput( inputPtr );
+  cmGenerator->SetInput( this->GetInput() );
   cmGenerator->SetOffsets( this->m_Offsets );
   cmGenerator->SetNumberOfBinsPerAxis( this->m_NumberOfHistogramBins );
   cmGenerator->SetPixelValueMinMax( this->m_HistogramMinimum, this->m_HistogramMaximum );
@@ -204,10 +226,7 @@ TextureImageToImageFilter< TInputImage, TOutputImage >
   /** Setup a neigborhood iterator over the input image. */
   RadiusType radius;
   radius.Fill( this->m_NeighborhoodRadius );
-  ConstNeighborhoodIteratorType nit(
-    radius,
-    this->GetInput(),
-    this->GetInput()->GetRequestedRegion() );
+  ConstNeighborhoodIteratorType nit( radius, this->GetInput(), regionForThread );
   nit.GoToBegin();
 
   /** Setup iterators over the output images. */
@@ -215,36 +234,32 @@ TextureImageToImageFilter< TInputImage, TOutputImage >
   std::vector< OutputIteratorType > outputIterators( noo );
   for ( unsigned int i = 0; i < noo; ++i )
   {
-    outputIterators[ i ] = OutputIteratorType( this->GetOutput( i ),
-      this->GetOutput()->GetLargestPossibleRegion() );
+    outputIterators[ i ] = OutputIteratorType( this->GetOutput( i ), regionForThread );
     outputIterators[ i ].GoToBegin();
   }
 
-  /** Printing progress. */
-  const unsigned long totalNumberOfVoxels = inputPtr->GetBufferedRegion().GetNumberOfPixels();
-  const unsigned long numberOfUpdates = 100;
-  const unsigned long frac =
-    static_cast<unsigned long>( totalNumberOfVoxels / numberOfUpdates );
-  unsigned long currentVoxel = 0;
-  std::cout << "Progress: 0%";
-  std::cout << std::flush;
-
-  /** Loop over the input image. */
+  /** Loop over the input region. */
+  InputImageRegionType localRegion;
   while ( !nit.IsAtEnd() )
   {
-    /** Construct a local neighborhood. */
-    InputImageRegionType localRegion = nit.GetBoundingBoxAsImageRegion();
-    localRegion.Crop( inputPtr->GetBufferedRegion() );
+    /** Construct a local neighborhood over which GLCM computation takes place.
+     * The regions have to be cropped with the largest possible region
+     * of the input image, to avoid problems at the border.
+     * Note that a larger subimage than localRegion is actually used for
+     * computing the co-occurrence matrix, because of the offsets.
+     */
+    localRegion = nit.GetBoundingBoxAsImageRegion();
+    localRegion.Crop( this->GetInput()->GetLargestPossibleRegion() );
 
     /** Generate the co-occurrence over a local region only. */
-    inputPtr->SetRequestedRegion( localRegion );
+    cmGenerator->SetComputeRegion( localRegion );
     cmGenerator->Compute();
 
     /** Compute texture features from this co-occurrence matrix. */
     cmCalculator->SetHistogram( cmGenerator->GetOutput() );
     cmCalculator->Compute();
 
-    /** Copy the requested texture features to the outputs. And update iterators. */
+    /** Copy the requested texture features to the outputs and update iterators. */
     for ( unsigned int ii = 0; ii < noo; ++ii )
     {
       outputIterators[ ii ].Set( cmCalculator->GetFeature( ii ) );
@@ -252,21 +267,11 @@ TextureImageToImageFilter< TInputImage, TOutputImage >
     }
     ++nit;
 
-    /** Print progress. */
-    ++currentVoxel;
-    if ( currentVoxel % frac == 0 )
-    {
-      unsigned int progress = static_cast<unsigned int>(
-        100.0 * static_cast<float>( currentVoxel ) /
-        static_cast<float>( totalNumberOfVoxels ) );
-      std::cout << "\rProgress: " << progress << "%";
-      std::cout << std::flush;
-    }
+    progress.CompletedPixel();
 
   } // end while
-  std::cout << "\rProgress: 100%" << std::endl;
 
-} // end GenerateData()
+} // end ThreadedGenerateData()
 
 
 /**
@@ -306,7 +311,7 @@ TextureImageToImageFilter< TInputImage, TOutputImage >
   for ( unsigned int i = 0; i < numberOfOutputs; ++i )
   {
     OutputImagePointer output = this->GetOutput( i );
-    output->SetRegions( this->GetOutput( 0 )->GetRequestedRegion() );
+    output->SetRegions( this->GetInput()->GetLargestPossibleRegion() );
     output->Allocate();
   }
 
@@ -361,12 +366,12 @@ TextureImageToImageFilter< TInputImage, TOutputImage >
 ::ComputeDefaultOffsets( std::vector<unsigned int> scales )
 {
   /** Compute, but only if necessary.
-  * This loop creates the offsets (in 2D):
-  * - scales = (1)    : (1,0); (0,1)
-  * - scales = (1,2)  : (1,0); (0,1); (2,0); (0,2)
-  * - scales = (1,2,4): (1,0); (0,1); (2,0); (0,2); (4,0); (0,4)
-  * etcetera. The scales are by default just 1.
-  */
+   * This loop creates the offsets (in 2D):
+   * - scales = (1)    : (1,0); (0,1)
+   * - scales = (1,2)  : (1,0); (0,1); (2,0); (0,2)
+   * - scales = (1,2,4): (1,0); (0,1); (2,0); (0,2); (4,0); (0,4)
+   * etcetera. The scales are by default just 1.
+   */
   if ( !this->m_OffsetsSetManually )
   {
     this->m_Offsets->Reserve( scales.size() * InputImageDimension );
