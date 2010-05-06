@@ -11,6 +11,7 @@
 #include "itkAdaptiveOtsuThresholdImageFilter.h"
 #include "itkRobustAutomaticThresholdImageFilter.h"
 #include "itkKappaSigmaThresholdImageFilter.h"
+#include "itkMinErrorThresholdImageFilter.h"
 
 
 //-------------------------------------------------------------------------------------
@@ -46,6 +47,11 @@ if ( ComponentTypeIn == #type && Dimension == dim ) \
   { \
     KappaSigmaThresholdImage< InputImageType >( inputFileName, outputFileName, \
       maskFileName, maskValue, sigma, iterations ); \
+    supported = true; \
+  } \
+  else if ( method == "MinErrorThreshold" ) \
+  { \
+    MinErrorThresholdImage< InputImageType >( inputFileName, outputFileName, bins, mixtureType ); \
     supported = true; \
   } \
 }
@@ -100,6 +106,13 @@ void KappaSigmaThresholdImage(
   const unsigned int & maskValue,
   const double & sigma,
   const unsigned int & iterations );
+
+template< class InputImageType >
+void MinErrorThresholdImage(
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+  const unsigned int & bins,
+  const unsigned int & mixtureType );
 
 /** Declare PrintHelp. */
 void PrintHelp( void );
@@ -172,6 +185,9 @@ int main( int argc, char **argv )
   unsigned int maskValue = 1;
   parser->GetCommandLineArgument( "-mv", maskValue );
 
+  unsigned int mixtureType = 1;
+  parser->GetCommandLineArgument( "-mt", mixtureType );
+
   /** Checks. */
   if ( !retin )
   {
@@ -183,11 +199,12 @@ int main( int argc, char **argv )
     && method != "OtsuMultipleThreshold"
     && method != "AdaptiveOtsuThreshold"
     && method != "RobustAutomaticThreshold"
-    && method != "KappaSigmaThreshold" )
+    && method != "KappaSigmaThreshold"
+    && method != "MinErrorThreshold" )
   {
     std::cerr << "ERROR: method \"-m\" should be one of { Threshold, "
       << "OtsuThreshold, OtsuMultipleThreshold, AdaptiveOtsuThreshold, "
-      << "RobustAutomaticThreshold, KappaSigmaThreshold }." << std::endl;
+      << "RobustAutomaticThreshold, KappaSigmaThreshold, MinErrorThreshold }." << std::endl;
     return 1;
   }
   if ( method == "KappaSigmaThreshold" && maskFileName == "" )
@@ -581,6 +598,51 @@ void KappaSigmaThresholdImage(
 
 
 /**
+ * ******************* MinErrorThresholdImage *******************
+ */
+
+template< class InputImageType >
+void MinErrorThresholdImage(
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+  const unsigned int & bins,
+  const unsigned int & mixtureType )
+{
+  /** Typedef's. */
+  const unsigned int ImageDimension = InputImageType::ImageDimension;
+
+  typedef unsigned char                                 OutputPixelType;
+  typedef itk::Image< OutputPixelType, ImageDimension > OutputImageType;
+  typedef itk::ImageFileReader< InputImageType >        ReaderType;
+  typedef itk::MinErrorThresholdImageFilter<
+    InputImageType, OutputImageType >                   ThresholderType;
+  typedef itk::ImageFileWriter< OutputImageType >       WriterType;
+
+  /** Declarations. */
+  typename ReaderType::Pointer reader = ReaderType::New();
+
+  typename ThresholderType::Pointer thresholder = ThresholderType::New();
+  typename WriterType::Pointer writer = WriterType::New();
+
+  /** Read in the inputImage. */
+  reader->SetFileName( inputFileName.c_str() );
+
+  /** Apply the threshold. */
+  thresholder->SetNumberOfHistogramBins( bins );
+  thresholder->SetMixtureType( mixtureType );
+  thresholder->SetInsideValue( 1 );
+  thresholder->SetOutsideValue( 0 );
+  thresholder->SetInput( reader->GetOutput() );
+
+  /** Write the output image. */
+  writer->SetInput( thresholder->GetOutput() );
+  writer->SetFileName( outputFileName.c_str() );
+  writer->Update();
+
+} // end MinErrorThresholdImage()
+
+
+/**
  * ******************* PrintHelp *******************
  */
 
@@ -593,12 +655,13 @@ void PrintHelp( void )
   std::cout << "  [-mask]  maskFilename, optional for \"OtsuThreshold\", "
     << "required for \"KappaSigmaThreshold\"\n";
   std::cout << "  [-m]     method, choose one of { Threshold, OtsuThreshold, "
-    << "OtsuMultipleThreshold, AdaptiveOtsuThreshold, RobustAutomaticThreshold, KappaSigmaThreshold }\n";
+    << "OtsuMultipleThreshold, AdaptiveOtsuThreshold, RobustAutomaticThreshold, "
+    << "KappaSigmaThreshold, MinErrorThreshold }\n";
   std::cout << "           default \"Threshold\"\n";
   std::cout << "  [-t1]    lower threshold, for \"Threshold\", default -infinity\n";
   std::cout << "  [-t2]    upper threshold, for \"Threshold\", default 1.0\n";
   std::cout << "  [-t]     number of thresholds, for \"OtsuMultipleThreshold\", default 1\n";
-  std::cout << "  [-b]     number of histogram bins, for \"OtsuThreshold\" "
+  std::cout << "  [-b]     number of histogram bins, for \"OtsuThreshold\", \"MinErrorThreshold\" "
     << "and \"AdaptiveOtsuThreshold\", default 128\n";
   std::cout << "  [-r]     radius, for \"AdaptiveOtsuThreshold\", default 8\n";
   std::cout << "  [-cp]    number of control points, for \"AdaptiveOtsuThreshold\", default 50\n";
@@ -609,6 +672,7 @@ void PrintHelp( void )
   std::cout << "  [-sigma] sigma factor, for \"KappaSigmaThreshold\", default 2\n";
   std::cout << "  [-iter]  number of iterations, for \"KappaSigmaThreshold\", default 2\n";
   std::cout << "  [-mv]    mask value, for \"KappaSigmaThreshold\", default 1\n";
+  std::cout << "  [-mt]    mixture type (1 - Gaussians, 2 - Poissons), for \"MinErrorThreshold\", default 1\n";
   std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double." << std::endl;
 
 } // end PrintHelp()
