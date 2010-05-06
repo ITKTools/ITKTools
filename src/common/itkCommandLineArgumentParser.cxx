@@ -14,7 +14,7 @@ namespace itk
     SetCommandLineArguments( int argc, char **argv )
   {
     m_argv.resize( argc );
-    for ( unsigned int i = 0; i < static_cast<unsigned int>( argc ); i++ )
+    for ( IndexType i = 0; i < static_cast<IndexType>( argc ); i++ )
     {
       m_argv[ i ] = argv [ i ];
     }
@@ -28,7 +28,7 @@ namespace itk
 
   void CommandLineArgumentParser::CreateArgumentMap( void )
   {
-    for ( unsigned int i = 1; i < m_argv.size(); ++i )
+    for ( IndexType i = 1; i < m_argv.size(); ++i )
     {
       if ( m_argv[ i ].substr( 0, 1 ) == "-" )
       {
@@ -59,14 +59,14 @@ namespace itk
    */
 
   bool CommandLineArgumentParser::
-    FindKey( const std::string & key, unsigned int & keyIndex, unsigned int & nextKeyIndex )
+    FindKey( const std::string & key, IndexType & keyIndex, IndexType & nextKeyIndex )
     {
     /** Loop once over the arguments, to get the index of the key,
      * and that of the next key. */
     bool keyFound = false;
     keyIndex = 0;
     nextKeyIndex = m_argv.size();
-    for ( unsigned int i = 0; i < m_argv.size(); i++ )
+    for ( IndexType i = 0; i < m_argv.size(); i++ )
     {
       if ( !keyFound && m_argv[ i ] == key )
       {
@@ -95,7 +95,7 @@ namespace itk
   /**
    * ******************* IsANumber *******************
    *
-   * Checks if something startin with a "-" is a key or a negative number.
+   * Checks if something starting with a "-" is a key or a negative number.
    */
 
   bool CommandLineArgumentParser::
@@ -105,7 +105,7 @@ namespace itk
       static const std::basic_string<char>::size_type npos = std::basic_string<char>::npos;
       if ( arg.size() > 1 )
       {
-        if ( npos != number.find( arg.substr(1,1) ) )
+        if ( npos != number.find( arg.substr( 1, 1 ) ) )
         {
           return true;
         }
@@ -117,7 +117,7 @@ namespace itk
   /**
    * ******************* GetCommandLineArgument *******************
    *
-   * Different specialisations for String types.
+   * Different specializations for String types.
    */
 
   bool CommandLineArgumentParser::

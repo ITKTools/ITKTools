@@ -12,13 +12,13 @@
 namespace itk
 {
 
-  /**
-   * \class CommandLineArgumentParser
-   *
-   * \brief This class parses command line arguments. This
-   * makes it easy to get the desired argument.
-   *
-   */
+/**
+ * \class CommandLineArgumentParser
+ *
+ * \brief This class parses command line arguments. This
+ * makes it easy to get the desired argument.
+ *
+ */
 
 class CommandLineArgumentParser :
   public Object
@@ -40,8 +40,9 @@ public:
   void SetCommandLineArguments( int argc, char **argv );
 
   /** Map to store the arguments and their indices. */
-  typedef std::map< std::string, unsigned int >   ArgumentMapType;
-  typedef ArgumentMapType::value_type             EntryType;
+  typedef std::size_t                           IndexType;
+  typedef std::map< std::string, IndexType >    ArgumentMapType;
+  typedef ArgumentMapType::value_type           EntryType;
   void CreateArgumentMap( void );
   bool ArgumentExists( std::string key );
 
@@ -62,7 +63,7 @@ public:
     bool GetCommandLineArgumentString( const std::string & key, std::vector<T> & arg )
   {
     /** Check for the key. */
-    unsigned int keyIndex, nextKeyIndex;
+    IndexType keyIndex, nextKeyIndex;
     keyIndex = nextKeyIndex = 0;
     bool keyFound = this->FindKey( key, keyIndex, nextKeyIndex );
     if ( !keyFound ) return false;
@@ -71,7 +72,7 @@ public:
      * only one (1) argument is provided in the command line, we create
      * a vector of size oldSize and fill it with the single argument.
      */
-    unsigned int oldSize = arg.size();
+    IndexType oldSize = arg.size();
     if ( oldSize > 1 && nextKeyIndex - keyIndex == 2 )
     {
       arg.clear();
@@ -80,11 +81,11 @@ public:
     }
     
     /** Otherwise, gather the arguments and put them in arg. */
-    unsigned int newSize = nextKeyIndex - keyIndex - 1;
+    IndexType newSize = nextKeyIndex - keyIndex - 1;
     newSize = newSize > oldSize ? newSize : oldSize;
     arg.resize( newSize );
-    unsigned int j = 0;
-    for ( unsigned int i = keyIndex + 1; i < nextKeyIndex; i++ )
+    IndexType j = 0;
+    for ( IndexType i = keyIndex + 1; i < nextKeyIndex; i++ )
     {
       arg[ j ] = m_argv[ i ];
       ++j;
@@ -98,7 +99,7 @@ public:
     bool GetCommandLineArgumentInteger( const std::string & key, std::vector<T> & arg )
   {
     /** Check for the key. */
-    unsigned int keyIndex, nextKeyIndex;
+    IndexType keyIndex, nextKeyIndex;
     keyIndex = nextKeyIndex = 0;
     bool keyFound = this->FindKey( key, keyIndex, nextKeyIndex );
     if ( !keyFound ) return false;
@@ -107,7 +108,7 @@ public:
      * only one (1) argument is provided in the command line, we create
      * a vector of size oldSize and fill it with the single argument.
      */
-    unsigned int oldSize = arg.size();
+    IndexType oldSize = arg.size();
     if ( oldSize > 1 && nextKeyIndex - keyIndex == 2 )
     {
       arg.clear();
@@ -116,11 +117,11 @@ public:
     }
     
     /** Otherwise, gather the arguments and put them in arg. */
-    unsigned int newSize = nextKeyIndex - keyIndex - 1;
+    IndexType newSize = nextKeyIndex - keyIndex - 1;
     newSize = newSize > oldSize ? newSize : oldSize;
     arg.resize( newSize );
-    unsigned int j = 0;
-    for ( unsigned int i = keyIndex + 1; i < nextKeyIndex; i++ )
+    IndexType j = 0;
+    for ( IndexType i = keyIndex + 1; i < nextKeyIndex; i++ )
     {
       arg[ j ] = static_cast<T>( atoi( m_argv[ i ].c_str() ) );
       ++j;
@@ -134,7 +135,7 @@ public:
     bool GetCommandLineArgumentReal( const std::string & key, std::vector<T> & arg )
   {
     /** Check for the key. */
-    unsigned int keyIndex, nextKeyIndex;
+    IndexType keyIndex, nextKeyIndex;
     keyIndex = nextKeyIndex = 0;
     bool keyFound = this->FindKey( key, keyIndex, nextKeyIndex );
     if ( !keyFound ) return false;
@@ -143,7 +144,7 @@ public:
      * only one (1) argument is provided in the command line, we create
      * a vector of size oldSize and fill it with the single argument.
      */
-    unsigned int oldSize = arg.size();
+    IndexType oldSize = arg.size();
     if ( oldSize > 1 && nextKeyIndex - keyIndex == 2 )
     {
       arg.clear();
@@ -152,11 +153,11 @@ public:
     }
     
     /** Otherwise, gather the arguments and put them in arg. */
-    unsigned int newSize = nextKeyIndex - keyIndex - 1;
+    IndexType newSize = nextKeyIndex - keyIndex - 1;
     newSize = newSize > oldSize ? newSize : oldSize;
     arg.resize( newSize );
-    unsigned int j = 0;
-    for ( unsigned int i = keyIndex + 1; i < nextKeyIndex; i++ )
+    IndexType j = 0;
+    for ( IndexType i = keyIndex + 1; i < nextKeyIndex; i++ )
     {
       arg[ j ] = static_cast<T>( atof( m_argv[ i ].c_str() ) );
       ++j;
@@ -188,7 +189,7 @@ protected:
   virtual ~CommandLineArgumentParser() {}
 
   /** General functionality. */
-  bool FindKey( const std::string & key, unsigned int & keyIndex, unsigned int & nextKeyIndex );
+  bool FindKey( const std::string & key, IndexType & keyIndex, IndexType & nextKeyIndex );
 
   bool IsANumber( const std::string & arg );
 
