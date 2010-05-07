@@ -13,7 +13,6 @@
 #include "itkKappaSigmaThresholdImageFilter.h"
 #include "itkMinErrorThresholdImageFilter.h"
 
-
 //-------------------------------------------------------------------------------------
 
 /** run: A macro to call a function. */
