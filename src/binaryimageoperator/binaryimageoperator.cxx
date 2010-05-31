@@ -35,6 +35,8 @@ int main( int argc, char **argv )
   std::string opct = "";
   bool retopct = parser->GetCommandLineArgument( "-opct", opct );
 
+	const bool useCompression = parser->ArgumentExists( "-z" );
+
   /** Check if the required arguments are given. */
   if ( !retin )
   {

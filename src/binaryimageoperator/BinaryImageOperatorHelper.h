@@ -54,6 +54,7 @@ void BinaryImageOperator(
   const std::string & inputFileName2,
   const std::string & outputFileName,
   const std::string & ops,
+	const bool & useCompression,
   const std::string & arg )
 {
   /** Typedefs. */
@@ -104,6 +105,7 @@ void BinaryImageOperator(
   typename WriterType::Pointer writer = WriterType::New();
   writer->SetFileName( outputFileName.c_str() );
   writer->SetInput( binaryFilter->GetOutput() );
+	writer->SetUseCompression( useCompression );
   writer->Update();
 
 } // end BinaryImageOperator
