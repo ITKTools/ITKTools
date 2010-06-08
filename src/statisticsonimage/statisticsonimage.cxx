@@ -146,5 +146,6 @@ void PrintHelp()
   std::cout << "           for integer images, choose the number of bins\n";
   std::cout << "           much larger (~100x) than the number of gray values." << std::endl;
   std::cout << "  [-s]     select which to compute {arithmetic, geometric, histogram}, default all;\n";
-  std::cout << "Supported: 2D, 3D, float, (unsigned) short, (unsigned) char, 1, 2 or 3 components per pixel." << std::endl;
+  std::cout << "Supported: 2D, 3D, 4D, float, (unsigned) short, (unsigned) char, 1, 2 or 3 components per pixel.\n";
+	std::cout << "For 4D, only 1 or 4 components per pixel are supported." << std::endl;
 } // end PrintHelp
