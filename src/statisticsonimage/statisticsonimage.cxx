@@ -104,6 +104,8 @@ int main( int argc, char ** argv )
     run( StatisticsOnImage, float, 3, 1 );
     run( StatisticsOnImage, float, 3, 2 );
     run( StatisticsOnImage, float, 3, 3 );
+    run( StatisticsOnImage, float, 4, 1 );
+    run( StatisticsOnImage, float, 4, 4 );
   }
   catch( itk::ExceptionObject &e )
   {
