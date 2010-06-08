@@ -48,13 +48,13 @@ int main( int argc, char ** argv )
   }
 
   std::string maskFileName = "";
-  bool retmask = parser->GetCommandLineArgument( "-mask", maskFileName );
+  parser->GetCommandLineArgument( "-mask", maskFileName );
 
   std::string histogramOutputFileName = "";
-  bool rethist = parser->GetCommandLineArgument( "-out", histogramOutputFileName );
+  parser->GetCommandLineArgument( "-out", histogramOutputFileName );
 
   unsigned int numberOfBins = 100;
-  bool retb = parser->GetCommandLineArgument( "-b", numberOfBins );
+  parser->GetCommandLineArgument( "-b", numberOfBins );
 
   std::string select = "";
   bool rets = parser->GetCommandLineArgument( "-s", select );

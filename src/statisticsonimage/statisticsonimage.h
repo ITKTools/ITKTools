@@ -49,7 +49,8 @@ void ComputeStatistics(
     InputImageType, InputImageType>                   LogFilterType;
   
   /** Arithmetic mean */
-  PixelType maxPixelValue, minPixelValue;
+  PixelType maxPixelValue = 1;
+	PixelType minPixelValue = 0;
   if ( select == "arithmetic" || select == "" || select == "histogram" )
   {
     statistics->SetInput( inputImage );
