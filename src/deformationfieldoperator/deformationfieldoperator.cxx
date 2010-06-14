@@ -12,7 +12,7 @@
 #define run(function,type,dim) \
 if ( ComponentType == #type && Dimension == dim ) \
 { \
-  function< type, dim >( inputFileName, outputFileName, ops, fromWhat ); \
+  function< type, dim >( inputFileName, outputFileName, ops, fromWhat, numberOfStreams ); \
   supported = true; \
 }
 
@@ -61,6 +61,10 @@ int main( int argc, char **argv )
 
   std::string fromWhat = "transformation";
   bool retfw = parser->GetCommandLineArgument( "-fw", fromWhat );
+
+  /** Support for streaming. */
+  unsigned int numberOfStreams = 1;
+  bool rets = parser->GetCommandLineArgument( "-s", numberOfStreams );
   
   /** Determine image properties. */
   std::string ComponentType = "float";
@@ -139,17 +143,18 @@ int main( int argc, char **argv )
 
 void PrintHelp()
 {
-  std::cout << "This program converts between deformations (displacement fields) "
+  std::cout << "Usage:" << std::endl << "pxdeformationfieldoperator\n";
+  std::cout << "  This program converts between deformations (displacement fields) "
     << "and transformations, and computes the magnitude or Jacobian of a "
     << "deformation field.\n";
-  std::cout << "Usage:\npxdeformationfieldoperator\n";
   std::cout << "  -in      inputFilename\n";
   std::cout << "  [-out]   outputFilename; default: in + {operation}.mhd\n";
   std::cout << "  [-ops]   operation; options: DEF2TRANS, TRANS2DEF, "
     << "MAGNITUDE, JACOBIAN. default: MAGNITUDE\n";
   std::cout << "  [-fw]    from what the Jacobian is computed, one of "
             << "           {transformation, deformation}, default transformation for backward compatibility.\n";
-  std::cout << "Supported: 2D, 3D, vector of floats, number of components "
+  std::cout << "  [-s]     number of streams, default 1.\n";
+  std::cout << "Supported: 2D, 3D, vector of floats or doubles, number of components "
     << "must equal number of dimensions." << std::endl;
 
 } // end PrintHelp()

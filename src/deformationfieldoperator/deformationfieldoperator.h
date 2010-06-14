@@ -149,31 +149,34 @@ void ComputeJacobianFromTransformation(
 
 template<class TVectorImage, class TScalarImage>
 void ComputeJacobianFromDeformation(
-  TVectorImage * inputImage,
-  const std::string & outputFileName)
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+  const unsigned int & numberOfStreams )
 {
+  /** Typedef's. */
   typedef TVectorImage                                InputImageType; 
   typedef TScalarImage                                OutputImageType; 
   typedef typename OutputImageType::PixelType         OutputPixelType;
+  typedef itk::ImageFileReader< InputImageType >      ReaderType;
   typedef itk::ImageFileWriter< OutputImageType >     WriterType;
   typedef itk::DisplacementFieldJacobianDeterminantFilter<
     InputImageType, OutputPixelType >                 JacobianFilterType;
-  
+
+  /** Declare filters. */
+  typename ReaderType::Pointer reader = ReaderType::New();
   typename JacobianFilterType::Pointer jacobianFilter = JacobianFilterType::New();
   typename WriterType::Pointer writer = WriterType::New();
 
+  /** Process the image.  No intermediate calls to Update() are allowed,
+   * otherwise streaming does not work.
+   */
+  reader->SetFileName( inputFileName.c_str() );
   jacobianFilter->SetUseImageSpacingOn();
-  jacobianFilter->SetInput( inputImage );
-  std::cout << "Computing Jacobian image from deformation field ..." << std::endl;
-  jacobianFilter->Update();
-  std::cout << "Done computing Jacobian image." << std::endl;
-
-  /** Write the output image. */
+  jacobianFilter->SetInput( reader->GetOutput() );
   writer->SetInput( jacobianFilter->GetOutput() );
   writer->SetFileName( outputFileName.c_str() );
-  std::cout << "Saving the resulting image to disk as: " << outputFileName << std::endl;
+  writer->SetNumberOfStreamDivisions( numberOfStreams );
   writer->Update();
-  std::cout << "Done." << std::endl;
 
 } // end ComputeJacobianFromDeformation()
 
@@ -182,7 +185,7 @@ void ComputeJacobianFromDeformation(
  * **************** DeformationFieldOperator *******************
  *
  * converts between deformation fields and transformation 'fields',
- * and compute magnitudes/jacobians.
+ * and compute magnitudes/Jacobians.
  */
 
 /** Declare DeformationFieldOperator. */
@@ -191,7 +194,8 @@ void DeformationFieldOperator(
   const std::string & inputFileName,
   const std::string & outputFileName,
   const std::string & ops,
-  const std::string & fromWhat )
+  const std::string & fromWhat,
+  const unsigned int & numberOfStreams )
 {
   /** constants */
   const unsigned int Dimension = NDimension;
@@ -209,12 +213,15 @@ void DeformationFieldOperator(
   typename VectorImageType::Pointer workingImage;
   typename ReaderType::Pointer reader = ReaderType::New();
   
-
   /** Read in the inputImage. */
   reader->SetFileName( inputFileName.c_str() );
-  std::cout << "Reading input image: " << inputFileName << std::endl;   
-  reader->Update();
-  std::cout << "Input image read." << std::endl;
+  // temporarily: only streaming support for one case needed for EMPIRE10 challenge.
+  if ( ops != "JACOBIAN" && fromWhat != "deformation" )
+  {
+    std::cout << "Reading input image: " << inputFileName << std::endl;
+    reader->Update();
+    std::cout << "Input image read." << std::endl;
+  }
   
   /** Change to Transformation or Deformation by adding/subtracting pixel coordinates */
   workingImage = reader->GetOutput();
@@ -243,7 +250,7 @@ void DeformationFieldOperator(
   else if ( ops == "JACOBIAN" && fromWhat == "deformation" )
   {
     ComputeJacobianFromDeformation<VectorImageType, ScalarImageType>(
-      workingImage, outputFileName );
+      inputFileName, outputFileName, numberOfStreams );
   }
   else
   {
