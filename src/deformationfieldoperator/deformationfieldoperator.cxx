@@ -12,7 +12,7 @@
 #define run(function,type,dim) \
 if ( ComponentType == #type && Dimension == dim ) \
 { \
-  function< type, dim >( inputFileName, outputFileName, ops ); \
+  function< type, dim >( inputFileName, outputFileName, ops, fromWhat ); \
   supported = true; \
 }
 
@@ -58,6 +58,9 @@ int main( int argc, char **argv )
       itksys::SystemTools::GetFilenameLastExtension(inputFileName);
     outputFileName = part1 + ops + ext;
   }
+
+  std::string fromWhat = "transformation";
+  bool retfw = parser->GetCommandLineArgument( "-fw", fromWhat );
   
   /** Determine image properties. */
   std::string ComponentType = "float";
@@ -138,12 +141,14 @@ void PrintHelp()
 {
   std::cout << "This program converts between deformations (displacement fields) "
     << "and transformations, and computes the magnitude or Jacobian of a "
-    << "deformation field." << std::endl;
-  std::cout << "Usage:" << std::endl << "pxdeformationfieldoperator" << std::endl;
-  std::cout << "  -in      inputFilename" << std::endl;
+    << "deformation field.\n";
+  std::cout << "Usage:\npxdeformationfieldoperator\n";
+  std::cout << "  -in      inputFilename\n";
+  std::cout << "  [-out]   outputFilename; default: in + {operation}.mhd\n";
   std::cout << "  [-ops]   operation; options: DEF2TRANS, TRANS2DEF, "
-    << "MAGNITUDE, JACOBIAN. default: MAGNITUDE" << std::endl;
-  std::cout << "  [-out]   outputFilename; default: in + {operation}.mhd" << std::endl;
+    << "MAGNITUDE, JACOBIAN. default: MAGNITUDE\n";
+  std::cout << "  [-fw]    from what the Jacobian is computed, one of "
+            << "           {transformation, deformation}, default transformation for backward compatibility.\n";
   std::cout << "Supported: 2D, 3D, vector of floats, number of components "
     << "must equal number of dimensions." << std::endl;
 

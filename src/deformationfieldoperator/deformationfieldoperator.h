@@ -5,6 +5,7 @@
 #include "itkImageFileWriter.h"
 #include "itkImageRegionIteratorWithIndex.h"
 #include "itkDeformationFieldJacobianDeterminantFilter.h"
+#include "itkDisplacementFieldJacobianDeterminantFilter.h"
 #include "itkGradientToMagnitudeImageFilter.h"
 
 
@@ -106,12 +107,12 @@ void ComputeMagnitude(
 
 
 /** 
- * ******************* ComputeJacobian ************************
- * write Jacobian of deformation field to disk 
+ * ******************* ComputeJacobianFromTransformation ************************
+ * write Jacobian of transformation field to disk 
  */
 
 template<class TVectorImage, class TScalarImage>
-void ComputeJacobian(
+void ComputeJacobianFromTransformation(
   TVectorImage * inputImage,
   const std::string & outputFileName)
 {
@@ -127,9 +128,9 @@ void ComputeJacobian(
 
   jacobianFilter->SetUseImageSpacingOn();
   jacobianFilter->SetInput( inputImage );
-  std::cout << "Computing jacobian image..." << std::endl;
+  std::cout << "Computing Jacobian image from transformation field ..." << std::endl;
   jacobianFilter->Update();
-  std::cout << "Done computing jacobian image." << std::endl;
+  std::cout << "Done computing Jacobian image." << std::endl;
 
   /** Write the output image. */
   writer->SetInput( jacobianFilter->GetOutput() );
@@ -138,8 +139,43 @@ void ComputeJacobian(
   writer->Update();
   std::cout << "Done." << std::endl;
 
-} // end ComputeJacobian
+} // end ComputeJacobianFromTransformation()
 
+
+/** 
+ * ******************* ComputeJacobianFromDeformation ************************
+ * write Jacobian of deformation field to disk 
+ */
+
+template<class TVectorImage, class TScalarImage>
+void ComputeJacobianFromDeformation(
+  TVectorImage * inputImage,
+  const std::string & outputFileName)
+{
+  typedef TVectorImage                                InputImageType; 
+  typedef TScalarImage                                OutputImageType; 
+  typedef typename OutputImageType::PixelType         OutputPixelType;
+  typedef itk::ImageFileWriter< OutputImageType >     WriterType;
+  typedef itk::DisplacementFieldJacobianDeterminantFilter<
+    InputImageType, OutputPixelType >                 JacobianFilterType;
+  
+  typename JacobianFilterType::Pointer jacobianFilter = JacobianFilterType::New();
+  typename WriterType::Pointer writer = WriterType::New();
+
+  jacobianFilter->SetUseImageSpacingOn();
+  jacobianFilter->SetInput( inputImage );
+  std::cout << "Computing Jacobian image from deformation field ..." << std::endl;
+  jacobianFilter->Update();
+  std::cout << "Done computing Jacobian image." << std::endl;
+
+  /** Write the output image. */
+  writer->SetInput( jacobianFilter->GetOutput() );
+  writer->SetFileName( outputFileName.c_str() );
+  std::cout << "Saving the resulting image to disk as: " << outputFileName << std::endl;
+  writer->Update();
+  std::cout << "Done." << std::endl;
+
+} // end ComputeJacobianFromDeformation()
 
 
 /**
@@ -154,7 +190,8 @@ template< class TComponent, unsigned int NDimension >
 void DeformationFieldOperator(
   const std::string & inputFileName,
   const std::string & outputFileName,
-  const std::string & ops)
+  const std::string & ops,
+  const std::string & fromWhat )
 {
   /** constants */
   const unsigned int Dimension = NDimension;
@@ -185,26 +222,34 @@ void DeformationFieldOperator(
   /** Do something with this image and save the result */
   if ( ops == "DEF2TRANS" )
   {
-    Deformation2Transformation<VectorImageType>(workingImage, outputFileName, true);
+    Deformation2Transformation<VectorImageType>(
+      workingImage, outputFileName, true );
   }
   else if ( ops == "TRANS2DEF" )
   {
-    Deformation2Transformation<VectorImageType>(workingImage, outputFileName, false);
+    Deformation2Transformation<VectorImageType>(
+      workingImage, outputFileName, false );
   }
   else if ( ops == "MAGNITUDE" )
   {
-    ComputeMagnitude<VectorImageType, ScalarImageType>(workingImage, outputFileName);
+    ComputeMagnitude<VectorImageType, ScalarImageType>(
+      workingImage, outputFileName );
   }
-  else if ( ops == "JACOBIAN" )
+  else if ( ops == "JACOBIAN" && fromWhat == "transformation" )
   {
-    ComputeJacobian<VectorImageType, ScalarImageType>(workingImage, outputFileName);
+    ComputeJacobianFromTransformation<VectorImageType, ScalarImageType>(
+      workingImage, outputFileName );
+  }
+  else if ( ops == "JACOBIAN" && fromWhat == "deformation" )
+  {
+    ComputeJacobianFromDeformation<VectorImageType, ScalarImageType>(
+      workingImage, outputFileName );
   }
   else
   {
     itkGenericExceptionMacro(<< "<< invalid operator: " << ops );
   }
-  
 
-} // end DeformationFieldOperator
+} // end DeformationFieldOperator()
 
 
