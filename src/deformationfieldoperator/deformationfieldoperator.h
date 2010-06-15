@@ -194,7 +194,6 @@ void DeformationFieldOperator(
   const std::string & inputFileName,
   const std::string & outputFileName,
   const std::string & ops,
-  const std::string & fromWhat,
   const unsigned int & numberOfStreams )
 {
   /** constants */
@@ -216,7 +215,7 @@ void DeformationFieldOperator(
   /** Read in the inputImage. */
   reader->SetFileName( inputFileName.c_str() );
   // temporarily: only streaming support for one case needed for EMPIRE10 challenge.
-  if ( ops != "JACOBIAN" && fromWhat != "deformation" )
+  if ( ops != "DEF2JAC" )
   {
     std::cout << "Reading input image: " << inputFileName << std::endl;
     reader->Update();
@@ -242,12 +241,12 @@ void DeformationFieldOperator(
     ComputeMagnitude<VectorImageType, ScalarImageType>(
       workingImage, outputFileName );
   }
-  else if ( ops == "JACOBIAN" && fromWhat == "transformation" )
+  else if ( ops == "JACOBIAN" || ops == "TRANS2JAC" )
   {
     ComputeJacobianFromTransformation<VectorImageType, ScalarImageType>(
       workingImage, outputFileName );
   }
-  else if ( ops == "JACOBIAN" && fromWhat == "deformation" )
+  else if ( ops == "DEF2JAC" )
   {
     ComputeJacobianFromDeformation<VectorImageType, ScalarImageType>(
       inputFileName, outputFileName, numberOfStreams );

@@ -12,7 +12,7 @@
 #define run(function,type,dim) \
 if ( ComponentType == #type && Dimension == dim ) \
 { \
-  function< type, dim >( inputFileName, outputFileName, ops, fromWhat, numberOfStreams ); \
+  function< type, dim >( inputFileName, outputFileName, ops, numberOfStreams ); \
   supported = true; \
 }
 
@@ -58,9 +58,6 @@ int main( int argc, char **argv )
       itksys::SystemTools::GetFilenameLastExtension(inputFileName);
     outputFileName = part1 + ops + ext;
   }
-
-  std::string fromWhat = "transformation";
-  bool retfw = parser->GetCommandLineArgument( "-fw", fromWhat );
 
   /** Support for streaming. */
   unsigned int numberOfStreams = 1;
@@ -150,9 +147,8 @@ void PrintHelp()
   std::cout << "  -in      inputFilename\n";
   std::cout << "  [-out]   outputFilename; default: in + {operation}.mhd\n";
   std::cout << "  [-ops]   operation; options: DEF2TRANS, TRANS2DEF, "
-    << "MAGNITUDE, JACOBIAN. default: MAGNITUDE\n";
-  std::cout << "  [-fw]    from what the Jacobian is computed, one of "
-            << "           {transformation, deformation}, default transformation for backward compatibility.\n";
+    << "MAGNITUDE, JACOBIAN, DEF2JAC, TRANS2JAC. default: MAGNITUDE\n"
+    << "           TRANS2JAC == JACOBIAN\n";
   std::cout << "  [-s]     number of streams, default 1.\n";
   std::cout << "Supported: 2D, 3D, vector of floats or doubles, number of components "
     << "must equal number of dimensions." << std::endl;
