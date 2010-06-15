@@ -13,7 +13,7 @@ if ( ComponentTypeIn == #type && Dimension == dim ) \
 { \
   typedef itk::Image< type, dim >       InputImageType; \
   typedef itk::VectorImage< type, dim > OutputImageType; \
-  function< InputImageType, OutputImageType >( inputFileNames, outputFileName ); \
+  function< InputImageType, OutputImageType >( inputFileNames, outputFileName, numberOfStreams ); \
   supported = true; \
 }
 
@@ -23,7 +23,8 @@ if ( ComponentTypeIn == #type && Dimension == dim ) \
 template< class InputImageType, class OutputImageType >
 void ComposeVectorImage(
   const std::vector<std::string> & inputFileNames,
-  const std::string & outputFileName );
+  const std::string & outputFileName,
+  const unsigned int & numberOfStreams );
 
 /** Declare PrintHelp. */
 void PrintHelp( void );
@@ -49,6 +50,10 @@ int main( int argc, char ** argv )
 
   std::string outputFileName = "VECTOR.mhd";
   bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+
+  /** Support for streaming. */
+  unsigned int numberOfStreams = 1;
+  bool rets = parser->GetCommandLineArgument( "-s", numberOfStreams );
 
   /** Check if the required arguments are given. */
   if ( !retin )
@@ -143,8 +148,10 @@ int main( int argc, char ** argv )
    */
 
 template< class InputImageType, class OutputImageType >
-void ComposeVectorImage( const std::vector<std::string> & inputFileNames,
-  const std::string & outputFileName )
+void ComposeVectorImage(
+  const std::vector<std::string> & inputFileNames,
+  const std::string & outputFileName,
+  const unsigned int & numberOfStreams )
 {
   /** Typedef's. */
   typedef itk::ImageFileReader< InputImageType >          ReaderType;
@@ -157,7 +164,6 @@ void ComposeVectorImage( const std::vector<std::string> & inputFileNames,
   {
     readers[ i ] = ReaderType::New();
     readers[ i ]->SetFileName( inputFileNames[ i ] );
-    readers[ i ]->Update();
   }
 
   /** Create index extractor and writer. */
@@ -171,20 +177,25 @@ void ComposeVectorImage( const std::vector<std::string> & inputFileNames,
   typename WriterType::Pointer writer = WriterType::New();
   writer->SetFileName( outputFileName );
   writer->SetInput( composer->GetOutput() );
+  writer->SetNumberOfStreamDivisions( numberOfStreams );
   writer->Update();
 
 } // end ComposeVectorImage()
 
 
-  /**
-   * ******************* PrintHelp *******************
-   */
-void PrintHelp()
+/**
+ * ******************* PrintHelp *******************
+ */
+
+void PrintHelp( void )
 {
-  std::cout << "Usage:" << std::endl << "pximagetovectorimage" << std::endl;
-  std::cout << "  -in      inputFilenames, at least 2" << std::endl;
-  std::cout << "  [-out]   outputFilename, default VECTOR.mhd" << std::endl;
-  std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
+  std::cout << "Usage:" << std::endl << "pximagetovectorimage\n";
+  std::cout << "  -in      inputFilenames, at least 2\n";
+  std::cout << "  [-out]   outputFilename, default VECTOR.mhd\n";
+  std::cout << "  [-s]     number of streams, default 1.\n";
+  std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, "
+    << "(unsigned) int, (unsigned) long, float, double.\n";
   std::cout << "Note: make sure that the input images are of the same type, size, etc." << std::endl;
+
 } // end PrintHelp()
 
