@@ -76,16 +76,12 @@ int main( int argc, char **argv )
     Dimension,
     NumberOfComponents,
     imagesize );
-  if ( retgip !=0 )
+  if ( retgip != 0 )
   {
     return 1;
   }
-  std::cout << "The input image has the following properties:" << std::endl;
-  std::cout << "\tPixelType:          " << PixelType << std::endl;
-  std::cout << "\tComponentType:      " << ComponentType << std::endl;
-  std::cout << "\tDimension:          " << Dimension << std::endl;
-  std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
-  
+
+  /** Checks. */
   if ( NumberOfComponents != Dimension )
   { 
     std::cerr << "ERROR: The NumberOfComponents must equal the Dimension!" << std::endl;
@@ -138,7 +134,7 @@ int main( int argc, char **argv )
  * ******************* PrintHelp *******************
  */
 
-void PrintHelp()
+void PrintHelp( void )
 {
   std::cout << "Usage:" << std::endl << "pxdeformationfieldoperator\n";
   std::cout << "  This program converts between deformations (displacement fields) "
