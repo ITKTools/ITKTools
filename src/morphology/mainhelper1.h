@@ -11,12 +11,14 @@ void PrintHelp( void )
 {
   std::cout << "Usage:" << std::endl << "pxmorphology\n";
   std::cout << "  -in      inputFilename\n";
-  std::cout << "  -op      operation, choose one of {erosion, dilation, opening, closing}\n";
+  std::cout << "  -op      operation, choose one of {erosion, dilation, opening, closing, gradient}\n";
   std::cout << "  -type    type, choose one of {grayscale, binary, parabolic}\n";
   std::cout << "  [-out]   outputFilename, default in_operation_type.extension\n";
   std::cout << "  -r       radius\n";
   std::cout << "  [-bc]    boundaryCondition (grayscale): the gray value outside the image\n";
   std::cout << "  [-bin]   foreground, background, erosion values\n";
+  std::cout << "  [-a]     algorithm type for op=gradient\n";
+  std::cout << "           BASIC = 0, HISTO = 1, ANCHOR = 2, VHGW = 3, default 0\n";
   std::cout << "  [-opct]  pixelType, default: automatically determined from input image\n";
   std::cout << "For grayscale filters, supply the boundary condition.\n";
   std::cout << "  This value defaults to the maximum pixel value.\n";

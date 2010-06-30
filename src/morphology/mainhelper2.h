@@ -6,6 +6,7 @@
 #include "dilation.h"
 #include "opening.h"
 #include "closing.h"
+#include "gradient.h"
 
 
 /** run: A macro to call a function. */
@@ -30,5 +31,17 @@ if ( operation == #function ) \
       function##Parabolic< ImageType >( inputFileName, outputFileName, radius ); \
       supported = true; \
     } \
+  } \
+}
+
+/** run2: A macro to call a function. */
+#define run2( function, ctype, dim ) \
+if ( operation == #function ) \
+{ \
+  if ( componentType == #ctype && Dimension == dim ) \
+  { \
+    typedef itk::Image< ctype, dim > ImageType; \
+    function< ImageType >( inputFileName, outputFileName, radius, algorithm ); \
+    supported = true; \
   } \
 }

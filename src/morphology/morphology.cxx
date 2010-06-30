@@ -13,7 +13,8 @@ extern bool Morphology2D(
   const std::string & type,
   const std::string & boundaryCondition,
   const std::vector<unsigned int> & radius,
-  const std::vector<std::string> & bin );
+  const std::vector<std::string> & bin,
+  const int & algorithm );
 extern bool Morphology3D(
   const std::string & componentType,
   const unsigned int & Dimension,
@@ -23,7 +24,8 @@ extern bool Morphology3D(
   const std::string & type,
   const std::string & boundaryCondition,
   const std::vector<unsigned int> & radius,
-  const std::vector<std::string> & bin );
+  const std::vector<std::string> & bin,
+  const int & algorithm );
 
 //-------------------------------------------------------------------------------------
 
@@ -68,6 +70,9 @@ int main( int argc, char *argv[] )
   std::vector<std::string> bin;
   bool retbin = parser->GetCommandLineArgument( "-bin", bin );
 
+  int algorithm = 0;
+  bool reta = parser->GetCommandLineArgument( "-a", algorithm );
+
   /** Check if the required arguments are given. */
   if ( !retin )
   {
@@ -89,9 +94,10 @@ int main( int argc, char *argv[] )
   if ( operation != "erosion" 
     && operation != "dilation"
     && operation != "opening"
-    && operation != "closing" )
+    && operation != "closing"
+    && operation != "gradient" )
   {
-    std::cerr << "ERROR: \"-op\" should be one of {erosion, dilation, opening, closing}." << std::endl;
+    std::cerr << "ERROR: \"-op\" should be one of {erosion, dilation, opening, closing, gradient}." << std::endl;
     return 1;
   }
   if ( type != "grayscale" && type != "binary" && type != "parabolic" )
@@ -104,7 +110,12 @@ int main( int argc, char *argv[] )
     std::cerr << "ERROR: \"-bin\" should contain three value: foreground, background, erosion." << std::endl;
     return 1;
   }
-  
+  if ( reta && ( algorithm < 0 || algorithm > 3 ) )
+  {
+    std::cerr << "ERROR: \"-a\" should have a value 0, 1, 2 or 3." << std::endl;
+    return 1;
+  }
+
   /** Determine image properties. */
   std::string componentType = "short";
   std::string pixelType; //we don't use this
@@ -169,13 +180,13 @@ int main( int argc, char *argv[] )
     {
       supported = Morphology2D( componentType, Dimension,
         inputFileName, outputFileName, operation, type,
-        boundaryCondition, Radius, bin );
+        boundaryCondition, Radius, bin, algorithm );
     }
     else if ( Dimension == 3 )
     {
       supported = Morphology3D( componentType, Dimension,
         inputFileName, outputFileName, operation, type,
-        boundaryCondition, Radius, bin );
+        boundaryCondition, Radius, bin, algorithm );
     }
   }
   catch( itk::ExceptionObject & e )

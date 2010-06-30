@@ -10,6 +10,11 @@ ELSE(ITK_FOUND)
           "Cannot build without ITK.  Please set ITK_DIR.")
 ENDIF(ITK_FOUND)
 
+# pxmorphology depends on some ITK settings
+#IF( NOT ITK_USE_CONSOLIDATED_MORPHOLOGY )
+#  message( SEND_ERROR "ITK_USE_CONSOLIDATED_MORPHOLOGY has not been set to ON when compiling ITK. This option is mandatory for pxmorphology to build.\nPlease recompile your ITK installation." )
+#ENDIF()
+
 ADD_EXECUTABLE(pxmorphology
   morphology.cxx
   morphology2D.cxx
@@ -20,6 +25,7 @@ ADD_EXECUTABLE(pxmorphology
   dilation.h
 	opening.h
 	closing.h
+	gradient.h
 )
 
 INSTALL_TARGETS(/. pxmorphology)

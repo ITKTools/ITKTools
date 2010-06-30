@@ -9,7 +9,8 @@ bool Morphology3D(
   const std::string & type,
   const std::string & boundaryCondition,
   const std::vector<unsigned int> & radius,
-  const std::vector<std::string> & bin )
+  const std::vector<std::string> & bin,
+  const int & algorithm )
 {
   bool supported = false;
 
@@ -36,6 +37,12 @@ bool Morphology3D(
   run( closing, char, 3 );
   run( closing, unsigned short, 3 );
   run( closing, short, 3 );
+
+  /** Gradient. */
+  run2( gradient, unsigned char, 3 );
+  run2( gradient, char, 3 );
+  run2( gradient, unsigned short, 3 );
+  run2( gradient, short, 3 );
 
   /** Return a value. */
   return supported;

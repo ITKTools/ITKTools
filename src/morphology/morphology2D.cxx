@@ -9,7 +9,8 @@ bool Morphology2D(
   const std::string & type,
   const std::string & boundaryCondition,
   const std::vector<unsigned int> & radius,
-  const std::vector<std::string> & bin )
+  const std::vector<std::string> & bin,
+  const int & algorithm )
 {
   bool supported = false;
 
@@ -36,6 +37,12 @@ bool Morphology2D(
   run( closing, char, 2 );
   run( closing, unsigned short, 2 );
   run( closing, short, 2 );
+
+  /** Gradient. */
+  run2( gradient, unsigned char, 2 );
+  run2( gradient, char, 2 );
+  run2( gradient, unsigned short, 2 );
+  run2( gradient, short, 2 );
 
   /** Return a value. */
   return supported;
