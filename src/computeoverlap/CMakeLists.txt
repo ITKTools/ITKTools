@@ -12,10 +12,6 @@ ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxcomputeoverlap computeoverlap.cxx)
 
-TARGET_LINK_LIBRARIES(pxcomputeoverlap
-ITKBasicFilters
-ITKNumerics
-ITKIO
-ITKCommon )
+TARGET_LINK_LIBRARIES(pxcomputeoverlap pxcommon ITKIO ITKCommon ITKBasicFilters )
 
 INSTALL_TARGETS(/. pxcomputeoverlap)
