@@ -10,9 +10,12 @@ ELSE(ITK_FOUND)
           "Cannot build without ITK.  Please set ITK_DIR.")
 ENDIF(ITK_FOUND)
 
-ADD_EXECUTABLE(pxlogicalimageoperator logicalimageoperator.cxx itkLogicalFunctors.h)
+ADD_EXECUTABLE( pxlogicalimageoperator
+  logicalimageoperator.cxx
+  itkLogicalFunctors.h
+  LogicalImageOperatorHelper.h )
 
 INSTALL_TARGETS(/. pxlogicalimageoperator)
 
-TARGET_LINK_LIBRARIES(pxlogicalimageoperator pxcommon ITKBasicFilters ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES( pxlogicalimageoperator pxcommon ITKBasicFilters ITKIO ITKCommon )
 
