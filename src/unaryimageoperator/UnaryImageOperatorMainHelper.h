@@ -7,10 +7,11 @@
 #include <itksys/SystemTools.hxx>
 
 
-  /**
-   * ******************* PrintHelp *******************
-   */
-void PrintHelp()
+/**
+ * ******************* PrintHelp *******************
+ */
+
+void PrintHelp( void )
 {
   std::cout << "Unary operations on one image." << std::endl;
   std::cout << "Usage:" << std::endl << "pxunaryimageoperator" << std::endl;
@@ -30,12 +31,13 @@ void PrintHelp()
   std::cout << "  [-out]   outputFilename, default in + <ops> + <arg> + .mhd" << std::endl;
   std::cout << "  [-pto]   outputPixelType, default: same as inputimage" << std::endl;
   std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, float." << std::endl;
-} // end PrintHelp
+} // end PrintHelp()
 
 
-  /**
-   * ******************* InputIsInteger *******************
-   */
+/**
+ * ******************* InputIsInteger *******************
+ */
+
 void InputIsInteger( const std::string & inputComponentType,
   bool & inputIsInteger )
 {
@@ -48,12 +50,13 @@ void InputIsInteger( const std::string & inputComponentType,
   {
     inputIsInteger = true;
   }
-} // end InputIsInteger
+} // end InputIsInteger()
 
 
-  /**
-   * ******************* ArgumentIsInteger *******************
-   */
+/**
+ * ******************* ArgumentIsInteger *******************
+ */
+
 void ArgumentIsInteger( const std::string & argument, bool & argumentIsInteger )
 {
   /** Check if the argument is of integer type. */
@@ -65,12 +68,13 @@ void ArgumentIsInteger( const std::string & argument, bool & argumentIsInteger )
     argumentIsInteger = true;
   }
 
-} // end ArgumentIsInteger
+} // end ArgumentIsInteger()
 
 
-  /**
-   * ******************* CheckOps *******************
-   */
+/**
+ * ******************* CheckOps *******************
+ */
+
 int CheckOps( std::string & ops, bool isInteger )
 {
   /** A map to store if there are integer and double versions
@@ -125,12 +129,13 @@ int CheckOps( std::string & ops, bool isInteger )
   /** Return a value. */
   return 0;
   
-} // end CheckOps
+} // end CheckOps()
 
 
-  /**
-   * ******************* OperatorNeedsArgument *******************
-   */
+/**
+ * ******************* OperatorNeedsArgument *******************
+ */
+
 bool OperatorNeedsArgument( std::string & ops )
 {
   /** A map to store if OperatorNeedsArgument. */
@@ -168,13 +173,15 @@ bool OperatorNeedsArgument( std::string & ops )
 
   return operatorMap[ ops ];
 
-} // end OperatorNeedsArgument
+} // end OperatorNeedsArgument()
 
-  
-  /**
-   * ******************* CreateOutputFileName *******************
-   */
-void CreateOutputFileName( const std::string & inputFileName, std::string & outputFileName,
+
+/**
+ * ******************* CreateOutputFileName *******************
+ */
+
+void CreateOutputFileName( const std::string & inputFileName,
+  std::string & outputFileName,
   const std::string & ops, const std::string & arg )
 {
   /** A map to store if ops is before, if arg is needed, and if arg is before. */
@@ -238,6 +245,7 @@ void CreateOutputFileName( const std::string & inputFileName, std::string & outp
     outputFileName = path + name + ops + arg + ext;
   }
   
-} // end CreateOutputFileName
+} // end CreateOutputFileName()
+
 
 #endif //#ifndef __UnaryImageOperatorMainHelper_h

@@ -8,20 +8,20 @@ namespace itk {
 namespace Functor {  
 
 /** A Macro to write a unary functor class with SetArgument(). */
-#define itkUnaryFunctorMacro(name,ops)\
-template< class TInput, class TArgument=TInput, class TOutput=TInput >\
-class name\
-{\
-public:\
-  name() {};\
-  ~name() {};\
-  inline TOutput operator()( const TInput & A )\
-  {\
-    return static_cast<TOutput>( ops );\
-  }\
-  void SetArgument( TArgument arg ){ this->m_Argument = arg; };\
-private:\
-  TArgument m_Argument;\
+#define itkUnaryFunctorMacro( name, ops ) \
+template< class TInput, class TArgument=TInput, class TOutput=TInput > \
+class name \
+{ \
+public: \
+  name() {}; \
+  ~name() {}; \
+  inline TOutput operator()( const TInput & A ) \
+  { \
+    return static_cast<TOutput>( ops ); \
+  } \
+  void SetArgument( TArgument arg ){ this->m_Argument = arg; }; \
+private: \
+  TArgument m_Argument; \
 }
 
 /** Arithmetic functors which use m_Argument. */
