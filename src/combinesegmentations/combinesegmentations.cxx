@@ -323,6 +323,8 @@ void CombineSegmentations(
   typedef itk::Image< 
     ConfusionMatrixPixelType, 3 >                   ConfusionMatrixImageType;
 
+  typedef typename LabelImageType::RegionType       RegionType;
+
   typedef typename LabelImageType::Pointer          LabelImagePointer;
   typedef typename ProbImageType::Pointer           ProbImagePointer;
   typedef typename 
@@ -407,23 +409,35 @@ void CombineSegmentations(
   priorProbImageArray.resize( numberOfClasses );
 
   /** Read the input label images */
-  bool relabel = (inValues.size() > 0 );
+  RegionType lastRegion;
+  bool relabel = ( inValues.size() > 0 );
   std::cout << "Reading (and possibly relabeling) input segmentations..." << std::endl;
-  for (unsigned int i = 0; i < numberOfObservers; ++i )
+  for ( unsigned int i = 0; i < numberOfObservers; ++i )
   {
     typename LabelImageReaderType::Pointer labelImageReader =
       LabelImageReaderType::New();
     labelImageReader->SetFileName( inputSegmentationFileNames[i].c_str() );
     labelImageReader->Update();
+
+    /** Check size. */
+    RegionType region = labelImageReader->GetOutput()->GetLargestPossibleRegion();
+    if ( i > 0 && region != lastRegion )
+    {
+      std::cerr << "\nERROR: input label images are not of the same size!" << std::endl;
+      return;
+    }
+    lastRegion = region;
+
+    /** Relabel? */
     if ( relabel ) 
     {
       typename RelabelFilterType::Pointer relabeler = RelabelFilterType::New();
       relabeler->SetInput( labelImageReader->GetOutput() );
-      for ( unsigned int lab = 0; lab < inValues.size(); ++lab)
+      for ( unsigned int lab = 0; lab < inValues.size(); ++lab )
       {
         LabelPixelType labin = static_cast<LabelPixelType>( inValues[lab] );
         LabelPixelType labout = static_cast<LabelPixelType>( outValues[lab] );
-        relabeler->SetChange( labin, labout);
+        relabeler->SetChange( labin, labout );
       }
       relabeler->Update();
       labelImageArray[i] = relabeler->GetOutput();
