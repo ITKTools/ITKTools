@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 
-
 #include "itkImage.h"
 #include "itkExceptionObject.h"
 #include "itkImageFileReader.h"
@@ -20,6 +19,7 @@
 #include "itkBinaryDilateImageFilter.h"
 #include "itkBinaryBallStructuringElement.h"
 #include "itkChangeLabelImageFilter.h"
+#include "itkMultiThreader.h"
 
 
 /** Declare CombineSegmentations. */
@@ -39,10 +39,10 @@ void CombineSegmentations(
   unsigned int maskDilationRadius,
   const std::vector<unsigned int> & prefOrder,
   const std::vector<unsigned int> & inValues,
-  const std::vector<unsigned int> & outValues);
+  const std::vector<unsigned int> & outValues );
 
 /** Declare PrintHelp. */
-void PrintHelp(void);
+void PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -191,6 +191,14 @@ int main( int argc, char **argv )
     prefOrder[i] = i;
   }
   bool retord = parser->GetCommandLineArgument( "-ord", prefOrder );
+
+  /** Threads. */
+  unsigned int maximumNumberOfThreads
+    = itk::MultiThreader::GetGlobalDefaultNumberOfThreads();
+  bool retthreads = parser->GetCommandLineArgument(
+    "-threads", maximumNumberOfThreads );
+  itk::MultiThreader::SetGlobalMaximumNumberOfThreads(
+    maximumNumberOfThreads );
   
   /** Determine image properties. */
   std::string ComponentType = "unsigned char";
@@ -205,7 +213,7 @@ int main( int argc, char **argv )
     Dimension,
     NumberOfComponents,
     imagesize );
-  if ( retgip !=0 )
+  if ( retgip != 0 )
   {
     return 1;
   }
@@ -229,6 +237,16 @@ int main( int argc, char **argv )
       << " are not supported!" 
       << std::endl;
     return 1;
+  }
+  /** This is the easiest way to make sure that the input labels are in the
+   * valid range 0 - 127. Leads to crashes in case of short input with high
+   * values otherwise.
+   */
+  if ( ComponentType != "unsigned char" )
+  {
+    std::cerr << "ERROR: only \"unsigned char\" images are supported." << std::endl;
+    return 1;
+
   }
     
   /** Run the program. */
@@ -972,7 +990,7 @@ void PrintHelp()
             << "           real label, the y-axis corresponds to the label given by the observer." << std::endl;            
   std::cout << "  [-mask]  [maskDilationRadius]: Use a mask if this flag is provided.\n"
             << "           Only taken into account by [VOTE_]MULTISTAPLE2 and VOTE.\n"
-            << "           The mask is 0 at those pixels were the decision is unanymous, and 1 elsewhere.\n"
+            << "           The mask is 0 at those pixels were the decision is unanimous, and 1 elsewhere.\n"
             << "           A dilation is performed with a kernel with radius maskDilationRadius (default:1)\n"
             << "           Pixels that are outside the mask, will have class of the first observer.\n"
             << "           Other pixels are passed through the combination algorithm.\n" 
