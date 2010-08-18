@@ -47,7 +47,7 @@ void PrintHelp()
   std::cout << "  [-arg]   argument, necessary for some ops\n"
             << "             WEIGHTEDADDITION: 0.0 < weight alpha < 1.0\n"
             << "             MASK[NEG]: background value, e.g. 0." << std::endl;
-	std::cout << "  [-z]     compression flag; if provided, the output image is compressed\n";
+  std::cout << "  [-z]     compression flag; if provided, the output image is compressed\n";
   std::cout << "  [-opct]  output component type, by default the largest of the two input images\n"
             << "             choose one of: {[unsigned_]{char,short,int,long},float,double}" << std::endl;
   std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
@@ -253,7 +253,7 @@ int CheckOperator( std::string & operatoR )
 
   /** Return a value. */
   return 0;
-
+  
 } // end CheckOperator()
 
 
@@ -289,7 +289,7 @@ bool OperatorNeedsArgument( const std::string & operatoR )
 
 } // end OperatorNeedsArgument()
 
-
+  
   /**
    * ******************* CreateOutputFileName *******************
    */
@@ -329,7 +329,7 @@ void CreateOutputFileName( const std::vector<std::string> & inputFileNames,
     /** Example: /path/imageRDIVIDE3.mhd *
     outputFileName = path + name + ops + arg + ext;
   }*/
-
+  
 } // end CreateOutputFileName
 
   /**
