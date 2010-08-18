@@ -200,7 +200,7 @@ bool ReadInputData( const std::string & filename, std::vector<std::vector<double
     std::vector<itksys::String> linevec2 = itksys::SystemTools::SplitString(
       line.c_str(), '\t', false );
     unsigned int linelength = linevec1.size() > linevec2.size() ? linevec1.size() : linevec2.size();
- 
+
     /** Read and convert the first line. */
     std::istringstream lineSS1( line.c_str() );
     std::vector<double> linevec( linelength );

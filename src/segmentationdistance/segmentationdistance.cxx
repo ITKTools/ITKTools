@@ -79,9 +79,9 @@ int main( int argc, char **argv )
     std::cout << "ERROR: You should specify two input images." << std::endl;
     return 1;
   }
-  std::string inputFileName1 = inputFileNames[ 0 ]; 
+  std::string inputFileName1 = inputFileNames[ 0 ];
   std::string inputFileName2 = inputFileNames[ 1 ];
-  
+
   /** Get the outputFileName */
   std::string outputFileName = "";
   bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
@@ -108,7 +108,7 @@ int main( int argc, char **argv )
 
   unsigned int thetasize = 180;
   bool rett = parser->GetCommandLineArgument( "-t", thetasize );
-  
+
   unsigned int phisize = 90;
   bool retp = parser->GetCommandLineArgument( "-p", phisize );
 
@@ -118,17 +118,17 @@ int main( int argc, char **argv )
   if ( cartesianstr == "true" )
   {
     cartesianonly = true;
-  }  
-    
+  }
+
   /** This program supports only the following INTERNAL pixel type.
    * The input images  are assumed to be short. Input images other
    * than short are supported, but automatically converted to short. */
   unsigned int Dimension = 3;
   std::string PixelType = "float";
-  
+
   /** Get rid of the possible "_" in PixelType. */
   ReplaceUnderscoreWithSpace( PixelType );
-  
+
   /** Run the program. */
   bool supported = false;
   try
@@ -149,7 +149,7 @@ int main( int argc, char **argv )
       << std::endl;
     return 1;
   }
-  
+
   /** End program. */
   return 0;
 
@@ -178,13 +178,13 @@ void SegmentationDistanceHelper(
   bool cartesianonly,
   bool invertedImage  )
 {
-  
+
   /** constants */
   const unsigned int Dimension = ImageType::ImageDimension;
   typedef typename ImageType::PixelType               PixelType;
   typedef typename InputImageType1::PixelType         InputPixelType1;
   typedef typename InputImageType2::PixelType         InputPixelType2;
-      
+
   typedef itk::SignedMaurerDistanceMapImageFilter<
     InputImageType1, ImageType>                       DistanceMapFilterType1;
   typedef itk::SignedMaurerDistanceMapImageFilter<
@@ -201,19 +201,19 @@ void SegmentationDistanceHelper(
     ImageType, double>                                InterpolatorType;
   typedef itk::AccumulateImageFilter<
     ImageType, ImageType>                             AccumulatorType;
-    
+
   typedef typename InputImageType1::IndexType         IndexType;
   typedef typename InputImageType1::SizeType          SizeType;
   typedef typename InputImageType1::SpacingType       SpacingType;
   typedef typename CSCFilterType::SizeType            RTPSizeType;
   typedef typename CSCFilterType::PointType           PointType;
   typedef typename CSCFilterType::MaskImageType       MaskImageType;
-  typedef itk::CastImageFilter< 
+  typedef itk::CastImageFilter<
     ImageType, MaskImageType >                        ToMaskImageCasterType;
   typedef typename MomentCalculatorType::VectorType   VectorType;
   typedef itk::ImageRegionIterator<
     ImageType>                                        OutputIteratorType;
-  
+
   /** Instantiate filters */
   typename DistanceMapFilterType1::Pointer distanceMapFilter1 =
     DistanceMapFilterType1::New();
@@ -227,11 +227,11 @@ void SegmentationDistanceHelper(
   typename CSCFilterType::Pointer cscFilter2 = CSCFilterType::New();
   typename InterpolatorType::Pointer interpolator1 = InterpolatorType::New();
   typename InterpolatorType::Pointer interpolator2 = InterpolatorType::New();
-  typename MomentCalculatorType::Pointer momentCalculator = 
+  typename MomentCalculatorType::Pointer momentCalculator =
     MomentCalculatorType::New();
   typename AccumulatorType::Pointer accumulator1 = AccumulatorType::New();
   typename AccumulatorType::Pointer accumulator2 = AccumulatorType::New();
-    
+
   /** Compute the distance map of image 1 */
   distanceMapFilter1->SetInput( inputImage1 );
   distanceMapFilter1->SetUseImageSpacing( true );
@@ -247,7 +247,7 @@ void SegmentationDistanceHelper(
   std::cout << "Computing distance map D of input image 2..." << std::endl;
   distanceMapFilter2->Update();
   std::cout << "Distance map computed." << std::endl;
-    
+
   /** Compute minimum spacing */
   double minSpacing = itk::NumericTraits<double>::max();
   SpacingType inputSpacing = inputImage1->GetSpacing();
@@ -255,7 +255,7 @@ void SegmentationDistanceHelper(
   {
     minSpacing = vnl_math_min( minSpacing, inputSpacing[i]);
   }
-    
+
   /** Find distanceMap2==0 pixels */
   thresholder->SetInput( distanceMapFilter2->GetOutput() );
   thresholder->SetUpperThreshold(minSpacing*0.5);
@@ -276,7 +276,7 @@ void SegmentationDistanceHelper(
   {
     return;
   }
-  
+
   /** Compute the center of gravity of image 1 */
   PointType cor;
   if ( mancor.size() == Dimension )
@@ -332,7 +332,7 @@ void SegmentationDistanceHelper(
   /** Convert edgeImage to MaskImageType */
   toMaskImageCaster->SetInput( edgeImage );
   toMaskImageCaster->Update();
-      
+
   /** Computing spherical transforms */
   RTPSizeType rtpSize;
   rtpSize[0] = static_cast<unsigned int>( vcl_ceil(maxR / minSpacing ) );
@@ -351,7 +351,7 @@ void SegmentationDistanceHelper(
   cscFilter2->SetCenterOfRotation( cor );
   cscFilter2->SetMaximumNumberOfSamplesPerVoxel(samples);
   cscFilter2->SetInterpolator( interpolator2);
-  std::cout << "Computing spherical transforms of D and E: S(D) and S(E)..." << std::endl;   
+  std::cout << "Computing spherical transforms of D and E: S(D) and S(E)..." << std::endl;
   cscFilter1->GetRandomGenerator()->SetSeed(12345);
   cscFilter1->Update();
   cscFilter2->GetRandomGenerator()->SetSeed(12345);
@@ -401,14 +401,14 @@ void SegmentationDistance(
   unsigned int phisize,
   bool cartesianonly)
 {
-  
+
   /** constants */
   const unsigned int Dimension = ImageType::ImageDimension;
   const unsigned int OutputDimension = Dimension-1;
   typedef typename ImageType::PixelType               PixelType;
   typedef short                                       InputPixelType1;
   typedef short                                       InputPixelType2;
-      
+
   /** TYPEDEF's. */
   typedef itk::Image<InputPixelType1, Dimension>      InputImageType1;
   typedef itk::Image<InputPixelType2, Dimension>      InputImageType2;
@@ -432,7 +432,7 @@ void SegmentationDistance(
   typedef itk::ImageFileWriter<OutputImageType>       WriterType;
   typedef itk::ImageFileWriter<ImageType>             WriterCartesianType;
 
-  typedef typename 
+  typedef typename
     ExtracterType::InputImageRegionType               RegionType;
   typedef typename RegionType::IndexType              IndexType;
   typedef typename RegionType::SizeType               SizeType;
@@ -448,7 +448,7 @@ void SegmentationDistance(
     ImageType>                                        OutputIteratorType;
   typedef itk::ImageRegionConstIterator<
     ImageType>                                        ConstOutputImageIteratorType;
-    
+
   /** Instantiate filters */
   typename ReaderType1::Pointer reader1 = ReaderType1::New();
   typename ReaderType2::Pointer reader2 = ReaderType2::New();
@@ -467,7 +467,7 @@ void SegmentationDistance(
    /** Read in the inputImages. */
   reader1->SetFileName( inputFileName1.c_str() );
   reader2->SetFileName( inputFileName2.c_str() );
-  std::cout << "Reading input images..." << std::endl;    
+  std::cout << "Reading input images..." << std::endl;
   reader1->Update();
   reader2->Update();
   std::cout << "Input images read." << std::endl;
@@ -499,7 +499,7 @@ void SegmentationDistance(
   std::vector<double> cor = mancor;
 
   SegmentationDistanceHelper<InputImageType1, InputImageType2, ImageType>(
-    padder1->GetOutput(), padder2->GetOutput(), accum1, accum2, dist, edge, 
+    padder1->GetOutput(), padder2->GetOutput(), accum1, accum2, dist, edge,
     cor, samples, thetasize, phisize, cartesianonly, false);
 
   /** Compute 1 minus the input images */
@@ -519,7 +519,7 @@ void SegmentationDistance(
   InputIteratorType1 invinit1( invInputImage1, invInputImage1->GetLargestPossibleRegion() );
   InputIteratorType2 invinit2( invInputImage2, invInputImage2->GetLargestPossibleRegion() );
   init1.GoToBegin();
-  init2.GoToBegin();  
+  init2.GoToBegin();
   invinit1.GoToBegin();
   invinit2.GoToBegin();
   while ( !init1.IsAtEnd() )
@@ -542,12 +542,12 @@ void SegmentationDistance(
   SegmentationDistanceHelper<InputImageType1, InputImageType2, ImageType>(
     invInputImage1, invInputImage2, accum1inv, accum2inv, distinv, edgeinv,
     cor, samples, thetasize, phisize, cartesianonly, true);
-  
-  // 
+
+  //
   if ( cartesianonly )
   {
-    
-      
+
+
     /** Compute dist-distinv and edge+edgeinv */
     subtracterDistCartesian->SetInput1( dist );
     subtracterDistCartesian->SetInput2( distinv );
@@ -564,7 +564,7 @@ void SegmentationDistance(
     part2 += itksys::SystemTools::GetFilenameLastExtension(outputFileName);
     std::string diststr = "DIST";
     std::string edgestr = "EDGE";
-    
+
     /** compose outputfilename */
     std::string outputFileNameDIST = part1 + diststr + part2;
     std::string outputFileNameEDGE = part1 + edgestr + part2;
@@ -579,7 +579,7 @@ void SegmentationDistance(
       << outputFileNameDIST << "\n\t"  << outputFileNameEDGE << std::endl;
     writerDistCartesian->Update();
     writerEdgeCartesian->Update();
-    
+
     return;
   }
 
@@ -601,14 +601,14 @@ void SegmentationDistance(
   it.GoToBegin();
   while (!it.IsAtEnd() )
   {
-    /** If a (theta,phi) combination didn't pass through the edge 
+    /** If a (theta,phi) combination didn't pass through the edge
      * at least smallnumber times, do not count it. */
     if ( it.Value() < smallnumber )
     {
       it.Value() = itk::NumericTraits<PixelType>::max();
     }
     ++it;
-  }  
+  }
 
   /** Divide the integrated spherical transforms */
   divider->SetInput1( subtracter->GetOutput() );
@@ -627,7 +627,7 @@ void SegmentationDistance(
   std::cout << "Collapsing the result to a 2d image..." << std::endl;
   extracter->Update();
   std::cout << "Done collapsing." << std::endl;
-  
+
   /** Write the output image. */
   writer->SetInput( extracter->GetOutput() );
   writer->SetFileName( outputFileName.c_str() );

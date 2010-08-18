@@ -11,7 +11,7 @@ ArgMapType argmap;
 
 void PrintUsageString(void)
 {
-  std::cerr 
+  std::cerr
     << "\nThis program creates a random image.\n\n"
     << "Usage:\n"
     << "pxcreaterandomimage\n"
@@ -30,7 +30,7 @@ void PrintUsageString(void)
     << "\t[-sigma]\tThe standard deviation of the blurring filter\n"
     << "\t[-min] \tMinimum pixel value\n"
     << "\t[-max] \tMaximum pixel value\n"
-    << "\t[-seed]\tThe random seed <int>\n" 
+    << "\t[-seed]\tThe random seed <int>\n"
     << std::endl;
 } // end PrintUsageString
 
@@ -62,7 +62,7 @@ int ReadArgument(const std::string & key, std::string & value, bool optional)
 } // end ReadArgument
 
 
-/** 
+/**
  * ********************* main ***********************************
  */
 
@@ -137,7 +137,7 @@ int main(int argc, char** argv)
   sizes.SetSize(iDim);
   for (unsigned int i=0; i< iDim ; i++)
   {
-    makeString << "-d" << i;  
+    makeString << "-d" << i;
     returndummy |= ReadArgument(makeString.str(), dimsize, 0);
     if (returndummy ==0)
     {
@@ -262,7 +262,7 @@ int main(int argc, char** argv)
   }
 
   return returndummy;
-  
+
 } // end function main
 
 #endif // #ifndef __createrandomimage_cxx

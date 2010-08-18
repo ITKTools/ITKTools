@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -36,7 +36,7 @@ MinErrorThresholdImageFilter<TInputImage, TOutputImage>
   m_AlphaRight= 0.0;
   m_PriorLeft = 0.0;
   m_PriorRight= 0.0;
-  m_MixtureType= 1;  
+  m_MixtureType= 1;
 }
 
 template<class TInputImage, class TOutputImage>
@@ -57,7 +57,7 @@ MinErrorThresholdImageFilter<TInputImage, TOutputImage>
   else
   	MinError->UseGaussianMixture(true);
   MinError->Compute();
-  
+
   //Get the threshold and the estimated mixture parameters
   m_Threshold = MinError->GetThreshold();
   m_AlphaLeft = MinError->GetAlphaLeft();
@@ -69,7 +69,7 @@ MinErrorThresholdImageFilter<TInputImage, TOutputImage>
     m_StdLeft= MinError->GetStdLeft();
     m_StdRight= MinError->GetStdRight();
     }
-    
+
   //Once we have the threshold, binarize the image using "BinaryThresholdImageFilter"
   typename BinaryThresholdImageFilter<TInputImage,TOutputImage>::Pointer threshold =
     BinaryThresholdImageFilter<TInputImage,TOutputImage>::New();
@@ -99,11 +99,11 @@ MinErrorThresholdImageFilter<TInputImage, TOutputImage>
 }
 
 template<class TInputImage, class TOutputImage>
-void 
+void
 MinErrorThresholdImageFilter<TInputImage,TOutputImage>
 ::PrintSelf(std::ostream& os, Indent indent) const
 {
-  //Superclass::PrintSelf(os,indent);  
+  //Superclass::PrintSelf(os,indent);
   os << indent << "Computed Threshold : "
      << static_cast<typename NumericTraits<InputPixelType>::PrintType>(m_Threshold) << std::endl;
   os << indent << "Estimated Mixture Parameters : "<<std::endl;

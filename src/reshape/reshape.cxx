@@ -68,7 +68,7 @@ int main( int argc, char **argv )
     std::cerr << "ERROR: You should specify \"-s\"." << std::endl;
     return 1;
   }
-  
+
   /** Determine image properties. */
   std::string ComponentTypeIn = "short";
   std::string PixelType; //we don't use this
@@ -89,7 +89,7 @@ int main( int argc, char **argv )
 
   /** Check for vector images. */
   if ( NumberOfComponents > 1 )
-  { 
+  {
     std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
     std::cerr << "  Vector images are not supported." << std::endl;
     return 1;
@@ -104,9 +104,9 @@ int main( int argc, char **argv )
     std::cerr << "ERROR: input and output dimension should be the same.\n";
     std::cerr << "  Please, specify only " << Dimension
       << "numbers with \"-s\"." << std::endl;
-    return 1; 
+    return 1;
   }
-  
+
   /** Run the program. */
   bool supported = false;
   try
@@ -147,7 +147,7 @@ int main( int argc, char **argv )
       << std::endl;
     return 1;
   }
-  
+
   /** End program. */
   return 0;
 
@@ -176,12 +176,12 @@ void Reshape(
   {
     size[ i ] = outputSize[ i ];
   }
-  
+
 
   /** Reader. */
   typename ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName( inputFilename.c_str() );
-  
+
   /** Reshaper. */
   typename ReshapeFilterType::Pointer reshaper = ReshapeFilterType::New();
   reshaper->SetInput( reader->GetOutput() );

@@ -67,7 +67,7 @@ int main(int argc, char** argv)
   }
 
   return returndummy;
-  
+
 } // end function main
 
 #endif // #ifndef __contrastenhanceimage_cxx

@@ -5,7 +5,7 @@
 
 namespace itk {
 
-namespace Functor {  
+namespace Functor {
 
 /** A Macro to write a unary functor class with SetArgument(). */
 #define itkUnaryFunctorMacro( name, ops ) \

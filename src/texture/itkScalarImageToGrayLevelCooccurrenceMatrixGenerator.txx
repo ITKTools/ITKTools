@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -29,7 +29,7 @@ namespace Statistics {
 /**
  * ********************* Constructor ****************************
  */
-  
+
 template< class TImageType, class THistogramFrequencyContainer >
 ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
   TImageType, THistogramFrequencyContainer >
@@ -84,7 +84,7 @@ ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
       if ( distance > minRadius )
       {
         minRadius = distance;
-      }          
+      }
     }
   }
 
@@ -120,7 +120,7 @@ ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
   TImageType, THistogramFrequencyContainer >
 ::FillHistogram( RadiusType radius, RegionType region )
 {
-  // Iterate over all of those pixels and offsets, adding each 
+  // Iterate over all of those pixels and offsets, adding each
   // co-occurrence pair to the histogram
   typedef ConstNeighborhoodIterator<ImageType> NeighborhoodIteratorType;
   NeighborhoodIteratorType neighborIt;
@@ -182,7 +182,7 @@ ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
 ::NormalizeHistogram( void )
 {
   typename HistogramType::Iterator hit( this->m_Output );
-  typename HistogramType::TotalAbsoluteFrequencyType totalFrequency = 
+  typename HistogramType::TotalAbsoluteFrequencyType totalFrequency =
     m_Output->GetTotalFrequency();
 
   /** \todo: this won't work with the new statistics framework, since
@@ -255,8 +255,8 @@ ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
 } // end PrintSelf()
 
 
-} // end of namespace Statistics 
-} // end of namespace itk 
+} // end of namespace Statistics
+} // end of namespace itk
 
 
 #endif

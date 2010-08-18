@@ -137,10 +137,10 @@ int main( int argc, char **argv )
 
   /** Check for vector images. */
   if ( NumberOfComponents > 1 )
-  { 
+  {
     std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
     std::cerr << "Vector images are not supported." << std::endl;
-    return 1; 
+    return 1;
   }
 
   /** Input images are read in as float, always. The default output is float,
@@ -172,7 +172,7 @@ int main( int argc, char **argv )
       << std::endl;
     return 1;
   }
-  
+
   /** End program. */
   return 0;
 

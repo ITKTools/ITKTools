@@ -78,7 +78,7 @@ namespace itk
     for ( unsigned int k = 0; k < numberOfInputs; ++k )
     {
       /** the confusion matrix has as many row/columns as there are input labels,
-       * The column nrs correspond to the 'real' class, as estimated by the 
+       * The column nrs correspond to the 'real' class, as estimated by the
        * STAPLE algorithm. The rows correspond to the classes assigned by
        * the observers.
        * We skip the extra column to accomodate "reject" classifications,
@@ -89,7 +89,7 @@ namespace itk
         ( ConfusionMatrixType( this->m_NumberOfClasses, this->m_NumberOfClasses ) );
     }
   } // end AllocateConfusionMatrixArray
-   
+
 
   template< typename TInputImage, typename TOutputImage, typename TWeights >
     void
@@ -97,7 +97,7 @@ namespace itk
     ::InitializeConfusionMatrixArray()
   {
     const unsigned int numberOfInputs = this->GetNumberOfInputs();
-   
+
     if ( this->GetInitializeWithMajorityVoting() )
     {
       typedef itk::LabelVoting2ImageFilter<
@@ -111,7 +111,7 @@ namespace itk
       voting->SetObserverTrust( this->GetObserverTrust() );
       voting->SetMaskImage( this->GetMaskImage() );
       voting->SetPriorPreference( this->GetPriorPreference() );
-      voting->SetGenerateConfusionMatrix( true );      
+      voting->SetGenerateConfusionMatrix( true );
       voting->SetGenerateProbabilisticSegmentations( false );
       voting->Update();
       for (unsigned int i = 0; i < numberOfInputs; ++i)
@@ -160,14 +160,14 @@ namespace itk
     {
       if ( this->m_PriorProbabilityImageArray.size() < this->m_NumberOfClasses )
       {
-        itkExceptionMacro("m_PriorProbabilityImageArray has wrong size: " << m_PriorProbabilityImageArray.size() << "; should have at least " << this->m_NumberOfClasses << "elements!");      
+        itkExceptionMacro("m_PriorProbabilityImageArray has wrong size: " << m_PriorProbabilityImageArray.size() << "; should have at least " << this->m_NumberOfClasses << "elements!");
       }
     }
     else if ( this->m_HasPriorProbabilities )
     {
       if ( this->m_PriorProbabilities.GetSize() < this->m_NumberOfClasses )
       {
-        itkExceptionMacro ("m_PriorProbabilities array has wrong size " << m_PriorProbabilities << "; should have at least " << this->m_NumberOfClasses << "elements!" );      
+        itkExceptionMacro ("m_PriorProbabilities array has wrong size " << m_PriorProbabilities << "; should have at least " << this->m_NumberOfClasses << "elements!" );
       }
     }
     else
@@ -239,7 +239,7 @@ namespace itk
     /** Initialize some variables */
     this->m_MaximumConfusionMatrixElementUpdate = 0.0;
     this->m_ElapsedIterations = 0;
-    const bool generateProbSeg = 
+    const bool generateProbSeg =
       this->GetGenerateProbabilisticSegmentations();
     const bool useMask = this->m_MaskImage.IsNotNull();
     const unsigned int numberOfInputs = this->GetNumberOfInputs();
@@ -279,16 +279,16 @@ namespace itk
     /** Initialize prior probabilities and confusion matrices */
     this->InitializePriorProbabilities();
     this->AllocateConfusionMatrixArray();
-    this->InitializeConfusionMatrixArray();    
+    this->InitializeConfusionMatrixArray();
 
-    /** If probabilistic segmentations are desired, allocate them */   
+    /** If probabilistic segmentations are desired, allocate them */
     if ( generateProbSeg )
     {
-      this->m_ProbabilisticSegmentationArray = 
+      this->m_ProbabilisticSegmentationArray =
         ProbabilisticSegmentationArrayType( this->m_NumberOfClasses );
       for ( unsigned int k = 0; k < this->m_NumberOfClasses; ++k )
       {
-        this->m_ProbabilisticSegmentationArray[k] = 
+        this->m_ProbabilisticSegmentationArray[k] =
           ProbabilityImageType::New();
         this->m_ProbabilisticSegmentationArray[k]->SetRegions(
           output->GetRequestedRegion() );
@@ -304,7 +304,7 @@ namespace itk
       it[k] = InputConstIteratorType
         ( this->GetInput( k ), output->GetRequestedRegion() );
     }
-   
+
     /** Create and initialize the prior prob image iterators */
     ProbConstIteratorArrayType pit;
     if ( this->m_HasPriorProbabilityImageArray )
@@ -340,7 +340,7 @@ namespace itk
 
     /** Create and initialize the output iterator */
     OutputIteratorType out = OutputIteratorType( output, output->GetRequestedRegion() );
- 
+
     /** Start iterating! */
     while (  ( !this->m_HasMaximumNumberOfIterations ) ||
              ( this->m_ElapsedIterations < this->m_MaximumNumberOfIterations )   )
@@ -351,7 +351,7 @@ namespace itk
         this->m_UpdatedConfusionMatrixArray[k].Fill( 0.0 );
       }
 
-      /** Loop over voxels and do the E and M step 
+      /** Loop over voxels and do the E and M step
        * use it[0] as indicator for image pixel count */
       while ( ! it[0].IsAtEnd() )
       {
@@ -379,7 +379,7 @@ namespace itk
           ++mit;
         } // end if useMask
 
-        /** the following is the E step for one pixel, only performed when this 
+        /** the following is the E step for one pixel, only performed when this
          * pixel is inside the mask */
         if ( this->m_HasPriorProbabilityImageArray )
         {
@@ -431,9 +431,9 @@ namespace itk
       for ( unsigned int k = 0; k < numberOfInputs; ++k )
       {
         // compute sum over all output classifications
-        for ( OutputPixelType ci = 0; ci < this->m_NumberOfClasses; ++ci ) 
+        for ( OutputPixelType ci = 0; ci < this->m_NumberOfClasses; ++ci )
         {
-          WeightsType sumW = this->m_UpdatedConfusionMatrixArray[k][0][ci]; 
+          WeightsType sumW = this->m_UpdatedConfusionMatrixArray[k][0][ci];
           for ( InputPixelType j = 1; j < this->m_NumberOfClasses; ++j )
           {
             sumW += this->m_UpdatedConfusionMatrixArray[k][j][ci];
@@ -455,7 +455,7 @@ namespace itk
         const WeightsType maximumUpdate_k = static_cast<WeightsType>(
           (this->m_UpdatedConfusionMatrixArray[k]-this->m_ConfusionMatrixArray[k]).array_inf_norm() );
         maximumUpdate = vnl_math_max( maximumUpdate, maximumUpdate_k );
-        
+
         this->m_ConfusionMatrixArray[k] = this->m_UpdatedConfusionMatrixArray[k];
       }
       this->m_MaximumConfusionMatrixElementUpdate = maximumUpdate;
@@ -463,8 +463,8 @@ namespace itk
       /** We have finished this iteration */
       ++(this->m_ElapsedIterations);
 
-      /** reset all input iterators to start, to be prepared for next iteration 
-       * or for generating the final segmentation, if the current iteration 
+      /** reset all input iterators to start, to be prepared for next iteration
+       * or for generating the final segmentation, if the current iteration
        * happened to be the last one */
       if (useMask)
       {
@@ -483,12 +483,12 @@ namespace itk
       }
 
       /** Allow user to do something */
-      this->InvokeEvent( IterationEvent() );    
+      this->InvokeEvent( IterationEvent() );
       if( this->GetAbortGenerateData() )
       {
-        this->ResetPipeline(); 
+        this->ResetPipeline();
         // fake this to cause termination; we could really just break
-        maximumUpdate = 0; 
+        maximumUpdate = 0;
       }
 
       // if all confusion matrix parameters changes by less than the defined
@@ -504,7 +504,7 @@ namespace itk
     for ( out.GoToBegin(); !out.IsAtEnd(); ++out )
     {
       OutputPixelType winningLabel = leastPreferredLabel;
-    
+
       bool insideMask = true;
       if (useMask)
       {
@@ -603,7 +603,7 @@ namespace itk
           ++(psit[ci]);
         }
       }
-     
+
     } // end loop over output pixels
 
   } // end GenerateData

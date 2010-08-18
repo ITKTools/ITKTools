@@ -69,11 +69,11 @@ int main( int argc, char **argv )
   std::string inputPoints1FileName = "";
   std::string inputPoints2FileName = "";
   std::string outputImageFileName = "";
-  std::string kernelName = "TPS"; 
+  std::string kernelName = "TPS";
   double stiffness = 0.0;
-  
+
   /** Get arguments. */
-  
+
   bool retin1  = parser->GetCommandLineArgument( "-in1", inputImage1FileName );
   bool retin2  = parser->GetCommandLineArgument( "-in2", inputImage2FileName );
   bool retipp1 = parser->GetCommandLineArgument( "-ipp1", inputPoints1FileName );
@@ -81,7 +81,7 @@ int main( int argc, char **argv )
   bool retout  = parser->GetCommandLineArgument( "-out", outputImageFileName );
   bool retk    = parser->GetCommandLineArgument( "-k", kernelName );
   bool retstif = parser->GetCommandLineArgument( "-s", stiffness );
-  
+
   /** Check if the required arguments are given. */
   if ( !retin1 )
   {
@@ -127,14 +127,14 @@ int main( int argc, char **argv )
   std::cout << "\tPixelType:          " << ComponentType << std::endl;
   std::cout << "\tDimension:          " << Dimension << std::endl;
   std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
- 
+
   if (NumberOfComponents > 1)
-  { 
+  {
     std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
     std::cerr << "Vector images are not supported!" << std::endl;
-    return 1; 
+    return 1;
   }
-  
+
   /** Run the program for 2D and 3D. */
   bool supported = false;
   try
@@ -156,7 +156,7 @@ int main( int argc, char **argv )
       << std::endl;
     return 1;
   }
-  
+
   /** End program. */
   return 0;
 
@@ -181,15 +181,15 @@ void DeformationFieldGenerator(
   typedef short InputPixelType;
   typedef float DeformationVectorValueType;
   typedef double CoordRepType;
-  
+
   typedef itk::Image<InputPixelType, Dimension>       InputImageType;
   typedef itk::ImageFileReader< InputImageType >      InputImageReaderType;
-  
+
   typedef itk::Vector<
-    DeformationVectorValueType, Dimension>            DeformationVectorType; 
+    DeformationVectorValueType, Dimension>            DeformationVectorType;
   typedef itk::Image<DeformationVectorType, Dimension> DeformationFieldType;
   typedef itk::ImageRegionIteratorWithIndex<
-    DeformationFieldType>                             DeformationFieldIteratorType;  
+    DeformationFieldType>                             DeformationFieldIteratorType;
   typedef itk::ImageFileWriter<DeformationFieldType>  DeformationFieldWriterType;
   typedef typename DeformationFieldType::IndexType    IndexType;
   typedef typename DeformationFieldType::PointType    PointType;
@@ -199,7 +199,7 @@ void DeformationFieldGenerator(
   typedef typename DeformationFieldType::SpacingType  SpacingType;
   typedef typename DeformationFieldType::IndexType    IndexType;
   typedef typename IndexType::IndexValueType          IndexValueType;
-  
+
   typedef itk::KernelTransform<
     CoordRepType, Dimension>                     KernelTransformType;
   typedef itk::ThinPlateSplineKernelTransform<
@@ -216,7 +216,7 @@ void DeformationFieldGenerator(
   typedef typename KernelTransformType::PointSetType  PointSetType;
   typedef itk::TransformixInputPointFileReader<
     PointSetType >                                    IPPReaderType;
-  
+
   /** Declarations */
   typename InputImageReaderType::Pointer reader1 = InputImageReaderType::New();
   typename InputImageReaderType::Pointer reader2 = InputImageReaderType::New();
@@ -235,9 +235,9 @@ void DeformationFieldGenerator(
     ipp1Reader->Update();
   }
   catch (itk::ExceptionObject & err)
-  { 
+  {
     std::cerr << "Error while opening input point file 1." << std::endl;
-    std::cerr << err << std::endl;      
+    std::cerr << err << std::endl;
   }
 
   if ( ipp1Reader->GetPointsAreIndices() )
@@ -259,9 +259,9 @@ void DeformationFieldGenerator(
     ipp2Reader->Update();
   }
   catch (itk::ExceptionObject & err)
-  { 
+  {
     std::cerr << "Error while opening input point file 2." << std::endl;
-    std::cerr << err << std::endl;      
+    std::cerr << err << std::endl;
   }
 
   if ( ipp2Reader->GetPointsAreIndices() )
@@ -281,7 +281,7 @@ void DeformationFieldGenerator(
     itkGenericExceptionMacro( << "Number of input points does not equal number of output points!" );
   }
   const unsigned int nrofpoints = nrofpoints1;
-      
+
 
   /** Read input images */
   std::cout << "Reading Input image(s)." << std::endl;
@@ -320,11 +320,11 @@ void DeformationFieldGenerator(
       {
         index[i] = static_cast< IndexValueType >( vnl_math_rnd( point[i] ) );
       }
-      dummyImage->TransformIndexToPhysicalPoint( index, point );          
+      dummyImage->TransformIndexToPhysicalPoint( index, point );
       tempPointSet->SetPoint(j, point);
-    } 
+    }
     inputPointSet1 = tempPointSet;
-  } 
+  }
 
   /** Convert from index to point, if necessary */
   if ( ipp2Reader->GetPointsAreIndices() )
@@ -343,30 +343,30 @@ void DeformationFieldGenerator(
       {
         index[i] = static_cast< IndexValueType >( vnl_math_rnd( point[i] ) );
       }
-      dummyImage->TransformIndexToPhysicalPoint( index, point );          
+      dummyImage->TransformIndexToPhysicalPoint( index, point );
       tempPointSet->SetPoint(j, point);
-    } 
+    }
     inputPointSet2 = tempPointSet;
-  } 
+  }
 
   if ( kernelName == "TPS" )
-  {  
+  {
     kernelTransform = TPSTransformType::New();
   }
   else if ( kernelName == "TPSR2LOGR" )
-  {  
+  {
     kernelTransform = TPSR2LOGRTransformType::New();
   }
   else if ( kernelName == "VS" )
-  {  
+  {
     kernelTransform = VSTransformType::New();
   }
   else if ( kernelName == "EBS" )
-  {  
+  {
     kernelTransform = EBSTransformType::New();
   }
   else if ( kernelName == "EBSR" )
-  {  
+  {
     kernelTransform = EBSRTransformType::New();
   }
   else
@@ -379,7 +379,7 @@ void DeformationFieldGenerator(
   kernelTransform->SetSourceLandmarks( inputPointSet1 );
   kernelTransform->SetTargetLandmarks( inputPointSet2 );
   kernelTransform->ComputeWMatrix();
-   
+
   /** Define the deformation field and an iterator on it */
   deformationField->SetSpacing( reader1->GetOutput()->GetSpacing() );
   deformationField->SetOrigin( reader1->GetOutput()->GetOrigin() );
@@ -390,8 +390,8 @@ void DeformationFieldGenerator(
   iterator.GoToBegin();
 
   std::cout << "Generating deformation field. " << std::endl;
-  
-  while ( !iterator.IsAtEnd() )  
+
+  while ( !iterator.IsAtEnd() )
   {
     PointType pointin;
     const IndexType & index = iterator.GetIndex();
@@ -406,7 +406,7 @@ void DeformationFieldGenerator(
   writer->SetFileName( outputImageFileName.c_str() );
   writer->SetInput( deformationField );
   writer->Update();
-  
+
 } // end DeformationFieldGenerator
 
 

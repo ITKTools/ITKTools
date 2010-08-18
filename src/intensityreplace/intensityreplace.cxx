@@ -111,7 +111,7 @@ int main( int argc, char ** argv )
   {
     std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
     std::cerr << "Cannot make vector of vector images." << std::endl;
-    return 1; 
+    return 1;
   }
 
   /** Get rid of the possible "_" in ComponentType. */
@@ -159,7 +159,7 @@ int main( int argc, char ** argv )
       << std::endl;
     return 1;
   }
-  
+
   /** End program. */
   return 0;
 
@@ -181,7 +181,7 @@ void IntensityReplaceImageFilter( const std::string & inputFileName,
   const unsigned int Dimension = NDimension;
 
   typedef OutputPixelType                                 InputPixelType;
-  
+
   typedef itk::Image< InputPixelType, Dimension >         InputImageType;
   typedef itk::Image< OutputPixelType, Dimension >        OutputImageType;
 
@@ -197,7 +197,7 @@ void IntensityReplaceImageFilter( const std::string & inputFileName,
 
   /** Set up reader */
   reader->SetFileName( inputFileName );
-  
+
   /** Setup the the input and the 'change map' of the replace filter. */
   replaceFilter->SetInput( reader->GetOutput() );
   if ( itk::NumericTraits<OutputPixelType>::is_integer )
@@ -222,7 +222,7 @@ void IntensityReplaceImageFilter( const std::string & inputFileName,
       replaceFilter->SetChange( inval, outval );
     }
   }
-    
+
   /** Set up writer. */
   writer->SetFileName( outputFileName );
   writer->SetInput( replaceFilter->GetOutput() );

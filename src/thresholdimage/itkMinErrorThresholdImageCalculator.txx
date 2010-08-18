@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -25,8 +25,8 @@
 #include <limits>
 
 namespace itk
-{ 
-    
+{
+
 /*
  * Constructor
  */
@@ -43,7 +43,7 @@ MinErrorThresholdImageCalculator<TInputImage>
   m_PriorLeft = 0.0;
   m_PriorRight= 0.0;
   m_StdLeft = 0.0;
-  m_StdRight = 0.0; 
+  m_StdRight = 0.0;
   m_UseGaussian = 0;
   m_usePoisson = 1;
 }
@@ -129,7 +129,7 @@ MinErrorThresholdImageCalculator<TInputImage>
     unsigned int binNumber;
     PixelType value = iter.Get();
 
-    if ( value == imageMin ) 
+    if ( value == imageMin )
       {
       binNumber = 0;
       }
@@ -146,8 +146,8 @@ MinErrorThresholdImageCalculator<TInputImage>
     ++iter;
 
     }
- 
-  // normalize the histogram 
+
+  // normalize the histogram
   double totalMean = 0.0;
   for ( j = 0; j < m_NumberOfHistogramBins; j++ )
     {
@@ -166,7 +166,7 @@ MinErrorThresholdImageCalculator<TInputImage>
   double varRight = 0.0;
   double stdLeft = 0.0;
   double stdRight = 0.0;
-  
+
   for ( j = 1; j < m_NumberOfHistogramBins-1; j++ )
     {
     //compute the current parameters for left (background) mixture component
@@ -185,7 +185,7 @@ MinErrorThresholdImageCalculator<TInputImage>
       }
     varLeft/=priorLeft;
     stdLeft = vcl_sqrt(varLeft); //standard deviation
-    
+
     //compute the current parameters for right (foreground) mixture component
     priorRight = 0.0; //Prior Probability
     meanRight = 0.0; //mean
@@ -195,7 +195,7 @@ MinErrorThresholdImageCalculator<TInputImage>
       priorRight+=relativeFrequency[i];
       meanRight+=(i*relativeFrequency[i]);
       }
-    meanRight/=priorRight;    
+    meanRight/=priorRight;
     for ( i=j+1; i<m_NumberOfHistogramBins; i++)
       {
       varRight+=(vnl_math_sqr(i-meanRight)*relativeFrequency[i]);
@@ -206,19 +206,19 @@ MinErrorThresholdImageCalculator<TInputImage>
     priorLeft += std::numeric_limits<long double>::epsilon();
     priorRight += std::numeric_limits<long double>::epsilon();
     stdLeft += std::numeric_limits<long double>::epsilon();
-    stdRight += std::numeric_limits<long double>::epsilon();    
-    
+    stdRight += std::numeric_limits<long double>::epsilon();
+
     //compute the values of the error functions at the current threshold (j)
     errorFunctionPois[j] = totalMean-priorLeft*(vcl_log(priorLeft)+meanLeft*vcl_log(meanLeft))-priorRight*(vcl_log(priorRight)+meanRight*vcl_log(meanRight));
-    errorFunctionGaus[j] = 1+2*(priorLeft*vcl_log(stdLeft)+priorRight*vcl_log(stdRight))-2*(priorLeft*vcl_log(priorLeft)+priorRight*vcl_log(priorRight));        
+    errorFunctionGaus[j] = 1+2*(priorLeft*vcl_log(stdLeft)+priorRight*vcl_log(stdRight))-2*(priorLeft*vcl_log(priorLeft)+priorRight*vcl_log(priorRight));
     }
-    
+
   //find the threshold value that minimizes each of the error functions
-  i = 1;    
+  i = 1;
   if(m_UseGaussian)
     {
     for ( j = 2; j < m_NumberOfHistogramBins-1; j++ )
-      {        
+      {
       if(errorFunctionGaus[j]<errorFunctionGaus[i])
          i = j;
       }
@@ -226,14 +226,14 @@ MinErrorThresholdImageCalculator<TInputImage>
   else
     {
     for ( j = 2; j < m_NumberOfHistogramBins-1; j++ )
-      {    
+      {
       if(errorFunctionPois[j]<errorFunctionPois[i])
          i = j;
       }
     }
-     
+
    //Finally, compute the threshold
-    m_Threshold = static_cast<PixelType>( imageMin + 
+    m_Threshold = static_cast<PixelType>( imageMin +
                                         (i+1) / binMultiplier );
 
   //estimate the parameters of the resulting mixture
@@ -243,15 +243,15 @@ MinErrorThresholdImageCalculator<TInputImage>
     m_AlphaLeft+=(j*relativeFrequency[j]);
     }
   m_AlphaLeft/= m_PriorLeft;
-  
+
   for ( j=i+1; j<m_NumberOfHistogramBins; j++)
     {
     m_PriorRight+=relativeFrequency[j];
     m_AlphaRight+=(j*relativeFrequency[j]);
-    }  
-  m_AlphaRight/= m_PriorRight;  
-  
-  
+    }
+  m_AlphaRight/= m_PriorRight;
+
+
   if(m_UseGaussian)
     {
     varLeft = 0.0;
@@ -260,20 +260,20 @@ MinErrorThresholdImageCalculator<TInputImage>
       varLeft+=(vnl_math_sqr(j-m_AlphaLeft)*relativeFrequency[j]);
       }
     varLeft/=m_PriorLeft;
-    m_StdLeft=vcl_sqrt(varLeft);  
-    
+    m_StdLeft=vcl_sqrt(varLeft);
+
     varRight = 0.0;
     for ( j=i+1; j<m_NumberOfHistogramBins; j++)
       {
       varRight+=(vnl_math_sqr(j-m_AlphaRight)*relativeFrequency[j]);
       }
     varRight/=m_PriorRight;
-    m_StdRight=vcl_sqrt(varRight);  
+    m_StdRight=vcl_sqrt(varRight);
     }
   m_AlphaLeft= imageMin + (m_AlphaLeft+1) / binMultiplier ;
-  m_AlphaRight= imageMin + (m_AlphaRight+1) / binMultiplier ;   
+  m_AlphaRight= imageMin + (m_AlphaRight+1) / binMultiplier ;
   m_StdLeft/= binMultiplier ;
-  m_StdRight/= binMultiplier ;        
+  m_StdRight/= binMultiplier ;
 }
 
 template<class TInputImage>
@@ -285,7 +285,7 @@ MinErrorThresholdImageCalculator<TInputImage>
   m_RegionSetByUser = true;
 }
 
-  
+
 template<class TInputImage>
 void
 MinErrorThresholdImageCalculator<TInputImage>
@@ -293,7 +293,7 @@ MinErrorThresholdImageCalculator<TInputImage>
 {
   Superclass::PrintSelf(os,indent);
 
-  os << indent << "Threshold: " << m_Threshold << std::endl;  
+  os << indent << "Threshold: " << m_Threshold << std::endl;
   os << indent << "Image: " << m_Image.GetPointer() << std::endl;
 }
 

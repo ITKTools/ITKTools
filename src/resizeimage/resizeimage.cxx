@@ -175,7 +175,7 @@ int main( int argc, char **argv )
       << std::endl;
     return 1;
   }
-  
+
   /** End program. */
   return 0;
 
@@ -229,7 +229,7 @@ void ResizeImage(
   SpacingType inputSpacing  = inputImage->GetSpacing();
   SizeType    inputSize     = inputImage->GetLargestPossibleRegion().GetSize();
   SpacingType outputSpacing = inputSpacing;
-  SizeType    outputSize    = inputSize;  
+  SizeType    outputSize    = inputSize;
   if ( isFactor )
   {
     for ( unsigned int i = 0; i < Dimension; i++ )

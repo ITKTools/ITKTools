@@ -35,7 +35,7 @@ TRealType
 DeformationFieldBendingEnergyFilter< TInputImage, TRealType, TOutputImage >
 ::EvaluateAtNeighborhood(const ConstNeighborhoodIteratorType &it) const
 {
-  double bending = itk::NumericTraits<RealType>::Zero;  
+  double bending = itk::NumericTraits<RealType>::Zero;
   /** diagonal terms: */
   const RealVectorType c2 = it.GetCenterPixel() *2.0;
   for (unsigned int i = 0; i < ImageDimension; ++i)
@@ -43,8 +43,8 @@ DeformationFieldBendingEnergyFilter< TInputImage, TRealType, TOutputImage >
     const RealVectorType p = it.GetNext(i);
     const RealVectorType q = it.GetPrevious(i);
     const RealVectorType pqc = p + q - c2;
-    bending += pqc.GetSquaredNorm() * 
-      vcl_pow( this->m_HalfDerivativeWeights[i], static_cast<int>(4) );    
+    bending += pqc.GetSquaredNorm() *
+      vcl_pow( this->m_HalfDerivativeWeights[i], static_cast<int>(4) );
   }
   /** off-diagonal: */
   for (unsigned int i = 0; i < ImageDimension; ++i)
@@ -55,12 +55,12 @@ DeformationFieldBendingEnergyFilter< TInputImage, TRealType, TOutputImage >
       const RealVectorType q = it.GetPixel( it.GetCenterNeighborhoodIndex() - it.GetStride(i) - it.GetStride(j) );
       const RealVectorType r = it.GetPixel( it.GetCenterNeighborhoodIndex() + it.GetStride(i) - it.GetStride(j) );
       const RealVectorType s = it.GetPixel( it.GetCenterNeighborhoodIndex() - it.GetStride(i) + it.GetStride(j) );
-      const RealVectorType pqrs = p + q - r - s;      
-      bending += 2.0 * pqrs.GetSquaredNorm() * vnl_math_sqr( 
-          this->m_HalfDerivativeWeights[i] * this->m_HalfDerivativeWeights[j] );     
+      const RealVectorType pqrs = p + q - r - s;
+      bending += 2.0 * pqrs.GetSquaredNorm() * vnl_math_sqr(
+          this->m_HalfDerivativeWeights[i] * this->m_HalfDerivativeWeights[j] );
     }
   }
-   
+
   return bending;
 }
 

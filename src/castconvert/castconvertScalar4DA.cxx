@@ -20,9 +20,9 @@ int FileConverterScalar4DA( const std::string &inputPixelComponentType,
   const std::string &outputPixelComponentType, const std::string &inputFileName,
   const std::string &outputFileName, const unsigned int inputDimension, bool useCompression )
 {
- 
+
   enum { ImageDims = 4 };
-  
+
   if ( inputDimension == ImageDims )
   {
     callCorrectReadWriterMacro( int, unsigned char, ImageDims );

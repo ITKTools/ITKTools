@@ -5,11 +5,11 @@
 
 namespace itk {
 namespace Statistics {
-  
+
 /** \class CohenWeightedKappaStatistic
  *
  * \brief This class computes the weighted kappa statistic for two observers.
- * 
+ *
  * The kappa statistic is a measure for the agreement of observers.
  *
  * n:  the number of observers = 2

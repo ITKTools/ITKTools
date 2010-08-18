@@ -24,27 +24,27 @@ namespace itk
  *
  * This last class is based on several papers from Haralick and Conners:
  *
- * Haralick, R.M., K. Shanmugam and I. Dinstein. 1973.  Textural Features for 
- * Image Classification. IEEE Transactions on Systems, Man and Cybernetics. 
+ * Haralick, R.M., K. Shanmugam and I. Dinstein. 1973.  Textural Features for
+ * Image Classification. IEEE Transactions on Systems, Man and Cybernetics.
  * SMC-3(6):610-620.
  *
- * Haralick, R.M. 1979. Statistical and Structural Approaches to Texture. 
+ * Haralick, R.M. 1979. Statistical and Structural Approaches to Texture.
  * Proceedings of the IEEE, 67:786-804.
  *
- * R.W. Conners and C.A. Harlow. A Theoretical Comparison of Texture Algorithms. 
+ * R.W. Conners and C.A. Harlow. A Theoretical Comparison of Texture Algorithms.
  * IEEE Transactions on Pattern Analysis and Machine Intelligence, 2:204-222, 1980.
  *
  * R.W. Conners, M.M. Trivedi, and C.A. Harlow. Segmentation of a High-Resolution
- * Urban Scene using Texture Operators. Computer Vision, Graphics and Image 
+ * Urban Scene using Texture Operators. Computer Vision, Graphics and Image
  * Processing, 25:273-310, 1984.
  *
  * \todo this class does not work properly for large offsets and small neighborhoods.
  * \ingroup ??
- */ 
+ */
 
-template <class TInputImage, 
+template <class TInputImage,
   class TOutputImage = Image< double, ::itk::GetImageDimension<TInputImage>::ImageDimension> >
-class ITK_EXPORT TextureImageToImageFilter: 
+class ITK_EXPORT TextureImageToImageFilter:
   public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
@@ -149,7 +149,7 @@ protected:
   virtual void PrintSelf( std::ostream& os, Indent indent ) const;
 
   /** This filter must produce all of the outputs at once, as such it
-   * must override the EnlargeOutputRequestedRegion method to enlarge the 
+   * must override the EnlargeOutputRequestedRegion method to enlarge the
    * output request region.
    */
   virtual void EnlargeOutputRequestedRegion( DataObject * );
@@ -186,7 +186,7 @@ private:
   bool                      m_HistogramMinimumSetManually;
   bool                      m_HistogramMaximumSetManually;
   bool                      m_NormalizeHistogram;
-  
+
 }; // end class TextureImageToImageFilter
 
 

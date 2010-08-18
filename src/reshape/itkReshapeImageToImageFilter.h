@@ -8,14 +8,14 @@ namespace itk
 {
 
 /** \class ReshapeImageToImageFilter
- * \brief ReshapeImageToImageFilter 
+ * \brief ReshapeImageToImageFilter
  *
  *
  * \ingroup ??
- */ 
+ */
 
 template <class TInputImage >
-class ITK_EXPORT ReshapeImageToImageFilter: 
+class ITK_EXPORT ReshapeImageToImageFilter:
     public ImageToImageFilter< TInputImage, TInputImage >
 {
 public:
@@ -77,7 +77,7 @@ protected:
   virtual void PrintSelf( std::ostream& os, Indent indent ) const;
 
   /** This filter must produce all of the outputs at once, as such it
-   * must override the EnlargeOutputRequestedRegion method to enlarge the 
+   * must override the EnlargeOutputRequestedRegion method to enlarge the
    * output request region.
    *
   virtual void EnlargeOutputRequestedRegion( DataObject * );
@@ -86,12 +86,12 @@ protected:
   virtual void GenerateData( void );
 //   virtual void ThreadedGenerateData(
 //     const OutputImageRegionType & outputRegionForThread,
-//     int threadId 
+//     int threadId
 private:
 
   ReshapeImageToImageFilter( const Self& ); // purposely not implemented
   void operator=( const Self& );        // purposely not implemented
-  
+
   /** Private variables. */
   SizeType  m_OutputSize;
 

@@ -74,10 +74,10 @@ int main( int argc, char **argv )
 
   unsigned int radius = 7;
   bool retradius = parser->GetCommandLineArgument( "-r", radius );
-    
+
   unsigned int Dimension = 3;
   bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
-  
+
   std::string PixelType = "short";
   bool retpt = parser->GetCommandLineArgument( "-pt", PixelType );
 
@@ -87,10 +87,10 @@ int main( int argc, char **argv )
     std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
     return 1;
   }
-  
+
   /** Get rid of the possible "_" in PixelType. */
   ReplaceUnderscoreWithSpace(PixelType);
-  
+
   /** Run the program. */
   bool supported = false;
   try
@@ -111,7 +111,7 @@ int main( int argc, char **argv )
       << std::endl;
     return 1;
   }
-  
+
   /** End program. */
   return 0;
 
@@ -132,7 +132,7 @@ void DetectGoldMarkers(
   const double & threshold,
   const unsigned int & radius )
 {
-  
+
   /** constants */
   const unsigned int Dimension = InputImageType::ImageDimension;
   const unsigned int NumberOfBins = static_cast<unsigned int>(
@@ -143,11 +143,11 @@ void DetectGoldMarkers(
   typedef typename InputImageType::PixelType          InputPixelType;
   typedef char                                        OutputPixelType;
   typedef float                                       InternalPixelType;
-  
+
   typedef itk::Image<OutputPixelType, Dimension>      OutputImageType;
   typedef itk::Image<InternalPixelType, Dimension>    InternalImageType;
   typedef typename InputImageType::SpacingType        SpacingType;
-     
+
   typedef itk::ImageFileReader< InputImageType >      ReaderType;
   typedef itk::CastImageFilter<
     InputImageType, InternalImageType>                InputCasterType;
@@ -161,7 +161,7 @@ void DetectGoldMarkers(
     InternalImageType, InternalImageType>             AbserType;
   typedef itk::MultiplyImageFilter<InternalImageType,
     InternalImageType, InternalImageType>             MultiplierType;
-  typedef 
+  typedef
     itk::Statistics::ScalarImageToHistogramGenerator<
     InternalImageType>                                HistogramGeneratorType;
   typedef itk::BinaryThresholdImageFilter<
@@ -174,7 +174,7 @@ void DetectGoldMarkers(
   typedef itk::NotImageFilter<
     OutputImageType, OutputImageType>                 NoterType;
   typedef itk::ImageFileWriter< OutputImageType >     WriterType;
-  
+
   /** DECLARATION'S. */
   SpacingType backupSpacing;
   SpacingType hackSpacing;
@@ -197,15 +197,15 @@ void DetectGoldMarkers(
   typename WriterType::Pointer writer = WriterType::New();
 
   /** Read in the inputImage. */
-  
+
   reader->SetFileName( inputFileName.c_str() );
 
-  std::cout << "Reading input image..." << std::endl;   
+  std::cout << "Reading input image..." << std::endl;
   reader->Update();
   std::cout << "Input image read." << std::endl;
 
   inputImage = reader->GetOutput();
-    
+
   /** Make sure changes are not undone */
   inputImage->DisconnectPipeline();
 
@@ -213,9 +213,9 @@ void DetectGoldMarkers(
   backupSpacing = inputImage->GetSpacing();
   hackSpacing.Fill( 1.0 );
   inputImage->SetSpacing( hackSpacing );
-  
+
   /** Set up pipeline until thresholding */
-  
+
   caster->SetInput( inputImage );
 
   laplacianer->SetSigma( sigma );
@@ -223,7 +223,7 @@ void DetectGoldMarkers(
   std::cout << "Computing Laplacian..." << std::endl;
   laplacianer->Update();
   std::cout << "Laplacian computed." << std::endl;
-  
+
   smoother1->SetSigma( SmallSigma );
   smoother1->SetInput( caster->GetOutput() );
   subtracter->SetInput1( caster->GetOutput() );
@@ -251,14 +251,14 @@ void DetectGoldMarkers(
   std::cout << "Determining histogram..." << std::endl;
   histogramGenerator->Compute();
   thresholdvalue = histogramGenerator->GetOutput()->Quantile( 0, threshold );
-  std::cout 
+  std::cout
     << "Histogram has been computed. The most recent result will be thresholded at: "
-    << thresholdvalue 
+    << thresholdvalue
     << " ." << std::endl;
-  
+
   /** resume the pipeline */
 
-  thresholder->SetLowerThreshold( 
+  thresholder->SetLowerThreshold(
     itk::NumericTraits<InternalPixelType>::NonpositiveMin() );
   thresholder->SetUpperThreshold( thresholdvalue );
   thresholder->SetInsideValue( itk::NumericTraits<OutputPixelType>::Zero );

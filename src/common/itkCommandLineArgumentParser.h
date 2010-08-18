@@ -32,7 +32,7 @@ public:
 
   /** Method for creation through the object factory. */
   itkNewMacro( Self );
- 
+
   /** Run-time type information (and related methods). */
   itkTypeMacro( CommandLineArgumentParser, Object );
 
@@ -67,7 +67,7 @@ public:
     keyIndex = nextKeyIndex = 0;
     bool keyFound = this->FindKey( key, keyIndex, nextKeyIndex );
     if ( !keyFound ) return false;
-    
+
     /** If a vector of size oldSize > 1 is given to this function, and if
      * only one (1) argument is provided in the command line, we create
      * a vector of size oldSize and fill it with the single argument.
@@ -79,7 +79,7 @@ public:
       arg.resize( oldSize, m_argv[ keyIndex + 1 ] );
       return true;
     }
-    
+
     /** Otherwise, gather the arguments and put them in arg. */
     IndexType newSize = nextKeyIndex - keyIndex - 1;
     newSize = newSize > oldSize ? newSize : oldSize;
@@ -103,7 +103,7 @@ public:
     keyIndex = nextKeyIndex = 0;
     bool keyFound = this->FindKey( key, keyIndex, nextKeyIndex );
     if ( !keyFound ) return false;
-    
+
     /** If a vector of size oldSize > 1 is given to this function, and if
      * only one (1) argument is provided in the command line, we create
      * a vector of size oldSize and fill it with the single argument.
@@ -115,7 +115,7 @@ public:
       arg.resize( oldSize, static_cast<T>( atoi( m_argv[ keyIndex + 1 ].c_str() ) ) );
       return true;
     }
-    
+
     /** Otherwise, gather the arguments and put them in arg. */
     IndexType newSize = nextKeyIndex - keyIndex - 1;
     newSize = newSize > oldSize ? newSize : oldSize;
@@ -139,7 +139,7 @@ public:
     keyIndex = nextKeyIndex = 0;
     bool keyFound = this->FindKey( key, keyIndex, nextKeyIndex );
     if ( !keyFound ) return false;
-    
+
     /** If a vector of size oldSize > 1 is given to this function, and if
      * only one (1) argument is provided in the command line, we create
      * a vector of size oldSize and fill it with the single argument.
@@ -151,7 +151,7 @@ public:
       arg.resize( oldSize, static_cast<T>( atof( m_argv[ keyIndex + 1 ].c_str() ) ) );
       return true;
     }
-    
+
     /** Otherwise, gather the arguments and put them in arg. */
     IndexType newSize = nextKeyIndex - keyIndex - 1;
     newSize = newSize > oldSize ? newSize : oldSize;

@@ -33,7 +33,7 @@ if ( ComponentTypeIn == #typeIn && ComponentTypeOut == #typeOut && inputDimensio
  *   OutputImageType,
  *   itk::Functor::PLUS<InputPixelType,ArgumentType,OutputPixelType > PLUSFilterType;
  * unaryFilter = (PLUSFilterType::New()).GetPointer();
- * 
+ *
  */
 #define InstantiateUnaryFilter(name,typeArg) \
   typedef itk::UnaryFunctorImageFilter< \
@@ -45,7 +45,7 @@ if ( ComponentTypeIn == #typeIn && ComponentTypeOut == #typeOut && inputDimensio
     tempUnaryFilter->GetFunctor().SetArgument( static_cast<typeArg>( argument ) ); \
     unaryFilter = tempUnaryFilter.GetPointer(); \
   }
-  
+
 #define InstantiateUnaryFilter2(name) \
   typedef itk::UnaryFunctorImageFilter< \
     InputImageType, OutputImageType, \
@@ -56,14 +56,14 @@ if ( ComponentTypeIn == #typeIn && ComponentTypeOut == #typeOut && inputDimensio
     tempUnaryFilter->GetFunctor().SetArgument( static_cast<double>( argument ) ); \
     unaryFilter = tempUnaryFilter.GetPointer(); \
   }
- 
+
 
 /**
  * ******************* UnaryImageOperator *******************
  */
 
 template< class InputImageType, class OutputImageType >
-void UnaryImageOperator( 
+void UnaryImageOperator(
   const std::string & inputFileName,
   const std::string & outputFileName,
   const std::string & ops,

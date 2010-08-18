@@ -93,7 +93,7 @@ int main( int argc, char ** argv )
   {
     std::cerr << "ERROR: The NumberOfComponents is 1!" << std::endl;
     std::cerr << "Cannot make extract index from a scalar image." << std::endl;
-    return 1; 
+    return 1;
   }
 
   /** Get rid of the possible "_" in ComponentType. */
@@ -148,7 +148,7 @@ int main( int argc, char ** argv )
       << std::endl;
     return 1;
   }
-  
+
   /** End program. */
   return 0;
 
@@ -180,7 +180,7 @@ void ExtractIndex(
   /** Read input image. */
   typename ImageReaderType::Pointer reader = ImageReaderType::New();
   reader->SetFileName( inputFileName );
-  
+
   /** Extract index. */
   typename IndexExtractorType::Pointer extractor = IndexExtractorType::New();
   extractor->SetInput( reader->GetOutput() );

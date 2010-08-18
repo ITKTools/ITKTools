@@ -253,7 +253,7 @@ int CheckOperator( std::string & operatoR )
 
   /** Return a value. */
   return 0;
-  
+
 } // end CheckOperator()
 
 
@@ -289,7 +289,7 @@ bool OperatorNeedsArgument( const std::string & operatoR )
 
 } // end OperatorNeedsArgument()
 
-  
+
   /**
    * ******************* CreateOutputFileName *******************
    */
@@ -329,7 +329,7 @@ void CreateOutputFileName( const std::vector<std::string> & inputFileNames,
     /** Example: /path/imageRDIVIDE3.mhd *
     outputFileName = path + name + ops + arg + ext;
   }*/
-  
+
 } // end CreateOutputFileName
 
   /**

@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -22,7 +22,7 @@
 
 namespace itk {
 
-/** \class OtsuThresholdWithMaskImageFilter 
+/** \class OtsuThresholdWithMaskImageFilter
  * \brief Threshold an image using the Otsu Threshold
  *
  * This filter creates a binary thresholded image that separates an
@@ -39,7 +39,7 @@ namespace itk {
  */
 
 template<class TInputImage, class TOutputImage>
-class ITK_EXPORT OtsuThresholdWithMaskImageFilter : 
+class ITK_EXPORT OtsuThresholdWithMaskImageFilter :
     public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
@@ -48,17 +48,17 @@ public:
   typedef ImageToImageFilter<TInputImage,TOutputImage>  Superclass;
   typedef SmartPointer<Self>                            Pointer;
   typedef SmartPointer<const Self>                      ConstPointer;
-  
+
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);  
+  itkNewMacro(Self);
 
   /** Runtime information support. */
   itkTypeMacro(OtsuThresholdWithMaskImageFilter, ImageToImageFilter);
-  
+
   /** Image pixel value typedef. */
   typedef typename TInputImage::PixelType   InputPixelType;
   typedef typename TOutputImage::PixelType  OutputPixelType;
-  
+
   /** Image related typedefs. */
   typedef typename TInputImage::Pointer  InputImagePointer;
   typedef typename TOutputImage::Pointer OutputImagePointer;
@@ -81,22 +81,22 @@ public:
   typedef typename MaskImageType::Pointer           MaskImagePointer;
   typedef typename MaskImageType::ConstPointer      MaskImageConstPointer;
 
-  /** Set the "outside" pixel value. The default value 
+  /** Set the "outside" pixel value. The default value
    * NumericTraits<OutputPixelType>::Zero. */
   itkSetMacro(OutsideValue,OutputPixelType);
-  
+
   /** Get the "outside" pixel value. */
   itkGetConstMacro(OutsideValue,OutputPixelType);
 
-  /** Set the "inside" pixel value. The default value 
+  /** Set the "inside" pixel value. The default value
    * NumericTraits<OutputPixelType>::max() */
   itkSetMacro(InsideValue,OutputPixelType);
-  
+
   /** Get the "inside" pixel value. */
   itkGetConstMacro(InsideValue,OutputPixelType);
 
   /** Set/Get the number of histogram bins. Defaults is 128. */
-  itkSetClampMacro( NumberOfHistogramBins, unsigned long, 1, 
+  itkSetClampMacro( NumberOfHistogramBins, unsigned long, 1,
                     NumericTraits<unsigned long>::max() );
   itkGetConstMacro( NumberOfHistogramBins, unsigned long );
 
@@ -147,7 +147,7 @@ private:
 }; // end of class
 
 } // end namespace itk
-  
+
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "itkOtsuThresholdWithMaskImageFilter.txx"
 #endif

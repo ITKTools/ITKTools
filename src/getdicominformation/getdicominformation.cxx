@@ -98,13 +98,13 @@ int main( int argc, char **argv )
       << inputDirectoryName << "." << std::endl;
     return 1;
   }
-  
+
   /** Create a test reader. */
   SeriesReaderType::Pointer testReader = SeriesReaderType::New();
   GDCMImageIOType::Pointer gdcmIO = GDCMImageIOType::New();
   testReader->SetImageIO( gdcmIO );
   testReader->SetFileNames( fileNames );
-  
+
   /** Try reading image information. */
   try
   {
@@ -116,7 +116,7 @@ int main( int argc, char **argv )
     std::cerr  << err <<  std::endl;
     return 1;
   }
-  
+
   /** Get general image information from the dicomIO. */
   unsigned int sizeX = gdcmIO->GetDimensions( 0 );
   unsigned int sizeY = gdcmIO->GetDimensions( 1 );
@@ -229,7 +229,7 @@ int main( int argc, char **argv )
   gdcmIO->GetInstitution( institution );
   std::string convolutionKernel = "";
   gdcmIO->GetValueFromTag( "0018|1210", convolutionKernel );
- 
+
   /** Print scanner information. */
   std::cout << "\nScanner information:\n";
   std::cout << "institution:      " << institution << std::endl;

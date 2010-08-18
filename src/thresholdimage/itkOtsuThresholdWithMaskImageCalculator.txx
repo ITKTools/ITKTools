@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -25,8 +25,8 @@
 #include "vnl/vnl_math.h"
 
 namespace itk
-{ 
-    
+{
+
 /**
  * Constructor
  */
@@ -123,7 +123,7 @@ OtsuThresholdWithMaskImageCalculator<TInputImage>
     unsigned int binNumber;
     PixelType value = iter.Get();
 
-    if ( value == imageMin ) 
+    if ( value == imageMin )
       {
       binNumber = 0;
       }
@@ -142,7 +142,7 @@ OtsuThresholdWithMaskImageCalculator<TInputImage>
     ++iter;
     if ( m_MaskImage ) ++itMask;
   }
- 
+
   // normalize the frequencies
   double totalMean = 0.0;
   for ( j = 0; j < m_NumberOfHistogramBins; j++ )
@@ -168,7 +168,7 @@ OtsuThresholdWithMaskImageCalculator<TInputImage>
   for ( j = 1; j < m_NumberOfHistogramBins; j++ )
     {
     freqLeft += relativeFrequency[j];
-    meanLeft = ( meanLeftOld * freqLeftOld + 
+    meanLeft = ( meanLeftOld * freqLeftOld +
                  (j+1) * relativeFrequency[j] ) / freqLeft;
     if (freqLeft == 1.0)
       {
@@ -176,12 +176,12 @@ OtsuThresholdWithMaskImageCalculator<TInputImage>
       }
     else
       {
-      meanRight = ( totalMean - meanLeft * freqLeft ) / 
+      meanRight = ( totalMean - meanLeft * freqLeft ) /
         ( 1.0 - freqLeft );
       }
     double varBetween = freqLeft * ( 1.0 - freqLeft ) *
       vnl_math_sqr( meanLeft - meanRight );
-   
+
     if ( varBetween > maxVarBetween )
       {
       maxVarBetween = varBetween;
@@ -190,11 +190,11 @@ OtsuThresholdWithMaskImageCalculator<TInputImage>
 
     // cache old values
     freqLeftOld = freqLeft;
-    meanLeftOld = meanLeft; 
+    meanLeftOld = meanLeft;
 
-    } 
+    }
 
-  m_Threshold = static_cast<PixelType>( imageMin + 
+  m_Threshold = static_cast<PixelType>( imageMin +
                                         ( maxBinNumber + 1 ) / binMultiplier );
 }
 
@@ -207,7 +207,7 @@ OtsuThresholdWithMaskImageCalculator<TInputImage>
   m_RegionSetByUser = true;
 }
 
-  
+
 template<class TInputImage>
 void
 OtsuThresholdWithMaskImageCalculator<TInputImage>

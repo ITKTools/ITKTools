@@ -40,7 +40,7 @@ namespace itk
   * classifier combination in atlas-based image segmentation using
   * expectation-maximization parameter estimation," IEEE Transactions on
   * Medical Imaging, vol. 23, pp. 983-994, Aug. 2004.
-  * 
+  *
   * \par INPUTS
   * All input volumes to this filter must be segmentations of an image,
   * that is, they must have discrete pixel values where each value represents
@@ -58,7 +58,7 @@ namespace itk
   * \par OUTPUTS
   * The filter produces a single output volume. Each output pixel
   * contains the label that has the highest probability of being the correct
-  * label, based on the performance models of the individual segmentations. 
+  * label, based on the performance models of the individual segmentations.
   * If the maximum probaility is not unique, i.e., if more than one label have
   * a maximum probability, then an "undecided" label is assigned to that output
   * pixel.
@@ -74,7 +74,7 @@ namespace itk
   * GetConfusionMatrix member function.
   *
   * \par PARAMETERS
-  * The label used for "undecided" labels can be set using 
+  * The label used for "undecided" labels can be set using
   * SetLabelForUndecidedPixels. This functionality can be unset by calling
   * UnsetLabelForUndecidedPixels.
   *
@@ -93,7 +93,7 @@ namespace itk
   * converged. The algorithm makes no attempt to report its progress since the
   * number of iterations needed cannot be known in advance.
   *
-  * This code is largely based on the MultiLabelSTAPLEImageFilter code 
+  * This code is largely based on the MultiLabelSTAPLEImageFilter code
   * written by Rohlfing.
   *
   * \author Stefan Klein
@@ -131,10 +131,10 @@ namespace itk
     typedef TOutputImage OutputImageType;
     typedef typename InputImageType::Pointer InputImagePointer;
     typedef typename OutputImageType::Pointer OutputImagePointer;
-           
+
     /** Superclass typedefs. */
     typedef typename Superclass::OutputImageRegionType OutputImageRegionType;
-    
+
     /** Confusion matrix typedefs. */
     typedef TWeights WeightsType;
     typedef Array2D<WeightsType> ConfusionMatrixType;
@@ -145,9 +145,9 @@ namespace itk
       WeightsType,
       ::itk::GetImageDimension<
         InputImageType>::ImageDimension>            ProbabilityImageType;
-    typedef typename ProbabilityImageType::Pointer  ProbabilityImagePointer;    
+    typedef typename ProbabilityImageType::Pointer  ProbabilityImagePointer;
     typedef std::vector<ProbabilityImagePointer>    PriorProbabilityImageArrayType;
-    
+
     /** Various typedefs */
     typedef Array<WeightsType>                      ObserverTrustType;
     typedef std::vector<ProbabilityImagePointer>    ProbabilisticSegmentationArrayType;
@@ -157,13 +157,13 @@ namespace itk
     typedef InputImageType                          MaskImageType;
     typedef typename MaskImageType::Pointer         MaskImagePointer;
     typedef typename MaskImageType::PixelType       MaskPixelType;
-    
+
     /** Iterator types. */
     typedef ImageRegionConstIterator< InputImageType >  InputConstIteratorType;
     typedef ImageRegionIterator< OutputImageType >      OutputIteratorType;
-    typedef ImageRegionConstIterator< 
+    typedef ImageRegionConstIterator<
       ProbabilityImageType >                            ProbConstIteratorType;
-    typedef ImageRegionIterator< 
+    typedef ImageRegionIterator<
       ProbabilityImageType >                            ProbIteratorType;
     typedef ImageRegionConstIterator< MaskImageType >   MaskConstIteratorType;
 
@@ -176,7 +176,7 @@ namespace itk
     }
 
     itkGetConstMacro(MaximumNumberOfIterations, unsigned int);
-    
+
     virtual void UnsetMaximumNumberOfIterations()
     {
       if ( this->m_HasMaximumNumberOfIterations )
@@ -202,9 +202,9 @@ namespace itk
       this->m_HasPriorPreference = true;
       this->Modified();
     }
-    
+
     itkGetConstReferenceMacro( PriorPreference, PriorPreferenceType );
-        
+
     virtual void UnsetPriorPreference(void)
     {
       if ( this->m_HasPriorPreference )
@@ -213,11 +213,11 @@ namespace itk
         this->Modified();
       }
     }
-      
+
     /** Set/get/unset an array of prior probability images */
     virtual void SetPriorProbabilityImageArray( const PriorProbabilityImageArrayType & arg)
     {
-      this->m_PriorProbabilityImageArray = arg;   
+      this->m_PriorProbabilityImageArray = arg;
       this->m_HasPriorProbabilityImageArray = true;
       this->Modified();
     }
@@ -226,7 +226,7 @@ namespace itk
     {
       return this->m_PriorProbabilityImageArray;
     }
-            
+
     virtual void UnsetPriorProbabilityImageArray(void)
     {
       if ( this->m_HasPriorProbabilityImageArray )
@@ -243,9 +243,9 @@ namespace itk
       this->m_HasPriorProbabilities = true;
       this->Modified();
     }
-    
+
     itkGetConstReferenceMacro( PriorProbabilities, PriorProbabilitiesType );
-        
+
     virtual void UnsetPriorProbabilities(void)
     {
       if ( this->m_HasPriorProbabilities )
@@ -274,7 +274,7 @@ namespace itk
       }
     }
 
-    /** Set/unset/get the number of classes. If you don't set it, it is 
+    /** Set/unset/get the number of classes. If you don't set it, it is
      * automatically determined from the input segmentations */
     virtual void SetNumberOfClasses(InputPixelType arg)
     {
@@ -293,7 +293,7 @@ namespace itk
     }
 
     itkGetConstMacro( NumberOfClasses, InputPixelType );
-    
+
     /** Set/Get a mask image; If a mask is supplied, only pixels that are
      * within the mask are used in the staple procedure. The output
      * at pixels outside the mask will be equal to that of the first
@@ -312,12 +312,12 @@ namespace itk
     itkGetConstMacro(GenerateProbabilisticSegmentations, bool);
 
     /** Get the probabilistic segmentations. Only valid when
-     * SetGenerateProbabilisticSegmentations(true) has been 
+     * SetGenerateProbabilisticSegmentations(true) has been
      * invoked before updating this filter. */
     virtual const ProbabilisticSegmentationArrayType &
       GetProbabilisticSegmentationArray(void) const
     {
-      return this->m_ProbabilisticSegmentationArray;        
+      return this->m_ProbabilisticSegmentationArray;
     }
 
     /** If you have inspected the probabilistic segmentations and want to get rid
@@ -326,7 +326,7 @@ namespace itk
     {
       if ( this->m_ProbabilisticSegmentationArray.size() > 0 )
       {
-        this->m_ProbabilisticSegmentationArray = 
+        this->m_ProbabilisticSegmentationArray =
           ProbabilisticSegmentationArrayType(0);
         this->Modified();
       }
@@ -343,14 +343,14 @@ namespace itk
 
     /** Get the number of elapsed iterations */
     itkGetConstMacro( ElapsedIterations, unsigned int );
-  
+
 
   protected:
     /** Constructor */
     MultiLabelSTAPLE2ImageFilter();
 
     /** Destructor */
-    virtual ~MultiLabelSTAPLE2ImageFilter() {}  
+    virtual ~MultiLabelSTAPLE2ImageFilter() {}
 
     /** Do the actual work */
     void GenerateData();
@@ -370,8 +370,8 @@ namespace itk
 
     /** The number of different labels found in the input segmentations */
     InputPixelType m_NumberOfClasses;
-    
-    /** Variables that store whether the a specific parameter has been 
+
+    /** Variables that store whether the a specific parameter has been
      * set by the user */
     bool m_HasPriorProbabilities;
     bool m_HasObserverTrust;
@@ -379,7 +379,7 @@ namespace itk
     bool m_HasPriorProbabilityImageArray;
     bool m_HasNumberOfClasses;
     bool m_HasPriorPreference;
-  
+
     /** These variables could in principle be accessed via the member functions,
      * but for inheriting classes this would be annoying. So, make them protected. */
     PriorProbabilitiesType             m_PriorProbabilities;
@@ -392,7 +392,7 @@ namespace itk
 
     /** Variables updated during iterating: */
     WeightsType m_MaximumConfusionMatrixElementUpdate;
-    unsigned int m_ElapsedIterations;    
+    unsigned int m_ElapsedIterations;
 
   private:
     MultiLabelSTAPLE2ImageFilter(const Self&); //purposely not implemented
@@ -404,7 +404,7 @@ namespace itk
     WeightsType m_TerminationUpdateThreshold;
     MaskImagePointer m_MaskImage;
     bool m_InitializeWithMajorityVoting;
-    
+
 
   };
 

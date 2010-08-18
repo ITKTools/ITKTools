@@ -5,7 +5,7 @@
 #include "itkImageFileReader.h"
 
 
-/** 
+/**
  * *************** ReplaceUnderscoreWithSpace ***********************
  */
 
@@ -18,11 +18,11 @@ void ReplaceUnderscoreWithSpace( std::string & arg )
   {
     arg.replace( pos, 1, " " );
   }
-  
+
 } // end ReplaceUnderscoreWithSpace()
 
 
-/** 
+/**
  * *************** ReplaceSpaceWithUnderscore ***********************
  */
 
@@ -35,11 +35,11 @@ void ReplaceSpaceWithUnderscore( std::string & arg )
   {
     arg.replace( pos, 1, "_" );
   }
-  
+
 } // end ReplaceSpaceWithUnderscore()
 
 
-/** 
+/**
  * *************** RemoveUnsignedFromString ***********************
  */
 
@@ -54,7 +54,7 @@ void RemoveUnsignedFromString( std::string & arg )
 } // end RemoveUnsignedFromString()
 
 
-/** 
+/**
  * *************** CheckForValidComponentType ***********************
  */
 
@@ -83,7 +83,7 @@ bool CheckForValidComponentType( const std::string & arg )
 
 } // end CheckForValidComponentType()
 
-/** 
+/**
  * ***************** GetImageProperties ************************
  */
 
@@ -120,7 +120,7 @@ int GetImageProperties(
     std::cerr << "Caught ITK exception: " << e << std::endl;
     return 1;
   }
-    
+
   /** Extract the ImageIO from the testReader. */
   ImageIOBaseType::Pointer testImageIOBase = testReader->GetImageIO();
 
@@ -153,21 +153,21 @@ int GetImageProperties(
     && componenttype != "double" )
   {
     /** In this case an illegal pixeltype is found. */
-    std::cerr 
+    std::cerr
       << "ERROR while determining image properties!"
       << "The found componenttype is \""
       << componenttype
-      << "\", which is not supported." 
+      << "\", which is not supported."
       << std::endl;
     return 1;
   }
 
   return 0;
-  
+
 } // end GetImageProperties()
 
 
-/** 
+/**
  * ***************** GetImageProperties ************************
  */
 
@@ -243,11 +243,11 @@ int GetImageProperties(
     && componenttype != "double" )
   {
     /** In this case an illegal pixeltype is found. */
-    std::cerr 
+    std::cerr
       << "ERROR while determining image properties!"
       << "The found componenttype is \""
       << componenttype
-      << "\", which is not supported." 
+      << "\", which is not supported."
       << std::endl;
     return 1;
   }
@@ -257,7 +257,7 @@ int GetImageProperties(
 }
 
 
-/** 
+/**
  * *************** GetLargestComponentType ***********************
  */
 

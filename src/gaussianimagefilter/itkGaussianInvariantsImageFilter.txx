@@ -49,7 +49,7 @@ GaussianInvariantsImageFilter<TInputImage,TOutputImage>
  * Set value of Sigma
  */
 template <typename TInputImage, typename TOutputImage>
-void 
+void
 GaussianInvariantsImageFilter<TInputImage,TOutputImage>
 ::SetSigma( const ScalarRealType sigma )
 {
@@ -63,7 +63,7 @@ GaussianInvariantsImageFilter<TInputImage,TOutputImage>
  * Set value of Sigma
  */
 template <typename TInputImage, typename TOutputImage>
-void 
+void
 GaussianInvariantsImageFilter<TInputImage,TOutputImage>
 ::SetSigma( const SigmaType sigma )
 {
@@ -87,7 +87,7 @@ GaussianInvariantsImageFilter<TInputImage,TOutputImage>
  * Set Normalize Across Scale Space
  */
 template <typename TInputImage, typename TOutputImage>
-void 
+void
 GaussianInvariantsImageFilter<TInputImage,TOutputImage>
 ::SetNormalizeAcrossScale( const bool arg )
 {
@@ -112,7 +112,7 @@ GaussianInvariantsImageFilter<TInputImage,TOutputImage>
  */
 
 template <typename TInputImage, typename TOutputImage>
-void 
+void
 GaussianInvariantsImageFilter<TInputImage,TOutputImage>
 ::SetInvariant( std::string arg )
 {
@@ -239,7 +239,7 @@ GaussianInvariantsImageFilter<TInputImage,TOutputImage >
       gradient[ i ] = derIt[ i ].Value();
       ++derIt[ i ];
     }
-    
+
     /** Construct Hessian. */
     HessianPixelType hes = hesIt.Value();
     for ( unsigned int row = 0; row < ImageDimension; row++ )

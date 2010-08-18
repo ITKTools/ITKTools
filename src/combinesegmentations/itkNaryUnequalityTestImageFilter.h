@@ -6,23 +6,23 @@
 
 namespace itk
 {
-  
+
 /** \class NaryUnequalityTestImageFilter
  * \brief Implements an operator for pixel-wise comparison of N images.
  *
- * This class is parametrized over the types of the  
- * input images and the type of the output image. 
+ * This class is parametrized over the types of the
+ * input images and the type of the output image.
  * Numeric conversions (castings) are done by the C++ defaults.
  *
  * The pixel type of the input image must have a valid definition of
- * the operator==. This condition is required because internally this filter 
+ * the operator==. This condition is required because internally this filter
  * will perform the operation
  *
  *        pixel_from_image_{i} == pixel_from_image_{i+1}
  *
  * The total operation over one pixel will be
  *
- *  output_pixel = static_cast<OutputPixelType>( 
+ *  output_pixel = static_cast<OutputPixelType>(
  *    ! (input_0_pixel == input1_pixel == input_2_pixel == etc ) )
  *
  * If not all pixels are equal, the result is 1. If all pixels are equal, the resut = 0.
@@ -30,8 +30,8 @@ namespace itk
  * \ingroup IntensityImageFilters  Multithreaded
  */
 
-namespace Functor {  
-  
+namespace Functor {
+
 template< class TInput, class TOutput >
 class UnequalityTest
 {
@@ -41,11 +41,11 @@ public:
   inline TOutput operator()( const std::vector< TInput > & B)
   {
     const TInput & ref = B[0];
-    bool allequal = true;    
+    bool allequal = true;
     for( unsigned int i=1; i < B.size(); ++i )
     {
       allequal &= ( B[i] == ref );
-    }       
+    }
     return static_cast<TOutput>( !allequal );
   }
   bool operator== (const UnequalityTest&) const
@@ -56,12 +56,12 @@ public:
   {
     return false;
   }
-}; 
+};
 }
 template <class TInputImage, class TOutputImage>
 class NaryUnequalityTestImageFilter : public
-  NaryFunctorImageFilter< TInputImage, TOutputImage, 
-  Functor::UnequalityTest<typename TInputImage::PixelType, typename TOutputImage::PixelType > > 
+  NaryFunctorImageFilter< TInputImage, TOutputImage,
+  Functor::UnequalityTest<typename TInputImage::PixelType, typename TOutputImage::PixelType > >
 {
 public:
   /** Standard class typedefs. */

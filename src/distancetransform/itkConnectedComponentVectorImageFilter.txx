@@ -24,10 +24,10 @@ ConnectedComponentVectorImageFilter< TInputImage, TOutputImage >
 {
   // call the superclass' implementation of this method
   Superclass::GenerateInputRequestedRegion();
-  
+
   // We need all the input.
   InputImagePointer input = const_cast<InputImageType *>(this->GetInput());
-  
+
   input->SetRequestedRegion( input->GetLargestPossibleRegion() );
 }
 
@@ -45,9 +45,9 @@ ConnectedComponentVectorImageFilter<TInputImage, TOutputImage>
    /*
    int m_K = this->GetInput()->GetVectorLength();
    Array<int> sortedVec(m_K);
-   for (unsigned int k=0; k<m_K; k++) 
+   for (unsigned int k=0; k<m_K; k++)
      sortedVec[k] = vec[k];
-   
+
    /// Shell sort: "Numerical Recipes in C", Second Edition, page 332
    unsigned int i,j,inc;
    int v;
@@ -75,19 +75,19 @@ ConnectedComponentVectorImageFilter<TInputImage, TOutputImage>
    InputPixelType sortedVec(m_K);
    std::vector<int> stdvec;
    stdvec.resize(m_K);
-   for (unsigned int k=0; k<m_K; k++) 
+   for (unsigned int k=0; k<m_K; k++)
      stdvec[k] = vec[k];
    std::sort(stdvec.begin(), stdvec.end());
-   for (unsigned int k=0; k<m_K; k++) 
+   for (unsigned int k=0; k<m_K; k++)
      sortedVec[k] = stdvec[k];
-      
-   return sortedVec;   
+
+   return sortedVec;
 }
 
 
 
 template <class TInputImage, class TOutputImage>
-void 
+void
 ConnectedComponentVectorImageFilter<TInputImage, TOutputImage>
 ::EnlargeOutputRequestedRegion(DataObject *)
 {
@@ -117,11 +117,11 @@ ConnectedComponentVectorImageFilter< TInputImage, TOutputImage >
   // Allocate the output and initialize to zeros
   this->AllocateOutputs();
   output->FillBuffer( NumericTraits<OutputPixelType>::Zero );
-  
+
   // Set up the boundary condition to be zero padded (used on output image)
   ConstantBoundaryCondition<TOutputImage> BC;
   BC.SetConstant(NumericTraits<OutputPixelType>::Zero);
-  
+
 
   // Neighborhood iterator.  Let's use a shaped neighborhood so we can
   // restrict the access to face connected neighbors. This iterator
@@ -133,8 +133,8 @@ ConnectedComponentVectorImageFilter< TInputImage, TOutputImage >
                                output->GetRequestedRegion());
   nit.OverrideBoundaryCondition(&BC); // assign the boundary condition
 
-  
-  
+
+
   // only activate the indices that are "previous" to the current
   // pixel and face connected (exclude the center pixel from the
   // neighborhood)
@@ -172,7 +172,7 @@ ConnectedComponentVectorImageFilter< TInputImage, TOutputImage >
                                                 input->GetRequestedRegion());
   ImageRegionIterator<OutputImageType> oit(output,
                                              output->GetRequestedRegion());
-  
+
 
   // Setup a progress reporter.  We have 3 stages to the algorithm so
   // pretend we have 3 times the number of pixels
@@ -181,7 +181,7 @@ ConnectedComponentVectorImageFilter< TInputImage, TOutputImage >
 
   // Mark the output image as either background or unlabeled
   output->FillBuffer( maxPossibleLabel );
-  
+
   // iterate over the image, labeling the objects and defining
   // equivalence classes.  Use the neighborhood iterator to access the
   // "previous" neighbor pixels and an output iterator to access the
@@ -190,7 +190,7 @@ ConnectedComponentVectorImageFilter< TInputImage, TOutputImage >
   nit.GoToBegin();
   oit.GoToBegin();
 
-  long counter=1;  
+  long counter=1;
   while ( !oit.IsAtEnd() )
     {
     counter++;
@@ -221,7 +221,7 @@ ConnectedComponentVectorImageFilter< TInputImage, TOutputImage >
           }
           typename InputImageType::PixelType sorted_here = SortArray(ids_here);
           typename InputImageType::PixelType sorted_there = SortArray(ids_there);
-/*          for (unsigned int ii=0; ii<input->GetVectorLength(); ii++)  
+/*          for (unsigned int ii=0; ii<input->GetVectorLength(); ii++)
             std::cout << sorted_here[ii] << " " << sorted_there[ii] <<"\t";
             std::cout <<std::endl;*/
 
@@ -235,7 +235,7 @@ ConnectedComponentVectorImageFilter< TInputImage, TOutputImage >
             }
           }
         else {
-          IDsarethesame=false;        
+          IDsarethesame=false;
           }
         if (IDsarethesame) //&& neighborLabel != NumericTraits<OutputPixelType>::Zero)
           {
@@ -247,15 +247,15 @@ ConnectedComponentVectorImageFilter< TInputImage, TOutputImage >
             }
           // else if current pixel has a label that is not already
           // equivalent to the label of the previous pixel, then setup
-          // a new equivalence.  
+          // a new equivalence.
           else if ((label != neighborLabel) /// && vec here == vec there?
                    && (eqTable->RecursiveLookup(label)
-                       != eqTable->RecursiveLookup(neighborLabel))) 
+                       != eqTable->RecursiveLookup(neighborLabel)))
             {
             eqTable->Add(label, neighborLabel);
             }
           }
-          
+
         }
       // if none of the "previous" neighbors were set, then make a new label
       if (originalLabel == label)

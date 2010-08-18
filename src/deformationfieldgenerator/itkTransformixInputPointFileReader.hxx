@@ -6,7 +6,7 @@
 namespace itk
 {
 
-  /** 
+  /**
    * **************** Constructor ***************
    */
   template <class TOutputMesh>
@@ -15,11 +15,11 @@ namespace itk
   {
     this->m_NumberOfPoints = 0;
     this->m_PointsAreIndices = false;
-    
+
   } // end constructor
 
 
-  /** 
+  /**
    * **************** Destructor ***************
    */
   template <class TOutputMesh>
@@ -30,11 +30,11 @@ namespace itk
     {
       this->m_Reader.close();
     }
-        
+
   } // end constructor
 
 
-  /** 
+  /**
    * ***************GenerateOutputInformation ***********
    */
 
@@ -56,12 +56,12 @@ namespace itk
     /** Read the first entry */
     std::string indexOrPoint;
     this->m_Reader >> indexOrPoint;
-    
+
     /** Set the IsIndex bool and the number of points.*/
     if (indexOrPoint == "point")
     {
       /** Input points are specified in world coordinates. */
-      this->m_PointsAreIndices = false;   
+      this->m_PointsAreIndices = false;
       this->m_Reader >> this->m_NumberOfPoints;
     }
     else if (indexOrPoint == "index")
@@ -70,11 +70,11 @@ namespace itk
       this->m_PointsAreIndices = true;
       this->m_Reader >> this->m_NumberOfPoints;
     }
-    else 
+    else
     {
       /** Input points are assumed to be specified as image indices. */
       this->m_PointsAreIndices = true;
-      this->m_NumberOfPoints = atoi( indexOrPoint.c_str() );        
+      this->m_NumberOfPoints = atoi( indexOrPoint.c_str() );
     }
 
     /** Leave the file open for the generate data  method */
@@ -82,7 +82,7 @@ namespace itk
   }  // end GenerateOutputInformation
 
 
-  /** 
+  /**
    * ***************GenerateData ***********
    */
 
@@ -90,16 +90,16 @@ namespace itk
   void
   TransformixInputPointFileReader<TOutputMesh>
   ::GenerateData()
-  { 
-    typedef typename OutputMeshType::PointsContainer  PointsContainerType; 
+  {
+    typedef typename OutputMeshType::PointsContainer  PointsContainerType;
     typedef typename PointsContainerType::Pointer     PointsContainerPointer;
     typedef typename OutputMeshType::PointType        PointType;
-    const unsigned int dimension = OutputMeshType::PointDimension;    
+    const unsigned int dimension = OutputMeshType::PointDimension;
 
     OutputMeshPointer output = this->GetOutput();
 
     PointsContainerPointer points = PointsContainerType::New();
-    
+
     /** read the file */
     if ( this->m_Reader.is_open() )
     {
@@ -124,7 +124,7 @@ namespace itk
             return;
 
           }
-        } 
+        }
         points->push_back(point);
       }
     }
@@ -146,9 +146,9 @@ namespace itk
     /** Close the reader */
     this->m_Reader.close();
 
-    /** This indicates that the current BufferedRegion is equal to the 
+    /** This indicates that the current BufferedRegion is equal to the
      * requested region. This action prevents useless rexecutions of
-     * the pipeline. 
+     * the pipeline.
      * (I copied this from the BinaryMaskToNarrowBandPointSetFilter) */
     output->SetBufferedRegion( output->GetRequestedRegion() );
 
@@ -157,4 +157,4 @@ namespace itk
 
 } // end namespace itk
 
-#endif 
+#endif

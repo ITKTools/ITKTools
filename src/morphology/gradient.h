@@ -12,7 +12,7 @@
  */
 
 template< class ImageType >
-void gradient( 
+void gradient(
   const std::string & inputFileName,
   const std::string & outputFileName,
   const std::vector<unsigned int> & radius,
@@ -36,7 +36,7 @@ void gradient(
   typename ReaderType::Pointer reader = ReaderType::New();
   typename WriterType::Pointer writer = WriterType::New();
   typename FilterType::Pointer filter = FilterType::New();
-  
+
   /** Setup the reader. */
   reader->SetFileName( inputFileName.c_str() );
 

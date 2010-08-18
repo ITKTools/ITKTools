@@ -34,13 +34,13 @@ namespace itk
  *
  * \brief Computes a scalar image from a vector image (e.g., deformation field)
  * input, where each output scalar at each pixel is the bending energy
- * of the vector field at that location.  
+ * of the vector field at that location.
  * The bending energy happens to be identical for Transformation and Displacement fields.
- * 
+ *
  * Bending energy = sum of all squared second order derivatives.
  *
  * This class is a specialization of the DisplacementFieldJacobianDeterminantFilter, further
- * details regarding it's implementation should be reviewed in 
+ * details regarding it's implementation should be reviewed in
  * itkDisplacementFieldJacobianDeterminantFilter.h.
  *
  * \ingroup GradientFilters

@@ -46,7 +46,7 @@ struct SortingElement  {
 * This class is parametrized over the type of the input image
 * and the type of the output image.
 *
-* This filter computes the distance map of the input image 
+* This filter computes the distance map of the input image
 * as an approximation with pixel accuracy to the Euclidean distance.
 *
 * The input is assumed to contain numeric codes defining objects.
@@ -65,16 +65,16 @@ struct SortingElement  {
 * This filter is N-dimensional and known to be efficient
 * in computational time.  The algorithm is the N-dimensional version
 * of the 4SED algorithm given for two dimensions in:
-* 
+*
 * Danielsson, Per-Erik.  Euclidean Distance Mapping.  Computer
 * Graphics and Image Processing 14, 227-248 (1980).
 *
-* \ingroup ImageFeatureExtraction 
+* \ingroup ImageFeatureExtraction
 *
 */
-template <class TInputImage, 
+template <class TInputImage,
                     class TOutputImage,
-                    class TKDistanceImage=VectorImage<float, ::itk::GetImageDimension<TInputImage>::ImageDimension>, 
+                    class TKDistanceImage=VectorImage<float, ::itk::GetImageDimension<TInputImage>::ImageDimension>,
                     class TKIDImage=VectorImage<int, ::itk::GetImageDimension<TInputImage>::ImageDimension> >
 class ITK_EXPORT OrderKDistanceTransformImageFilter :
     public ImageToImageFilter<TInputImage, TOutputImage >
@@ -105,10 +105,10 @@ public:
 
   /**  Type for the VectorImage<float, InputImageDimension> of distances to k closest object pixels */
   typedef TKDistanceImage  KDistanceImageType;
-  
+
   /**  Type for the VectorImage<int, InputImageDimension> of IDs of k closest object pixels */
   typedef TKIDImage    KIDImageType;
-  
+
     /** Pointer Type for input image. */
   typedef typename InputImageType::ConstPointer InputImagePointer;
 
@@ -120,20 +120,20 @@ public:
 
 /** Pointer Type for the i-ID image. */
   typedef typename KIDImageType::Pointer          KIDImagePointer;
-  
-  
+
+
   /** Vector Pixel types */
   typedef typename KIDImageType::PixelType KIDPixelType;
   typedef typename KIDPixelType::ValueType KIDValueType;
   typedef typename KDistanceImageType::PixelType KDistancePixelType;
   typedef typename KDistancePixelType::ValueType KDistanceValueType;
-  
-  
+
+
   typedef typename InputImageType::RegionType   RegionType;
   typedef typename RegionType::IndexType             IndexType;
   typedef typename RegionType::SizeType               SizeType;
   typedef typename InputImageType::OffsetType      OffsetType;
-  
+
 
 
 
@@ -160,11 +160,11 @@ public:
   /** Set On/Off if the input is binary.  See SetInputIsBinary(). */
   itkBooleanMacro( InputIsBinary );
 
-  /** Set boolean to control what kind of 
-   *  neighborhood is used to compute the voronoi diagram. 
-   *  FullyConnected= true is a 2D 8-neighborhood, or a 3D 
-   *  26-neighborhood. 
-   *  FullyConnected= false is a 2D 4-neighborhood, or a 3D 
+  /** Set boolean to control what kind of
+   *  neighborhood is used to compute the voronoi diagram.
+   *  FullyConnected= true is a 2D 8-neighborhood, or a 3D
+   *  26-neighborhood.
+   *  FullyConnected= false is a 2D 4-neighborhood, or a 3D
    *  6-neighborhood. */
   itkSetMacro( FullyConnected, bool );
 
@@ -174,7 +174,7 @@ public:
   /** Set On/Off FullyConnected. See SetFullyConnected(). */
   itkBooleanMacro( FullyConnected );
 
-  
+
   /** Set if image spacing should be used in computing distances. */
   itkSetMacro( UseImageSpacing, bool );
 
@@ -192,7 +192,7 @@ public:
 
   /** Get Voronoi Map
    * This map shows for each pixel what object is closest to it.
-   * Each object should be labeled by a number (larger than 0), 
+   * Each object should be labeled by a number (larger than 0),
    * so the map has a value for each pixel corresponding to the label
    * of the closest object.  */
   OutputImageType * GetVoronoiMap(void);
@@ -225,12 +225,12 @@ protected:
   void GenerateData();
 
   void GenerateInputRequestedRegion();
-  
+
   /** Prepare data. */
-  void PrepareData();  
+  void PrepareData();
 
   /**  Compute Voronoi Map. */
-  void ComputeVoronoiMap();  
+  void ComputeVoronoiMap();
 
   /** Update distance map locally.  Used by GenerateData(). */
   void UpdateLocalDistance(const IndexType&,

@@ -14,15 +14,15 @@
 
 /** This file defines two templated functions */
 
-/** 
+/**
  * ************************ ComputeStatistics **************************8
  *
  * Generic template function that computes statistics on an input image
  * Assumes that the number of histogram bins and the marginal scale are set
  * in the histogramGenerator, that the maskerOrCopier has been initialized
- * to a (dummy) caster or to a MaskFilterType with mask set, and that the 
+ * to a (dummy) caster or to a MaskFilterType with mask set, and that the
  * statistics filter has been initialized.
- * 
+ *
  * This function is only to be used by the StatisticsOnImage function.
  * It is quite specific and not really well over thought. Introduced to avoid
  * duplication of code.
@@ -39,7 +39,7 @@ void ComputeStatistics(
   const std::string & select )
 {
   typedef THistogramGenerator                         HistogramGeneratorType;
-  typedef typename 
+  typedef typename
     HistogramGeneratorType::HistogramType             HistogramType;
   typedef typename HistogramGeneratorType::RealPixelType   RealPixelType;
   typedef TStatisticsFilter                           StatisticsFilterType;
@@ -47,7 +47,7 @@ void ComputeStatistics(
   typedef TInputImage                                 InputImageType;
   typedef itk::LogImageFilter<
     InputImageType, InputImageType>                   LogFilterType;
-  
+
   /** Arithmetic mean */
   PixelType maxPixelValue = 1;
 	PixelType minPixelValue = 0;
@@ -100,7 +100,7 @@ void ComputeStatistics(
     {
       std::cout << "Done replacing all pixels outside the mask by -infinity." << std::endl;
     }
-  
+
     /** This code is copied from the ListSampleToHistogramGenerator->GenerateData()
      * and adapted.
      * It makes sure that the maximum values are also included in the histogram.
@@ -110,8 +110,8 @@ void ComputeStatistics(
     {
       /** floating pixeltype */
 
-      /** if the maximum (almost) equals the minimum, we have to make sure that 
-       * everything still works. 
+      /** if the maximum (almost) equals the minimum, we have to make sure that
+       * everything still works.
        * 4 conditions:
        * - The binsize must be greater than epsilon
        * - The uppermargin must be greater than epsilon
@@ -155,11 +155,11 @@ void ComputeStatistics(
       std::cerr << " pxstatisticsonimage cannot handle this situation." << std::endl;
       itkGenericExceptionMacro( << "Histogram cannot be computed." );
     }
-          
+
     histogramGenerator->SetAutoMinMax(false);
     histogramGenerator->SetNumberOfBins(numberOfBins);
     histogramGenerator->SetHistogramMin( static_cast<RealPixelType>(minPixelValue) );
-    histogramGenerator->SetHistogramMax( histogramMax );    
+    histogramGenerator->SetHistogramMax( histogramMax );
     histogramGenerator->SetInput( maskerOrCopier->GetOutput() );
     std::cout << "Computing histogram..." << std::endl;
     histogramGenerator->Compute();
@@ -181,7 +181,7 @@ void ComputeStatistics(
 template< class ComponentType, unsigned int Dimension, unsigned int NumberOfComponents >
 void StatisticsOnImage(
   const std::string & inputFileName,
-  const std::string & maskFileName, 
+  const std::string & maskFileName,
   const std::string & histogramOutputFileName,
   unsigned int numberOfBins,
   const std::string & select )
@@ -193,11 +193,11 @@ void StatisticsOnImage(
   typedef itk::Vector<ComponentType, NumberOfComponents>  VectorPixelType;
   typedef itk::Image<ScalarPixelType, Dimension>          ScalarImageType;
   typedef itk::Image<VectorPixelType, Dimension>          VectorImageType;
-  
+
   typedef itk::Image<InternalPixelType, Dimension>    InternalImageType;
   typedef itk::Image<MaskPixelType, Dimension>        MaskImageType;
   typedef itk::ImageMaskSpatialObject< Dimension>     MaskSpatialObjectType;
-  
+
   typedef itk::ImageToImageFilter<
     InternalImageType, InternalImageType>             BaseFilterType;
   typedef itk::ImageFileReader< ScalarImageType >     ScalarReaderType;
@@ -215,7 +215,7 @@ void StatisticsOnImage(
     InternalImageType>                                HistogramGeneratorType;
   typedef itk::MaskImageFilter< InternalImageType,
     MaskImageType, InternalImageType>                 MaskerType;
-  typedef typename 
+  typedef typename
     HistogramGeneratorType::HistogramType             HistogramType;
 
   /** Read mask */
@@ -243,15 +243,15 @@ void StatisticsOnImage(
       itk::NumericTraits<InternalPixelType>::NonpositiveMin() );
     maskerOrCopier = maskFilter.GetPointer();
   }
-  
+
   /** Create StatisticsFilter */
-  typename StatisticsFilterType::Pointer statistics = 
+  typename StatisticsFilterType::Pointer statistics =
     StatisticsFilterType::New();
   statistics->SetMask(mask);
   /** vnl_svd is used by this class, which is not thread safe */
   statistics->SetNumberOfThreads(1);
 
-  typename HistogramGeneratorType::Pointer histogramGenerator = 
+  typename HistogramGeneratorType::Pointer histogramGenerator =
     HistogramGeneratorType::New();
 
   if ( NumberOfComponents == 1 )
@@ -266,7 +266,7 @@ void StatisticsOnImage(
     std::cout << "Reading input image..." << std::endl;
     reader->Update();
     std::cout << "Done reading input image." << std::endl;
-    
+
     caster->SetInput( reader->GetOutput() );
     std::cout << "Casting input image to float..." << std::endl;
     caster->Update();
@@ -285,27 +285,27 @@ void StatisticsOnImage(
         numberOfBins,
         histogramOutputFileName,
         select );
-        
+
   } // end scalar images
   else
   {
     typename VectorReaderType::Pointer reader = VectorReaderType::New();
-    
+
     std::cout << "InputImage is a vector image." << std::endl;
     std::cout << "Statistics are computed on the magnitude of the vectors." << std::endl;
-    
+
     reader->SetFileName( inputFileName.c_str() );
     std::cout << "Reading input image..." << std::endl;
     reader->Update();
     std::cout << "Done reading input image." << std::endl;
 
     typename MagnitudeFilterType::Pointer magnitudeFilter = MagnitudeFilterType::New();
-    
+
     magnitudeFilter->SetInput( reader->GetOutput() );
     std::cout << "Computing magnitude image..." << std::endl;
     magnitudeFilter->Update();
     std::cout << "Done computing magnitude image." << std::endl;
-    
+
     /** Call the generic ComputeStatistics function */
     ComputeStatistics<
       InternalImageType,

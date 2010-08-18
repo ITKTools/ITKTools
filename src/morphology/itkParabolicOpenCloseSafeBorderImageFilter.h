@@ -80,7 +80,7 @@ public:
   {
     return(this->m_MorphFilt->GetScale());
   }
-  
+
 
   void SetUseImageSpacing(bool B)
   {
@@ -95,14 +95,14 @@ public:
     return(this->m_MorphFilt->GetUseImageSpacing());
   }
   itkBooleanMacro(UseImageSpacing);
-  
+
 
   itkSetMacro(SafeBorder, bool);
   itkGetConstReferenceMacro(SafeBorder, bool);
   itkBooleanMacro(SafeBorder);
   // should add the Get methods
 
-  
+
   /** ParabolicOpenCloseImageFilter must forward the Modified() call to its internal filters */
   virtual void Modified() const;
 
@@ -124,8 +124,8 @@ protected:
     m_SafeBorder = true;
   }
   virtual ~ParabolicOpenCloseSafeBorderImageFilter() {};
-  
-  
+
+
 private:
   ParabolicOpenCloseSafeBorderImageFilter(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented

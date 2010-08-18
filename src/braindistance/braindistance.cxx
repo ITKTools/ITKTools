@@ -49,7 +49,7 @@ int main( int argc, char ** argv )
   /** Get arguments (mandatory): input deformation field */
   std::string inputFileName = "";
   bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
-  
+
   /** Get arguments (mandatory): input deformation field */
   std::string maskFileName = "";
   bool retmask = parser->GetCommandLineArgument( "-mask", maskFileName );
@@ -65,7 +65,7 @@ int main( int argc, char ** argv )
   {
     retout = false;
   }
-  
+
   /** Check if the required arguments are given. */
   if ( !retin )
   {
@@ -83,7 +83,7 @@ int main( int argc, char ** argv )
       << std::endl;
     return 1;
   }
-  
+
   /** Determine image properties. */
   std::string ComponentTypeIn = "float";
   std::string PixelType; //we don't use this
@@ -129,7 +129,7 @@ int main( int argc, char ** argv )
     std::cerr << "Caught ITK exception: " << e << std::endl;
     return 1;
   }
-    
+
   /** End program. */
   return 0;
 
@@ -141,16 +141,16 @@ int main( int argc, char ** argv )
 /** Function that does (x-b)^2 */
 namespace itk
 {
-  namespace Function {  
-  
+  namespace Function {
+
   template< class TInput, class TOutput = TInput>
   class SubtractSquare
   {
   public:
     typedef typename NumericTraits<TInput>::RealType RealType;
 
-    SubtractSquare() 
-    { 
+    SubtractSquare()
+    {
       this->m_ScalarToSubtract = itk::NumericTraits<RealType>::Zero;
     }
     ~SubtractSquare() {}
@@ -215,7 +215,7 @@ void ComputeBrainDistance(
   typedef itk::Vector<InputComponentType, Dimension>      InputPixelType;
   typedef unsigned char                                   MaskPixelType;
   typedef float                                           InternalPixelType;
-    
+
   typedef itk::Image< InputPixelType, Dimension >         InputImageType;
   typedef itk::Image< MaskPixelType, Dimension >          MaskImageType;
   typedef itk::Image< InternalPixelType, Dimension >      InternalImageType;
@@ -223,33 +223,33 @@ void ComputeBrainDistance(
   typedef itk::ImageFileReader< InputImageType >          InputReaderType;
   typedef itk::ImageFileReader< MaskImageType >           MaskReaderType;
 
-  typedef itk::ImageRegionIteratorWithIndex< 
+  typedef itk::ImageRegionIteratorWithIndex<
     InputImageType >                                      IteratorType;
   typedef InputImageType::IndexType                       IndexType;
   typedef InputImageType::PointType                       PointType;
   typedef InputImageType::RegionType                      RegionType;
   typedef RegionType::SizeType                            SizeType;
-  
+
   typedef itk::DisplacementFieldJacobianDeterminantFilter<
-    InputImageType, InternalPixelType, InternalImageType> JacobianFilterType;  
+    InputImageType, InternalPixelType, InternalImageType> JacobianFilterType;
   typedef itk::DeformationFieldBendingEnergyFilter<
-    InputImageType, InternalPixelType, InternalImageType> BendingEnergyFilterType;  
-  
+    InputImageType, InternalPixelType, InternalImageType> BendingEnergyFilterType;
+
   typedef itk::BinaryThresholdImageFilter<
     MaskImageType, MaskImageType >                        ThresholderType;
   typedef itk::LabelStatisticsImageFilter<
     InternalImageType, MaskImageType >                    StatFilterType;
   typedef itk::StatisticsImageFilter< MaskImageType >     MaximumComputerType;
 
-  typedef itk::RegionOfInterestImageFilter< 
+  typedef itk::RegionOfInterestImageFilter<
     InternalImageType, InternalImageType >                JacobianCropFilterType;
-  typedef itk::RegionOfInterestImageFilter< 
+  typedef itk::RegionOfInterestImageFilter<
     MaskImageType, MaskImageType >                        MaskCropFilterType;
-  
+
   typedef itk::Function::SubtractSquare<
     InternalPixelType >                                   SubtractSquareFunctionType;
   typedef itk::UnaryFunctorImageFilter<
-    InternalImageType, InternalImageType, 
+    InternalImageType, InternalImageType,
      SubtractSquareFunctionType >                         SubtractSquareFilterType;
 
   typedef itk::IntensityWindowingImageFilter<
@@ -270,7 +270,7 @@ void ComputeBrainDistance(
   StatFilterType::Pointer statFilterBrainMask = StatFilterType::New();
   StatFilterType::Pointer statFilterLabels = StatFilterType::New();
   StatFilterType::Pointer statFilterLabelsSpecial = StatFilterType::New();
-  MaximumComputerType::Pointer maximumComputer  = MaximumComputerType::New(); 
+  MaximumComputerType::Pointer maximumComputer  = MaximumComputerType::New();
   SubtractSquareFilterType::Pointer subsqFilter = SubtractSquareFilterType::New();
   WindowFilterType::Pointer windowFilter = WindowFilterType::New();
   LogFilterType::Pointer logFilter = LogFilterType::New();
@@ -284,18 +284,18 @@ void ComputeBrainDistance(
   else
   {
     jacobianFilter = BendingEnergyFilterType::New();
-  }  
-  
+  }
+
   /** Read image. */
   std::cout << "Reading input image..." << std::endl;
   inputReader->SetFileName( inputFileName );
   inputImage = inputReader->GetOutput();
   inputImage->Update();
-  
-  /** Compute the 'jacobian' (or bending energy) and crop */  
+
+  /** Compute the 'jacobian' (or bending energy) and crop */
   std::cout << "Computing jacobian image..." << std::endl;
-  jacobianFilter->SetUseImageSpacingOn();    
-  jacobianFilter->SetInput( inputImage );  
+  jacobianFilter->SetUseImageSpacingOn();
+  jacobianFilter->SetInput( inputImage );
   jacobianFilter->UpdateLargestPossibleRegion();
   RegionType oldregion = jacobianFilter->GetOutput()->GetLargestPossibleRegion();
   SizeType oldsize = oldregion.GetSize();
@@ -309,11 +309,11 @@ void ComputeBrainDistance(
     newindex[d] = oldindex[d] + 1;
   }
   newregion.SetIndex( newindex);
-  newregion.SetSize( newsize );  
-  jacobianCropFilter->SetRegionOfInterest( newregion );    
-  jacobianCropFilter->SetInput( jacobianFilter->GetOutput() );  
+  newregion.SetSize( newsize );
+  jacobianCropFilter->SetRegionOfInterest( newregion );
+  jacobianCropFilter->SetInput( jacobianFilter->GetOutput() );
   jacobianCropFilter->Update();
-    
+
   const double maxJac = 3.0;
   if ( method ==2 )
   {
@@ -332,15 +332,15 @@ void ComputeBrainDistance(
     /** Do nothing */
     jacobian = jacobianCropFilter->GetOutput();
   }
-    
+
   /** Read the label mask and crop */
   std::cout << "Reading label mask image..." << std::endl;
   maskReader->SetFileName( maskFileName );
   maskReader->Update();
   maskCropFilter->SetRegionOfInterest( newregion );
-  maskCropFilter->SetInput( maskReader->GetOutput() );  
-  labelMask = maskCropFilter->GetOutput();  
-  labelMask->Update();  
+  maskCropFilter->SetInput( maskReader->GetOutput() );
+  labelMask = maskCropFilter->GetOutput();
+  labelMask->Update();
 
   /** Generate brain mask by thresholding at 0 (assumes Hammer atlas) */
   std::cout << "Thresholding label image..." << std::endl;
@@ -383,9 +383,9 @@ void ComputeBrainDistance(
   statFilterLabels->SetInput( jacobian );
   statFilterLabels->SetLabelInput( labelMask );
   statFilterLabels->UseHistogramsOff();
-  statFilterLabels->Update();  
+  statFilterLabels->Update();
   std::vector<double> mu_i( maxLabelNr + 1, 0.0);
-  std::vector<double> sigma_i( maxLabelNr + 1, 0.0); 
+  std::vector<double> sigma_i( maxLabelNr + 1, 0.0);
   for ( MaskPixelType i = 0; i <= maxLabelNr; ++i )
   {
     if ( statFilterLabels->HasLabel( i ) )
@@ -398,7 +398,7 @@ void ComputeBrainDistance(
       /** Some bogus value which will never occur */
       mu_i[ i ] = -1000.0;
       sigma_i[ i ] = -1000.0;
-    }   
+    }
   }
 
   /** Compute (Jac - mu_tot)^2 image */
@@ -406,27 +406,27 @@ void ComputeBrainDistance(
   subsqFilter->GetFunctor().SetScalarToSubtract( mu_tot );
   subsqFilter->SetInput( jacobian );
   subsqFilter->Update();
-  
+
   /** Compute sigma_i,tot for each segment_i */
   std::cout << "Compute sigma_i,tot = sqrt[ mean[ ( jacobian - mu_tot )^2 ] ] "
     << "per segment_i... " << std::endl;
   statFilterLabelsSpecial->SetInput( subsqFilter->GetOutput() );
   statFilterLabelsSpecial->SetLabelInput( labelMask );
   statFilterLabelsSpecial->UseHistogramsOff();
-  statFilterLabelsSpecial->Update();  
-  std::vector<double> sigma_itot( maxLabelNr + 1, 0.0); 
+  statFilterLabelsSpecial->Update();
+  std::vector<double> sigma_itot( maxLabelNr + 1, 0.0);
   for ( MaskPixelType i = 0; i <= maxLabelNr; ++i )
   {
     if ( statFilterLabelsSpecial->HasLabel( i ) )
     {
-      sigma_itot[ i ] = vcl_sqrt( statFilterLabelsSpecial->GetMean( i ) );      
+      sigma_itot[ i ] = vcl_sqrt( statFilterLabelsSpecial->GetMean( i ) );
     }
     else
     {
       /** Some bogus value which will never occur */
       sigma_itot[ i ] = -1000.0;
-    }   
-  }  
+    }
+  }
 
   /** Write results to files */
   std::cout << "Write results to files" << std::endl;
@@ -450,7 +450,7 @@ void ComputeBrainDistance(
   musigmaperlabel.close();
 
   std::cout << "Ready!" << std::endl;
-   
+
 } // end ComputeBrainDistance()
 
 
@@ -468,7 +468,7 @@ void PrintHelp()
   std::cout << "  -mask    maskFileName: the name of the label image (deformed HAMMER atlas)\n";
   std::cout << "  [-m]     method: 0 (jacobian), 1 (bending energy), or 2 (log(jacobian)); default: 0.\n";
   std::cout << "Supported: -in: 3D vector of floats, 3 elements per vector; "
-    << "-mask: 3D unsigned char or anything that is valid after casting to unsigned char\n";  
+    << "-mask: 3D unsigned char or anything that is valid after casting to unsigned char\n";
   std::cout << std::endl;
 
 } // end PrintHelp()

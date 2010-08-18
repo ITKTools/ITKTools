@@ -82,15 +82,15 @@ int main( int argc, char ** argv )
 
   /** Check for vector images. */
   if ( NumberOfComponents > 1 )
-  { 
+  {
     std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
     std::cerr << "Vector images are not supported." << std::endl;
-    return 1; 
+    return 1;
   }
 
   /** Get rid of the possible "_" in ComponentType. */
   ReplaceUnderscoreWithSpace( ComponentTypeIn );
-  
+
   /** Run the program. */
   bool supported = false;
   try
@@ -126,7 +126,7 @@ int main( int argc, char ** argv )
       << std::endl;
     return 1;
   }
-  
+
   /** End program. */
   return 0;
 
@@ -150,7 +150,7 @@ void InvertIntensity( const std::string & inputFileName,
   typedef itk::StatisticsImageFilter< InputImageType >      StatisticsFilterType;
   typedef typename StatisticsFilterType::RealType                   RealType;
   typedef itk::InvertIntensityImageFilter< InputImageType > InvertIntensityFilterType;
-  
+
   /** Create reader. */
   typename ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName( inputFileName.c_str() );

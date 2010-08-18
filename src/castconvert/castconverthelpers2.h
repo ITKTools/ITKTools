@@ -207,7 +207,7 @@ int GetFileNameFromDICOMDirectory(
       + " in directory " + inputDirectoryName + ".";
     return 1;
   }
-  
+
   /** Get a name of a 2D image. */
   fileName = fileNames[ 0 ];
 

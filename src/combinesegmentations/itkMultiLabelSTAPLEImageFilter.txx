@@ -9,8 +9,8 @@ Version:   $Revision: 1.1 $
 Copyright (c) 2002 Insight Consortium. All rights reserved.
 See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-This software is distributed WITHOUT ANY WARRANTY; without even 
-the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+This software is distributed WITHOUT ANY WARRANTY; without even
+the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -32,9 +32,9 @@ namespace itk
     ::PrintSelf(std::ostream& os, Indent indent) const
   {
     Superclass::PrintSelf(os,indent);
-    os << indent << "m_HasLabelForUndecidedPixels = " 
+    os << indent << "m_HasLabelForUndecidedPixels = "
       << this->m_HasLabelForUndecidedPixels << std::endl;
-    os << indent << "m_LabelForUndecidedPixels = " 
+    os << indent << "m_LabelForUndecidedPixels = "
       << this->m_LabelForUndecidedPixels << std::endl;
   }
 
@@ -115,7 +115,7 @@ namespace itk
     {
       this->m_ConfusionMatrixArray[k].Fill( 0.0 );
 
-      InputConstIteratorType in = 
+      InputConstIteratorType in =
         InputConstIteratorType( this->GetInput( k ), votingOutput->GetRequestedRegion() );
 
       for ( out.GoToBegin(); ! out.IsAtEnd(); ++out, ++in )
@@ -160,7 +160,7 @@ namespace itk
     {
       if ( this->m_PriorProbabilities.GetSize() < this->m_TotalLabelCount )
       {
-        itkExceptionMacro ("m_PriorProbabilities array has wrong size " << m_PriorProbabilities << "; should be at least " << 1+this->m_TotalLabelCount );      
+        itkExceptionMacro ("m_PriorProbabilities array has wrong size " << m_PriorProbabilities << "; should be at least " << 1+this->m_TotalLabelCount );
       }
     }
     else
@@ -206,7 +206,7 @@ namespace itk
     this->InitializeConfusionMatrixArrayFromVoting();
 
     // test existing or allocate and initialize new array with prior class
-    // probabilities  
+    // probabilities
     this->InitializePriorProbabilities();
 
     // Allocate the output image.
@@ -228,8 +228,8 @@ namespace itk
     // allocate array for pixel class weights
     WeightsType* W = new WeightsType[ this->m_TotalLabelCount ];
 
-    for ( unsigned int iteration = 0; 
-      (!this->m_HasMaximumNumberOfIterations) || 
+    for ( unsigned int iteration = 0;
+      (!this->m_HasMaximumNumberOfIterations) ||
       (iteration < this->m_MaximumNumberOfIterations);
     ++iteration )
     {
@@ -286,9 +286,9 @@ namespace itk
       for ( unsigned int k = 0; k < numberOfInputs; ++k )
       {
         // compute sum over all output classifications
-        for ( OutputPixelType ci = 0; ci < this->m_TotalLabelCount; ++ci ) 
+        for ( OutputPixelType ci = 0; ci < this->m_TotalLabelCount; ++ci )
         {
-          WeightsType sumW = this->m_UpdatedConfusionMatrixArray[k][0][ci]; 
+          WeightsType sumW = this->m_UpdatedConfusionMatrixArray[k][0][ci];
           for ( InputPixelType j = 1; j < 1+this->m_TotalLabelCount; ++j )
             sumW += this->m_UpdatedConfusionMatrixArray[k][j][ci];
 
@@ -309,21 +309,21 @@ namespace itk
           for ( OutputPixelType ci = 0; ci < this->m_TotalLabelCount; ++ci )
           {
             const WeightsType thisParameterUpdate =
-              fabs( this->m_UpdatedConfusionMatrixArray[k][j][ci] -  
+              fabs( this->m_UpdatedConfusionMatrixArray[k][j][ci] -
               this->m_ConfusionMatrixArray[k][j][ci] );
 
             maximumUpdate = vnl_math_max( maximumUpdate, thisParameterUpdate );
 
-            this->m_ConfusionMatrixArray[k][j][ci] = 
+            this->m_ConfusionMatrixArray[k][j][ci] =
               this->m_UpdatedConfusionMatrixArray[k][j][ci];
           }
 
-          this->InvokeEvent( IterationEvent() );    
+          this->InvokeEvent( IterationEvent() );
           if( this->GetAbortGenerateData() )
           {
-            this->ResetPipeline(); 
+            this->ResetPipeline();
             // fake this to cause termination; we could really just break
-            maximumUpdate = 0; 
+            maximumUpdate = 0;
           }
 
           // if all confusion matrix parameters changes by less than the defined
@@ -376,10 +376,10 @@ namespace itk
       }
 
       out.Set( winningLabel );
-    }  
+    }
 
     delete[] W;
-    delete[] it;  
+    delete[] it;
   }
 
 } // end namespace itk

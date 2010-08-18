@@ -13,7 +13,7 @@ namespace itk
   /**
    * ********************* Constructor ****************************
    */
-  
+
   template< class TInputImage, class TOutputImage >
     PCAImageToImageFilter< TInputImage, TOutputImage >
     ::PCAImageToImageFilter( void )
@@ -26,7 +26,7 @@ namespace itk
     this->m_EigenValues.set_size( 0 );
     this->m_NormalisedEigenValues.set_size( 0 );
     this->m_PrincipalComponents.set_size( 0, 0 );
-  
+
     this->m_NumberOfPixels = 0;
     this->m_NumberOfFeatureImages = 0;
     this->m_NumberOfPrincipalComponentsRequired = 0;
@@ -51,7 +51,7 @@ namespace itk
         this->GetOutput( i )->SetRequestedRegionToLargestPossibleRegion();
       }
     }
-  
+
   } // end EnlargeOutputRequestedRegion()
 
 
@@ -80,12 +80,12 @@ namespace itk
       {
         if ( this->GetInput( i ) )
         {
-          typename TInputImage::RegionType requestedRegion = 
+          typename TInputImage::RegionType requestedRegion =
             this->GetInput( 0 )->GetLargestPossibleRegion();
 
           typename TInputImage::RegionType largestRegion =
             this->GetInput( i )->GetLargestPossibleRegion();
-          
+
           if ( !largestRegion.IsInside( requestedRegion ) )
           {
             itkExceptionMacro( << "LargestPossibleRegion of input " << i
@@ -99,7 +99,7 @@ namespace itk
         }
       }
     }
-  
+
   } // end GenerateInputRequestedRegion()
 
 
@@ -116,7 +116,7 @@ namespace itk
     {
       this->m_NumberOfPrincipalComponentsRequired = n;
       this->Modified();
-      
+
       /** Create enough outputs. */
       this->SetAndCreateOutputs( n );
     }
@@ -161,7 +161,7 @@ namespace itk
   /**
    * ********************* SetNumberOfFeatureImages ****************************
    */
-  
+
   template< class TInputImage, class TOutputImage >
     void
     PCAImageToImageFilter< TInputImage, TOutputImage >
@@ -184,7 +184,7 @@ namespace itk
    */
 
   template< class TInputImage, class TOutputImage >
-    void 
+    void
     PCAImageToImageFilter< TInputImage, TOutputImage >
     ::GenerateData( void )
   {
@@ -192,9 +192,9 @@ namespace itk
     this->PerformPCA();
 
     /** Allocate memory for each output. ??Why here? */
-    unsigned int numberOfOutputs = 
+    unsigned int numberOfOutputs =
       static_cast<unsigned int>( this->GetNumberOfOutputs() );
-    
+
     for ( unsigned int i = 0; i < numberOfOutputs; ++i )
     {
       OutputImagePointer output = this->GetOutput( i );
@@ -216,7 +216,7 @@ namespace itk
       OutputImageIterator iter( this->GetOutput( i ), this->GetOutput( i )->GetRequestedRegion() );
       iter.GoToBegin();
       unsigned int pix = 0;
-      
+
       /** Fill this output with a principal component. */
       while ( !iter.IsAtEnd() )
       {
@@ -228,7 +228,7 @@ namespace itk
 
     /** Maybe remove principal components? */
     //this->m_PrincipalComponents.set_size( 0, 0 );
-    
+
   } // end GenerateData()
 
 
@@ -237,7 +237,7 @@ namespace itk
    */
 
   template< class TInputImage, class TOutputImage >
-    void 
+    void
     PCAImageToImageFilter< TInputImage, TOutputImage >
     ::PerformPCA( void )
   {
@@ -249,7 +249,7 @@ namespace itk
     this->CenterFeatureImages();
     this->CalculateCovarianceMatrix();
     this->PerformEigenAnalysis();
-  
+
   } // end PerformPCA()
 
 
@@ -258,7 +258,7 @@ namespace itk
    */
 
   template< class TInputImage, class TOutputImage >
-    void 
+    void
     PCAImageToImageFilter< TInputImage, TOutputImage >
     ::CheckNumberOfOutputs( void )
   {
@@ -273,7 +273,7 @@ namespace itk
     else
     {
       /** In this case the number of required PC's have been
-       * specified. 
+       * specified.
        */
       unsigned int numberOfValidOutputs = vnl_math_min(
         this->m_NumberOfFeatureImages,

@@ -107,7 +107,7 @@ protected:
   ParabolicOpenCloseImageFilter();
   virtual ~ParabolicOpenCloseImageFilter() {};
   void PrintSelf(std::ostream& os, Indent indent) const;
-  
+
   /** Generate Data */
   void GenerateData( void );
   int SplitRequestedRegion(int i, int num, OutputImageRegionType& splitRegion);
@@ -115,9 +115,9 @@ protected:
 //  virtual void GenerateInputRequestedRegion() throw(InvalidRequestedRegionError);
   // Override since the filter produces the entire dataset.
   void EnlargeOutputRequestedRegion(DataObject *output);
-  
+
   typedef typename std::vector<ScalarRealType> LineBufferType;
-  
+
 private:
   ParabolicOpenCloseImageFilter(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented

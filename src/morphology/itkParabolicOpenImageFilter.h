@@ -8,14 +8,14 @@ namespace itk
 {
 /**
  * \class ParabolicOpenImageFilter
- * \brief Class for morphological opening 
+ * \brief Class for morphological opening
  * operations  with parabolic structuring elements.
  *
  * This filter provides options for padded borders
  *
  * This filter is threaded.
  *
- * \sa itkParabolicOpenCloseImageFilter 
+ * \sa itkParabolicOpenCloseImageFilter
  *
  * \author Richard Beare, Department of Medicine, Monash University,
  * Australia.  <Richard.Beare@med.monash.edu.au>
@@ -66,12 +66,12 @@ protected:
   ParabolicOpenImageFilter(){};
   virtual ~ParabolicOpenImageFilter() {};
 //   void PrintSelf(std::ostream& os, Indent indent) const;
-  
+
 private:
   ParabolicOpenImageFilter(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
 
-  
+
 };
 
 } // end namespace itk

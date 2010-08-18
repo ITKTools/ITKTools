@@ -97,10 +97,10 @@ int main( int argc, char **argv )
 
   /** Check for vector images. */
   if ( NumberOfComponents > 1 )
-  { 
+  {
     std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
     std::cerr << "Vector images are not supported." << std::endl;
-    return 1; 
+    return 1;
   }
 
   /** The default output is equal to the input, but can be overridden by
@@ -151,7 +151,7 @@ int main( int argc, char **argv )
       << std::endl;
     return 1;
   }
-  
+
   /** End program. */
   return 0;
 
@@ -204,7 +204,7 @@ void PerformPCA(
 
   /** Do the PCA analysis. */
   pcaEstimator->Update();
-  
+
   /** Get eigenvalues and vectors, and print it to screen. */
   //pcaEstimator->Print( std::cout );
   VectorOfDoubleType vec = pcaEstimator->GetEigenValues();

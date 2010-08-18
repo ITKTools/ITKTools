@@ -54,7 +54,7 @@ int main( int argc, char *argv[] )
   while ( !it.IsAtEnd() )
   {
     if ( it.Value() ) counter++;
-    /** Increase iterator. */   
+    /** Increase iterator. */
     ++it;
   } // end while
 

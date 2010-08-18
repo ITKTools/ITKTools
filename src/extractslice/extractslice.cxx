@@ -76,13 +76,13 @@ int main( int argc, char ** argv )
   {
     return 1;
   }
-  
+
   /** Let the user overrule this. */
   bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
-  
+
   /** Error checking. */
   if ( NumberOfComponents > 1 )
-  { 
+  {
     std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
     std::cerr << "Vector images are not supported!" << std::endl;
     return 1;
@@ -237,7 +237,7 @@ void PrintHelp( void )
   std::cout << "           default: automatically determined from the first input image." << std::endl;
   std::cout << "  -sn      slice number" << std::endl;
   std::cout << "  [-d]     the dimension from which a slice is extracted, default the z dimension" << std::endl;
-  std::cout << "Supported pixel types: (unsigned) char, (unsigned) short, float.\n" << std::endl; 
+  std::cout << "Supported pixel types: (unsigned) char, (unsigned) short, float.\n" << std::endl;
 
 } // end PrintHelp
 

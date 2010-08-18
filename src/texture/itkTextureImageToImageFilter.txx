@@ -171,7 +171,7 @@ TextureImageToImageFilter< TInputImage, TOutputImage >
  */
 
 template< class TInputImage, class TOutputImage >
-void 
+void
 TextureImageToImageFilter< TInputImage, TOutputImage >
 ::BeforeThreadedGenerateData( void )
 {
@@ -198,7 +198,7 @@ TextureImageToImageFilter< TInputImage, TOutputImage >
  */
 
 template< class TInputImage, class TOutputImage >
-void 
+void
 TextureImageToImageFilter< TInputImage, TOutputImage >
 ::ThreadedGenerateData( const OutputImageRegionType & regionForThread, int threadId )
 {
@@ -306,7 +306,7 @@ TextureImageToImageFilter< TInputImage, TOutputImage >
   }
 
   /** Allocate memory for each output. */
-  unsigned int numberOfOutputs = 
+  unsigned int numberOfOutputs =
     static_cast<unsigned int>( this->GetNumberOfOutputs() );
   for ( unsigned int i = 0; i < numberOfOutputs; ++i )
   {

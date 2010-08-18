@@ -36,7 +36,7 @@ if ( ComponentType == #type && Dimension == dim ) \
  *   InputImageType,
  *   itk::Functor::AND<InputPixelType > ANDFilterType;
  * logicalFilter = (ANDFilterType::New()).GetPointer();
- * 
+ *
  */
 #define InstantiateUnaryLogicalFilter( name ) \
 typedef itk::UnaryFunctorImageFilter< \
@@ -57,14 +57,14 @@ if ( logicalOperatorName == #name ) \
 { \
   logicalFilter = ( name##FilterType::New() ).GetPointer(); \
 }
-  
+
 
 /**
  * ******************* LogicalOps *******************
  */
 
 template< class InputImageType >
-void LogicalImageOperator( 
+void LogicalImageOperator(
   const std::string & inputFileName1,
   const std::string & inputFileName2,
   const std::string & outputFileName,
@@ -84,7 +84,7 @@ void LogicalImageOperator(
   /** A pair indicating which functor should be used for an operator,
    * and whether the arguments should be swapped.
    */
-  typedef std::pair< std::string, bool >              SimpleOperatorType; 
+  typedef std::pair< std::string, bool >              SimpleOperatorType;
   typedef std::map<std::string, SimpleOperatorType>   SimplifyMapType;
 
   /** Declarations. */
@@ -96,26 +96,26 @@ void LogicalImageOperator(
 
   /** Available SimpleOperatorTypes are defined in itkLogicalFunctors.h:
    * AND, OR, XOR, NOT_AND, NOT_OR, NOT_XOR, ANDNOT, ORNOT
-   * 
+   *
    * The Simplification map (simpmap) defines for every possible logical
    * operation of the form
    *   [not]( ([not] A) [{&,|,^} ([not] B])] )
    * a simplified version.
-   * 
+   *
    * example1: A ^ (!B) = XORNOT(A,B) = NOT_XOR(A,B) = ! (A ^ B)
-   * example2: (!A) & B = NOTAND(A,B) = ANDNOT(B,A) = B & (!A)  
+   * example2: (!A) & B = NOTAND(A,B) = ANDNOT(B,A) = B & (!A)
    **/
-  
+
   simpmap["AND"]        = SimpleOperatorType("AND", false); // SimpleOperatorType
   simpmap["OR"]         = SimpleOperatorType("OR", false); // SimpleOperatorType
   simpmap["XOR"]        = SimpleOperatorType("XOR", false); // SimpleOperatorType
   simpmap["NOT"]        = SimpleOperatorType("NOT", false); // SimpleOperatorType
   simpmap["EQUAL"]      = SimpleOperatorType("EQUAL", false); // SimpleOperatorType
-  
+
   simpmap["ANDNOT"]     = SimpleOperatorType("ANDNOT", false); // SimpleOperatorType
   simpmap["ORNOT"]      = SimpleOperatorType("ORNOT", false); // SimpleOperatorType
   simpmap["XORNOT"]     = SimpleOperatorType("NOT_XOR", false); // see example1
-  
+
   simpmap["NOTAND"]     = SimpleOperatorType("ANDNOT", true); // see example2
   simpmap["NOTOR"]      = SimpleOperatorType("ORNOT", true);
   simpmap["NOTXOR"]     = SimpleOperatorType("NOT_XOR", false);
@@ -129,10 +129,10 @@ void LogicalImageOperator(
   simpmap["NOT_XOR"]    = SimpleOperatorType("NOT_XOR", false); // SimpleOperatorType
   simpmap["NOT_NOT"]    = SimpleOperatorType("DUMMY", false); // SimpleOperatorType
 
-  simpmap["NOT_ANDNOT"] = SimpleOperatorType("ORNOT", true); 
-  simpmap["NOT_ORNOT"]  = SimpleOperatorType("ANDNOT", true); 
+  simpmap["NOT_ANDNOT"] = SimpleOperatorType("ORNOT", true);
+  simpmap["NOT_ORNOT"]  = SimpleOperatorType("ANDNOT", true);
   simpmap["NOT_XORNOT"] = SimpleOperatorType("XOR", false);
-  
+
   simpmap["NOT_NOTAND"] = SimpleOperatorType("ORNOT", false);
   simpmap["NOT_NOTOR"]  = SimpleOperatorType("ANDNOT", false);
   simpmap["NOT_NOTXOR"] = SimpleOperatorType("XOR", false);
@@ -172,11 +172,11 @@ void LogicalImageOperator(
       {
         withswapping = " with swapped arguments";
       }
-      std::cout 
+      std::cout
         << "The desired logical operation, "
-        << ops 
+        << ops
         << ", is simplified to the "
-        << logicalOperator.first 
+        << logicalOperator.first
         << " operation"
         << withswapping
         << "."
@@ -222,10 +222,10 @@ void LogicalImageOperator(
     }
   }
 
-  std::cout 
-    << "Performing logical operation, " 
+  std::cout
+    << "Performing logical operation, "
     << logicalOperatorName
-    << ", on input image(s)..." 
+    << ", on input image(s)..."
     << std::endl;
   logicalFilter->Update();
   std::cout << "Done performing logical operation." << std::endl;
@@ -255,15 +255,15 @@ void PrintHelp( void )
             << "           notation:\n"
             << "             [NOT_][NOT][{AND,OR,XOR}[NOT]]\n"
             << "           notation examples:\n"
-            << "             ANDNOT = A & (!B)\n" 
-            << "             NOTAND = (!A) & B\n" 
-            << "             NOTANDNOT = (!A) & (!B)\n" 
-            << "             NOT_NOTANDNOT = !( (!A) & (!B) )\n" 
+            << "             ANDNOT = A & (!B)\n"
+            << "             NOTAND = (!A) & B\n"
+            << "             NOTANDNOT = (!A) & (!B)\n"
+            << "             NOT_NOTANDNOT = !( (!A) & (!B) )\n"
             << "             NOT_AND = !(A & B)\n"
-            << "             OR = A | B\n" 
-            << "             XOR = A ^ B\n" 
-            << "             NOT = !A \n" 
-            << "             NOT_NOT = A \n" 
+            << "             OR = A | B\n"
+            << "             XOR = A ^ B\n"
+            << "             NOT = !A \n"
+            << "             NOT_NOT = A \n"
             << "           Internally this expression is simplified.\n"
             << std::endl;
   std::cout << "  [-arg]   argument, necessary for some ops" << std::endl;

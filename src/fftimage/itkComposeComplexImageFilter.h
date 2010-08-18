@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -33,9 +33,9 @@
 
 namespace itk
 {
-  
-namespace Function {  
-  
+
+namespace Function {
+
 template< class TInput, class TOutputComponentType >
 class ComposeComplex
 {
@@ -51,14 +51,14 @@ public:
   {
     return !(*this != other);
   }
-  inline OutputType operator()(  const TInput & s1, 
+  inline OutputType operator()(  const TInput & s1,
                                  const TInput & s2 )
   {
     OutputType c( static_cast<TOutputComponentType>( s1 ),
       static_cast<TOutputComponentType>( s2 ) );
     return c;
   }
-}; 
+};
 }
 
 template < typename TInputImage,
@@ -83,7 +83,7 @@ public:
   typedef SmartPointer<const Self>    ConstPointer;
 
   typedef typename Superclass::OutputImageType OutputImageType;
-  
+
   /** Method for creation through the object factory. */
   itkNewMacro( Self );
 

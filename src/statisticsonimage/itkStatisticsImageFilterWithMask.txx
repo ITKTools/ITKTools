@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -56,7 +56,7 @@ StatisticsImageFilter<TInputImage>
   this->GetSigmaOutput()->Set( NumericTraits<RealType>::max() );
   this->GetVarianceOutput()->Set( NumericTraits<RealType>::max() );
   this->GetSumOutput()->Set( NumericTraits<RealType>::Zero );
-  
+
   this->m_Mask = 0;
 }
 
@@ -242,7 +242,7 @@ StatisticsImageFilter<TInputImage>
   m_ThreadSum.SetSize(numberOfThreads);
   m_ThreadMin.SetSize(numberOfThreads);
   m_ThreadMax.SetSize(numberOfThreads);
-  
+
   // Initialize the temporaries
   m_Count.Fill(NumericTraits<long>::Zero);
   m_ThreadSum.Fill(NumericTraits<RealType>::Zero);
@@ -253,7 +253,7 @@ StatisticsImageFilter<TInputImage>
   // Call the IsInside function from the Mask. This function internally computes
   // the inverse of a MatrixOffsetTransform, which uses vnl_svd. This function
   // is not thread-safe. However, if the GetInverse() has been computed once, it
-  // is saved for later use, and, consequently, the vnl_svd is not used anymore 
+  // is saved for later use, and, consequently, the vnl_svd is not used anymore
   // when IsInside is called later on.
   if (this->m_Mask)
   {
@@ -272,7 +272,7 @@ StatisticsImageFilter<TInputImage>
   int i;
   long count;
   RealType sumOfSquares;
-    
+
   int numberOfThreads = this->GetNumberOfThreads();
 
   PixelType minimum;
@@ -281,7 +281,7 @@ StatisticsImageFilter<TInputImage>
   RealType  sigma;
   RealType  variance;
   RealType  sum;
-  
+
   sum = sumOfSquares = NumericTraits<RealType>::Zero;
   count = 0;
 
@@ -327,7 +327,7 @@ template<class TInputImage>
 void
 StatisticsImageFilter<TInputImage>
 ::ThreadedGenerateData(const RegionType& outputRegionForThread,
-                       int threadId) 
+                       int threadId)
 {
   RealType realValue;
   PixelType value;
@@ -350,7 +350,7 @@ StatisticsImageFilter<TInputImage>
         {
         m_ThreadMax[threadId] = value;
         }
-        
+
         m_ThreadSum[threadId] += realValue;
         m_SumOfSquares[threadId] += (realValue * realValue);
         m_Count[threadId]++;
@@ -379,7 +379,7 @@ StatisticsImageFilter<TInputImage>
             {
             m_ThreadMax[threadId] = value;
             }
-            
+
             m_ThreadSum[threadId] += realValue;
             m_SumOfSquares[threadId] += (realValue * realValue);
             m_Count[threadId]++;
@@ -388,12 +388,12 @@ StatisticsImageFilter<TInputImage>
         progress.CompletedPixel();
     } // end while
   } // end else
-        
-      
+
+
 }
 
 template <class TImage>
-void 
+void
 StatisticsImageFilter<TImage>
 ::PrintSelf(std::ostream& os, Indent indent) const
 {

@@ -1,6 +1,6 @@
 #include "itkKappaStatisticBase.h"
 
-namespace itk { 
+namespace itk {
 namespace Statistics {
 
 
@@ -153,7 +153,7 @@ bool KappaStatisticBase
 
   /** Return a value. */
   return true;
-  
+
 } // end CheckObservations()
 
 

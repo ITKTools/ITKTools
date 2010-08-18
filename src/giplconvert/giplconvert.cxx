@@ -67,24 +67,24 @@ int main( int argc, char **argv )
   /** Test reader */
   typedef itk::ImageFileReader< DummyImageType >     ReaderType;
   typedef itk::GiplImageIO                            ImageIOType;
-  
+
   typedef itk::Array<unsigned int> SizeArrayType;
 
   /** Create a test imageIO object */
   ImageIOType::Pointer testImageIO = ImageIOType::New();
- 
+
   /** Create a testReader. */
   ReaderType::Pointer testReader = ReaderType::New();
   testReader->SetFileName( inputFileName.c_str() );
-  testReader->SetImageIO(testImageIO);  
-  
+  testReader->SetImageIO(testImageIO);
+
   /** Determine image properties */
   std::string ComponentType = "short";
   std::string PixelType; //we don't use this
-  unsigned int Dimension = 2;  
-  unsigned int NumberOfComponents = 1;  
+  unsigned int Dimension = 2;
+  unsigned int NumberOfComponents = 1;
   SizeArrayType imageSize;
-  
+
   /** Generate all information. */
   try
   {
@@ -95,7 +95,7 @@ int main( int argc, char **argv )
     std::cerr << "Caught ITK exception: " << e << std::endl;
     return 1;
   }
-    
+
   /** Get the component type, number of components, dimension and pixel type. */
   Dimension = testImageIO->GetNumberOfDimensions();
   NumberOfComponents = testImageIO->GetNumberOfComponents();
@@ -121,11 +121,11 @@ int main( int argc, char **argv )
     && ComponentType != "double" )
   {
     /** In this case an illegal pixeltype  is found. */
-    std::cerr 
+    std::cerr
       << "ERROR while determining image properties!"
       << "The found componenttype is \""
       << ComponentType
-      << "\", which is not supported." 
+      << "\", which is not supported."
       << std::endl;
     return 1;
   }
@@ -137,7 +137,7 @@ int main( int argc, char **argv )
   std::cout << "\tDimension:          " << Dimension << std::endl;
   std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
   std::cout << "\tSize                " << imageSize << std::endl;
-  
+
   /** Let the user overrule this */
   bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
   bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
@@ -150,12 +150,12 @@ int main( int argc, char **argv )
   }
 
   if ( NumberOfComponents > 1 )
-  { 
+  {
     std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
     std::cerr << "Vector images are not supported!" << std::endl;
-    return 1; 
+    return 1;
   }
- 
+
   /** Get rid of the possible "_" in ComponentType. */
   ReplaceUnderscoreWithSpace( ComponentType );
 
@@ -182,7 +182,7 @@ int main( int argc, char **argv )
       << std::endl;
     return 1;
   }
-  
+
   /** End program. */
   return 0;
 
@@ -207,11 +207,11 @@ void GiplConvert(
   typename ReaderType::Pointer reader = ReaderType::New();
   typename WriterType::Pointer writer = WriterType::New();
   typename ImageIOType::Pointer imageIO = ImageIOType::New();
-  
-  /** Read the image. 
+
+  /** Read the image.
    * We force a GiplImageIO, otherwise the GDCMImageIO is used which gives
-   * problems. This is the whole reason of existence of this program. 
-   * \todo Is this an ITK bug or a bug in the radiotherapy software that 
+   * problems. This is the whole reason of existence of this program.
+   * \todo Is this an ITK bug or a bug in the radiotherapy software that
    * generates bad gipls? It seems that it is an ITK (GDCM) bug.
    */
   reader->SetFileName( inputFileName.c_str() );

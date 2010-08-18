@@ -10,8 +10,8 @@ namespace itk
 {
 
 /** \class GaussianInvariantsImageFilter
- * \brief Computes the 
- * 
+ * \brief Computes the
+ *
  * \ingroup IntensityImageFilters
  * \ingroup Singlethreaded
  */
@@ -88,7 +88,7 @@ protected:
   GaussianInvariantsImageFilter();
   virtual ~GaussianInvariantsImageFilter() {};
   void PrintSelf( std::ostream& os, Indent indent ) const;
-  
+
   /** Generate Data */
   void GenerateData( void );
 
@@ -105,7 +105,7 @@ protected:
 private:
   GaussianInvariantsImageFilter(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
-  
+
   /** Member variables. */
   bool        m_NormalizeAcrossScale;
   SigmaType   m_Sigma;

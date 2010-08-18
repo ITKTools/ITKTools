@@ -20,7 +20,7 @@ ParabolicOpenCloseSafeBorderImageFilter<TInputImage, doOpen, TOutputImage>
   InputImageConstPointer inputImage;
   unsigned long Bounds[ImageDimension];
   typename TInputImage::SizeType BoundsSize;
-  if (this->m_SafeBorder) 
+  if (this->m_SafeBorder)
     {
     // need to compute some image statistics and determine the padding
     // extent. This will almost certainly be an over estimate
@@ -59,7 +59,7 @@ ParabolicOpenCloseSafeBorderImageFilter<TInputImage, doOpen, TOutputImage>
   m_MorphFilt->SetInput(inputImage);
   progress->RegisterInternalFilter(m_MorphFilt, 0.8f);
 
-  if (this->m_SafeBorder) 
+  if (this->m_SafeBorder)
     {
     // crop
     m_CropFilt->SetInput(m_MorphFilt->GetOutput());

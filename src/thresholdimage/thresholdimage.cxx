@@ -155,7 +155,7 @@ int main( int argc, char **argv )
   /** Get arguments. */
   std::string inputFileName = "";
   bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
-  
+
   std::string outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
   outputFileName += "THRESHOLDED.mhd";
   bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
@@ -259,15 +259,15 @@ int main( int argc, char **argv )
 
   /** Check for vector images. */
   if ( NumberOfComponents > 1 )
-  { 
+  {
     std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
     std::cerr << "Vector images are not supported." << std::endl;
-    return 1; 
+    return 1;
   }
 
   /** Get rid of the possible "_" in ComponentType. */
   ReplaceUnderscoreWithSpace( ComponentTypeIn );
-  
+
   /** Run the program. */
   bool supported = false;
   try
@@ -303,7 +303,7 @@ int main( int argc, char **argv )
       << std::endl;
     return 1;
   }
-  
+
   /** End program. */
   return 0;
 
@@ -331,7 +331,7 @@ void ThresholdImage(
   typedef itk::BinaryThresholdImageFilter<
     InputImageType, OutputImageType>                  ThresholderType;
   typedef itk::ImageFileWriter< OutputImageType >     WriterType;
-  
+
   /** Declarations. */
   InputPixelType lowerthreshold;
   typename ReaderType::Pointer reader = ReaderType::New();
@@ -340,7 +340,7 @@ void ThresholdImage(
 
   /** Read in the inputImage. */
   reader->SetFileName( inputFileName.c_str() );
-  
+
   /** Apply the threshold. */
   lowerthreshold = static_cast<InputPixelType>( vnl_math_max(
     static_cast<double>( itk::NumericTraits<InputPixelType>::NonpositiveMin() ),
@@ -394,7 +394,7 @@ void OtsuThresholdImage(
 
   /** Read in the inputImage. */
   reader1->SetFileName( inputFileName.c_str() );
-  
+
   /** Apply the threshold. */
   thresholder->SetNumberOfHistogramBins( bins );
   thresholder->SetInsideValue( static_cast<InputPixelType>( inside ) );
@@ -405,7 +405,7 @@ void OtsuThresholdImage(
     reader2->SetFileName( maskFileName.c_str() );
     thresholder->SetMaskImage( reader2->GetOutput() );
   }
-  
+
   /** Write the output image. */
   writer->SetInput( thresholder->GetOutput() );
   writer->SetFileName( outputFileName.c_str() );
@@ -450,7 +450,7 @@ void OtsuMultipleThresholdImage(
 
   /** Read in the inputImage. */
   reader1->SetFileName( inputFileName.c_str() );
-  
+
   /** Apply the threshold. */
   thresholder->SetInput( reader1->GetOutput() );
   thresholder->SetNumberOfHistogramBins( bins );
@@ -462,7 +462,7 @@ void OtsuMultipleThresholdImage(
 //     reader2->SetFileName( maskFileName.c_str() );
 //     thresholder->SetMaskImage( reader2->GetOutput() );
 //   }
-  
+
   /** Write the output image. */
   writer->SetInput( thresholder->GetOutput() );
   writer->SetFileName( outputFileName.c_str() );
@@ -474,7 +474,7 @@ void OtsuMultipleThresholdImage(
 // /**
 //  * ******************* AdaptiveOtsuThresholdImage *******************
 //  */
-// 
+//
 // template< class InputImageType >
 // void AdaptiveOtsuThresholdImage(
 //   const std::string & inputFileName,
@@ -488,7 +488,7 @@ void OtsuMultipleThresholdImage(
 // {
 //   /** Typedef's. */
 //   const unsigned int ImageDimension = InputImageType::ImageDimension;
-// 
+//
 //   typedef unsigned char                                 OutputPixelType;
 //   typedef itk::Image< OutputPixelType, ImageDimension > OutputImageType;
 //   typedef itk::ImageFileReader< InputImageType >        ReaderType;
@@ -496,16 +496,16 @@ void OtsuMultipleThresholdImage(
 //     InputImageType, OutputImageType>                    ThresholderType;
 //   typedef itk::ImageFileWriter< OutputImageType >       WriterType;
 //   typedef ThresholderType::InputSizeType                RadiusType;
-// 
+//
 //   /** Declarations. */
 //   typename ReaderType::Pointer reader = ReaderType::New();
 //   typename ThresholderType::Pointer thresholder = ThresholderType::New();
 //   typename WriterType::Pointer writer = WriterType::New();
 //   RadiusType Radius; Radius.Fill( radius );
-// 
+//
 //   /** Read in the inputImage. */
 //   reader->SetFileName( inputFileName.c_str() );
-// 
+//
 //   /** Apply the threshold. */
 //   thresholder->SetRadius( Radius );
 //   thresholder->SetNumberOfHistogramBins( bins );
@@ -516,12 +516,12 @@ void OtsuMultipleThresholdImage(
 //   thresholder->SetInsideValue( 1 );
 //   thresholder->SetOutsideValue( 0 );
 //   thresholder->SetInput( reader->GetOutput() );
-// 
+//
 //   /** Write the output image. */
 //   writer->SetInput( thresholder->GetOutput() );
 //   writer->SetFileName( outputFileName.c_str() );
 //   writer->Update();
-// 
+//
 // } // end AdaptiveOtsuThresholdImage()
 
 
@@ -560,7 +560,7 @@ void RobustAutomaticThresholdImage(
 
   /** Read in the inputImage. */
   reader->SetFileName( inputFileName.c_str() );
-  
+
   /** Get the gradient magnitude of the input. */
   gradientFilter->SetInput( reader->GetOutput() );
   gradientFilter->SetSigma( 1.0 );

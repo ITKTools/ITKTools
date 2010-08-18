@@ -58,7 +58,7 @@ int main( int argc, char **argv )
 
   std::vector<unsigned int> size( Dimension, 0 );
   bool retsz = parser->GetCommandLineArgument( "-sz", size );
-  
+
   std::vector<double> spacing( Dimension, 1.0 );
   bool retsp = parser->GetCommandLineArgument( "-sp", spacing );
 
@@ -167,7 +167,7 @@ int main( int argc, char **argv )
       << std::endl;
     return 1;
   }
-  
+
   /** End program. */
   return 0;
 

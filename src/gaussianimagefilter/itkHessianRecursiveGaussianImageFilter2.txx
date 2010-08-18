@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -51,10 +51,10 @@ HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
 
   this->m_DerivativeFilterA->SetOrder( DerivativeFilterAType::FirstOrder );
   this->m_DerivativeFilterA->SetNormalizeAcrossScale( this->m_NormalizeAcrossScale );
-  
+
   this->m_DerivativeFilterB->SetOrder( DerivativeFilterBType::FirstOrder );
   this->m_DerivativeFilterB->SetNormalizeAcrossScale( this->m_NormalizeAcrossScale );
-  
+
   this->m_DerivativeFilterA->SetInput( this->GetInput() );
   this->m_DerivativeFilterB->SetInput( this->m_DerivativeFilterA->GetOutput() );
 
@@ -69,7 +69,7 @@ HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
     this->m_SmoothingFilters[ i ]->SetInput(
       this->m_SmoothingFilters[ i - 1 ]->GetOutput() );
   }
-  
+
   this->m_ImageAdaptor = OutputImageAdaptorType::New();
 
   /** Initialize variables. */
@@ -82,7 +82,7 @@ HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
  * Set value of Sigma
  */
 template <typename TInputImage, typename TOutputImage>
-void 
+void
 HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
 ::SetSigma( ScalarRealType sigma )
 {
@@ -96,7 +96,7 @@ HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
  * Set value of Sigma
  */
 template <typename TInputImage, typename TOutputImage>
-void 
+void
 HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
 ::SetSigma( const SigmaType sigma )
 {
@@ -105,7 +105,7 @@ HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
   {
     this->m_Sigma = sigma;
     this->Modified();
-  
+
     for ( unsigned int i = 0; i < NumberOfSmoothingFilters; i++ )
     {
       this->m_SmoothingFilters[ i ]->SetSigma( sigma[ 0 ] );
@@ -124,7 +124,7 @@ HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
  * Set Normalize Across Scale Space
  */
 template <typename TInputImage, typename TOutputImage>
-void 
+void
 HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
 ::SetNormalizeAcrossScale( const bool arg )
 {
@@ -197,7 +197,7 @@ HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage >
   ProgressAccumulator::Pointer progress = ProgressAccumulator::New();
   progress = ProgressAccumulator::New();
   progress->SetMiniPipelineFilter( this );
- 
+
   // Compute the contribution of each filter to the total progress.
   const double weight =
      1.0 / ( ImageDimension * ( ImageDimension * ( ImageDimension + 1 ) / 2 ) );
@@ -211,11 +211,11 @@ HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage >
 
   const typename TInputImage::ConstPointer   inputImage( this->GetInput() );
   this->m_ImageAdaptor->SetImage( this->GetOutput() );
-  this->m_ImageAdaptor->SetLargestPossibleRegion( 
+  this->m_ImageAdaptor->SetLargestPossibleRegion(
     inputImage->GetLargestPossibleRegion() );
-  this->m_ImageAdaptor->SetBufferedRegion( 
+  this->m_ImageAdaptor->SetBufferedRegion(
     inputImage->GetBufferedRegion() );
-  this->m_ImageAdaptor->SetRequestedRegion( 
+  this->m_ImageAdaptor->SetRequestedRegion(
     inputImage->GetRequestedRegion() );
   this->m_ImageAdaptor->Allocate();
 
@@ -227,7 +227,7 @@ HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage >
   {
     for ( unsigned int dimb = dima; dimb < ImageDimension; dimb++ )
     {
-      // Manage the diagonal in a different way in order to avoid 
+      // Manage the diagonal in a different way in order to avoid
       // applying a double smoothing to this direction, and missing
       // to smooth one of the other directions.
       if ( dimb == dima )
@@ -277,7 +277,7 @@ HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage >
         {
           while ( j < ImageDimension )
           {
-            if ( j != dima && j != dimb ) 
+            if ( j != dima && j != dimb )
             {
               this->m_SmoothingFilters[ i ]->SetDirection( j );
               j++;
@@ -291,8 +291,8 @@ HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage >
         this->m_DerivativeFilterA->SetDirection( dima );
         this->m_DerivativeFilterB->SetDirection( dimb );
       }
-     
-      typename RealImageType::Pointer derivativeImage; 
+
+      typename RealImageType::Pointer derivativeImage;
 
       // Deal with the 2D case.
       if ( NumberOfSmoothingFilters > 0 )
@@ -316,9 +316,9 @@ HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage >
       ImageRegionIteratorWithIndex< RealImageType > it(
         derivativeImage, derivativeImage->GetRequestedRegion() );
 
-      ImageRegionIteratorWithIndex< OutputImageAdaptorType > ot( 
+      ImageRegionIteratorWithIndex< OutputImageAdaptorType > ot(
         this->m_ImageAdaptor, this->m_ImageAdaptor->GetRequestedRegion() );
-    
+
       const ScalarRealType spacingA = inputImage->GetSpacing()[ dima ];
       const ScalarRealType spacingB = inputImage->GetSpacing()[ dimb ];
       const ScalarRealType factor = spacingA * spacingB;
@@ -333,7 +333,7 @@ HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage >
       }
     }
   }
-  
+
 
 } // end GenerateData()
 

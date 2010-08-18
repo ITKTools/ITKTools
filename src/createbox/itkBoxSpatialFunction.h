@@ -13,7 +13,7 @@ namespace itk
  *
  * Implements a function that returns 0 for points inside or on the surface
  * of a sphere, 1 for points outside the sphere
- * 
+ *
  * \ingroup SpatialFunctions
  */
 template < unsigned int VImageDimension = 3,
@@ -28,7 +28,7 @@ public:
     VImageDimension,TInput>                             Superclass;
   typedef SmartPointer<Self>                            Pointer;
   typedef SmartPointer<const Self>                      ConstPointer;
-    
+
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
@@ -56,19 +56,19 @@ public:
 
   /** Get the center of the box. */
   itkGetMacro( Center, InputType );
-  
+
   /** Set the radius lengths of the box. */
   itkSetMacro( Radius, InputType );
 
   /** Get the radius lengths of the box. */
   itkGetMacro( Radius, InputType );
-  
+
   /** Set the orientation vector, which are Euler angles. */
   virtual void SetOrientation( const InputType _arg );
 
   /** Evaluates the function at a given position */
   OutputType Evaluate(const InputType& position) const;
-         
+
 protected:
   BoxSpatialFunction();
   virtual ~BoxSpatialFunction();

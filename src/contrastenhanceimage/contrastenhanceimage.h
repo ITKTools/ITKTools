@@ -14,7 +14,7 @@ typedef std::map<std::string, std::string> ArgMapType;
 
 void PrintUsageString(void)
 {
-  std::cerr 
+  std::cerr
     << "\nThis program enhances an image.\n"
     << "alpha and beta control the exact behaviour of the filter. See the\n"
     << "ITK documentation of the AdaptiveHistogramEqualizationImageFilter\n"
@@ -29,7 +29,7 @@ void PrintUsageString(void)
     << "\t-beta  \t0.0 < beta < 1.0\n"
     << "\t-r0    \tInteger radius of window, dimension 0\n"
     << "\t-r1    \tInteger radius of window, dimension 1\n"
-    << "\t[-r2]  \tInteger radius of window, dimension 2\n" 
+    << "\t[-r2]  \tInteger radius of window, dimension 2\n"
     << "\t[-LUT] \tUse Lookup-table <true, false>;\n"
     << "\t\tdefault = true; Faster, but requires more memory.\n"
     << std::endl;
@@ -65,7 +65,7 @@ int ReadArgument(const ArgMapType & argmap, const std::string & key, std::string
 //strange hack:
 #if defined(_MSC_VER) && (_MSC_VER <= 1300)
 #  define CRI_STATIC_ENUM static enum
-#else 
+#else
 #  define CRI_STATIC_ENUM enum
 #endif
 
@@ -94,7 +94,7 @@ class runwrap
       ImageType>                                  EnhancerType;
     typedef typename EnhancerType::Pointer        EnhancerPointer;
     typedef typename EnhancerType::ImageSizeType  RadiusType;
-    
+
     /** vars */
     std::string inputImageFileName("");
     std::string outputImageFileName("");
@@ -105,7 +105,7 @@ class runwrap
     float alpha = 0.0;
     float beta = 0.0;
     bool lutbool = true;
-    
+
     /** Read filenames */
     returndummy |= ReadArgument(argmap, "-in", inputImageFileName, false);
     returndummy |= ReadArgument(argmap, "-out", outputImageFileName, false);
@@ -117,7 +117,7 @@ class runwrap
     /** Try to read input image */
     ReaderPointer reader = ReaderType::New();
     reader->SetFileName( inputImageFileName.c_str() );
-    try 
+    try
     {
       reader->Update();
     }
@@ -130,7 +130,7 @@ class runwrap
 
     /** read alpha and beta from the commandline */
 
-    std::string alphaString("0.0");   
+    std::string alphaString("0.0");
     std::string betaString("0.0");
     returndummy |= ReadArgument(argmap, "-alpha", alphaString, false);
     returndummy |= ReadArgument(argmap, "-beta", betaString, false);
@@ -148,14 +148,14 @@ class runwrap
     {
       lutbool = false;
     }
-   
-            
+
+
     /** read radius from the commandline. */
-    
+
     for (unsigned int i=0; i< ImageDimension ; i++)
     {
       std::ostringstream key("");
-      key << "-r" << i; 
+      key << "-r" << i;
       std::string tempvalue("");
       returndummy |= ReadArgument(argmap, key.str(), tempvalue, false);
       if (returndummy ==0)
@@ -167,7 +167,7 @@ class runwrap
     {
       return returndummy;
     }
-    
+
     /** Setup pipeline and configure its components */
 
     enhancer->SetUseLookupTable(lutbool);
@@ -179,7 +179,7 @@ class runwrap
     writer->SetFileName(outputImageFileName.c_str());
 
     /** do it. */
-    std::cout 
+    std::cout
       << "Saving image to disk as \""
       << outputImageFileName
       << "\""
@@ -193,9 +193,9 @@ class runwrap
       std::cerr << err << std::endl;
       return 3;
     }
-    
+
     return 0;
-    
+
   } // end function run_cri
 
   /** Constructor and destructor */
@@ -213,14 +213,14 @@ class ptswrap
 
   static int PixelTypeSelector(const ArgMapType & argmap )
   {
-    const unsigned int ImageDimension = NImageDimension; 
+    const unsigned int ImageDimension = NImageDimension;
     std::string pixelType("");
     int returndummy = ReadArgument(argmap, "-pt", pixelType, false);
     if ( returndummy !=0 )
     {
       return returndummy;
     }
-    
+
     std::map<std::string, enum_type> typemap;
     typemap["FLOAT"] = eFLOAT;
     typemap["INT"] = eINT;
@@ -229,7 +229,7 @@ class ptswrap
     typemap["USHORT"] = eUSHORT;
     typemap["CHAR"] = eCHAR;
     typemap["UCHAR"] = eUCHAR;
-    
+
     enum_type pt = eUNKNOWN;
     if ( typemap.count(pixelType) )
     {
@@ -237,17 +237,17 @@ class ptswrap
     }
     switch( pt )
     {
-    case eSHORT : 
+    case eSHORT :
       return  runwrap<ImageDimension, short>::run_cri(argmap);
-    case eCHAR : 
+    case eCHAR :
       return  runwrap<ImageDimension, char>::run_cri(argmap);
-    case eUCHAR : 
+    case eUCHAR :
       return  runwrap<ImageDimension, unsigned char>::run_cri(argmap);
     default :
       std::cerr << "ERROR: PixelType not supported" << std::endl;
       return 1;
     }
-    
+
   }
 
   /** constructor and destructor */

@@ -43,7 +43,7 @@ int main( int argc, char **argv )
     std::cerr << "ERROR: You should specify two input images." << std::endl;
     return 1;
   }
-  std::string inputFileName1 = inputFileNames[ 0 ]; 
+  std::string inputFileName1 = inputFileNames[ 0 ];
   std::string inputFileName2 = "";
   if( (inputFileNames.size() == 2) & (ops != "NOT") )
   {
@@ -79,7 +79,7 @@ int main( int argc, char **argv )
   std::cout << "\tPixelType:          " << ComponentType << std::endl;
   std::cout << "\tDimension:          " << Dimension << std::endl;
   std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
-  
+
   /** Let the user overrule this */
   bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
   bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
@@ -92,12 +92,12 @@ int main( int argc, char **argv )
   }
 
   if ( NumberOfComponents > 1 )
-  { 
+  {
     std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
     std::cerr << "Vector images are not supported!" << std::endl;
-    return 1; 
+    return 1;
   }
-  
+
   /** Get rid of the possible "_" in ComponentType. */
   ReplaceUnderscoreWithSpace( ComponentType );
 
@@ -112,7 +112,7 @@ int main( int argc, char **argv )
     /** get file name of a full filename (i.e. file name without path) */
     std::string part2;
     if ( inputFileName2 != "" )
-    { 
+    {
       part2 = itksys::SystemTools::GetFilenameName(inputFileName2);
     }
     else
@@ -153,7 +153,7 @@ int main( int argc, char **argv )
       << std::endl;
     return 1;
   }
-  
+
   /** End program. */
   return 0;
 

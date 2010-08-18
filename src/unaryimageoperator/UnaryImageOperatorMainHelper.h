@@ -128,7 +128,7 @@ int CheckOps( std::string & ops, bool isInteger )
 
   /** Return a value. */
   return 0;
-  
+
 } // end CheckOps()
 
 
@@ -244,7 +244,7 @@ void CreateOutputFileName( const std::string & inputFileName,
     /** Example: /path/imageRDIVIDE3.mhd */
     outputFileName = path + name + ops + arg + ext;
   }
-  
+
 } // end CreateOutputFileName()
 
 

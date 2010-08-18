@@ -9,7 +9,7 @@
 #include "itkGradientToMagnitudeImageFilter.h"
 
 
-/** 
+/**
  * *************** Deformation2Transformation *********************
  * convert between deformation fields and transformation 'fields'
  */
@@ -21,7 +21,7 @@ void Deformation2Transformation(
   bool def2trans )
 {
   //inputimagetype = outputimagetype
-  typedef TImage                                      ImageType; 
+  typedef TImage                                      ImageType;
   const unsigned int Dimension = ImageType::ImageDimension;
   typedef typename ImageType::PixelType               PixelType;
   typedef typename PixelType::ValueType               ComponentType;
@@ -30,7 +30,7 @@ void Deformation2Transformation(
     ImageType >                                       IteratorType;
   typedef typename ImageType::IndexType               IndexType;
   typedef typename ImageType::PointType               PointType;
-    
+
   typename WriterType::Pointer writer = WriterType::New();
 
   /** We are going to change the image, so make sure these changes are not undone */
@@ -60,7 +60,7 @@ void Deformation2Transformation(
     ++it;
   }
   std::cout << "Ready changing image " << message << "." << std::endl;
-  
+
   /** Write the output image. */
   writer->SetInput( inputImage );
   writer->SetFileName( outputFileName.c_str() );
@@ -81,15 +81,15 @@ void ComputeMagnitude(
   TVectorImage * inputImage,
   const std::string & outputFileName )
 {
-  typedef TVectorImage                                InputImageType; 
-  typedef TScalarImage                                OutputImageType; 
+  typedef TVectorImage                                InputImageType;
+  typedef TScalarImage                                OutputImageType;
   typedef itk::ImageFileWriter< OutputImageType >     WriterType;
   typedef itk::GradientToMagnitudeImageFilter<
     InputImageType, OutputImageType >                 MagnitudeFilterType;
 
   typename MagnitudeFilterType::Pointer magnitudeFilter = MagnitudeFilterType::New();
   typename WriterType::Pointer writer = WriterType::New();
-    
+
   magnitudeFilter->SetInput( inputImage );
   std::cout << "Computing magnitude image..." << std::endl;
   magnitudeFilter->Update();
@@ -105,7 +105,7 @@ void ComputeMagnitude(
 } // end ComputeMagnitude
 
 
-/** 
+/**
  * ******************* ComputeJacobian ************************
  * Compute Jacobian of deformation or transformation field
  */
@@ -118,8 +118,8 @@ void ComputeJacobian(
   const bool & transToJac )
 {
   /** Typedef's. */
-  typedef TVectorImage                                InputImageType; 
-  typedef TScalarImage                                OutputImageType; 
+  typedef TVectorImage                                InputImageType;
+  typedef TScalarImage                                OutputImageType;
   typedef typename OutputImageType::PixelType         OutputPixelType;
   typedef itk::ImageFileReader< InputImageType >      ReaderType;
   typedef itk::ImageFileWriter< OutputImageType >     WriterType;
@@ -180,7 +180,7 @@ void DeformationFieldOperator(
 {
   /** constants */
   const unsigned int Dimension = NDimension;
-    
+
   /** TYPEDEF's. */
   typedef TComponent                                  ComponentType;
   typedef ComponentType                               ScalarPixelType;
@@ -189,11 +189,11 @@ void DeformationFieldOperator(
   typedef itk::Image< ScalarPixelType, Dimension >    ScalarImageType;
   typedef itk::Image< VectorPixelType, Dimension >    VectorImageType;
   typedef itk::ImageFileReader< VectorImageType >     ReaderType;
-  
+
   /** DECLARATION'S. */
   typename VectorImageType::Pointer workingImage;
   typename ReaderType::Pointer reader = ReaderType::New();
-  
+
   /** Read in the inputImage. */
   reader->SetFileName( inputFileName.c_str() );
   // temporarily: only streaming support for Jacobian case needed for EMPIRE10 challenge.
@@ -203,7 +203,7 @@ void DeformationFieldOperator(
     reader->Update();
     std::cout << "Input image read." << std::endl;
   }
-  
+
   /** Change to Transformation or Deformation by adding/subtracting pixel coordinates */
   workingImage = reader->GetOutput();
 

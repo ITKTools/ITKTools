@@ -9,7 +9,7 @@ namespace itk
 /**
  * ********************* Constructor ****************************
  */
-  
+
 template< class TInputImage >
 ReshapeImageToImageFilter< TInputImage >
 ::ReshapeImageToImageFilter( )
@@ -54,7 +54,7 @@ ReshapeImageToImageFilter< TInputImage >
   {
     itkExceptionMacro( << "ERROR: You have to specify the output size." );
   }
-// 
+//
 //   // Check if reshaping is possible
 //   // \todo: Could be less strict append with 0's or just take a part
 //   if ( numPixelsInput != numPixelsOutput )

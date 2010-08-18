@@ -91,21 +91,21 @@ void PrintInfo( ReaderType reader, WriterType writer )
 //   typedef itk::ImageRegionIterator< OutputImageType >         OutputIteratorType;
 //   typedef typename itk::ImageFileWriter< OutputImageType >    ImageWriterType;
 //   typedef typename OutputImageType::PixelType                 OutputPixelType;
-// 
+//
 //   /** Create and setup the readers. */
 //   typename Image1ReaderType::Pointer reader1 = Image1ReaderType::New();
 //   typename Image2ReaderType::Pointer reader2 = Image2ReaderType::New();
 //   reader1->SetFileName( image1FileName.c_str() );
 //   reader2->SetFileName( image2FileName.c_str() );
-// 
+//
 //   /** Read images. */
 //   reader1->Update();
 //   reader2->Update();
-// 
+//
 //   /** The sizes of the image1 and image2 must match. */
 //   typename InputImageType1::SizeType size1 = reader1->GetOutput()->GetLargestPossibleRegion().GetSize();
 //   typename InputImageType2::SizeType size2 = reader2->GetOutput()->GetLargestPossibleRegion().GetSize();
-// 
+//
 //   if ( size1 != size2 )
 //   {
 //     std::cerr << "The size of the two images are "
@@ -115,14 +115,14 @@ void PrintInfo( ReaderType reader, WriterType writer )
 //     /** Create and throw an exception. */
 //     //itkException( "ERROR: sizes do not match!" );
 //   }
-// 
+//
 //   /** Create an output image. */
 //   typename OutputImageType::Pointer outputImage = OutputImageType::New();
 //   outputImage->SetRegions( reader1->GetOutput()->GetLargestPossibleRegion() );
 //   outputImage->SetSpacing( reader1->GetOutput()->GetSpacing() );
 //   outputImage->SetOrigin( reader1->GetOutput()->GetOrigin() );
 //   outputImage->Allocate();
-// 
+//
 //   /** Create iterators over the images. */
 //   ConstIteratorType1 it1( reader1->GetOutput(),
 //     reader1->GetOutput()->GetLargestPossibleRegion() );
@@ -132,13 +132,13 @@ void PrintInfo( ReaderType reader, WriterType writer )
 //   it1.GoToBegin();
 //   it2.GoToBegin();
 //   itout.GoToBegin();
-// 
+//
 //   /** Get the extrema of the pixel type. */
 //   OutputPixelType minimum = itk::NumericTraits<OutputPixelType>::NonpositiveMin();
 //   OutputPixelType maximum = itk::NumericTraits<OutputPixelType>::max();
 //   double min = static_cast<double>( minimum );
 //   double max = static_cast<double>( maximum );
-// 
+//
 //   /** Do the actual work. */
 //   double diff = 0.0;
 //   while ( !it1.IsAtEnd() )
@@ -161,18 +161,18 @@ void PrintInfo( ReaderType reader, WriterType writer )
 //     ++it2;
 //     ++itout;
 //   } // end while
-// 
+//
 //   /** Connect the pipeline. */
 //   typename ImageWriterType::Pointer writer = ImageWriterType::New();
 //   writer->SetFileName( outputFileName.c_str() );
 //   writer->SetInput( outputImage );
-// 
+//
 //   /** Do the actual conversion. */
 //   writer->Update();
-// 
+//
 //   /** Print information. */
 //   //PrintInfo( reader, writer );
-// 
+//
 // }  // end CreateScalarDifferenceImage
 
 

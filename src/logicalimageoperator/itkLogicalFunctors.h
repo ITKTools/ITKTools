@@ -3,7 +3,7 @@
 
 namespace itk {
 
-namespace Functor {  
+namespace Functor {
 
 /** Macro for unary logical filter. */
 #define itkLogicalUnaryFunctorMacro( name, ops ) \
@@ -47,8 +47,8 @@ itkLogicalBinaryFunctorMacro( XOR,       A ^ B );
 itkLogicalBinaryFunctorMacro( NOT_AND, !(A & B) );
 itkLogicalBinaryFunctorMacro( NOT_OR , !(A | B) );
 itkLogicalBinaryFunctorMacro( NOT_XOR, !(A ^ B) );
-itkLogicalBinaryFunctorMacro( ANDNOT,    A & (!B) ); 
-itkLogicalBinaryFunctorMacro( ORNOT,     A | (!B) ); 
+itkLogicalBinaryFunctorMacro( ANDNOT,    A & (!B) );
+itkLogicalBinaryFunctorMacro( ORNOT,     A | (!B) );
 
 
 } // end namespace Functor

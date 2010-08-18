@@ -4,7 +4,7 @@
 
 #include "statisticsonimage.h"
 
-/** This program determines the minimum, maximum, 
+/** This program determines the minimum, maximum,
  * mean, sigma, variance, and sum of an image, or its magnitude/jacobian.
  */
 
@@ -27,7 +27,7 @@ void PrintHelp( void );
 
 int main( int argc, char ** argv )
 {
-  
+
   if ( argc < 3 )
   {
     PrintHelp();
@@ -67,7 +67,7 @@ int main( int argc, char ** argv )
       << std::endl;
     return 1;
   }
-  
+
   /** Determine image properties. */
   std::string ComponentType = "float";
   std::string PixelType; //we don't use this
@@ -93,7 +93,7 @@ int main( int argc, char ** argv )
 
   /** force images to sneaky be converted to doubles */
   ComponentType = "float";
-    
+
   /** Run the program. */
   bool supported = false;
   try
@@ -121,7 +121,7 @@ int main( int argc, char ** argv )
       << std::endl;
     return 1;
   }
-  
+
   /** End program. */
   return 0;
 

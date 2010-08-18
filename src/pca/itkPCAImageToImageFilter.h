@@ -13,7 +13,7 @@ namespace itk
 {
 
 /** \class PCAImageToImageFilter
- * \brief PCAImageToImageFilter performs a principal component analysis 
+ * \brief PCAImageToImageFilter performs a principal component analysis
  * (PCA) on a set of images.
  *
  * The user specifies the number of input feature images on which a PCA
@@ -27,11 +27,11 @@ namespace itk
  * as the Matlab function princomp.
  *
  * \ingroup ??
- */ 
+ */
 
-template <class TInputImage, 
+template <class TInputImage,
           class TOutputImage = Image< double, ::itk::GetImageDimension<TInputImage>::ImageDimension> >
-class ITK_EXPORT PCAImageToImageFilter: 
+class ITK_EXPORT PCAImageToImageFilter:
     public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
@@ -65,7 +65,7 @@ public:
   itkStaticConstMacro( InputImageDimension, unsigned int, TInputImage::ImageDimension );
 
   /** Type definition for a vnl double matrix. */
-  typedef vnl_matrix<double> MatrixOfDoubleType; 
+  typedef vnl_matrix<double> MatrixOfDoubleType;
 
   /** Type definition for a vnl double vector. */
   typedef vnl_vector<double> VectorOfDoubleType;
@@ -102,7 +102,7 @@ protected:
   virtual void PrintSelf( std::ostream& os, Indent indent ) const;
 
   /** This filter must produce all of the outputs at once, as such it
-   * must override the EnlargeOutputRequestedRegion method to enlarge the 
+   * must override the EnlargeOutputRequestedRegion method to enlarge the
    * output request region.
    */
   virtual void EnlargeOutputRequestedRegion( DataObject * );
@@ -142,11 +142,11 @@ private:
   VectorOfDoubleType    m_EigenValues;
   VectorOfDoubleType    m_NormalisedEigenValues;
   MatrixOfDoubleType    m_PrincipalComponents;
-  
+
   unsigned int          m_NumberOfPixels;
   unsigned int          m_NumberOfFeatureImages;
   unsigned int          m_NumberOfPrincipalComponentsRequired;
-  
+
 }; // end class PCAImageToImageFilter
 
 

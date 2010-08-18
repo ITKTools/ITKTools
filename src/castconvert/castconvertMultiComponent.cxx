@@ -104,7 +104,7 @@ int FileConverterMultiComponent( const std::string &inputPixelComponentType,
   {
     if ( numberOfComponents == 2 )
     {
-      const int ret_value = 
+      const int ret_value =
         FileConverterMultiComponent2D2CA( inputPixelComponentType, outputPixelComponentType,
         numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression )
         || FileConverterMultiComponent2D2CB( inputPixelComponentType, outputPixelComponentType,
@@ -116,7 +116,7 @@ int FileConverterMultiComponent( const std::string &inputPixelComponentType,
     }
     else if ( numberOfComponents == 3 )
     {
-      const int ret_value = 
+      const int ret_value =
         FileConverterMultiComponent2D3CA( inputPixelComponentType, outputPixelComponentType,
         numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression )
         || FileConverterMultiComponent2D3CB( inputPixelComponentType, outputPixelComponentType,
@@ -128,7 +128,7 @@ int FileConverterMultiComponent( const std::string &inputPixelComponentType,
     }
     else if ( numberOfComponents == 4 )
     {
-      const int ret_value = 
+      const int ret_value =
         FileConverterMultiComponent2D4CA( inputPixelComponentType, outputPixelComponentType,
         numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression )
         || FileConverterMultiComponent2D4CB( inputPixelComponentType, outputPixelComponentType,
@@ -149,7 +149,7 @@ int FileConverterMultiComponent( const std::string &inputPixelComponentType,
   {
     if ( numberOfComponents == 2 )
     {
-      const int ret_value = 
+      const int ret_value =
         FileConverterMultiComponent3D2CA( inputPixelComponentType, outputPixelComponentType,
         numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression )
         || FileConverterMultiComponent3D2CB( inputPixelComponentType, outputPixelComponentType,
@@ -161,7 +161,7 @@ int FileConverterMultiComponent( const std::string &inputPixelComponentType,
     }
     else if ( numberOfComponents == 3 )
     {
-      const int ret_value = 
+      const int ret_value =
         FileConverterMultiComponent3D3CA( inputPixelComponentType, outputPixelComponentType,
         numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression )
         || FileConverterMultiComponent3D3CB( inputPixelComponentType, outputPixelComponentType,
@@ -173,7 +173,7 @@ int FileConverterMultiComponent( const std::string &inputPixelComponentType,
     }
     else if ( numberOfComponents == 4 )
     {
-      const int ret_value = 
+      const int ret_value =
         FileConverterMultiComponent3D4CA( inputPixelComponentType, outputPixelComponentType,
         numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression )
         || FileConverterMultiComponent3D4CB( inputPixelComponentType, outputPixelComponentType,
@@ -194,7 +194,7 @@ int FileConverterMultiComponent( const std::string &inputPixelComponentType,
   {
     if ( numberOfComponents == 2 )
     {
-      const int ret_value = 
+      const int ret_value =
         FileConverterMultiComponent4D2CA( inputPixelComponentType, outputPixelComponentType,
         numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression )
         || FileConverterMultiComponent4D2CB( inputPixelComponentType, outputPixelComponentType,
@@ -206,7 +206,7 @@ int FileConverterMultiComponent( const std::string &inputPixelComponentType,
     }
     else if ( numberOfComponents == 3 )
     {
-      const int ret_value = 
+      const int ret_value =
         FileConverterMultiComponent4D3CA( inputPixelComponentType, outputPixelComponentType,
         numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression )
         || FileConverterMultiComponent4D3CB( inputPixelComponentType, outputPixelComponentType,
@@ -218,7 +218,7 @@ int FileConverterMultiComponent( const std::string &inputPixelComponentType,
     }
     else if ( numberOfComponents == 4 )
     {
-      const int ret_value = 
+      const int ret_value =
         FileConverterMultiComponent4D4CA( inputPixelComponentType, outputPixelComponentType,
         numberOfComponents, inputFileName, outputFileName, inputDimension, useCompression )
         || FileConverterMultiComponent4D4CB( inputPixelComponentType, outputPixelComponentType,

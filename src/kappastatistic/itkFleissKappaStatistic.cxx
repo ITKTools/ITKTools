@@ -1,6 +1,6 @@
 #include "itkFleissKappaStatistic.h"
 
-namespace itk { 
+namespace itk {
 namespace Statistics {
 
 

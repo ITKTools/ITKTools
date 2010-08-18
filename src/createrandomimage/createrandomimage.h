@@ -26,7 +26,7 @@
 //strange hack:
 #if defined(_MSC_VER) && (_MSC_VER <= 1300)
 #  define CRI_STATIC_ENUM static enum
-#else 
+#else
 #  define CRI_STATIC_ENUM enum
 #endif
 
@@ -49,17 +49,17 @@ class runwrap
                   int rand_seed )
 {
   /** Typedefs */
-  
+
   /** Dimensions */
   const unsigned int ImageDimension = NImageDimension;
   const unsigned int SpaceDimension = NSpaceDimension;
-    
+
   /** PixelTypes */
   typedef TValue    ValueType;
   typedef ValueType ScalarPixelType;
   typedef float InternalValueType;
   typedef itk::Vector<ValueType, SpaceDimension> VectorPixelType;
-  
+
   /** ImageTypes */
   typedef itk::Image<ValueType, ImageDimension> ImageType;
   typedef itk::Image<InternalValueType, ImageDimension> InternalImageType;
@@ -67,31 +67,31 @@ class runwrap
   typedef itk::Image<VectorPixelType, ImageDimension> VectorOutputImageType;
   typedef typename ImageType::Pointer ImagePointer;
   typedef typename InternalImageType::Pointer InternalImagePointer;
-  
+
   typedef typename ImageType::SizeType SizeType;
   typedef typename ImageType::IndexType IndexType;
   typedef typename ImageType::PointType OriginType;
   typedef typename ImageType::RegionType RegionType;
-  
+
   typedef typename InternalImageType::SizeType InternalSizeType;
   typedef typename InternalImageType::IndexType InternalIndexType;
   typedef typename InternalImageType::PointType InternalOriginType;
   typedef typename InternalImageType::RegionType InternalRegionType;
-  
+
   typedef itk::FixedArray<InternalImagePointer, SpaceDimension> SetOfChannelsType;
-    
+
   /** Iterator */
   typedef itk::ImageRandomIteratorWithIndex<InternalImageType>  RandomIteratorType;
   typedef itk::ImageRegionIterator<InternalImageType> RegionIteratorType;
-  
+
   /** Blurring filter */
   //typedef itk::DiscreteGaussianImageFilter<
   // InternalImageType, InternalImageType>              BlurFilterType;
   typedef itk::SmoothingRecursiveGaussianImageFilter<
     InternalImageType, InternalImageType>               BlurFilterType;
   typedef typename BlurFilterType::Pointer            BlurFilterPointer;
-  typedef itk::FixedArray<BlurFilterPointer, SpaceDimension> SetOfBlurrersType; 
-      
+  typedef itk::FixedArray<BlurFilterPointer, SpaceDimension> SetOfBlurrersType;
+
   typedef itk::CastImageFilter<InternalImageType, ImageType> CastFilterType;
   typedef typename CastFilterType::Pointer CastFilterPointer;
   typedef itk::FixedArray<CastFilterPointer, SpaceDimension> SetOfCastersType;
@@ -99,7 +99,7 @@ class runwrap
   typedef itk::ExtractImageFilter<ImageType, ImageType> ExtractFilterType;
   typedef typename ExtractFilterType::Pointer ExtractFilterPointer;
   typedef itk::FixedArray<ExtractFilterPointer, SpaceDimension> SetOfExtractersType;
-  
+
 
   /** For different space dimensions different types: */
   /** Combine channels into one vector image */
@@ -107,7 +107,7 @@ class runwrap
   typedef itk::Compose3DVectorImageFilter<ImageType>  Composer3DType;
   typedef typename Composer2DType::Pointer Composer2DPointer;
   typedef typename Composer3DType::Pointer Composer3DPointer;
-  
+
   /** ImageWriters */
   typedef itk::ImageFileWriter<ScalarOutputImageType> ScalarWriterType;
   typedef itk::ImageFileWriter<VectorOutputImageType> VectorWriterType;
@@ -117,10 +117,10 @@ class runwrap
   /** RandomGenerator */
   typedef itk::Statistics::MersenneTwisterRandomVariateGenerator RandomGeneratorType;
   typedef RandomGeneratorType::Pointer RandomGeneratorPointer;
-  
-  
+
+
   /** Create variables */
-   
+
   ScalarWriterPointer scalarWriter = 0;
   VectorWriterPointer vectorWriter = 0;
   Composer2DPointer composer2D = 0;
@@ -131,13 +131,13 @@ class runwrap
   SetOfExtractersType setOfExtracters;
   RandomGeneratorPointer randomGenerator = RandomGeneratorType::New();
   bool randomiterating = true;
-  
+
 
   /** Set the random seed */
   randomGenerator->SetSeed(rand_seed);
 
 
-    
+
   /** Convert the itkArray to an itkSizeType and calculate nrOfPixels */
   InternalSizeType internalimagesize;
   InternalIndexType internalimageindex;
@@ -156,14 +156,14 @@ class runwrap
     imageorigin.SetElement(i,0.0);
     nrOfPixels *= sizes[i];
   }
-  
+
   /** Compute the standard deviation of the Gaussian used for blurring
    * the random images */
   if ( sigma < 0 )
   {
     sigma = static_cast<double>(
-      static_cast<double>(nrOfPixels) / 
-      static_cast<double>(resolution) / 
+      static_cast<double>(nrOfPixels) /
+      static_cast<double>(resolution) /
       pow( 2.0, static_cast<double>(ImageDimension) )
       );
   }
@@ -175,9 +175,9 @@ class runwrap
   {
     internalimagesize[i] += static_cast<unsigned long>( 2*paddingSize );
     internalimageindex[i] = static_cast<long>(-paddingSize);
-    internalimageorigin[i] =0;// static_cast<double> ( -paddingSize );    
+    internalimageorigin[i] =0;// static_cast<double> ( -paddingSize );
   }
-  
+
   internalimageregion.SetSize(internalimagesize);
   internalimageregion.SetIndex(internalimageindex);
 
@@ -189,19 +189,19 @@ class runwrap
   {
     randomiterating = false;
   }
-  
+
   /** Create the images */
   for (unsigned int i = 0; i< SpaceDimension; i++)
   {
-    
+
     setOfChannels[i] = InternalImageType::New();
     setOfChannels[i]->SetRegions( internalimageregion );
     setOfChannels[i]->SetOrigin( internalimageorigin );
     setOfChannels[i]->SetRequestedRegion( imageregion );
     setOfChannels[i]->Allocate();
     setOfChannels[i]->FillBuffer( itk::NumericTraits<InternalValueType>::Zero );
-    
-    
+
+
     /** Setting random values to random points */
 
     double range = max_value-min_value;
@@ -214,17 +214,17 @@ class runwrap
         << resolution
         << " random points."
         << std::endl;
-      RandomIteratorType iterator = 
+      RandomIteratorType iterator =
         RandomIteratorType( setOfChannels[i], setOfChannels[i]->GetLargestPossibleRegion() );
       iterator.SetNumberOfSamples(resolution);
       iterator.GoToBegin();
       while( !iterator.IsAtEnd() )
       {
         /** Set a random value to a random point */
-        iterator.Set( static_cast<InternalValueType>( 
+        iterator.Set( static_cast<InternalValueType>(
           randomGenerator->GetUniformVariate(min_value, max_value) ) );
-        ++iterator;  
-      } 
+        ++iterator;
+      }
     }
     else
     {
@@ -234,7 +234,7 @@ class runwrap
         << ": Setting random values to "
         << "all voxels in the image."
         << std::endl;
-      RegionIteratorType iterator = 
+      RegionIteratorType iterator =
         RegionIteratorType( setOfChannels[i], setOfChannels[i]->GetLargestPossibleRegion() );
       iterator.GoToBegin();
       while( !iterator.IsAtEnd() )
@@ -242,29 +242,29 @@ class runwrap
         /** Set a random value to a point */
         iterator.Set( static_cast<InternalValueType>(
           randomGenerator->GetUniformVariate(min_value,max_value) ) );
-        ++iterator;  
-      } 
+        ++iterator;
+      }
 
     }
-    
+
     /** The random image is blurred */
-    std::cout 
+    std::cout
       << "Channel"
       << i
       << ": Blurring with standard deviation "
-      << sigma 
+      << sigma
       << "."
       << std::endl;
-    
+
     setOfBlurrers[i] = BlurFilterType::New();
     setOfBlurrers[i]->SetSigma(sigma);
-    
+
     //setOfBlurrers[i]->SetVariance( sigma*sigma );
     //setOfBlurrers[i]->SetUseImageSpacingOff();
     //setOfBlurrers[i]->SetMaximumError(0.01);
     //setOfBlurrers[i]->SetMaximumKernelWidth(maximumKernelWidth);
     setOfBlurrers[i]->SetInput( setOfChannels[i] );
-    
+
     setOfCasters[i] = CastFilterType::New();
     setOfCasters[i]->SetInput( setOfBlurrers[i]->GetOutput() );
     //setOfCasters[i]->UpdateLargestPossibleRegion();
@@ -276,7 +276,7 @@ class runwrap
     // suppress warnings about exceeding the maximum kernel width,
     // generated by the blurrers.
   //  itk::Object::GlobalWarningDisplayOff();
-    try 
+    try
     {
       setOfExtracters[i]->Update();
     }
@@ -288,10 +288,10 @@ class runwrap
       std::cerr << err << std::endl;
       return 3;
     }
-  
+
 //  itk::Object::GlobalWarningDisplayOn();
   }
-  
+
   /** Combine the channels into the final vector image (if sDim > 1)
    * and setup the Writer */
   if ( SpaceDimension == 1 )
@@ -311,7 +311,7 @@ class runwrap
       composer2D->SetInput2( setOfExtracters[1]->GetOutput() );
       vectorWriter->SetInput( dynamic_cast<VectorOutputImageType *>( composer2D->GetOutput() )   );
     }
-    else if ( SpaceDimension == 3 ) 
+    else if ( SpaceDimension == 3 )
     {
       composer3D = Composer3DType::New();
       composer3D->SetInput1( setOfExtracters[0]->GetOutput() );
@@ -320,9 +320,9 @@ class runwrap
       vectorWriter->SetInput( dynamic_cast<VectorOutputImageType *>( composer3D->GetOutput() )   );
     }
   }
-  
+
   /** do it. */
-  std::cout 
+  std::cout
     << "Saving image to disk as \""
     << outputImageFileName
     << "\""
@@ -343,9 +343,9 @@ class runwrap
     std::cerr << err << std::endl;
     return 2;
   }
-  
+
   return 0;
-  
+
 } // end function run_cri
 
   runwrap(){}
@@ -367,10 +367,10 @@ static int PixelTypeSelector(const char * pixelType,
                              unsigned long resolution, double sigma,
                              int rand_seed )
 {
-  
-  
-    const unsigned int ImageDimension = NImageDimension; 
-    const unsigned int SpaceDimension = NSpaceDimension;    
+
+
+    const unsigned int ImageDimension = NImageDimension;
+    const unsigned int SpaceDimension = NSpaceDimension;
     std::map<std::string, enum_type> typemap;
     typemap["FLOAT"] = eFLOAT;
     typemap["INT"] = eINT;
@@ -379,7 +379,7 @@ static int PixelTypeSelector(const char * pixelType,
     typemap["USHORT"] = eUSHORT;
     typemap["CHAR"] = eCHAR;
     typemap["UCHAR"] = eUCHAR;
-    
+
     enum_type pt = eUNKNOWN;
     if ( typemap.count(pixelType) )
     {
@@ -387,7 +387,7 @@ static int PixelTypeSelector(const char * pixelType,
     }
     switch( pt )
     {
-    case eFLOAT : 
+    case eFLOAT :
       return  runwrap<ImageDimension, SpaceDimension, float>::run_cri(
         outputImageFileName,
         sizes,
@@ -395,7 +395,7 @@ static int PixelTypeSelector(const char * pixelType,
         max_value,
         resolution, sigma,
         rand_seed );
-    case eSHORT : 
+    case eSHORT :
       return runwrap<ImageDimension, SpaceDimension, short>::run_cri(
         outputImageFileName,
         sizes,
@@ -403,7 +403,7 @@ static int PixelTypeSelector(const char * pixelType,
         max_value,
         resolution, sigma,
         rand_seed );
-    case eUSHORT : 
+    case eUSHORT :
       return runwrap<ImageDimension, SpaceDimension, unsigned short>::run_cri(
         outputImageFileName,
         sizes,
@@ -411,7 +411,7 @@ static int PixelTypeSelector(const char * pixelType,
         max_value,
         resolution, sigma,
         rand_seed );
-    case eINT : 
+    case eINT :
       return runwrap<ImageDimension, SpaceDimension, int>::run_cri(
         outputImageFileName,
         sizes,
@@ -419,7 +419,7 @@ static int PixelTypeSelector(const char * pixelType,
         max_value,
         resolution, sigma,
         rand_seed );
-    case eUINT : 
+    case eUINT :
       return runwrap<ImageDimension, SpaceDimension, unsigned int>::run_cri(
         outputImageFileName,
         sizes,
@@ -427,7 +427,7 @@ static int PixelTypeSelector(const char * pixelType,
         max_value,
         resolution, sigma,
         rand_seed );
-    case eCHAR : 
+    case eCHAR :
       return runwrap<ImageDimension, SpaceDimension, char>::run_cri(
         outputImageFileName,
         sizes,
@@ -435,19 +435,19 @@ static int PixelTypeSelector(const char * pixelType,
         max_value,
         resolution, sigma,
         rand_seed );
-    case eUCHAR : 
+    case eUCHAR :
       return runwrap<ImageDimension, SpaceDimension, unsigned char>::run_cri(
         outputImageFileName,
         sizes,
         min_value,
         max_value,
         resolution, sigma,
-        rand_seed ); 
+        rand_seed );
     default :
       std::cerr << "ERROR: PixelType not supported" << std::endl;
       return 1;
     }
-    
+
 }
 
 ptswrap(){}

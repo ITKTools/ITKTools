@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -27,7 +27,7 @@ namespace itk
  *
  * Implements a function that returns 0 for points inside or on the surface
  * of a sphere, 1 for points outside the sphere
- * 
+ *
  * \ingroup SpatialFunctions
  */
 template <unsigned int VImageDimension=3,typename TInput=Point<double,VImageDimension> >
@@ -59,11 +59,11 @@ public:
   /** Get and set the center of the sphere. */
   itkGetConstMacro( Center, InputType);
   itkSetMacro( Center, InputType);
-  
+
   /** Get and set the radius of the sphere */
   itkGetConstMacro( Radius, double);
   itkSetMacro( Radius, double);
-       
+
 protected:
   CylinderSpatialFunction();
   virtual ~CylinderSpatialFunction();

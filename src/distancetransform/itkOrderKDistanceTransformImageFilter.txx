@@ -36,7 +36,7 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
 ::OrderKDistanceTransformImageFilter()
 {
 
-  m_SquaredDistance     = false; 
+  m_SquaredDistance     = false;
   m_InputIsBinary       = true; // for my purposes this should be true as default...
   m_UseImageSpacing     = true; // this also
   m_FullyConnected    = true;  /// should this be true or false?
@@ -135,15 +135,15 @@ void
 OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, TKIDImage >
 ::PrepareData(void)
 {
-  
+
   itkDebugMacro(<< "PrepareData Start");
-  
+
   InputImagePointer  inputImage  =
     dynamic_cast<const TInputImage  *>( ProcessObject::GetInput(0) );
 
 
   typename OutputImageType::RegionType region  = inputImage->GetLargestPossibleRegion() ;
-  
+
   // find the largest of the image dimensions
   //
   // This should include the image spacing!!!! (in DanielssonDM also!)
@@ -249,10 +249,10 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
     }
   else // Input is not binary
     {
-    typedef SortingElement<typename InputImageType::PixelType, 
+    typedef SortingElement<typename InputImageType::PixelType,
                                                   typename InputImageType::IndexType>  Element;
     std::vector<Element> indices;
-    
+
     while( !it.IsAtEnd() )
       {
       IndexType index = it.GetIndex();
@@ -294,13 +294,13 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
 ::ComputeVoronoiMap()
 {
   itkDebugMacro( << "ComputeVoronoiMap Start");
-    
+
   typedef typename itk::ConnectedComponentVectorImageFilter<KIDImageType, OutputImageType> ConnectedComponentFilterType;
   typename ConnectedComponentFilterType::Pointer connectedCompFilter = ConnectedComponentFilterType::New();
   connectedCompFilter->SetInput( this->GetKclosestIDMap() );
-  
+
   connectedCompFilter->UpdateLargestPossibleRegion();
-  
+
   this->GraftNthOutput( 2, connectedCompFilter->GetOutput() );
 }
 
@@ -349,12 +349,12 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
 
       if ( !m_SquaredDistance ) {
         InsertSorted(std::sqrt(sqdist), kid_there[j], kd, kid_here );
-        } 
+        }
       else {
         InsertSorted(sqdist, kid_there[j], kd, kid_here );
         }
       }
-    }    
+    }
 
 }
 
@@ -434,7 +434,7 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
 
   std::cerr << "to here inside 1";
   this->PrepareData();
-  
+
   // Specify images and regions.
 
   InputImagePointer    inputimage             =  this->GetInput();
@@ -445,12 +445,12 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
   std::cerr << "to here inside 2";
 
   typename InputImageType::RegionType region  = inputimage->GetLargestPossibleRegion();
-  
+
   itkDebugMacro (<< "Region to process: " << region);
 
   // Instantiate reflective iterator
 
-  ReflectiveImageRegionConstIterator< const InputImageType > 
+  ReflectiveImageRegionConstIterator< const InputImageType >
     it( inputimage, region );
   it.FillOffsets(1); // what exactly is happening here?
 
@@ -470,7 +470,7 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
   const float updatePeriod = static_cast<float>(updateVisits) * 10.0;
 
   // Process image.
-  
+
   OffsetType  offset;
   offset.Fill( 0 );
 
@@ -512,7 +512,7 @@ std::cerr << "to here inside 5";
 
 
 template <class TInputImage, class TOutputImage, class TKDistanceImage, class TKIDImage >
-void 
+void
 OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, TKIDImage >
 ::GenerateInputRequestedRegion()
 {
@@ -525,7 +525,7 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
     }
 
   // get pointers to the input and output
-  typename InputImageType::Pointer  inputPtr  = 
+  typename InputImageType::Pointer  inputPtr  =
     const_cast< TInputImage *>( this->GetInput() );
 
   // Request the entire input image
@@ -543,12 +543,12 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
  *  Print Self
  */
 template <class TInputImage, class TOutputImage, class TKDistanceImage, class TKIDImage >
-void 
+void
 OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, TKIDImage >
 ::PrintSelf(std::ostream& os, Indent indent) const
 {
   Superclass::PrintSelf(os,indent);
-  
+
   os << indent << "Order K Distance Transform: " << std::endl;
   os << indent << "Input Is Binary   : " << m_InputIsBinary << std::endl;
   os << indent << "Use Image Spacing : " << m_UseImageSpacing << std::endl;

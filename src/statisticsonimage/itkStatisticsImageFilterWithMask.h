@@ -2,10 +2,10 @@
  * A copy of the itkStatisticsImageFilter, but changed to use a mask.
  * NB: the class is still named StatisticsImageFilter, so cannot be used
  * at the same times as the the itk-class.
- * 
+ *
  * Original ITK copyright message:
  */
-  
+
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
@@ -17,8 +17,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -33,7 +33,7 @@
 
 namespace itk {
 
-/** \class StatisticsImageFilter 
+/** \class StatisticsImageFilter
  * \brief Compute min. max, variance and mean of an Image.
  *
  * StatisticsImageFilter computes the minimum, maximum, sum, mean, variance
@@ -49,7 +49,7 @@ namespace itk {
  * \ingroup MathematicalStatisticsImageFilters
  */
 template<class TInputImage>
-class ITK_EXPORT StatisticsImageFilter : 
+class ITK_EXPORT StatisticsImageFilter :
     public ImageToImageFilter<TInputImage, TInputImage>
 {
 public:
@@ -58,13 +58,13 @@ public:
   typedef ImageToImageFilter<TInputImage,TInputImage>  Superclass;
   typedef SmartPointer<Self>        Pointer;
   typedef SmartPointer<const Self>  ConstPointer;
-  
+
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);  
+  itkNewMacro(Self);
 
   /** Runtime information support. */
   itkTypeMacro(StatisticsImageFilter, ImageToImageFilter);
-  
+
   /** Image related typedefs. */
   typedef typename TInputImage::Pointer InputImagePointer;
 
@@ -73,7 +73,7 @@ public:
   typedef typename TInputImage::IndexType IndexType ;
   typedef typename TInputImage::PointType PointType ;
   typedef typename TInputImage::PixelType PixelType ;
-  
+
   /** Image related typedefs. */
   itkStaticConstMacro(ImageDimension, unsigned int,
                       TInputImage::ImageDimension ) ;
@@ -95,13 +95,13 @@ public:
     itkGetStaticConstMacro(ImageDimension)>       MaskType;
   typedef typename MaskType::Pointer              MaskPointer;
 
-  
+
   /** Return the computed Minimum. */
   PixelType GetMinimum() const
     { return this->GetMinimumOutput()->Get(); }
   PixelObjectType* GetMinimumOutput();
   const PixelObjectType* GetMinimumOutput() const;
-  
+
   /** Return the computed Maximum. */
   PixelType GetMaximum() const
     { return this->GetMaximumOutput()->Get(); }
@@ -146,16 +146,16 @@ protected:
   void PrintSelf(std::ostream& os, Indent indent) const;
 
   /** Pass the input through unmodified. Do this by Grafting in the AllocateOutputs method. */
-  void AllocateOutputs();      
+  void AllocateOutputs();
 
   /** Initialize some accumulators before the threads run. */
   void BeforeThreadedGenerateData ();
-  
+
   /** Do final mean and variance computation from data accumulated in threads. */
   void AfterThreadedGenerateData ();
-  
+
   /** Multi-thread version GenerateData. */
-  void  ThreadedGenerateData (const RegionType& 
+  void  ThreadedGenerateData (const RegionType&
                               outputRegionForThread,
                               int threadId) ;
 
@@ -180,7 +180,7 @@ private:
 } ; // end of class
 
 } // end namespace itk
-  
+
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "itkStatisticsImageFilterWithMask.txx"
 #endif

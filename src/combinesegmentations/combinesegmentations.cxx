@@ -62,7 +62,7 @@ int main( int argc, char **argv )
     /** Get the combination method (mandatory) */
   std::string combinationMethod = "MULTISTAPLE2";
   bool retm = parser->GetCommandLineArgument( "-m", combinationMethod );
-  
+
   /** Get the input segmentation file names (mandatory). */
   std::vector< std::string >  inputSegmentationFileNames;
   bool retin = parser->GetCommandLineArgument( "-in", inputSegmentationFileNames );
@@ -86,7 +86,7 @@ int main( int argc, char **argv )
   /** Get the number of classes to segment (not mandatory) */
   unsigned char numberOfClasses = 2;
   bool retn = parser->GetCommandLineArgument( "-n", numberOfClasses );
-  
+
   /** Get the prior probability images (not mandatory) */
   std::vector< std::string >  priorProbImageFileNames;
   bool retP = parser->GetCommandLineArgument( "-P", priorProbImageFileNames );
@@ -94,14 +94,14 @@ int main( int argc, char **argv )
   {
     if ( priorProbImageFileNames.size() != numberOfClasses )
     {
-      std::cerr 
+      std::cerr
         << "ERROR: Number of prior probability images should be equal "
-        << "to the number of classes." 
+        << "to the number of classes."
         << std::endl;
-      std::cerr 
-        << "i.e., \"-P\" should be followed by " 
-        << numberOfClasses 
-        << " filenames or just totally omitted." 
+      std::cerr
+        << "i.e., \"-P\" should be followed by "
+        << numberOfClasses
+        << " filenames or just totally omitted."
         << std::endl;
       return 1;
     }
@@ -114,14 +114,14 @@ int main( int argc, char **argv )
   {
     if ( priorProbs.size() != numberOfClasses )
     {
-      std::cerr 
+      std::cerr
         << "ERROR: Number of prior probabilities should be equal "
-        << "to the number of classes." 
+        << "to the number of classes."
         << std::endl;
-      std::cerr 
-        << "i.e., \"-p\" should be followed by " 
-        << numberOfClasses 
-        << " numbers or just totally omitted." 
+      std::cerr
+        << "i.e., \"-p\" should be followed by "
+        << numberOfClasses
+        << " numbers or just totally omitted."
         << std::endl;
       return 1;
     }
@@ -138,12 +138,12 @@ int main( int argc, char **argv )
   {
     if ( trust.size() != inputSegmentationFileNames.size() )
     {
-      std::cerr 
+      std::cerr
         << "ERROR: Number of trust factors should be equal to the number of "
-        << "input segmentations." 
+        << "input segmentations."
         << std::endl;
       std::cerr
-        << "i.e., \"-t\" should be followed by " 
+        << "i.e., \"-t\" should be followed by "
         << inputSegmentationFileNames.size()
         << " numbers or just totally omitted." << std::endl;
       return 1;
@@ -152,8 +152,8 @@ int main( int argc, char **argv )
 
   /** Get the number of classes to segment (not mandatory) */
   float terminationThreshold = 1e-5;
-  bool rete = parser->GetCommandLineArgument( "-e", terminationThreshold );  
-  
+  bool rete = parser->GetCommandLineArgument( "-e", terminationThreshold );
+
   /** Get the outputFileNames */
   std::vector< std::string > softOutputFileNames;
   std::string hardOutputFileName = "";
@@ -166,12 +166,12 @@ int main( int argc, char **argv )
     {
       std::cerr
         << "ERROR: Number of soft output image file names should be equal "
-        << "to the number of classes." 
+        << "to the number of classes."
         << std::endl;
-      std::cerr 
-        << "i.e., \"-outs\" should be followed by " 
-        << numberOfClasses 
-        << " filenames or just totally omitted." 
+      std::cerr
+        << "i.e., \"-outs\" should be followed by "
+        << numberOfClasses
+        << " filenames or just totally omitted."
         << std::endl;
       return 1;
     }
@@ -182,12 +182,12 @@ int main( int argc, char **argv )
   /** Use mask or not? If yes, read the maskDilationRadius. */
   unsigned int maskDilationRadius = 1;
   bool useMask = parser->ArgumentExists( "-mask" );
-  bool retmask = parser->GetCommandLineArgument( "-mask", maskDilationRadius );  
+  bool retmask = parser->GetCommandLineArgument( "-mask", maskDilationRadius );
 
   /** Read the preferred order of classes in case of undecided pixels */
   std::vector<unsigned int> prefOrder(numberOfClasses);
   for (unsigned int i = 0; i < numberOfClasses; ++i)
-  { 
+  {
     prefOrder[i] = i;
   }
   bool retord = parser->GetCommandLineArgument( "-ord", prefOrder );
@@ -199,7 +199,7 @@ int main( int argc, char **argv )
     "-threads", maximumNumberOfThreads );
   itk::MultiThreader::SetGlobalMaximumNumberOfThreads(
     maximumNumberOfThreads );
-  
+
   /** Determine image properties. */
   std::string ComponentType = "unsigned char";
   std::string PixelType; //we don't use this
@@ -234,7 +234,7 @@ int main( int argc, char **argv )
     std::cerr
       << "ERROR: images of dimension "
       << Dimension
-      << " are not supported!" 
+      << " are not supported!"
       << std::endl;
     return 1;
   }
@@ -248,7 +248,7 @@ int main( int argc, char **argv )
     return 1;
 
   }
-    
+
   /** Run the program. */
   try
   {
@@ -290,7 +290,7 @@ int main( int argc, char **argv )
         inValues,
         outValues);
     }
-    
+
   }
   catch( itk::ExceptionObject &e )
   {
@@ -299,7 +299,7 @@ int main( int argc, char **argv )
   }
 
   std::cout << "pxcombinesegmentations has finished!" << std::endl;
-  
+
   /** End program. */
   return 0;
 
@@ -338,16 +338,16 @@ void CombineSegmentations(
 
   typedef itk::Image< LabelPixelType, Dimension >   LabelImageType;
   typedef itk::Image< ProbPixelType, Dimension >    ProbImageType;
-  typedef itk::Image< 
+  typedef itk::Image<
     ConfusionMatrixPixelType, 3 >                   ConfusionMatrixImageType;
 
   typedef typename LabelImageType::RegionType       RegionType;
 
   typedef typename LabelImageType::Pointer          LabelImagePointer;
   typedef typename ProbImageType::Pointer           ProbImagePointer;
-  typedef typename 
+  typedef typename
     ConfusionMatrixImageType::Pointer               ConfusionMatrixImagePointer;
-  
+
   typedef itk::ImageFileReader< LabelImageType >    LabelImageReaderType;
   typedef itk::ImageFileReader< ProbImageType >     ProbImageReaderType;
   typedef itk::ImageFileWriter< LabelImageType >    LabelImageWriterType;
@@ -357,15 +357,15 @@ void CombineSegmentations(
 
   typedef itk::ChangeLabelImageFilter<
     LabelImageType, LabelImageType >                RelabelFilterType;
-  
+
   typedef itk::ProcessObject                        SegmentationCombinerType;
-  typedef itk::STAPLEImageFilter< 
+  typedef itk::STAPLEImageFilter<
     LabelImageType, ProbImageType >                 STAPLEType;
-  typedef itk::LabelVoting2ImageFilter< 
+  typedef itk::LabelVoting2ImageFilter<
     LabelImageType, LabelImageType, ProbPixelType > LabelVotingType;
-  typedef itk::MultiLabelSTAPLEImageFilter< 
+  typedef itk::MultiLabelSTAPLEImageFilter<
     LabelImageType, LabelImageType, ProbPixelType > MultiLabelSTAPLEType;
-  typedef itk::MultiLabelSTAPLE2ImageFilter< 
+  typedef itk::MultiLabelSTAPLE2ImageFilter<
     LabelImageType, LabelImageType, ProbPixelType > MultiLabelSTAPLE2Type;
 
   typedef itk::InvertIntensityImageFilter<
@@ -386,7 +386,7 @@ void CombineSegmentations(
     MultiLabelSTAPLEType::WeightsType              MultiSTAPLEWeightsType;
   typedef typename
     MultiLabelSTAPLEType::ConfusionMatrixType      MultiSTAPLEConfusionMatrixType;
-  typedef typename 
+  typedef typename
     MultiLabelSTAPLE2Type::ObserverTrustType       MultiSTAPLE2ObserverTrustType;
   typedef typename MultiLabelSTAPLE2Type::
     PriorProbabilityImageArrayType                 MultiSTAPLE2PriorProbImageArrayType;
@@ -397,20 +397,20 @@ void CombineSegmentations(
     MultiLabelSTAPLE2Type::PriorPreferenceType     PriorPreferenceType;
 
   typedef itk::NaryUnequalityTestImageFilter<
-    LabelImageType, MaskImageType>                 MaskGeneratorType; 
+    LabelImageType, MaskImageType>                 MaskGeneratorType;
 
   typedef itk::BinaryBallStructuringElement<
     MaskPixelType, Dimension >                     StructuringElementType;
-  typedef typename 
+  typedef typename
     StructuringElementType::RadiusType             KernelRadiusType;
   typedef itk::BinaryDilateImageFilter<
     MaskImageType,
     MaskImageType,
     StructuringElementType >                       DilateFilterType;
-  
+
   typedef std::vector< LabelImagePointer >         LabelImageArrayType;
   typedef std::vector< ProbImagePointer >          ProbImageArrayType;
-  
+
   /** Declare some variables */
   unsigned int numberOfObservers = 0;
   SegmentationCombinerType::Pointer segmentationCombiner = 0;
@@ -419,7 +419,7 @@ void CombineSegmentations(
   ProbImageArrayType softSegmentationArray;
   LabelImagePointer hardSegmentation = 0;
   ConfusionMatrixImagePointer confusionMatrixImage = 0;
-  
+
   /** Initialize some variables */
   numberOfObservers = inputSegmentationFileNames.size();
   labelImageArray.resize( numberOfObservers );
@@ -447,7 +447,7 @@ void CombineSegmentations(
     lastRegion = region;
 
     /** Relabel? */
-    if ( relabel ) 
+    if ( relabel )
     {
       typename RelabelFilterType::Pointer relabeler = RelabelFilterType::New();
       relabeler->SetInput( labelImageReader->GetOutput() );
@@ -463,9 +463,9 @@ void CombineSegmentations(
     else
     {
       labelImageArray[i] = labelImageReader->GetOutput();
-    }    
+    }
   }
-  std::cout << "Done reading input segmentations." << std::endl; 
+  std::cout << "Done reading input segmentations." << std::endl;
 
   /** Read the prior probability images, if supplied */
   if ( priorProbImageFileNames.size() == numberOfClasses )
@@ -479,7 +479,7 @@ void CombineSegmentations(
       probImageReader->Update();
       priorProbImageArray[i] = probImageReader->GetOutput();
     }
-    std::cout << "Done reading prior probability images." << std::endl; 
+    std::cout << "Done reading prior probability images." << std::endl;
   }
 
   /** Prepare the confusion matrix */
@@ -513,7 +513,7 @@ void CombineSegmentations(
     staple->Update();
     std::cout << "Done performing STAPLE algorithm." << std::endl;
     std::cout << "NumberOfIterations = " << staple->GetElapsedIterations() << std::endl;
-   
+
     /** Save the result in the softSegmentationArray[1] */
     softSegmentationArray[0] = 0;
     softSegmentationArray[1] = staple->GetOutput();
@@ -526,12 +526,12 @@ void CombineSegmentations(
     inverter->Update();
     std::cout << "Done generating soft segmentation for class 0..." << std::endl;
     softSegmentationArray[0] = inverter->GetOutput();
-    
+
     /** Generate the hard segmentation from the softSegmentation[0] */
     if ( hardOutputFileName != "" )
     {
-      /** use the soft segmentation of class 0, since the threshold filter 
-       * applies a > operator, and we would like to apply >= on the soft 
+      /** use the soft segmentation of class 0, since the threshold filter
+       * applies a > operator, and we would like to apply >= on the soft
        * segmentation of class 1  */
       typename ThresholderType::Pointer thresholder = ThresholderType::New();
       thresholder->SetLowerThreshold( itk::NumericTraits<ProbPixelType>::NonpositiveMin() );
@@ -567,7 +567,7 @@ void CombineSegmentations(
         ++cit;
         cit.Value() = sens; // class = 1, label = 1
         ++cit; // next observer
-      } // end while     
+      } // end while
     } // end if confusion
   }  // end if STAPLE
   else if ( combinationMethod == "MULTISTAPLE" )
@@ -593,9 +593,9 @@ void CombineSegmentations(
     std::cout << "Performing MULTISTAPLE algorithm..." << std::endl;
     multistaple->Update();
     std::cout << "Done performing MULTISTAPLE algorithm." << std::endl;
-    std::cout 
-      << "Estimated/supplied priorProbabilities were: " 
-      << multistaple->GetPriorProbabilities() 
+    std::cout
+      << "Estimated/supplied priorProbabilities were: "
+      << multistaple->GetPriorProbabilities()
       << std::endl;
     hardSegmentation = multistaple->GetOutput();
 
@@ -609,7 +609,7 @@ void CombineSegmentations(
       while ( !cit.IsAtEnd() )
       {
         cindex = cit.GetIndex();
-        MultiSTAPLEConfusionMatrixType confmat = 
+        MultiSTAPLEConfusionMatrixType confmat =
           multistaple->GetConfusionMatrix( cindex[2] );
         /** In multiSTAPLE the first index corresponds to applied class, and the
          * second index to the real class, so just different than in our definition. */
@@ -634,13 +634,13 @@ void CombineSegmentations(
     typename DilateFilterType::Pointer dilater = DilateFilterType::New();
 
     /** Set the number of classes */
-    multistaple2->SetNumberOfClasses( numberOfClasses );    
-    
+    multistaple2->SetNumberOfClasses( numberOfClasses );
+
     /** Set the inputs */
     for (unsigned int i = 0; i < numberOfObservers; ++i )
     {
       multistaple2->SetInput(i, labelImageArray[i]);
-      maskGenerator->SetInput(i, labelImageArray[i]);      
+      maskGenerator->SetInput(i, labelImageArray[i]);
     }
 
     /** Set the mask */
@@ -662,7 +662,7 @@ void CombineSegmentations(
     }
 
     /** Set the prior preferences. They are given as a list of labels in prefOrder.
-     * The staple class expects a 'preference'-number for each class; 
+     * The staple class expects a 'preference'-number for each class;
      * the lower the more preference. The code below does the conversion. */
     PriorPreferenceType priorPref(numberOfClasses);
     for (unsigned int i = 0; i < numberOfClasses; ++i)
@@ -703,12 +703,12 @@ void CombineSegmentations(
     }
 
     multistaple2->SetInitializeWithMajorityVoting( ( combinationMethod == "VOTE_MULTISTAPLE2" ) );
-    
+
     /** Set whether soft segmentations are required */
     if ( softOutputFileNames.size() > 0 )
     {
       multistaple2->SetGenerateProbabilisticSegmentations(true);
-    }  
+    }
 
     /** Set the termination threshold */
     std::cout << "TerminationUpdateThreshold = " << terminationThreshold << std::endl;
@@ -720,18 +720,18 @@ void CombineSegmentations(
     std::cout << "Done performing " << combinationMethod << " algorithm." << std::endl;
     if ( priorProbImageFileNames.size() != numberOfClasses )
     {
-      std::cout 
-        << "Estimated/supplied priorProbabilities were: " 
-        << multistaple2->GetPriorProbabilities() 
+      std::cout
+        << "Estimated/supplied priorProbabilities were: "
+        << multistaple2->GetPriorProbabilities()
         << std::endl;
     }
-    std::cout 
-      << "Estimated/supplied initial observer trust was: " 
-      << multistaple2->GetObserverTrust() 
+    std::cout
+      << "Estimated/supplied initial observer trust was: "
+      << multistaple2->GetObserverTrust()
       << std::endl;
     std::cout << "NumberOfIterations = " << multistaple2->GetElapsedIterations() << std::endl;
     std::cout << "Last maximum confusion matrix element update = " << multistaple2->GetMaximumConfusionMatrixElementUpdate() << std::endl;
-   
+
     /** Get the hard segmentation */
     hardSegmentation = multistaple2->GetOutput();
 
@@ -742,7 +742,7 @@ void CombineSegmentations(
       {
         softSegmentationArray[i] = multistaple2->GetProbabilisticSegmentationArray()[i];
       }
-    }   
+    }
 
     /** Generate the confusion matrix */
     if ( confusionOutputFileName != "" )
@@ -754,7 +754,7 @@ void CombineSegmentations(
       while ( !cit.IsAtEnd() )
       {
         cindex = cit.GetIndex();
-        MultiSTAPLEConfusionMatrixType confmat = 
+        MultiSTAPLEConfusionMatrixType confmat =
           multistaple2->GetConfusionMatrix( cindex[2] );
         /** In multiSTAPLE2 the first index corresponds to applied class, and the
          * second index to the real class, so just different than in our definition. */
@@ -777,15 +777,15 @@ void CombineSegmentations(
     typename MaskGeneratorType::Pointer maskGenerator = MaskGeneratorType::New();
     typename DilateFilterType::Pointer dilater = DilateFilterType::New();
     segmentationCombiner = voting;
-    
+
     /** Set the number of classes */
-    voting->SetNumberOfClasses( numberOfClasses );    
-    
+    voting->SetNumberOfClasses( numberOfClasses );
+
     /** Set the inputs */
     for (unsigned int i = 0; i < numberOfObservers; ++i )
     {
       voting->SetInput(i, labelImageArray[i]);
-      maskGenerator->SetInput(i, labelImageArray[i]);      
+      maskGenerator->SetInput(i, labelImageArray[i]);
     }
 
     /** Set the mask */
@@ -806,10 +806,10 @@ void CombineSegmentations(
       std::cout << "Done creating mask." << std::endl;
     }
 
-    voting->SetGenerateConfusionMatrix( (confusionOutputFileName != "") );    
- 
+    voting->SetGenerateConfusionMatrix( (confusionOutputFileName != "") );
+
     /** Set the prior preferences. They are given as a list of labels in prefOrder.
-     * The staple class expects a 'preference'-number for each class; 
+     * The staple class expects a 'preference'-number for each class;
      * the lower the more preference. The code below does the conversion. */
     PriorPreferenceType priorPref(numberOfClasses);
     for (unsigned int i = 0; i < numberOfClasses; ++i)
@@ -817,7 +817,7 @@ void CombineSegmentations(
       priorPref[ prefOrder[i] ] = i;
     }
     voting->SetPriorPreference( priorPref );
- 
+
     /** Set the trust in the observers */
     if ( trust.size() == numberOfObservers )
     {
@@ -833,18 +833,18 @@ void CombineSegmentations(
     if ( softOutputFileNames.size() > 0 )
     {
       voting->SetGenerateProbabilisticSegmentations(true);
-    }  
-    
+    }
+
     /** Run!! */
     std::cout << "Performing VOTE algorithm..." << std::endl;
     voting->Update();
     std::cout << "Done performing VOTE algorithm." << std::endl;
-    
-    std::cout 
-      << "Estimated/supplied initial observer trust was: " 
-      << voting->GetObserverTrust() 
+
+    std::cout
+      << "Estimated/supplied initial observer trust was: "
+      << voting->GetObserverTrust()
       << std::endl;
-    
+
     /** Get the hard segmentation */
     hardSegmentation = voting->GetOutput();
 
@@ -855,7 +855,7 @@ void CombineSegmentations(
       {
         softSegmentationArray[i] = voting->GetProbabilisticSegmentationArray()[i];
       }
-    }   
+    }
 
     /** Generate the confusion matrix */
     if ( confusionOutputFileName != "" )
@@ -867,7 +867,7 @@ void CombineSegmentations(
       while ( !cit.IsAtEnd() )
       {
         cindex = cit.GetIndex();
-        MultiSTAPLEConfusionMatrixType confmat = 
+        MultiSTAPLEConfusionMatrixType confmat =
           voting->GetConfusionMatrix( cindex[2] );
         /** In multiSTAPLE2 the first index corresponds to applied class, and the
          * second index to the real class, so just different than in our definition. */
@@ -885,8 +885,8 @@ void CombineSegmentations(
   } // end if VOTE
   else
   {
-    std::cout 
-      << "ERROR: The desired combination method " 
+    std::cout
+      << "ERROR: The desired combination method "
       << combinationMethod
       << " is not yet supported!"
       << std::endl;
@@ -894,14 +894,14 @@ void CombineSegmentations(
 
   }
 
-  
+
   /** Write soft segmentations */
   if ( softOutputFileNames.size() > 0 )
   {
     std::cout << "Writing soft segmentations..." << std::endl;
     for ( unsigned int i = 0; i < softOutputFileNames.size(); ++i )
     {
-      typename ProbImageWriterType::Pointer softWriter = 
+      typename ProbImageWriterType::Pointer softWriter =
         ProbImageWriterType::New();
       softWriter->SetFileName( softOutputFileNames[i].c_str() );
       /** Check if the soft segmentation is available. MULTISTAPLE does not
@@ -909,39 +909,39 @@ void CombineSegmentations(
       if ( softSegmentationArray[i].IsNotNull() )
       {
         softWriter->SetInput( softSegmentationArray[ i ] );
-        softWriter->Update();       
+        softWriter->Update();
       }
     }
-    std::cout << "Done writing soft segmentations." << std::endl;  
+    std::cout << "Done writing soft segmentations." << std::endl;
   }
 
   /** Write hard segmentations */
   if ( hardOutputFileName != "" )
   {
-    typename LabelImageWriterType::Pointer hardWriter = 
+    typename LabelImageWriterType::Pointer hardWriter =
       LabelImageWriterType::New();
     hardWriter->SetFileName( hardOutputFileName.c_str() );
     if ( hardSegmentation.IsNotNull() )
     {
       hardWriter->SetInput( hardSegmentation );
-      std::cout << "Writing hard segmentation..." << std::endl;  
+      std::cout << "Writing hard segmentation..." << std::endl;
       hardWriter->Update();
-      std::cout << "Done writing hard segmentation." << std::endl;  
+      std::cout << "Done writing hard segmentation." << std::endl;
     }
   }
 
   /** Write confusion image */
   if ( confusionOutputFileName != "" )
   {
-    typename ConfusionMatrixImageWriterType::Pointer confusionWriter = 
+    typename ConfusionMatrixImageWriterType::Pointer confusionWriter =
       ConfusionMatrixImageWriterType::New();
     confusionWriter->SetFileName( confusionOutputFileName.c_str() );
-    if ( confusionMatrixImage.IsNotNull() )      
+    if ( confusionMatrixImage.IsNotNull() )
     {
       confusionWriter->SetInput( confusionMatrixImage );
-      std::cout << "Writing confusion matrix image..." << std::endl;  
+      std::cout << "Writing confusion matrix image..." << std::endl;
       confusionWriter->Update();
-      std::cout << "Done writing confusion matrix image..." << std::endl;  
+      std::cout << "Done writing confusion matrix image..." << std::endl;
     }
   }
 
@@ -972,7 +972,7 @@ void PrintHelp()
             << "           number for each class. This parameter is ignored when \"-P\" is provided as well.\n"
             << "           For VOTE this parameter is ignored. For STAPLE, this number is considered\n"
             << "           as a factor which is multiplied with the estimated prior probability.\n"
-            << "           For MULTISTAPLE[2], the number is really the prior probability.\n" 
+            << "           For MULTISTAPLE[2], the number is really the prior probability.\n"
             << "           If -p and -P are not provided, the prior probs are estimated from the data." << std::endl;
   std::cout << "  [-t]     trust0 [trust1 ...]: a factor between 0 and 1 indicating the 'trust' in each observer;\n"
             << "           default: 0.99999 for each observer for [VOTE_]MULTISTAPLE2. 1.0 for VOTE.\n"
@@ -987,13 +987,13 @@ void PrintHelp()
             << "           are exactly equally likely)." << std::endl;
   std::cout << "  [-outc]  confusionImageFileName: 3d float image, in which each slice resembles\n"
             << "           the confusion matrix for each observer. The x-axis corresponds to the\n"
-            << "           real label, the y-axis corresponds to the label given by the observer." << std::endl;            
+            << "           real label, the y-axis corresponds to the label given by the observer." << std::endl;
   std::cout << "  [-mask]  [maskDilationRadius]: Use a mask if this flag is provided.\n"
             << "           Only taken into account by [VOTE_]MULTISTAPLE2 and VOTE.\n"
             << "           The mask is 0 at those pixels were the decision is unanimous, and 1 elsewhere.\n"
             << "           A dilation is performed with a kernel with radius maskDilationRadius (default:1)\n"
             << "           Pixels that are outside the mask, will have class of the first observer.\n"
-            << "           Other pixels are passed through the combination algorithm.\n" 
+            << "           Other pixels are passed through the combination algorithm.\n"
             << "           The confusion matrix will be only based on the pixels within the mask." << std::endl;
   std::cout << "  [-ord]   The order of preferred classes, in cases of undecided pixels. Default: 0 1 2...\n"
             << "           Ignored by STAPLE and MULTISTAPLE. In the default case, class 0 will be\n"

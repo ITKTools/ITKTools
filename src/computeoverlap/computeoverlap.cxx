@@ -86,7 +86,7 @@ int main( int argc, char ** argv )
     std::cerr << "ERROR: You should specify two input file names with \"-in\"." << std::endl;
     return 1;
   }
-  
+
   /** Determine image properties. */
   std::string ComponentType = "float";
   std::string PixelType = "VECTOR";
@@ -107,9 +107,9 @@ int main( int argc, char ** argv )
 
   /** Checks. */
   if ( NumberOfComponents > 1 )
-  { 
+  {
     std::cerr << "Vector images are not supported!" << std::endl;
-    return 1; 
+    return 1;
   }
 
   /** Get rid of the possible "_" in ComponentType. */
@@ -217,7 +217,7 @@ void ComputeOverlapOld(
   typedef ThresholdFilterType::ThresholdVector        ThresholdVectorType;
 
   /**
-   * Setup pipeline 
+   * Setup pipeline
    */
 
   /** Create readers and an AND filter. */
@@ -401,7 +401,7 @@ void ComputeOverlap2(
   typedef itk::ImageRegionConstIterator<ImageType>    IteratorType;
 
   /**
-   * Setup pipeline 
+   * Setup pipeline
    */
 
   /** Create readers. */

@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -32,19 +32,19 @@ namespace itk
 /** \class HessianRecursiveGaussianImageFilter2
  * \brief Computes the Hessian matrix of an image by convolution
  *        with the Second and Cross derivatives of a Gaussian.
- * 
+ *
  * This filter is implemented using the recursive gaussian
  * filters
  *
- * 
- * \ingroup GradientFilters   
+ *
+ * \ingroup GradientFilters
  * \ingroup Singlethreaded
  */
-// NOTE that the ITK_TYPENAME macro has to be used here in lieu 
-// of "typename" because VC++ doesn't like the typename keyword 
+// NOTE that the ITK_TYPENAME macro has to be used here in lieu
+// of "typename" because VC++ doesn't like the typename keyword
 // on the defaults of template parameters
-template <typename TInputImage, 
-          typename TOutputImage= Image< SymmetricSecondRankTensor< 
+template <typename TInputImage,
+          typename TOutputImage= Image< SymmetricSecondRankTensor<
   ITK_TYPENAME NumericTraits< ITK_TYPENAME TInputImage::PixelType>::RealType,
   ::itk::GetImageDimension<TInputImage>::ImageDimension >,
                                         ::itk::GetImageDimension<TInputImage>::ImageDimension > >
@@ -76,8 +76,8 @@ public:
   itkStaticConstMacro( NumberOfSmoothingFilters, unsigned int,
     GetImageDimension<TInputImage>::ImageDimension - 2 );
 
-  /** Define the image type for internal computations 
-      RealType is usually 'double' in NumericTraits. 
+  /** Define the image type for internal computations
+      RealType is usually 'double' in NumericTraits.
       Here we prefer float in order to save memory.  */
 
   typedef float                                       InternalRealType;
@@ -86,8 +86,8 @@ public:
     GetImageDimension<TInputImage>::ImageDimension >  RealImageType;
 
   /**  Output Image Nth Element Adaptor
-   *  This adaptor allows to use conventional scalar 
-   *  smoothing filters to compute each one of the 
+   *  This adaptor allows to use conventional scalar
+   *  smoothing filters to compute each one of the
    *  components of the gradient image pixels. */
   typedef NthElementImageAdaptor<
     TOutputImage, InternalRealType >                  OutputImageAdaptorType;
@@ -145,22 +145,22 @@ public:
 #endif
 
 protected:
-  
+
   HessianRecursiveGaussianImageFilter2();
   virtual ~HessianRecursiveGaussianImageFilter2() {};
   void PrintSelf(std::ostream& os, Indent indent) const;
-  
+
   /** Generate Data */
   void GenerateData( void );
 
   // Override since the filter produces the entire dataset
   void EnlargeOutputRequestedRegion(DataObject *output);
-  
+
 private:
 
   HessianRecursiveGaussianImageFilter2(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
-  
+
   GaussianFiltersArray          m_SmoothingFilters;
   DerivativeFilterAPointer      m_DerivativeFilterA;
   DerivativeFilterBPointer      m_DerivativeFilterB;
@@ -168,7 +168,7 @@ private:
   SigmaType                     m_Sigma;
 
   /** Normalize the image across scale space */
-  bool m_NormalizeAcrossScale; 
+  bool m_NormalizeAcrossScale;
 
 };
 

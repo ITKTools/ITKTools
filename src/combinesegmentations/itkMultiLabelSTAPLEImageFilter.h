@@ -9,8 +9,8 @@ Version:   $Revision: 1.1 $
 Copyright (c) 2002 Insight Consortium. All rights reserved.
 See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-This software is distributed WITHOUT ANY WARRANTY; without even 
-the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+This software is distributed WITHOUT ANY WARRANTY; without even
+the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -55,7 +55,7 @@ namespace itk
   * classifier combination in atlas-based image segmentation using
   * expectation-maximization parameter estimation," IEEE Transactions on
   * Medical Imaging, vol. 23, pp. 983-994, Aug. 2004.
-  * 
+  *
   * \par INPUTS
   * All input volumes to this filter must be segmentations of an image,
   * that is, they must have discrete pixel values where each value represents
@@ -73,7 +73,7 @@ namespace itk
   * \par OUTPUTS
   * The filter produces a single output volume. Each output pixel
   * contains the label that has the highest probability of being the correct
-  * label, based on the performance models of the individual segmentations. 
+  * label, based on the performance models of the individual segmentations.
   * If the maximum probaility is not unique, i.e., if more than one label have
   * a maximum probability, then an "undecided" label is assigned to that output
   * pixel.
@@ -89,7 +89,7 @@ namespace itk
   * GetConfusionMatrix member function.
   *
   * \par PARAMETERS
-  * The label used for "undecided" labels can be set using 
+  * The label used for "undecided" labels can be set using
   * SetLabelForUndecidedPixels. This functionality can be unset by calling
   * UnsetLabelForUndecidedPixels.
   *
@@ -254,14 +254,14 @@ namespace itk
     }
 
   protected:
-    MultiLabelSTAPLEImageFilter() 
-    { 
+    MultiLabelSTAPLEImageFilter()
+    {
       this->m_HasLabelForUndecidedPixels = false;
       this->m_HasPriorProbabilities = false;
       this->m_HasMaximumNumberOfIterations = false;
       this->m_TerminationUpdateThreshold = 1e-5;
     }
-    virtual ~MultiLabelSTAPLEImageFilter() {}  
+    virtual ~MultiLabelSTAPLEImageFilter() {}
 
     void GenerateData();
 

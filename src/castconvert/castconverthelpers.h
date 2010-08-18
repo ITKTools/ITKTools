@@ -158,7 +158,7 @@ ReadDicomSeriesCastWriteImage(
   /** Connect the pipeline. */
   caster->SetInput(  seriesReader->GetOutput()  );
   writer->SetInput(  caster->GetOutput()  );
-  
+
   /**  Do the actual  conversion.  */
   writer->Update();
 
@@ -231,7 +231,7 @@ ReadCastWriteVectorImage(
   typedef typename itk::VectorCastImageFilter<
     InputImageType, OutputImageType >                         CasterType;
   typedef typename itk::ImageFileWriter< OutputImageType >    ImageWriterType;
-  
+
   /** Create reader, caster and writer. */
   typename ImageReaderType::Pointer reader = ImageReaderType::New();
   typename CasterType::Pointer      caster = CasterType::New();

@@ -47,14 +47,14 @@ int main( int argc, char **argv )
 
   std::string ops = "MAGNITUDE";
   bool retops = parser->GetCommandLineArgument( "-ops", ops );
-  
+
   std::string outputFileName = "";
   bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
   if ( outputFileName == "" )
   {
     std::string part1 =
       itksys::SystemTools::GetFilenameWithoutLastExtension(inputFileName);
-    std::string ext = 
+    std::string ext =
       itksys::SystemTools::GetFilenameLastExtension(inputFileName);
     outputFileName = part1 + ops + ext;
   }
@@ -62,7 +62,7 @@ int main( int argc, char **argv )
   /** Support for streaming. */
   unsigned int numberOfStreams = 1;
   bool rets = parser->GetCommandLineArgument( "-s", numberOfStreams );
-  
+
   /** Determine image properties. */
   std::string ComponentType = "float";
   std::string PixelType = "VECTOR";
@@ -83,19 +83,19 @@ int main( int argc, char **argv )
 
   /** Checks. */
   if ( NumberOfComponents != Dimension )
-  { 
+  {
     std::cerr << "ERROR: The NumberOfComponents must equal the Dimension!" << std::endl;
-    return 1; 
+    return 1;
   }
   if ( NumberOfComponents == 1 )
-  { 
+  {
     std::cerr << "Scalar images are not supported!" << std::endl;
-    return 1; 
+    return 1;
   }
-  
+
   /** Get rid of the possible "_" in ComponentType. */
   ReplaceUnderscoreWithSpace( ComponentType );
-  
+
   /** Run the program. */
   bool supported = false;
   try
@@ -123,7 +123,7 @@ int main( int argc, char **argv )
       << "of supported images." << std::endl;
     return 1;
   }
-  
+
   /** End program. */
   return 0;
 

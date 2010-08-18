@@ -14,7 +14,7 @@ typedef std::map<std::string, std::string> ArgMapType;
 
 void PrintUsageString(void)
 {
-  std::cerr 
+  std::cerr
     << "\nThis program applies histogram equalization to an image.\n"
     << "Works as described by Maintz, Introduction to Image Processing.\n"
     << "Usage:\n"
@@ -57,7 +57,7 @@ int ReadArgument(const ArgMapType & argmap, const std::string & key, std::string
 //strange hack:
 #if defined(_MSC_VER) && (_MSC_VER <= 1300)
 #  define CRI_STATIC_ENUM static enum
-#else 
+#else
 #  define CRI_STATIC_ENUM enum
 #endif
 
@@ -85,14 +85,14 @@ class runwrap
     typedef itk::HistogramEqualizationImageFilter<
       ImageType>                                  EnhancerType;
     typedef typename EnhancerType::Pointer        EnhancerPointer;
-        
+
     /** vars */
     std::string inputImageFileName("");
     std::string outputImageFileName("");
     int returndummy = 0;
     WriterPointer writer = WriterType::New();
     EnhancerPointer enhancer = EnhancerType::New();
-    
+
     /** Read filenames */
     returndummy |= ReadArgument(argmap, "-in", inputImageFileName, false);
     returndummy |= ReadArgument(argmap, "-out", outputImageFileName, false);
@@ -104,7 +104,7 @@ class runwrap
     /** Try to read input image */
     ReaderPointer reader = ReaderType::New();
     reader->SetFileName( inputImageFileName.c_str() );
-    try 
+    try
     {
       reader->Update();
     }
@@ -114,7 +114,7 @@ class runwrap
       std::cerr << err << std::endl;
       return 2;
     }
-    
+
     /** Setup pipeline and configure its components */
 
     enhancer->SetInput( reader->GetOutput() );
@@ -122,7 +122,7 @@ class runwrap
     writer->SetFileName(outputImageFileName.c_str());
 
     /** do it. */
-    std::cout 
+    std::cout
       << "Saving image to disk as \""
       << outputImageFileName
       << "\""
@@ -136,9 +136,9 @@ class runwrap
       std::cerr << err << std::endl;
       return 3;
     }
-    
+
     return 0;
-    
+
   } // end function run_cri
 
   /** Constructor and destructor */
@@ -156,14 +156,14 @@ class ptswrap
 
   static int PixelTypeSelector(const ArgMapType & argmap )
   {
-    const unsigned int ImageDimension = NImageDimension; 
+    const unsigned int ImageDimension = NImageDimension;
     std::string pixelType("");
     int returndummy = ReadArgument(argmap, "-pt", pixelType, false);
     if ( returndummy !=0 )
     {
       return returndummy;
     }
-    
+
     std::map<std::string, enum_type> typemap;
     typemap["FLOAT"] = eFLOAT;
     typemap["INT"] = eINT;
@@ -172,7 +172,7 @@ class ptswrap
     typemap["USHORT"] = eUSHORT;
     typemap["CHAR"] = eCHAR;
     typemap["UCHAR"] = eUCHAR;
-    
+
     enum_type pt = eUNKNOWN;
     if ( typemap.count(pixelType) )
     {
@@ -180,19 +180,19 @@ class ptswrap
     }
     switch( pt )
     {
-    case eSHORT : 
+    case eSHORT :
       return  runwrap<ImageDimension, short>::run_cri(argmap);
-    case eUSHORT : 
+    case eUSHORT :
       return  runwrap<ImageDimension, unsigned short>::run_cri(argmap);
-    case eCHAR : 
+    case eCHAR :
       return  runwrap<ImageDimension, char>::run_cri(argmap);
-    case eUCHAR : 
+    case eUCHAR :
       return  runwrap<ImageDimension, unsigned char>::run_cri(argmap);
     default :
       std::cerr << "ERROR: PixelType not supported" << std::endl;
       return 1;
     }
-    
+
   }
 
   /** constructor and destructor */

@@ -13,14 +13,14 @@ namespace itk
 /** \class CartesianToSphericalCoordinateImageFilter
  * \brief Transform an image to spherical coordinates using a kind of ParzenWindow approach.
  *
- * This filter computes the spherical transform of a 3D image. 
- * It uses a quite unconventional way. Instead of 'shooting rays' and 
+ * This filter computes the spherical transform of a 3D image.
+ * It uses a quite unconventional way. Instead of 'shooting rays' and
  * interpolating the xyz image it walks over the xyz image and computes
- * the contribution of each voxel to each r-theta-phi voxel in the output 
+ * the contribution of each voxel to each r-theta-phi voxel in the output
  * image, using a linear parzen window. Multiple (random) samples per xyz voxel
  * may be taken to make sure that every r-theta-phi is filled with a sensible
  * value.
- * 
+ *
  * Since this filter produces an image which is a different size than
  * its input, it needs to override several of the methods defined
  * in ProcessObject in order to properly manage the pipeline execution model.
@@ -50,7 +50,7 @@ public:
   /** Number of dimensions. */
   itkStaticConstMacro( ImageDimension, unsigned int, TOutputImage::ImageDimension );
   itkStaticConstMacro( InputImageDimension, unsigned int, TInputImage::ImageDimension );
-  
+
   typedef TInputImage                           InputImageType;
   typedef TOutputImage                          OutputImageType;
   typedef typename InputImageType::Pointer      InputImagePointer;
@@ -60,10 +60,10 @@ public:
   typedef unsigned char                         MaskPixelType;
   typedef Image<MaskPixelType, ImageDimension>  MaskImageType;
   typedef typename MaskImageType::Pointer       MaskImagePointer;
-  
+
   typedef typename InputImageType::RegionType   InputImageRegionType;
   typedef typename OutputImageType::RegionType  OutputImageRegionType;
-    
+
   typedef typename OutputImageType::SizeType    SizeType;
   typedef typename OutputImageType::IndexType   IndexType;
   typedef ContinuousIndex<
@@ -73,24 +73,24 @@ public:
   typedef typename OutputImageType::SpacingType SpacingType;
   typedef typename OutputImageType::PointType   OriginPointType;
   typedef Vector<
-    double, 
+    double,
     itkGetStaticConstMacro( InputImageDimension )> VectorType;
   typedef typename PointType::CoordRepType      CoordRepType;
 
   typedef typename OutputImageType::PixelType   OutputPixelType;
   typedef typename InputImageType::PixelType    InputPixelType;
-  typedef typename  
+  typedef typename
     NumericTraits<InputPixelType>::RealType     InternalPixelType;
   typedef Image<
     InternalPixelType,
     itkGetStaticConstMacro( InputImageDimension )> InternalImageType;
-  
+
   /** The random number generator used to generate random coordinates. */
   typedef itk::Statistics::MersenneTwisterRandomVariateGenerator RandomGeneratorType;
 
   typedef InterpolateImageFunction<
     InputImageType, CoordRepType>               InterpolatorType;
-  
+
   /** Set/Get an interpolator; not mandatory. Implicitly, nearest
    * neighbor interpolation is used if you don't set it.  */
   itkSetObjectMacro( Interpolator, InterpolatorType );
@@ -114,7 +114,7 @@ public:
   /** Set the maximum number of random samples per pixel */
   itkSetMacro( MaximumNumberOfSamplesPerVoxel, unsigned int );
   itkGetConstMacro( MaximumNumberOfSamplesPerVoxel, unsigned int );
-    
+
   /** CartesianToSphericalCoordinateImageFilter produces an image which is a different size
    * than its input.  As such, it needs to provide an implementation
    * for GenerateOutputInformation() in order to inform the pipeline
@@ -155,7 +155,7 @@ protected:
   inline void GenerateRandomCoordinate(
     const PointType & inputPoint,
     PointType & randomPoint );
-  
+
   typename RandomGeneratorType::Pointer m_RandomGenerator;
 
   SpacingType             m_OutputSpacing; // output image spacing
@@ -166,21 +166,21 @@ protected:
 private:
   CartesianToSphericalCoordinateImageFilter(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
-  
+
   SizeType                m_OutputSize;       // Size of the output image
   PointType               m_CenterOfRotation;
   unsigned int            m_MaximumNumberOfSamplesPerVoxel;
 
-  MaskImagePointer        m_MaskImage; 
+  MaskImagePointer        m_MaskImage;
   typename InterpolatorType::Pointer m_Interpolator;
 
 }; // end class
 
-  
+
 } // end namespace itk
-  
+
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "itkCartesianToSphericalCoordinateImageFilter.txx"
 #endif
-  
+
 #endif // end #ifndef __itkCartesianToSphericalCoordinateImageFilter_h

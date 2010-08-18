@@ -78,7 +78,7 @@ int main( int argc, char **argv )
     std::cout << "ERROR: K should be larger than 1." << std::endl;
     return 1;
   }
-  
+
   /** Determine image properties. */
   std::string ComponentTypeIn = "short";
   std::string PixelType; //we don't use this
@@ -99,18 +99,18 @@ int main( int argc, char **argv )
 
   /** Check for vector images. */
   if ( NumberOfComponents > 1 )
-  { 
+  {
     std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
     std::cerr << "Vector images are not supported." << std::endl;
-    return 1; 
+    return 1;
   }
 
   /** Check for dimension. */
   if ( Dimension != 3 )
-  { 
+  {
     std::cerr << "ERROR: The image dimension equals " << Dimension << "." << std::endl;
     std::cerr << "Only 3D images are supported." << std::endl;
-    return 1; 
+    return 1;
   }
 
   /** Get rid of the possible "_" in ComponentType. */
@@ -148,7 +148,7 @@ int main( int argc, char **argv )
       << std::endl;
     return 1;
   }
-  
+
   /** End program. */
   return 0;
 
@@ -210,7 +210,7 @@ void ExtractEveryOtherSlice(
   /** Create iterators. */
   SliceConstIteratorType itIn( reader->GetOutput(), reader->GetOutput()->GetLargestPossibleRegion() );
   SliceIteratorType itOut( outputImage, outputImage->GetLargestPossibleRegion() );
- 
+
   /** Set direction, default slice = z. */
   if ( direction == 0 )
   {
@@ -265,7 +265,7 @@ void ExtractEveryOtherSlice(
       index[ direction ]++;
     }
     itIn.SetIndex( index );
-  } 
+  }
 
   /** Write the output image. */
   typename WriterType::Pointer writer = WriterType::New();

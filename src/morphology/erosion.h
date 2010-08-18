@@ -14,7 +14,7 @@
  */
 
 template< class ImageType >
-void erosionGrayscale( 
+void erosionGrayscale(
   const std::string & inputFileName,
   const std::string & outputFileName,
   const std::vector<unsigned int> & radius,
@@ -37,7 +37,7 @@ void erosionGrayscale(
   typename ReaderType::Pointer reader = ReaderType::New();
   typename WriterType::Pointer writer = WriterType::New();
   typename ErodeFilterType::Pointer erosion = ErodeFilterType::New();
-  
+
   /** Setup the reader. */
   reader->SetFileName( inputFileName.c_str() );
 

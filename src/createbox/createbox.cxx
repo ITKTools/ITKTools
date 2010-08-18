@@ -83,7 +83,7 @@ int main( int argc, char** argv )
 
   std::vector<unsigned int> size( Dimension );
   bool retsz = parser->GetCommandLineArgument( "-sz", size );
-  
+
   std::vector<double> center( Dimension );
   bool retc = parser->GetCommandLineArgument( "-c", center );
 
@@ -125,7 +125,7 @@ int main( int argc, char** argv )
     std::cerr << "ERROR: Or you should specify \"-ci1\" and \"-ci2\"." << std::endl;
     return 1;
   }
-  
+
   /** Determine input image properties. */
   std::string ComponentType = "short";
   std::string PixelType; //we don't use this
@@ -223,7 +223,7 @@ int main( int argc, char** argv )
   /** End program. Return a value. */
   return 0;
 
-} // end main 
+} // end main
 
 
   /**

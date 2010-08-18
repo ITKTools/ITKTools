@@ -52,7 +52,7 @@ HistogramEqualizationImageFilter<TImage>
   }
 
   InputImagePixelType tempmin = itk::NumericTraits<InputImagePixelType>::max();
-  InputImagePixelType tempmax = 
+  InputImagePixelType tempmax =
     itk::NumericTraits<InputImagePixelType>::NonpositiveMin();
 
   unsigned long numberOfValidPixels = 0;
@@ -83,11 +83,11 @@ HistogramEqualizationImageFilter<TImage>
 
   this->m_Min = tempmin;
   this->m_Max = tempmax;
-  
+
   /** Compute the number of bins and the ideal number of times a intensity value
    * should occur in the image */
-  this->m_NumberOfBins = tempmax - tempmin + 1;  
-  this->m_MeanFrequency = 
+  this->m_NumberOfBins = tempmax - tempmin + 1;
+  this->m_MeanFrequency =
     static_cast<double>( numberOfValidPixels ) /
     static_cast<double>( this->m_NumberOfBins );
 
@@ -125,12 +125,12 @@ HistogramEqualizationImageFilter<TImage>
   this->m_LUT.SetSize(this->m_NumberOfBins);
   for (unsigned int i = 0; i< this->m_NumberOfBins; i++)
   {
-    this->m_LUT[i] = static_cast<OutputImagePixelType>( vnl_math_max( 
-      static_cast<double>(tempmin),       
+    this->m_LUT[i] = static_cast<OutputImagePixelType>( vnl_math_max(
+      static_cast<double>(tempmin),
       -1.0 + tempmin + vcl_floor( static_cast<double>(hist[i]) / this->m_MeanFrequency + 0.5 ) ) );
   }
 
-  
+
 }
 
 template<class TImage>
@@ -138,15 +138,15 @@ void
 HistogramEqualizationImageFilter<TImage>
 ::AfterThreadedGenerateData ()
 {
-  //nothing 
-  
+  //nothing
+
 }
 
 template<class TImage>
 void
 HistogramEqualizationImageFilter<TImage>
 ::ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread,
-                       int threadId) 
+                       int threadId)
 {
 
   typedef ImageRegionConstIterator<InputImageType>   InputImageIteratorType;
@@ -168,10 +168,10 @@ HistogramEqualizationImageFilter<TImage>
     maskIt = MaskIteratorType( this->GetMask(), outputRegionForThread );
     maskIt.GoToBegin();
   }
-  
+
   // support progress methods/callbacks
   ProgressReporter progress(this, threadId, outputRegionForThread.GetNumberOfPixels());
-          
+
   LUTType & lut = this->m_LUT;
   InputImagePixelType & tempmin = this->m_Min;
 
@@ -199,7 +199,7 @@ HistogramEqualizationImageFilter<TImage>
 }
 
 template <class TImage>
-void 
+void
 HistogramEqualizationImageFilter<TImage>
 ::PrintSelf(std::ostream& os, Indent indent) const
 {
@@ -208,7 +208,7 @@ HistogramEqualizationImageFilter<TImage>
   os << indent << "NumberOfBins: "  << m_NumberOfBins << std::endl;
   os << indent << "Minimum intensity: "  << m_Min << std::endl;
   os << indent << "Maximum intensity: "  << m_Max << std::endl;
-  
+
 }
 
 

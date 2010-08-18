@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -56,13 +56,13 @@ SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
   this->m_SmoothingFilters[ 0 ]->SetInput( this->m_FirstSmoothingFilter->GetOutput() );
   for ( unsigned int i = 1; i < ImageDimension - 1; i++ )
   {
-    this->m_SmoothingFilters[ i ]->SetInput( 
+    this->m_SmoothingFilters[ i ]->SetInput(
       this->m_SmoothingFilters[ i - 1 ]->GetOutput() );
   }
 
   /** And finally a cast to the desired output type. */
   this->m_CastingFilter = CastingFilterType::New();
-  this->m_CastingFilter->SetInput( 
+  this->m_CastingFilter->SetInput(
     this->m_SmoothingFilters[ ImageDimension - 2 ]->GetOutput() );
 
   /** Initialize variables. */
@@ -76,7 +76,7 @@ SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
  * Set value of Sigma
  */
 template <typename TInputImage, typename TOutputImage>
-void 
+void
 SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
 ::SetSigma( const ScalarRealType sigma )
 {
@@ -90,7 +90,7 @@ SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
  * Set value of Sigma
  */
 template <typename TInputImage, typename TOutputImage>
-void 
+void
 SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
 ::SetSigma( const SigmaType sigma )
 {
@@ -114,7 +114,7 @@ SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
  * Set Normalize Across Scale Space
  */
 template <typename TInputImage, typename TOutputImage>
-void 
+void
 SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
 ::SetNormalizeAcrossScale( const bool arg )
 {
@@ -138,7 +138,7 @@ SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
  * Set value of Order
  */
 template <typename TInputImage, typename TOutputImage>
-void 
+void
 SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
 ::SetOrder( const unsigned int order )
 {
@@ -152,7 +152,7 @@ SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
  * Set Order
  */
 template <typename TInputImage, typename TOutputImage>
-void 
+void
 SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
 ::SetOrder( const OrderType order )
 {
@@ -193,7 +193,7 @@ SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
       }
       //else warning??
     } // end for
-    
+
   } // end if
 
 } // end SetOrder()
@@ -252,7 +252,7 @@ SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage >
 
   const typename TInputImage::RegionType region = inputImage->GetRequestedRegion();
   const typename TInputImage::SizeType   size   = region.GetSize();
- 
+
   for( unsigned int d=0; d < ImageDimension; d++)
     {
     if( size[d] < 4 )

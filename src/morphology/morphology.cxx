@@ -91,7 +91,7 @@ int main( int argc, char *argv[] )
   }
 
   /** Check for valid input options. */
-  if ( operation != "erosion" 
+  if ( operation != "erosion"
     && operation != "dilation"
     && operation != "opening"
     && operation != "closing"
@@ -133,17 +133,17 @@ int main( int argc, char *argv[] )
   {
     return 1;
   }
-  
+
   /** Let the user overrule this */
   bool retopct = parser->GetCommandLineArgument( "-opct", componentType );
 
   if ( numberOfComponents > 1 )
-  { 
+  {
     std::cerr << "ERROR: The number of components is larger than 1!" << std::endl;
     std::cerr << "Vector images are not supported!" << std::endl;
     return 1;
   }
-  
+
   /** Get rid of the possible "_" in ComponentType. */
   ReplaceUnderscoreWithSpace( componentType );
 
@@ -171,7 +171,7 @@ int main( int argc, char *argv[] )
       }
     }
   }
-  
+
   /** Run the program. */
   bool supported = false;
   try
@@ -205,7 +205,7 @@ int main( int argc, char *argv[] )
       << std::endl;
     return 1;
   }
-  
+
   /** End program. */
   return 0;
 

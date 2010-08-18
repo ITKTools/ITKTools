@@ -66,7 +66,7 @@ int main( int argc, char ** argv )
     std::cerr << "ERROR: You should specify at least two (2) input files." << std::endl;
     return 1;
   }
- 
+
   /** Determine image properties. */
   std::string ComponentTypeIn = "short";
   std::string PixelType; //we don't use this
@@ -87,10 +87,10 @@ int main( int argc, char ** argv )
 
   /** Check for vector images. */
   if ( NumberOfComponents > 1 )
-  { 
+  {
     std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
     std::cerr << "Cannot make vector of vector images." << std::endl;
-    return 1; 
+    return 1;
   }
 
   /** Get rid of the possible "_" in ComponentType. */
@@ -136,7 +136,7 @@ int main( int argc, char ** argv )
       << std::endl;
     return 1;
   }
-  
+
   /** End program. */
   return 0;
 

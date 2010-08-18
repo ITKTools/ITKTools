@@ -10,7 +10,7 @@ ELSE(ITK_FOUND)
           "Cannot build without ITK.  Please set ITK_DIR.")
 ENDIF(ITK_FOUND)
 
-# Make sure the MS VC compiler has enough memory 
+# Make sure the MS VC compiler has enough memory
 
 IF(CMAKE_BUILD_TOOL MATCHES "(msdev|devenv|nmake)")
  IF(CMAKE_CXX_FLAGS MATCHES "/Zm(0|1|2|3|4|5|6|7|8|9)*[^ ]")

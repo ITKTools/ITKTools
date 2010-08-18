@@ -21,7 +21,7 @@ int FileConverterScalar4DB( const std::string &inputPixelComponentType,
   const std::string &outputFileName, const unsigned int inputDimension, bool useCompression )
 {
   enum { ImageDims = 4 };
-  
+
   if ( inputDimension == ImageDims )
   {
     /** From unsigned char to something else. */
@@ -46,7 +46,7 @@ int FileConverterScalar4DB( const std::string &inputPixelComponentType,
     callCorrectReadWriterMacro( char, long, ImageDims );
     callCorrectReadWriterMacro( char, float, ImageDims );
     callCorrectReadWriterMacro( char, double, ImageDims );
- 
+
     callCorrectReadWriterMacro( unsigned short, unsigned char, ImageDims );
     callCorrectReadWriterMacro( unsigned short, char, ImageDims );
     callCorrectReadWriterMacro( unsigned short, unsigned short, ImageDims );

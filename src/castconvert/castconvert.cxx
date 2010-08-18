@@ -203,7 +203,7 @@ int main( int argc, char **argv )
       std::cout << errorMessage << std::endl;
       return returnValue3;
     }
-    
+
     /** Create a dicom ImageIO and set it in the testReader. */
     GDCMImageIOType::Pointer dicomIO = GDCMImageIOType::New();
     testReader->SetImageIO( dicomIO );
@@ -352,7 +352,7 @@ int main( int argc, char **argv )
       }
 
     } // end isDICOM
- 
+
   } // end try
   /** If any errors have occurred, catch and print the exception and return false. */
   catch ( itk::ExceptionObject & err )

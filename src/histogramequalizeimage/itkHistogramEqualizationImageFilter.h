@@ -30,7 +30,7 @@ public:
   typedef SmartPointer<const Self>  ConstPointer;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);  
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(HistogramEqualizationImageFilter, ImageToImageFilter);
@@ -39,7 +39,7 @@ public:
   itkStaticConstMacro(ImageDimension, unsigned int,
                       TImage::ImageDimension ) ;
 
-  /** Typedef to describe the input/output image types. */  
+  /** Typedef to describe the input/output image types. */
   typedef TImage          InputImageType;
   typedef TImage          OutputImageType;
 
@@ -47,7 +47,7 @@ public:
   typedef typename InputImageType::RegionType InputImageRegionType;
   typedef typename OutputImageType::RegionType OutputImageRegionType;
 
-  /** Typedef to describe the pointer to the input/output. */  
+  /** Typedef to describe the pointer to the input/output. */
   typedef typename InputImageType::Pointer InputImagePointer;
   typedef typename OutputImageType::Pointer OutputImagePointer;
 
@@ -71,17 +71,17 @@ public:
   /** Set/Get mask */
   itkSetObjectMacro( Mask, MaskImageType );
   itkGetObjectMacro( Mask, MaskImageType );
-  
+
 protected:
   HistogramEqualizationImageFilter();
   ~HistogramEqualizationImageFilter();
   void PrintSelf(std::ostream& os, Indent indent) const;
 
 
-  
+
   typedef itk::Array<OutputImagePixelType> LUTType;
   LUTType m_LUT;
-  
+
   unsigned int m_NumberOfBins;
   InputImagePixelType m_Min;
   InputImagePixelType m_Max;
@@ -91,12 +91,12 @@ protected:
   /** Initialize some accumulators before the threads run.
    * Create a LUT */
   void BeforeThreadedGenerateData ();
-  
+
   /** Tally accumulated in threads. */
   void AfterThreadedGenerateData ();
-  
+
   /** Multi-thread version GenerateData. Applies the LUT on the image. */
-  void  ThreadedGenerateData (const OutputImageRegionType& 
+  void  ThreadedGenerateData (const OutputImageRegionType&
                               outputRegionForThread,
                               int threadId) ;
 private:
@@ -105,12 +105,12 @@ private:
 
 };
 
-  
+
 } // end namespace itk
-  
+
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "itkHistogramEqualizationImageFilter.hxx"
 #endif
-  
+
 #endif
 

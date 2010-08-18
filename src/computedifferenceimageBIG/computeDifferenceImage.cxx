@@ -3,7 +3,7 @@
  *
  * This program computes the difference between images.
  *
- * 
+ *
  * authors:       Marius Staring
  *
  */
@@ -136,7 +136,7 @@ int  main(  int  argc,  char *argv[] )
   /** Setup the testReaders. */
   testReader1->SetFileName( image1FileName.c_str() );
   testReader2->SetFileName( image2FileName.c_str() );
-  
+
   /** Generate all information. */
   testReader1->GenerateOutputInformation();
   testReader2->GenerateOutputInformation();

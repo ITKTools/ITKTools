@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -31,16 +31,16 @@ namespace itk
 /** \class SmoothingRecursiveGaussianImageFilter2
  * \brief Computes the smoothing of an image by convolution
  *        with the Gaussian kernels implemented as IIR filters.
- * 
+ *
  * This filter is implemented using the recursive gaussian
- * filters. For multi-component images, the filter works on each 
+ * filters. For multi-component images, the filter works on each
  * component independently.
  *
- * 
+ *
  * \ingroup IntensityImageFilters
  * \ingroup Singlethreaded
  */
-template <typename TInputImage, 
+template <typename TInputImage,
           typename TOutputImage= TInputImage >
 class ITK_EXPORT SmoothingRecursiveGaussianImageFilter2:
     public ImageToImageFilter<TInputImage,TOutputImage>
@@ -51,8 +51,8 @@ public:
   typedef ImageToImageFilter<TInputImage,TOutputImage>      Superclass;
   typedef SmartPointer<Self>                                Pointer;
   typedef SmartPointer<const Self>                          ConstPointer;
-  
-  
+
+
   /** Pixel Type of the input image */
   typedef TInputImage                                       InputImageType;
   typedef TOutputImage                                      OutputImageType;
@@ -63,8 +63,8 @@ public:
   /** Image dimension. */
   itkStaticConstMacro( ImageDimension, unsigned int, TInputImage::ImageDimension);
 
-  /** Define the image type for internal computations 
-      RealType is usually 'double' in NumericTraits. 
+  /** Define the image type for internal computations
+      RealType is usually 'double' in NumericTraits.
       Here we prefer float in order to save memory.  */
   typedef typename NumericTraits< PixelType >::FloatType    InternalRealType;
   typedef Image<InternalRealType,
@@ -108,7 +108,7 @@ public:
   virtual void SetNormalizeAcrossScale( const bool arg );
   itkGetMacro( NormalizeAcrossScale, bool );
 
-  /** Set/Get the Order of the Gaussian to convolve with. 
+  /** Set/Get the Order of the Gaussian to convolve with.
       \li ZeroOrder is equivalent to convolving with a Gaussian.  This
       is the default.
       \li FirstOrder is equivalent to convolving with the first derivative of a Gaussian.
@@ -132,7 +132,7 @@ protected:
   SmoothingRecursiveGaussianImageFilter2();
   virtual ~SmoothingRecursiveGaussianImageFilter2() {};
   void PrintSelf( std::ostream& os, Indent indent ) const;
-  
+
   /** Generate Data */
   void GenerateData( void );
 
@@ -149,7 +149,7 @@ protected:
 private:
   SmoothingRecursiveGaussianImageFilter2(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
-  
+
   InternalGaussianFilterPointer         m_SmoothingFilters[ImageDimension-1];
   FirstGaussianFilterPointer            m_FirstSmoothingFilter;
   CastingFilterPointer                  m_CastingFilter;

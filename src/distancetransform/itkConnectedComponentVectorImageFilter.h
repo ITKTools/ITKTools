@@ -1,4 +1,4 @@
-/** 
+/**
  * author: Bryn Lloyd
  * date: September 2005
  */
@@ -32,14 +32,14 @@ namespace itk
  * labels may not be used on the final objects).  You can reorder the
  * labels such that object labels are consecutive and sorted based on
  * object size by passing the output of this filter to a
- * RelabelComponentImageFilter. 
+ * RelabelComponentImageFilter.
  *
  * \sa ImageToImageFilter
  */
 
 template <class TInputImage, class TOutputImage>
-class ITK_EXPORT ConnectedComponentVectorImageFilter : 
-    public ImageToImageFilter< TInputImage, TOutputImage > 
+class ITK_EXPORT ConnectedComponentVectorImageFilter :
+    public ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
   /**
@@ -59,40 +59,40 @@ public:
    */
   typedef typename TOutputImage::PixelType               OutputPixelType;
   typedef typename TInputImage::PixelType                  InputPixelType;
-  
+
   /** are these needed ?*/
   typedef typename TOutputImage::InternalPixelType OutputInternalPixelType;
   typedef typename TInputImage::InternalPixelType     InputInternalPixelType;
-  
+
   itkStaticConstMacro(ImageDimension, unsigned int,
                       TOutputImage::ImageDimension);
-  
+
   /**
    * Image typedef support
    */
   typedef TInputImage  InputImageType;
-  typedef TOutputImage OutputImageType;  
+  typedef TOutputImage OutputImageType;
 
   /** Pointer Type for the output image. */
   typedef typename OutputImageType::Pointer OutputImagePointer;
 
-  
+
   typedef   typename TInputImage::IndexType       IndexType;
   typedef   typename TInputImage::SizeType        SizeType;
   typedef   typename TOutputImage::RegionType     RegionType;
   typedef   std::list<IndexType>                  ListType;
 
-  /** 
-   * Smart pointer typedef support 
+  /**
+   * Smart pointer typedef support
    */
   typedef SmartPointer<Self> Pointer;
   typedef SmartPointer<const Self>  ConstPointer;
-  
+
   /**
    * Run-time type information (and related methods)
    */
   itkTypeMacro(ConnectedComponentVectorImageFilter, ImageToImageFilter);
-  
+
   /**
    * Method for creation through the object factory.
    */
@@ -109,7 +109,7 @@ public:
   itkBooleanMacro(FullyConnected);
 
 protected:
-  ConnectedComponentVectorImageFilter() 
+  ConnectedComponentVectorImageFilter()
     {
     m_FullyConnected = true;
     }
@@ -117,7 +117,7 @@ protected:
   void PrintSelf(std::ostream& os, Indent indent) const;
 
   /**
-   * Standard pipeline method. 
+   * Standard pipeline method.
    */
   void GenerateData();
 
@@ -134,13 +134,13 @@ protected:
 
  /** Sort an int Array */
   InputPixelType SortArray(const InputPixelType indices);
-    
+
 private:
   ConnectedComponentVectorImageFilter(const Self&) {}
   bool m_FullyConnected;
-  
+
 };
-  
+
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION

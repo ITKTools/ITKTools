@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -28,14 +28,14 @@
 namespace itk {
 namespace Statistics {
 
-/** \class ScalarImageToGrayLevelCooccurrenceMatrixGenerator 
+/** \class ScalarImageToGrayLevelCooccurrenceMatrixGenerator
 *  \brief This class computes a gray-level co-occurrence matrix (histogram) from
 * a given image. GLCM's are used for image texture description.
 *
 * This generator creates a gray-level co-occurrence matrix from a N-D scalar
 * image. This is the first step in texture description a la Haralick. (See
 * Haralick, R.M., K. Shanmugam and I. Dinstein. 1973. Textural Features for
-* Image Classification. IEEE Transactions on Systems, Man and Cybernetics. 
+* Image Classification. IEEE Transactions on Systems, Man and Cybernetics.
 * SMC-3(6):610-620. See also Haralick, R.M. 1979. Statistical and Structural
 * Approaches to Texture. Proceedings of the IEEE, 67:786-804.)
 *
@@ -61,32 +61,32 @@ namespace Statistics {
 * given image's requested region, for a given set of offsets. That is, if a given
 * offset falls outside of the requested region at a particular point, that
 * co-occurrence pair will not be added to the matrix.
-* 
+*
 * The number of histogram bins on each axis can be set (defaults to 256). Also,
 * by default the histogram min and max corresponds to the largest and smallest
 * possible pixel value of that pixel type. To customize the histogram bounds
 * for a given image, the max and min pixel values that will be placed in the
 * histogram can be set manually. NB: The min and max are INCLUSIVE.
 *
-* Further, the type of histogram frequency container used is an optional template 
+* Further, the type of histogram frequency container used is an optional template
 * parameter. By default, a dense container is used, but for images with little
 * texture or in cases where the user wants more histogram bins, a sparse container
-* can be used for the histogram instead. 
+* can be used for the histogram instead.
 *
 * WARNING: This probably won't work for pixels of double or long-double type
 * unless you set the histogram min and max manually. This is because the largest
-* histogram bin by default has max value of the largest possible pixel value 
+* histogram bin by default has max value of the largest possible pixel value
 * plus 1. For double and long-double types, whose "RealType" as defined by the
 * NumericTraits class is the same, and thus cannot hold any larger values,
 * this would cause a float overflow.
-* 
+*
 * \sa MaskedScalarImageToGrayLevelCooccurrenceMatrixGenerator
 * \sa GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator
 * \sa ScalarImageTextureCalculator
 *
 * Authors: Zachary Pincus and Glenn Pierce
 */
-    
+
 template< class TImageType,
           class THistogramFrequencyContainer = DenseFrequencyContainer2 >
 class ScalarImageToGrayLevelCooccurrenceMatrixGenerator : public Object
@@ -149,7 +149,7 @@ public:
   }
 
   /** Return the histogram.
-  \warning This output is only valid after the Compute() method has been invoked 
+  \warning This output is only valid after the Compute() method has been invoked
   \sa Compute */
   itkGetObjectMacro( Output, HistogramType );
 
@@ -162,7 +162,7 @@ public:
   itkGetMacro( Min, PixelType );
   itkGetMacro( Max, PixelType );
 
-  /** Set the calculator to normalize the histogram (divide all bins by the 
+  /** Set the calculator to normalize the histogram (divide all bins by the
   total frequency). Normalization is off by default.*/
   itkSetMacro( Normalize, bool );
   itkGetMacro( Normalize, bool );
@@ -201,8 +201,8 @@ private:
 };
 
 
-} // end of namespace Statistics 
-} // end of namespace itk 
+} // end of namespace Statistics
+} // end of namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "itkScalarImageToGrayLevelCooccurrenceMatrixGenerator.txx"

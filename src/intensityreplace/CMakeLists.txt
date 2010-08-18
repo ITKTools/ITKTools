@@ -10,7 +10,7 @@ ELSE(ITK_FOUND)
           "Cannot build without ITK.  Please set ITK_DIR.")
 ENDIF(ITK_FOUND)
 
-ADD_EXECUTABLE(pxintensityreplace 
+ADD_EXECUTABLE(pxintensityreplace
   intensityreplace.cxx
 )
 

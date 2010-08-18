@@ -9,16 +9,16 @@ namespace itk
 {
 
   /** \class TransformixInputPointFileReader
-   * 
+   *
    * \brief A reader that understands transformix input point files
    *
    * A reader that understands transformix input point files.
    *
-   * The first word in the text file indicates whether the input points 
-   * are given as an integer image index or as a point (world coordinates). 
-   * If the file does not start with "index" or "point" it is assumed 
-   * that the points are entered as indices, for compatibility with 
-   * elastix versions < 3.503. 
+   * The first word in the text file indicates whether the input points
+   * are given as an integer image index or as a point (world coordinates).
+   * If the file does not start with "index" or "point" it is assumed
+   * that the points are entered as indices, for compatibility with
+   * elastix versions < 3.503.
    *
    * The second word in the text file represents the number of points that
    * should be read.
@@ -49,15 +49,15 @@ namespace itk
      * of meta data in the output, but i don't understand this concept yet... */
     itkGetConstMacro(PointsAreIndices, bool);
 
-    /** Get the number of points that are defined in the file. 
+    /** Get the number of points that are defined in the file.
      * In fact we also should store this somehow in the output dataobject,
      * but that would mean resizing the point container, while still filled with
      * invalid data (since the GetNumberOfPoints method in a PointSet returns the
      * size of the point container. Storing as metadata would be another option.
      * For now leave it like this. This is a little similar to the ImageIO classes.
      * They also contain information about the image that they will read.
-     * For the Mesh readers I didn't choose for a MeshIO-design, but for a 
-     * MeshReaderBase class and inheriting classes, so somehow it 
+     * For the Mesh readers I didn't choose for a MeshIO-design, but for a
+     * MeshReaderBase class and inheriting classes, so somehow it
      * seems logic to store this kind of data in the inheriting reader classes. */
     itkGetConstMacro(NumberOfPoints, unsigned long);
 
@@ -91,4 +91,4 @@ namespace itk
 #endif
 
 
-#endif 
+#endif

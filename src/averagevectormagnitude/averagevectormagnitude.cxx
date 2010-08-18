@@ -21,40 +21,40 @@ template <
 ValueType run_avm(const char * inputFileName, const char * outputFileName = 0)
 {
   /** Typedefs */
-  
+
   const unsigned int ImageDimension = NImageDimension;
   const unsigned int SpaceDimension = NSpaceDimension;
-  
+
   typedef ValueType     InputValueType;
   typedef itk::Vector<InputValueType, SpaceDimension> InputPixelType;
   typedef InputValueType    OutputPixelType;
-    
+
   typedef itk::Image<InputPixelType, ImageDimension>  InputImageType;
   typedef itk::Image<OutputPixelType, ImageDimension>   OutputImageType;
   typedef typename OutputImageType::Pointer OutputImagePointer;
   typedef itk::ImageRegionConstIterator<OutputImageType>  IteratorType;
-    
+
   typedef itk::ImageFileReader<InputImageType>  ReaderType;
   typedef itk::ImageFileWriter<OutputImageType>   WriterType;
   typedef typename ReaderType::Pointer ReaderPointer;
   typedef typename WriterType::Pointer WriterPointer;
-  
+
   typedef itk::GradientToMagnitudeImageFilter<
     InputImageType, OutputImageType>  FilterType;
   typedef typename FilterType::Pointer    FilterPointer;
 
   /** Create variables */
-   
+
   ReaderPointer reader = ReaderType::New();
   WriterPointer writer = 0;
   FilterPointer filter = FilterType::New();
   OutputImagePointer magnitudeImage = 0;
-  
+
   /** Setup the pipeline */
   reader->SetFileName(inputFileName);
   filter->SetInput( reader->GetOutput() );
   magnitudeImage = filter->GetOutput();
-  
+
   /** Only write to disk if an outputFileName is given */
   if (outputFileName)
   {
@@ -65,7 +65,7 @@ ValueType run_avm(const char * inputFileName, const char * outputFileName = 0)
       writer->SetInput( magnitudeImage );
     }
   }
-  
+
   try
   {
     if (writer)
@@ -82,26 +82,26 @@ ValueType run_avm(const char * inputFileName, const char * outputFileName = 0)
     std::cerr << err << std::endl;
     throw err;
   }
-  
+
   /** Sum over the resulting image and divide by the number of pixels */
-  IteratorType iterator(magnitudeImage, magnitudeImage->GetLargestPossibleRegion() ); 
+  IteratorType iterator(magnitudeImage, magnitudeImage->GetLargestPossibleRegion() );
   double sum = 0.0;
   unsigned long nrOfPixels = 0;
-  
+
   for (iterator = iterator.Begin(); !iterator.IsAtEnd(); ++iterator)
   {
     sum += iterator.Value();
     ++nrOfPixels;
   }
-  ValueType averageVectorMagnitude = static_cast<ValueType>( sum / nrOfPixels ); 
-  
+  ValueType averageVectorMagnitude = static_cast<ValueType>( sum / nrOfPixels );
+
   return averageVectorMagnitude;
-  
+
 } // end function run_avm
 
 void PrintUsageString(void)
 {
-  std::cerr 
+  std::cerr
     << "Calculate the average magnitude of the vectors in a vector image.\n\n"
     << "Usage:\n"
     << "AverageVectorMagnitude\n"
@@ -117,13 +117,13 @@ int main(int argc, char** argv)
 {
   typedef std::map<std::string, std::string> ArgMapType;
   typedef float ValueType;
-  
+
   ArgMapType argmap;
   std::string inputFileName("");
   std::string outputFileName("");
   std::string imageDimension("");
   std::string spaceDimension("");
-  
+
   /** Fill the argument map */
   for (unsigned int i = 1; i<argc; i+=2)
   {
@@ -176,7 +176,7 @@ int main(int argc, char** argv)
   {
     std::cerr << "Not enough arguments\n";
     PrintUsageString();
-    return -1;  
+    return -1;
   }
 
   ValueType averageVectorMagnitude;
@@ -205,13 +205,13 @@ int main(int argc, char** argv)
 
   std::cout << "The average magnitude of the vectors in image \"" <<
     inputFileName << "\" is: " << averageVectorMagnitude << std::endl;
-    
+
   if ( !outputFileName.empty() )
   {
     std::cout << "The magnitude image is written as \"" << outputFileName << "\"" << std::endl;
   }
   return 0;
-  
+
 } // end function main
 
 #endif // #ifndef __avm_cxx

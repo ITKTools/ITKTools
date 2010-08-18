@@ -16,7 +16,7 @@ typedef std::map<std::string, std::string> ArgMapType;
 
 void PrintUsageString(void)
 {
-  std::cerr 
+  std::cerr
     << "\nThis program creates an image containing a white box, defined by point A and B.\n\n"
     << "Usage:\n"
     << "pxcreatesimplebox\n"
@@ -36,7 +36,7 @@ void PrintUsageString(void)
     << "\t[-pA2]\tIndex 2 of pointA\n"
     << "\t-pB0  \tIndex 0 of pointB\n"
     << "\t-pB1  \tIndex 1 of pointB\n"
-    << "\t[-pB2]\tIndex 2 of pointB\n" 
+    << "\t[-pB2]\tIndex 2 of pointB\n"
     << std::endl;
 } // end PrintUsageString
 
@@ -70,7 +70,7 @@ int ReadArgument(const ArgMapType & argmap, const std::string & key, std::string
 //strange hack:
 #if defined(_MSC_VER) && (_MSC_VER <= 1300)
 #  define CRI_STATIC_ENUM static enum
-#else 
+#else
 #  define CRI_STATIC_ENUM enum
 #endif
 
@@ -102,8 +102,8 @@ class runwrap
     typedef itk::SpatialFunctionImageEvaluatorFilter<
       BoxFunctionType, ImageType, ImageType>      FunctionEvaluatorType;
     typedef typename FunctionEvaluatorType::Pointer FunctionEvaluatorPointer;
-    
-    
+
+
     /** vars */
     std::string inputImageFileName("");
     std::string outputImageFileName("");
@@ -135,7 +135,7 @@ class runwrap
       for (unsigned int i=0; i< ImageDimension ; i++)
       {
         std::ostringstream makeString("");
-        makeString << "-d" << i;  
+        makeString << "-d" << i;
         std::string tempstring("");
         returndummy |= ReadArgument(argmap, makeString.str(), tempstring, false);
         if (returndummy ==0)
@@ -143,7 +143,7 @@ class runwrap
           sizes[i] = atoi( tempstring.c_str() );
         }
       }
-      
+
       if ( returndummy !=0 )
       {
         return returndummy;
@@ -154,11 +154,11 @@ class runwrap
       spacing.Fill(1.0);
     }
     else
-    { 
+    {
       /** Take dimension, origin and spacing from the inputfile.*/
       ReaderPointer reader = ReaderType::New();
       reader->SetFileName( inputImageFileName.c_str() );
-      try 
+      try
       {
         reader->Update();
       }
@@ -172,17 +172,17 @@ class runwrap
       sizes= inputImage->GetLargestPossibleRegion().GetSize();
       origin=inputImage->GetOrigin();
       spacing=inputImage->GetSpacing();
-      
+
     }
 
     /** read point A and B from the commandline.*/
-    
+
     for (unsigned int i=0; i< ImageDimension ; i++)
     {
       std::ostringstream makeStringA("");
       std::ostringstream makeStringB("");
-      makeStringA << "-pA" << i;  
-      makeStringB << "-pB" << i;  
+      makeStringA << "-pA" << i;
+      makeStringB << "-pB" << i;
       std::string tempstringA("");
       std::string tempstringB("");
       returndummy |= ReadArgument(argmap, makeStringA.str(), tempstringA, false);
@@ -197,9 +197,9 @@ class runwrap
     {
       return returndummy;
     }
-    
+
     /** Setup pipeline and configure its components */
-    
+
     tempImage->SetRegions(sizes);
     tempImage->SetOrigin(origin);
     tempImage->SetSpacing(spacing);
@@ -221,7 +221,7 @@ class runwrap
       pointA[i] -= small_factor * sign * spacing[i];
       pointB[i] += small_factor * sign * spacing[i];
     }
-    
+
     boxfunc->SetPointA(pointA);
     boxfunc->SetPointB(pointB);
 
@@ -232,7 +232,7 @@ class runwrap
     writer->SetFileName(outputImageFileName.c_str());
 
     /** do it. */
-    std::cout 
+    std::cout
       << "Saving image to disk as \""
       << outputImageFileName
       << "\""
@@ -246,9 +246,9 @@ class runwrap
       std::cerr << err << std::endl;
       return 3;
     }
-    
+
     return 0;
-    
+
   } // end function run_cri
 
   /** Constructor and destructor */
@@ -266,14 +266,14 @@ class ptswrap
 
   static int PixelTypeSelector(const ArgMapType & argmap )
   {
-    const unsigned int ImageDimension = NImageDimension; 
+    const unsigned int ImageDimension = NImageDimension;
     std::string pixelType("");
     int returndummy = ReadArgument(argmap, "-pt", pixelType, false);
     if ( returndummy !=0 )
     {
       return returndummy;
     }
-    
+
     std::map<std::string, enum_type> typemap;
     typemap["FLOAT"] = eFLOAT;
     typemap["INT"] = eINT;
@@ -282,7 +282,7 @@ class ptswrap
     typemap["USHORT"] = eUSHORT;
     typemap["CHAR"] = eCHAR;
     typemap["UCHAR"] = eUCHAR;
-    
+
     enum_type pt = eUNKNOWN;
     if ( typemap.count(pixelType) )
     {
@@ -290,17 +290,17 @@ class ptswrap
     }
     switch( pt )
     {
-    case eSHORT : 
+    case eSHORT :
       return  runwrap<ImageDimension, short>::run_cri(argmap);
-    case eCHAR : 
+    case eCHAR :
       return  runwrap<ImageDimension, char>::run_cri(argmap);
-    case eUCHAR : 
+    case eUCHAR :
       return  runwrap<ImageDimension, unsigned char>::run_cri(argmap);
     default :
       std::cerr << "ERROR: PixelType not supported" << std::endl;
       return 1;
     }
-    
+
   }
 
   /** constructor and destructor */

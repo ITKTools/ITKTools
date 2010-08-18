@@ -64,10 +64,10 @@ int main( int argc, char **argv )
 
   std::vector<std::string>  outputFileNames;
   bool retout = parser->GetCommandLineArgument( "-out", outputFileNames );
-  
+
   std::string op = "";
   bool retop = parser->GetCommandLineArgument( "-op", op );
-  
+
   std::string componentType = "float";
   bool retopct = parser->GetCommandLineArgument( "-opct", componentType );
 
@@ -94,7 +94,7 @@ int main( int argc, char **argv )
     std::cerr << "ERROR: \"-op\" should be one of {forward, backward}." << std::endl;
     return 1;
   }
-  
+
   /** Check input. */
   if ( op == "forward" && inputFileNames.size() > 1 )
   {
@@ -134,7 +134,7 @@ int main( int argc, char **argv )
       outputFileNames[ 0 ] = inputpart + "IFFT.mhd";
     }
   }
-  
+
   /** Determine image properties. */
   std::string ComponentTypeIn = "short";
   std::string PixelType; //we don't use this
@@ -158,20 +158,20 @@ int main( int argc, char **argv )
   {
     std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
     std::cerr << "Cannot take the forward Fourier transform of vector images." << std::endl;
-    return 1; 
+    return 1;
   }
   if ( op == "backward" && inputFileNames.size() == 1 && NumberOfComponents != 2 )
   {
     std::cerr << "ERROR: The NumberOfComponents is not 2!" << std::endl;
     std::cerr << "Cannot take the inverse Fourier transform of non-complex images." << std::endl;
-    return 1; 
+    return 1;
   }
   if ( op == "backward" && inputFileNames.size() == 2 && NumberOfComponents != 1 )
   {
     std::cerr << "ERROR: The NumberOfComponents is not 1!" << std::endl;
     std::cerr << "If two input images are given, they are expected to be two scalar images." << std::endl;
     std::cerr << "The first image is considered the real part, the second the imaginary part." << std::endl;
-    return 1; 
+    return 1;
   }
 
   /** Run the program. */
@@ -188,7 +188,7 @@ int main( int argc, char **argv )
     std::cerr << "Caught ITK exception: " << e << std::endl;
     return 1;
   }
-  
+
   /** End program. */
   return 0;
 
@@ -215,7 +215,7 @@ void FFTImage( const std::string & inputFileName,
     ComplexImageType, ImageType >                   RealFilterType;
   typedef itk::ComplexToImaginaryImageFilter<
     ComplexImageType, ImageType >                   ImaginaryFilterType;
-  
+
   /** Read the image as float or double. */
   typename ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName( inputFileName.c_str() );
@@ -264,7 +264,7 @@ void FFTImage( const std::string & inputFileName,
     writer2->SetInput( imaginaryFilter->GetOutput() );
     writer2->Update();
   }
-  
+
 } // end FFTImage()
 
 
@@ -285,7 +285,7 @@ void IFFTImage( const std::vector<std::string> & inputFileNames,
   typedef itk::ImageFileReader< ComplexImageType >      ComplexReaderType;
   typedef itk::ComposeComplexImageFilter< ImageType >   ComposeComplexImageFilterType;
   typedef itk::ImageFileWriter< ImageType >             WriterType;
-  
+
   /** The IFFT of the image. */
   typename IFFTFilterType::Pointer ifftFilter = IFFTFilterType::New();
 
@@ -326,7 +326,7 @@ void IFFTImage( const std::vector<std::string> & inputFileNames,
   writer->SetFileName( outputFileName.c_str() );
   writer->SetInput( ifftFilter->GetOutput() );
   writer->Update();
-  
+
 } // end IFFTImage()
 
 

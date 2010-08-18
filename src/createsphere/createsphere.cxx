@@ -51,7 +51,7 @@ int main( int argc, char *argv[] )
 
   std::vector<unsigned int> size;
   bool retsz = parser->GetCommandLineArgument( "-sz", size );
-  
+
   std::vector<double> center;
   bool retc = parser->GetCommandLineArgument( "-c", center );
 
@@ -128,7 +128,7 @@ int main( int argc, char *argv[] )
   /** End program. Return a value. */
   return 0;
 
-} // end main 
+} // end main
 
 /**
    * ******************* CreateSphere *******************

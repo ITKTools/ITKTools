@@ -12,7 +12,7 @@
  */
 
 template<class TStatisticsFilter>
-void PrintStatistics( const TStatisticsFilter * statistics ) 
+void PrintStatistics( const TStatisticsFilter * statistics )
 {
   /** Print to screen. */
   std::cout << std::setprecision(10);
@@ -22,7 +22,7 @@ void PrintStatistics( const TStatisticsFilter * statistics )
   std::cout << "\tarithmetic stdev: " << statistics->GetSigma() << std::endl;
   std::cout << "\tarithmetic var  : " << statistics->GetVariance() << std::endl;
   std::cout << "\tsum             : " << statistics->GetSum() << std::endl;
-  
+
 } // end PrintStatistics
 
 
@@ -33,7 +33,7 @@ void PrintStatistics( const TStatisticsFilter * statistics )
  */
 
 template<class TStatisticsFilter>
-void PrintGeometricStatistics( const TStatisticsFilter * statistics ) 
+void PrintGeometricStatistics( const TStatisticsFilter * statistics )
 {
   /** Print to screen. */
   std::cout << std::setprecision(10);
@@ -41,7 +41,7 @@ void PrintGeometricStatistics( const TStatisticsFilter * statistics )
   double geometricstdev = vcl_exp( statistics->GetSigma() );
   std::cout << "\tgeometric mean : " << geometricmean << std::endl;
   std::cout << "\tgeometric stdev: " << geometricstdev << std::endl;
-    
+
 } // end PrintGeometricStatistics
 
 
@@ -51,7 +51,7 @@ void PrintGeometricStatistics( const TStatisticsFilter * statistics )
 
 template<class THistogram>
 void PrintHistogramStatistics( const THistogram * histogram,
-  const std::string & histogramOutputFileName ) 
+  const std::string & histogramOutputFileName )
 {
   /** Print to screen. */
   //median, quartiles, histogram, percentiles.
@@ -88,28 +88,28 @@ void PrintHistogramStatistics( const THistogram * histogram,
     histogramOutputFile << std::setprecision(16);
     histogramOutputFile
       << "nr"
-      << "\t" 
+      << "\t"
       << "min"
-      << "\t" 
+      << "\t"
       << "max"
-      << "\t" 
+      << "\t"
       << "freq"
-      << "\t" 
+      << "\t"
       << "prob"
       << std::endl;
     for (unsigned long i = 0; i < histogram->GetSize(0); ++i)
     {
       AbsoluteFrequencyType freq = histogram->GetFrequency(i,0);
       double prob = static_cast<double>(freq) / static_cast<double>(nrOfPixels);
-      histogramOutputFile 
-        << i 
-        << "\t" 
+      histogramOutputFile
+        << i
+        << "\t"
         << histogram->GetBinMin(0,i)
-        << "\t" 
+        << "\t"
         << histogram->GetBinMax(0,i)
-        << "\t" 
+        << "\t"
         << freq
-        << "\t" 
+        << "\t"
         << prob
         << std::endl;
     } // end for

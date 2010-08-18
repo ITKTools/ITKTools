@@ -48,7 +48,7 @@ int main( int argc, char ** argv )
   bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
 
   std::vector<float> sigma;
-  sigma.push_back( 1.0 ); // default 1.0 for each resolution 
+  sigma.push_back( 1.0 ); // default 1.0 for each resolution
   bool retstd = parser->GetCommandLineArgument( "-std", sigma );
 
   std::vector<unsigned int> order;
@@ -92,7 +92,7 @@ int main( int argc, char ** argv )
     std::cerr << "ERROR: only one of \"-mag\" and \"-lap\" should be given!" << std::endl;
     return 1;
   }
- 
+
   /** Determine image properties. */
   std::string ComponentTypeIn = "short";
   std::string PixelType; //we don't use this
@@ -118,7 +118,7 @@ int main( int argc, char ** argv )
   {
     std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
     std::cerr << "Cannot make vector of vector images." << std::endl;
-    return 1; 
+    return 1;
   }
 
   /** Get rid of the possible "_" in ComponentType. */
@@ -138,7 +138,7 @@ int main( int argc, char ** argv )
   if ( sigma.size() != 1 && sigma.size() != Dimension )
   {
     std::cerr << "ERROR: the # of sigmas should be equal to 1 or the image dimension!" << std::endl;
-    return 1; 
+    return 1;
   }
 
   /** Run the program. */
@@ -181,9 +181,9 @@ int main( int argc, char ** argv )
       << std::endl;
     return 1;
   }
-  
+
   /** End program. */
   return 0;
 
 } // end main
- 
+

@@ -35,7 +35,7 @@ int main( int argc, char **argv )
   bool retops = parser->GetCommandLineArgument( "-ops", ops );
   std::string argument = "1";
   bool retarg = parser->GetCommandLineArgument( "-arg", argument );
-  
+
   /** Check if the required arguments are given. */
   if ( !retin )
   {
@@ -79,7 +79,7 @@ int main( int argc, char **argv )
   InputIsInteger( inputComponentType, inputIsInteger );
   std::string ComponentTypeIn = "double";
   if ( inputIsInteger ) ComponentTypeIn = "int";
-  
+
   /** Get the correct form of ops. For some operators
    * there are integer and double versions, in which case
    * ops is concatenated with INT or DOUBLE. For example
@@ -139,7 +139,7 @@ int main( int argc, char **argv )
     std::cerr << "Caught ITK exception: " << e << std::endl;
     return 1;
   }
-    
+
   /** End program. */
   return 0;
 

@@ -81,7 +81,7 @@ int main( int argc, char **argv )
       << inputDirectoryName << "." << std::endl;
     return 1;
   }
-  
+
   /** Print series. */
   for ( unsigned int i = 0; i < seriesNames.size(); i++ )
   {

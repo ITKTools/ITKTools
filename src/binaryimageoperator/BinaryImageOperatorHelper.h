@@ -20,7 +20,7 @@
  *   OutputImageType,
  *   itk::Functor::PLUS<InputPixel1Type,InputPixel2Type,OutputPixelType> > PLUSFilterType;
  * binaryFilter = (PLUSFilterType::New()).GetPointer();
- * 
+ *
  */
 #define InstantiateBinaryFilterNoArg( name ) \
   typedef itk::BinaryFunctorImageFilter< \
@@ -42,14 +42,14 @@
     tempBinaryFilter->GetFunctor().SetArgument( argument ); \
     binaryFilter = tempBinaryFilter.GetPointer(); \
   }
- 
-  
+
+
   /**
    * ******************* BinaryImageOperator *******************
    */
 
 template< class InputImage1Type, class InputImage2Type, class OutputImageType >
-void BinaryImageOperator( 
+void BinaryImageOperator(
   const std::string & inputFileName1,
   const std::string & inputFileName2,
   const std::string & outputFileName,

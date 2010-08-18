@@ -116,10 +116,10 @@ int main( int argc, char **argv )
 
   /** Check for vector images. */
   if ( NumberOfComponents > 1 )
-  { 
+  {
     std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
     std::cerr << "Vector images are not supported." << std::endl;
-    return 1; 
+    return 1;
   }
 
   /** Get rid of the possible "_" in ComponentType. */
@@ -136,7 +136,7 @@ int main( int argc, char **argv )
     std::cerr << "ERROR: Check your commandline arguments." << std::endl;
     return 1;
   }
-  
+
   /** Check argument pA. Point A should only be positive if not force. */
   if ( retpA )
   {
@@ -166,7 +166,7 @@ int main( int argc, char **argv )
       return 1;
     }
   }
-  
+
   /** Check argument lb. */
   if ( retlb )
   {
@@ -246,7 +246,7 @@ int main( int argc, char **argv )
       << std::endl;
     return 1;
   }
-  
+
   /** End program. */
   return 0;
 
@@ -408,7 +408,7 @@ bool ProcessArgument( std::vector<int> & arg, const unsigned int dimension, cons
 {
   /** Check if arg is of the right size. */
   if ( arg.size() != dimension && arg.size() != 1 )
-  { 
+  {
     return false;
   }
 
@@ -439,7 +439,7 @@ bool ProcessArgument( std::vector<int> & arg, const unsigned int dimension, cons
 
   /** Return a value. */
   return true;
-  
+
 } // end ProcessArgument()
 
 
@@ -475,7 +475,7 @@ std::vector<int> GetLowerBoundary( const std::vector<int> & input1,
   std::vector<int> lowerBoundary( input1 );
   padLowerBound.resize( dimension, 0 );
   if ( !force ) return lowerBoundary;
-  
+
   /** Fill output vector. */
   for ( unsigned int i = 0; i < dimension; i++ )
   {
@@ -504,7 +504,7 @@ std::vector<int> GetLowerBoundary( const std::vector<int> & input1,
   /** Create output vector. */
   std::vector<int> upperBoundary( dimension, 0 );
   padUpperBound.resize( dimension, 0 );
-  
+
   /** Fill output vector. */
   if ( option == 1 )
   {

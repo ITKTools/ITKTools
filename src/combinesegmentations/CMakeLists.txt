@@ -14,9 +14,9 @@ ADD_EXECUTABLE(pxcombinesegmentations
  combinesegmentations.cxx
  itkLabelVoting2ImageFilter.h
  itkLabelVoting2ImageFilter.txx
- itkMultiLabelSTAPLEImageFilter.h 
- itkMultiLabelSTAPLEImageFilter.txx 
- itkMultiLabelSTAPLE2ImageFilter.h 
+ itkMultiLabelSTAPLEImageFilter.h
+ itkMultiLabelSTAPLEImageFilter.txx
+ itkMultiLabelSTAPLE2ImageFilter.h
  itkMultiLabelSTAPLE2ImageFilter.txx
  itkNaryUnequalityTestImageFilter.h
 )

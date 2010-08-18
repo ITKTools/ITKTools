@@ -73,10 +73,10 @@ int main( int argc, char **argv )
 
   /** Let the user overrule this. */
   bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
-  
+
   /** Error checking. */
   if ( NumberOfComponents > 1 )
-  { 
+  {
     std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
     std::cerr << "Vector images are not supported!" << std::endl;
     return 1;
@@ -151,7 +151,7 @@ int main( int argc, char **argv )
       << std::endl;
     return 1;
   }
-  
+
   /** End program. */
   return 0;
 

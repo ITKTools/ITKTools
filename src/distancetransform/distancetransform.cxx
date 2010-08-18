@@ -39,7 +39,7 @@ int main( int argc, char **argv )
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-    
+
   /** Get the input segmentation file name (mandatory). */
   std::string inputFileName;
   bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
@@ -47,7 +47,7 @@ int main( int argc, char **argv )
   /** Get whether the squared distance should be returned instead of the
    * distance. Default: false, which is faster.
    */
-  bool outputSquaredDistance = parser->ArgumentExists( "-s" );  
+  bool outputSquaredDistance = parser->ArgumentExists( "-s" );
 
   /** Get the outputFileName */
   std::vector<std::string> outputFileNames;
@@ -87,7 +87,7 @@ int main( int argc, char **argv )
       << std::endl;
     return 1;
   }
-   
+
   /** Determine image properties. */
   std::string ComponentType = "unsigned char";
   std::string PixelType; //we don't use this
@@ -119,11 +119,11 @@ int main( int argc, char **argv )
     std::cerr
       << "ERROR: images of dimension "
       << Dimension
-      << " are not supported!" 
+      << " are not supported!"
       << std::endl;
     return 1;
   }
-    
+
   /** Run the program. */
   try
   {
@@ -143,7 +143,7 @@ int main( int argc, char **argv )
         outputSquaredDistance,
         method, K );
     }
-    
+
   }
   catch( itk::ExceptionObject & e )
   {
@@ -154,13 +154,13 @@ int main( int argc, char **argv )
   {
     std::cerr << "Caught std::exception: " << e.what() << std::endl;
     return 1;
-  } 
+  }
   catch ( ... )
   {
     std::cerr << "Caught unknown exception" << std::endl;
     return 1;
   }
-  
+
   /** End program. */
   return 0;
 
@@ -185,8 +185,8 @@ void DistanceTransform(
   typedef unsigned char           InputComponentType;
   typedef InputComponentType      InputPixelType;
   typedef float                   OutputComponentType;
-  typedef OutputComponentType     OutputPixelType;  
-  
+  typedef OutputComponentType     OutputPixelType;
+
   typedef itk::Image< InputPixelType, Dimension >   InputImageType;
   typedef itk::Image< OutputPixelType, Dimension >  OutputImageType;
   typedef itk::Image< float, Dimension >            FloatImageType;
@@ -198,14 +198,14 @@ void DistanceTransform(
     InputImageType, OutputImageType >               DanielssonDistanceType;
 //   typedef itk::OrderKDistanceTransformImageFilter<
 //     FloatImageType, ULImageType >                   OrderKDistanceType;
-// 
+//
 //   typedef typename OrderKDistanceType::OutputImageType    VoronoiMapType;
 //   typedef typename OrderKDistanceType::KDistanceImageType KDistanceImageType;
 //   typedef typename OrderKDistanceType::KIDImageType       KIDImageType;
-  
+
   typedef typename InputImageType::Pointer          InputImagePointer;
   typedef typename OutputImageType::Pointer         OutputImagePointer;
-   
+
   typedef itk::ImageFileReader< InputImageType >    ReaderType;
   typedef itk::ImageFileReader< FloatImageType >    FloatReaderType;
   typedef itk::ImageFileWriter< OutputImageType >   WriterType;
@@ -216,10 +216,10 @@ void DistanceTransform(
   /** Read the input images */
   typename ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName( inputFileName.c_str() );
-  
+
   typename FloatReaderType::Pointer freader = FloatReaderType::New();
   freader->SetFileName( inputFileName.c_str() );
-  
+
   /** Setup the Maurer distance transform filter. */
   typename MaurerDistanceType::Pointer distance_Maurer
     = MaurerDistanceType::New();
@@ -228,7 +228,7 @@ void DistanceTransform(
   distance_Maurer->SetInsideIsPositive( false );
   distance_Maurer->SetSquaredDistance( outputSquaredDistance );
   distance_Maurer->SetBackgroundValue( 0 );
-  
+
   /** Setup the Danielsson distance transform filter. */
   typename DanielssonDistanceType::Pointer distance_Danielsson
     = DanielssonDistanceType::New();
@@ -236,7 +236,7 @@ void DistanceTransform(
   distance_Danielsson->SetUseImageSpacing( true );
   distance_Danielsson->SetInsideIsPositive( false );
   distance_Danielsson->SetSquaredDistance( outputSquaredDistance );
-  
+
   /** Setup the OrderK distance transform filter. */
 //   typename OrderKDistanceType::Pointer distance_OrderK
 //     = OrderKDistanceType::New();
@@ -280,12 +280,12 @@ void DistanceTransform(
 //     voronoiWriter->SetInput( distance_OrderK->GetVoronoiMap() );
 //     kDistanceWriter->SetInput( distance_OrderK->GetKDistanceMap() );
 //     kIDWriter->SetInput( distance_OrderK->GetKclosestIDMap() );
-// 
+//
 //     voronoiWriter->Update();
 //     kDistanceWriter->Update();
 //     kIDWriter->Update();
 //   }
- 
+
 } // end DistanceTransform()
 
 

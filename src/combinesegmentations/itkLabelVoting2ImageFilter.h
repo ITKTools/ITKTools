@@ -27,9 +27,9 @@ namespace itk
   * The use of label voting for combination of multiple segmentations is
   * described in
   *
-  * T. Rohlfing and C. R. Maurer, Jr., "Multi-classifier framework for 
+  * T. Rohlfing and C. R. Maurer, Jr., "Multi-classifier framework for
   * atlas-based image segmentation," Pattern Recognition Letters, 2005.
-  * 
+  *
   * \par INPUTS
   * All input volumes to this filter must be segmentations of an image,
   * that is, they must have discrete pixel values where each value represents
@@ -43,13 +43,13 @@ namespace itk
   * The voting filter produces a single output volume. Each output pixel
   * contains the label that occured most often among the labels assigned to
   * this pixel in all the input volumes, that is, the label that received the
-  * maximum number of "votes" from the input pixels.. If the maximum number of 
+  * maximum number of "votes" from the input pixels.. If the maximum number of
   * votes is not unique, i.e., if more than one label have a maximum number of
   * votes, the prior preferences are used to select a winning label. On request,
   * the probabilistic segmentation can also be produced.
-  * 
+  *
   * \par PARAMETERS
-  * 
+  *
   *
   * \author Torsten Rohlfing, SRI International, Neuroscience Program
   * Modified by Stefan Klein.
@@ -101,7 +101,7 @@ namespace itk
       WeightsType,
       ::itk::GetImageDimension<
       InputImageType>::ImageDimension>              ProbabilityImageType;
-    typedef typename ProbabilityImageType::Pointer  ProbabilityImagePointer;    
+    typedef typename ProbabilityImageType::Pointer  ProbabilityImagePointer;
 
     typedef Array<WeightsType>                      ObserverTrustType;
     typedef std::vector<ProbabilityImagePointer>    ProbabilisticSegmentationArrayType;
@@ -115,7 +115,7 @@ namespace itk
     /** Iterator types. */
     typedef ImageRegionConstIterator< InputImageType >  InputConstIteratorType;
     typedef ImageRegionIterator< OutputImageType >      OutputIteratorType;
-    typedef ImageRegionIterator< 
+    typedef ImageRegionIterator<
       ProbabilityImageType >                            ProbIteratorType;
     typedef ImageRegionConstIterator< MaskImageType >   MaskConstIteratorType;
 
@@ -161,7 +161,7 @@ namespace itk
       }
     }
 
-    /** Set/unset/get the number of classes. If you don't set it, it is 
+    /** Set/unset/get the number of classes. If you don't set it, it is
     * automatically determined from the input segmentations */
     virtual void SetNumberOfClasses(InputPixelType arg)
     {
@@ -188,12 +188,12 @@ namespace itk
     itkGetConstMacro(GenerateProbabilisticSegmentations, bool);
 
     /** Get the probabilistic segmentations. Only valid when
-    * SetGenerateProbabilisticSegmentations(true) has been 
+    * SetGenerateProbabilisticSegmentations(true) has been
     * invoked before updating this filter. */
     virtual const ProbabilisticSegmentationArrayType &
       GetProbabilisticSegmentationArray(void) const
     {
-      return this->m_ProbabilisticSegmentationArray;        
+      return this->m_ProbabilisticSegmentationArray;
     }
 
     /** If you have inspected the probabilistic segmentations and want to get rid
@@ -202,7 +202,7 @@ namespace itk
     {
       if ( this->m_ProbabilisticSegmentationArray.size() > 0 )
       {
-        this->m_ProbabilisticSegmentationArray = 
+        this->m_ProbabilisticSegmentationArray =
           ProbabilisticSegmentationArrayType(0);
         this->Modified();
       }
@@ -249,7 +249,7 @@ namespace itk
 
   protected:
     LabelVoting2ImageFilter();
-    virtual ~LabelVoting2ImageFilter() {}  
+    virtual ~LabelVoting2ImageFilter() {}
 
     /** Determine maximum label value in all input images and initialize global data.*/
     void BeforeThreadedGenerateData ();
@@ -265,7 +265,7 @@ namespace itk
     /** The label with the highest priorPreference number */
     OutputPixelType m_LeastPreferredLabel;
 
-    /** Variables that store whether the a specific parameter has been 
+    /** Variables that store whether the a specific parameter has been
     * set by the user */
     bool m_HasObserverTrust;
     bool m_HasNumberOfClasses;
@@ -283,7 +283,7 @@ namespace itk
 
     /** For multithreading: */
     ConfusionMatrixArrayArrayType      m_ConfusionMatrixArrays;
-    
+
     /** Determine maximum value among all input images' pixels */
     virtual InputPixelType ComputeMaximumInputValue();
 

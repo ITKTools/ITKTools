@@ -40,7 +40,7 @@ int main( int argc, char *argv[] )
   std::string imagefilename = argv[ 2 ];
   unsigned int pos_s, pos_sp;
   pos_s = pos_sp = 0;
-  
+
   /** Get positions of -?. */
   for ( unsigned int i = 2; i < argc; i++ )
   {
@@ -106,7 +106,7 @@ int main( int argc, char *argv[] )
   while ( !it.IsAtEnd() )
   {
     it.Set( 0 );
-    /** Increase iterator. */   
+    /** Increase iterator. */
     ++it;
   } // end while
 
@@ -135,7 +135,7 @@ int main( int argc, char *argv[] )
       << "\" could not be opened!" << std::endl;
     return 1;
   } // end if
-  
+
   /** Write image. */
   ImageWriterType::Pointer writer = ImageWriterType::New();
   writer->SetFileName( imagefilename.c_str() );

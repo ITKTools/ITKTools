@@ -87,20 +87,20 @@ int main( int argc, char **argv )
   }
 
   /** Anyway, float is only supported. */
-  ComponentType = "float";  
+  ComponentType = "float";
   // bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
 
   /** Get rid of the possible "_" in ComponentType. */
   ReplaceUnderscoreWithSpace( ComponentType );
-  
+
   /** Error checking. */
   if ( NumberOfComponents > 1 )
-  { 
+  {
     std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
     std::cerr << "Vector images are not supported!" << std::endl;
     return 1;
   }
-   
+
 
   /** Run the program. */
   bool supported = false;
@@ -118,7 +118,7 @@ int main( int argc, char **argv )
   {
     std::cerr << "Caught std::exception: " << e.what() << std::endl;
     return 1;
-  } 
+  }
   catch ( ... )
   {
     std::cerr << "Caught unknown exception" << std::endl;
@@ -133,7 +133,7 @@ int main( int argc, char **argv )
       << std::endl;
     return 1;
   }
-  
+
   /** End program. */
   return 0;
 
@@ -162,7 +162,7 @@ void WeightedAddition(
   typedef typename MultiplierType::Pointer              MultiplierPointer;
   typedef typename AdderType::Pointer                   AdderPointer;
   typedef typename WriterType::Pointer                  WriterPointer;
-    
+
   /** DECLARATION'S. */
   unsigned int nrInputs = inputFileNames.size();
   if ( weightFileNames.size() != nrInputs )
@@ -186,9 +186,9 @@ void WeightedAddition(
     multipliers[i]->SetInput(0, inReaders[i]->GetOutput() );
     multipliers[i]->SetInput(1, wReaders[i]->GetOutput() );
     multipliers[i]->InPlaceOn();
-    adder->SetInput(i, multipliers[i]->GetOutput() );    
+    adder->SetInput(i, multipliers[i]->GetOutput() );
   }
-  
+
   /** Write the output image. */
   writer->SetFileName( outputFileName.c_str() );
   writer->SetInput( adder->GetOutput() );
@@ -205,7 +205,7 @@ void PrintHelp()
   std::cout << "Usage:" << std::endl << "pxweightedaddition" << std::endl;
   std::cout << "  -in      inputFilenames" << std::endl;
   std::cout << "  -w       weightFilenames" << std::endl;
-  std::cout << "  -out     outputFilename; always written as float" << std::endl;  
+  std::cout << "  -out     outputFilename; always written as float" << std::endl;
   std::cout << "Supported: 2D, 3D, (unsigned) short, (unsigned) char, float." << std::endl;
 
 } // end PrintHelp()

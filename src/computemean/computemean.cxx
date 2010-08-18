@@ -58,7 +58,7 @@ int main( int argc, char *argv[] )
     std::cerr << "ERROR: \"-m\" should be one of { arithmetic, geometric }." << std::endl;
     return 1;
   }
-  
+
   /** Create file stream. */
   std::ifstream fileIn( inputTextFile.c_str() );
 

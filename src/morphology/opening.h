@@ -34,7 +34,7 @@ void openingGrayscale(
   typename ReaderType::Pointer reader = ReaderType::New();
   typename WriterType::Pointer writer = WriterType::New();
   typename OpeningFilterType::Pointer opening = OpeningFilterType::New();
-  
+
   /** Setup the reader. */
   reader->SetFileName( inputFileName.c_str() );
 
@@ -47,7 +47,7 @@ void openingGrayscale(
   StructuringElementType  S_ball;
   S_ball.SetRadius( radiusarray );
   S_ball.CreateStructuringElement();
-  
+
   /** Setup the opening filter. */
   opening->SetKernel( S_ball );
   opening->SetInput( reader->GetOutput() );
@@ -86,7 +86,7 @@ void openingBinary(
   typename ReaderType::Pointer reader = ReaderType::New();
   typename WriterType::Pointer writer = WriterType::New();
   typename OpeningFilterType::Pointer opening = OpeningFilterType::New();
-  
+
   /** Setup the reader. */
   reader->SetFileName( inputFileName.c_str() );
 
@@ -118,7 +118,7 @@ void openingBinary(
   StructuringElementType  S_ball;
   S_ball.SetRadius( radiusarray );
   S_ball.CreateStructuringElement();
-  
+
   /** Setup the opening filter. */
   opening->SetForegroundValue( values[ 0 ] );
   opening->SetBackgroundValue( values[ 1 ] );

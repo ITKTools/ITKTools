@@ -30,7 +30,7 @@ namespace itk
     ::PrintSelf(std::ostream& os, Indent indent) const
   {
     Superclass::PrintSelf(os,indent);
-    //etc  
+    //etc
   } // end PrintSelf
 
 
@@ -65,13 +65,13 @@ namespace itk
     const unsigned int numberOfInputs = this->GetNumberOfInputs();
 
     this->m_ConfusionMatrixArray.clear();
-    
+
     /** create the confusion matrix and space for updated confusion matrix for
      * each of the input images */
     for ( unsigned int k = 0; k < numberOfInputs; ++k )
     {
       /** the confusion matrix has as many row/columns as there are input labels,
-       * The column nrs correspond to the 'real' class, as estimated by the 
+       * The column nrs correspond to the 'real' class, as estimated by the
        * STAPLE algorithm. The rows correspond to the classes assigned by
        * the observers.
        * We skip the extra column to accomodate "reject" classifications,
@@ -89,14 +89,14 @@ namespace itk
       this->m_ConfusionMatrixArrays[t].clear();
       for ( unsigned int k = 0; k < numberOfInputs; ++k )
       {
-        this->m_ConfusionMatrixArrays[t].push_back( 
+        this->m_ConfusionMatrixArrays[t].push_back(
           ConfusionMatrixType( this->m_NumberOfClasses, this->m_NumberOfClasses ) );
         this->m_ConfusionMatrixArrays[t][k].Fill(0.0);
       }
     }
 
   } // end AllocateConfusionMatrixArray
-   
+
 
 
   template< typename TInputImage, typename TOutputImage, typename TWeights >
@@ -106,10 +106,10 @@ namespace itk
   {
     this->Superclass::BeforeThreadedGenerateData();
 
-    const bool generateProbSeg = 
+    const bool generateProbSeg =
       this->GetGenerateProbabilisticSegmentations();
     const unsigned int numberOfInputs = this->GetNumberOfInputs();
-    
+
     /** Set some default values if necessary */
     if ( this->m_HasNumberOfClasses == false )
     {
@@ -143,14 +143,14 @@ namespace itk
     this->AllocateOutputs();
     typename TOutputImage::Pointer output = this->GetOutput();
 
-    /** If probabilistic segmentations are desired, allocate them */   
+    /** If probabilistic segmentations are desired, allocate them */
     if ( generateProbSeg )
     {
-      this->m_ProbabilisticSegmentationArray = 
+      this->m_ProbabilisticSegmentationArray =
         ProbabilisticSegmentationArrayType( this->m_NumberOfClasses );
       for ( unsigned int k = 0; k < this->m_NumberOfClasses; ++k )
       {
-        this->m_ProbabilisticSegmentationArray[k] = 
+        this->m_ProbabilisticSegmentationArray[k] =
           ProbabilityImageType::New();
         this->m_ProbabilisticSegmentationArray[k]->SetRegions(
           output->GetRequestedRegion() );
@@ -179,7 +179,7 @@ namespace itk
     typedef std::vector<ProbIteratorType>       ProbIteratorArrayType;
 
     typename TOutputImage::Pointer output = this->GetOutput();
-    const bool generateProbSeg = 
+    const bool generateProbSeg =
       this->GetGenerateProbabilisticSegmentations();
     const bool generateConfusionMatrix = this->GetGenerateConfusionMatrix();
     const unsigned int numberOfInputs = this->GetNumberOfInputs();
@@ -254,7 +254,7 @@ namespace itk
         for( unsigned int i = 0; i < numberOfInputs; ++i)
         {
           const InputPixelType label = it[i].Get();
-          W[label] += this->m_ObserverTrust( i );       
+          W[label] += this->m_ObserverTrust( i );
         }
 
         /** normalize: */
@@ -264,7 +264,7 @@ namespace itk
           W /= sumW;
         }
 
-        /** now determine the label with the maximum W, i.e., 
+        /** now determine the label with the maximum W, i.e.,
         * determine the label with the most votes for this pixel */
         WeightsType winningLabelW = 0.0;
         for ( OutputPixelType ci = 0; ci < this->m_NumberOfClasses; ++ci )
@@ -301,7 +301,7 @@ namespace itk
             }
           }
         } // end if generateConfusionMatrix
-  
+
         /** Next input pixel */
         for( unsigned int i = 0; i < numberOfInputs; ++i)
         {
@@ -343,7 +343,7 @@ namespace itk
         for ( unsigned int i = 0; i < numberOfInputs; ++i )
         {
           this->m_ConfusionMatrixArray[i] +=
-            this->m_ConfusionMatrixArrays[t][i];            
+            this->m_ConfusionMatrixArrays[t][i];
         }
       } // end for t
 
@@ -351,9 +351,9 @@ namespace itk
       for ( unsigned int i = 0; i < numberOfInputs; ++i)
       {
         // compute sum over all output classifications
-        for ( OutputPixelType ci = 0; ci < this->m_NumberOfClasses; ++ci ) 
+        for ( OutputPixelType ci = 0; ci < this->m_NumberOfClasses; ++ci )
         {
-          WeightsType sumW = this->m_ConfusionMatrixArray[i][0][ci]; 
+          WeightsType sumW = this->m_ConfusionMatrixArray[i][0][ci];
           for ( InputPixelType j = 1; j < this->m_NumberOfClasses; ++j )
           {
             sumW += this->m_ConfusionMatrixArray[i][j][ci];
@@ -366,7 +366,7 @@ namespace itk
           }
         } // end for ci
       } // end for i
-                  
+
     } // end if GetGenerateConfusionMatrix
 
   } // end AfterThreadedGenerateData

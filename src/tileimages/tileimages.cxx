@@ -122,7 +122,7 @@ int main( int argc, char ** argv )
   std::cout << "\tPixelType:          " << ComponentType << std::endl;
   std::cout << "\tDimension:          " << Dimension << std::endl;
   std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
-  
+
   /** Let the user overrule this. */
   bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
   if ( retpt )
@@ -134,7 +134,7 @@ int main( int argc, char ** argv )
   }
 
   if ( NumberOfComponents > 1 )
-  { 
+  {
     std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
     std::cerr << "Vector images are not supported!" << std::endl;
     return 1;
@@ -142,7 +142,7 @@ int main( int argc, char ** argv )
 
   /** Get rid of the possible "_" in ComponentType. */
   ReplaceUnderscoreWithSpace( ComponentType );
-  
+
   /** Run the program. */
   bool supported = false;
   try
@@ -218,7 +218,7 @@ void TileImages2D3D(
   reader->Update();
   std::cout << "Reading done." << std::endl;
   typename ImageType::Pointer tiledImage = reader->GetOutput();
-  
+
   /** Get and set the spacing, if it was set by the user. */
   if ( zspacing > 0.0 )
   {
@@ -237,7 +237,7 @@ void TileImages2D3D(
   std::cout << "Writing tiled image..." << std::endl;
   writer->Update();
   std::cout << "Ready." << std::endl;
-    
+
 } // end TileImages2D3D
 
 //-------------------------------------------------------------------------------------
@@ -289,7 +289,7 @@ void TileImages(
   writer->SetFileName( outputFileName.c_str() );
   writer->SetInput( tiler->GetOutput() );
   writer->Update();
-    
+
 } // end TileImages
 
 //-------------------------------------------------------------------------------------
@@ -319,7 +319,7 @@ void PrintHelp( void )
   std::cout << "           example: in 2D for 4 images \"-ly 4 1\" (or \"-ly 0 1\") results in" << std::endl;
   std::cout << "             im1 im2 im3 im4" << std::endl;
   std::cout << "  [-d]     default value, by default 0." << std::endl;
-  std::cout << "Supported pixel types: (unsigned) char, (unsigned) short, float.\n" << std::endl; 
+  std::cout << "Supported pixel types: (unsigned) char, (unsigned) short, float.\n" << std::endl;
 
 } // end PrintHelp
 

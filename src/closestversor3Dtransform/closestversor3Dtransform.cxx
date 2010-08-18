@@ -63,7 +63,7 @@ int main( int argc, char *argv[] )
     std::cerr << "ERROR: You should specify \"-m\"." << std::endl;
     return 1;
   }
-  
+
   /** Compute the closest rigid transformation. */
   std::vector<double> parVersor, centerOfRotation;
   try
@@ -138,7 +138,7 @@ void ComputeClosestVersor(
     TransformType, ImageType, ImageType >             EstimatorType;
   typedef EstimatorType::LandmarkPointType            LandmarkType;
   typedef EstimatorType::LandmarkPointContainer       LandmarkContainer;
-  
+
   /** Read the fixed landmark points. */
   LandmarkContainer fixedLandmarkContainer;
   ReadLandmarks( fixedLandmarkFileName, fixedLandmarkContainer );

@@ -15,7 +15,7 @@ namespace itk
  *
  * This filter is threaded.
  *
- * \sa itkParabolicOpenCloseImageFilter 
+ * \sa itkParabolicOpenCloseImageFilter
  *
  * \author Richard Beare, Department of Medicine, Monash University,
  * Australia.  <Richard.Beare@med.monash.edu.au>
@@ -69,12 +69,12 @@ protected:
   ParabolicCloseImageFilter(){};
   virtual ~ParabolicCloseImageFilter() {};
 //   void PrintSelf(std::ostream& os, Indent indent) const;
-  
+
 private:
   ParabolicCloseImageFilter(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
 
-  
+
 };
 
 } // end namespace itk

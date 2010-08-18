@@ -33,7 +33,7 @@ ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage>
     m_Extreme2 = NumericTraits<PixelType>::min();
     m_MagnitudeSign1 = -1;
     m_MagnitudeSign2 = 1;
-    } 
+    }
   else
     {
     // dilation then erosion
@@ -55,7 +55,7 @@ ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage>
 {
   // Get the output pointer
   OutputImageType * outputPtr = this->GetOutput();
-  const typename TOutputImage::SizeType& requestedRegionSize 
+  const typename TOutputImage::SizeType& requestedRegionSize
     = outputPtr->GetRequestedRegion().GetSize();
 
   int splitAxis;
@@ -97,7 +97,7 @@ ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage>
     // last thread needs to process the "rest" dimension being split
     splitSize[splitAxis] = splitSize[splitAxis] - i*valuesPerThread;
     }
-  
+
   // set the split region ivars
   splitRegion.SetIndex( splitIndex );
   splitRegion.SetSize( splitSize );
@@ -192,7 +192,7 @@ ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage >
   // swap over the parameters controlling erosion/dilation
   m_Extreme = m_Extreme2;
   m_MagnitudeSign = m_MagnitudeSign2;
-  
+
   // multithread the execution - stage 2
   m_Stage=2;
   for( unsigned int d=0; d<ImageDimension; d++ )
@@ -204,7 +204,7 @@ ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage >
   m_Extreme = m_Extreme1;
   m_MagnitudeSign = m_MagnitudeSign1;
   m_Stage=1;
-  
+
 }
 
 ////////////////////////////////////////////////////////////
@@ -271,16 +271,16 @@ ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage >
 	unsigned long LineLength = region.GetSize()[0];
 	RealType image_scale = this->GetInput()->GetSpacing()[0];
 	
-	doOneDimension<InputConstIteratorType,OutputIteratorType, 
-	  RealType, OutputPixelType, !doOpen>(inputIterator, outputIterator, 
-					      *progress, LineLength, 0, 
-					      this->m_MagnitudeSign, 
+	doOneDimension<InputConstIteratorType,OutputIteratorType,
+	  RealType, OutputPixelType, !doOpen>(inputIterator, outputIterator,
+					      *progress, LineLength, 0,
+					      this->m_MagnitudeSign,
 					      this->m_UseImageSpacing,
 					      this->m_Extreme,
-					      image_scale, 
+					      image_scale,
 					      this->m_Scale[0]);
 	}
-      else 
+      else
 	{
 	// copy to output
 	typedef ImageRegionConstIterator<TInputImage> InItType;
@@ -302,16 +302,16 @@ ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage >
       // now deal with the other dimensions for first stage
       unsigned long LineLength = region.GetSize()[m_CurrentDimension];
       RealType image_scale = this->GetInput()->GetSpacing()[m_CurrentDimension];
-      
-      doOneDimension<OutputConstIteratorType,OutputIteratorType, 
-	RealType, OutputPixelType, !doOpen>(inputIteratorStage2, outputIterator, 
-					    *progress, LineLength, m_CurrentDimension, 
-					    this->m_MagnitudeSign, 
+
+      doOneDimension<OutputConstIteratorType,OutputIteratorType,
+	RealType, OutputPixelType, !doOpen>(inputIteratorStage2, outputIterator,
+					    *progress, LineLength, m_CurrentDimension,
+					    this->m_MagnitudeSign,
 					    this->m_UseImageSpacing,
 					    this->m_Extreme,
-					    image_scale, 
+					    image_scale,
 					    this->m_Scale[m_CurrentDimension]);
-      
+
       }
     }
   else
@@ -322,14 +322,14 @@ ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage >
       //RealType magnitude = 1.0/(2.0 * m_Scale[dd]);
       unsigned long LineLength = region.GetSize()[m_CurrentDimension];
       RealType image_scale = this->GetInput()->GetSpacing()[m_CurrentDimension];
-      
+
       doOneDimension<OutputConstIteratorType,OutputIteratorType,
- 	RealType, OutputPixelType, doOpen>(inputIteratorStage2, outputIterator, 
-					   *progress, LineLength, m_CurrentDimension, 
-					   this->m_MagnitudeSign, 
+ 	RealType, OutputPixelType, doOpen>(inputIteratorStage2, outputIterator,
+					   *progress, LineLength, m_CurrentDimension,
+					   this->m_MagnitudeSign,
 					   this->m_UseImageSpacing,
 					   this->m_Extreme,
-					   image_scale, 
+					   image_scale,
 					   this->m_Scale[m_CurrentDimension]);
       }
     }

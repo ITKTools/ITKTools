@@ -44,7 +44,7 @@ int main( int argc, char **argv )
   /** Get arguments. */
   std::string inputFileName = "";
   bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
-  
+
   /** Check if the required arguments are given. */
   if ( !retin )
   {
@@ -75,7 +75,7 @@ int main( int argc, char **argv )
   std::cout << "\tPixelType:          " << ComponentType << std::endl;
   std::cout << "\tDimension:          " << Dimension << std::endl;
   std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
-  
+
   /** Let the user overrule this */
   bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
   bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
@@ -88,12 +88,12 @@ int main( int argc, char **argv )
   }
 
   if (NumberOfComponents > 1)
-  { 
+  {
     std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
     std::cerr << "Vector images are not supported!" << std::endl;
-    return 1; 
+    return 1;
   }
- 
+
   /** Get rid of the possible "_" in ComponentType. */
   ReplaceUnderscoreWithSpace( ComponentType );
 
@@ -125,7 +125,7 @@ int main( int argc, char **argv )
       << std::endl;
     return 1;
   }
-  
+
   /** End program. */
   return 0;
 
@@ -142,18 +142,18 @@ void ComputeBoundingBox( std::string inputFileName )
   /** Typedefs. */
   typedef itk::ImageFileReader< InputImageType >      ReaderType;
   typedef itk::ImageRegionConstIteratorWithIndex<
-    InputImageType>                                   IteratorType;  
+    InputImageType>                                   IteratorType;
   typedef typename InputImageType::PixelType          PixelType;
   typedef typename InputImageType::IndexType          IndexType;
   typedef typename InputImageType::PointType          PointType;
   const unsigned int dimension = InputImageType::GetImageDimension();
-  
+
   /** Declarations */
   typename ReaderType::Pointer reader = ReaderType::New();
   typename InputImageType::Pointer image;
   IndexType minIndex;
   IndexType maxIndex;
-    
+
   /** Read input image */
   reader->SetFileName( inputFileName.c_str() );
   reader->Update();
@@ -161,14 +161,14 @@ void ComputeBoundingBox( std::string inputFileName )
 
   /** Define iterator on input image */
   IteratorType iterator( image, image->GetLargestPossibleRegion() );
-  
+
   /** Initialize the two corner points */
   iterator.GoToReverseBegin();
   minIndex = iterator.GetIndex();
   iterator.GoToBegin();
   maxIndex = iterator.GetIndex();
   PixelType zero = itk::NumericTraits< PixelType>::Zero;
-  
+
   while ( ! iterator.IsAtEnd() )
   {
     if ( iterator.Get() > zero )

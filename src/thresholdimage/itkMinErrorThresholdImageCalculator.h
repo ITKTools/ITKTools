@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -26,7 +26,7 @@ namespace itk
 
 /** \class MinErrorThresholdImageCalculator
  * \brief Computes a threshold using the minimum error thresholding algorithm
- * 
+ *
  * This calculator computes a threshold using the minimum error thresholding algorithm to
  * separate the image pixels into foreground and background components. The method relies on the
  * histogram of image intensities, and it tries to find the best mixture of two distributions
@@ -39,8 +39,8 @@ namespace itk
  * \ingroup Operators
  * \author Yousef Al-Kofahi, Rensselear Polytechnic Institute (RPI), Troy, NY USA
  */
-template <class TInputImage>            
-class ITK_EXPORT MinErrorThresholdImageCalculator : public Object 
+template <class TInputImage>
+class ITK_EXPORT MinErrorThresholdImageCalculator : public Object
 {
 public:
   /** Standard class typedefs. */
@@ -60,16 +60,16 @@ public:
 
   /** Pointer type for the image. */
   typedef typename TInputImage::Pointer  ImagePointer;
-  
+
   /** Const Pointer type for the image. */
   typedef typename TInputImage::ConstPointer ImageConstPointer;
 
   /** Type definition for the input image pixel type. */
   typedef typename TInputImage::PixelType PixelType;
-  
+
   /** Type definition for the input image region type. */
   typedef typename TInputImage::RegionType RegionType;
-  
+
   /** Set the input image. */
   itkSetConstObjectMacro(Image,ImageType);
 
@@ -81,16 +81,16 @@ public:
 
   /** Get the MinError's threshold value. */
   itkGetMacro(Threshold,PixelType);
-   
+
   /** Return the estimated mixture parameters. */
   itkGetMacro(AlphaLeft,double);
   itkGetMacro(AlphaRight,double);
   itkGetMacro(PriorLeft,double);
-  itkGetMacro(PriorRight,double); 
+  itkGetMacro(PriorRight,double);
   itkGetMacro(StdLeft,double);
   itkGetMacro(StdRight,double);
   /** Set/Get the number of histogram bins. Default is 128. */
-  itkSetClampMacro( NumberOfHistogramBins, unsigned long, 1, 
+  itkSetClampMacro( NumberOfHistogramBins, unsigned long, 1,
                     NumericTraits<unsigned long>::max() );
   itkGetMacro( NumberOfHistogramBins, unsigned long );
 
@@ -105,7 +105,7 @@ protected:
 private:
   MinErrorThresholdImageCalculator(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
-  
+
   /** Some needed variables */
   PixelType            m_Threshold;
   unsigned long        m_NumberOfHistogramBins;

@@ -107,7 +107,7 @@ int main( int argc, char *argv[] )
   {
     std::cerr << "ERROR: this dimension is not supported!" << std::endl;
     std::cerr <<
-      " ; dimension = " << imageDimension 
+      " ; dimension = " << imageDimension
       << std::endl;
     return 1;
   }
@@ -117,7 +117,7 @@ int main( int argc, char *argv[] )
 
 } // end main
 
-  
+
 /**
  * ******************* CreateGridImage *******************
  */

@@ -59,7 +59,7 @@ SimpleBoxSpatialFunction<VImageDimension,TInput>
     os << m_PointA[i] << ", ";
     }
   os << "]" << std::endl;
-  
+
   os << indent << "PointB: [";
   for (i=0; i < VImageDimension - 1; i++)
     {

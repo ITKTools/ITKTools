@@ -102,7 +102,7 @@ int main( int argc, char ** argv )
   {
     std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
     std::cerr << "Cannot make vector of vector images." << std::endl;
-    return 1; 
+    return 1;
   }
 
   /** Get rid of the possible "_" in ComponentType. */
@@ -158,7 +158,7 @@ int main( int argc, char ** argv )
       << std::endl;
     return 1;
   }
-  
+
   /** End program. */
   return 0;
 
@@ -193,7 +193,7 @@ void ReplaceVoxel( const std::string & inputFileName,
   reader->SetFileName( inputFileName );
   reader->Update();
   typename ImageType::Pointer image = reader->GetOutput();
-  
+
   /** Check size. */
   SizeType size = image->GetLargestPossibleRegion().GetSize();
   for ( unsigned int i = 0; i < Dimension; ++i )
@@ -211,7 +211,7 @@ void ReplaceVoxel( const std::string & inputFileName,
     index[ i ] = voxel[ i ];
   }
   image->SetPixel( index, static_cast<PixelType>( value ) );
-  
+
   /** Write output image. */
   writer->SetFileName( outputFileName );
   writer->SetInput( image );

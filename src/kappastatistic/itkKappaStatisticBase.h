@@ -9,7 +9,7 @@
 
 namespace itk {
 namespace Statistics {
-  
+
 /** \class KappaStatisticBase
  *
  * \brief This class is an abstract class for all variants of the kappa statistic.
@@ -38,7 +38,7 @@ public:
 
   /** Run-time type information (and related methods). */
   itkTypeMacro( KappaStatisticBase, Object );
-  
+
   /** Method for creation through the object factory.
    * Is not valid for abstract classes. *
   itkNewMacro( Self );
@@ -77,7 +77,7 @@ protected:
 
   /** Function to check if the input is valid. */
   virtual bool CheckObservations( const SamplesType & observations ) const;
-  
+
   SamplesType m_Observations;
   std::map<unsigned int,unsigned int>  m_Indices;
 
@@ -87,10 +87,10 @@ private:
 
   /** Compute the number of observers. */
   virtual void ComputeNumberOfObservers( void );
-  
+
   /** Compute the number of observations. */
   virtual void ComputeNumberOfObservations( void );
-  
+
   /** Compute the number of categories. */
   virtual void ComputeNumberOfCategories( void );
 
@@ -98,7 +98,7 @@ private:
   CountType m_NumberOfObservers;
   CountType m_NumberOfObservations;
   CountType m_NumberOfCategories;
-  
+
 }; // end class KappaStatisticBase
 
 } // end of namespace Statistics

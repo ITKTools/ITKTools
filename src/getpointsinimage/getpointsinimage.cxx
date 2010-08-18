@@ -77,7 +77,7 @@ int main( int argc, char *argv[] )
       //IndexType index = it.GetIndex();
       points[ value - 1 ].push_back( it.GetIndex() );
     }
-    /** Increase iterator. */   
+    /** Increase iterator. */
     ++it;
   } // end while
 
@@ -118,7 +118,7 @@ int main( int argc, char *argv[] )
 
   /** Close all files. */
   pointfile.close();
-  
+
   /** End program. Return a value. */
   return 0;
 

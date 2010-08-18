@@ -5,11 +5,11 @@
 
 namespace itk {
 namespace Statistics {
-  
+
 /** \class FleissKappaStatistic
  *
  * \brief This class computes the unweighted kappa statistic for multiple observers.
- * 
+ *
  * The kappa statistic is a measure for the agreement of observers.
  *
  * n:  the number of observers
@@ -53,9 +53,9 @@ public:
   /** The function that computes the kappa statistic value and standard deviation. */
   virtual void ComputeKappaStatisticValueAndStandardDeviation(
     double & Po, double & Pe, double & kappa, double & std, const bool & compare );
-  
+
 protected:
-  FleissKappaStatistic() {}; 
+  FleissKappaStatistic() {};
   virtual ~FleissKappaStatistic() {};
   void PrintSelf( std::ostream& os, Indent indent ) const;
 

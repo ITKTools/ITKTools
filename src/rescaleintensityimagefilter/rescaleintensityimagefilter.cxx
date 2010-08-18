@@ -138,15 +138,15 @@ int main( int argc, char **argv )
 
   /** Get rid of the possible "_" in ComponentType. */
   ReplaceUnderscoreWithSpace( ComponentType );
-  
+
   /** Error checking. */
   if ( NumberOfComponents > 1 )
-  { 
+  {
     std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
     std::cerr << "Vector images are not supported!" << std::endl;
     return 1;
   }
-  
+
   /** Get the values. */
   std::vector<double> values;
   if ( valuesAreExtrema )
@@ -187,7 +187,7 @@ int main( int argc, char **argv )
       << std::endl;
     return 1;
   }
-  
+
   /** End program. */
   return 0;
 
@@ -275,7 +275,7 @@ void RescaleIntensity(
     shiftscaler->SetInput( reader->GetOutput() );
     shiftscaler->SetShift( values[ 0 ] * sigma / vcl_sqrt( values[ 1 ] ) - mean );
     shiftscaler->SetScale( vcl_sqrt( values[ 1 ] ) / sigma );
-    
+
     /** Setup the writer. */
     writer->SetInput( shiftscaler->GetOutput() );
 

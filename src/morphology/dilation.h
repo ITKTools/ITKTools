@@ -14,7 +14,7 @@
  */
 
 template< class ImageType >
-void dilationGrayscale( 
+void dilationGrayscale(
   const std::string & inputFileName,
   const std::string & outputFileName,
   const std::vector<unsigned int> & radius,
@@ -37,7 +37,7 @@ void dilationGrayscale(
   typename ReaderType::Pointer reader = ReaderType::New();
   typename WriterType::Pointer writer = WriterType::New();
   typename DilateFilterType::Pointer dilation = DilateFilterType::New();
-    
+
   /** Setup the reader. */
   reader->SetFileName( inputFileName.c_str() );
 
@@ -88,7 +88,7 @@ void dilationGrayscale(
    */
 
 template< class ImageType >
-void dilationBinary( 
+void dilationBinary(
   const std::string & inputFileName,
   const std::string & outputFileName,
   const std::vector<unsigned int> & radius,
@@ -104,12 +104,12 @@ void dilationBinary(
   typedef typename StructuringElementType::RadiusType RadiusType;
   typedef itk::BinaryDilateImageFilter<
     ImageType, ImageType, StructuringElementType >    DilateFilterType;
-  
+
   /** Declarations. */
   typename ReaderType::Pointer reader = ReaderType::New();
   typename WriterType::Pointer writer = WriterType::New();
   typename DilateFilterType::Pointer dilation = DilateFilterType::New();
-    
+
   /** Setup the reader. */
   reader->SetFileName( inputFileName.c_str() );
 
@@ -166,7 +166,7 @@ void dilationBinary(
    *
 
 template< class ImageType >
-void dilationBinaryObject( 
+void dilationBinaryObject(
   const std::string & inputFileName,
   const std::string & outputFileName,
   const std::vector<unsigned int> & radius,
@@ -189,7 +189,7 @@ void dilationBinaryObject(
   typename ReaderType::Pointer reader = ReaderType::New();
   typename WriterType::Pointer writer = WriterType::New();
   typename FilterType::Pointer filter = FilterType::New();
-    
+
   /** Setup the reader. *
   reader->SetFileName( inputFileName.c_str() );
 
