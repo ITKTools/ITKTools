@@ -6,6 +6,7 @@
 #include "itkImageFileWriter.h"
 
 #include "itkImage.h"
+#include "itkVectorImage.h"
 #include "itkVector.h"
 
 //-------------------------------------------------------------------------------------
