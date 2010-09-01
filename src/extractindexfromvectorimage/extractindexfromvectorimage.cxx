@@ -169,8 +169,10 @@ void ExtractIndex(
   typedef TPixel                 PixelType;
   const unsigned int Dimension = NDimension;
 
-  typedef itk::Vector< PixelType, Dimension >         VectorPixelType;
-  typedef itk::Image< VectorPixelType, Dimension >    VectorImageType;
+  //typedef itk::Vector< PixelType, Dimension >         VectorPixelType;
+  //typedef itk::Image< VectorPixelType, Dimension >    VectorImageType;
+  /** Use vector image type that dynamically determines vector length: */
+  typedef itk::VectorImage< PixelType, Dimension >    VectorImageType;
   typedef itk::Image< PixelType, Dimension >          ImageType;
   typedef itk::ImageFileReader< VectorImageType >     ImageReaderType;
   typedef itk::VectorIndexSelectionCastImageFilter<
