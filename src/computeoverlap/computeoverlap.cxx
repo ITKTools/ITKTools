@@ -203,18 +203,18 @@ void ComputeOverlapOld(
 {
   /** Some typedef's. */
   typedef TImage                                      ImageType;
-  typedef ImageType::Pointer                          ImagePointer;
+  typedef typename ImageType::Pointer                 ImagePointer;
   typedef typename ImageType::PixelType               PixelType;
   typedef itk::ImageFileReader<ImageType>             ImageReaderType;
-  typedef ImageReaderType::Pointer                    ImageReaderPointer;
+  typedef typename ImageReaderType::Pointer           ImageReaderPointer;
   typedef itk::AndImageFilter<
     ImageType, ImageType, ImageType>                  AndFilterType;
-  typedef AndFilterType::Pointer                      AndFilterPointer;
+  typedef typename AndFilterType::Pointer             AndFilterPointer;
   typedef itk::ImageRegionConstIterator<ImageType>    IteratorType;
   typedef itk::ThresholdLabelerImageFilter<
     ImageType, ImageType>                             ThresholdFilterType;
-  typedef ThresholdFilterType::Pointer                ThresholdFilterPointer;
-  typedef ThresholdFilterType::ThresholdVector        ThresholdVectorType;
+  typedef typename ThresholdFilterType::Pointer       ThresholdFilterPointer;
+  typedef typename ThresholdFilterType::ThresholdVector ThresholdVectorType;
 
   /**
    * Setup pipeline
@@ -394,10 +394,10 @@ void ComputeOverlap2(
 {
   /** Some typedef's. */
   typedef TImage                                      ImageType;
-  typedef ImageType::Pointer                          ImagePointer;
+  typedef typename ImageType::Pointer                 ImagePointer;
   typedef typename ImageType::PixelType               PixelType;
   typedef itk::ImageFileReader<ImageType>             ImageReaderType;
-  typedef ImageReaderType::Pointer                    ImageReaderPointer;
+  typedef typename ImageReaderType::Pointer           ImageReaderPointer;
   typedef itk::ImageRegionConstIterator<ImageType>    IteratorType;
 
   /**
@@ -522,3 +522,4 @@ void ComputeOverlap2(
   std::cout << std::endl;
 
 } // end ComputeOverlap2()
+
