@@ -72,6 +72,7 @@ public:
   typedef TOutputImage                              OutputImageType;
   typedef typename OutputImageType::PixelType       OutputImagePixelType;
   typedef typename OutputImageType::Pointer         OutputImagePointer;
+  typedef typename OutputImageType::RegionType      OutputImageRegionType;
 
   /** Typedefs for texture calculation. */
   typedef Statistics::ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
