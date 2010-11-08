@@ -12,6 +12,8 @@ ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxcreatesphere createsphere.cxx)
 
-INSTALL_TARGETS(/. pxcreatesphere)
-
 TARGET_LINK_LIBRARIES(pxcreatesphere pxcommon ITKBasicFilters ITKIO ITKCommon)
+
+INSTALL( TARGETS pxcreatesphere
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
+

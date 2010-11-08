@@ -12,7 +12,8 @@ ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxgiplconvert giplconvert.cxx)
 
-INSTALL_TARGETS(/. pxgiplconvert)
-
 TARGET_LINK_LIBRARIES(pxgiplconvert pxcommon ITKBasicFilters ITKIO ITKCommon)
+
+INSTALL( TARGETS pxgiplconvert
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 

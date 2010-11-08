@@ -12,7 +12,8 @@ ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxreplacevoxel replacevoxel.cxx)
 
-INSTALL_TARGETS(/. pxreplacevoxel)
-
 TARGET_LINK_LIBRARIES(pxreplacevoxel pxcommon ITKBasicFilters ITKIO ITKCommon)
+
+INSTALL( TARGETS pxreplacevoxel
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 

@@ -21,7 +21,8 @@ ADD_EXECUTABLE(pxcombinesegmentations
  itkNaryUnequalityTestImageFilter.h
 )
 
-INSTALL_TARGETS(/. pxcombinesegmentations)
-
 TARGET_LINK_LIBRARIES(pxcombinesegmentations pxcommon ITKBasicFilters ITKIO ITKCommon ITKNumerics)
+
+INSTALL( TARGETS pxcombinesegmentations
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 

@@ -34,7 +34,8 @@ ADD_EXECUTABLE(pxmorphology
 	gradient.h
 )
 
-INSTALL_TARGETS(/. pxmorphology)
-
 TARGET_LINK_LIBRARIES(pxmorphology pxcommon ITKBasicFilters ITKIO ITKCommon)
+
+INSTALL( TARGETS pxmorphology
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 

@@ -12,7 +12,8 @@ ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxcropimage cropimage.cxx)
 
-INSTALL_TARGETS(/. pxcropimage)
-
 TARGET_LINK_LIBRARIES(pxcropimage pxcommon ITKBasicFilters ITKIO ITKCommon)
+
+INSTALL( TARGETS pxcropimage
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 

@@ -12,7 +12,8 @@ ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxweightedaddition weightedaddition.cxx)
 
-INSTALL_TARGETS(/. pxweightedaddition)
-
 TARGET_LINK_LIBRARIES(pxweightedaddition pxcommon ITKBasicFilters ITKIO ITKCommon)
+
+INSTALL( TARGETS pxweightedaddition
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 

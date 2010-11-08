@@ -14,4 +14,6 @@ ADD_EXECUTABLE(pxcomputemean computemean.cxx)
 
 TARGET_LINK_LIBRARIES(pxcomputemean pxcommon)
 
-INSTALL_TARGETS(/. pxcomputemean)
+INSTALL( TARGETS pxcomputemean
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
+

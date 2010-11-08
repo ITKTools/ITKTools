@@ -18,7 +18,8 @@ ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxresizeimage resizeimage.cxx)
 
-INSTALL_TARGETS(/. pxresizeimage)
-
 TARGET_LINK_LIBRARIES(pxresizeimage pxcommon ITKBasicFilters ITKIO ITKCommon)
+
+INSTALL( TARGETS pxresizeimage
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 

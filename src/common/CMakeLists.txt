@@ -18,3 +18,4 @@ ADD_LIBRARY(pxcommon
 )
 
 TARGET_LINK_LIBRARIES(pxcommon ITKCommon)
+

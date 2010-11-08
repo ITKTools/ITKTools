@@ -12,7 +12,8 @@ ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxintensitywindowing intensitywindowing.cxx)
 
-INSTALL_TARGETS(/. pxintensitywindowing)
-
 TARGET_LINK_LIBRARIES(pxintensitywindowing pxcommon ITKBasicFilters ITKIO ITKCommon)
+
+INSTALL( TARGETS pxintensitywindowing
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 

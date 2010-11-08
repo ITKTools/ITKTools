@@ -12,7 +12,8 @@ ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxgetimageinformation getimageinformation.cxx)
 
-INSTALL_TARGETS(/. pxgetimageinformation)
-
 TARGET_LINK_LIBRARIES(pxgetimageinformation pxcommon ITKIO ITKCommon)
+
+INSTALL( TARGETS pxgetimageinformation
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 

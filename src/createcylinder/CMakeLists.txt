@@ -12,6 +12,8 @@ ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxcreatecylinder createcylinder.cxx itkCylinderSpatialFunction.h itkCylinderSpatialFunction.txx)
 
-INSTALL_TARGETS(/. pxcreatecylinder)
-
 TARGET_LINK_LIBRARIES(pxcreatecylinder pxcommon ITKBasicFilters ITKIO ITKCommon)
+
+INSTALL( TARGETS pxcreatecylinder
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
+

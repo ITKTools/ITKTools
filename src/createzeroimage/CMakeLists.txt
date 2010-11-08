@@ -12,7 +12,8 @@ ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxcreatezeroimage createzeroimage.cxx)
 
-INSTALL_TARGETS(/. pxcreatezeroimage)
-
 TARGET_LINK_LIBRARIES(pxcreatezeroimage pxcommon ITKBasicFilters ITKIO ITKCommon)
+
+INSTALL( TARGETS pxcreatezeroimage
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 

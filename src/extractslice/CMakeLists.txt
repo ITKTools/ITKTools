@@ -14,5 +14,6 @@ ADD_EXECUTABLE(pxextractslice extractslice.cxx)
 
 TARGET_LINK_LIBRARIES(pxextractslice pxcommon ITKIO ITKCommon)
 
-INSTALL_TARGETS(/. pxextractslice)
+INSTALL( TARGETS pxextractslice
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 

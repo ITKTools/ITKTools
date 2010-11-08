@@ -12,7 +12,8 @@ ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxcomputeboundingbox computeboundingbox.cxx)
 
-INSTALL_TARGETS(/. pxcomputeboundingbox)
-
 TARGET_LINK_LIBRARIES(pxcomputeboundingbox pxcommon ITKBasicFilters ITKIO ITKCommon)
+
+INSTALL( TARGETS pxcomputeboundingbox
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 

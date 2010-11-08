@@ -44,5 +44,7 @@ ADD_EXECUTABLE(pxcastconvert
 
 TARGET_LINK_LIBRARIES(pxcastconvert pxcommon ITKIO ITKCommon ITKBasicFilters ITKIOReview)
 
-INSTALL_TARGETS(/. pxcastconvert)
+
+INSTALL( TARGETS pxcastconvert
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 

@@ -18,7 +18,8 @@ ADD_EXECUTABLE(pxdeformationfieldgenerator
  itkTransformixInputPointFileReader.hxx
 )
 
-INSTALL_TARGETS(/. pxdeformationfieldgenerator)
-
 TARGET_LINK_LIBRARIES(pxdeformationfieldgenerator pxcommon ITKBasicFilters ITKIO ITKCommon)
+
+INSTALL( TARGETS pxdeformationfieldgenerator
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 

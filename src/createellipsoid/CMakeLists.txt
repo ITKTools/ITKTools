@@ -12,6 +12,8 @@ ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxcreateellipsoid createellipsoid.cxx)
 
-INSTALL_TARGETS(/. pxcreateellipsoid)
-
 TARGET_LINK_LIBRARIES(pxcreateellipsoid pxcommon ITKBasicFilters ITKIO ITKCommon)
+
+INSTALL( TARGETS pxcreateellipsoid
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
+

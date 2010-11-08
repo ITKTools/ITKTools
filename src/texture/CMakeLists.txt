@@ -25,7 +25,8 @@ ADD_EXECUTABLE(pxtexture
  itkGrayLevelCooccurrenceMatrixTextureCoefficientsCalculator.h
  itkGrayLevelCooccurrenceMatrixTextureCoefficientsCalculator.txx )
 
-INSTALL_TARGETS(/. pxtexture)
-
 TARGET_LINK_LIBRARIES(pxtexture pxcommon ITKBasicFilters ITKIO ITKCommon ITKStatistics)
+
+INSTALL( TARGETS pxtexture
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 

@@ -30,5 +30,6 @@ ITKIO
 ITKCommon
 ITKStatistics )
 
-INSTALL_TARGETS(/. pxcreaterandomimage)
+INSTALL( TARGETS pxcreaterandomimage
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 

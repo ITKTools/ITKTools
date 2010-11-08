@@ -18,4 +18,5 @@ ITKNumerics
 ITKIO
 ITKCommon )
 
-INSTALL_TARGETS(/. pxaveragevectormagnitude)
+INSTALL( TARGETS pxaveragevectormagnitude
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

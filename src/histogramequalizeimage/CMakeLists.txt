@@ -12,7 +12,8 @@ ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxhistogramequalizeimage histogramequalizeimage.cxx histogramequalizeimage.h itkHistogramEqualizationImageFilter.h itkHistogramEqualizationImageFilter.hxx)
 
-INSTALL_TARGETS(/. pxhistogramequalizeimage)
-
 TARGET_LINK_LIBRARIES(pxhistogramequalizeimage ITKBasicFilters ITKIO ITKCommon)
+
+INSTALL( TARGETS pxhistogramequalizeimage
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 

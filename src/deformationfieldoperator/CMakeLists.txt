@@ -12,7 +12,8 @@ ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxdeformationfieldoperator deformationfieldoperator.cxx deformationfieldoperator.h )
 
-INSTALL_TARGETS(/. pxdeformationfieldoperator)
-
 TARGET_LINK_LIBRARIES(pxdeformationfieldoperator pxcommon ITKBasicFilters ITKIO ITKCommon)
+
+INSTALL( TARGETS pxdeformationfieldoperator
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 

@@ -12,6 +12,8 @@ ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxttest ttest.cxx)
 
-INSTALL_TARGETS(/. pxttest)
-
 TARGET_LINK_LIBRARIES(pxttest pxcommon ITKStatistics)
+
+INSTALL( TARGETS pxttest
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
+

@@ -12,6 +12,8 @@ ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxcreategridimage creategridimage.cxx)
 
-INSTALL_TARGETS(/. pxcreategridimage)
-
 TARGET_LINK_LIBRARIES(pxcreategridimage pxcommon ITKIO ITKCommon)
+
+INSTALL( TARGETS pxcreategridimage
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
+

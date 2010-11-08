@@ -12,7 +12,8 @@ ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxcontrastenhanceimage contrastenhanceimage.cxx contrastenhanceimage.h)
 
-INSTALL_TARGETS(/. pxcontrastenhanceimage)
-
 TARGET_LINK_LIBRARIES(pxcontrastenhanceimage ITKBasicFilters ITKIO ITKCommon)
+
+INSTALL( TARGETS pxcontrastenhanceimage
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 

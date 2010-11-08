@@ -15,7 +15,8 @@ ADD_EXECUTABLE(pxreshape
  itkReshapeImageToImageFilter.h
  itkReshapeImageToImageFilter.txx )
 
-INSTALL_TARGETS(/. pxreshape)
-
 TARGET_LINK_LIBRARIES(pxreshape pxcommon ITKBasicFilters ITKIO ITKCommon)
+
+INSTALL( TARGETS pxreshape
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 

@@ -12,7 +12,8 @@ ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxextracteveryotherslice extracteveryotherslice.cxx)
 
-INSTALL_TARGETS(/. pxextracteveryotherslice)
-
 TARGET_LINK_LIBRARIES(pxextracteveryotherslice pxcommon ITKBasicFilters ITKIO ITKCommon)
+
+INSTALL( TARGETS pxextracteveryotherslice
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 

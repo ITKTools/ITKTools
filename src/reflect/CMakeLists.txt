@@ -12,7 +12,8 @@ ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxreflect reflect.cxx )
 
-INSTALL_TARGETS(/. pxreflect)
-
 TARGET_LINK_LIBRARIES(pxreflect pxcommon ITKBasicFilters ITKIO ITKCommon)
+
+INSTALL( TARGETS pxreflect
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 

@@ -14,4 +14,6 @@ ADD_EXECUTABLE(pxcomputeoverlap computeoverlap.cxx)
 
 TARGET_LINK_LIBRARIES(pxcomputeoverlap pxcommon ITKIO ITKCommon ITKBasicFilters )
 
-INSTALL_TARGETS(/. pxcomputeoverlap)
+INSTALL( TARGETS pxcomputeoverlap
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
+

@@ -1,8 +1,16 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+CMAKE_MINIMUM_REQUIRED( VERSION 2.6 )
 
 # This project is intended to be built outside the Insight source tree
-PROJECT(praxix)
+PROJECT( praxix )
 
+# Define where to install praxix
+IF( WIN32 )
+  SET( PRAXIX_INSTALL_DIR ${CMAKE_INSTALL_PREFIX} )
+ELSE()
+  SET( PRAXIX_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/bin )
+ENDIF()
+
+# Include all subdirs
 SUBDIRS(
  averagevectormagnitude
  binaryimageoperator
@@ -89,5 +97,4 @@ MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
 SET(praxix_LIBRARY_PATH "${LIBRARY_OUTPUT_PATH}")
 SET(praxix_EXECUTABLE_PATH "${EXECUTABLE_OUTPUT_PATH}")
 INCLUDE_DIRECTORIES(${praxix_SOURCE_DIR}/common)
-
 

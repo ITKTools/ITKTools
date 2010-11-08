@@ -14,5 +14,6 @@ ADD_EXECUTABLE(pxtileimages tileimages.cxx)
 
 TARGET_LINK_LIBRARIES(pxtileimages pxcommon ITKIO ITKCommon)
 
-INSTALL_TARGETS(/. pxtileimages)
+INSTALL( TARGETS pxtileimages
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 

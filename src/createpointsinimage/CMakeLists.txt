@@ -12,6 +12,8 @@ ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxcreatepointsinimage createpointsinimage.cxx)
 
-INSTALL_TARGETS(/. pxcreatepointsinimage)
-
 TARGET_LINK_LIBRARIES(pxcreatepointsinimage ITKIO ITKCommon)
+
+INSTALL( TARGETS pxcreatepointsinimage
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
+

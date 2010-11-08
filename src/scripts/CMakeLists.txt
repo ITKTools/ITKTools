@@ -9,9 +9,8 @@ FOREACH(script ${allscripts} )
   STRING(COMPARE NOTEQUAL ${scriptname} "CVS" testvar2)
   STRING(COMPARE NOTEQUAL ${scriptname} ".svn" testvar3)
   IF( ${testvar1} AND ${testvar2} AND ${testvar3} )
-    INSTALL(PROGRAMS ${scriptname} DESTINATION .)
+    INSTALL( PROGRAMS ${scriptname}
+      DESTINATION ${PRAXIX_INSTALL_DIR} )
   ENDIF()
 ENDFOREACH(script)
-
-
 

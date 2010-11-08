@@ -15,8 +15,9 @@ OPTION(USE_FFTIMAGE "Build pxfftimage only if ITK was built with FFTW (float AND
 IF( USE_FFTIMAGE )
   ADD_EXECUTABLE(pxfftimage fftimage.cxx )
 
-  INSTALL_TARGETS(/. pxfftimage)
-
   TARGET_LINK_LIBRARIES(pxfftimage pxcommon ITKCommon ITKBasicFilters ITKIO ITKAlgorithms)
+
+  INSTALL( TARGETS pxfftimage
+    RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 ENDIF( USE_FFTIMAGE )
 

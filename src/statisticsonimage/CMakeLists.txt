@@ -21,5 +21,6 @@ ADD_EXECUTABLE(pxstatisticsonimage
 
 TARGET_LINK_LIBRARIES(pxstatisticsonimage pxcommon ITKIO ITKBasicFilters ITKCommon ITKStatistics)
 
-INSTALL_TARGETS(/. pxstatisticsonimage)
+INSTALL( TARGETS pxstatisticsonimage
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 

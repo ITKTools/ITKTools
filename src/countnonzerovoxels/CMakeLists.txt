@@ -12,6 +12,8 @@ ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxcountnonzerovoxels countnonzerovoxels.cxx)
 
-INSTALL_TARGETS(/. pxcountnonzerovoxels)
-
 TARGET_LINK_LIBRARIES(pxcountnonzerovoxels ITKIO ITKCommon)
+
+INSTALL( TARGETS pxcountnonzerovoxels
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
+

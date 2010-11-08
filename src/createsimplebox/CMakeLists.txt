@@ -12,7 +12,8 @@ ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxcreatesimplebox createsimplebox.cxx createsimplebox.h itkSimpleBoxSpatialFunction.txx itkSimpleBoxSpatialFunction.h)
 
-INSTALL_TARGETS(/. pxcreatesimplebox)
-
 TARGET_LINK_LIBRARIES(pxcreatesimplebox ITKBasicFilters ITKIO ITKCommon)
+
+INSTALL( TARGETS pxcreatesimplebox
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 

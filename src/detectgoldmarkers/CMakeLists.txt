@@ -12,7 +12,8 @@ ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxdetectgoldmarkers detectgoldmarkers.cxx )
 
-INSTALL_TARGETS(/. pxdetectgoldmarkers)
-
 TARGET_LINK_LIBRARIES(pxdetectgoldmarkers pxcommon ITKBasicFilters ITKIO ITKCommon ITKStatistics)
+
+INSTALL( TARGETS pxdetectgoldmarkers
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 

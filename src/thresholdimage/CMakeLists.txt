@@ -18,7 +18,8 @@ ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pxthresholdimage thresholdimage.cxx )
 
-INSTALL_TARGETS(/. pxthresholdimage)
-
 TARGET_LINK_LIBRARIES(pxthresholdimage pxcommon ITKBasicFilters ITKIO ITKCommon ITKStatistics)
+
+INSTALL( TARGETS pxthresholdimage
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 

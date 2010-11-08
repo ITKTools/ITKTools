@@ -21,7 +21,8 @@ ADD_EXECUTABLE(pxunaryimageoperator
  UnaryImageOperatorHelper.h
  UnaryImageOperatorMainHelper.h)
 
-INSTALL_TARGETS(/. pxunaryimageoperator)
-
 TARGET_LINK_LIBRARIES(pxunaryimageoperator pxcommon ITKBasicFilters ITKIO ITKCommon)
+
+INSTALL( TARGETS pxunaryimageoperator
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 

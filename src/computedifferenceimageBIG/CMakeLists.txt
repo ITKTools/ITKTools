@@ -20,5 +20,6 @@ ADD_EXECUTABLE(pxcomputedifferenceimageBIG computeDifferenceImage.cxx computeDif
 
 TARGET_LINK_LIBRARIES(pxcomputedifferenceimageBIG ITKIO ITKCommon)
 
-INSTALL_TARGETS(/. pxcomputedifferenceimageBIG)
+INSTALL( TARGETS pxcomputedifferenceimageBIG
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 

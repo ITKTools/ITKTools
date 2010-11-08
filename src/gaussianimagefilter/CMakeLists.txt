@@ -28,5 +28,6 @@ ADD_EXECUTABLE(pxgaussianimagefilter
 
 TARGET_LINK_LIBRARIES(pxgaussianimagefilter pxcommon ITKIO ITKBasicFilters ITKCommon)
 
-INSTALL_TARGETS(/. pxgaussianimagefilter)
+INSTALL( TARGETS pxgaussianimagefilter
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 

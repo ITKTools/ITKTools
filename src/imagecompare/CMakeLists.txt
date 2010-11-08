@@ -12,7 +12,8 @@ ENDIF(ITK_FOUND)
 
 ADD_EXECUTABLE(pximagecompare ImageCompare.cxx)
 
-INSTALL_TARGETS(/. pximagecompare)
-
 TARGET_LINK_LIBRARIES(pximagecompare ITKIO ITKCommon)
+
+INSTALL( TARGETS pximagecompare
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 

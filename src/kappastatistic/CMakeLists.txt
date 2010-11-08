@@ -14,5 +14,6 @@ ADD_EXECUTABLE(pxkappastatistic kappastatistic.cxx KappaStatisticMainHelper.cxx 
 
 TARGET_LINK_LIBRARIES(pxkappastatistic pxcommon ITKBasicFilters ITKCommon)
 
-INSTALL_TARGETS(/. pxkappastatistic)
+INSTALL( TARGETS pxkappastatistic
+  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
 
