@@ -2,13 +2,8 @@
 PROJECT(fftimage)
 
 # Find ITK.
-FIND_PACKAGE(ITK REQUIRED)
-IF(ITK_FOUND)
-  INCLUDE(${ITK_USE_FILE})
-ELSE(ITK_FOUND)
-  MESSAGE(FATAL_ERROR
-          "Cannot build without ITK.  Please set ITK_DIR.")
-ENDIF(ITK_FOUND)
+FIND_PACKAGE( ITK REQUIRED )
+INCLUDE( ${ITK_USE_FILE} )
 
 OPTION(USE_FFTIMAGE "Build pxfftimage only if ITK was built with FFTW (float AND double)" OFF)
 
