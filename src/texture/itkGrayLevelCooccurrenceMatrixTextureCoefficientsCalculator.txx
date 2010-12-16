@@ -151,7 +151,8 @@ GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator< THistogram >
 
   /** Compute the remaining features. */
   this->m_Correlation = ( pixelSum_01 - pixelMean * pixelMean )
-    / ( pixelVariance * pixelVariance );
+    / pixelVariance;
+//    / ( pixelVariance * pixelVariance );
 
   this->m_ClusterShade =
     + 16 * pixelMean3

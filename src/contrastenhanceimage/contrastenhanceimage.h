@@ -4,7 +4,7 @@
 #include <iostream>
 #include <string>
 #include <map>
-#include "itkExceptionObject.h"
+//#include "itkExceptionObject.h"
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"

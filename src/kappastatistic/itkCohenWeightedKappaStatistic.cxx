@@ -63,7 +63,7 @@ void CohenWeightedKappaStatistic
   else
   {
     InvalidArgumentError exp(__FILE__, __LINE__);
-    ::itk::OStringStream message;
+    std::ostringstream message;
     message << "itk::ERROR: " << this->GetNameOfClass()
       << "(" << this << "): "
       << "Invalid size of weights.";
@@ -91,7 +91,7 @@ void CohenWeightedKappaStatistic
   else
   {
     InvalidArgumentError exp(__FILE__, __LINE__);
-    ::itk::OStringStream message;
+    std::ostringstream message;
     message << "itk::ERROR: " << this->GetNameOfClass()
       << "(" << this << "): "
       << "Invalid initialisation of weights.";
@@ -139,7 +139,7 @@ void CohenWeightedKappaStatistic
       }
       else if ( weights == "linear" )
       {
-        this->m_Weights[ i ][ j ] = 1.0 - vcl_abs( i - j ) / ( k - 1.0 );
+        this->m_Weights[ i ][ j ] = 1.0 - vcl_abs( static_cast<float>( i - j ) ) / ( k - 1.0 );
       }
       else if ( weights == "quadratic" )
       {
@@ -217,7 +217,7 @@ void CohenWeightedKappaStatistic
   if ( this->m_WeightsName == "" )
   {
     InvalidArgumentError exp(__FILE__, __LINE__);
-    ::itk::OStringStream message;
+    std::ostringstream message;
     message << "itk::ERROR: " << this->GetNameOfClass()
       << "(" << this << "): "
       << "Weights not initialized.";
@@ -292,7 +292,7 @@ void CohenWeightedKappaStatistic
   if ( this->m_WeightsName == "" )
   {
     InvalidArgumentError exp(__FILE__, __LINE__);
-    ::itk::OStringStream message;
+    std::ostringstream message;
     message << "itk::ERROR: " << this->GetNameOfClass()
       << "(" << this << "): "
       << "Weights not initialized.";

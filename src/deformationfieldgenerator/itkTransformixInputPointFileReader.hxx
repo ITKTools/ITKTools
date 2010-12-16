@@ -115,7 +115,7 @@ namespace itk
           }
           else
           {
-            OStringStream msg;
+            std::ostringstream msg;
             msg <<"The file is not large enough. "
               << std::endl << "Filename: " << this->m_FileName
               << std::endl;
@@ -130,7 +130,7 @@ namespace itk
     }
     else
     {
-      OStringStream msg;
+      std::ostringstream msg;
       msg <<"The file has unexpectedly been closed. "
           << std::endl << "Filename: " << this->m_FileName
           << std::endl;
@@ -147,7 +147,7 @@ namespace itk
     this->m_Reader.close();
 
     /** This indicates that the current BufferedRegion is equal to the
-     * requested region. This action prevents useless rexecutions of
+     * requested region. This action prevents useless re-executions of
      * the pipeline.
      * (I copied this from the BinaryMaskToNarrowBandPointSetFilter) */
     output->SetBufferedRegion( output->GetRequestedRegion() );

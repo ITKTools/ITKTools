@@ -81,7 +81,7 @@
 #include "itkGE4ImageIOFactory.h"
 #include "itkGE5ImageIOFactory.h"
 #include "itkGEAdwImageIOFactory.h"
-#include "itkBrains2MaskImageIOFactory.h"
+//#include "itkBrains2MaskImageIOFactory.h"
 #include "itkPhilipsRECImageIOFactory.h"
 
 /** Functions to do the actual conversion. */
@@ -132,7 +132,7 @@ int main( int argc, char **argv )
   /** Register some non-standard IO Factories to make the tool more useful.
    * Copied from the Insight Applications.
    */
-  itk::Brains2MaskImageIOFactory::RegisterOneFactory();
+  //itk::Brains2MaskImageIOFactory::RegisterOneFactory();
   itk::GE4ImageIOFactory::RegisterOneFactory();
   itk::GE5ImageIOFactory::RegisterOneFactory();
   itk::GEAdwImageIOFactory::RegisterOneFactory();

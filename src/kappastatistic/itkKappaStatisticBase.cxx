@@ -38,7 +38,7 @@ void KappaStatisticBase
   else
   {
     InvalidArgumentError exp(__FILE__, __LINE__);
-    ::itk::OStringStream message;
+    std::ostringstream message;
     message << "itk::ERROR: " << this->GetNameOfClass()
       << "(" << this << "): "
       << "Invalid size of observations.";
