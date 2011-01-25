@@ -27,6 +27,8 @@ int main( int argc, char **argv )
   double argument = 0.0;
   bool retarg = parser->GetCommandLineArgument( "-arg", argument );
 
+	const bool useCompression = parser->ArgumentExists( "-z" );
+
   /** Check if the required arguments are given. */
   if ( !retin )
   {

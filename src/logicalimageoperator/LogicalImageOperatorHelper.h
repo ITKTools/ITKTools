@@ -22,7 +22,7 @@
 if ( ComponentType == #type && Dimension == dim ) \
 { \
   typedef itk::Image< type, dim > InputImageType; \
-  function< InputImageType >( inputFileName1, inputFileName2, outputFileName, ops, argument ); \
+  function< InputImageType >( inputFileName1, inputFileName2, outputFileName, ops, useCompression, argument ); \
   supported = true; \
 }
 
@@ -69,6 +69,7 @@ void LogicalImageOperator(
   const std::string & inputFileName2,
   const std::string & outputFileName,
   const std::string & ops,
+	const bool useCompression,
   const double & argument )
 {
   /** Typedefs. */
@@ -233,6 +234,7 @@ void LogicalImageOperator(
   /** Write the image to disk */
   writer->SetFileName( outputFileName.c_str() );
   writer->SetInput( logicalFilter->GetOutput() );
+	writer->SetUseCompression( useCompression );
   std::cout << "Writing output to disk as: " << outputFileName << std::endl;
   writer->Update();
   std::cout << "Done writing output to disk." << std::endl;
@@ -266,6 +268,7 @@ void PrintHelp( void )
             << "             NOT_NOT = A \n"
             << "           Internally this expression is simplified.\n"
             << std::endl;
+	std::cout << "  [-z]     compression flag; if provided, the output image is compressed" << std::endl;;
   std::cout << "  [-arg]   argument, necessary for some ops" << std::endl;
   std::cout << "  [-dim]   dimension, default: automatically determined from inputimage1" << std::endl;
   std::cout << "  [-pt]    pixelType, default: automatically determined from inputimage1" << std::endl;
