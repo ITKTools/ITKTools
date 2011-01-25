@@ -18,7 +18,8 @@ void erosionGrayscale(
   const std::string & inputFileName,
   const std::string & outputFileName,
   const std::vector<unsigned int> & radius,
-  const std::string & boundaryCondition )
+  const std::string & boundaryCondition,
+	const bool useCompression)
 {
   /** Typedefs. */
   typedef typename ImageType::PixelType               PixelType;
@@ -92,7 +93,8 @@ void erosionBinary(
   const std::string & inputFileName,
   const std::string & outputFileName,
   const std::vector<unsigned int> & radius,
-  const std::vector<std::string> & bin )
+  const std::vector<std::string> & bin,
+	const bool useCompression)
 {
   /** Typedefs. */
   typedef typename ImageType::PixelType               PixelType;
@@ -250,7 +252,8 @@ template< class ImageType >
 void erosionParabolic(
   const std::string & inputFileName,
   const std::string & outputFileName,
-  const std::vector<unsigned int> & radius )
+  const std::vector<unsigned int> & radius,
+	const bool useCompression)
 {
   /** Typedefs. */
   typedef typename ImageType::PixelType               PixelType;

@@ -13,8 +13,9 @@ extern bool Morphology2D(
   const std::string & type,
   const std::string & boundaryCondition,
   const std::vector<unsigned int> & radius,
-  const std::vector<std::string> & bin,
-  const int & algorithm );
+  const std::vector<std::string> & bin,	
+	const int & algorithm,
+	const bool useCompression);
 extern bool Morphology3D(
   const std::string & componentType,
   const unsigned int & Dimension,
@@ -25,7 +26,8 @@ extern bool Morphology3D(
   const std::string & boundaryCondition,
   const std::vector<unsigned int> & radius,
   const std::vector<std::string> & bin,
-  const int & algorithm );
+  const int & algorithm, 
+	const bool useCompression);
 
 //-------------------------------------------------------------------------------------
 
@@ -72,6 +74,8 @@ int main( int argc, char *argv[] )
 
   int algorithm = 0;
   bool reta = parser->GetCommandLineArgument( "-a", algorithm );
+
+	const bool useCompression = parser->ArgumentExists( "-z" );
 
   /** Check if the required arguments are given. */
   if ( !retin )
@@ -180,13 +184,13 @@ int main( int argc, char *argv[] )
     {
       supported = Morphology2D( componentType, Dimension,
         inputFileName, outputFileName, operation, type,
-        boundaryCondition, Radius, bin, algorithm );
+        boundaryCondition, Radius, bin, algorithm, useCompression);
     }
     else if ( Dimension == 3 )
     {
       supported = Morphology3D( componentType, Dimension,
         inputFileName, outputFileName, operation, type,
-        boundaryCondition, Radius, bin, algorithm );
+        boundaryCondition, Radius, bin, algorithm, useCompression);
     }
   }
   catch( itk::ExceptionObject & e )

@@ -14,6 +14,7 @@ void PrintHelp( void )
   std::cout << "  -op      operation, choose one of {erosion, dilation, opening, closing, gradient}\n";
   std::cout << "  -type    type, choose one of {grayscale, binary, parabolic}\n";
   std::cout << "  [-out]   outputFilename, default in_operation_type.extension\n";
+	std::cout << "  [-z]     compression flag; if provided, the output image is compressed\n";
   std::cout << "  -r       radius\n";
   std::cout << "  [-bc]    boundaryCondition (grayscale): the gray value outside the image\n";
   std::cout << "  [-bin]   foreground, background, erosion values\n";

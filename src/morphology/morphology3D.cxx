@@ -10,7 +10,8 @@ bool Morphology3D(
   const std::string & boundaryCondition,
   const std::vector<unsigned int> & radius,
   const std::vector<std::string> & bin,
-  const int & algorithm )
+  const int & algorithm,
+	const bool useCompression)
 {
   bool supported = false;
 

@@ -18,17 +18,17 @@ if ( operation == #function ) \
     typedef itk::Image< ctype, dim > ImageType; \
     if ( type == "grayscale" ) \
     { \
-      function##Grayscale< ImageType >( inputFileName, outputFileName, radius, boundaryCondition ); \
+      function##Grayscale< ImageType >( inputFileName, outputFileName, radius, boundaryCondition, useCompression ); \
       supported = true; \
     } \
     else if ( type == "binary" ) \
     { \
-      function##Binary< ImageType >( inputFileName, outputFileName, radius, bin ); \
+      function##Binary< ImageType >( inputFileName, outputFileName, radius, bin, useCompression ); \
       supported = true; \
     } \
     else if ( type == "parabolic" ) \
     { \
-      function##Parabolic< ImageType >( inputFileName, outputFileName, radius ); \
+      function##Parabolic< ImageType >( inputFileName, outputFileName, radius, useCompression ); \
       supported = true; \
     } \
   } \
@@ -41,7 +41,7 @@ if ( operation == #function ) \
   if ( componentType == #ctype && Dimension == dim ) \
   { \
     typedef itk::Image< ctype, dim > ImageType; \
-    function< ImageType >( inputFileName, outputFileName, radius, algorithm ); \
+    function< ImageType >( inputFileName, outputFileName, radius, algorithm, useCompression ); \
     supported = true; \
   } \
 }
