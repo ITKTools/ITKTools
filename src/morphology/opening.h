@@ -56,6 +56,7 @@ void openingGrayscale(
   /** Write the output image. */
   writer->SetFileName( outputFileName.c_str() );
   writer->SetInput( opening->GetOutput() );
+	writer->SetUseCompression( useCompression );
   writer->Update();
 
 } // end openingGrayscale()
@@ -130,6 +131,7 @@ void openingBinary(
   /** Write the output image. */
   writer->SetFileName( outputFileName.c_str() );
   writer->SetInput( opening->GetOutput() );
+	writer->SetUseCompression( useCompression );
   writer->Update();
 
 } // end openingBinary()
@@ -183,6 +185,7 @@ void openingParabolic(
   /** Write the output image. */
   writer->SetFileName( outputFileName.c_str() );
   writer->SetInput( filter->GetOutput() );
+	writer->SetUseCompression( useCompression );
   writer->Update();
 
 } // end openingParabolic()
