@@ -61,6 +61,7 @@ SUBDIRS(
  logicalimageoperator
  #localizedmeanshift
  morphology
+ naryimageoperator
  pca
  reflect
  replacevoxel
