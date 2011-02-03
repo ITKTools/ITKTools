@@ -18,7 +18,7 @@ void closingGrayscale(
   const std::string & outputFileName,
   const std::vector<unsigned int> & radius,
   const std::string & boundaryCondition,
-	const bool useCompression)
+  const bool useCompression )
 {
   /** Typedefs. */
   typedef typename ImageType::PixelType               PixelType;
@@ -72,7 +72,7 @@ void closingBinary(
   const std::string & outputFileName,
   const std::vector<unsigned int> & radius,
   const std::vector<std::string> & bin,
-	const bool useCompression)
+  const bool useCompression )
 {
   /** Typedefs. */
   typedef typename ImageType::PixelType               PixelType;
@@ -144,7 +144,7 @@ void closingParabolic(
   const std::string & inputFileName,
   const std::string & outputFileName,
   const std::vector<unsigned int> & radius,
-	const bool useCompression)
+  const bool useCompression )
 {
   /** Typedefs. */
   typedef typename ImageType::PixelType               PixelType;

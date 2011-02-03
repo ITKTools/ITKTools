@@ -11,7 +11,7 @@ bool Morphology3D(
   const std::vector<unsigned int> & radius,
   const std::vector<std::string> & bin,
   const int & algorithm,
-	const bool useCompression)
+  const bool useCompression )
 {
   bool supported = false;
 
@@ -49,3 +49,4 @@ bool Morphology3D(
   return supported;
 
 } // end support for 3D images
+

@@ -17,7 +17,7 @@ void gradient(
   const std::string & outputFileName,
   const std::vector<unsigned int> & radius,
   const int & algorithm,
-	const bool useCompression)
+  const bool useCompression )
 {
   /** Typedefs. */
   typedef typename ImageType::PixelType               PixelType;
