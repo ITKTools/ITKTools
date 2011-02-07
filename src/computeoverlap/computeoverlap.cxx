@@ -450,8 +450,10 @@ void ComputeOverlap2(
 
     if ( A > maxNumberOfLabels - 1 || B > maxNumberOfLabels - 1 )
     {
-      itkGenericExceptionMacro( << "ERROR: Your labels should be smaller than "
-        << maxNumberOfLabels );
+      itkGenericExceptionMacro( << "ERROR: All your labels should be smaller than "
+        << maxNumberOfLabels 
+        << "\nYour label pair for the current voxel is: ("
+        << A << ", " << B << ") !" );
     }
 
     if ( label == 0 )
