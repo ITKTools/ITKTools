@@ -448,6 +448,12 @@ void ComputeOverlap2(
     PixelType A = itA.Value();
     PixelType B = itB.Value();
 
+    if ( A > maxNumberOfLabels - 1 || B > maxNumberOfLabels - 1 )
+    {
+      itkGenericExceptionMacro( << "ERROR: Your labels should be smaller than "
+        << maxNumberOfLabels );
+    }
+
     if ( label == 0 )
     {
       ++sumA[ A ];
