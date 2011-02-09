@@ -101,6 +101,12 @@ void ComputeStatistics(
       std::cout << "Done replacing all pixels outside the mask by -infinity." << std::endl;
     }
 
+    /** If the user specified 0, the number of bins is equal to the intensity range. */
+    if ( numberOfBins == 0 )
+    {
+      numberOfBins = static_cast<unsigned int>( maxPixelValue - minPixelValue );
+    }
+
     /** This code is copied from the ListSampleToHistogramGenerator->GenerateData()
      * and adapted.
      * It makes sure that the maximum values are also included in the histogram.
@@ -123,6 +129,7 @@ void ComputeStatistics(
        */
       double marginalScale = 100.0;
       double epsilon = itk::NumericTraits<PixelType>::epsilon() * 100.0;
+
       double binsize = static_cast<double>( maxPixelValue - minPixelValue )
         / static_cast<double>( numberOfBins );
       binsize = vnl_math_max( binsize, epsilon );
@@ -156,12 +163,12 @@ void ComputeStatistics(
       itkGenericExceptionMacro( << "Histogram cannot be computed." );
     }
 
-    histogramGenerator->SetAutoMinMax(false);
-    histogramGenerator->SetNumberOfBins(numberOfBins);
+    histogramGenerator->SetAutoMinMax( false );
+    histogramGenerator->SetNumberOfBins( numberOfBins );
     histogramGenerator->SetHistogramMin( static_cast<RealPixelType>(minPixelValue) );
     histogramGenerator->SetHistogramMax( histogramMax );
     histogramGenerator->SetInput( maskerOrCopier->GetOutput() );
-    std::cout << "Computing histogram..." << std::endl;
+    std::cout << "Computing histogram ..." << std::endl;
     histogramGenerator->Compute();
     std::cout << "Done computing histogram." << std::endl;
     PrintHistogramStatistics<HistogramType>(

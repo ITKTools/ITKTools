@@ -145,6 +145,7 @@ void PrintHelp()
   std::cout << "           for an accurate estimate of median and quartiles\n";
   std::cout << "           for integer images, choose the number of bins\n";
   std::cout << "           much larger (~100x) than the number of gray values." << std::endl;
+  std::cout << "           if equal 0, then the intensity range (max - min) is chosen." << std::endl;
   std::cout << "  [-s]     select which to compute {arithmetic, geometric, histogram}, default all;\n";
   std::cout << "Supported: 2D, 3D, 4D, float, (unsigned) short, (unsigned) char, 1, 2 or 3 components per pixel.\n";
 	std::cout << "For 4D, only 1 or 4 components per pixel are supported." << std::endl;
