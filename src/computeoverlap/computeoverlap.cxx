@@ -10,6 +10,10 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
+#include <map>
+#include <set>
+
 
 //-------------------------------------------------------------------------------------
 
@@ -26,7 +30,7 @@ if ( ComponentType == #type && Dimension == dim ) \
 if ( ComponentType == #type && Dimension == dim ) \
 { \
   typedef itk::Image< type, dim >   ImageType; \
-  function< ImageType >( inputFileNames, label ); \
+  function< ImageType >( inputFileNames, labels ); \
   supported = true; \
 }
 
@@ -46,7 +50,7 @@ void ComputeOverlapOld(
 template< class TImage>
 void ComputeOverlap2(
   const std::vector<std::string> & inputFileNames,
-  const unsigned int & label );
+  const std::vector<unsigned int> & labels );
 
 //-------------------------------------------------------------------------------------
 
@@ -77,8 +81,9 @@ int main( int argc, char ** argv )
   unsigned int t2 = 0;
   bool rett2 = parser->GetCommandLineArgument( "-t2", t2 );
 
-  unsigned int label = 0; // default all labels
-  bool retlabel = parser->GetCommandLineArgument( "-l", label );
+  bool retlabel = parser->ArgumentExists( "-l" ); // default all labels
+  std::vector<unsigned int> labels( 0 );
+  parser->GetCommandLineArgument( "-l", labels );
 
   /** Checks. */
   if ( !retin || inputFileNames.size() != 2 )
@@ -171,9 +176,10 @@ int main( int argc, char ** argv )
 void PrintHelp( void )
 {
   std::cout << "Usage:" << std::endl << "pxcomputeoverlap\n";
-  std::cout << "This program computes the overlap of two binary images.\n"
-    << "Masks of a valid region (for example an US beam) are also taken into account.\n"
-    << "If the images are not binary, you must specify a threshold value.\n";
+  std::cout << "This program computes the overlap of two images.\n"
+    << "By default the overlap of nonzero regions is computed.\n"
+    << "Masks of a valid region are also taken into account.\n"
+    << "If the images are not binary, you can specify threshold values.\n";
   std::cerr << "\nThe results is computed as:\n";
   std::cerr << "   2 * L1( (im1 AND mask2) AND (im2 AND mask1) )\n";
   std::cerr << "  ----------------------------------------------\n";
@@ -183,7 +189,10 @@ void PrintHelp( void )
   std::cout << "  [-mask2] maskFilename2\n";
   std::cout << "  [-t1]    threshold1\n";
   std::cout << "  [-t2]    threshold2\n";
-  std::cout << "  [-l]     alternative implementation using a label value\n";
+  std::cout << "  [-l]     alternative implementation using label values\n";
+  std::cout << "           the overlap of exactly corresponding labels is computed\n";
+  std::cout << "           if \"-l\" is specified with no arguments, all labels in im1 are used,\n";
+  std::cout << "           otherwise (e.g. \"-l 1 6 19\") the specified labels are used.\n";
   std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short" << std::endl;
 
 } // end PrintHelp()
@@ -390,7 +399,7 @@ void ComputeOverlapOld(
 template< class TImage>
 void ComputeOverlap2(
   const std::vector<std::string> & inputFileNames,
-  const unsigned int & label )
+  const std::vector<unsigned int> & labelsArg )
 {
   /** Some typedef's. */
   typedef TImage                                      ImageType;
@@ -399,6 +408,15 @@ void ComputeOverlap2(
   typedef itk::ImageFileReader<ImageType>             ImageReaderType;
   typedef typename ImageReaderType::Pointer           ImageReaderPointer;
   typedef itk::ImageRegionConstIterator<ImageType>    IteratorType;
+  typedef std::map<PixelType, std::size_t>            OverlapMapType;
+  typedef std::set<PixelType>                         LabelsType;
+
+  /** Translate vector of labels to set. */
+  LabelsType labels;
+  for ( std::size_t i = 0; i < labelsArg.size(); i++ )
+  {
+    labels.insert( labelsArg[ i ] );
+  }
 
   /**
    * Setup pipeline
@@ -421,113 +439,66 @@ void ComputeOverlap2(
   itA.GoToBegin();
   itB.GoToBegin();
 
-  /** Determine size of objects. *
-  long long sumA, sumB, sumC;
-  sumA = sumB = sumC = 0;
-  while ( !itA.IsAtEnd() )
-  {
-    PixelType A = itA.Value();
-    PixelType B = itB.Value();
-    if ( A == label ) ++sumA;
-    if ( B == label ) ++sumB;
-    if ( A == label && B == label ) ++sumC;
-
-    ++itA; ++itB;
-  }*/
-
-  // Assuming positive labels only.
-  std::size_t maxNumberOfLabels = 10;
-  if ( label != 0 ) maxNumberOfLabels = 1;
-
-  /** Determine size of objects. */
-  std::vector<long long> sumA( maxNumberOfLabels, 0 );
-  std::vector<long long> sumB( maxNumberOfLabels, 0 );
-  std::vector<long long> sumC( maxNumberOfLabels, 0 );
+  /** Determine size of objects, and size in the overlap. */
+  OverlapMapType sumA, sumB, sumC;
   while ( !itA.IsAtEnd() )
   {
     PixelType A = itA.Value();
     PixelType B = itB.Value();
 
-    if ( A > maxNumberOfLabels - 1 || B > maxNumberOfLabels - 1 )
-    {
-      itkGenericExceptionMacro( << "ERROR: All your labels should be smaller than "
-        << maxNumberOfLabels 
-        << "\nYour label pair for the current voxel is: ("
-        << A << ", " << B << ") !" );
-    }
-
-    if ( label == 0 )
-    {
-      ++sumA[ A ];
-      ++sumB[ B ];
-      if ( A == B  ) ++sumC[ A ];
-    }
-    else
-    {
-      if ( A == label ) ++sumA[ 0 ];
-      if ( B == label ) ++sumB[ 0 ];
-      if ( A == label && B == label ) ++sumC[ 0 ];
-    }
+    sumA[ A ]++;
+    sumB[ B ]++;
+    if ( A == B  ) ++sumC[ A ];
 
     ++itA; ++itB;
   }
 
-  /** Calculate the overlap. */
-  std::vector<double> overlap( maxNumberOfLabels, 0.0 );
-  for ( std::size_t i = 0; i < maxNumberOfLabels; ++i )
+  /** Check if all requested labels exist. */
+  for ( LabelsType::const_iterator itL = labels.begin(); itL != labels.end(); itL++ )
   {
-    const long long sumAB = sumA[ i ] + sumB[ i ];
-    if ( sumAB == 0 ) overlap[ i ] = 0.0;
+    if ( sumA.count( *itL ) == 0 && sumB.count( *itL ) == 0 )
+    {
+      itkGenericExceptionMacro( << "The selected label "
+        << (*itL) << " does not exist in both input images." );
+    }
+  }
+
+  /** Calculate and print the overlap. */
+  std::cout << "label => sum input1 \t, sum input2 \t, sum overlap \t, overlap" << std::endl;
+  std::map<PixelType, double>     overlap;
+  OverlapMapType::const_iterator  it;
+  for ( it = sumA.begin() ; it != sumA.end(); it++ )
+  {
+    PixelType currentLabel = (*it).first;
+
+    /** Skip the current label if not selected by user.
+     * Print all labels if nothing is selected.
+     */
+    if ( labels.size() != 0 && labels.count( currentLabel ) == 0 )
+    {
+      continue;
+    }
+
+    /** Compute overlap. */
+    const std::size_t sumAB = sumA[ currentLabel ] + sumB[ currentLabel ];
+    if ( sumAB == 0 )
+    {
+      overlap[ currentLabel ] = 0.0;
+    }
     else
     {
-      overlap[ i ] = static_cast<double>( 2 * sumC[ i ] )
+      overlap[ currentLabel ]
+        = static_cast<double>( 2 * sumC[ currentLabel ] )
         / static_cast<double>( sumAB );
     }
-  }
 
-  /** Format the output and show overlap. */
-  if ( label == 0 )
-  {
-    std::cout << "label:   ";
-    for ( std::size_t i = 0; i < maxNumberOfLabels; ++i )
-    {
-      std::cout << i << " ";
-    }
-    std::cout << std::endl;
+    /** Print information. */
+    std::cout << currentLabel << " => "
+      << sumA[ currentLabel ]
+      << "\t, " << sumB[ currentLabel ]
+      << "\t, " << sumC[ currentLabel ]
+      << "\t, " << overlap[ currentLabel ] << std::endl;
   }
-  else
-  {
-    std::cout << "label:   " << label << std::endl;
-  }
-
-  std::cout << "|A|:     ";
-  for ( std::size_t i = 0; i < maxNumberOfLabels; ++i )
-  {
-    std::cout << sumA[ i ] << " ";
-  }
-  std::cout << std::endl;
-
-  std::cout << "|B|:     ";
-  for ( std::size_t i = 0; i < maxNumberOfLabels; ++i )
-  {
-    std::cout << sumB[ i ] << " ";
-  }
-  std::cout << std::endl;
-
-  std::cout << "|A & B|: ";
-  for ( std::size_t i = 0; i < maxNumberOfLabels; ++i )
-  {
-    std::cout << sumC[ i ] << " ";
-  }
-  std::cout << std::endl;
-
-  std::cout << "overlap: ";
-  std::cout << std::fixed << std::showpoint;
-  for ( std::size_t i = 0; i < maxNumberOfLabels; ++i )
-  {
-    std::cout << overlap[ i ] << " ";
-  }
-  std::cout << std::endl;
 
 } // end ComputeOverlap2()
 
