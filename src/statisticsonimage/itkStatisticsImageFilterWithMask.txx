@@ -16,13 +16,13 @@
 =========================================================================*/
 #ifndef _itkStatisticsImageFilter_txx
 #define _itkStatisticsImageFilter_txx
+
 #include "itkStatisticsImageFilterWithMask.h"
 
-#include "itkImageRegionIterator.h"
 #include "itkImageRegionConstIterator.h"
-#include "itkImageRegionConstIteratorWithIndex.h"
 #include "itkNumericTraits.h"
 #include "itkProgressReporter.h"
+
 
 namespace itk {
 
@@ -35,20 +35,20 @@ StatisticsImageFilter<TInputImage>
   //
   // allocate the data objects for the outputs which are
   // just decorators around pixel types
-  for (int i=1; i < 3; ++i)
-    {
+  for ( int i = 1; i < 3; ++i )
+  {
     typename PixelObjectType::Pointer output
-      = static_cast<PixelObjectType*>(this->MakeOutput(i).GetPointer());
-    this->ProcessObject::SetNthOutput(i, output.GetPointer());
-    }
+      = static_cast<PixelObjectType*>( this->MakeOutput(i).GetPointer() );
+    this->ProcessObject::SetNthOutput( i, output.GetPointer() );
+  }
   // allocate the data objects for the outputs which are
   // just decorators around real types
-  for (int i=3; i < 7; ++i)
-    {
+  for ( int i = 3; i < 7; ++i )
+  {
     typename RealObjectType::Pointer output
-      = static_cast<RealObjectType*>(this->MakeOutput(i).GetPointer());
-    this->ProcessObject::SetNthOutput(i, output.GetPointer());
-    }
+      = static_cast<RealObjectType*>( this->MakeOutput(i).GetPointer() );
+    this->ProcessObject::SetNthOutput( i, output.GetPointer() );
+  }
 
   this->GetMinimumOutput()->Set( NumericTraits<PixelType>::max() );
   this->GetMaximumOutput()->Set( NumericTraits<PixelType>::NonpositiveMin() );
@@ -66,7 +66,7 @@ DataObject::Pointer
 StatisticsImageFilter<TInputImage>
 ::MakeOutput(unsigned int output)
 {
-  switch (output)
+  switch ( output )
     {
    case 0:
       return static_cast<DataObject*>(TInputImage::New().GetPointer());
@@ -232,7 +232,7 @@ StatisticsImageFilter<TInputImage>
 template<class TInputImage>
 void
 StatisticsImageFilter<TInputImage>
-::BeforeThreadedGenerateData()
+::BeforeThreadedGenerateData( void )
 {
   int numberOfThreads = this->GetNumberOfThreads();
 
@@ -250,24 +250,12 @@ StatisticsImageFilter<TInputImage>
   m_ThreadMin.Fill(NumericTraits<PixelType>::max());
   m_ThreadMax.Fill(NumericTraits<PixelType>::NonpositiveMin());
 
-  // Call the IsInside function from the Mask. This function internally computes
-  // the inverse of a MatrixOffsetTransform, which uses vnl_svd. This function
-  // is not thread-safe. However, if the GetInverse() has been computed once, it
-  // is saved for later use, and, consequently, the vnl_svd is not used anymore
-  // when IsInside is called later on.
-  if (this->m_Mask)
-  {
-    PointType point;
-    point.Fill(0.0);
-    this->m_Mask->IsInside( point );
-  }
-
 }
 
 template<class TInputImage>
 void
 StatisticsImageFilter<TInputImage>
-::AfterThreadedGenerateData()
+::AfterThreadedGenerateData( void )
 {
   int i;
   long count;
@@ -305,7 +293,7 @@ StatisticsImageFilter<TInputImage>
       }
     }
   // compute statistics
-  mean = sum / static_cast<RealType>(count);
+  mean = sum / static_cast<RealType>( count );
 
   // unbiased estimate
   variance = (sumOfSquares - (sum*sum / static_cast<RealType>(count)))
@@ -326,13 +314,12 @@ StatisticsImageFilter<TInputImage>
 template<class TInputImage>
 void
 StatisticsImageFilter<TInputImage>
-::ThreadedGenerateData(const RegionType& outputRegionForThread,
-                       int threadId)
+::ThreadedGenerateData( const RegionType& outputRegionForThread, int threadId )
 {
   RealType realValue;
   PixelType value;
   // support progress methods/callbacks
-  ProgressReporter progress(this, threadId, outputRegionForThread.GetNumberOfPixels());
+  ProgressReporter progress( this, threadId, outputRegionForThread.GetNumberOfPixels() );
 
   if ( this->m_Mask.IsNull() )
   {
@@ -360,16 +347,18 @@ StatisticsImageFilter<TInputImage>
   } //end if
   else
   { //use a mask
-    ImageRegionConstIteratorWithIndex<TInputImage> it (this->GetInput(), outputRegionForThread);
+    ImageRegionConstIterator< InputImageType > itIm(
+      this->GetInput(), outputRegionForThread );
+    ImageRegionConstIterator< MaskType > itMask(
+      this->m_Mask, outputRegionForThread );
+    itIm.GoToBegin();
+    itMask.GoToBegin();
     // do the work
-    while (!it.IsAtEnd())
+    while ( !itIm.IsAtEnd() )
     {
-        PointType point;
-        this->GetInput()->
-          TransformIndexToPhysicalPoint(it.GetIndex(), point);
-        if ( this->m_Mask->IsInside( point ) )
+      if ( itMask.Value() )
         {
-            value = it.Get();
+            value = itIm.Get();
             realValue = static_cast<RealType>( value );
             if (value < m_ThreadMin[threadId])
             {
@@ -384,11 +373,10 @@ StatisticsImageFilter<TInputImage>
             m_SumOfSquares[threadId] += (realValue * realValue);
             m_Count[threadId]++;
         }
-        ++it;
+        ++itIm; ++itMask;
         progress.CompletedPixel();
     } // end while
   } // end else
-
 
 }
 

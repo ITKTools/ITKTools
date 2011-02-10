@@ -128,13 +128,14 @@ int main( int argc, char ** argv )
 } // end main
 
 
-  /**
-   * ******************* PrintHelp *******************
-   */
-void PrintHelp()
+/**
+ * ******************* PrintHelp *******************
+ */
+
+void PrintHelp( void )
 {
   std::cout << "Compute statistics on an image. For vector images, the magnitude is used." << std::endl;
-  std::cout << "Usage:" << std::endl << "pxstatisticonimage" << std::endl;
+  std::cout << "Usage:" << std::endl << "pxstatisticsonimage" << std::endl;
   std::cout << "  -in      inputFilename" << std::endl;
   std::cout << "  [-out]   outputFileName for histogram;\n";
   std::cout << "           if omitted, no histogram is written; default: <empty>" << std::endl;
@@ -149,4 +150,5 @@ void PrintHelp()
   std::cout << "  [-s]     select which to compute {arithmetic, geometric, histogram}, default all;\n";
   std::cout << "Supported: 2D, 3D, 4D, float, (unsigned) short, (unsigned) char, 1, 2 or 3 components per pixel.\n";
 	std::cout << "For 4D, only 1 or 4 components per pixel are supported." << std::endl;
-} // end PrintHelp
+
+} // end PrintHelp()

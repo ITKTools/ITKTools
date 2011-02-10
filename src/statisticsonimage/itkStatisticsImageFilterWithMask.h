@@ -29,7 +29,7 @@
 #include "itkNumericTraits.h"
 #include "itkArray.h"
 #include "itkSimpleDataObjectDecorator.h"
-#include "itkSpatialObject.h"
+
 
 namespace itk {
 
@@ -54,29 +54,30 @@ class ITK_EXPORT StatisticsImageFilter :
 {
 public:
   /** Standard Self typedef */
-  typedef StatisticsImageFilter Self;
-  typedef ImageToImageFilter<TInputImage,TInputImage>  Superclass;
+  typedef StatisticsImageFilter     Self;
+  typedef ImageToImageFilter<
+    TInputImage,TInputImage>        Superclass;
   typedef SmartPointer<Self>        Pointer;
   typedef SmartPointer<const Self>  ConstPointer;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Runtime information support. */
-  itkTypeMacro(StatisticsImageFilter, ImageToImageFilter);
+  itkTypeMacro( StatisticsImageFilter, ImageToImageFilter );
 
   /** Image related typedefs. */
-  typedef typename TInputImage::Pointer InputImagePointer;
-
-  typedef typename TInputImage::RegionType RegionType ;
-  typedef typename TInputImage::SizeType SizeType ;
-  typedef typename TInputImage::IndexType IndexType ;
-  typedef typename TInputImage::PointType PointType ;
-  typedef typename TInputImage::PixelType PixelType ;
+  typedef TInputImage                         InputImageType;
+  typedef typename InputImageType::Pointer    InputImagePointer;
+  typedef typename InputImageType::RegionType RegionType ;
+  typedef typename InputImageType::SizeType   SizeType ;
+  typedef typename InputImageType::IndexType  IndexType ;
+  typedef typename InputImageType::PointType  PointType ;
+  typedef typename InputImageType::PixelType  PixelType ;
 
   /** Image related typedefs. */
-  itkStaticConstMacro(ImageDimension, unsigned int,
-                      TInputImage::ImageDimension ) ;
+  itkStaticConstMacro( ImageDimension, unsigned int,
+    InputImageType::ImageDimension ) ;
 
   /** Type to use for computations. */
   typedef typename NumericTraits<PixelType>::RealType RealType;
@@ -90,21 +91,21 @@ public:
 
   /** Mask support.
    *  Type for the mask of the input image. Only pixels that are "inside"
-   * this mask will be considered for the computation of the statistics */
-  typedef SpatialObject<
-    itkGetStaticConstMacro(ImageDimension)>       MaskType;
+   * this mask will be considered for the computation of the statistics.
+   */
+  typedef Image< unsigned char,
+    itkGetStaticConstMacro( ImageDimension ) >    MaskType;
   typedef typename MaskType::Pointer              MaskPointer;
-
 
   /** Return the computed Minimum. */
   PixelType GetMinimum() const
-    { return this->GetMinimumOutput()->Get(); }
+  { return this->GetMinimumOutput()->Get(); }
   PixelObjectType* GetMinimumOutput();
   const PixelObjectType* GetMinimumOutput() const;
 
   /** Return the computed Maximum. */
   PixelType GetMaximum() const
-    { return this->GetMaximumOutput()->Get(); }
+  { return this->GetMaximumOutput()->Get(); }
   PixelObjectType* GetMaximumOutput();
   const PixelObjectType* GetMaximumOutput() const;
 
@@ -133,8 +134,9 @@ public:
   const RealObjectType* GetSumOutput() const;
 
   /** Make a DataObject of the correct type to be used as the specified
-   * output. */
-  virtual DataObjectPointer MakeOutput(unsigned int idx);
+   * output.
+   */
+  virtual DataObjectPointer MakeOutput( unsigned int idx );
 
   /** Set/Get Mask */
   itkSetObjectMacro(Mask, MaskType);
@@ -143,27 +145,26 @@ public:
 protected:
   StatisticsImageFilter();
   ~StatisticsImageFilter(){};
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf( std::ostream& os, Indent indent ) const;
 
   /** Pass the input through unmodified. Do this by Grafting in the AllocateOutputs method. */
-  void AllocateOutputs();
+  void AllocateOutputs( void );
 
   /** Initialize some accumulators before the threads run. */
-  void BeforeThreadedGenerateData ();
+  void BeforeThreadedGenerateData( void );
 
   /** Do final mean and variance computation from data accumulated in threads. */
-  void AfterThreadedGenerateData ();
+  void AfterThreadedGenerateData( void );
 
   /** Multi-thread version GenerateData. */
-  void  ThreadedGenerateData (const RegionType&
-                              outputRegionForThread,
-                              int threadId) ;
+  void ThreadedGenerateData( const RegionType & outputRegionForThread,
+    int threadId );
 
   // Override since the filter needs all the data for the algorithm
-  void GenerateInputRequestedRegion();
+  void GenerateInputRequestedRegion( void );
 
   // Override since the filter produces all of its output
-  void EnlargeOutputRequestedRegion(DataObject *data);
+  void EnlargeOutputRequestedRegion( DataObject *data );
 
   MaskPointer m_Mask;
 

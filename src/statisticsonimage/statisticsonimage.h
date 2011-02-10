@@ -2,7 +2,6 @@
 #define __statisticsonimage_h
 
 #include "itkImageFileReader.h"
-#include "itkImageMaskSpatialObject.h"
 #include "itkStatisticsImageFilterWithMask.h"
 #include "itkCastImageFilter.h"
 #include "itkGradientToMagnitudeImageFilter.h"
@@ -11,6 +10,7 @@
 #include "itkLogImageFilter.h"
 
 #include "statisticsprinters.h"
+
 
 /** This file defines two templated functions */
 
@@ -203,7 +203,6 @@ void StatisticsOnImage(
 
   typedef itk::Image<InternalPixelType, Dimension>    InternalImageType;
   typedef itk::Image<MaskPixelType, Dimension>        MaskImageType;
-  typedef itk::ImageMaskSpatialObject< Dimension>     MaskSpatialObjectType;
 
   typedef itk::ImageToImageFilter<
     InternalImageType, InternalImageType>             BaseFilterType;
@@ -226,24 +225,21 @@ void StatisticsOnImage(
     HistogramGeneratorType::HistogramType             HistogramType;
 
   /** Read mask */
-  typename MaskSpatialObjectType::Pointer mask = 0;
-  typename MaskReaderType::Pointer maskReader =
-    MaskReaderType::New();
-  typename BaseFilterType::Pointer maskerOrCopier = (CopierType::New()).GetPointer();
+  typename MaskReaderType::Pointer maskReader
+    = MaskReaderType::New();
+  typename BaseFilterType::Pointer maskerOrCopier
+    = (CopierType::New()).GetPointer();
   if ( maskFileName != "" )
   {
     /** Read mask */
     maskReader->SetFileName( maskFileName.c_str() );
-    std::cout << "Reading Mask..." << std::endl;
+    std::cout << "Reading Mask ..." << std::endl;
     maskReader->Update();
     std::cout << "Done reading Mask." << std::endl;
 
-    /** Convert to spatial object */
-    mask = MaskSpatialObjectType::New();
-    mask->SetImage( maskReader->GetOutput() );
-
     /** Prepare filter that applies mask to an image (by replacing all pixels
-     * that fall outside the mask by -infinity */
+     * that fall outside the mask by -infinity. Needed for histogram.
+     */
     typename MaskerType::Pointer maskFilter = MaskerType::New();
     maskFilter->SetInput2( maskReader->GetOutput() );
     maskFilter->SetOutsideValue(
@@ -254,9 +250,8 @@ void StatisticsOnImage(
   /** Create StatisticsFilter */
   typename StatisticsFilterType::Pointer statistics =
     StatisticsFilterType::New();
-  statistics->SetMask(mask);
-  /** vnl_svd is used by this class, which is not thread safe */
-  statistics->SetNumberOfThreads(1);
+  statistics->SetMask( maskReader->GetOutput() );
+  //statistics->SetNumberOfThreads( 1 );
 
   typename HistogramGeneratorType::Pointer histogramGenerator =
     HistogramGeneratorType::New();
@@ -329,7 +324,7 @@ void StatisticsOnImage(
 
   } // end vector images
 
-} // end StatisticsOnImage
+} // end StatisticsOnImage()
 
 
 #endif // #ifndef __statisticsonimage_h

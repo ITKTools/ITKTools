@@ -23,7 +23,7 @@ void PrintStatistics( const TStatisticsFilter * statistics )
   std::cout << "\tarithmetic var  : " << statistics->GetVariance() << std::endl;
   std::cout << "\tsum             : " << statistics->GetSum() << std::endl;
 
-} // end PrintStatistics
+} // end PrintStatistics()
 
 
 /**
@@ -42,7 +42,7 @@ void PrintGeometricStatistics( const TStatisticsFilter * statistics )
   std::cout << "\tgeometric mean : " << geometricmean << std::endl;
   std::cout << "\tgeometric stdev: " << geometricstdev << std::endl;
 
-} // end PrintGeometricStatistics
+} // end PrintGeometricStatistics()
 
 
 /**
@@ -117,7 +117,7 @@ void PrintHistogramStatistics( const THistogram * histogram,
     std::cout << "Done writing histogram to file." << std::endl;
   } // end if
 
-} // end PrintHistogramStatistics
+} // end PrintHistogramStatistics()
 
 
 #endif // #ifndef __statisticsprinters_h
