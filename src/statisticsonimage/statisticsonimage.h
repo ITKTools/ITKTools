@@ -250,8 +250,10 @@ void StatisticsOnImage(
   /** Create StatisticsFilter */
   typename StatisticsFilterType::Pointer statistics =
     StatisticsFilterType::New();
-  statistics->SetMask( maskReader->GetOutput() );
-  //statistics->SetNumberOfThreads( 1 );
+  if ( maskFileName != "" )
+  {
+    statistics->SetMask( maskReader->GetOutput() );
+  }
 
   typename HistogramGeneratorType::Pointer histogramGenerator =
     HistogramGeneratorType::New();
