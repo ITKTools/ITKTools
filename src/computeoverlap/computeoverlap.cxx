@@ -493,7 +493,7 @@ void ComputeOverlap2(
     }
 
     /** Print information. */
-    std::cout << currentLabel << " => "
+    std::cout << static_cast<std::size_t>( currentLabel ) << " => "
       << sumA[ currentLabel ]
       << "\t, " << sumB[ currentLabel ]
       << "\t, " << sumC[ currentLabel ]
