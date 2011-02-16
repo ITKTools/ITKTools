@@ -459,7 +459,7 @@ void ComputeOverlap2(
     if ( sumA.count( *itL ) == 0 && sumB.count( *itL ) == 0 )
     {
       itkGenericExceptionMacro( << "The selected label "
-        << (*itL) << " does not exist in both input images." );
+        << static_cast<std::size_t>( *itL ) << " does not exist in both input images." );
     }
   }
 
