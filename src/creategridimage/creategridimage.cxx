@@ -11,7 +11,7 @@
 #define run( function, dim ) \
 if ( imageDimension == dim ) \
 { \
-  function< dim >( outputFileName, imageSize, imageSpacing, distance ); \
+  function< dim >( outputFileName, imageSize, imageSpacing, distance, is2DStack ); \
   supported = true; \
 }
 
@@ -25,7 +25,8 @@ void CreateGridImage(
   const std::string & outputFileName,
   const std::vector<unsigned int> & imageSize,
   const std::vector<float> & imageSpacing,
-  const std::vector<unsigned int> & distance );
+  const std::vector<unsigned int> & distance,
+  const bool & is2DStack );
 
 //-------------------------------------------------------------------------------------
 
@@ -46,17 +47,18 @@ int main( int argc, char *argv[] )
   std::string outputFileName = "";
   bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
 
-  unsigned int imageDimension = 2;
-  bool retdim = parser->GetCommandLineArgument( "-dim", imageDimension );
-
-  std::vector<unsigned int> imageSize( imageDimension );
+  std::vector<unsigned int> imageSize;
   bool retsz = parser->GetCommandLineArgument( "-sz", imageSize );
+
+  const std::size_t imageDimension = imageSize.size();
 
   std::vector<float> imageSpacing( imageDimension, 1.0 );
   bool retsp = parser->GetCommandLineArgument( "-sp", imageSpacing );
 
   std::vector<unsigned int> distance( imageDimension, 1 );
   bool retd = parser->GetCommandLineArgument( "-d", distance );
+
+  const bool is2DStack = parser->ArgumentExists( "-stack" );
 
   /** Check if the required arguments are given. */
   if ( !retout )
@@ -127,10 +129,11 @@ void CreateGridImage(
   const std::string & outputFileName,
   const std::vector<unsigned int> & imageSize,
   const std::vector<float> & imageSpacing,
-  const std::vector<unsigned int> & distance )
+  const std::vector<unsigned int> & distance,
+  const bool & is2DStack )
 {
   /** Typedef's. */
-  typedef short                                           PixelType;
+  typedef unsigned char                                   PixelType;
   typedef itk::Image< PixelType, Dimension >              ImageType;
   typedef itk::ImageRegionIteratorWithIndex< ImageType >  IteratorType;
   typedef itk::ImageFileWriter< ImageType >               WriterType;
@@ -166,7 +169,7 @@ void CreateGridImage(
     bool onGrid = false;
     onGrid |= ind[ 0 ] % distance[ 0 ] == 0;
     onGrid |= ind[ 1 ] % distance[ 1 ] == 0;
-    if ( Dimension == 3 )
+    if ( Dimension == 3 && !is2DStack )
     {
       if ( ind[ 2 ] % distance[ 2 ] != 0 )
       {
@@ -188,18 +191,18 @@ void CreateGridImage(
 } // end CreateGridImage()
 
 
-  /**
-   * ******************* PrintHelp *******************
-   */
+/**
+ * ******************* PrintHelp *******************
+ */
+
 void PrintHelp( void )
 {
   std::cout << "Usage:" << std::endl << "pxcreategridimage" << std::endl;
   std::cout << "  -out     outputFilename" << std::endl;
-  std::cout << "  [-dim]   image dimension, default 2" << std::endl;
-  std::cout << "  -sz      image size" << std::endl;
+  std::cout << "  -sz      image size for each dimension" << std::endl;
   std::cout << "  [-sp]    image spacing, default 1.0" << std::endl;
   std::cout << "  -d       distance in pixels between two gridlines" << std::endl;
+  std::cout << "  [-stack] for 3D images, create a stack of 2D images, default false" << std::endl;
   std::cout << "Supported: 2D, 3D, short." << std::endl;
-  std::cout << "In 3D simply a stack of 2D grid image is created." << std::endl;
-} // end PrintHelp()
 
+} // end PrintHelp()
