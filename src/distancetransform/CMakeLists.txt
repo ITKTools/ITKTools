@@ -1,15 +1,18 @@
 # This project is intended to be built outside the Insight source tree
-PROJECT(distancetransform)
+PROJECT( distancetransform )
 
 # Find ITK.
 FIND_PACKAGE( ITK REQUIRED )
 INCLUDE( ${ITK_USE_FILE} )
 
-ADD_EXECUTABLE(pxdistancetransform
- distancetransform.cxx
+INCLUDE_DIRECTORIES( ../morphology )
+
+ADD_EXECUTABLE( pxdistancetransform
+  distancetransform.cxx
 )
 
-TARGET_LINK_LIBRARIES(pxdistancetransform pxcommon ITKBasicFilters ITKIO ITKCommon ITKNumerics)
+TARGET_LINK_LIBRARIES( pxdistancetransform
+  pxcommon ITKBasicFilters ITKIO ITKCommon ITKNumerics )
 
 INSTALL( TARGETS pxdistancetransform
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

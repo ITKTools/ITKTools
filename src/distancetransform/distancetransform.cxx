@@ -11,6 +11,8 @@
 
 #include "itkSignedMaurerDistanceMapImageFilter.h"
 #include "itkSignedDanielssonDistanceMapImageFilter.h"
+#include "itkMorphologicalSignedDistanceTransformImageFilter.h"
+#include "itkMorphologicalDistanceTransformImageFilter.h"
 //#include "itkOrderKDistanceTransformImageFilter.h"
 
 /** Declare DistanceTransform. */
@@ -71,11 +73,10 @@ int main( int argc, char **argv )
     return 1;
   }
 
-  //if ( method != "Maurer" && method != "Danielsson" && method != "OrderK" )
-  if ( method != "Maurer" && method != "Danielsson" )
+  if ( method != "Maurer" && method != "Danielsson"
+    && method != "Morphological" && method != "MorphologicalSigned" )
   {
-    //std::cerr << "ERROR: the method should be one of {Maurer, Danielsson, OrderK}!"
-    std::cerr << "ERROR: the method should be one of { Maurer, Danielsson }!"
+    std::cerr << "ERROR: the method should be one of { Maurer, Danielsson, Morphological, MorphologicalSigned }!"
       << std::endl;
     return 1;
   }
@@ -196,6 +197,10 @@ void DistanceTransform(
     InputImageType, OutputImageType >               MaurerDistanceType;
   typedef itk::SignedDanielssonDistanceMapImageFilter<
     InputImageType, OutputImageType >               DanielssonDistanceType;
+  typedef itk::MorphologicalSignedDistanceTransformImageFilter<
+    InputImageType, OutputImageType >               MorphologicalSignedDistanceType;
+  typedef itk::MorphologicalDistanceTransformImageFilter<
+    InputImageType, OutputImageType >               MorphologicalDistanceType;
 //   typedef itk::OrderKDistanceTransformImageFilter<
 //     FloatImageType, ULImageType >                   OrderKDistanceType;
 //
@@ -237,6 +242,22 @@ void DistanceTransform(
   distance_Danielsson->SetInsideIsPositive( false );
   distance_Danielsson->SetSquaredDistance( outputSquaredDistance );
 
+  /** Setup the Morphological distance transform filter. */
+  typename MorphologicalDistanceType::Pointer distance_Morphological
+    = MorphologicalDistanceType::New();
+  distance_Morphological->SetInput( reader->GetOutput() );
+  distance_Morphological->SetUseImageSpacing( true );
+  distance_Morphological->SetOutsideValue( 1 );
+  distance_Morphological->SetSqrDist( outputSquaredDistance );
+
+  /** Setup the Morphological signed distance transform filter. */
+  typename MorphologicalSignedDistanceType::Pointer distance_MorphologicalSigned
+    = MorphologicalSignedDistanceType::New();
+  distance_MorphologicalSigned->SetInput( reader->GetOutput() );
+  distance_MorphologicalSigned->SetUseImageSpacing( true );
+  distance_MorphologicalSigned->SetInsideIsPositive( false );
+  distance_MorphologicalSigned->SetOutsideValue( 0 );
+
   /** Setup the OrderK distance transform filter. */
 //   typename OrderKDistanceType::Pointer distance_OrderK
 //     = OrderKDistanceType::New();
@@ -270,6 +291,19 @@ void DistanceTransform(
     writer->SetInput( distance_Danielsson->GetOutput() );
     writer->Update();
   }
+  else if ( method == "Morphological" )
+  {
+    distance_Morphological->Update();
+    writer->SetInput( distance_Morphological->GetOutput() );
+    writer->Update();
+  }
+  else if ( method == "MorphologicalSigned" )
+  {
+    distance_MorphologicalSigned->Update();
+    writer->SetInput( distance_MorphologicalSigned->GetOutput() );
+    writer->Update();
+  }
+  
 //   else if ( method == "OrderK" )
 //   {
 //     std::cerr << "to here";
@@ -302,7 +336,7 @@ void PrintHelp( void )
   std::cout << "  -out     outputFilename: the output of distance transform\n";
   std::cout << "  [-s]     flag: if set, output squared distances instead of distances\n";
   //std::cout << "  [-m]     method, one of {Maurer, Danielsson, OrderK}, default Maurer\n";
-  std::cout << "  [-m]     method, one of {Maurer, Danielsson}, default Maurer\n";
+  std::cout << "  [-m]     method, one of {Maurer, Danielsson, Morphological, MorphologicalSigned}, default Maurer\n";
   //std::cout << "  [-K]     for method \"OrderK\", specify K, default 5\n";
   std::cout << "Note: voxel spacing is taken into account. Voxels inside the "
     << "object (=1) receive a negative distance.\n";
