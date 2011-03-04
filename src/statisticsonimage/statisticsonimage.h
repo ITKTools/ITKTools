@@ -28,7 +28,7 @@ void DetermineHistogramMaximum(
   const unsigned int & numberOfBins,
   PixelType & histogramMax )
 {
-  typedef itk::NumericTraits<PixelType>::ScalarRealType RealPixelType;
+  typedef typename itk::NumericTraits<PixelType>::ScalarRealType RealPixelType;
 
   /** This code is copied from the ListSampleToHistogramGenerator->GenerateData()
    * and adapted. It makes sure that the maximum values are also included in the histogram.

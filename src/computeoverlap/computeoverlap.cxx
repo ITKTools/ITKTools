@@ -454,7 +454,7 @@ void ComputeOverlap2(
   }
 
   /** Check if all requested labels exist. */
-  for ( LabelsType::const_iterator itL = labels.begin(); itL != labels.end(); itL++ )
+  for ( typename LabelsType::const_iterator itL = labels.begin(); itL != labels.end(); itL++ )
   {
     if ( sumA.count( *itL ) == 0 && sumB.count( *itL ) == 0 )
     {
@@ -466,7 +466,7 @@ void ComputeOverlap2(
   /** Calculate and print the overlap. */
   std::cout << "label => sum input1 \t, sum input2 \t, sum overlap \t, overlap" << std::endl;
   std::map<PixelType, double>     overlap;
-  OverlapMapType::const_iterator  it;
+  typename OverlapMapType::const_iterator  it;
   for ( it = sumA.begin() ; it != sumA.end(); it++ )
   {
     PixelType currentLabel = (*it).first;
