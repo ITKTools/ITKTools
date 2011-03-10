@@ -12,7 +12,8 @@
 #define run(function,type,dim) \
 if ( ComponentType == #type && Dimension == dim ) \
 { \
-  function< type, dim >( inputFileName, outputFileName, ops, numberOfStreams ); \
+  function< type, dim >( inputFileName, outputFileName, ops, \
+    numberOfStreams, numberOfIterations, stopValue ); \
   supported = true; \
 }
 
@@ -62,6 +63,13 @@ int main( int argc, char **argv )
   /** Support for streaming. */
   unsigned int numberOfStreams = 1;
   bool rets = parser->GetCommandLineArgument( "-s", numberOfStreams );
+
+  /** Parameters for the inversion. */
+  unsigned int numberOfIterations = 1;
+  bool retit = parser->GetCommandLineArgument( "-it", numberOfIterations );
+
+  double stopValue = 0.0;
+  bool retstop = parser->GetCommandLineArgument( "-stop", stopValue );
 
   /** Determine image properties. */
   std::string ComponentType = "float";
@@ -143,9 +151,11 @@ void PrintHelp( void )
   std::cout << "  -in      inputFilename\n";
   std::cout << "  [-out]   outputFilename; default: in + {operation}.mhd\n";
   std::cout << "  [-ops]   operation; options: DEF2TRANS, TRANS2DEF, "
-    << "MAGNITUDE, JACOBIAN, DEF2JAC, TRANS2JAC. default: MAGNITUDE\n"
+    << "MAGNITUDE, JACOBIAN, DEF2JAC, TRANS2JAC, INVERSE. default: MAGNITUDE\n"
     << "           TRANS2JAC == JACOBIAN\n";
   std::cout << "  [-s]     number of streams, default 1.\n";
+  std::cout << "  [-it]    number of iterations, for the iterative inversion, default 1, increase to get better results.\n";
+  std::cout << "  [-stop]  allowed error, default 0.0, increase to get faster convergence.\n";
   std::cout << "Supported: 2D, 3D, vector of floats or doubles, number of components "
     << "must equal number of dimensions." << std::endl;
 

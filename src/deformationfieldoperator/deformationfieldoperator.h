@@ -7,6 +7,7 @@
 #include "itkDeformationFieldJacobianDeterminantFilter.h"
 #include "itkDisplacementFieldJacobianDeterminantFilter.h"
 #include "itkGradientToMagnitudeImageFilter.h"
+#include "itkIterativeInverseDeformationFieldImageFilter.h"
 
 
 /**
@@ -164,6 +165,51 @@ void ComputeJacobian(
 
 
 /**
+ * ******************* ComputeInverse ************************
+ * Compute inverse of deformation field
+ */
+
+template<class TVectorImage>
+void ComputeInverse(
+  const std::string & inputFileName,
+  const std::string & outputFileName,
+  const unsigned int & numberOfStreams,
+  const unsigned int & numberOfIterations,
+  const double & stopValue )
+{
+  /** Typedef's. */
+  typedef TVectorImage                                VectorImageType;
+  typedef itk::ImageFileReader< VectorImageType >     ReaderType;
+  typedef itk::ImageFileWriter< VectorImageType >     WriterType;
+  typedef itk::IterativeInverseDeformationFieldImageFilter<
+    VectorImageType, VectorImageType >                InverseDeformationFilterType;
+
+  /** Declare filters. */
+  typename ReaderType::Pointer reader = ReaderType::New();
+  typename InverseDeformationFilterType::Pointer inversionFilter
+    = InverseDeformationFilterType::New();
+  typename WriterType::Pointer writer = WriterType::New();
+
+  /** Setup reader. */
+  reader->SetFileName( inputFileName.c_str() );
+
+  /** Setup inversion filter. */
+  inversionFilter->SetInput( reader->GetOutput() );
+  inversionFilter->SetNumberOfIterations( numberOfIterations );
+  inversionFilter->SetStopValue( stopValue );
+
+  /** Setup writer.  No intermediate calls to Update() are allowed,
+   * otherwise streaming does not work.
+   */
+  writer->SetInput( inversionFilter->GetOutput() );
+  writer->SetFileName( outputFileName.c_str() );
+  writer->SetNumberOfStreamDivisions( numberOfStreams );
+  writer->Update();
+
+} // end ComputeInverse()
+
+
+/**
  * **************** DeformationFieldOperator *******************
  *
  * converts between deformation fields and transformation 'fields',
@@ -176,7 +222,9 @@ void DeformationFieldOperator(
   const std::string & inputFileName,
   const std::string & outputFileName,
   const std::string & ops,
-  const unsigned int & numberOfStreams )
+  const unsigned int & numberOfStreams,
+  const unsigned int & numberOfIterations,
+  const double & stopValue )
 {
   /** constants */
   const unsigned int Dimension = NDimension;
@@ -233,9 +281,14 @@ void DeformationFieldOperator(
     ComputeJacobian<VectorImageType, ScalarImageType>(
       inputFileName, outputFileName, numberOfStreams, false );
   }
+  else if ( ops == "INVERSE" )
+  {
+    ComputeInverse<VectorImageType>(
+      inputFileName, outputFileName, numberOfStreams, numberOfIterations, stopValue );
+  }
   else
   {
-    itkGenericExceptionMacro(<< "<< invalid operator: " << ops );
+    itkGenericExceptionMacro( << "<< invalid operator: " << ops );
   }
 
 } // end DeformationFieldOperator()
