@@ -2,13 +2,12 @@
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
-/*#include "itkBinaryBallStructuringElement.h"*/
-#include "itkNeighborhood.h"
+#include "itkFlatStructuringElement.h"
 #include "itkMorphologicalGradientImageFilter.h"
 
 
 /**
- * ******************* erosionGrayscale *******************
+ * ******************* gradient *******************
  */
 
 template< class ImageType >
@@ -25,10 +24,7 @@ void gradient(
 
   typedef itk::ImageFileReader< ImageType >           ReaderType;
   typedef itk::ImageFileWriter< ImageType >           WriterType;
-//   typedef itk::BinaryBallStructuringElement<
-//     PixelType, Dimension >                            StructuringElementType;
-  //typedef typename StructuringElementType::RadiusType RadiusType;
-  typedef itk::Neighborhood< PixelType, Dimension >   KernelType;
+  typedef itk::FlatStructuringElement< Dimension >    KernelType;
   typedef itk::MorphologicalGradientImageFilter<
     ImageType, ImageType, KernelType >    FilterType;
   typedef typename FilterType::RadiusType             RadiusType;
@@ -47,13 +43,12 @@ void gradient(
   {
     radiusarray.SetElement( i, radius[ i ] );
   }
-//   StructuringElementType  S_ball;
-//   S_ball.SetRadius( radiusarray );
-//   S_ball.CreateStructuringElement();
+
+  KernelType structuringElement;
+  structuringElement = structuringElement.Box( radiusarray );
 
   /** Setup the gradient filter. BASIC = 0, HISTO = 1, ANCHOR = 2, VHGW = 3. */
-  //filter->SetKernel( S_ball );
-  filter->SetRadius( radiusarray );
+  filter->SetKernel( structuringElement );
   filter->SetAlgorithm( algorithm );
   filter->SetInput( reader->GetOutput() );
 

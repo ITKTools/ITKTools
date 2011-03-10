@@ -52,7 +52,7 @@ int main( int argc, char *argv[] )
   bool retop = parser->GetCommandLineArgument( "-op", operation );
   operation = itksys::SystemTools::UnCapitalizedWords( operation );
 
-  std::string type = "Grayscale";
+  std::string type = "grayscale";
   bool rettype = parser->GetCommandLineArgument( "-type", type );
   type = itksys::SystemTools::UnCapitalizedWords( type );
 
