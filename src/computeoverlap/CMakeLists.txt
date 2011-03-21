@@ -1,13 +1,17 @@
 # This project is intended to be built outside the Insight source tree
-PROJECT(ComputeOverlap)
+PROJECT( ComputeOverlap )
 
 # Find ITK.
 FIND_PACKAGE( ITK REQUIRED )
 INCLUDE( ${ITK_USE_FILE} )
 
-ADD_EXECUTABLE(pxcomputeoverlap computeoverlap.cxx)
+ADD_EXECUTABLE( pxcomputeoverlap
+  computeoverlap.cxx
+  itkDiceOverlapImageFilter.h
+  itkDiceOverlapImageFilter.txx )
 
-TARGET_LINK_LIBRARIES(pxcomputeoverlap pxcommon ITKIO ITKCommon ITKBasicFilters )
+TARGET_LINK_LIBRARIES( pxcomputeoverlap
+  pxcommon ITKIO ITKCommon ITKBasicFilters )
 
 INSTALL( TARGETS pxcomputeoverlap
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

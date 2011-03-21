@@ -8,6 +8,8 @@
 #include "itkThresholdLabelerImageFilter.h"
 #include "itkNumericTraits.h"
 
+#include "itkDiceOverlapImageFilter.h"
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -49,6 +51,11 @@ void ComputeOverlapOld(
 
 template< class TImage>
 void ComputeOverlap2(
+  const std::vector<std::string> & inputFileNames,
+  const std::vector<unsigned int> & labels );
+
+template< class TImage>
+void ComputeOverlap3(
   const std::vector<std::string> & inputFileNames,
   const std::vector<unsigned int> & labels );
 
@@ -126,13 +133,13 @@ int main( int argc, char ** argv )
   {
     if ( retlabel )
     {
-      run2( ComputeOverlap2, char, 2 );
-      run2( ComputeOverlap2, short, 2 );
+      run2( ComputeOverlap3, char, 2 );
+      run2( ComputeOverlap3, short, 2 );
 
-      run2( ComputeOverlap2, char, 3 );
-      run2( ComputeOverlap2, unsigned char, 3 );
-      run2( ComputeOverlap2, short, 3 );
-      run2( ComputeOverlap2, unsigned short, 3 );
+      run2( ComputeOverlap3, char, 3 );
+      run2( ComputeOverlap3, unsigned char, 3 );
+      run2( ComputeOverlap3, short, 3 );
+      run2( ComputeOverlap3, unsigned short, 3 );
     }
     else
     {
@@ -502,3 +509,46 @@ void ComputeOverlap2(
 
 } // end ComputeOverlap2()
 
+
+/**
+ * ******************* ComputeOverlap3 *******************
+ */
+
+
+template< class TImage>
+void ComputeOverlap3(
+  const std::vector<std::string> & inputFileNames,
+  const std::vector<unsigned int> & labelsArg )
+{
+  /** Some typedef's. */
+  typedef TImage                                      ImageType;
+  typedef itk::ImageFileReader<ImageType>             ImageReaderType;
+  typedef typename ImageReaderType::Pointer           ImageReaderPointer;
+  typedef itk::DiceOverlapImageFilter<ImageType>      DiceComputeFilter;
+  //typedef typename DiceComputeFilter::OverlapMapType  OverlapMapType;
+  typedef typename DiceComputeFilter::LabelsType      LabelsType;
+
+  /** Translate vector of labels to set. */
+  LabelsType requestedLabels;
+  for ( std::size_t i = 0; i < labelsArg.size(); i++ )
+  {
+    requestedLabels.insert( labelsArg[ i ] );
+  }
+
+  /** Create and setup readers. */
+  ImageReaderPointer reader1 = ImageReaderType::New();
+  reader1->SetFileName( inputFileNames[ 0 ].c_str() );
+  ImageReaderPointer reader2 = ImageReaderType::New();
+  reader2->SetFileName( inputFileNames[ 1 ].c_str() );
+
+  /** Create Dice overlap filter. */
+  DiceComputeFilter::Pointer diceFilter = DiceComputeFilter::New();
+  diceFilter->SetInput( 0, reader1->GetOutput() );
+  diceFilter->SetInput( 1, reader2->GetOutput() );
+  diceFilter->SetRequestedLabels( requestedLabels );
+  diceFilter->Update();
+
+  /** Print the results. */
+  diceFilter->PrintRequestedDiceOverlaps();
+
+} // end ComputeOverlap3()
