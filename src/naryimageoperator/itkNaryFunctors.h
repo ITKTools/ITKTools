@@ -59,6 +59,8 @@ public: \
 /** Arithmetic functors. */
 itkNaryFunctorMacroA( ADDITION, AccumulateType, NumericTraits< AccumulateType >::Zero,
                      0, += B[ i ], result );
+itkNaryFunctorMacroA( MEAN, AccumulateType, NumericTraits< AccumulateType >::Zero,
+                     0, += B[ i ], result / B.size() );
 itkNaryFunctorMacroA( MINUS,    AccumulateType, static_cast< AccumulateType >( B[ 0 ] ),
                      1, -= B[ i ], result );
 itkNaryFunctorMacroA( TIMES,    AccumulateType, NumericTraits< AccumulateType >::One,

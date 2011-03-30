@@ -82,6 +82,7 @@ void NaryImageOperator(
   /** Set up the binaryFilter. */
   typename BaseFilterType::Pointer naryFilter = 0;
   InstantiateNaryFilterNoArg( ADDITION );
+  InstantiateNaryFilterNoArg( MEAN );
   InstantiateNaryFilterNoArg( MINUS );
   InstantiateNaryFilterNoArg( TIMES );
   InstantiateNaryFilterNoArg( DIVIDE );

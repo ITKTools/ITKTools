@@ -37,6 +37,7 @@ void PrintHelp( void )
             << "           {+,-,*,/,^,%}\n"
             << "           notation:\n"
             << "             {ADDITION, MINUS, TIMES, DIVIDE,\n"
+            << "             MEAN,\n"
             << "             MAXIMUM, MINIMUM, ABSOLUTEDIFFERENCE,\n"
             << "             NARYMAGNITUDE }\n"
             << "           notation examples:\n"
@@ -177,6 +178,11 @@ int CheckOperator( std::string & operatoR )
     operatoR = "ADDITION";
     return 0;
   }
+  else if ( operatoR == "MEAN" || operatoR == "AVERAGE" )
+  {
+    operatoR = "MEAN";
+    return 0;
+  }
   else if ( operatoR == "WEIGHTEDADDITION" || operatoR == "WEIGHTEDADD"
     || operatoR == "WEIGHTEDPLUS" )
   {
@@ -274,6 +280,7 @@ bool OperatorNeedsArgument( const std::string & operatoR )
 
   /** Fill the map. */
   operatorMap["ADDITION"]           = false;
+  operatorMap["MEAN"]               = false;
   operatorMap["WEIGHTEDADDITION"]   = true;
   operatorMap["MINUS"]              = false;
   operatorMap["TIMES"]              = false;
