@@ -57,13 +57,13 @@ public: \
 // }
 
 /** Arithmetic functors. */
-itkNaryFunctorMacroA( ADDITION, AccumulateType, NumericTraits< AccumulateType >::Zero,
+itkNaryFunctorMacroA( ADDITION, ScalarRealType, NumericTraits< ScalarRealType >::Zero,
                      0, += B[ i ], result );
-itkNaryFunctorMacroA( MEAN, AccumulateType, NumericTraits< AccumulateType >::Zero,
+itkNaryFunctorMacroA( MEAN, ScalarRealType, NumericTraits< ScalarRealType >::Zero,
                      0, += B[ i ], result / B.size() );
-itkNaryFunctorMacroA( MINUS,    AccumulateType, static_cast< AccumulateType >( B[ 0 ] ),
+itkNaryFunctorMacroA( MINUS,    ScalarRealType, static_cast< ScalarRealType >( B[ 0 ] ),
                      1, -= B[ i ], result );
-itkNaryFunctorMacroA( TIMES,    AccumulateType, NumericTraits< AccumulateType >::One,
+itkNaryFunctorMacroA( TIMES,    ScalarRealType, NumericTraits< ScalarRealType >::One,
                      0, *= B[ i ], result );
 itkNaryFunctorMacroA( DIVIDE,   ScalarRealType, static_cast< ScalarRealType >( B[ 0 ] ),
                      1,  = B[ i ] != 0 ? result / B[ i ] : result, result );
@@ -75,7 +75,7 @@ itkNaryFunctorMacroA( MAXIMUM,  AccumulateType, static_cast< AccumulateType >( B
 itkNaryFunctorMacroA( MINIMUM,  AccumulateType, static_cast< AccumulateType >( B[ 0 ] ),
                      1,  = vnl_math_min( result, B[ i ] ), result );
 
-itkNaryFunctorMacroA( ABSOLUTEDIFFERENCE, AccumulateType, static_cast< AccumulateType >( B[ 0 ] ),
+itkNaryFunctorMacroA( ABSOLUTEDIFFERENCE, ScalarRealType, static_cast< ScalarRealType >( B[ 0 ] ),
                      1, -= B[ i ], result > 0.0 ? result : -result );
 itkNaryFunctorMacroA( NARYMAGNITUDE,      ScalarRealType, NumericTraits< ScalarRealType >::Zero,
                      0, += B[ i ] * B[ i ], vcl_sqrt( result ) );
