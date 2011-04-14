@@ -34,7 +34,7 @@ int  main(  int  argc,  char *argv[] )
    * Check arguments.
    * *******************************************************************
    */
-  if ( argc  < 3 || argv[ 1 ] == "--help" )
+  if ( argc  < 3 || strcmp(argv[ 1 ], "--help") == 0 )
   {
     std::cout  << "Usage:"  << std::endl;
     std::cout  << "\tpxcomputedifferenceimage inputimage1filename inputimage2filename [outputimagefilename] [outputPixelComponentType]" << std::endl;
