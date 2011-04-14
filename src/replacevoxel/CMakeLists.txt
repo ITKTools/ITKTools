@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE(pxreplacevoxel replacevoxel.cxx)
 
-TARGET_LINK_LIBRARIES(pxreplacevoxel pxcommon ITKBasicFilters ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxreplacevoxel pxcommon ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxreplacevoxel
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

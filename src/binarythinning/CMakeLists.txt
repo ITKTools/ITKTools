@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE(pxbinarythinning binarythinning.cxx)
 
-TARGET_LINK_LIBRARIES(pxbinarythinning pxcommon ITKIO ITKBasicFilters ITKCommon)
+TARGET_LINK_LIBRARIES(pxbinarythinning pxcommon ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxbinarythinning
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

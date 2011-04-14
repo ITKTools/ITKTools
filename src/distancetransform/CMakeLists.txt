@@ -12,7 +12,7 @@ ADD_EXECUTABLE( pxdistancetransform
 )
 
 TARGET_LINK_LIBRARIES( pxdistancetransform
-  pxcommon ITKBasicFilters ITKIO ITKCommon ITKNumerics )
+  pxcommon ITKBasicFilters ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxdistancetransform
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

@@ -13,7 +13,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE(pxextractindexfromvectorimage extractindexfromvectorimage.cxx)
 
-TARGET_LINK_LIBRARIES(pxextractindexfromvectorimage pxcommon ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxextractindexfromvectorimage pxcommon ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxextractindexfromvectorimage
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

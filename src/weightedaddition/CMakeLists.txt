@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE(pxweightedaddition weightedaddition.cxx)
 
-TARGET_LINK_LIBRARIES(pxweightedaddition pxcommon ITKBasicFilters ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxweightedaddition pxcommon ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxweightedaddition
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

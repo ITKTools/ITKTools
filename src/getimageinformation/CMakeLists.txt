@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE(pxgetimageinformation getimageinformation.cxx)
 
-TARGET_LINK_LIBRARIES(pxgetimageinformation pxcommon ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxgetimageinformation pxcommon ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxgetimageinformation
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

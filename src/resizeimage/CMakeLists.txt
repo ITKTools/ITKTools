@@ -13,7 +13,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE(pxresizeimage resizeimage.cxx)
 
-TARGET_LINK_LIBRARIES(pxresizeimage pxcommon ITKBasicFilters ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxresizeimage pxcommon ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxresizeimage
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

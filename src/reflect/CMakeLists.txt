@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE(pxreflect reflect.cxx )
 
-TARGET_LINK_LIBRARIES(pxreflect pxcommon ITKBasicFilters ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxreflect pxcommon ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxreflect
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

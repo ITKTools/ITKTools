@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE(pxcontrastenhanceimage contrastenhanceimage.cxx contrastenhanceimage.h)
 
-TARGET_LINK_LIBRARIES(pxcontrastenhanceimage ITKBasicFilters ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxcontrastenhanceimage ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxcontrastenhanceimage
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

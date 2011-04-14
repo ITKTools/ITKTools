@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE(pxcountnonzerovoxels countnonzerovoxels.cxx)
 
-TARGET_LINK_LIBRARIES(pxcountnonzerovoxels ITKIO ITKCommon pxcommon )
+TARGET_LINK_LIBRARIES(pxcountnonzerovoxels ${ITK_LIBRARIES} pxcommon )
 
 INSTALL( TARGETS pxcountnonzerovoxels
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

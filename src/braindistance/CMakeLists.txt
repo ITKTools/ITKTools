@@ -11,7 +11,7 @@ ADD_EXECUTABLE(pxbraindistance
 	itkDeformationFieldBendingEnergyFilter.txx
 )
 
-TARGET_LINK_LIBRARIES(pxbraindistance pxcommon ITKBasicFilters ITKIO ITKCommon ITKNumerics ITKStatistics)
+TARGET_LINK_LIBRARIES(pxbraindistance pxcommon ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxbraindistance
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

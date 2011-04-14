@@ -18,12 +18,7 @@ ENDIF(CMAKE_BUILD_TOOL MATCHES "(msdev|devenv|nmake)")
 
 ADD_EXECUTABLE(pxcreaterandomimage createrandomimage.cxx createrandomimage.h)
 
-TARGET_LINK_LIBRARIES(pxcreaterandomimage
-ITKBasicFilters
-ITKNumerics
-ITKIO
-ITKCommon
-ITKStatistics )
+TARGET_LINK_LIBRARIES(pxcreaterandomimage ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxcreaterandomimage
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

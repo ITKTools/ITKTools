@@ -10,7 +10,7 @@ ADD_EXECUTABLE( pxlogicalimageoperator
   itkLogicalFunctors.h
   LogicalImageOperatorHelper.h )
 
-TARGET_LINK_LIBRARIES( pxlogicalimageoperator pxcommon ITKBasicFilters ITKIO ITKCommon )
+TARGET_LINK_LIBRARIES( pxlogicalimageoperator pxcommon ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxlogicalimageoperator
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

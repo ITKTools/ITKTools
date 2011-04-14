@@ -10,7 +10,7 @@ ADD_EXECUTABLE(pxsegmentationdistance segmentationdistance.cxx
  itkCartesianToSphericalCoordinateImageFilter.txx
  )
 
-TARGET_LINK_LIBRARIES(pxsegmentationdistance pxcommon ITKBasicFilters ITKIO ITKCommon ITKStatistics)
+TARGET_LINK_LIBRARIES(pxsegmentationdistance pxcommon ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxsegmentationdistance
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

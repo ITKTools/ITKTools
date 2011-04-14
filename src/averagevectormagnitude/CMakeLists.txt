@@ -7,11 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE(pxaveragevectormagnitude averagevectormagnitude.cxx)
 
-TARGET_LINK_LIBRARIES(pxaveragevectormagnitude
-ITKBasicFilters
-ITKNumerics
-ITKIO
-ITKCommon )
+TARGET_LINK_LIBRARIES(pxaveragevectormagnitude ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxaveragevectormagnitude
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE(pxextracteveryotherslice extracteveryotherslice.cxx)
 
-TARGET_LINK_LIBRARIES(pxextracteveryotherslice pxcommon ITKBasicFilters ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxextracteveryotherslice pxcommon ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxextracteveryotherslice
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

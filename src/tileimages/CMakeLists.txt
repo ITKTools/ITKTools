@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE(pxtileimages tileimages.cxx)
 
-TARGET_LINK_LIBRARIES(pxtileimages pxcommon ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxtileimages pxcommon ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxtileimages
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

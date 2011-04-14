@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE(pxdeformationfieldoperator deformationfieldoperator.cxx deformationfieldoperator.h )
 
-TARGET_LINK_LIBRARIES(pxdeformationfieldoperator pxcommon ITKBasicFilters ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxdeformationfieldoperator pxcommon ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxdeformationfieldoperator
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

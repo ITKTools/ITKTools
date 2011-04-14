@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE(pxcreatezeroimage createzeroimage.cxx)
 
-TARGET_LINK_LIBRARIES(pxcreatezeroimage pxcommon ITKBasicFilters ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxcreatezeroimage pxcommon ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxcreatezeroimage
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

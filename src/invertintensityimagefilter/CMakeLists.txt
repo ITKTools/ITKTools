@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE(pxinvertintensityimagefilter invertintensityimagefilter.cxx)
 
-TARGET_LINK_LIBRARIES(pxinvertintensityimagefilter pxcommon ITKIO ITKBasicFilters ITKCommon)
+TARGET_LINK_LIBRARIES(pxinvertintensityimagefilter pxcommon ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxinvertintensityimagefilter
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE(pxcreatesimplebox createsimplebox.cxx createsimplebox.h itkSimpleBoxSpatialFunction.txx itkSimpleBoxSpatialFunction.h)
 
-TARGET_LINK_LIBRARIES(pxcreatesimplebox ITKBasicFilters ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxcreatesimplebox ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxcreatesimplebox
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

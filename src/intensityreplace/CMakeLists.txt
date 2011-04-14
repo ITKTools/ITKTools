@@ -9,7 +9,7 @@ ADD_EXECUTABLE(pxintensityreplace
   intensityreplace.cxx
 )
 
-TARGET_LINK_LIBRARIES(pxintensityreplace pxcommon ITKBasicFilters ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxintensityreplace pxcommon ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxintensityreplace
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

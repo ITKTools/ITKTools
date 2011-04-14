@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE(pximagecompare ImageCompare.cxx)
 
-TARGET_LINK_LIBRARIES(pximagecompare ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pximagecompare ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pximagecompare
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

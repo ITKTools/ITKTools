@@ -13,7 +13,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE(pxcomputedifferenceimageBIG computeDifferenceImage.cxx computeDifferenceImageVector.cxx computeDifferenceImageVector2D.cxx computeDifferenceImageVector3D.cxx computeDifferenceImageVector4D.cxx)
 
-TARGET_LINK_LIBRARIES(pxcomputedifferenceimageBIG ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxcomputedifferenceimageBIG ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxcomputedifferenceimageBIG
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

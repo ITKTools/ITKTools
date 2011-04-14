@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE(pxcreatesphere createsphere.cxx)
 
-TARGET_LINK_LIBRARIES(pxcreatesphere pxcommon ITKBasicFilters ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxcreatesphere pxcommon ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxcreatesphere
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

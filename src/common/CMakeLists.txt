@@ -12,5 +12,5 @@ ADD_LIBRARY(pxcommon
  CommandLineArgumentHelper.h
 )
 
-TARGET_LINK_LIBRARIES(pxcommon ITKCommon)
+TARGET_LINK_LIBRARIES(pxcommon ${ITK_LIBRARIES})
 

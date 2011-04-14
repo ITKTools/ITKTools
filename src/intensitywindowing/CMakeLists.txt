@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE(pxintensitywindowing intensitywindowing.cxx)
 
-TARGET_LINK_LIBRARIES(pxintensitywindowing pxcommon ITKBasicFilters ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxintensitywindowing pxcommon ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxintensitywindowing
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

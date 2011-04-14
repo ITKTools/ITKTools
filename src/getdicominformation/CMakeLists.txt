@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE(pxgetdicominformation getdicominformation.cxx)
 
-TARGET_LINK_LIBRARIES(pxgetdicominformation pxcommon ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxgetdicominformation pxcommon ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxgetdicominformation
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

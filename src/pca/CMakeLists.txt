@@ -10,7 +10,7 @@ ADD_EXECUTABLE(pxpca
  itkPCAImageToImageFilter.h
  itkPCAImageToImageFilter.txx )
 
-TARGET_LINK_LIBRARIES(pxpca pxcommon ITKBasicFilters ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxpca pxcommon ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxpca
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

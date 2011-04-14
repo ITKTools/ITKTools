@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE(pxcropimage cropimage.cxx)
 
-TARGET_LINK_LIBRARIES(pxcropimage pxcommon ITKBasicFilters ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxcropimage pxcommon ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxcropimage
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

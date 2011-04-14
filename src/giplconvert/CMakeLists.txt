@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE(pxgiplconvert giplconvert.cxx)
 
-TARGET_LINK_LIBRARIES(pxgiplconvert pxcommon ITKBasicFilters ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxgiplconvert pxcommon ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxgiplconvert
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE(pxrescaleintensityimagefilter rescaleintensityimagefilter.cxx)
 
-TARGET_LINK_LIBRARIES(pxrescaleintensityimagefilter pxcommon ITKBasicFilters ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxrescaleintensityimagefilter pxcommon ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxrescaleintensityimagefilter
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

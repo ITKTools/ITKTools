@@ -13,7 +13,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE(pximagetovectorimage imagetovectorimage.cxx)
 
-TARGET_LINK_LIBRARIES(pximagetovectorimage pxcommon ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pximagetovectorimage pxcommon ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pximagetovectorimage
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

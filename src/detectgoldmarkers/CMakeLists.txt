@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE(pxdetectgoldmarkers detectgoldmarkers.cxx )
 
-TARGET_LINK_LIBRARIES(pxdetectgoldmarkers pxcommon ITKBasicFilters ITKIO ITKCommon ITKStatistics)
+TARGET_LINK_LIBRARIES(pxdetectgoldmarkers pxcommon ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxdetectgoldmarkers
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

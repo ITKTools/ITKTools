@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE(pxgetpointsinimage getpointsinimage.cxx)
 
-TARGET_LINK_LIBRARIES(pxgetpointsinimage ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxgetpointsinimage ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxgetpointsinimage
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

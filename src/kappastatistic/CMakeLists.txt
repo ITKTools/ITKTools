@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE(pxkappastatistic kappastatistic.cxx KappaStatisticMainHelper.cxx itkKappaStatisticBase.cxx itkFleissKappaStatistic.cxx itkCohenWeightedKappaStatistic.cxx)
 
-TARGET_LINK_LIBRARIES(pxkappastatistic pxcommon ITKBasicFilters ITKCommon)
+TARGET_LINK_LIBRARIES(pxkappastatistic pxcommon ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxkappastatistic
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )

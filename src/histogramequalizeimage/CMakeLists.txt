@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE(pxhistogramequalizeimage histogramequalizeimage.cxx histogramequalizeimage.h itkHistogramEqualizationImageFilter.h itkHistogramEqualizationImageFilter.hxx)
 
-TARGET_LINK_LIBRARIES(pxhistogramequalizeimage ITKBasicFilters ITKIO ITKCommon)
+TARGET_LINK_LIBRARIES(pxhistogramequalizeimage ${ITK_LIBRARIES})
 
 INSTALL( TARGETS pxhistogramequalizeimage
   RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
