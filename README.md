@@ -4,14 +4,15 @@ Practical command line tools based on the ITK. These tools are design to do take
 
 Building
 --------
-- Create a 'build' directory:
-mkdir build
+- Create a 'bin' directory at the same level as the 'src' directory:
+ITKTools]$ mkdir bin
 
 - From the new 'build' directory, run cmake on the source directory:
-cd build
-cmake ../
+ITKTools]$ cd bin
+bin]$ cmake ../src
 
 - Run 'make' from the 'build' directory
+bin]$ make
 
 Contributing
 ------------
