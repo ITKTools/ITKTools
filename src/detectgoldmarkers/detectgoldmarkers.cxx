@@ -64,22 +64,22 @@ int main( int argc, char **argv )
 
   std::string outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
   outputFileName += "MASK.mhd";
-  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  parser->GetCommandLineArgument( "-out", outputFileName );
 
   double sigma = 4.0;
-  bool rets = parser->GetCommandLineArgument( "-s", sigma );
+  parser->GetCommandLineArgument( "-s", sigma );
 
   double threshold = 0.9999;
-  bool rett = parser->GetCommandLineArgument( "-t", threshold );
+  parser->GetCommandLineArgument( "-t", threshold );
 
   unsigned int radius = 7;
-  bool retradius = parser->GetCommandLineArgument( "-r", radius );
+  parser->GetCommandLineArgument( "-r", radius );
 
   unsigned int Dimension = 3;
-  bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
+  parser->GetCommandLineArgument( "-dim", Dimension );
 
   std::string PixelType = "short";
-  bool retpt = parser->GetCommandLineArgument( "-pt", PixelType );
+  parser->GetCommandLineArgument( "-pt", PixelType );
 
   /** Check if the required arguments are given. */
   if ( !retin )

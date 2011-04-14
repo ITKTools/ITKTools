@@ -75,12 +75,12 @@ int main( int argc, char **argv )
   /** Get arguments. */
 
   bool retin1  = parser->GetCommandLineArgument( "-in1", inputImage1FileName );
-  bool retin2  = parser->GetCommandLineArgument( "-in2", inputImage2FileName );
+  parser->GetCommandLineArgument( "-in2", inputImage2FileName );
   bool retipp1 = parser->GetCommandLineArgument( "-ipp1", inputPoints1FileName );
   bool retipp2 = parser->GetCommandLineArgument( "-ipp2", inputPoints2FileName );
   bool retout  = parser->GetCommandLineArgument( "-out", outputImageFileName );
-  bool retk    = parser->GetCommandLineArgument( "-k", kernelName );
-  bool retstif = parser->GetCommandLineArgument( "-s", stiffness );
+  parser->GetCommandLineArgument( "-k", kernelName );
+  parser->GetCommandLineArgument( "-s", stiffness );
 
   /** Check if the required arguments are given. */
   if ( !retin1 )

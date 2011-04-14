@@ -53,7 +53,7 @@ int main( int argc, char *argv[] )
   const std::size_t imageDimension = imageSize.size();
 
   std::vector<float> imageSpacing( imageDimension, 1.0 );
-  bool retsp = parser->GetCommandLineArgument( "-sp", imageSpacing );
+  parser->GetCommandLineArgument( "-sp", imageSpacing );
 
   std::vector<unsigned int> distance( imageDimension, 1 );
   bool retd = parser->GetCommandLineArgument( "-d", distance );

@@ -47,10 +47,10 @@ int main( int argc, char **argv )
   }
 
   std::string ops = "MAGNITUDE";
-  bool retops = parser->GetCommandLineArgument( "-ops", ops );
+  parser->GetCommandLineArgument( "-ops", ops );
 
   std::string outputFileName = "";
-  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  parser->GetCommandLineArgument( "-out", outputFileName );
   if ( outputFileName == "" )
   {
     std::string part1 =
@@ -62,14 +62,14 @@ int main( int argc, char **argv )
 
   /** Support for streaming. */
   unsigned int numberOfStreams = 1;
-  bool rets = parser->GetCommandLineArgument( "-s", numberOfStreams );
+  parser->GetCommandLineArgument( "-s", numberOfStreams );
 
   /** Parameters for the inversion. */
   unsigned int numberOfIterations = 1;
-  bool retit = parser->GetCommandLineArgument( "-it", numberOfIterations );
+  parser->GetCommandLineArgument( "-it", numberOfIterations );
 
   double stopValue = 0.0;
-  bool retstop = parser->GetCommandLineArgument( "-stop", stopValue );
+  parser->GetCommandLineArgument( "-stop", stopValue );
 
   /** Determine image properties. */
   std::string ComponentType = "float";

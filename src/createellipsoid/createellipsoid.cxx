@@ -60,13 +60,13 @@ int main( int argc, char *argv[] )
   bool retr = parser->GetCommandLineArgument( "-r", radius );
 
   unsigned int Dimension = 3;
-  bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
+  parser->GetCommandLineArgument( "-dim", Dimension );
 
   std::string PixelType = "short";
-  bool retpt = parser->GetCommandLineArgument( "-pt", PixelType );
+  parser->GetCommandLineArgument( "-pt", PixelType );
 
   std::vector<double> spacing( Dimension, 1.0 );
-  bool retsp = parser->GetCommandLineArgument( "-sp", spacing );
+  parser->GetCommandLineArgument( "-sp", spacing );
 
   std::vector<double> orientation( Dimension * Dimension, 0.0 );
   bool reto = parser->GetCommandLineArgument( "-o", orientation );

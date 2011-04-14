@@ -56,10 +56,10 @@ int main( int argc, char **argv )
   bool retout = parser->GetCommandLineArgument( "-out", outputFileNames );
 
   std::string method = "Maurer";
-  bool retm = parser->GetCommandLineArgument( "-m", method );
+  parser->GetCommandLineArgument( "-m", method );
 
   unsigned int K = 5;
-  bool retK = parser->GetCommandLineArgument( "-k", K );
+  parser->GetCommandLineArgument( "-k", K );
 
   /** Checks. */
   if ( !retin )
@@ -303,7 +303,7 @@ void DistanceTransform(
     writer->SetInput( distance_MorphologicalSigned->GetOutput() );
     writer->Update();
   }
-  
+
 //   else if ( method == "OrderK" )
 //   {
 //     std::cerr << "to here";

@@ -76,10 +76,10 @@ int main( int argc, char** argv )
   bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
 
   unsigned int Dimension = 3;
-  bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
+  parser->GetCommandLineArgument( "-dim", Dimension );
 
   std::vector<double> spacing( Dimension, 1.0 );
-  bool retsp = parser->GetCommandLineArgument( "-sp", spacing );
+  parser->GetCommandLineArgument( "-sp", spacing );
 
   std::vector<unsigned int> size( Dimension );
   bool retsz = parser->GetCommandLineArgument( "-sz", size );
@@ -103,7 +103,7 @@ int main( int argc, char** argv )
   bool retci2 = parser->GetCommandLineArgument( "-ci2", cornerindex2 );
 
   std::vector<double> orientation( Dimension, 0.0 );
-  bool reto = parser->GetCommandLineArgument( "-o", orientation );
+  parser->GetCommandLineArgument( "-o", orientation );
 
   /** Check if the required arguments are given. */
   if ( !retout )
@@ -141,7 +141,7 @@ int main( int argc, char** argv )
   }
 
   /** Let the user overrule this. */
-  bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
+  parser->GetCommandLineArgument( "-pt", ComponentType );
 
   /** Get rid of the possible "_" in ComponentType. */
   ReplaceUnderscoreWithSpace( ComponentType );

@@ -51,10 +51,10 @@ int main( int argc, char **argv )
   bool retout = parser->GetCommandLineArgument( "-out", fileName );
 
   unsigned int Dimension = 3;
-  bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
+  parser->GetCommandLineArgument( "-dim", Dimension );
 
   std::string PixelType = "short";
-  bool retpt = parser->GetCommandLineArgument( "-pt", PixelType );
+  parser->GetCommandLineArgument( "-pt", PixelType );
 
   std::vector<unsigned int> size( Dimension, 0 );
   bool retsz = parser->GetCommandLineArgument( "-sz", size );
