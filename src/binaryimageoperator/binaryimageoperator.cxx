@@ -24,7 +24,7 @@ int main( int argc, char **argv )
   bool retin = parser->GetCommandLineArgument( "-in", inputFileNames );
 
   std::string outputFileName = "";
-  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  parser->GetCommandLineArgument( "-out", outputFileName );
 
   std::string ops = "";
   bool retops = parser->GetCommandLineArgument( "-ops", ops );
@@ -135,7 +135,7 @@ int main( int argc, char **argv )
       << std::endl;
     return 1;
   }
-    
+
   /** End program. */
   return 0;
 

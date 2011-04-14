@@ -48,7 +48,7 @@ int main( int argc, char ** argv )
 
   std::string outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
   outputFileName += "THINNED.mhd";
-  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  parser->GetCommandLineArgument( "-out", outputFileName );
 
   /** Check if the required arguments are given. */
   if ( !retin )

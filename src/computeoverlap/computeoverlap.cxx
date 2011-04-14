@@ -79,14 +79,14 @@ int main( int argc, char ** argv )
   bool retin = parser->GetCommandLineArgument( "-in", inputFileNames );
 
   std::string maskFileName1 = "";
-  bool retmask1 = parser->GetCommandLineArgument( "-mask1", maskFileName1 );
+  parser->GetCommandLineArgument( "-mask1", maskFileName1 );
   std::string maskFileName2 = "";
-  bool retmask2 = parser->GetCommandLineArgument( "-mask2", maskFileName2 );
+  parser->GetCommandLineArgument( "-mask2", maskFileName2 );
 
   unsigned int t1 = 0;
-  bool rett1 = parser->GetCommandLineArgument( "-t1", t1 );
+  parser->GetCommandLineArgument( "-t1", t1 );
   unsigned int t2 = 0;
-  bool rett2 = parser->GetCommandLineArgument( "-t2", t2 );
+  parser->GetCommandLineArgument( "-t2", t2 );
 
   bool retlabel = parser->ArgumentExists( "-l" ); // default all labels
   std::vector<unsigned int> labels( 0 );

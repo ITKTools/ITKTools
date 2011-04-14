@@ -76,9 +76,9 @@ int GetCommandLineArguments( int argc, char **argv,
   /** Get arguments. */
   bool retin = parser->GetCommandLineArgument( "-in", input );
   bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
-  bool retopct = parser->GetCommandLineArgument( "-opct", outputPixelComponentType );
-  bool rets = parser->GetCommandLineArgument( "-s", seriesUID );
-  bool retr = parser->GetCommandLineArgument( "-r", restrictions );
+  parser->GetCommandLineArgument( "-opct", outputPixelComponentType );
+  parser->GetCommandLineArgument( "-s", seriesUID );
+  parser->GetCommandLineArgument( "-r", restrictions );
   useCompression = parser->ArgumentExists( "-z" );
 
   /** Check if necessary command line arguments are available. */

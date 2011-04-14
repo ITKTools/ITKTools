@@ -61,7 +61,7 @@ int main( int argc, char **argv )
 
     /** Get the combination method (mandatory) */
   std::string combinationMethod = "MULTISTAPLE2";
-  bool retm = parser->GetCommandLineArgument( "-m", combinationMethod );
+  parser->GetCommandLineArgument( "-m", combinationMethod );
 
   /** Get the input segmentation file names (mandatory). */
   std::vector< std::string >  inputSegmentationFileNames;
@@ -75,8 +75,8 @@ int main( int argc, char **argv )
   /** Get the settings for the change label image filter (not mandatory) */
   std::vector<unsigned int>  inValues;
   std::vector<unsigned int>  outValues;
-  bool retiv = parser->GetCommandLineArgument( "-iv", inValues );
-  bool retov = parser->GetCommandLineArgument( "-ov", outValues );
+  parser->GetCommandLineArgument( "-iv", inValues );
+  parser->GetCommandLineArgument( "-ov", outValues );
   if ( inValues.size() != outValues.size() )
   {
     std::cerr << "ERROR: Number of values following after \"-iv\" and \"-ov\" should be equal." << std::endl;
@@ -85,7 +85,7 @@ int main( int argc, char **argv )
 
   /** Get the number of classes to segment (not mandatory) */
   unsigned char numberOfClasses = 2;
-  bool retn = parser->GetCommandLineArgument( "-n", numberOfClasses );
+  parser->GetCommandLineArgument( "-n", numberOfClasses );
 
   /** Get the prior probability images (not mandatory) */
   std::vector< std::string >  priorProbImageFileNames;
@@ -152,7 +152,7 @@ int main( int argc, char **argv )
 
   /** Get the number of classes to segment (not mandatory) */
   float terminationThreshold = 1e-5;
-  bool rete = parser->GetCommandLineArgument( "-e", terminationThreshold );
+  parser->GetCommandLineArgument( "-e", terminationThreshold );
 
   /** Get the outputFileNames */
   std::vector< std::string > softOutputFileNames;
@@ -176,13 +176,13 @@ int main( int argc, char **argv )
       return 1;
     }
   }
-  bool retouth = parser->GetCommandLineArgument( "-outh", hardOutputFileName );
-  bool retoutc = parser->GetCommandLineArgument( "-outc", confusionOutputFileName );
+  parser->GetCommandLineArgument( "-outh", hardOutputFileName );
+  parser->GetCommandLineArgument( "-outc", confusionOutputFileName );
 
   /** Use mask or not? If yes, read the maskDilationRadius. */
   unsigned int maskDilationRadius = 1;
   bool useMask = parser->ArgumentExists( "-mask" );
-  bool retmask = parser->GetCommandLineArgument( "-mask", maskDilationRadius );
+  parser->GetCommandLineArgument( "-mask", maskDilationRadius );
 
   /** Read the preferred order of classes in case of undecided pixels */
   std::vector<unsigned int> prefOrder(numberOfClasses);
@@ -190,12 +190,12 @@ int main( int argc, char **argv )
   {
     prefOrder[i] = i;
   }
-  bool retord = parser->GetCommandLineArgument( "-ord", prefOrder );
+  parser->GetCommandLineArgument( "-ord", prefOrder );
 
   /** Threads. */
   unsigned int maximumNumberOfThreads
     = itk::MultiThreader::GetGlobalDefaultNumberOfThreads();
-  bool retthreads = parser->GetCommandLineArgument(
+  parser->GetCommandLineArgument(
     "-threads", maximumNumberOfThreads );
   itk::MultiThreader::SetGlobalMaximumNumberOfThreads(
     maximumNumberOfThreads );

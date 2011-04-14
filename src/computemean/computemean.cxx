@@ -33,19 +33,19 @@ int main( int argc, char *argv[] )
   bool retin = parser->GetCommandLineArgument( "-in", inputTextFile );
 
   std::string whichMean = "arithmetic";
-  bool retm = parser->GetCommandLineArgument( "-m", whichMean );
+  parser->GetCommandLineArgument( "-m", whichMean );
 
   unsigned int skiprow = 0;
-  bool retsr = parser->GetCommandLineArgument( "-sr", skiprow );
+  parser->GetCommandLineArgument( "-sr", skiprow );
 
   unsigned int skipcolumn = 0;
-  bool retsc = parser->GetCommandLineArgument( "-sc", skipcolumn );
+  parser->GetCommandLineArgument( "-sc", skipcolumn );
 
   unsigned int column = 0;
-  bool retc = parser->GetCommandLineArgument( "-c", column );
+  parser->GetCommandLineArgument( "-c", column );
 
   unsigned int precision = 6;
-  bool retp = parser->GetCommandLineArgument( "-p", precision );
+  parser->GetCommandLineArgument( "-p", precision );
 
   /** Check if the required arguments are given. */
   if ( !retin )
@@ -69,7 +69,7 @@ int main( int argc, char *argv[] )
   /** Read the values. */
   if ( fileIn.is_open() )
   {
-    unsigned int l = 0;
+
     /** Skip some lines. */
     for ( unsigned int i = 0; i < skiprow; i++ )
     {
