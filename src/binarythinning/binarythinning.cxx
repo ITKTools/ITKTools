@@ -95,9 +95,9 @@ int main( int argc, char ** argv )
     run( BinaryThinning, short, 2 );
     run( BinaryThinning, unsigned short, 2 );
     run( BinaryThinning, int, 2 );
-    run( BinaryThinning, unsigned int, 2 );
+    run( BinaryThinning, unsigned int, 2u );
     run( BinaryThinning, long, 2 );
-    run( BinaryThinning, unsigned long, 2 );
+    run( BinaryThinning, unsigned long, 2u );
     run( BinaryThinning, float, 2 );
     run( BinaryThinning, double, 2 );
 
