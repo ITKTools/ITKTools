@@ -43,7 +43,7 @@ namespace itk
     InputPixelType maxLabel = 0;
     const unsigned int numberOfInputs = this->GetNumberOfInputs();
 
-    for ( int k = 0; k < numberOfInputs; ++k )
+    for ( unsigned int k = 0; k < numberOfInputs; ++k )
     {
       InputConstIteratorType it
         ( this->GetInput( k ), this->GetInput( k )->GetBufferedRegion() );
@@ -338,7 +338,7 @@ namespace itk
     {
 
       /** Add the confusion matrix arrays of all threads */
-      for ( unsigned int t = 0; t < this->GetNumberOfThreads(); ++t )
+      for ( unsigned int t = 0; t < static_cast<unsigned int>(this->GetNumberOfThreads()); ++t )
       {
         for ( unsigned int i = 0; i < numberOfInputs; ++i )
         {

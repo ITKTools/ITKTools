@@ -38,7 +38,7 @@ int main( int argc, char **argv )
   bool baselineImageStartIndexFound = false;
   unsigned int baselineImageStartIndex = 2;
   unsigned int baselineImageEndIndex = 2;
-  for ( unsigned int i = 1; i < argc; i++ )
+  for ( unsigned int i = 1; i < static_cast<unsigned int>(argc); i++ )
   {
     /** Check for the difference threshold. */
     if ( static_cast<std::string>( argv[ i ] ) == "-t" )
@@ -116,7 +116,7 @@ int main( int argc, char **argv )
     else
     {
       int currentStatus = 2001;
-      for ( int i = baselineImageStartIndex; i < baselineImageEndIndex; i++ )
+      for ( unsigned int i = baselineImageStartIndex; i < baselineImageEndIndex; i++ )
       {
         currentStatus = RegressionTestImage(
           testImage, argv[ i ], 0, differenceThreshold, toleranceRadius );

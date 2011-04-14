@@ -42,7 +42,7 @@ int main( int argc, char *argv[] )
   pos_s = pos_sp = 0;
 
   /** Get positions of -?. */
-  for ( unsigned int i = 2; i < argc; i++ )
+  for ( unsigned int i = 2; i < static_cast<unsigned int>(argc); i++ )
   {
     std::string temp = argv[ i ];
     //std::cout << "argv[ " << i << " ] = " << argv[ i ] << std::endl;

@@ -56,7 +56,7 @@ int  main(  int  argc,  char *argv[] )
 
   /** Print arguments. */
   std::cout << "pxcomputedifferenceimage ";
-  for ( unsigned int i = 1; i < argc; i++ )
+  for ( unsigned int i = 1; i < static_cast<unsigned int>(argc); i++ )
   {
     std::cout << argv[ i ] << " ";
   }

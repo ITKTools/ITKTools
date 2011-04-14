@@ -60,7 +60,7 @@ int main( int argc, char ** argv )
 
   std::string outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
   outputFileName += "INVERTED.mhd";
-  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  parser->GetCommandLineArgument( "-out", outputFileName );
 
   /** Determine image properties. */
   std::string ComponentTypeIn = "short";

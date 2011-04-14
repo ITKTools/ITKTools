@@ -71,7 +71,7 @@ int main( int argc, char *argv[] )
     if ( value != 0 )
     {
       /** Make the points vector long enough. */
-      if ( value > points.size() ) points.resize( static_cast<unsigned int>( value ) );
+      if ( static_cast<unsigned int>(value) > points.size() ) points.resize( static_cast<unsigned int>( value ) );
       /** Insert a point at the value-th row of points. */
       //points[ value - 1 ].resize( 1 );
       //IndexType index = it.GetIndex();

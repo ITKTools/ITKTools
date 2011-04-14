@@ -48,7 +48,7 @@ namespace itk
     // Record the number of input files.
     const unsigned int numberOfInputs = this->GetNumberOfInputs();
 
-    for ( int k = 0; k < numberOfInputs; ++k )
+    for ( unsigned int k = 0; k < numberOfInputs; ++k )
     {
       InputConstIteratorType it
         ( this->GetInput( k ), this->GetInput( k )->GetBufferedRegion() );

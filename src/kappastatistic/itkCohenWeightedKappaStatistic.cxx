@@ -124,9 +124,9 @@ void CohenWeightedKappaStatistic
    * linear:    1 - | i - j | / ( k - 1 )
    * quadratic: 1 - [ (i - j ) / ( k - 1 ) ]^2
    */
-  for ( int i = 0; i < k; ++i )
+  for ( unsigned int i = 0; i < k; ++i )
   {
-    for ( int j = 0; j < k; ++j )
+    for ( unsigned int j = 0; j < k; ++j )
     {
       if ( weights == "equal" )
       {

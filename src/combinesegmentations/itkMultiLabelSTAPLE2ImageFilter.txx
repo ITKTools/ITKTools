@@ -49,7 +49,7 @@ namespace itk
     InputPixelType maxLabel = 0;
     const unsigned int numberOfInputs = this->GetNumberOfInputs();
 
-    for ( int k = 0; k < numberOfInputs; ++k )
+    for ( unsigned int k = 0; k < numberOfInputs; ++k )
     {
       InputConstIteratorType it
         ( this->GetInput( k ), this->GetInput( k )->GetBufferedRegion() );
