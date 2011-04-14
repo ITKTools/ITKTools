@@ -542,7 +542,7 @@ void ComputeOverlap3(
   reader2->SetFileName( inputFileNames[ 1 ].c_str() );
 
   /** Create Dice overlap filter. */
-  DiceComputeFilter::Pointer diceFilter = DiceComputeFilter::New();
+  typename DiceComputeFilter::Pointer diceFilter = DiceComputeFilter::New();
   diceFilter->SetInput( 0, reader1->GetOutput() );
   diceFilter->SetInput( 1, reader2->GetOutput() );
   diceFilter->SetRequestedLabels( requestedLabels );
