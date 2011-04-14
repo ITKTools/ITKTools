@@ -125,9 +125,9 @@ int main(int argc, char** argv)
   std::string spaceDimension("");
 
   /** Fill the argument map */
-  for (unsigned int i = 1; i<argc; i+=2)
+  for (unsigned int i = 1; i < static_cast<unsigned int>(argc); i+=2)
   {
-    if ( (i+1) < argc)
+    if ( (i+1) < static_cast<unsigned int>(argc))
     {
       argmap[ argv[i] ] = argv[i+1];
     }
