@@ -19,7 +19,7 @@
  *   OutputImageType,
  *   itk::Functor::PLUS<InputPixelType,OutputPixelType> > PLUSFilterType;
  * naryFilter = (PLUSFilterType::New()).GetPointer();
- * 
+ *
  */
 #define InstantiateNaryFilterNoArg( name ) \
   typedef itk::NaryFunctorImageFilter< \
@@ -72,9 +72,6 @@ void NaryImageOperator(
     readers[ i ] = ReaderType::New();
     readers[ i ]->SetFileName( inputFileNames[ i ] );
   }
-
-  /** Get the argument. */
-  double argument = atof( arg.c_str() );
 
   /** Get the naryOperatorName. */
   std::string naryOperatorName = ops;

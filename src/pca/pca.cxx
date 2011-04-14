@@ -53,12 +53,12 @@ int main( int argc, char **argv )
   std::string base = itksys::SystemTools::GetFilenamePath( inputFileNames[ 0 ] );
   if ( base != "" ) base = base + "/";
   std::string outputDirectory = base;
-  bool retout = parser->GetCommandLineArgument( "-out", outputDirectory );
+  parser->GetCommandLineArgument( "-out", outputDirectory );
   bool endslash = itksys::SystemTools::StringEndsWith( outputDirectory.c_str(), "/" );
   if ( !endslash ) outputDirectory += "/";
 
   unsigned int numberOfPCs = inputFileNames.size();
-  bool retnpc = parser->GetCommandLineArgument( "-npc", numberOfPCs );
+  parser->GetCommandLineArgument( "-npc", numberOfPCs );
 
   std::string componentType = "";
   bool retpt = parser->GetCommandLineArgument( "-opct", componentType );

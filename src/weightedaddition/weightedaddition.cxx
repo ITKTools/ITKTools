@@ -66,7 +66,7 @@ int main( int argc, char **argv )
   }
 
   std::string outputFileName("");
-  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  parser->GetCommandLineArgument( "-out", outputFileName );
 
   /** Determine input image properties. */
   std::string ComponentType = "float";

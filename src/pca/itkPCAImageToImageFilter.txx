@@ -351,7 +351,7 @@ namespace itk
     {
       for ( unsigned int pix = 0; pix < this->m_NumberOfPixels; pix++ )
       {
-        double tmp = (iterators[ i ]).Get();
+
         this->m_CenteredFeatureImages[ pix ][ i ] =
           (iterators[ i ]).Get() - this->m_MeanOfFeatureImages[ i ];
         ++iterators[ i ];

@@ -41,8 +41,6 @@ ReshapeImageToImageFilter< TInputImage >
     return;
   }
 
-  unsigned long numVoxelsInput
-    = inputPtr->GetLargestPossibleRegion().GetNumberOfPixels();
   unsigned long numVoxelsOutput = 1;
   for ( unsigned int i = 0; i < ImageDimension; i++ )
   {

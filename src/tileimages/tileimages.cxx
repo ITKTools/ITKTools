@@ -87,7 +87,7 @@ int main( int argc, char ** argv )
 
   /** Read the z-spacing. */
   double zspacing = -1.0;
-  bool retsp = parser->GetCommandLineArgument( "-sp", zspacing );
+  parser->GetCommandLineArgument( "-sp", zspacing );
 
   /** Get the layout. */
   std::vector< unsigned int > layout;
@@ -95,7 +95,7 @@ int main( int argc, char ** argv )
 
   /** Get the layout. */
   double defaultvalue = 0.0;
-  bool retd = parser->GetCommandLineArgument( "-d", defaultvalue );
+  parser->GetCommandLineArgument( "-d", defaultvalue );
 
   /** Determine image properties. */
   std::string ComponentType = "short";

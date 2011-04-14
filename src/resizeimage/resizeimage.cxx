@@ -55,7 +55,7 @@ int main( int argc, char **argv )
 
   std::string outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
   outputFileName += "RESIZED.mhd";
-  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  parser->GetCommandLineArgument( "-out", outputFileName );
 
   std::vector<double> factor;
   bool retf = parser->GetCommandLineArgument( "-f", factor );
@@ -65,13 +65,13 @@ int main( int argc, char **argv )
   bool retsp = parser->GetCommandLineArgument( "-sp", spacing );
 
   unsigned int Dimension = 3;
-  bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
+  parser->GetCommandLineArgument( "-dim", Dimension );
 
   std::string PixelType = "short";
-  bool retpt = parser->GetCommandLineArgument( "-pt", PixelType );
+  parser->GetCommandLineArgument( "-pt", PixelType );
 
   unsigned int interpolationOrder = 1;
-  bool retio = parser->GetCommandLineArgument( "-io", interpolationOrder );
+  parser->GetCommandLineArgument( "-io", interpolationOrder );
 
   /** Check if the required arguments are given. */
   if ( !retin )

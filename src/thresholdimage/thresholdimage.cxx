@@ -72,7 +72,7 @@ void ThresholdImage(
   const std::string & inputFileName,
   const std::string & outputFileName,
   const double & inside,
-  const double & outside, 
+  const double & outside,
   const double & threshold1,
   const double & threshold2 );
 
@@ -82,7 +82,7 @@ void OtsuThresholdImage(
   const std::string & outputFileName,
   const std::string & maskFileName,
   const double & inside,
-  const double & outside, 
+  const double & outside,
   const unsigned int & bins );
 
 template< class InputImageType >
@@ -91,7 +91,7 @@ void OtsuMultipleThresholdImage(
   const std::string & outputFileName,
   const std::string & maskFileName,
   const double & inside,
-  const double & outside, 
+  const double & outside,
   const unsigned int & bins,
   const unsigned int & numThresholds );
 
@@ -111,7 +111,7 @@ void RobustAutomaticThresholdImage(
   const std::string & inputFileName,
   const std::string & outputFileName,
   const double & inside,
-  const double & outside, 
+  const double & outside,
   const double & pow );
 
 template< class InputImageType >
@@ -120,7 +120,7 @@ void KappaSigmaThresholdImage(
   const std::string & outputFileName,
   const std::string & maskFileName,
   const double & inside,
-  const double & outside, 
+  const double & outside,
   const unsigned int & maskValue,
   const double & sigma,
   const unsigned int & iterations );
@@ -130,7 +130,7 @@ void MinErrorThresholdImage(
   const std::string & inputFileName,
   const std::string & outputFileName,
   const double & inside,
-  const double & outside, 
+  const double & outside,
   const unsigned int & bins,
   const unsigned int & mixtureType );
 
@@ -158,7 +158,7 @@ int main( int argc, char **argv )
 
   std::string outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
   outputFileName += "THRESHOLDED.mhd";
-  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  parser->GetCommandLineArgument( "-out", outputFileName );
 
   std::string maskFileName = "";
   parser->GetCommandLineArgument( "-mask", maskFileName );
@@ -167,16 +167,16 @@ int main( int argc, char **argv )
   parser->GetCommandLineArgument( "-m", method );
 
   double threshold1 = itk::NumericTraits<double>::NonpositiveMin();
-  bool rett1 = parser->GetCommandLineArgument( "-t1", threshold1 );
+  parser->GetCommandLineArgument( "-t1", threshold1 );
 
   double threshold2 = itk::NumericTraits<double>::One;
-  bool rett2 = parser->GetCommandLineArgument( "-t2", threshold2 );
+  parser->GetCommandLineArgument( "-t2", threshold2 );
 
   double inside = itk::NumericTraits<double>::One;
-  bool retinside = parser->GetCommandLineArgument( "-inside", inside );
+  parser->GetCommandLineArgument( "-inside", inside );
 
   double outside = itk::NumericTraits<double>::Zero;
-  bool retoutside = parser->GetCommandLineArgument( "-outside", outside );
+  parser->GetCommandLineArgument( "-outside", outside );
 
   unsigned int radius = 8;
   parser->GetCommandLineArgument( "-r", radius );
@@ -319,7 +319,7 @@ void ThresholdImage(
   const std::string & inputFileName,
   const std::string & outputFileName,
   const double & inside,
-  const double & outside, 
+  const double & outside,
   const double & threshold1,
   const double & threshold2 )
 {
@@ -424,7 +424,7 @@ void OtsuMultipleThresholdImage(
   const std::string & outputFileName,
   const std::string & itkNotUsed( maskFileName ),
   const double & inside,
-  const double & outside, 
+  const double & outside,
   const unsigned int & bins,
   const unsigned int & numThresholds )
 {
@@ -534,7 +534,7 @@ void RobustAutomaticThresholdImage(
   const std::string & inputFileName,
   const std::string & outputFileName,
   const double & inside,
-  const double & outside, 
+  const double & outside,
   const double & pow )
 {
   /** Typedef's. */
@@ -591,7 +591,7 @@ void KappaSigmaThresholdImage(
   const std::string & outputFileName,
   const std::string & maskFileName,
   const double & inside,
-  const double & outside, 
+  const double & outside,
   const unsigned int & maskValue,
   const double & sigma,
   const unsigned int & iterations )
@@ -646,7 +646,7 @@ void MinErrorThresholdImage(
   const std::string & inputFileName,
   const std::string & outputFileName,
   const double & inside,
-  const double & outside, 
+  const double & outside,
   const unsigned int & bins,
   const unsigned int & mixtureType )
 {

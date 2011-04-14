@@ -30,7 +30,7 @@ int main( int argc, char **argv )
   std::string inputFileName = "";
   bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
   std::string outputFileName = "";
-  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  parser->GetCommandLineArgument( "-out", outputFileName );
   std::string ops = "PLUS";
   bool retops = parser->GetCommandLineArgument( "-ops", ops );
   std::string argument = "1";
@@ -71,7 +71,7 @@ int main( int argc, char **argv )
 
   /** Get the output component type. */
   std::string ComponentTypeOut = inputComponentType;
-  bool retopt = parser->GetCommandLineArgument( "-pto", ComponentTypeOut );
+  parser->GetCommandLineArgument( "-pto", ComponentTypeOut );
   ReplaceUnderscoreWithSpace( ComponentTypeOut );
 
   /** The input is only templated over int and double. */

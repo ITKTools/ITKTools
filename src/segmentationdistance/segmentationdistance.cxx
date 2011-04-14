@@ -84,7 +84,7 @@ int main( int argc, char **argv )
 
   /** Get the outputFileName */
   std::string outputFileName = "";
-  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  parser->GetCommandLineArgument( "-out", outputFileName );
   if ( outputFileName == "" )
   {
     /** get file name without its last (shortest) extension  */
@@ -101,20 +101,20 @@ int main( int argc, char **argv )
   }
 
   std::vector<double> manualcor;
-  bool retc = parser->GetCommandLineArgument( "-c", manualcor);
+  parser->GetCommandLineArgument( "-c", manualcor);
 
   unsigned int samples = 20;
-  bool rets = parser->GetCommandLineArgument( "-s", samples );
+  parser->GetCommandLineArgument( "-s", samples );
 
   unsigned int thetasize = 180;
-  bool rett = parser->GetCommandLineArgument( "-t", thetasize );
+  parser->GetCommandLineArgument( "-t", thetasize );
 
   unsigned int phisize = 90;
-  bool retp = parser->GetCommandLineArgument( "-p", phisize );
+  parser->GetCommandLineArgument( "-p", phisize );
 
   std::string cartesianstr = "false";
   bool cartesianonly = false;
-  bool retcar = parser->GetCommandLineArgument( "-car", cartesianstr);
+  parser->GetCommandLineArgument( "-car", cartesianstr);
   if ( cartesianstr == "true" )
   {
     cartesianonly = true;

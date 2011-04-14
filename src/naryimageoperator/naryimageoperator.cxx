@@ -39,7 +39,7 @@ int main( int argc, char **argv )
 
   /** Support for streaming. */
   unsigned int numberOfStreams = inputFileNames.size();
-  bool rets = parser->GetCommandLineArgument( "-s", numberOfStreams );
+  parser->GetCommandLineArgument( "-s", numberOfStreams );
 
   /** Check if the required arguments are given. */
   if ( !retin )
@@ -136,7 +136,7 @@ int main( int argc, char **argv )
       << std::endl;
     return 1;
   }
-    
+
   /** End program. */
   return 0;
 

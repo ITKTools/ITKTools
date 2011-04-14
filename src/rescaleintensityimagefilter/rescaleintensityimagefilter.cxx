@@ -54,7 +54,7 @@ int main( int argc, char **argv )
 
   std::string outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
   outputFileName += "INTENSITYRESCALED.mhd";
-  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  parser->GetCommandLineArgument( "-out", outputFileName );
 
   std::vector<double> extrema( 2, 0.0 );
   bool retmm = parser->GetCommandLineArgument( "-mm", extrema );
@@ -134,7 +134,7 @@ int main( int argc, char **argv )
   {
     ComponentType = "float";
   }
-  bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
+  parser->GetCommandLineArgument( "-pt", ComponentType );
 
   /** Get rid of the possible "_" in ComponentType. */
   ReplaceUnderscoreWithSpace( ComponentType );

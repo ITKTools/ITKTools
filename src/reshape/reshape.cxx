@@ -52,7 +52,7 @@ int main( int argc, char **argv )
   std::string ext  = itksys::SystemTools::GetFilenameLastExtension(
     inputFilename );
   std::string outputFilename = base + "_reshaped" + ext;
-  bool retout = parser->GetCommandLineArgument( "-out", outputFilename );
+  parser->GetCommandLineArgument( "-out", outputFilename );
 
   std::vector<unsigned long> outputSize;
   bool rets = parser->GetCommandLineArgument( "-s", outputSize );

@@ -75,24 +75,24 @@ int main( int argc, char **argv )
   std::string base = itksys::SystemTools::GetFilenamePath( inputFileName );
   if ( base != "" ) base = base + "/";
   std::string outputDirectory = base;
-  bool retout = parser->GetCommandLineArgument( "-out", outputDirectory );
+  parser->GetCommandLineArgument( "-out", outputDirectory );
   bool endslash = itksys::SystemTools::StringEndsWith( outputDirectory.c_str(), "/" );
   if ( !endslash ) outputDirectory += "/";
 
   unsigned int neighborhoodRadius = 3;
-  bool retr = parser->GetCommandLineArgument( "-r", neighborhoodRadius );
+  parser->GetCommandLineArgument( "-r", neighborhoodRadius );
 
   std::vector<unsigned int> offsetScales( 1, 1 );
-  bool retos = parser->GetCommandLineArgument( "-os", offsetScales );
+  parser->GetCommandLineArgument( "-os", offsetScales );
 
   unsigned int numberOfBins = 128;
-  bool retb = parser->GetCommandLineArgument( "-b", numberOfBins );
+  parser->GetCommandLineArgument( "-b", numberOfBins );
 
   unsigned int numberOfOutputs = 8;
-  bool retnoo = parser->GetCommandLineArgument( "-noo", numberOfOutputs );
+  parser->GetCommandLineArgument( "-noo", numberOfOutputs );
 
   std::string componentTypeOut = "float";
-  bool retopct = parser->GetCommandLineArgument( "-opct", componentTypeOut );
+  parser->GetCommandLineArgument( "-opct", componentTypeOut );
 
   /** Check if the required arguments are given. */
   if ( !retin )
@@ -112,8 +112,6 @@ int main( int argc, char **argv )
   /** Threads. */
   unsigned int maximumNumberOfThreads
     = itk::MultiThreader::GetGlobalDefaultNumberOfThreads();
-  bool retthreads = parser->GetCommandLineArgument(
-    "-threads", maximumNumberOfThreads );
   itk::MultiThreader::SetGlobalMaximumNumberOfThreads(
     maximumNumberOfThreads );
 
@@ -192,7 +190,6 @@ void PerformTextureAnalysis(
   unsigned int numberOfBins,
   unsigned int numberOfOutputs )
 {
-  const unsigned int Dimension = InputImageType::ImageDimension;
 
   /** Typedefs. */
   typedef itk::TextureImageToImageFilter<

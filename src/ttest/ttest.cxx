@@ -48,19 +48,19 @@ int main( int argc, char **argv )
   bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
 
   std::string output = "p";
-  bool retout = parser->GetCommandLineArgument( "-out", output );
+  parser->GetCommandLineArgument( "-out", output );
 
   std::vector<unsigned int> columns( 2, 0 );
   bool retc = parser->GetCommandLineArgument( "-c", columns );
 
   unsigned int tail = 2;
-  bool rettail = parser->GetCommandLineArgument( "-tail", tail );
+  parser->GetCommandLineArgument( "-tail", tail );
 
   unsigned int type = 1;
-  bool rettype = parser->GetCommandLineArgument( "-type", type );
+  parser->GetCommandLineArgument( "-type", type );
 
   unsigned int precision = 8;
-  bool retp = parser->GetCommandLineArgument( "-p", precision );
+  parser->GetCommandLineArgument( "-p", precision );
 
   /** Check if the required arguments are given. */
   if ( !retin )
