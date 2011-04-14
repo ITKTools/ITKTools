@@ -30,13 +30,13 @@ int main( int argc, char **argv )
   bool rettype = parser->GetCommandLineArgument( "-type", type );
 
   std::string weights = "linear";
-  bool retw = parser->GetCommandLineArgument( "-w", weights );
+  parser->GetCommandLineArgument( "-w", weights );
 
   std::string output = "all";
-  bool retout = parser->GetCommandLineArgument( "-out", output );
+  parser->GetCommandLineArgument( "-out", output );
 
   unsigned int precision = 8;
-  bool retp = parser->GetCommandLineArgument( "-p", precision );
+  parser->GetCommandLineArgument( "-p", precision );
 
   bool exstd = parser->ArgumentExists( "-std" );
 

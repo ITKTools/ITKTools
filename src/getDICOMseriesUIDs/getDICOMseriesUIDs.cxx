@@ -37,10 +37,10 @@ int main( int argc, char **argv )
 
   /** Get arguments. */
   std::string inputDirectoryName;
-  bool retin = parser->GetCommandLineArgument( "-in", inputDirectoryName );
+  parser->GetCommandLineArgument( "-in", inputDirectoryName );
 
   std::vector<std::string> restrictions;
-  bool retr = parser->GetCommandLineArgument( "-r", restrictions );
+  parser->GetCommandLineArgument( "-r", restrictions );
 
   /** Make sure last character of inputDirectoryName != "/".
    * Otherwise FileIsDirectory() won't work.

@@ -56,7 +56,7 @@ int main( int argc, char ** argv )
 
   std::string outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
   outputFileName += "LUTAPPLIED.mhd";
-  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  parser->GetCommandLineArgument( "-out", outputFileName );
 
   std::string ComponentType = "";
   bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );

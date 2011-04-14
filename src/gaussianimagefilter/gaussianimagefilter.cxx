@@ -49,14 +49,14 @@ int main( int argc, char ** argv )
 
   std::vector<float> sigma;
   sigma.push_back( 1.0 ); // default 1.0 for each resolution
-  bool retstd = parser->GetCommandLineArgument( "-std", sigma );
+  parser->GetCommandLineArgument( "-std", sigma );
 
   std::vector<unsigned int> order;
-  bool retord = parser->GetCommandLineArgument( "-ord", order );
+  parser->GetCommandLineArgument( "-ord", order );
 
   std::string outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
   outputFileName += "BLURRED.mhd";
-  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  parser->GetCommandLineArgument( "-out", outputFileName );
 
   bool retmag = parser->ArgumentExists( "-mag" );
 

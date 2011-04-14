@@ -105,7 +105,7 @@ int main( int argc, char **argv )
 
   /** outputFileName */
   std::string outputFileName = "";
-  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  parser->GetCommandLineArgument( "-out", outputFileName );
   if ( outputFileName == "" )
   {
     /** get file name without its last (shortest) extension  */

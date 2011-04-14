@@ -30,7 +30,7 @@ int main( int argc, char **argv )
   bool retin = parser->GetCommandLineArgument( "-in", inputDirectoryName );
 
   std::string seriesNumber = "";
-  bool rets = parser->GetCommandLineArgument( "-s", seriesNumber );
+  parser->GetCommandLineArgument( "-s", seriesNumber );
 
   std::vector<std::string> restrictions;
   parser->GetCommandLineArgument( "-r", restrictions );

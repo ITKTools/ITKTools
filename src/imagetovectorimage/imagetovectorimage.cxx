@@ -49,11 +49,11 @@ int main( int argc, char ** argv )
   bool retin = parser->GetCommandLineArgument( "-in", inputFileNames );
 
   std::string outputFileName = "VECTOR.mhd";
-  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  parser->GetCommandLineArgument( "-out", outputFileName );
 
   /** Support for streaming. */
   unsigned int numberOfStreams = 1;
-  bool rets = parser->GetCommandLineArgument( "-s", numberOfStreams );
+  parser->GetCommandLineArgument( "-s", numberOfStreams );
 
   /** Check if the required arguments are given. */
   if ( !retin )

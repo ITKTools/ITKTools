@@ -13,7 +13,7 @@ extern bool Morphology2D(
   const std::string & type,
   const std::string & boundaryCondition,
   const std::vector<unsigned int> & radius,
-  const std::vector<std::string> & bin,	
+  const std::vector<std::string> & bin,
   const int & algorithm,
   const bool useCompression );
 extern bool Morphology3D(
@@ -26,7 +26,7 @@ extern bool Morphology3D(
   const std::string & boundaryCondition,
   const std::vector<unsigned int> & radius,
   const std::vector<std::string> & bin,
-  const int & algorithm, 
+  const int & algorithm,
   const bool useCompression );
 
 //-------------------------------------------------------------------------------------
@@ -53,11 +53,11 @@ int main( int argc, char *argv[] )
   operation = itksys::SystemTools::UnCapitalizedWords( operation );
 
   std::string type = "grayscale";
-  bool rettype = parser->GetCommandLineArgument( "-type", type );
+  parser->GetCommandLineArgument( "-type", type );
   type = itksys::SystemTools::UnCapitalizedWords( type );
 
   std::string boundaryCondition = "";
-  bool retbc = parser->GetCommandLineArgument( "-bc", boundaryCondition );
+  parser->GetCommandLineArgument( "-bc", boundaryCondition );
 
   std::vector<unsigned int> radius;
   bool retr = parser->GetCommandLineArgument( "-r", radius );
@@ -67,7 +67,7 @@ int main( int argc, char *argv[] )
   std::string ext =
     itksys::SystemTools::GetFilenameLastExtension( inputFileName );
   outputFileName += "_" + operation + "_" + type + ext;
-  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  parser->GetCommandLineArgument( "-out", outputFileName );
 
   std::vector<std::string> bin;
   bool retbin = parser->GetCommandLineArgument( "-bin", bin );
@@ -139,7 +139,7 @@ int main( int argc, char *argv[] )
   }
 
   /** Let the user overrule this */
-  bool retopct = parser->GetCommandLineArgument( "-opct", componentType );
+  parser->GetCommandLineArgument( "-opct", componentType );
 
   if ( numberOfComponents > 1 )
   {

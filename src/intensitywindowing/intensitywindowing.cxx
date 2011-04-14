@@ -72,7 +72,7 @@ int main( int argc, char **argv )
   }
 
   /** Let the user overrule this. */
-  bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
+  parser->GetCommandLineArgument( "-pt", ComponentType );
 
   /** Error checking. */
   if ( NumberOfComponents > 1 )
@@ -85,7 +85,7 @@ int main( int argc, char **argv )
   /** Get the output file name. */
   std::string outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
   outputFileName += "WINDOWED.mhd";
-  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  parser->GetCommandLineArgument( "-out", outputFileName );
 
   /** Get the window. */
   std::vector<double> window;

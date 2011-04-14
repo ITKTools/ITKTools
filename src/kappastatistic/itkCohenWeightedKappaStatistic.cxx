@@ -209,7 +209,6 @@ void CohenWeightedKappaStatistic
   this->CheckObservations( this->m_Observations );
 
   /** Get some numbers. */
-  unsigned int n = this->GetNumberOfObservers();
   unsigned int N = this->GetNumberOfObservations();
   unsigned int k = this->GetNumberOfCategories();
 

@@ -78,7 +78,7 @@ int main( int argc, char ** argv )
   }
 
   /** Let the user overrule this. */
-  bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
+  parser->GetCommandLineArgument( "-pt", ComponentType );
 
   /** Error checking. */
   if ( NumberOfComponents > 1 )
@@ -97,13 +97,13 @@ int main( int argc, char ** argv )
     return 1;
   }
   std::string slicenumberstring;
-  bool retsns = parser->GetCommandLineArgument( "-sn", slicenumberstring );
+  parser->GetCommandLineArgument( "-sn", slicenumberstring );
 
   /** Get the dimension in which the slice is to be extracted.
    * The default is the z-direction.
    */
   unsigned int which_dimension = 2;
-  bool retd = parser->GetCommandLineArgument( "-d", which_dimension );
+  parser->GetCommandLineArgument( "-d", which_dimension );
 
   /** Sanity check. */
   if ( slicenumber > imagesize[ which_dimension ] )
@@ -137,7 +137,7 @@ int main( int argc, char ** argv )
   std::string part2 =
     itksys::SystemTools::GetFilenameLastExtension( inputFileName );
   std::string outputFileName = part1 + "_slice_" + direction + "=" + slicenumberstring + part2;
-  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  parser->GetCommandLineArgument( "-out", outputFileName );
 
   /** Run the program. */
   bool supported = false;

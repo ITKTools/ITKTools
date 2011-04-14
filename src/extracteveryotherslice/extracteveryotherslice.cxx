@@ -53,17 +53,17 @@ int main( int argc, char **argv )
 
   std::string outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
   outputFileName += "EveryOtherKExtracted.mhd";
-  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  parser->GetCommandLineArgument( "-out", outputFileName );
 
   unsigned int everyOther = 2;
-  bool retK = parser->GetCommandLineArgument( "-K", everyOther );
+  parser->GetCommandLineArgument( "-K", everyOther );
 
   unsigned int offset = 0;
-  bool retof = parser->GetCommandLineArgument( "-of", offset );
+  parser->GetCommandLineArgument( "-of", offset );
   offset = offset % everyOther;
 
   unsigned int direction = 2;
-  bool retd = parser->GetCommandLineArgument( "-d", direction );
+  parser->GetCommandLineArgument( "-d", direction );
 
   /** Check if the required arguments are given. */
   if ( !retin )
@@ -179,8 +179,6 @@ void ExtractEveryOtherSlice(
   typedef typename InputImageType::RegionType         RegionType;
   typedef typename RegionType::IndexType              IndexType;
   typedef typename InputImageType::SizeType           SizeType;
-
-  const unsigned int Dimension = InputImageType::ImageDimension;
 
   /** Read in the inputImage. */
   typename ReaderType::Pointer reader = ReaderType::New();

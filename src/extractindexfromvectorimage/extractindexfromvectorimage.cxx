@@ -52,7 +52,7 @@ int main( int argc, char ** argv )
 
   std::string outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
   outputFileName += "INDEXEXTRACTED.mhd";
-  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  parser->GetCommandLineArgument( "-out", outputFileName );
 
   unsigned int index = 0;
   bool retind = parser->GetCommandLineArgument( "-ind", index );
