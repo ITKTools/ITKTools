@@ -253,7 +253,7 @@ int CheckOperator( std::string & operatoR )
 
   /** Return a value. */
   return 0;
-  
+
 } // end CheckOperator()
 
 
@@ -289,7 +289,7 @@ bool OperatorNeedsArgument( const std::string & operatoR )
 
 } // end OperatorNeedsArgument()
 
-  
+
   /**
    * ******************* CreateOutputFileName *******************
    */
@@ -313,23 +313,24 @@ void CreateOutputFileName( const std::vector<std::string> & inputFileNames,
 
   /** Compose outputFileName. */
   outputFileName = path + name1 + ops + name2 + ext;
-  /*
+/*
   if ( operatorMap[ops].first && !operatorMap[ops].second.first )
   {
-    /** Example: /path/SINimage.mhd *
+    // Example: /path/SINimage.mhd *
     outputFileName = path + ops + name + ext;
   }
   else if ( operatorMap[ops].first && operatorMap[ops].second.first )
   {
-    /** Example: /path/3LPOWERimage.mhd *
+    // Example: /path/3LPOWERimage.mhd *
     outputFileName = path + arg + ops + name + ext;
   }
   else
   {
-    /** Example: /path/imageRDIVIDE3.mhd *
+    // Example: /path/imageRDIVIDE3.mhd *
     outputFileName = path + name + ops + arg + ext;
-  }*/
-  
+  }
+*/
+
 } // end CreateOutputFileName
 
   /**
