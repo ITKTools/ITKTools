@@ -46,20 +46,20 @@ void erosionGrayscale(
    * This is the value outside the image.
    * By default it is set to max(PixelType).
    */
-  BoundaryConditionType bc;
-  PixelType bcValue = itk::NumericTraits<PixelType>::max();
+  
+  PixelType boundaryValue = itk::NumericTraits<PixelType>::max();
   if ( boundaryCondition != "" )
   {
     if ( itk::NumericTraits<PixelType>::is_integer )
     {
-      bcValue = static_cast<PixelType>( atoi( boundaryCondition.c_str() ) );
+      boundaryValue = static_cast<PixelType>( atoi( boundaryCondition.c_str() ) );
     }
     else
     {
-      bcValue = static_cast<PixelType>( atof( boundaryCondition.c_str() ) );
+      boundaryValue = static_cast<PixelType>( atof( boundaryCondition.c_str() ) );
     }
-    bc.SetConstant( bcValue );
-    erosion->OverrideBoundaryCondition( &bc );
+    
+    erosion->SetBoundary( boundaryValue );
   }
 
   /** Create the structuring element. */
@@ -167,7 +167,7 @@ void erosionBinary(
  * ******************* erosionBinaryObject *******************
  * Don't use for now, because it does not give output, consistent
  * with the grayscale and binary.
- *
+ */
 
 template< class ImageType >
 void erosionBinaryObject(
@@ -176,7 +176,7 @@ void erosionBinaryObject(
   const std::vector<unsigned int> & radius,
   const std::string & boundaryCondition )
 {
-  /** Typedefs. *
+  /** Typedefs. */
   typedef typename ImageType::PixelType               PixelType;
   const unsigned int Dimension = ImageType::ImageDimension;
   typedef itk::ImageFileReader< ImageType >           ReaderType;
@@ -189,15 +189,15 @@ void erosionBinaryObject(
   typedef typename
     ErodeFilterType::DefaultBoundaryConditionType     BoundaryConditionType;
 
-  /** Declarations. *
+  /** Declarations. */
   typename ReaderType::Pointer reader = ReaderType::New();
   typename WriterType::Pointer writer = WriterType::New();
   typename ErodeFilterType::Pointer erosion = ErodeFilterType::New();
 
-  /** Setup the reader. *
+  /** Setup the reader. */
   reader->SetFileName( inputFileName.c_str() );
 
-  /** Create and fill the radius. *
+  /** Create and fill the radius. */
   RadiusType  radiusarray;
   //radiusarray.Fill( 1 );
   for ( unsigned int i = 0; i < Dimension; i++ )
@@ -205,7 +205,7 @@ void erosionBinaryObject(
     radiusarray.SetElement( i, radius[ i ] );
   }
 
-  /** Create the structuring element and set it into the erosion filter. *
+  /** Create the structuring element and set it into the erosion filter. */
   StructuringElementType  S_ball;
   S_ball.SetRadius( radiusarray );
   S_ball.CreateStructuringElement();
@@ -214,7 +214,7 @@ void erosionBinaryObject(
   /** Set a boundary condition value.
    * This is the value outside the image.
    * By default it is set to max(PixelType).
-   *
+   */
   BoundaryConditionType bc;
   PixelType bcValue = itk::NumericTraits<PixelType>::max();
   if ( boundaryCondition != "" )
@@ -231,19 +231,19 @@ void erosionBinaryObject(
     erosion->OverrideBoundaryCondition( &bc );
   }
 
-  /** Connect the pipeline. *
+  /** Connect the pipeline. */
   erosion->SetBackgroundValue( 0 );
   erosion->SetObjectValue( 1 );
   //erosion->SetErodeValue( 1 );
   erosion->SetInput( reader->GetOutput() );
 
-  /** Write the output image. *
+  /** Write the output image. */
   writer->SetFileName( outputFileName.c_str() );
   writer->SetInput( erosion->GetOutput() );
   writer->Update();
 
 } // end erosionBinaryObject
-*/
+
 
 
 /**

@@ -11,11 +11,6 @@ ENDIF ( WIN32 )
 FIND_PACKAGE( ITK REQUIRED )
 INCLUDE( ${ITK_USE_FILE} )
 
-# pxmorphology depends on some ITK settings
-#IF( NOT ITK_USE_CONSOLIDATED_MORPHOLOGY )
-#  message( SEND_ERROR "ITK_USE_CONSOLIDATED_MORPHOLOGY has not been set to ON when compiling ITK. This option is mandatory for pxmorphology to build.\nPlease recompile your ITK installation." )
-#ENDIF()
-
 ADD_EXECUTABLE(pxmorphology
   morphology.cxx
   morphology2D.cxx

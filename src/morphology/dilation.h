@@ -46,20 +46,20 @@ void dilationGrayscale(
    * This is the value outside the image.
    * By default it is set to min(PixelType).
    */
-  BoundaryConditionType bc;
-  PixelType bcValue = itk::NumericTraits<PixelType>::NonpositiveMin();
+  
+  PixelType boundaryValue = itk::NumericTraits<PixelType>::NonpositiveMin();
   if ( boundaryCondition != "")
   {
     if ( itk::NumericTraits<PixelType>::is_integer )
     {
-      bcValue = static_cast<PixelType>( atoi( boundaryCondition.c_str() ) );
+      boundaryValue = static_cast<PixelType>( atoi( boundaryCondition.c_str() ) );
     }
     else
     {
-      bcValue = static_cast<PixelType>( atof( boundaryCondition.c_str() ) );
+      boundaryValue = static_cast<PixelType>( atof( boundaryCondition.c_str() ) );
     }
-    bc.SetConstant( bcValue );
-    dilation->OverrideBoundaryCondition(&bc);
+    
+    dilation->SetBoundary(boundaryValue);
   }
 
   /** Create the structuring element. */
@@ -167,7 +167,7 @@ void dilationBinary(
    * ******************* dilationBinaryObject *******************
    * Don't use for now, because it does not give output, consistent
    * with the grayscale and binary.
-   *
+   */
 
 template< class ImageType >
 void dilationBinaryObject(
@@ -176,7 +176,7 @@ void dilationBinaryObject(
   const std::vector<unsigned int> & radius,
   const std::string & boundaryCondition )
 {
-  /** Typedefs. *
+  /** Typedefs. */
   typedef typename ImageType::PixelType               PixelType;
   const unsigned int Dimension = ImageType::ImageDimension;
   typedef itk::ImageFileReader< ImageType >           ReaderType;
@@ -189,15 +189,15 @@ void dilationBinaryObject(
   typedef typename
     FilterType::DefaultBoundaryConditionType    BoundaryConditionType;
 
-  /** Declarations. *
+  /** Declarations. */
   typename ReaderType::Pointer reader = ReaderType::New();
   typename WriterType::Pointer writer = WriterType::New();
   typename FilterType::Pointer filter = FilterType::New();
 
-  /** Setup the reader. *
+  /** Setup the reader. */
   reader->SetFileName( inputFileName.c_str() );
 
-  /** Create and fill the radius. *
+  /** Create and fill the radius. */
   RadiusType  radiusarray;
   radiusarray.Fill( 1 );
   for ( unsigned int i = 0; i < Dimension; i++ )
@@ -205,14 +205,14 @@ void dilationBinaryObject(
     radiusarray.SetElement( i, radius[ i ] );
   }
 
-  /** Create the structuring element and set it into the filter filter. *
+  /** Create the structuring element and set it into the filter filter. */
   StructuringElementType  S_ball;
   S_ball.SetRadius( radiusarray );
   S_ball.CreateStructuringElement();
   filter->SetKernel( S_ball );
 
   /** Set a boundary condition value. This is the value outside the image.
-   * By default it is set to min(PixelType). *
+   * By default it is set to min(PixelType). */
   BoundaryConditionType bc;
   PixelType bcValue = itk::NumericTraits<PixelType>::NonpositiveMin();
   if ( boundaryCondition != "")
@@ -229,16 +229,16 @@ void dilationBinaryObject(
     filter->OverrideBoundaryCondition(&bc);
   }
 
-  /** Connect the pipeline. *
+  /** Connect the pipeline. */
   filter->SetInput( reader->GetOutput() );
 
-  /** Write the output image. *
+  /** Write the output image. */
   writer->SetFileName( outputFileName.c_str() );
   writer->SetInput( filter->GetOutput() );
   writer->Update();
 
 } // end dilationBinaryObject
-*/
+
 
 
 /**
