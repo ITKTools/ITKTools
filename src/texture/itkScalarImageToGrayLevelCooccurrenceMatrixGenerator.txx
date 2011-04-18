@@ -162,7 +162,8 @@ ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
       // histogram with them.
       cooccur[ 0 ] = centerPixelIntensity;
       cooccur[ 1 ] = pixelIntensity;
-      m_Output->IncreaseFrequency( cooccur, 1 );
+      //m_Output->IncreaseFrequency( cooccur, 1 );
+      m_Output->IncreaseFrequency( 1, cooccur );
       cooccur[ 1 ] = centerPixelIntensity;
       cooccur[ 0 ] = pixelIntensity;
       m_Output->IncreaseFrequency( cooccur, 1 );

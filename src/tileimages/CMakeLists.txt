@@ -5,6 +5,9 @@ PROJECT(tileimages)
 FIND_PACKAGE( ITK REQUIRED )
 INCLUDE( ${ITK_USE_FILE} )
 
+
+# could not convert template argument error
+
 ADD_EXECUTABLE(pxtileimages tileimages.cxx)
 
 TARGET_LINK_LIBRARIES(pxtileimages pxcommon ${ITK_LIBRARIES})

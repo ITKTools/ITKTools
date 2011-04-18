@@ -5,7 +5,9 @@
 #include <map>
 #include <set>
 
-
+template <typename T>
+std::ostream& operator<<(std::ostream& output, const std::set<T> &setobject);
+ 
 namespace itk
 {
 

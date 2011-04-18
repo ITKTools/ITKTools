@@ -23,7 +23,7 @@ SUBDIRS(
  computeboundingbox
  computedifferenceimageBIG
  computemean
- computeoverlap
+ 
  contrastenhanceimage
  countnonzerovoxels
  createbox
@@ -71,12 +71,20 @@ SUBDIRS(
  scripts
  segmentationdistance
  statisticsonimage
- texture
- tileimages
+ 
+ 
  ttest
  thresholdimage
  unaryimageoperator
  weightedaddition )
+
+SET(PROBLEMS OFF CACHE BOOL "Compile things with problems." FORCE)
+if(problems)
+  SUBDIRS(
+  tileimages
+  texture
+  computeoverlap)
+endif(problems)
 
 #---------------------------------------------------------------------
 # Kill the anoying MS VS warning about non-safe functions.
