@@ -2,7 +2,7 @@
 #include "CommandLineArgumentHelper.h"
 
 #include "itkImageFileReader.h"
-#include "itkReflectImageFilter.h"
+#include "itkFlipImageFilter.h"
 #include "itkImageFileWriter.h"
 
 //-------------------------------------------------------------------------------------
@@ -180,8 +180,7 @@ void ReflectImageFilter( const std::string & inputFileName,
   typedef itk::Image< OutputPixelType, Dimension >        OutputImageType;
 
   typedef itk::ImageFileReader< InputImageType >          ReaderType;
-  typedef itk::ReflectImageFilter<
-    InputImageType, OutputImageType >                     ReflectFilterType;
+  typedef itk::FlipImageFilter< InputImageType >          ReflectFilterType;
   typedef itk::ImageFileWriter< OutputImageType >         WriterType;
 
   /** Read in the input image. */
@@ -191,7 +190,11 @@ void ReflectImageFilter( const std::string & inputFileName,
 
   /** Set up pipeline. */
   reader->SetFileName( inputFileName );
-  reflectFilter->SetDirection( direction );
+  
+  itk::FixedArray<bool, Dimension> flipAxes(false);
+  flipAxes[direction] = true;
+  
+  reflectFilter->SetFlipAxes( flipAxes );
   writer->SetFileName( outputFileName );
 
   reflectFilter->SetInput( reader->GetOutput() );
