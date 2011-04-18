@@ -62,8 +62,8 @@ public:
    * implementation for GenerateInputRequestedRegion() in order to inform the
    * pipeline execution model.
    * \sa ProcessObject::GenerateInputRequestedRegion()
-   *
-  virtual void GenerateInputRequestedRegion();*/
+   */
+  virtual void GenerateInputRequestedRegion();
 
 protected:
 
@@ -79,8 +79,8 @@ protected:
   /** This filter must produce all of the outputs at once, as such it
    * must override the EnlargeOutputRequestedRegion method to enlarge the
    * output request region.
-   *
-  virtual void EnlargeOutputRequestedRegion( DataObject * );
+   */
+  //virtual void EnlargeOutputRequestedRegion( DataObject * );
 
   /** Performs the image reshaping process. */
   virtual void GenerateData( void );

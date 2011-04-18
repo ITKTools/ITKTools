@@ -291,7 +291,8 @@ void ComputeMeanAndStandardDeviation(
   double & mean1, double & mean2, double & meandiff,
   double & std1, double & std2, double & stddiff )
 {
-  /** The slow way: two loops. *
+  /** The slow way: two loops. */
+  /*
   mean = std = 0.0;
   for ( unsigned int i = 0; i < vec.size(); ++i )
   {
@@ -304,7 +305,8 @@ void ComputeMeanAndStandardDeviation(
   }
   std /= ( vec.size() - 1 );
   std = vcl_sqrt( std );
-
+  */
+  
   /** Compute mean and std fast, using one loop. */
   double N = static_cast<double>( samples1.size() );
   double s1 = 0.0, ss1 = 0.0;

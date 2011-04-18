@@ -31,30 +31,32 @@ public: \
 }
 
 /** A macro to write a n-ary functor class, using an input argument. */
-// #define itkNaryFunctorMacroB( name, initialize, start, operation, postprocess ) \
-// template< class TInput, class TOutput = TInput > \
-// class Nary##name \
-// { \
-// public: \
-//   typedef typename NumericTraits< TInput >::AccumulateType AccumulateType; \
-//   typedef typename NumericTraits< TInput >::ScalarRealType ScalarRealType; \
-//   Nary##name() {}; \
-//   ~Nary##name() {}; \
-//   bool operator!=( const Nary##name & ) const{ return false; } \
-//   bool operator==( const Nary##name & other ) const{ return !(*this != other); } \
-//   inline TOutput operator()( const std::vector< TInput > & B ) const \
-//   { \
-//     iniType result = NumericTraits< iniType >::iniValue; \
-//     for ( unsigned int i = start; i < B.size(); i++ ) \
-//     { \
-//       result operation; \
-//     } \
-//     return static_cast< TOutput >( postprocess ); \
-//   } \
-//   void SetArgument( double arg ){ this->m_Argument = arg; }; \
-// private: \
-//   double m_Argument; \
-// }
+/*
+#define itkNaryFunctorMacroB( name, initialize, start, operation, postprocess ) \
+template< class TInput, class TOutput = TInput > \
+class Nary##name \
+{ \
+public: \
+  typedef typename NumericTraits< TInput >::AccumulateType AccumulateType; \
+  typedef typename NumericTraits< TInput >::ScalarRealType ScalarRealType; \
+  Nary##name() {}; \
+  ~Nary##name() {}; \
+  bool operator!=( const Nary##name & ) const{ return false; } \
+  bool operator==( const Nary##name & other ) const{ return !(*this != other); } \
+  inline TOutput operator()( const std::vector< TInput > & B ) const \
+  { \
+    iniType result = NumericTraits< iniType >::iniValue; \
+    for ( unsigned int i = start; i < B.size(); i++ ) \
+    { \
+      result operation; \
+    } \
+    return static_cast< TOutput >( postprocess ); \
+  } \
+  void SetArgument( double arg ){ this->m_Argument = arg; }; \
+private: \
+  double m_Argument; \
+}
+*/
 
 /** Arithmetic functors. */
 itkNaryFunctorMacroA( ADDITION, ScalarRealType, NumericTraits< ScalarRealType >::Zero,

@@ -93,10 +93,6 @@ int main( int argc, char ** argv )
     return 1;
   }
 
-  /** The default output is equal to the input, but can be overridden by
-   * specifying -pt in the command line.   *
-  if ( !retpt ) componentType = ComponentTypeIn;
-
   /** Check for vector images. */
   if ( NumberOfComponents > 1 )
   {

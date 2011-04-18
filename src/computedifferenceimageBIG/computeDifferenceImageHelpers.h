@@ -15,20 +15,20 @@
 #include "itkImageRegionConstIterator.h"
 #include "itkImageRegionIterator.h"
 
-/** One of these is used to cast the image. *
+// One of these is used to cast the image. *
 #include "itkShiftScaleImageFilter.h"
 #include "itkRescaleIntensityImageFilter.h"
 
-/** Print image information from the reader and the writer. *
+// Print image information from the reader and the writer. *
 template< class ReaderType, class WriterType >
 void PrintInfo( ReaderType reader, WriterType writer )
 {
-  /** Typedef's. *
+  //* Typedef's. *
   typedef itk::ImageIOBase                        ImageIOBaseType;
   typedef itk::ImageIORegion                      ImageIORegionType;
   typedef typename ImageIORegionType::SizeType    SizeType;
 
-  /** Get IOBase of the reader and extract information. *
+  //* Get IOBase of the reader and extract information. *
   ImageIOBaseType::Pointer imageIOBaseIn = reader->GetImageIO();
   ImageIORegionType iORegionIn = imageIOBaseIn->GetIORegion();
 
@@ -39,7 +39,7 @@ void PrintInfo( ReaderType reader, WriterType writer )
   unsigned int dimensionIn = imageIOBaseIn->GetNumberOfDimensions();
   SizeType sizeIn = iORegionIn.GetSize();
 
-  /**  Get  IOBase of  the  writer and extract information.  *
+  //*  Get  IOBase of  the  writer and extract information.  *
   ImageIOBaseType::Pointer imageIOBaseOut = writer->GetImageIO();
   ImageIORegionType iORegionOut = imageIOBaseOut->GetIORegion();
 
@@ -50,7 +50,7 @@ void PrintInfo( ReaderType reader, WriterType writer )
   unsigned int dimensionOut = imageIOBaseOut->GetNumberOfDimensions();
   SizeType sizeOut = iORegionOut.GetSize();
 
-  /** Print information. *
+  //* Print information. *
   std::cout << "Information about the input image \"" << fileNameIn << "\":" << std::endl;
   std::cout << "\tdimension:\t\t" << dimensionIn << std::endl;
   std::cout << "\tpixel type:\t\t" << pixelTypeIn << std::endl;
@@ -60,7 +60,7 @@ void PrintInfo( ReaderType reader, WriterType writer )
   for ( unsigned int i = 0; i < dimensionIn; i++ ) std::cout << sizeIn[ i ] << " ";
   std::cout << std::endl;
 
-  /** Print information. *
+  //* Print information. *
   std::cout << std::endl;
   std::cout << "Information about the output image \"" << fileNameOut << "\":" << std::endl;
   std::cout << "\tdimension:\t\t" << dimensionOut << std::endl;
@@ -295,15 +295,16 @@ void ComputeVectorDifferenceImage( std::string image1FileName,
 /** callCorrectScalarDifferenceMacro:
  * A macro to call the conversion function.
  */
-
-// #define callCorrectScalarDifferenceMacro(typeIn1,typeIn2,typeOut,dim) \
-//     if ( inputPixelComponentType1 == #typeIn1 && inputPixelComponentType2 == #typeIn2 && outputPixelComponentType == #typeOut && inputDimension == dim) \
-// { \
-//     typedef itk::Image< typeIn1, dim >  InputImageType1; \
-//     typedef itk::Image< typeIn2, dim >  InputImageType2; \
-//     typedef itk::Image< typeOut, dim >  OutputImageType; \
-//     ComputeScalarDifferenceImage< InputImageType1, InputImageType2, OutputImageType >( image1FileName, image2FileName, outputFileName ); \
-// }
+/*
+#define callCorrectScalarDifferenceMacro(typeIn1,typeIn2,typeOut,dim) \
+    if ( inputPixelComponentType1 == #typeIn1 && inputPixelComponentType2 == #typeIn2 && outputPixelComponentType == #typeOut && inputDimension == dim) \
+{ \
+    typedef itk::Image< typeIn1, dim >  InputImageType1; \
+    typedef itk::Image< typeIn2, dim >  InputImageType2; \
+    typedef itk::Image< typeOut, dim >  OutputImageType; \
+    ComputeScalarDifferenceImage< InputImageType1, InputImageType2, OutputImageType >( image1FileName, image2FileName, outputFileName ); \
+}
+*/
 
 /** callCorrectVectorDifferenceMacro:
  * A macro to call the conversion function.

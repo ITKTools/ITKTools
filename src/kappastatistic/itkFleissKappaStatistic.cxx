@@ -6,7 +6,7 @@ namespace Statistics {
 
 /**
  * *************** Constructor ****************
- *
+ */
 
 FleissKappaStatistic
 ::FleissKappaStatistic()

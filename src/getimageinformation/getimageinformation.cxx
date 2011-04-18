@@ -35,7 +35,7 @@ int main( int argc, char **argv )
   bool exct = parser->ArgumentExists( "-ct" );
   bool exnoc = parser->ArgumentExists( "-noc" );
   bool exsz = parser->ArgumentExists( "-sz" );
-  //bool exind = parser->ArgumentExists( "-ind" );
+  bool exind = parser->ArgumentExists( "-ind" );
   bool exsp = parser->ArgumentExists( "-sp" );
   bool exdc = parser->ArgumentExists( "-dc" );
   bool exvol = parser->ArgumentExists( "-vol" );
@@ -136,7 +136,7 @@ int main( int argc, char **argv )
       return 0;
     }
 
-    /** Print image index. *
+    /** Print image index. */
     if ( exind )
     {
       if ( reti )

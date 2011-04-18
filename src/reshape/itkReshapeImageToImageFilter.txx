@@ -68,11 +68,11 @@ ReshapeImageToImageFilter< TInputImage >
 
 /**
  * ********************* GenerateInputRequestedRegion ****************************
- *
+ */
 
-template< class TInputImage, class TOutputImage >
+template< class TInputImage>
 void
-ReshapeImageToImageFilter< TInputImage, TOutputImage >
+ReshapeImageToImageFilter< TInputImage>
 ::GenerateInputRequestedRegion( void )
 {
 } // end GenerateInputRequestedRegion()

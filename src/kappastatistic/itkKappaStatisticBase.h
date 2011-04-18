@@ -40,8 +40,8 @@ public:
   itkTypeMacro( KappaStatisticBase, Object );
 
   /** Method for creation through the object factory.
-   * Is not valid for abstract classes. *
-  itkNewMacro( Self );
+   * Is not valid for abstract classes. */
+  //itkNewMacro( Self );
 
   /** Typedefs. */
   typedef unsigned int                CategoryType;

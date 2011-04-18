@@ -97,7 +97,7 @@ int main( int argc, char *argv[] )
 
   /** Open the file containing the inputpoints.*/
   std::ofstream pointfile( pointfilename.c_str() );
-  SizeType size = reader->GetOutput()->GetLargestPossibleRegion().GetSize();
+  
   if ( pointfile.is_open() )
   {
     /** Write the inputpoints to a text file. */
