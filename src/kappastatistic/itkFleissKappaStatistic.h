@@ -55,7 +55,7 @@ public:
     double & Po, double & Pe, double & kappa, double & std, const bool & compare );
 
 protected:
-  FleissKappaStatistic() {};
+  FleissKappaStatistic();
   virtual ~FleissKappaStatistic() {};
   void PrintSelf( std::ostream& os, Indent indent ) const;
 
