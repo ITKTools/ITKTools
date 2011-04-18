@@ -32,7 +32,7 @@ SUBDIRS(
  creategridimage
  # createimage
  createpointsinimage
- #createrandomimage
+ createrandomimage
  createsimplebox
  createsphere
  createzeroimage

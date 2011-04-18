@@ -169,7 +169,7 @@ class runwrap
   }
 
   int paddingSize = static_cast<int>(2.0*sigma);
-  int maximumKernelWidth = 64;
+  
 
   for (unsigned int i = 0; i< ImageDimension; i++)
   {
@@ -204,7 +204,6 @@ class runwrap
 
     /** Setting random values to random points */
 
-    double range = max_value-min_value;
     if (randomiterating)
     {
       std::cout

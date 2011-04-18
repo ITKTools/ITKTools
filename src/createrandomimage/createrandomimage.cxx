@@ -83,7 +83,7 @@ int main(int argc, char** argv)
   std::ostringstream makeString("");
   itk::Array<unsigned int> sizes;
   unsigned int iDim = 0;
-  unsigned int sDim = 0;
+
   unsigned long res = 0;
   double sig = -1.0;
   double min_value = 0.0;
@@ -93,7 +93,7 @@ int main(int argc, char** argv)
   unsigned long nrOfPixels = 1;
 
   /** Fill the argument map */
-  for (unsigned int i = 1; i<argc; i+=2)
+  for (unsigned int i = 1; i<static_cast<unsigned int>(argc); i+=2)
   {
     if ( (i+1) < argc)
     {
