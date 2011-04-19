@@ -68,6 +68,7 @@ SUBDIRS(
  scripts
  segmentationdistance
  statisticsonimage
+ texture
  ttest
  thresholdimage
  unaryimageoperator
@@ -76,9 +77,9 @@ SUBDIRS(
 SET( COMPILE_PROBLEMS OFF CACHE BOOL "Compile things with problems." )
 if( COMPILE_PROBLEMS )
   SUBDIRS(
-  tileimages
-  texture
-  computeoverlap )
+  computeoverlap # operator<< problem (issue #5)
+  tileimages # "could not convert template argument" gcc4.6 bug
+   )
 endif()
 
 #---------------------------------------------------------------------
