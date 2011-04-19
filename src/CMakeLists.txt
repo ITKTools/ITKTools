@@ -70,18 +70,12 @@ SUBDIRS(
  segmentationdistance
  statisticsonimage
  texture
+ tileimages # "could not convert template argument" gcc4.6 bug
  ttest
  thresholdimage
  unaryimageoperator
  weightedaddition )
 
-SET( COMPILE_PROBLEMS OFF CACHE BOOL "Compile things with problems." )
-if( COMPILE_PROBLEMS )
-  SUBDIRS(
-  
-  tileimages # "could not convert template argument" gcc4.6 bug
-   )
-endif()
 
 #---------------------------------------------------------------------
 # Kill the anoying MS VS warning about non-safe functions.
