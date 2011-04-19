@@ -23,7 +23,6 @@ SUBDIRS(
  computeboundingbox
  computedifferenceimageBIG
  computemean
- 
  contrastenhanceimage
  countnonzerovoxels
  createbox
@@ -59,7 +58,6 @@ SUBDIRS(
  invertintensityimagefilter
  kappastatistic
  logicalimageoperator
- #localizedmeanshift
  morphology
  naryimageoperator
  pca
@@ -71,20 +69,18 @@ SUBDIRS(
  scripts
  segmentationdistance
  statisticsonimage
- 
- 
  ttest
  thresholdimage
  unaryimageoperator
  weightedaddition )
 
-SET(PROBLEMS OFF CACHE BOOL "Compile things with problems." FORCE)
-if(problems)
+SET( COMPILE_PROBLEMS OFF CACHE BOOL "Compile things with problems." )
+if( COMPILE_PROBLEMS )
   SUBDIRS(
   tileimages
   texture
-  computeoverlap)
-endif(problems)
+  computeoverlap )
+endif()
 
 #---------------------------------------------------------------------
 # Kill the anoying MS VS warning about non-safe functions.
