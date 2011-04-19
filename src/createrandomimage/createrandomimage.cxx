@@ -93,15 +93,16 @@ int main(int argc, char** argv)
   unsigned long nrOfPixels = 1;
 
   /** Fill the argument map */
-  for (unsigned int i = 1; i<static_cast<unsigned int>(argc); i+=2)
+  const unsigned int argc_ui = static_cast<unsigned int>( argc );
+  for ( unsigned int i = 1; i < argc_ui; i+=2 )
   {
-    if ( (i+1) < argc)
+    if ( ( i + 1 ) < argc_ui )
     {
-      argmap[ argv[i] ] = argv[i+1];
+      argmap[ argv[ i ] ] = argv[ i + 1 ];
     }
     else
     {
-      argmap[ argv[i] ] = "";
+      argmap[ argv[ i ] ] = "";
     }
   }
 

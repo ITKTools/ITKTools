@@ -330,7 +330,8 @@ TextureImageToImageFilter< TInputImage, TOutputImage >
   /** Typedefs needed for computing the minimum and maximum of the input image. */
   typedef StatisticsImageFilter< InputImageType >  StatisticsFilterType;
   typename StatisticsFilterType::Pointer stats = StatisticsFilterType::New();
-  InputImagePixelType min, max;
+  InputImagePixelType min = NumericTraits<InputImagePixelType>::max();
+  InputImagePixelType max = NumericTraits<InputImagePixelType>::NonpositiveMin();
 
   /** Compute, but only if necessary. */
   if ( !this->m_HistogramMinimumSetManually || !this->m_HistogramMaximumSetManually )

@@ -21,7 +21,6 @@ template <
 ValueType run_avm(const char * inputFileName, const char * outputFileName = 0)
 {
   /** Typedefs */
-
   const unsigned int ImageDimension = NImageDimension;
   const unsigned int SpaceDimension = NSpaceDimension;
 
@@ -44,7 +43,6 @@ ValueType run_avm(const char * inputFileName, const char * outputFileName = 0)
   typedef typename FilterType::Pointer    FilterPointer;
 
   /** Create variables */
-
   ReaderPointer reader = ReaderType::New();
   WriterPointer writer = 0;
   FilterPointer filter = FilterType::New();
@@ -113,7 +111,7 @@ void PrintUsageString(void)
 }
 
 
-int main(int argc, char** argv)
+int main( int argc, char** argv )
 {
   typedef std::map<std::string, std::string> ArgMapType;
   typedef float ValueType;
@@ -179,7 +177,7 @@ int main(int argc, char** argv)
     return -1;
   }
 
-  ValueType averageVectorMagnitude;
+  ValueType averageVectorMagnitude = 0.0f;
   if (imageDimension == "2")
   {
     if (spaceDimension == "2")
