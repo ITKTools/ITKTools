@@ -63,7 +63,11 @@ public:
       this->Modified();
     }
   }
-  itkGetConstReferenceMacro( RequestedLabels, LabelsType );
+  //itkGetConstReferenceMacro( RequestedLabels, LabelsType );
+  virtual const LabelsType & GetRequestedLabels( void ) const
+  {
+    return this->m_RequestedLabels;
+  }
 
   /** Get the Dice overlaps, all of them. */
   itkGetConstReferenceMacro( DiceOverlap, OverlapMapRealType );
