@@ -102,7 +102,7 @@ ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
   this->FillHistogram( radius, region );
 
   // Normalize the histogram if requested
-  if ( m_Normalize )
+  if ( this->m_Normalize )
   {
     this->NormalizeHistogram();
   }
@@ -162,11 +162,10 @@ ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
       // histogram with them.
       cooccur[ 0 ] = centerPixelIntensity;
       cooccur[ 1 ] = pixelIntensity;
-      //m_Output->IncreaseFrequency( cooccur, 1 );
-      m_Output->IncreaseFrequency( 1, cooccur );
+      this->m_Output->IncreaseFrequencyOfMeasurement( cooccur, 1 );
       cooccur[ 1 ] = centerPixelIntensity;
       cooccur[ 0 ] = pixelIntensity;
-      m_Output->IncreaseFrequency( cooccur, 1 );
+      this->m_Output->IncreaseFrequencyOfMeasurement( cooccur, 1 );
     }
   }
 } // end FillHistogram()
@@ -184,7 +183,7 @@ ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
 {
   typename HistogramType::Iterator hit( this->m_Output );
   typename HistogramType::TotalAbsoluteFrequencyType totalFrequency =
-    m_Output->GetTotalFrequency();
+    this->m_Output->GetTotalFrequency();
 
   /** \todo: this won't work with the new statistics framework, since
   * frequency are always integer then... */
