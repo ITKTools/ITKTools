@@ -338,7 +338,7 @@ namespace itk
     {
 
       /** Add the confusion matrix arrays of all threads */
-      for ( unsigned int t = 0; t < static_cast<unsigned int>(this->GetNumberOfThreads()); ++t )
+      for ( unsigned int t = 0; t < this->GetNumberOfThreads(); ++t )
       {
         for ( unsigned int i = 0; i < numberOfInputs; ++i )
         {
