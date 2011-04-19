@@ -24,7 +24,7 @@ ADD_EXECUTABLE( pxmorphology
 	gradient.h
  )
 
-TARGET_LINK_LIBRARIES( pxmorphology pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxmorphology ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxmorphology
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

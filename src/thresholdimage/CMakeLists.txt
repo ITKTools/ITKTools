@@ -13,7 +13,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE( pxthresholdimage thresholdimage.cxx )
 
-TARGET_LINK_LIBRARIES( pxthresholdimage pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxthresholdimage ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxthresholdimage
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

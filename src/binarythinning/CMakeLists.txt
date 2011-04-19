@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE( pxbinarythinning binarythinning.cxx )
 
-TARGET_LINK_LIBRARIES( pxbinarythinning pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxbinarythinning ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxbinarythinning
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

@@ -9,7 +9,7 @@ ADD_EXECUTABLE( pxintensityreplace
   intensityreplace.cxx
  )
 
-TARGET_LINK_LIBRARIES( pxintensityreplace pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxintensityreplace ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxintensityreplace
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

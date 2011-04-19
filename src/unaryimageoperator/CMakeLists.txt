@@ -16,7 +16,7 @@ ADD_EXECUTABLE( pxunaryimageoperator
  UnaryImageOperatorHelper.h
  UnaryImageOperatorMainHelper.h )
 
-TARGET_LINK_LIBRARIES( pxunaryimageoperator pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxunaryimageoperator ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxunaryimageoperator
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

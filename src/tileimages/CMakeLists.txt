@@ -10,7 +10,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE( pxtileimages tileimages.cxx )
 
-TARGET_LINK_LIBRARIES( pxtileimages pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxtileimages ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxtileimages
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

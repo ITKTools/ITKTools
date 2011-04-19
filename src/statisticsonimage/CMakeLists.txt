@@ -14,7 +14,7 @@ ADD_EXECUTABLE( pxstatisticsonimage
   itkScalarImageToHistogramGenerator2.txx
   statisticsprinters.h )
 
-TARGET_LINK_LIBRARIES( pxstatisticsonimage pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxstatisticsonimage ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxstatisticsonimage
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

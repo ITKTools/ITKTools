@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE( pxreflect reflect.cxx )
 
-TARGET_LINK_LIBRARIES( pxreflect pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxreflect ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxreflect
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

@@ -17,7 +17,7 @@ ADD_EXECUTABLE( pxbinaryimageoperator
  BinaryImageOperatorHelper.h
  BinaryImageOperatorMainHelper.h )
 
-TARGET_LINK_LIBRARIES( pxbinaryimageoperator pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxbinaryimageoperator ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxbinaryimageoperator
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

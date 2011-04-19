@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE( pxcomputemean computemean.cxx )
 
-TARGET_LINK_LIBRARIES( pxcomputemean pxcommon )
+TARGET_LINK_LIBRARIES( pxcomputemean ITKTools-Common )
 
 INSTALL( TARGETS pxcomputemean
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

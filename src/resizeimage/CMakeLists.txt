@@ -13,7 +13,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE( pxresizeimage resizeimage.cxx )
 
-TARGET_LINK_LIBRARIES( pxresizeimage pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxresizeimage ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxresizeimage
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

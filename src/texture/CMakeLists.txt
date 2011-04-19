@@ -20,7 +20,7 @@ ADD_EXECUTABLE( pxtexture
  itkGrayLevelCooccurrenceMatrixTextureCoefficientsCalculator.h
  itkGrayLevelCooccurrenceMatrixTextureCoefficientsCalculator.txx )
 
-TARGET_LINK_LIBRARIES( pxtexture pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxtexture ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxtexture
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

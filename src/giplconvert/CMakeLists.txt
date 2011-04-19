@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE( pxgiplconvert giplconvert.cxx )
 
-TARGET_LINK_LIBRARIES( pxgiplconvert pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxgiplconvert ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxgiplconvert
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

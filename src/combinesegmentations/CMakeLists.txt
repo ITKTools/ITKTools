@@ -16,7 +16,7 @@ ADD_EXECUTABLE( pxcombinesegmentations
  itkNaryUnequalityTestImageFilter.h
  )
 
-TARGET_LINK_LIBRARIES( pxcombinesegmentations pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxcombinesegmentations ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxcombinesegmentations
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE( pxweightedaddition weightedaddition.cxx )
 
-TARGET_LINK_LIBRARIES( pxweightedaddition pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxweightedaddition ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxweightedaddition
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

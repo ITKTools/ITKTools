@@ -12,7 +12,7 @@ ADD_EXECUTABLE( pxdistancetransform
  )
 
 TARGET_LINK_LIBRARIES( pxdistancetransform
-  pxcommon ${ITK_LIBRARIES} )
+  ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxdistancetransform
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

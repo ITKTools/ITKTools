@@ -9,7 +9,7 @@ ADD_EXECUTABLE( pxdeformationfieldoperator
   deformationfieldoperator.cxx
   deformationfieldoperator.h )
 
-TARGET_LINK_LIBRARIES( pxdeformationfieldoperator pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxdeformationfieldoperator ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxdeformationfieldoperator
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE( pxreplacevoxel replacevoxel.cxx )
 
-TARGET_LINK_LIBRARIES( pxreplacevoxel pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxreplacevoxel ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxreplacevoxel
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

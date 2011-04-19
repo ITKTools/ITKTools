@@ -10,7 +10,7 @@ ADD_EXECUTABLE( pxreshape
  itkReshapeImageToImageFilter.h
  itkReshapeImageToImageFilter.txx )
 
-TARGET_LINK_LIBRARIES( pxreshape pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxreshape ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxreshape
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

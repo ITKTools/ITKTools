@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE( pxcomputeboundingbox computeboundingbox.cxx )
 
-TARGET_LINK_LIBRARIES( pxcomputeboundingbox pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxcomputeboundingbox ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxcomputeboundingbox
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

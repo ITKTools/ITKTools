@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE( pxcropimage cropimage.cxx )
 
-TARGET_LINK_LIBRARIES( pxcropimage pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxcropimage ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxcropimage
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

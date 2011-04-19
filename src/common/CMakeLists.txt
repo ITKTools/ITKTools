@@ -5,12 +5,12 @@ PROJECT( common )
 FIND_PACKAGE( ITK REQUIRED )
 INCLUDE( ${ITK_USE_FILE} )
 
-ADD_LIBRARY( pxcommon
+ADD_LIBRARY( ITKTools-Common
  itkCommandLineArgumentParser.cxx
  itkCommandLineArgumentParser.h
  CommandLineArgumentHelper.cxx
  CommandLineArgumentHelper.h
  )
 
-TARGET_LINK_LIBRARIES( pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( ITKTools-Common ${ITK_LIBRARIES} )
 

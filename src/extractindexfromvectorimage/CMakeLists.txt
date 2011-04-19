@@ -13,7 +13,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE( pxextractindexfromvectorimage extractindexfromvectorimage.cxx )
 
-TARGET_LINK_LIBRARIES( pxextractindexfromvectorimage pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxextractindexfromvectorimage ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxextractindexfromvectorimage
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

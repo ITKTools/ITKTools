@@ -10,7 +10,7 @@ OPTION( USE_FFTIMAGE "Build pxfftimage only if ITK was built with FFTW (float AN
 IF( USE_FFTIMAGE )
   ADD_EXECUTABLE( pxfftimage fftimage.cxx )
 
-  TARGET_LINK_LIBRARIES( pxfftimage pxcommon ${ITK_LIBRARIES} )
+  TARGET_LINK_LIBRARIES( pxfftimage ITKTools-Common ${ITK_LIBRARIES} )
 
   INSTALL( TARGETS pxfftimage
     RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE( pxgetimageinformation getimageinformation.cxx )
 
-TARGET_LINK_LIBRARIES( pxgetimageinformation pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxgetimageinformation ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxgetimageinformation
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

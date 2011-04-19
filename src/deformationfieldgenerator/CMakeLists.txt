@@ -13,7 +13,7 @@ ADD_EXECUTABLE( pxdeformationfieldgenerator
  itkTransformixInputPointFileReader.hxx
  )
 
-TARGET_LINK_LIBRARIES( pxdeformationfieldgenerator pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxdeformationfieldgenerator ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxdeformationfieldgenerator
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

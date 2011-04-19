@@ -37,7 +37,7 @@ ADD_EXECUTABLE( pxcastconvert
  castconvertMultiComponent4D4CB.cxx
  )
 
-TARGET_LINK_LIBRARIES( pxcastconvert pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxcastconvert ITKTools-Common ${ITK_LIBRARIES} )
 
 
 INSTALL( TARGETS pxcastconvert

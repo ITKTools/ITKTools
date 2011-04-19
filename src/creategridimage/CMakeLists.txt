@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE( pxcreategridimage creategridimage.cxx )
 
-TARGET_LINK_LIBRARIES( pxcreategridimage pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxcreategridimage ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxcreategridimage
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

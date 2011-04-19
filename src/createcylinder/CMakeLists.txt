@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE( pxcreatecylinder createcylinder.cxx itkCylinderSpatialFunction.h itkCylinderSpatialFunction.txx )
 
-TARGET_LINK_LIBRARIES( pxcreatecylinder pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxcreatecylinder ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxcreatecylinder
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE( pxgetdicominformation getdicominformation.cxx )
 
-TARGET_LINK_LIBRARIES( pxgetdicominformation pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxgetdicominformation ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxgetdicominformation
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE( pxcreatezeroimage createzeroimage.cxx )
 
-TARGET_LINK_LIBRARIES( pxcreatezeroimage pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxcreatezeroimage ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxcreatezeroimage
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

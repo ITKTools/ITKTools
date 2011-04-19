@@ -12,7 +12,7 @@ ADD_EXECUTABLE( pxkappastatistic
   itkFleissKappaStatistic.cxx
   itkCohenWeightedKappaStatistic.cxx )
 
-TARGET_LINK_LIBRARIES( pxkappastatistic pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxkappastatistic ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxkappastatistic
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

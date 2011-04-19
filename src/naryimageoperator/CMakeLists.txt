@@ -17,7 +17,7 @@ ADD_EXECUTABLE( pxnaryimageoperator
  NaryImageOperatorHelper.h
  NaryImageOperatorMainHelper.h )
 
-TARGET_LINK_LIBRARIES( pxnaryimageoperator pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxnaryimageoperator ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxnaryimageoperator
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

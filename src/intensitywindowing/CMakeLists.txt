@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE( pxintensitywindowing intensitywindowing.cxx )
 
-TARGET_LINK_LIBRARIES( pxintensitywindowing pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxintensitywindowing ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxintensitywindowing
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

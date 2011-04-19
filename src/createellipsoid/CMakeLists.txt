@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE( pxcreateellipsoid createellipsoid.cxx )
 
-TARGET_LINK_LIBRARIES( pxcreateellipsoid pxcommon ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxcreateellipsoid ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxcreateellipsoid
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )
