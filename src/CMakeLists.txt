@@ -1,13 +1,13 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 2.6 )
 
 # This project is intended to be built outside the Insight source tree
-PROJECT( praxix )
+PROJECT( ITKTools )
 
-# Define where to install praxix
+# Define where to install ITKTools
 IF( WIN32 )
-  SET( PRAXIX_INSTALL_DIR ${CMAKE_INSTALL_PREFIX} )
+  SET( ITKTools_INSTALL_DIR ${CMAKE_INSTALL_PREFIX} )
 ELSE()
-  SET( PRAXIX_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/bin )
+  SET( ITKTools_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/bin )
 ENDIF()
 
 # Include all subdirs
@@ -29,7 +29,6 @@ SUBDIRS(
  createcylinder
  createellipsoid
  creategridimage
- # createimage
  createpointsinimage
  createrandomimage
  createsimplebox
@@ -96,10 +95,12 @@ ENDIF( MSVC )
 #---------------------------------------------------------------------
 # Output directories.
 
-SET (LIBRARY_OUTPUT_PATH ${praxix_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all libraries.")
-SET (EXECUTABLE_OUTPUT_PATH ${praxix_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all executables.")
-MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
-SET(praxix_LIBRARY_PATH "${LIBRARY_OUTPUT_PATH}")
-SET(praxix_EXECUTABLE_PATH "${EXECUTABLE_OUTPUT_PATH}")
-INCLUDE_DIRECTORIES(${praxix_SOURCE_DIR}/common)
+SET( LIBRARY_OUTPUT_PATH ${ITKTools_BINARY_DIR}/bin
+  CACHE INTERNAL "Single output directory for building all libraries." )
+SET( EXECUTABLE_OUTPUT_PATH ${ITKTools_BINARY_DIR}/bin
+  CACHE INTERNAL "Single output directory for building all executables." )
+MARK_AS_ADVANCED( LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH )
+SET( ITKTools_LIBRARY_PATH    "${LIBRARY_OUTPUT_PATH}" )
+SET( ITKTools_EXECUTABLE_PATH "${EXECUTABLE_OUTPUT_PATH}" )
+INCLUDE_DIRECTORIES( ${ITKTools_SOURCE_DIR}/common )
 

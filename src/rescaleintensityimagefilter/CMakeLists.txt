@@ -1,14 +1,14 @@
 # This project is intended to be built outside the Insight source tree
-PROJECT(rescaleintensityimagefilter)
+PROJECT( rescaleintensityimagefilter )
 
 # Find ITK.
 FIND_PACKAGE( ITK REQUIRED )
 INCLUDE( ${ITK_USE_FILE} )
 
-ADD_EXECUTABLE(pxrescaleintensityimagefilter rescaleintensityimagefilter.cxx)
+ADD_EXECUTABLE( pxrescaleintensityimagefilter rescaleintensityimagefilter.cxx )
 
-TARGET_LINK_LIBRARIES(pxrescaleintensityimagefilter pxcommon ${ITK_LIBRARIES})
+TARGET_LINK_LIBRARIES( pxrescaleintensityimagefilter pxcommon ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxrescaleintensityimagefilter
-  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
+  RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )
 

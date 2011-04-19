@@ -9,11 +9,11 @@ INCLUDE_DIRECTORIES( ../morphology )
 
 ADD_EXECUTABLE( pxdistancetransform
   distancetransform.cxx
-)
+ )
 
 TARGET_LINK_LIBRARIES( pxdistancetransform
-  pxcommon ${ITK_LIBRARIES})
+  pxcommon ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxdistancetransform
-  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
+  RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )
 

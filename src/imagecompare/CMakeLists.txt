@@ -1,14 +1,14 @@
 # This project is intended to be built outside the Insight source tree
-PROJECT(imagecompare)
+PROJECT( imagecompare )
 
 # Find ITK.
 FIND_PACKAGE( ITK REQUIRED )
 INCLUDE( ${ITK_USE_FILE} )
 
-ADD_EXECUTABLE(pximagecompare ImageCompare.cxx)
+ADD_EXECUTABLE( pximagecompare ImageCompare.cxx )
 
-TARGET_LINK_LIBRARIES(pximagecompare ${ITK_LIBRARIES})
+TARGET_LINK_LIBRARIES( pximagecompare ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pximagecompare
-  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
+  RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )
 

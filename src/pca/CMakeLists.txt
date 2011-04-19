@@ -1,17 +1,17 @@
 # This project is intended to be built outside the Insight source tree
-PROJECT(pca)
+PROJECT( pca )
 
 # Find ITK.
 FIND_PACKAGE( ITK REQUIRED )
 INCLUDE( ${ITK_USE_FILE} )
 
-ADD_EXECUTABLE(pxpca
+ADD_EXECUTABLE( pxpca
  pca.cxx
  itkPCAImageToImageFilter.h
  itkPCAImageToImageFilter.txx )
 
-TARGET_LINK_LIBRARIES(pxpca pxcommon ${ITK_LIBRARIES})
+TARGET_LINK_LIBRARIES( pxpca pxcommon ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxpca
-  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
+  RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )
 

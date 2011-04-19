@@ -3,8 +3,8 @@ PROJECT( naryimageoperator )
 
 # Increases address capacity
 IF ( WIN32 )
-  SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /bigobj")
-  SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /bigobj")
+  SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /bigobj" )
+  SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /bigobj" )
 ENDIF ( WIN32 )
 
 # Find ITK.
@@ -17,8 +17,8 @@ ADD_EXECUTABLE( pxnaryimageoperator
  NaryImageOperatorHelper.h
  NaryImageOperatorMainHelper.h )
 
-TARGET_LINK_LIBRARIES( pxnaryimageoperator pxcommon ${ITK_LIBRARIES})
+TARGET_LINK_LIBRARIES( pxnaryimageoperator pxcommon ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxnaryimageoperator
-  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
+  RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )
 

@@ -1,14 +1,14 @@
 # This project is intended to be built outside the Insight source tree
-PROJECT(computemean)
+PROJECT( computemean )
 
 # Find ITK.
 FIND_PACKAGE( ITK REQUIRED )
 INCLUDE( ${ITK_USE_FILE} )
 
-ADD_EXECUTABLE(pxcomputemean computemean.cxx)
+ADD_EXECUTABLE( pxcomputemean computemean.cxx )
 
-TARGET_LINK_LIBRARIES(pxcomputemean pxcommon)
+TARGET_LINK_LIBRARIES( pxcomputemean pxcommon )
 
 INSTALL( TARGETS pxcomputemean
-  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
+  RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )
 

@@ -11,8 +11,8 @@ ADD_EXECUTABLE( pxcomputeoverlap
   itkDiceOverlapImageFilter.txx )
 
 TARGET_LINK_LIBRARIES( pxcomputeoverlap
-  pxcommon ${ITK_LIBRARIES})
+  pxcommon ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxcomputeoverlap
-  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
+  RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )
 

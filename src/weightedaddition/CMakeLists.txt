@@ -1,14 +1,14 @@
 # This project is intended to be built outside the Insight source tree
-PROJECT(weightedaddition)
+PROJECT( weightedaddition )
 
 # Find ITK.
 FIND_PACKAGE( ITK REQUIRED )
 INCLUDE( ${ITK_USE_FILE} )
 
-ADD_EXECUTABLE(pxweightedaddition weightedaddition.cxx)
+ADD_EXECUTABLE( pxweightedaddition weightedaddition.cxx )
 
-TARGET_LINK_LIBRARIES(pxweightedaddition pxcommon ${ITK_LIBRARIES})
+TARGET_LINK_LIBRARIES( pxweightedaddition pxcommon ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxweightedaddition
-  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
+  RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )
 

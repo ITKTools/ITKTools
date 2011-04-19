@@ -2,7 +2,7 @@
 
 # This script converts a 3D image to a stack of 2D images,
 # or actually to an animated gif.
-# This script depends on some praxix programs and on
+# This script depends on some ITKTools programs and on
 # the `convert' program of Image Magic.
 
 #############################################################################
@@ -18,7 +18,7 @@ then
   echo "This script converts a 3D image to a stack of 2D images,"
   echo "or actually to an animated gif."
   echo
-  echo "WARNING: This script depends on some praxix programs and on"
+  echo "WARNING: This script depends on some ITKTools programs and on"
   echo "the \"convert\" program of Image Magic."
   echo
   echo "WARNING: this script is not thread safe!"

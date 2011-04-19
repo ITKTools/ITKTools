@@ -1,14 +1,14 @@
 # This project is intended to be built outside the Insight source tree
-PROJECT(getimageinformation)
+PROJECT( getimageinformation )
 
 # Find ITK.
 FIND_PACKAGE( ITK REQUIRED )
 INCLUDE( ${ITK_USE_FILE} )
 
-ADD_EXECUTABLE(pxgetimageinformation getimageinformation.cxx)
+ADD_EXECUTABLE( pxgetimageinformation getimageinformation.cxx )
 
-TARGET_LINK_LIBRARIES(pxgetimageinformation pxcommon ${ITK_LIBRARIES})
+TARGET_LINK_LIBRARIES( pxgetimageinformation pxcommon ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxgetimageinformation
-  RUNTIME DESTINATION ${PRAXIX_INSTALL_DIR} )
+  RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )
 
