@@ -64,14 +64,18 @@ public:
     }
   }
   //itkGetConstReferenceMacro( RequestedLabels, LabelsType );
-  virtual const LabelsType & GetRequestedLabels( void ) const
+  virtual const LabelsType & GetRequestedLabels() const
   {
     return this->m_RequestedLabels;
   }
 
   /** Get the Dice overlaps, all of them. */
-  itkGetConstReferenceMacro( DiceOverlap, OverlapMapRealType );
-
+  //itkGetConstReferenceMacro( DiceOverlap, OverlapMapRealType );
+  virtual const OverlapMapRealType & GetDiceOverlap() const
+  {
+    return this->m_DiceOverlap;
+  }
+  
   /** Print the Dice overlaps, only the requested ones. */
   void PrintRequestedDiceOverlaps( void );
 

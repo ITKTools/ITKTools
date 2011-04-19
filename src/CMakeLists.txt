@@ -23,6 +23,7 @@ SUBDIRS(
  computeboundingbox
  computedifferenceimageBIG
  computemean
+ computeoverlap
  contrastenhanceimage
  countnonzerovoxels
  createbox
@@ -77,7 +78,7 @@ SUBDIRS(
 SET( COMPILE_PROBLEMS OFF CACHE BOOL "Compile things with problems." )
 if( COMPILE_PROBLEMS )
   SUBDIRS(
-  computeoverlap # operator<< problem (issue #5)
+  
   tileimages # "could not convert template argument" gcc4.6 bug
    )
 endif()
