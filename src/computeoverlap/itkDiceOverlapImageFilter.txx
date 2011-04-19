@@ -240,11 +240,5 @@ DiceOverlapImageFilter<TInputImage>
 
 } // end namespace itk
 
-template <typename T>
-std::ostream& operator<<(std::ostream& output, const std::set<T> &setobject)
-{
-  
-  return output;
-}
 
 #endif // end #ifndef _itkDiceOverlapImageFilter_txx

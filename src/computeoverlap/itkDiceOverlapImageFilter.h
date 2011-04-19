@@ -5,9 +5,7 @@
 #include <map>
 #include <set>
 
-template <typename T>
-std::ostream& operator<<(std::ostream& output, const std::set<T> &setobject);
- 
+
 namespace itk
 {
 
@@ -56,7 +54,15 @@ public:
   typedef std::set<InputPixelType>                          LabelsType;
 
   /** Set and get the user-requested labels for which the overlaps a. */
-  itkSetMacro( RequestedLabels, LabelsType );
+  //itkSetMacro( RequestedLabels, LabelsType );
+  virtual void SetRequestedLabels( const LabelsType & arg )
+  {
+    if ( this->m_RequestedLabels != arg )
+    {
+      this->m_RequestedLabels = arg;
+      this->Modified();
+    }
+  }
   itkGetConstReferenceMacro( RequestedLabels, LabelsType );
 
   /** Get the Dice overlaps, all of them. */
