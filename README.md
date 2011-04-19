@@ -2,6 +2,19 @@ ITK Tools
 ==========
 Practical command line tools based on the ITK. These tools are design to do take an input from the command line, perform a a single function, and produce an output.
 
+Historical note
+---------------
+
+This toolkit originates from the toolkit praxix, created by Marius Staring and Stefan Klein, which was hosted on Google Code using svn:
+
+  http://code.google.com/p/praxix/
+
+The name praxix is related to a Dutch warehouse selling tools, and also to the image processing sofware ImageExplorer (iX).
+
+The move to git under the name ITKTools was inspired by David Doria, who released the ITK_OneShot repository and sent a mail to the ITK mailing list.
+
+The tools are therefore still prefixed with '``'px'.
+
 Building
 --------
 - Create a 'bin' directory at the same level as the 'src' directory:
