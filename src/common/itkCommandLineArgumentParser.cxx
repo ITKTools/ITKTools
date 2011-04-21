@@ -6,200 +6,154 @@
 namespace itk
 {
 
-  /**
-   * ******************* SetCommandLineArguments *******************
-   */
+/**
+ * ******************* Constructor *******************
+ */
 
-  void CommandLineArgumentParser::
-    SetCommandLineArguments( int argc, char **argv )
+CommandLineArgumentParser
+::CommandLineArgumentParser()
+{
+  this->m_Argv.clear();
+  this->m_ArgumentMap.clear();
+
+} // end Constructor
+
+
+/**
+ * ******************* SetCommandLineArguments *******************
+ */
+
+void
+CommandLineArgumentParser
+::SetCommandLineArguments( int argc, char **argv )
+{
+  this->m_Argv.resize( argc );
+  for ( IndexType i = 0; i < static_cast<IndexType>( argc ); i++ )
   {
-    m_argv.resize( argc );
-    for ( IndexType i = 0; i < static_cast<IndexType>( argc ); i++ )
+    this->m_Argv[ i ] = argv [ i ];
+  }
+  this->CreateArgumentMap();
+
+} // end SetCommandLineArguments()
+
+
+/**
+ * ******************* CreateArgumentMap *******************
+ */
+
+void
+CommandLineArgumentParser
+::CreateArgumentMap( void )
+{
+  for ( IndexType i = 1; i < this->m_Argv.size(); ++i )
+  {
+    if ( this->m_Argv[ i ].substr( 0, 1 ) == "-" )
     {
-      m_argv[ i ] = argv [ i ];
+      /** All key entries are removed, the latest is stored. */
+      this->m_ArgumentMap.erase( this->m_Argv[ i ] );
+      this->m_ArgumentMap.insert( EntryType( this->m_Argv[ i ], i ) );
     }
-    this->CreateArgumentMap();
-  } // end SetCommandLineArguments()
+  }
+} // end CreateArgumentMap()
 
 
-  /**
-   * ******************* CreateArgumentMap *******************
-   */
+/**
+ * ******************* ArgumentExists *******************
+ */
 
-  void CommandLineArgumentParser::CreateArgumentMap( void )
+bool
+CommandLineArgumentParser
+::ArgumentExists( const std::string & key ) const
+{
+  if ( this->m_ArgumentMap.count( key ) == 0 )
   {
-    for ( IndexType i = 1; i < m_argv.size(); ++i )
+    return false;
+  }
+  return true;
+
+} // end ArgumentExists()
+
+
+/**
+ * ******************* FindKey *******************
+ */
+
+bool
+CommandLineArgumentParser
+::FindKey( const std::string & key,
+  IndexType & keyIndex, IndexType & nextKeyIndex ) const
+{
+  /** Loop once over the arguments, to get the index of the key,
+   * and that of the next key.
+   */
+  bool keyFound = false;
+  keyIndex = 0;
+  nextKeyIndex = this->m_Argv.size();
+  for ( IndexType i = 0; i < this->m_Argv.size(); i++ )
+  {
+    if ( !keyFound && this->m_Argv[ i ] == key )
     {
-      if ( m_argv[ i ].substr( 0, 1 ) == "-" )
+      keyFound = true;
+      keyIndex = i;
+      continue;
+    }
+    if ( keyFound && this->m_Argv[ i ].substr(0,1) == "-" )
+    {
+      if ( !this->IsANumber( this->m_Argv[ i ] ) )
       {
-        /** All key entries are removed, the latest is stored. */
-        this->m_ArgumentMap.erase( m_argv[ i ] );
-        this->m_ArgumentMap.insert( EntryType( m_argv[ i ], i ) );
+        nextKeyIndex = i;
+        break;
       }
     }
-  } // end CreateArgumentMap()
+  } // end for loop
+
+  /** Check if the key was found and if the next argument is not also a key. */
+  if ( !keyFound ) return false;
+  if ( nextKeyIndex - keyIndex == 1 ) return false;
+
+  return true;
+
+} // end FindKey()
 
 
-  /**
-   * ******************* ArgumentExists *******************
-   */
+/**
+ * ******************* IsANumber *******************
+ *
+ * Checks if something starting with a "-" is a key or a negative number.
+ */
 
-  bool CommandLineArgumentParser::ArgumentExists( std::string key )
+bool CommandLineArgumentParser::
+IsANumber( const std::string & arg ) const
+{
+  std::string number = "0123456789";
+  static const std::basic_string<char>::size_type npos = std::basic_string<char>::npos;
+  if ( arg.size() > 1 )
   {
-    if ( this->m_ArgumentMap.count( key ) == 0 )
+    if ( npos != number.find( arg.substr( 1, 1 ) ) )
     {
-      return false;
+      return true;
     }
-    return true;
-  } // end ArgumentExists()
-
-
-  /**
-   * ******************* FindKey *******************
-   */
-
-  bool CommandLineArgumentParser::
-    FindKey( const std::string & key, IndexType & keyIndex, IndexType & nextKeyIndex )
-    {
-    /** Loop once over the arguments, to get the index of the key,
-     * and that of the next key. */
-    bool keyFound = false;
-    keyIndex = 0;
-    nextKeyIndex = m_argv.size();
-    for ( IndexType i = 0; i < m_argv.size(); i++ )
-    {
-      if ( !keyFound && m_argv[ i ] == key )
-      {
-        keyFound = true;
-        keyIndex = i;
-        continue;
-      }
-      if ( keyFound && m_argv[ i ].substr(0,1) == "-" )
-      {
-        if ( !this->IsANumber( m_argv[ i ] ) )
-        {
-          nextKeyIndex = i;
-          break;
-        }
-      }
-    } // end for loop
-
-    /** Check if the key was found and if the next argument is not also a key. */
-    if ( !keyFound ) return false;
-    if ( nextKeyIndex - keyIndex == 1 ) return false;
-
-    return true;
-
-  } // end FindKey()
-
-  /**
-   * ******************* IsANumber *******************
-   *
-   * Checks if something starting with a "-" is a key or a negative number.
-   */
-
-  bool CommandLineArgumentParser::
-    IsANumber( const std::string & arg )
-    {
-      std::string number = "0123456789";
-      static const std::basic_string<char>::size_type npos = std::basic_string<char>::npos;
-      if ( arg.size() > 1 )
-      {
-        if ( npos != number.find( arg.substr( 1, 1 ) ) )
-        {
-          return true;
-        }
-      }
-
-      return false;
-    } // end IsANumber()
-
-  /**
-   * ******************* GetCommandLineArgument *******************
-   *
-   * Different specializations for String types.
-   */
-
-  bool CommandLineArgumentParser::
-    GetCommandLineArgument( const std::string & key, std::vector<std::string> & arg )
-  {
-    return this->GetCommandLineArgumentString( key, arg );
-  } // end GetCommandLineArgument()
-
-
-  /**
-   * ******************* GetCommandLineArgument *******************
-   *
-   * Different specialisations for Integer types.
-   */
-
-  bool CommandLineArgumentParser::
-    GetCommandLineArgument( const std::string & key, std::vector<char> & arg )
-  {
-    return this->GetCommandLineArgumentInteger( key, arg );
   }
 
-  bool CommandLineArgumentParser::
-    GetCommandLineArgument( const std::string & key, std::vector<unsigned char> & arg )
-  {
-    return this->GetCommandLineArgumentInteger( key, arg );
-  }
+  return false;
 
-  bool CommandLineArgumentParser::
-    GetCommandLineArgument( const std::string & key, std::vector<int> & arg )
-  {
-    return this->GetCommandLineArgumentInteger( key, arg );
-  }
-
-  bool CommandLineArgumentParser::
-    GetCommandLineArgument( const std::string & key, std::vector<unsigned int> & arg )
-  {
-    return this->GetCommandLineArgumentInteger( key, arg );
-  }
-
-  bool CommandLineArgumentParser::
-    GetCommandLineArgument( const std::string & key, std::vector<short> & arg )
-  {
-    return this->GetCommandLineArgumentInteger( key, arg );
-  }
-
-  bool CommandLineArgumentParser::
-    GetCommandLineArgument( const std::string & key, std::vector<unsigned short> & arg )
-  {
-    return this->GetCommandLineArgumentInteger( key, arg );
-  }
-
-  bool CommandLineArgumentParser::
-    GetCommandLineArgument( const std::string & key, std::vector<long> & arg )
-  {
-    return this->GetCommandLineArgumentInteger( key, arg );
-  }
-
-  bool CommandLineArgumentParser::
-    GetCommandLineArgument( const std::string & key, std::vector<unsigned long> & arg )
-  {
-    return this->GetCommandLineArgumentInteger( key, arg );
-  }
+} // end IsANumber()
 
 
-  /**
-   * ******************* GetCommandLineArgument *******************
-   *
-   * Different specialisations for Real types.
-   */
+/**
+ * **************** StringCast ***************
+ */
 
-  bool CommandLineArgumentParser::
-    GetCommandLineArgument( const std::string & key, std::vector<float> & arg )
-  {
-    return this->GetCommandLineArgumentReal( key, arg );
-  }
+bool
+CommandLineArgumentParser
+::StringCast( const std::string & parameterValue, std::string & casted ) const
+{
+  casted = parameterValue;
+  return true;
 
-  bool CommandLineArgumentParser::
-    GetCommandLineArgument( const std::string & key, std::vector<double> & arg )
-  {
-    return this->GetCommandLineArgumentReal( key, arg );
-  }
+} // end StringCast()
 
-} // end name space itk
+
+} // end namespace itk
 
 #endif // end #ifndef __itkCommandLineArgumentParser_h
