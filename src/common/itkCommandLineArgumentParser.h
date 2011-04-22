@@ -77,6 +77,17 @@ public:
   /** Set the command line arguments in a vector of strings. */
   void SetCommandLineArguments( int argc, char **argv );
 
+  /** Set the minimum allowed number of command line arguments. */
+  itkSetMacro(MinimumArguments, unsigned int);
+  itkGetMacro(MinimumArguments, unsigned int);
+  
+  /** Set the maximum allowed number of command line arguments. */
+  itkSetMacro(MaximumArguments, unsigned int);
+  itkGetMacro(MaximumArguments, unsigned int);
+  
+  /** Ensure the number of arguments is legal. */
+  bool CheckNumberOfArguments(std::string helpString) const;
+  
   /** Map to store the arguments and their indices. */
   typedef std::size_t                           IndexType;
   typedef std::map< std::string, IndexType >    ArgumentMapType;
@@ -213,7 +224,13 @@ protected:
 
   /** A map to store the arguments and their indices. */
   ArgumentMapType m_ArgumentMap;
-
+  
+  /** The fewest number of arguments a program is allowed to have. */
+  unsigned int m_MinimumArguments;
+  
+  /** The largest arguments a program is allowed to have. */
+  unsigned int m_MaximumArguments;
+  
 private:
   CommandLineArgumentParser( const Self & ); // purposely not implemented
   void operator=( const Self & );            // purposely not implemented
