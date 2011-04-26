@@ -34,8 +34,8 @@ int main( int argc, char **argv )
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
 
-  parser->SetMinimumArguments(2);
-  parser->SetMinimumArguments(6);
+  parser->SetMinimumNumberOfArguments(2);
+  parser->SetMinimumNumberOfArguments(6);
   bool validNumberOfArguments = parser->CheckNumberOfArguments(PrintHelp());
   
   if(!validNumberOfArguments)

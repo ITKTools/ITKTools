@@ -154,17 +154,17 @@ CommandLineArgumentParser
 } // end StringCast()
 
 /**
- * **************** StringCast ***************
+ * **************** CheckNumberOfArguments ***************
  */
 
 bool
 CommandLineArgumentParser
-::CheckNumberOfArguments(std::string helpString) const
+::CheckNumberOfArguments(const std::string & helpString) const
 {
   // This function returns false if the number of arguments is not valid.
   // It returns true if the number of arguments is valid.
-  if(this->m_Argv.size() < this->m_MinimumArguments ||
-     this->m_Argv.size() > this->m_MaximumArguments)
+  if(this->m_Argv.size() < this->m_MinimumNumberOfArguments ||
+     this->m_Argv.size() > this->m_MaximumNumberOfArguments)
   {
     std::cerr << helpString << std::endl;
     return false;
