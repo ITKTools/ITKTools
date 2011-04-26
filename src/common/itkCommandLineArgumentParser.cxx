@@ -3,6 +3,8 @@
 
 #include "itkCommandLineArgumentParser.h"
 
+#include <limits>
+
 namespace itk
 {
 
@@ -15,7 +17,8 @@ CommandLineArgumentParser
 {
   this->m_Argv.clear();
   this->m_ArgumentMap.clear();
-
+  this->m_MinimumNumberOfArguments = 0;
+  this->m_MaximumNumberOfArguments = std::numeric_limits<unsigned int>::max();
 } // end Constructor
 
 
@@ -180,6 +183,9 @@ CommandLineArgumentParser
   if(this->m_Argv.size() < this->m_MinimumNumberOfArguments ||
      this->m_Argv.size() > this->m_MaximumNumberOfArguments)
   {
+    std::cerr << "The number of arguments specified is " << this->m_Argv.size() - 1
+              << " but must be between " << this->m_MinimumNumberOfArguments
+              << " and " << this->m_MaximumNumberOfArguments << std::endl;
     std::cerr << helpString << std::endl;
     return false;
   }
@@ -196,15 +202,20 @@ bool
 CommandLineArgumentParser
 ::CheckForRequiredArguments() const
 {
+  // Loop through all required arguments. Check them all even if one fails.
+
+  bool allRequiredArgumentsSpecified = true;
+
   for(unsigned int i = 0; i < m_RequiredArguments.size(); i++)
     {
     if(!ArgumentExists(m_RequiredArguments[i].first))
       {
-      std::cout << "Argument " << m_RequiredArguments[i].first << " is required but not specified." << std::endl;
-      return false;
+      std::cout << "Argument " << m_RequiredArguments[i].first << " is required but not specified." << std::endl
+                << "This argument is: " << m_RequiredArguments[i].second << std::endl;
+      allRequiredArgumentsSpecified = false;
       }
     }
-  return true;
+  return allRequiredArgumentsSpecified;
 } // end CheckNumberOfArguments()
 
 /**
