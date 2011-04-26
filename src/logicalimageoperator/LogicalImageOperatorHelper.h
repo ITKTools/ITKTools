@@ -7,7 +7,7 @@
 #include "itkLogicalFunctors.h"
 #include "itkUnaryFunctorImageFilter.h"
 #include "itkVectorImage.h"
-#include "itkVectorImageToImageAdaptor.h"
+#include "itkVectorIndexSelectionCastImageFilter.h"
 
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
@@ -43,7 +43,7 @@ if ( ComponentType == #type && Dimension == dim ) \
  */
 #define InstantiateUnaryLogicalFilter( name ) \
 typedef itk::UnaryFunctorImageFilter< \
-  ComponentAdaptorType, ComponentAdaptorType, \
+  ScalarImageType, ScalarImageType, \
   itk::Functor::localName##name<ScalarPixelType> >  name##FilterType; \
 if ( logicalOperatorName == #name ) \
 { \
@@ -54,7 +54,7 @@ if ( logicalOperatorName == #name ) \
 
 #define InstantiateBinaryLogicalFilter( name ) \
 typedef itk::BinaryFunctorImageFilter< \
-  ComponentAdaptorType, ComponentAdaptorType, ComponentAdaptorType, \
+  ScalarImageType, ScalarImageType, ScalarImageType, \
   itk::Functor::localName##name<ScalarPixelType> >  name##FilterType; \
 if ( logicalOperatorName == #name ) \
 { \
@@ -80,10 +80,10 @@ void LogicalImageOperator(
   typedef typename InputImageType::InternalPixelType          ScalarPixelType;
   typedef itk::Image<ScalarPixelType, InputImageType::ImageDimension> ScalarImageType;
   typedef itk::ImageToImageFilter<
-    InputImageType, InputImageType >                  BaseFilterType;
+    ScalarImageType, ScalarImageType>                  BaseFilterType;
   /** \todo: write a real dummy filter which does really nothing */
   typedef itk::CastImageFilter<
-    InputImageType,InputImageType >                   DummyFilterType;
+    ScalarImageType,ScalarImageType >                   DummyFilterType;
   typedef itk::ImageFileReader< InputImageType >      ReaderType;
   typedef itk::ImageFileWriter< InputImageType >      WriterType;
 
@@ -201,7 +201,7 @@ void LogicalImageOperator(
     logicalFilter = (DummyFilterType::New()).GetPointer();
   }
 
-  typedef itk::VectorImageToImageAdaptor<ScalarPixelType, InputImageType::ImageDimension> ComponentAdaptorType;
+  typedef itk::VectorIndexSelectionCastImageFilter<InputImageType, ScalarImageType> ComponentExtractionType;
   
   InstantiateUnaryLogicalFilter( EQUAL );
   InstantiateUnaryLogicalFilter( NOT );
@@ -227,26 +227,32 @@ void LogicalImageOperator(
     
   for(unsigned int component = 0; component < reader1->GetOutput()->GetNumberOfComponentsPerPixel(); component++)
   {
-    typename ComponentAdaptorType::Pointer componentAdaptor1 = ComponentAdaptorType::New();
-    componentAdaptor1->SetExtractComponentIndex(component);
-    componentAdaptor1->SetImage(reader1->GetOutput());
+    typename ComponentExtractionType::Pointer componentExtractor1 = ComponentExtractionType::New();
+    componentExtractor1->SetIndex(component);
+    componentExtractor1->SetInput(reader1->GetOutput());
+    componentExtractor1->Update();
     
-    typename ComponentAdaptorType::Pointer componentAdaptor2 = ComponentAdaptorType::New();
-    componentAdaptor2->SetExtractComponentIndex(component);
-    componentAdaptor2->SetImage(reader2->GetOutput());
+    typename ComponentExtractionType::Pointer componentExtractor2 = ComponentExtractionType::New();
+    if ( reader2.IsNotNull() )
+      {
+      componentExtractor2->SetIndex(component);
+      componentExtractor2->SetInput(reader2->GetOutput());
+      componentExtractor2->Update();
+      }
 
     if ( swapArguments )
     {
       /** swap the input files */
-      logicalFilter->SetInput( 1, componentAdaptor1 );
-      logicalFilter->SetInput( 0, componentAdaptor2 );
+      // Is this safe? It seems like this only makes sense if reader2 is specified.
+      logicalFilter->SetInput( 1, componentExtractor1->GetOutput() );
+      logicalFilter->SetInput( 0, componentExtractor2->GetOutput() );
     }
     else
     {
-      logicalFilter->SetInput( 0, componentAdaptor1 );
+      logicalFilter->SetInput( 0, componentExtractor1->GetOutput() );
       if ( reader2.IsNotNull() )
       {
-        logicalFilter->SetInput( 1, componentAdaptor2 );
+        logicalFilter->SetInput( 1, componentExtractor2->GetOutput() );
       }
     }
     logicalFilter->Update();

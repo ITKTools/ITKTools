@@ -93,13 +93,6 @@ int main( int argc, char **argv )
     std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
   }
 
-  if ( NumberOfComponents > 1 )
-  {
-    std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
-    std::cerr << "Vector images are not supported!" << std::endl;
-    return 1;
-  }
-
   /** Get rid of the possible "_" in ComponentType. */
   ReplaceUnderscoreWithSpace( ComponentType );
 
