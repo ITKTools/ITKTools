@@ -1,5 +1,5 @@
 # This project is intended to be built outside the Insight source tree
-PROJECT( imagetovectorimage )
+PROJECT( imagestovectorimage )
 
 # Increases address capacity
 IF ( WIN32 )
@@ -11,10 +11,10 @@ ENDIF ( WIN32 )
 FIND_PACKAGE( ITK REQUIRED )
 INCLUDE( ${ITK_USE_FILE} )
 
-ADD_EXECUTABLE( pximagetovectorimage imagetovectorimage.cxx )
+ADD_EXECUTABLE( pximagestovectorimage imagestovectorimage.cxx )
 
-TARGET_LINK_LIBRARIES( pximagetovectorimage ITKTools-Common ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pximagestovectorimage ITKTools-Common ${ITK_LIBRARIES} )
 
-INSTALL( TARGETS pximagetovectorimage
+INSTALL( TARGETS pximagestovectorimage
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )
 
