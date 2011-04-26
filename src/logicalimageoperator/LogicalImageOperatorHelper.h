@@ -1,10 +1,13 @@
 #ifndef __LogicalImageOperatorHelper_h
 #define __LogicalImageOperatorHelper_h
 
-#include "itkLogicalFunctors.h"
-#include "itkUnaryFunctorImageFilter.h"
 #include "itkBinaryFunctorImageFilter.h"
 #include "itkCastImageFilter.h"
+#include "itkImageToVectorImageFilter.h"
+#include "itkLogicalFunctors.h"
+#include "itkUnaryFunctorImageFilter.h"
+#include "itkVectorImage.h"
+#include "itkVectorImageToImageAdaptor.h"
 
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
@@ -21,7 +24,7 @@
 #define run( function, type, dim ) \
 if ( ComponentType == #type && Dimension == dim ) \
 { \
-  typedef itk::Image< type, dim > InputImageType; \
+  typedef itk::VectorImage< type, dim > InputImageType; \
   function< InputImageType >( inputFileName1, inputFileName2, outputFileName, ops, useCompression, argument ); \
   supported = true; \
 }
@@ -40,19 +43,19 @@ if ( ComponentType == #type && Dimension == dim ) \
  */
 #define InstantiateUnaryLogicalFilter( name ) \
 typedef itk::UnaryFunctorImageFilter< \
-  InputImageType, InputImageType, \
-  itk::Functor::localName##name<InputPixelType> >  name##FilterType; \
+  ComponentAdaptorType, ComponentAdaptorType, \
+  itk::Functor::localName##name<ScalarPixelType> >  name##FilterType; \
 if ( logicalOperatorName == #name ) \
 { \
   typename name##FilterType::Pointer tempLogicalFilter = name##FilterType::New(); \
-  tempLogicalFilter->GetFunctor().SetArgument( static_cast<InputPixelType>( argument ) ); \
+  tempLogicalFilter->GetFunctor().SetArgument( static_cast<ScalarPixelType>( argument ) ); \
   logicalFilter = tempLogicalFilter.GetPointer(); \
 }
 
 #define InstantiateBinaryLogicalFilter( name ) \
 typedef itk::BinaryFunctorImageFilter< \
-  InputImageType, InputImageType, InputImageType, \
-  itk::Functor::localName##name<InputPixelType> >  name##FilterType; \
+  ComponentAdaptorType, ComponentAdaptorType, ComponentAdaptorType, \
+  itk::Functor::localName##name<ScalarPixelType> >  name##FilterType; \
 if ( logicalOperatorName == #name ) \
 { \
   logicalFilter = ( name##FilterType::New() ).GetPointer(); \
@@ -69,11 +72,13 @@ void LogicalImageOperator(
   const std::string & inputFileName2,
   const std::string & outputFileName,
   const std::string & ops,
-	const bool useCompression,
+  const bool useCompression,
   const double & argument )
 {
   /** Typedefs. */
-  typedef typename InputImageType::PixelType          InputPixelType;
+  typedef typename InputImageType::PixelType                  InputPixelType;
+  typedef typename InputImageType::InternalPixelType          ScalarPixelType;
+  typedef itk::Image<ScalarPixelType, InputImageType::ImageDimension> ScalarImageType;
   typedef itk::ImageToImageFilter<
     InputImageType, InputImageType >                  BaseFilterType;
   /** \todo: write a real dummy filter which does really nothing */
@@ -196,6 +201,8 @@ void LogicalImageOperator(
     logicalFilter = (DummyFilterType::New()).GetPointer();
   }
 
+  typedef itk::VectorImageToImageAdaptor<ScalarPixelType, InputImageType::ImageDimension> ComponentAdaptorType;
+  
   InstantiateUnaryLogicalFilter( EQUAL );
   InstantiateUnaryLogicalFilter( NOT );
 
@@ -208,33 +215,50 @@ void LogicalImageOperator(
   InstantiateBinaryLogicalFilter( ANDNOT );
   InstantiateBinaryLogicalFilter( ORNOT );
 
-  if ( swapArguments )
-  {
-    /** swap the input files */
-    logicalFilter->SetInput( 1, reader1->GetOutput() );
-    logicalFilter->SetInput( 0, reader2->GetOutput() );
-  }
-  else
-  {
-    logicalFilter->SetInput( 0, reader1->GetOutput() );
-    if ( reader2.IsNotNull() )
-    {
-      logicalFilter->SetInput( 1, reader2->GetOutput() );
-    }
-  }
-
+  // Create the filter which will assemble the component into the output image
+  typedef itk::ImageToVectorImageFilter<ScalarImageType> ImageToVectorImageFilterType;
+  typename ImageToVectorImageFilterType::Pointer imageToVectorImageFilter = ImageToVectorImageFilterType::New();
+  
   std::cout
     << "Performing logical operation, "
     << logicalOperatorName
     << ", on input image(s)..."
     << std::endl;
-  logicalFilter->Update();
+    
+  for(unsigned int component = 0; component < reader1->GetOutput()->GetNumberOfComponentsPerPixel(); component++)
+  {
+    typename ComponentAdaptorType::Pointer componentAdaptor1 = ComponentAdaptorType::New();
+    componentAdaptor1->SetExtractComponentIndex(component);
+    componentAdaptor1->SetImage(reader1->GetOutput());
+    
+    typename ComponentAdaptorType::Pointer componentAdaptor2 = ComponentAdaptorType::New();
+    componentAdaptor2->SetExtractComponentIndex(component);
+    componentAdaptor2->SetImage(reader2->GetOutput());
+
+    if ( swapArguments )
+    {
+      /** swap the input files */
+      logicalFilter->SetInput( 1, componentAdaptor1 );
+      logicalFilter->SetInput( 0, componentAdaptor2 );
+    }
+    else
+    {
+      logicalFilter->SetInput( 0, componentAdaptor1 );
+      if ( reader2.IsNotNull() )
+      {
+        logicalFilter->SetInput( 1, componentAdaptor2 );
+      }
+    }
+    logicalFilter->Update();
+    imageToVectorImageFilter->SetNthInput(component, logicalFilter->GetOutput());
+  }//end component loop
+
   std::cout << "Done performing logical operation." << std::endl;
 
   /** Write the image to disk */
   writer->SetFileName( outputFileName.c_str() );
-  writer->SetInput( logicalFilter->GetOutput() );
-	writer->SetUseCompression( useCompression );
+  writer->SetInput( imageToVectorImageFilter->GetOutput() );
+  writer->SetUseCompression( useCompression );
   std::cout << "Writing output to disk as: " << outputFileName << std::endl;
   writer->Update();
   std::cout << "Done writing output to disk." << std::endl;
