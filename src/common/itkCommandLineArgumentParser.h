@@ -84,9 +84,15 @@ public:
   /** Set the maximum allowed number of command line arguments. */
   itkSetMacro(MaximumNumberOfArguments, unsigned int);
   itkGetMacro(MaximumNumberOfArguments, unsigned int);
-  
+
+  /** Ensure the number of arguments is legal and reqired arguments have been passed. */
+  bool ValidateArguments(const std::string & helpString) const;
+
   /** Ensure the number of arguments is legal. */
   bool CheckNumberOfArguments(const std::string & helpString) const;
+  
+  /** Ensure that all required arguments have been passed. */
+  bool CheckForRequiredArguments() const;
   
   /** Map to store the arguments and their indices. */
   typedef std::size_t                           IndexType;
@@ -98,6 +104,9 @@ public:
 
   /** Function that checks if an argument is given. */
   bool ArgumentExists( const std::string & key ) const;
+
+  /** Mark an argument as required. */
+  void MarkArgumentAsRequired(const std::string & argument, const std::string & helpText);
 
   /** Get command line argument if arg is a vector type. */
   template <class T>
@@ -174,7 +183,10 @@ public:
 
   }; // end GetCommandLineArgument()
 
-  /** Get command line argument if arg is not a vector type. */
+  /** Get command line argument if arg is not a vector type. 
+    * We do this by creating a 1D vector, using the GetCommandLineArgument
+    * for vector types, and then returning the first element.
+    */
   template <class T>
     bool GetCommandLineArgument( const std::string & key, T & arg )
   {
@@ -222,7 +234,9 @@ protected:
   /** A vector of strings to store the command line arguments. */
   std::vector<std::string> m_Argv;
 
-  /** A map to store the arguments and their indices. */
+  /** A map to store the arguments and their indices. The arguments are stored
+    * INCLUDING the leading dash. I.e. an example pair is ("-test", 2)
+    */
   ArgumentMapType m_ArgumentMap;
   
   /** The fewest number of arguments a program is allowed to have. */
@@ -230,7 +244,10 @@ protected:
   
   /** The largest arguments a program is allowed to have. */
   unsigned int m_MaximumNumberOfArguments;
-  
+
+  /** The list of required arguments. They are stored with an accompanying help text string. */
+  std::vector<std::pair<std::string, std::string> > m_RequiredArguments;
+
 private:
   CommandLineArgumentParser( const Self & ); // purposely not implemented
   void operator=( const Self & );            // purposely not implemented

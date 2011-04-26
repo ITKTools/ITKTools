@@ -36,13 +36,14 @@ int main( int argc, char **argv )
 
   parser->SetMinimumNumberOfArguments(2);
   parser->SetMinimumNumberOfArguments(6);
-  bool validNumberOfArguments = parser->CheckNumberOfArguments(PrintHelp());
-  
-  if(!validNumberOfArguments)
+  parser->MarkArgumentAsRequired( "-in", "inputFileName" );
+  bool validateArguments = parser->ValidateArguments(PrintHelp());
+
+  if(!validateArguments)
   {
     return EXIT_FAILURE;
   }
-  
+
   /** Get arguments. */
   std::string inputFileName = "";
   bool retin = parser->GetCommandLineArgument( "-in", inputFileName );

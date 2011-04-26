@@ -154,6 +154,20 @@ CommandLineArgumentParser
 } // end StringCast()
 
 /**
+ * **************** MarkArgumentAsRequired ***************
+ */
+
+void
+CommandLineArgumentParser
+::MarkArgumentAsRequired(const std::string & argument, const std::string & helpText)
+{
+  std::pair<std::string, std::string> requiredArgument;
+  requiredArgument.first = argument;
+  requiredArgument.second = helpText;
+  m_RequiredArguments.push_back(requiredArgument);
+} // end MarkArgumentAsRequired()
+
+/**
  * **************** CheckNumberOfArguments ***************
  */
 
@@ -173,6 +187,37 @@ CommandLineArgumentParser
 
 } // end CheckNumberOfArguments()
 
+
+/**
+ * **************** CheckNumberOfArguments ***************
+ */
+
+bool
+CommandLineArgumentParser
+::CheckForRequiredArguments() const
+{
+  for(unsigned int i = 0; i < m_RequiredArguments.size(); i++)
+    {
+    if(!ArgumentExists(m_RequiredArguments[i].first))
+      {
+      std::cout << "Argument " << m_RequiredArguments[i].first << " is required but not specified." << std::endl;
+      return false;
+      }
+    }
+  return true;
+} // end CheckNumberOfArguments()
+
+/**
+ * **************** ValidateArguments ***************
+ */
+
+bool
+CommandLineArgumentParser
+::ValidateArguments(const std::string & helpString) const
+{
+  return CheckNumberOfArguments(helpString) && CheckForRequiredArguments();
+
+} // end ValidateArguments()
 
 } // end namespace itk
 
