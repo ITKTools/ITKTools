@@ -17,6 +17,7 @@ CommandLineArgumentParser
 {
   this->m_Argv.clear();
   this->m_ArgumentMap.clear();
+  this->m_ProgramHelpText = "No help text provided.";
 } // end Constructor
 
 
