@@ -33,11 +33,9 @@ int main( int argc, char **argv )
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-
-  parser->SetMinimumNumberOfArguments(1);
-  parser->SetMaximumNumberOfArguments(3);
+  parser->SetProgramHelpText(PrintHelp());
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
-  bool validateArguments = parser->ValidateArguments(PrintHelp());
+  bool validateArguments = parser->CheckForRequiredArguments();
 
   if(!validateArguments)
   {

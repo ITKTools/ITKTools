@@ -17,8 +17,6 @@ CommandLineArgumentParser
 {
   this->m_Argv.clear();
   this->m_ArgumentMap.clear();
-  this->m_MinimumNumberOfArguments = 0;
-  this->m_MaximumNumberOfArguments = std::numeric_limits<unsigned int>::max();
 } // end Constructor
 
 
@@ -171,37 +169,27 @@ CommandLineArgumentParser
 } // end MarkArgumentAsRequired()
 
 /**
- * **************** CheckNumberOfArguments ***************
- */
-
-bool
-CommandLineArgumentParser
-::CheckNumberOfArguments(const std::string & helpString) const
-{
-  // This function returns false if the number of arguments is not valid.
-  // It returns true if the number of arguments is valid.
-  if(this->m_Argv.size() < this->m_MinimumNumberOfArguments ||
-     this->m_Argv.size() > this->m_MaximumNumberOfArguments)
-  {
-    std::cerr << "The number of arguments specified is " << this->m_Argv.size() - 1
-              << " but must be between " << this->m_MinimumNumberOfArguments
-              << " and " << this->m_MaximumNumberOfArguments << std::endl;
-    std::cerr << helpString << std::endl;
-    return false;
-  }
-  return true;
-
-} // end CheckNumberOfArguments()
-
-
-/**
- * **************** CheckNumberOfArguments ***************
+ * **************** CheckForRequiredArguments ***************
  */
 
 bool
 CommandLineArgumentParser
 ::CheckForRequiredArguments() const
 {
+  // If no arguments were specified at all, display the help text.
+  if(m_Argv.size() == 1)
+    {
+    std::cerr << m_ProgramHelpText << std::endl;
+    return false;
+    }
+    
+  // Display the help text if the user asked for it.
+  if(ArgumentExists("--help"))
+    {
+    std::cerr << m_ProgramHelpText << std::endl;
+    return false;
+    }
+
   // Loop through all required arguments. Check them all even if one fails.
 
   bool allRequiredArgumentsSpecified = true;
@@ -216,19 +204,7 @@ CommandLineArgumentParser
       }
     }
   return allRequiredArgumentsSpecified;
-} // end CheckNumberOfArguments()
-
-/**
- * **************** ValidateArguments ***************
- */
-
-bool
-CommandLineArgumentParser
-::ValidateArguments(const std::string & helpString) const
-{
-  return CheckNumberOfArguments(helpString) && CheckForRequiredArguments();
-
-} // end ValidateArguments()
+} // end CheckForRequiredArguments()
 
 } // end namespace itk
 

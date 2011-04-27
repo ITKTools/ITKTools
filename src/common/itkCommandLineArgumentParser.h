@@ -76,20 +76,6 @@ public:
 
   /** Set the command line arguments in a vector of strings. */
   void SetCommandLineArguments( int argc, char **argv );
-
-  /** Set the minimum allowed number of command line arguments. */
-  itkSetMacro(MinimumNumberOfArguments, unsigned int);
-  itkGetMacro(MinimumNumberOfArguments, unsigned int);
-  
-  /** Set the maximum allowed number of command line arguments. */
-  itkSetMacro(MaximumNumberOfArguments, unsigned int);
-  itkGetMacro(MaximumNumberOfArguments, unsigned int);
-
-  /** Ensure the number of arguments is legal and reqired arguments have been passed. */
-  bool ValidateArguments(const std::string & helpString) const;
-
-  /** Ensure the number of arguments is legal. */
-  bool CheckNumberOfArguments(const std::string & helpString) const;
   
   /** Ensure that all required arguments have been passed. */
   bool CheckForRequiredArguments() const;
@@ -107,6 +93,9 @@ public:
 
   /** Mark an argument as required. */
   void MarkArgumentAsRequired(const std::string & argument, const std::string & helpText);
+
+  itkSetMacro( ProgramHelpText, std::string);
+  itkGetMacro( ProgramHelpText, std::string);
 
   /** Get command line argument if arg is a vector type. */
   template <class T>
@@ -238,15 +227,11 @@ protected:
     * INCLUDING the leading dash. I.e. an example pair is ("-test", 2)
     */
   ArgumentMapType m_ArgumentMap;
-  
-  /** The fewest number of arguments a program is allowed to have. */
-  unsigned int m_MinimumNumberOfArguments;
-  
-  /** The largest arguments a program is allowed to have. */
-  unsigned int m_MaximumNumberOfArguments;
 
   /** The list of required arguments. They are stored with an accompanying help text string. */
   std::vector<std::pair<std::string, std::string> > m_RequiredArguments;
+
+  std::string m_ProgramHelpText;
 
 private:
   CommandLineArgumentParser( const Self & ); // purposely not implemented
