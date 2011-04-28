@@ -107,19 +107,29 @@ int main( int argc, char** argv )
 {
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  
+  parser->SetProgramHelpText(PrintUsageString());
+
   std::string inputFileName("");
   std::string outputFileName(inputFileName + "AverageVectorMagnitude.mhd");
   std::string imageDimension("");
   std::string spaceDimension("");
-  parser->SetProgramHelpText(PrintUsageString());
-  
+
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
   parser->MarkArgumentAsRequired( "-id", "Image dimension." );
   parser->MarkArgumentAsRequired( "-sd", "Space dimension." );
 
   parser->GetCommandLineArgument( "-in", inputFileName );
-  
+  parser->GetCommandLineArgument( "-out", outputFileName );
+  parser->GetCommandLineArgument( "-sd", spaceDimension );
+  parser->GetCommandLineArgument( "-id", imageDimension );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
+
   float averageVectorMagnitude = 0.0f;
   if (imageDimension.compare("2") == 0)
   {
