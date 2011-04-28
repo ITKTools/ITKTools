@@ -32,31 +32,27 @@ void InvertIntensity(
   const std::string & outputFileName );
 
 /** Declare PrintHelp. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char ** argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 3 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
 
   /** Get arguments. */
   std::string inputFileName = "";
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
+  parser->GetCommandLineArgument( "-in", inputFileName );
 
   std::string outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
   outputFileName += "INVERTED.mhd";
@@ -181,13 +177,16 @@ void InvertIntensity( const std::string & inputFileName,
  * ******************* PrintHelp *******************
  */
 
-void PrintHelp( void )
+std::string PrintHelp( void )
 {
-  std::cout << "This program inverts the intensities of an image." << std::endl;
-  std::cout << "Usage:" << std::endl << "pxinvertintensityimagefilter" << std::endl;
-  std::cout << "  -in      inputFilename" << std::endl;
-  std::cout << "  [-out]   outputFilename; default: in + INVERTED.mhd" << std::endl;
-  std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double." << std::endl;
+  std::string helpText = "This program inverts the intensities of an image. \
+  Usage:\
+  pxinvertintensityimagefilter \
+    -in      inputFilename \
+    [-out]   outputFilename; default: in + INVERTED.mhd \
+  Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
+
+  return helpText;
 
 } // end PrintHelp()
 
