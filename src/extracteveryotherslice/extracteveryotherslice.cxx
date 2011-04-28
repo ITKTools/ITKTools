@@ -30,26 +30,29 @@ void ExtractEveryOtherSlice(
   unsigned int direction );
 
 /** Declare PrintHelp. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char **argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 3 || argc > 9 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
 
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
+  
   /** Get arguments. */
   std::string inputFileName = "";
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  parser->GetCommandLineArgument( "-in", inputFileName );
 
   std::string outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
   outputFileName += "EveryOtherKExtracted.mhd";
@@ -64,13 +67,6 @@ int main( int argc, char **argv )
 
   unsigned int direction = 2;
   parser->GetCommandLineArgument( "-d", direction );
-
-  /** Check if the required arguments are given. */
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
 
   /** Check everyOther. */
   if ( everyOther < 2 )
@@ -278,15 +274,17 @@ void ExtractEveryOtherSlice(
    * ******************* PrintHelp *******************
    */
 
-void PrintHelp( void )
+std::string PrintHelp( void )
 {
-  std::cout << "Usage:" << std::endl << "pxextracteveryotherslice" << std::endl;
-  std::cout << "  -in      inputFilename" << std::endl;
-  std::cout << "  [-out]   outputFilename, default in + EveryOtherKExtracted.mhd" << std::endl;
-  std::cout << "  [-K]     every other slice K, default 2" << std::endl;
-  std::cout << "  [-of]    offset, default 0" << std::endl;
-  std::cout << "  [-d]     direction, default is z-axes" << std::endl;
-  std::cout << "Supported: 3D, (unsigned) char, (unsigned) short, float, double." << std::endl;
+  std::string helpText = "Usage: \
+  pxextracteveryotherslice \
+    -in      inputFilename \
+    [-out]   outputFilename, default in + EveryOtherKExtracted.mhd \
+    [-K]     every other slice K, default 2 \
+    [-of]    offset, default 0 \
+    [-d]     direction, default is z-axes \
+  Supported: 3D, (unsigned) char, (unsigned) short, float, double.";
+  return helpText;
 
 } // end PrintHelp()
 
