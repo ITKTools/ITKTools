@@ -18,7 +18,7 @@ ENDIF(CMAKE_BUILD_TOOL MATCHES "(msdev|devenv|nmake )" )
 
 ADD_EXECUTABLE( pxcreaterandomimage createrandomimage.cxx createrandomimage.h )
 
-TARGET_LINK_LIBRARIES( pxcreaterandomimage ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxcreaterandomimage ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxcreaterandomimage
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )
