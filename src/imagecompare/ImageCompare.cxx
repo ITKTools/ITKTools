@@ -15,111 +15,74 @@
 /** Declare function to compare two images. */
 int RegressionTestImage (const char *, const char *, int, double, int );
 
+std::string GetHelpText();
 
 int main( int argc, char **argv )
 {
-  /** Check arguments. */
-  if( argc < 2 )
+  /** Create a command line argument parser. */
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
+
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
   {
-    std::cerr << "Usage:" << std::endl;
-    std::cerr << "pximagecompare [-t threshold] [-r radius] testImage baselineImage1 [baselineImage2 baselineImage3 ...]" << std::endl;
-    std::cerr << "Note that if you supply more than one baselineImage, this test will pass if any" << std::endl;
-    std::cerr << "of them match the testImage." << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
-  /** Defaults for the difference filter. */
+  /** Settings for the difference filter. */
   double differenceThreshold = 2.0;
-  int toleranceRadius = 0;
+  parser->GetCommandLineArgument( "-t", differenceThreshold);
 
-  /** Get the command line arguments. */
-  bool testImageFound = false;
-  char * testImage;
-  bool baselineImageStartIndexFound = false;
-  unsigned int baselineImageStartIndex = 2;
-  unsigned int baselineImageEndIndex = 2;
-  for ( unsigned int i = 1; i < static_cast<unsigned int>(argc); i++ )
+  int toleranceRadius = 0;
+  parser->GetCommandLineArgument( "-r", toleranceRadius);
+
+  if ( toleranceRadius > 0 )
   {
-    /** Check for the difference threshold. */
-    if ( static_cast<std::string>( argv[ i ] ) == "-t" )
-    {
-      differenceThreshold = atof( argv[ i + 1 ] );
-      i++;
-    }
-    /** Check for the difference tolerance radius. */
-    else if ( static_cast<std::string>( argv[ i ] ) == "-r" )
-    {
-      toleranceRadius = atoi( argv[ i + 1 ] );
-      i++;
-      if ( toleranceRadius > 0 )
-      {
-        std::cout << "WARNING: setting the tolerance radius to values "
-          << "larger than 0, will result in very (!) large computation time, "
-          << "since a 6D neighborhood will have to be traversed." << std::endl;
-      }
-    }
-    else
-    {
-      /** Get the testImage. */
-      if ( !testImageFound )
-      {
-        testImage = argv[ i ];
-        testImageFound = true;
-      }
-      /** Get the starting baselineImage. */
-      else if ( !baselineImageStartIndexFound )
-      {
-        baselineImageStartIndex = i;
-        baselineImageEndIndex = i;
-        baselineImageStartIndexFound = true;
-      }
-      /** Get the ending baselineImage. */
-      else if ( baselineImageStartIndexFound )
-      {
-        baselineImageEndIndex = i;
-      }
-    }
+    std::cout << "WARNING: setting the tolerance radius to values "
+      << "larger than 0, will result in very (!) large computation time, "
+      << "since a 6D neighborhood will have to be traversed." << std::endl;
   }
+
+  std::vector<std::string> baselineImageFileNames;
+  parser->GetCommandLineArgument( "-base", baselineImageFileNames);
+
+  std::string testImageFileName;
+  parser->GetCommandLineArgument( "-test", testImageFileName);
 
   /** Print arguments. */
   std::cout << "pximagecompare called with the following arguments:" << std::endl;
   std::cout << "differenceThreshold:\t" << differenceThreshold << std::endl;
   std::cout << "toleranceRadius:\t" << toleranceRadius << std::endl;
-  std::cout << "testImage:\t\t" << testImage << std::endl;
-  if ( baselineImageStartIndex == baselineImageEndIndex )
-  {
-    std::cout << "baselineImage:\t\t" << argv[ baselineImageStartIndex ] << std::endl;
-  }
-  else if ( baselineImageEndIndex - baselineImageStartIndex == 1 )
-  {
-    std::cout << "baselineImages:\t\t{"
-      << argv[ baselineImageStartIndex ] << ", "
-      << argv[ baselineImageStartIndex + 1 ] << "}" << std::endl;
-  }
-  else
-  {
-    std::cout << "baselineImages:\t\t{"
-      << argv[ baselineImageStartIndex ] << ", ..., "
-      << argv[ baselineImageEndIndex ] << "}" << std::endl;
-  }
+  std::cout << "testImage:\t\t" << testImageFileName << std::endl;
 
+  std::cout << "baselineImages:\t\t{";
+  for(unsigned int i = 0; i < baselineImages.size(); ++i)
+  {
+    std::cout << baselineImages[i] << ", ";
+  }
+  std::cout << "}" << std::endl;
+  
   /** Run the comparison(s). */
-  int bestBaselineStatus = 2001;
-  int bestBaseline = 2;
+  int bestBaselineStatus = 2001; // magic number!!!
+  int bestBaseline = 2; // magic number!!!
   try
   {
-    if( baselineImageStartIndex == baselineImageEndIndex )
+    if( baselineImages.size() == 1)
     {
       bestBaselineStatus = RegressionTestImage(
-        testImage, argv[ baselineImageStartIndex ], 0, differenceThreshold, toleranceRadius );
+        testImage, baselineImages[0], 0, differenceThreshold, toleranceRadius );
     }
     else
     {
       int currentStatus = 2001;
-      for ( unsigned int i = baselineImageStartIndex; i < baselineImageEndIndex; i++ )
+      for ( unsigned int i = 0; i < baselineImages.size(); i++ )
       {
         currentStatus = RegressionTestImage(
-          testImage, argv[ i ], 0, differenceThreshold, toleranceRadius );
+          testImage, baselineImages[ i ], 0, differenceThreshold, toleranceRadius );
         if( currentStatus < bestBaselineStatus )
         {
           bestBaselineStatus = currentStatus;
@@ -366,3 +329,12 @@ int RegressionTestImage( const char *testImageFilename,
 
 } // end RegressionTestImage
 
+std::string GetHelpText()
+{
+  std::string helpText = "Usage: \
+  pximagecompare [-t threshold] [-r radius] testImage baselineImage1 [baselineImage2 baselineImage3 ...] \
+  Note that if you supply more than one baselineImage, this test will pass if any \
+  of them match the testImage.;
+
+  return helpText;
+}
