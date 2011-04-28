@@ -1,4 +1,3 @@
-
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 
@@ -27,32 +26,30 @@ void ComputeBrainDistance(
   unsigned int method);
 
 /** Declare PrintHelp. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
 
 int main( int argc, char ** argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 7 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser
     = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
+
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+  parser->MarkArgumentAsRequired( "-mask", "The mask filename." );
+  parser->MarkArgumentAsRequired( "-out", "The output filenames." );
 
   /** Get arguments (mandatory): input deformation field */
   std::string inputFileName = "";
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  parser->GetCommandLineArgument( "-in", inputFileName );
 
   /** Get arguments (mandatory): input deformation field */
   std::string maskFileName = "";
-  bool retmask = parser->GetCommandLineArgument( "-mask", maskFileName );
+  parser->GetCommandLineArgument( "-mask", maskFileName );
 
   /** Get arguments (optional): method */
   unsigned int method = 0;
@@ -60,28 +57,17 @@ int main( int argc, char ** argv )
 
   /** Get arguments (mandatory): Output filenames */
   std::vector< std::string > outputFileNames;
-  bool retout = parser->GetCommandLineArgument( "-out", outputFileNames );
+  parser->GetCommandLineArgument( "-out", outputFileNames );
   if ( outputFileNames.size() != 2 )
   {
-    retout = false;
+    std::cerr << "ERROR: You should specify \"-out\", followed by 2 filenames." << std::endl;
   }
 
-  /** Check if the required arguments are given. */
-  if ( !retin )
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
   {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
-  if ( !retmask )
-  {
-    std::cerr << "ERROR: You should specify \"-mask\"." << std::endl;
-    return 1;
-  }
-  if ( !retout )
-  {
-    std::cerr << "ERROR: You should specify \"-out\", followed by 5 filenames."
-      << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   /** Determine image properties. */
@@ -457,18 +443,19 @@ void ComputeBrainDistance(
 /**
  * ******************* PrintHelp *******************
  */
-void PrintHelp()
+std::string PrintHelp()
 {
-  std::cout << "This program computes the distance between brains, based on "
-    << "a label mask image of one of the brains and a deformation field.\n";
-  std::cout << "Usage:\n" << "pxbraindistance\n";
-  std::cout << "  -in      inputFilename: 3D deformation field \n";
-  std::cout << "  -out     outputFilenames: two output filenames. The first "
-    << "one contains mu_tot and sigma_tot. the second one contains mu_i, sigma_i, and sigma_itot.\n";
-  std::cout << "  -mask    maskFileName: the name of the label image (deformed HAMMER atlas)\n";
-  std::cout << "  [-m]     method: 0 (jacobian), 1 (bending energy), or 2 (log(jacobian)); default: 0.\n";
-  std::cout << "Supported: -in: 3D vector of floats, 3 elements per vector; "
-    << "-mask: 3D unsigned char or anything that is valid after casting to unsigned char\n";
-  std::cout << std::endl;
+  std::string helpText = "This program computes the distance between brains, based on \
+  a label mask image of one of the brains and a deformation field.\n \
+  Usage:\n \
+  pxbraindistance\n \
+    -in      inputFilename: 3D deformation field \n \
+    -out     outputFilenames: two output filenames. The first \
+  one contains mu_tot and sigma_tot. the second one contains mu_i, sigma_i, and sigma_itot.\n \
+    -mask    maskFileName: the name of the label image (deformed HAMMER atlas)\n \
+    [-m]     method: 0 (jacobian), 1 (bending energy), or 2 (log(jacobian)); default: 0.\n \
+  Supported: -in: 3D vector of floats, 3 elements per vector \
+  -mask: 3D unsigned char or anything that is valid after casting to unsigned char\n";
+  return helpText;
 
 } // end PrintHelp()
