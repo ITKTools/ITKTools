@@ -8,28 +8,22 @@
 
 int main( int argc, char *argv[] )
 {
-  /** Check number of arguments. */
-  if ( argc != 3 )
-  {
-    std::cout << "Usage:" << std::endl;
-    std::cout << "pxcountnonzerovoxels -in imagename" << std::endl;
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
 
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
+
   /** Get arguments. */
   std::string inputFileName;
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
-
-  /** Checks. */
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify the input file name with \"-in\"." << std::endl;
-    return 1;
-  }
+  parser->GetCommandLineArgument( "-in", inputFileName );
 
   // Some consts.
   const unsigned int  Dimension = 3;
