@@ -20,31 +20,28 @@ if ( ComponentType == #type && Dimension == dim ) \
 //-------------------------------------------------------------------------------------
 
 /** Declare PrintHelp. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char **argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 3 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
 
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
   /** Get arguments. */
   std::string inputFileName = "";
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
+  parser->GetCommandLineArgument( "-in", inputFileName );
 
   std::string ops = "MAGNITUDE";
   parser->GetCommandLineArgument( "-ops", ops );
@@ -142,21 +139,22 @@ int main( int argc, char **argv )
  * ******************* PrintHelp *******************
  */
 
-void PrintHelp( void )
+std::string PrintHelp( void )
 {
-  std::cout << "Usage:" << std::endl << "pxdeformationfieldoperator\n";
-  std::cout << "  This program converts between deformations (displacement fields) "
-    << "and transformations, and computes the magnitude or Jacobian of a "
-    << "deformation field.\n";
-  std::cout << "  -in      inputFilename\n";
-  std::cout << "  [-out]   outputFilename; default: in + {operation}.mhd\n";
-  std::cout << "  [-ops]   operation; options: DEF2TRANS, TRANS2DEF, "
-    << "MAGNITUDE, JACOBIAN, DEF2JAC, TRANS2JAC, INVERSE. default: MAGNITUDE\n"
-    << "           TRANS2JAC == JACOBIAN\n";
-  std::cout << "  [-s]     number of streams, default 1.\n";
-  std::cout << "  [-it]    number of iterations, for the iterative inversion, default 1, increase to get better results.\n";
-  std::cout << "  [-stop]  allowed error, default 0.0, increase to get faster convergence.\n";
-  std::cout << "Supported: 2D, 3D, vector of floats or doubles, number of components "
-    << "must equal number of dimensions." << std::endl;
-
+  std::string helpText ="Usage: \
+  pxdeformationfieldoperator\n \
+    This program converts between deformations (displacement fields) \
+  and transformations, and computes the magnitude or Jacobian of a \
+  deformation field.\n \
+    -in      inputFilename\n \
+    [-out]   outputFilename; default: in + {operation}.mhd\n \
+    [-ops]   operation; options: DEF2TRANS, TRANS2DEF, \
+  MAGNITUDE, JACOBIAN, DEF2JAC, TRANS2JAC, INVERSE. default: MAGNITUDE\n \
+             TRANS2JAC == JACOBIAN\n \
+    [-s]     number of streams, default 1.\n \
+    [-it]    number of iterations, for the iterative inversion, default 1, increase to get better results.\n \
+    [-stop]  allowed error, default 0.0, increase to get faster convergence.\n \
+  Supported: 2D, 3D, vector of floats or doubles, number of components \
+  must equal number of dimensions.";
+  return helpText;
 } // end PrintHelp()
