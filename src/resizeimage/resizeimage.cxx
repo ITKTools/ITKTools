@@ -32,26 +32,34 @@ void ResizeImage(
   const unsigned int & interpolationOrder );
 
 /** Declare PrintHelp. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char **argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 5 || argc > 13 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
+
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+
+  std::vector<std::string> exactlyOneArguments;
+  exactlyOneArguments.push_back("-f");
+  exactlyOneArguments.push_back("-sp");
+  parser->MarkExactlyOneOfArgumentsAsRequired(exactlyOneArguments);
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
 
   /** Get arguments. */
   std::string inputFileName = "";
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  parser->GetCommandLineArgument( "-in", inputFileName );
 
   std::string outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
   outputFileName += "RESIZED.mhd";
@@ -72,18 +80,6 @@ int main( int argc, char **argv )
 
   unsigned int interpolationOrder = 1;
   parser->GetCommandLineArgument( "-io", interpolationOrder );
-
-  /** Check if the required arguments are given. */
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
-  if ( !( retf ^ retsp ) )
-  {
-    std::cerr << "ERROR: You should specify either \"-f\" or \"-sp\"." << std::endl;
-    return 1;
-  }
 
   /** Get rid of the possible "_" in PixelType. */
   ReplaceUnderscoreWithSpace( PixelType );
@@ -277,17 +273,20 @@ void ResizeImage(
   /**
    * ******************* PrintHelp *******************
    */
-void PrintHelp( void )
+std::string PrintHelp( void )
 {
-  std::cout << "Usage:" << std::endl << "pxresizeimage" << std::endl;
-  std::cout << "  -in      inputFilename" << std::endl;
-  std::cout << "  [-out]   outputFilename, default in + RESIZED.mhd" << std::endl;
-  std::cout << "  [-f]     factor" << std::endl;
-  std::cout << "  [-sp]    spacing" << std::endl;
-  std::cout << "  [-io]    interpolation order, default 1" << std::endl;
-  std::cout << "  [-dim]   dimension, default 3" << std::endl;
-  std::cout << "  [-pt]    pixelType, default short" << std::endl;
-  std::cout << "One of -f and -sp should be given." << std::endl;
-  std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
+  std::string helpText = "Usage: \
+  pxresizeimage \
+    -in      inputFilename \
+    [-out]   outputFilename, default in + RESIZED.mhd \
+    [-f]     factor \
+    [-sp]    spacing \
+    [-io]    interpolation order, default 1 \
+    [-dim]   dimension, default 3 \
+    [-pt]    pixelType, default short \
+  One of -f and -sp should be given. \
+  Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
+
+  return helpText;
 } // end PrintHelp()
 
