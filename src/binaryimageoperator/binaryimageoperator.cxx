@@ -8,26 +8,29 @@
 
 int main( int argc, char **argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 5 || argc > 10 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+  parser->MarkArgumentAsRequired( "-ops", "The operation to perform." );
 
   /** Get arguments. */
   std::vector<std::string> inputFileNames;
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileNames );
+  parser->GetCommandLineArgument( "-in", inputFileNames );
 
+  // You must specify two input files.
+  if ( inputFileNames.size() != 2 )
+  {
+    std::cerr << "ERROR: You should specify two input file names." << std::endl;
+    return 1;
+  }
+  
   std::string outputFileName = "";
   parser->GetCommandLineArgument( "-out", outputFileName );
 
   std::string ops = "";
-  bool retops = parser->GetCommandLineArgument( "-ops", ops );
+  parser->GetCommandLineArgument( "-ops", ops );
 
   std::string argument = "0";
   bool retarg = parser->GetCommandLineArgument( "-arg", argument );
@@ -37,23 +40,11 @@ int main( int argc, char **argv )
 
   const bool useCompression = parser->ArgumentExists( "-z" );
 
-  /** Check if the required arguments are given. */
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
-  if ( !retops )
-  {
-    std::cerr << "ERROR: You should specify \"-ops\"." << std::endl;
-    return 1;
-  }
+  bool validateArguments = parser->CheckForRequiredArguments();
 
-  /** You should specify two input files. */
-  if ( inputFileNames.size() != 2 )
+  if(!validateArguments)
   {
-    std::cerr << "ERROR: You should specify two input file names." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   /** Create outputFileName. */

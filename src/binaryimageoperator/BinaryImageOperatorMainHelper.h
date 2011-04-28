@@ -27,30 +27,33 @@ if ( ComponentTypeIn1 == #typeIn1 && ComponentTypeIn2 == #typeIn2 \
   /**
    * ******************* PrintHelp *******************
    */
-void PrintHelp()
+std::string PrintHelp()
 {
-  std::cout << "Performs binary operations on two images." << std::endl;
-  std::cout << "Usage:\npxbinaryimageoperator" << std::endl;
-  std::cout << "  -in      inputFilenames" << std::endl;
-  std::cout << "  [-out]   outputFilename, default in1 + ops + arg + in2 + .mhd" << std::endl;
-  std::cout << "  -ops     binary operator of the following form:\n"
-            << "           {+,-,*,/,^,%}\n"
-            << "           notation:\n"
-            << "             {ADDITION, WEIGHTEDADDITION, MINUS, TIMES,DIVIDE,POWER,\n"
-            << "             MAXIMUM, MINIMUM, ABSOLUTEDIFFERENCE, SQUAREDDIFFERENCE,\n"
-            << "             BINARYMAGNITUDE, MASK, MASKNEGATED, LOG}\n"
-            << "           notation examples:\n"
-            << "             MINUS = A - B\n"
-            << "             ABSDIFF = |A - B|\n"
-            << "             MIN = min( A, B )\n"
-            << "             MAGNITUDE = sqrt( A * A + B * B )\n";
-  std::cout << "  [-arg]   argument, necessary for some ops\n"
-            << "             WEIGHTEDADDITION: 0.0 < weight alpha < 1.0\n"
-            << "             MASK[NEG]: background value, e.g. 0." << std::endl;
-  std::cout << "  [-z]     compression flag; if provided, the output image is compressed\n";
-  std::cout << "  [-opct]  output component type, by default the largest of the two input images\n"
-            << "             choose one of: {[unsigned_]{char,short,int,long},float,double}" << std::endl;
-  std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
+  std::string helpString = \
+  "Performs binary operations on two images. \
+  Usage:\npxbinaryimageoperator \
+    -in      inputFilenames \
+    [-out]   outputFilename, default in1 + ops + arg + in2 + .mhd \
+    -ops     binary operator of the following form:\n \
+             {+,-,*,/,^,%}\n \
+             notation:\n \
+               {ADDITION, WEIGHTEDADDITION, MINUS, TIMES,DIVIDE,POWER,\n \
+               MAXIMUM, MINIMUM, ABSOLUTEDIFFERENCE, SQUAREDDIFFERENCE,\n \
+               BINARYMAGNITUDE, MASK, MASKNEGATED, LOG}\n \
+             notation examples:\n \
+               MINUS = A - B\n \
+               ABSDIFF = |A - B|\n \
+               MIN = min( A, B )\n \
+               MAGNITUDE = sqrt( A * A + B * B )\n \
+    [-arg]   argument, necessary for some ops\n \
+               WEIGHTEDADDITION: 0.0 < weight alpha < 1.0\n \
+               MASK[NEG]: background value, e.g. 0. \
+    [-z]     compression flag; if provided, the output image is compressed\n \
+    [-opct]  output component type, by default the largest of the two input images\n \
+               choose one of: {[unsigned_]{char,short,int,long},float,double} \
+  Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
+
+  return helpString;
 
 } // end PrintHelp()
 
