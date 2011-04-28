@@ -288,22 +288,25 @@ void GaussianImageFilterInvariants(
    * ******************* PrintHelp *******************
    */
 
-void PrintHelp( void )
+std::string PrintHelp( void )
 {
-  std::cout << "Usage:" << std::endl << "pxgaussianimagefilter" << std::endl;
-  std::cout << "  -in      inputFilename" << std::endl;
-  std::cout << "  [-out]   outputFilename, default in + BLURRED.mhd" << std::endl;
-  std::cout << "  [-std]   sigma, for each dimension, default 1.0" << std::endl;
-  std::cout << "  [-ord]   order, for each dimension, default zero\n";
-  std::cout << "             0: zero order = blurring\n";
-  std::cout << "             1: first order = gradient\n";
-  std::cout << "             2: second order derivative" << std::endl;
-  std::cout << "  [-mag]   compute the magnitude of the separate blurrings, default false" << std::endl;
-  std::cout << "  [-lap]   compute the laplacian, default false" << std::endl;
-  std::cout << "  [-inv]   compute invariants, choose one of \n";
-  std::cout << "           {LiLi, LiLijLj, LiLijLjkLk, Lii, LijLji, LijLjkLki}" << std::endl;
-  std::cout << "  [-opct]  output pixel type, default equal to input" << std::endl;
-  std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
+  std::string helpText = "Usage: \
+  pxgaussianimagefilter \
+    -in      inputFilename \
+    [-out]   outputFilename, default in + BLURRED.mhd \
+    [-std]   sigma, for each dimension, default 1.0 \
+    [-ord]   order, for each dimension, default zero\n \
+               0: zero order = blurring\n \
+               1: first order = gradient\n \
+               2: second order derivative \
+    [-mag]   compute the magnitude of the separate blurrings, default false \
+    [-lap]   compute the laplacian, default false \
+    [-inv]   compute invariants, choose one of \n \
+             {LiLi, LiLijLj, LiLijLjkLk, Lii, LijLji, LijLjkLki} \
+    [-opct]  output pixel type, default equal to input \
+  Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
+
+  return helpText;
 
 } // end PrintHelp()
 

@@ -32,20 +32,23 @@ if ( componentType == #type && Dimension == dim ) \
 
 int main( int argc, char ** argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 3 || argc > 15 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
+
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
 
   /** Get arguments. */
   std::string inputFileName = "";
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  parser->GetCommandLineArgument( "-in", inputFileName );
 
   std::vector<float> sigma;
   sigma.push_back( 1.0 ); // default 1.0 for each resolution
@@ -67,13 +70,6 @@ int main( int argc, char ** argv )
 
   std::string componentType = "";
   bool retopct = parser->GetCommandLineArgument( "-opct", componentType );
-
-  /** Check if the required arguments are given. */
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
 
   /** Check options. */
   for ( unsigned int i = 0; i < order.size(); ++i )
