@@ -7,7 +7,6 @@
 #include "itkImageFileWriter.h"
 #include "itkImageToVectorImageFilter.h"
 #include "itkLogicalFunctors.h"
-#include "itkRescaleIntensityImageFilter.h"
 #include "itkUnaryFunctorImageFilter.h"
 #include "itkVectorImage.h"
 #include "itkVectorIndexSelectionCastImageFilter.h"
@@ -25,7 +24,7 @@
 if ( ComponentType == #type && Dimension == dim ) \
 { \
   typedef itk::VectorImage< type, dim > InputImageType; \
-  function< InputImageType >( inputFileName1, inputFileName2, outputFileName, ops, useCompression, argument, positiveValue ); \
+  function< InputImageType >( inputFileName1, inputFileName2, outputFileName, ops, useCompression, argument); \
   supported = true; \
 }
 
@@ -73,8 +72,7 @@ void LogicalImageOperator(
   const std::string & outputFileName,
   const std::string & ops,
   const bool useCompression,
-  const double & argument,
-  const double & positiveValue)
+  const double & argument)
 {
   /** Typedefs. */
   typedef typename InputImageType::PixelType                  InputPixelType;
@@ -258,15 +256,7 @@ void LogicalImageOperator(
     }
     logicalFilter->Update();
     
-    // Rescale the not-zero value to the user specified value.
-    typedef itk::RescaleIntensityImageFilter< ScalarImageType, ScalarImageType> RescaleFilterType;
-    typename RescaleFilterType::Pointer rescaleFilter = RescaleFilterType::New();
-    rescaleFilter->SetInput(logicalFilter->GetOutput());
-    rescaleFilter->SetOutputMinimum(0);
-    rescaleFilter->SetOutputMaximum(positiveValue);
-    rescaleFilter->Update();
-    
-    imageToVectorImageFilter->SetNthInput(component, rescaleFilter->GetOutput());
+    imageToVectorImageFilter->SetNthInput(component, logicalFilter->GetOutput());
   }//end component loop
 
   std::cout << "Done performing logical operation." << std::endl;
@@ -308,9 +298,7 @@ void PrintHelp( void )
             << "             NOT = !A \n"
             << "             NOT_NOT = A \n"
             << "           Internally this expression is simplified.\n";
-  std::cout << "  -pv      Positive value. This is the value representing 'not zero'" << std::endl
-            << std::endl;
-	std::cout << "  [-z]     compression flag; if provided, the output image is compressed" << std::endl;;
+  std::cout << "  [-z]     compression flag; if provided, the output image is compressed" << std::endl;;
   std::cout << "  [-arg]   argument, necessary for some ops" << std::endl;
   std::cout << "  [-dim]   dimension, default: automatically determined from inputimage1" << std::endl;
   std::cout << "  [-pt]    pixelType, default: automatically determined from inputimage1" << std::endl;
