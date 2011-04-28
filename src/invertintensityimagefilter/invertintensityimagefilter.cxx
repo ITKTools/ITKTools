@@ -112,7 +112,7 @@ int main( int argc, char ** argv )
     run( InvertIntensity, double, 3 );
 
   } // end run
-    catch ( itk::ExceptionObject &e )
+  catch ( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
     return 1;
@@ -148,7 +148,7 @@ void InvertIntensity( const std::string & inputFileName,
   typedef itk::ImageFileReader< InputImageType >            ReaderType;
   typedef itk::ImageFileWriter< InputImageType >            WriterType;
   typedef itk::StatisticsImageFilter< InputImageType >      StatisticsFilterType;
-  typedef typename StatisticsFilterType::RealType                   RealType;
+  typedef typename StatisticsFilterType::RealType           RealType;
   typedef itk::InvertIntensityImageFilter< InputImageType > InvertIntensityFilterType;
 
   /** Create reader. */
@@ -176,15 +176,18 @@ void InvertIntensity( const std::string & inputFileName,
 
 } // end InvertIntensity()
 
-  /**
-   * ******************* PrintHelp *******************
-   */
-void PrintHelp()
+
+/**
+ * ******************* PrintHelp *******************
+ */
+
+void PrintHelp( void )
 {
   std::cout << "This program inverts the intensities of an image." << std::endl;
   std::cout << "Usage:" << std::endl << "pxinvertintensityimagefilter" << std::endl;
   std::cout << "  -in      inputFilename" << std::endl;
   std::cout << "  [-out]   outputFilename; default: in + INVERTED.mhd" << std::endl;
   std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double." << std::endl;
+
 } // end PrintHelp()
 

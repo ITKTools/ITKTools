@@ -3,6 +3,7 @@
 
 #include "itkImage.h"
 #include "itkImageRegionIteratorWithIndex.h"
+#include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
 //-------------------------------------------------------------------------------------
@@ -11,7 +12,7 @@
 #define run( function, dim ) \
 if ( imageDimension == dim ) \
 { \
-  function< dim >( outputFileName, imageSize, imageSpacing, distance, is2DStack ); \
+  function< dim >( inputFileName, outputFileName, imageSize, imageSpacing, distance, is2DStack ); \
   supported = true; \
 }
 
@@ -22,6 +23,7 @@ void PrintHelp( void );
 
 template<unsigned int Dimension>
 void CreateGridImage(
+  const std::string & inputFileName,
   const std::string & outputFileName,
   const std::vector<unsigned int> & imageSize,
   const std::vector<float> & imageSpacing,
@@ -44,19 +46,14 @@ int main( int argc, char *argv[] )
   parser->SetCommandLineArguments( argc, argv );
 
   /** Get arguments. */
+  std::string inputFileName = "";
+  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+
   std::string outputFileName = "";
   bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
 
   std::vector<unsigned int> imageSize;
   bool retsz = parser->GetCommandLineArgument( "-sz", imageSize );
-
-  const std::size_t imageDimension = imageSize.size();
-
-  std::vector<float> imageSpacing( imageDimension, 1.0 );
-  parser->GetCommandLineArgument( "-sp", imageSpacing );
-
-  std::vector<unsigned int> distance( imageDimension, 1 );
-  bool retd = parser->GetCommandLineArgument( "-d", distance );
 
   const bool is2DStack = parser->ArgumentExists( "-stack" );
 
@@ -66,30 +63,70 @@ int main( int argc, char *argv[] )
     std::cerr << "ERROR: You should specify \"-out\"." << std::endl;
     return 1;
   }
-  if ( !retsz )
+  if ( ( !retin && !retsz ) || ( retin && retsz ) )
   {
-    std::cerr << "ERROR: You should specify \"-sz\"." << std::endl;
-    return 1;
-  }
-  if ( !retd )
-  {
-    std::cerr << "ERROR: You should specify \"-d\"." << std::endl;
+    std::cerr << "ERROR: You should specify \"-in\" or \"-sz\"." << std::endl;
     return 1;
   }
 
-  /** Check arguments. */
+  /** Check arguments: size. */
+  if ( retsz )
+  {
+    for ( unsigned int i = 0; i < imageSize.size(); ++i )
+    {
+      if ( imageSize[ i ] == 0 )
+      {
+        std::cerr << "ERROR: image size[" << i << "] = 0." << std::endl;
+        return 1;
+      }
+    }
+  }
+
+  /** Get desired grid image dimension. */
+  unsigned int imageDimension = 3;
+  if ( retsz )
+  {
+    imageDimension = imageSize.size();
+  }
+  else
+  {
+    /** Determine image properties. */
+    std::string ComponentTypeIn = "short";
+    std::string PixelType; //we don't use this
+    unsigned int NumberOfComponents = 1;
+    std::vector<unsigned int> imagesize( imageDimension, 0 );
+    int retgip = GetImageProperties(
+      inputFileName,
+      PixelType,
+      ComponentTypeIn,
+      imageDimension,
+      NumberOfComponents,
+      imagesize );
+    if ( retgip != 0 ) return 1;
+  }
+
+  /** Check arguments: dimensionality. */
   if ( imageDimension < 2 || imageDimension > 3 )
   {
     std::cerr << "ERROR: Only image dimensions of 2 or 3 are supported." << std::endl;
     return 1;
   }
-  for ( unsigned int i = 0; i < imageDimension; ++i )
+
+  /** Get more arguments. */
+  std::vector<float> imageSpacing( imageDimension, 1.0 );
+  parser->GetCommandLineArgument( "-sp", imageSpacing );
+
+  std::vector<unsigned int> distance( imageDimension, 1 );
+  bool retd = parser->GetCommandLineArgument( "-d", distance );
+
+  /** Check arguments: distance. */
+  if ( !retd )
   {
-    if ( imageSize[ i ] == 0 )
-    {
-      std::cerr << "ERROR: image size[" << i << "] = 0." << std::endl;
-      return 1;
-    }
+    std::cerr << "ERROR: You should specify \"-d\"." << std::endl;
+    return 1;
+  }
+  for ( unsigned int i = 0; i < distance.size(); ++i )
+  {
     if ( distance[ i ] == 0 ) distance[ i ] = 1;
   }
 
@@ -126,6 +163,7 @@ int main( int argc, char *argv[] )
 
 template< unsigned int Dimension >
 void CreateGridImage(
+  const std::string & inputFileName,
   const std::string & outputFileName,
   const std::vector<unsigned int> & imageSize,
   const std::vector<float> & imageSpacing,
@@ -136,26 +174,44 @@ void CreateGridImage(
   typedef unsigned char                                   PixelType;
   typedef itk::Image< PixelType, Dimension >              ImageType;
   typedef itk::ImageRegionIteratorWithIndex< ImageType >  IteratorType;
+  typedef itk::ImageFileReader< ImageType >               ReaderType;
   typedef itk::ImageFileWriter< ImageType >               WriterType;
 
-  typedef typename ImageType::SizeType      SizeType;
+  typedef typename ImageType::SizeType    SizeType;
   typedef typename ImageType::IndexType   IndexType;
   typedef typename ImageType::SpacingType SpacingType;
 
   /* Create image and writer. */
   typename ImageType::Pointer  image  = ImageType::New();
+  typename ReaderType::Pointer reader = ReaderType::New();
   typename WriterType::Pointer writer = WriterType::New();
 
-  /** Allocate image. */
-  SizeType    size;
-  SpacingType spacing;
-  for ( unsigned int i = 0; i < Dimension; ++i )
+  /** Get and set grid image information. */
+  if ( inputFileName != "" )
   {
-    size[ i ] = imageSize[ i ];
-    spacing[ i ] = imageSpacing[ i ];
+    reader->SetFileName( inputFileName.c_str() );
+    reader->GenerateOutputInformation();
+
+    SizeType size = reader->GetOutput()->GetLargestPossibleRegion().GetSize();
+    image->SetRegions( size );
+    image->SetSpacing( reader->GetOutput()->GetSpacing() );
+    image->SetOrigin( reader->GetOutput()->GetOrigin() );
+    image->SetDirection( reader->GetOutput()->GetDirection() );
   }
-  image->SetRegions( size );
-  image->SetSpacing( spacing );
+  else
+  {
+    SizeType    size;
+    SpacingType spacing;
+    for ( unsigned int i = 0; i < Dimension; ++i )
+    {
+      size[ i ] = imageSize[ i ];
+      spacing[ i ] = imageSpacing[ i ];
+    }
+    image->SetRegions( size );
+    image->SetSpacing( spacing );
+  }
+
+  /** Allocate image. */
   image->Allocate();
 
   /* Fill the image. */
@@ -198,6 +254,7 @@ void CreateGridImage(
 void PrintHelp( void )
 {
   std::cout << "Usage:" << std::endl << "pxcreategridimage" << std::endl;
+  std::cout << "  [-in]    inputFilename, information about size, etc, is taken from it" << std::endl;
   std::cout << "  -out     outputFilename" << std::endl;
   std::cout << "  -sz      image size for each dimension" << std::endl;
   std::cout << "  [-sp]    image spacing, default 1.0" << std::endl;
