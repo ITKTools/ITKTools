@@ -185,7 +185,7 @@ CommandLineArgumentParser
     }
     
   // Display the help text if the user asked for it.
-  if(ArgumentExists("--help"))
+  if(ArgumentExists("--help") || ArgumentExists("-help") || ArgumentExists("--h"))
     {
     std::cerr << m_ProgramHelpText << std::endl;
     return false;
