@@ -41,26 +41,29 @@ void DetectGoldMarkers(
   const unsigned int & radius );
 
 /** Declare PrintHelp. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char **argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 4 || argc > 13 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
+
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
 
   /** Get arguments. */
   std::string inputFileName = "";
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  parser->GetCommandLineArgument( "-in", inputFileName );
 
   std::string outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
   outputFileName += "MASK.mhd";
@@ -80,13 +83,6 @@ int main( int argc, char **argv )
 
   std::string PixelType = "short";
   parser->GetCommandLineArgument( "-pt", PixelType );
-
-  /** Check if the required arguments are given. */
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
 
   /** Get rid of the possible "_" in PixelType. */
   ReplaceUnderscoreWithSpace(PixelType);
@@ -301,27 +297,29 @@ void DetectGoldMarkers(
   /**
    * ******************* PrintHelp *******************
    */
-void PrintHelp( void )
+std::string PrintHelp( void )
 {
-  std::cout << "This program creates a mask for mr_bffe images of the prostate that contains gold marker seeds." << std::endl;
-  std::cout << "The program computes the following:\n"
-    << "  Laplacian at scale 'sigma' (L_xx(sigma) + L_yy(sigma) + L_zz(sigma)),\n"
-    << "  A highpass filtered version of the original image. (L - L(sigma)),\n"
-    << "  BlurAbsHighPass = Gaussian(sigma)[ abs(highpass) ];\n"
-    << "  FeatureImage = Laplacian times BlurAbsHighPass;\n"
-    << "  Histogram of FeatureImage; the quantile 'threshold' is used to determine a threshold value,\n"
-    << "  Threshold of the FeatureImage;\n"
-    << "  Dilation of the Threshold FeatureImage with binary ball with specified 'radius';\n"
-    << "  A Not-filter to make the gold markers 0 and the rest 1.\n" << std::endl;
+  std::string helpText = "This program creates a mask for mr_bffe images of the prostate that contains gold marker seeds. \
+  The program computes the following:\n \
+    Laplacian at scale 'sigma' (L_xx(sigma) + L_yy(sigma) + L_zz(sigma)),\n \
+    A highpass filtered version of the original image. (L - L(sigma)),\n \
+    BlurAbsHighPass = Gaussian(sigma)[ abs(highpass) ];\n \
+    FeatureImage = Laplacian times BlurAbsHighPass;\n \
+    Histogram of FeatureImage; the quantile 'threshold' is used to determine a threshold value,\n \
+    Threshold of the FeatureImage;\n \
+    Dilation of the Threshold FeatureImage with binary ball with specified 'radius';\n \
+    A Not-filter to make the gold markers 0 and the rest 1.\n\n \
+  Usage: \
+  pxdetectgoldmarkers \
+    -in      inputFilename \
+    [-out]   outputFilename, default in + MASK.mhd \
+    [-r]     radius [voxels, unsigned int]; radius of ball structuring element used for dilation; default: 7. \
+    [-s]     sigma [voxels, double]; standard deviation of the gaussian used to compute the Laplacian and the blurring; default 4.0. \
+    [-t]     threshold (0,1); before dilation, a threshold is done; default: 0.9999 \
+    [-dim]   dimension, default 3 \
+    [-pt]    pixelType, default short \
+  Supported: 3D, short.";
 
-  std::cout << "Usage:" << std::endl << "pxdetectgoldmarkers" << std::endl;
-  std::cout << "  -in      inputFilename" << std::endl;
-  std::cout << "  [-out]   outputFilename, default in + MASK.mhd" << std::endl;
-  std::cout << "  [-r]     radius [voxels, unsigned int]; radius of ball structuring element used for dilation; default: 7." << std::endl;
-  std::cout << "  [-s]     sigma [voxels, double]; standard deviation of the gaussian used to compute the Laplacian and the blurring; default 4.0." << std::endl;
-  std::cout << "  [-t]     threshold (0,1); before dilation, a threshold is done; default: 0.9999" << std::endl;
-  std::cout << "  [-dim]   dimension, default 3" << std::endl;
-  std::cout << "  [-pt]    pixelType, default short" << std::endl;
-  std::cout << "Supported: 3D, short." << std::endl;
+  return helpText;
 } // end PrintHelp
 
