@@ -10,37 +10,33 @@
 #include "itkGDCMSeriesFileNames.h"
 
 /** Declare PrintHelp. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 int main( int argc, char **argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 3 || argc > 7 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
+
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
 
   /** Get arguments. */
   std::string inputDirectoryName = "";
-  bool retin = parser->GetCommandLineArgument( "-in", inputDirectoryName );
+  parser->GetCommandLineArgument( "-in", inputDirectoryName );
 
   std::string seriesNumber = "";
   parser->GetCommandLineArgument( "-s", seriesNumber );
 
   std::vector<std::string> restrictions;
   parser->GetCommandLineArgument( "-r", restrictions );
-
-  /** Check required input. */
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
 
   /** Make sure last character of inputDirectoryName != "/".
    * Otherwise FileIsDirectory() won't work.
@@ -273,13 +269,16 @@ int main( int argc, char **argv )
 /**
  * ******************* PrintHelp *******************
  */
-void PrintHelp()
+std::string PrintHelp()
 {
-  std::cout << "Usage:" << std::endl << "pxgetdicominformation" << std::endl;
-  std::cout << "  -in      inputDirectoryName\n";
-  std::cout << "  [-s]     seriesUID\n";
-  std::cout << "  [-r]     add restrictions to generate a unique seriesUID\n";
-  std::cout << "           e.g. \"0020|0012\" to add a check for acquisition number.\n";
-  std::cout << "By default the first series encountered is used." << std::endl;
+  std::string helpText = "Usage: \
+  pxgetdicominformation \
+    -in      inputDirectoryName\n \
+    [-s]     seriesUID\n \
+    [-r]     add restrictions to generate a unique seriesUID\n \
+             e.g. \"0020|0012\" to add a check for acquisition number.\n \
+  By default the first series encountered is used.";
+
+  return helpText;
 
 } // end PrintHelp()
