@@ -23,23 +23,24 @@ template< class InputImageType >
 void ComputeBoundingBox( std::string inputFileName );
 
 /** Declare other functions. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char **argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 3 || argc > 7 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
 
   /** Get arguments. */
   std::string inputFileName = "";
@@ -200,8 +201,9 @@ void ComputeBoundingBox( std::string inputFileName )
   /**
    * ******************* PrintHelp *******************
    */
-void PrintHelp()
+std::string PrintHelp()
 {
+  /*
   std::cout << "This program computes the bounding box of an image." << std::endl;
   std::cout << "Every pixel > 0 is considered to be within the bounding box." << std::endl;
   std::cout << "Returns the minimum and maximum indices/points that lie within the bounding box." << std::endl;
@@ -210,6 +212,18 @@ void PrintHelp()
   std::cout << "  [-dim]   dimension, default 3" << std::endl;
   std::cout << "  [-pt]    pixelType, default short" << std::endl;
   std::cout << "Supported: 2D, 3D, short. Images with PixelType other than short are automatically converted. " << std::endl;
+  */
+  std::string helpString = "This program computes the bounding box of an image.\n  \
+  Every pixel > 0 is considered to be within the bounding box.\n \
+  Returns the minimum and maximum indices/points that lie within the bounding box. \
+  Usage:\n \
+  pxcomputeboundingbox\
+    -in      inputFilename\n \
+    [-dim]   dimension, default 3\n \
+    [-pt]    pixelType, default short\n \
+  Supported: 2D, 3D, short. Images with PixelType other than short are automatically converted.";
+  
+  return helpString;
 } // end PrintHelp
 
 

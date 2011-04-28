@@ -1,13 +1,15 @@
 #ifndef __LogicalImageOperatorHelper_h
 #define __LogicalImageOperatorHelper_h
 
-#include "itkLogicalFunctors.h"
-#include "itkUnaryFunctorImageFilter.h"
 #include "itkBinaryFunctorImageFilter.h"
 #include "itkCastImageFilter.h"
-
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
+#include "itkImageToVectorImageFilter.h"
+#include "itkLogicalFunctors.h"
+#include "itkUnaryFunctorImageFilter.h"
+#include "itkVectorImage.h"
+#include "itkVectorIndexSelectionCastImageFilter.h"
 
 #include <map>
 #include <utility>
@@ -21,8 +23,8 @@
 #define run( function, type, dim ) \
 if ( ComponentType == #type && Dimension == dim ) \
 { \
-  typedef itk::Image< type, dim > InputImageType; \
-  function< InputImageType >( inputFileName1, inputFileName2, outputFileName, ops, useCompression, argument ); \
+  typedef itk::VectorImage< type, dim > InputImageType; \
+  function< InputImageType >( inputFileName1, inputFileName2, outputFileName, ops, useCompression, argument); \
   supported = true; \
 }
 
@@ -40,19 +42,19 @@ if ( ComponentType == #type && Dimension == dim ) \
  */
 #define InstantiateUnaryLogicalFilter( name ) \
 typedef itk::UnaryFunctorImageFilter< \
-  InputImageType, InputImageType, \
-  itk::Functor::localName##name<InputPixelType> >  name##FilterType; \
+  ScalarImageType, ScalarImageType, \
+  itk::Functor::localName##name<ScalarPixelType> >  name##FilterType; \
 if ( logicalOperatorName == #name ) \
 { \
   typename name##FilterType::Pointer tempLogicalFilter = name##FilterType::New(); \
-  tempLogicalFilter->GetFunctor().SetArgument( static_cast<InputPixelType>( argument ) ); \
+  tempLogicalFilter->GetFunctor().SetArgument( static_cast<ScalarPixelType>( argument ) ); \
   logicalFilter = tempLogicalFilter.GetPointer(); \
 }
 
 #define InstantiateBinaryLogicalFilter( name ) \
 typedef itk::BinaryFunctorImageFilter< \
-  InputImageType, InputImageType, InputImageType, \
-  itk::Functor::localName##name<InputPixelType> >  name##FilterType; \
+  ScalarImageType, ScalarImageType, ScalarImageType, \
+  itk::Functor::localName##name<ScalarPixelType> >  name##FilterType; \
 if ( logicalOperatorName == #name ) \
 { \
   logicalFilter = ( name##FilterType::New() ).GetPointer(); \
@@ -69,16 +71,18 @@ void LogicalImageOperator(
   const std::string & inputFileName2,
   const std::string & outputFileName,
   const std::string & ops,
-	const bool useCompression,
-  const double & argument )
+  const bool useCompression,
+  const double & argument)
 {
   /** Typedefs. */
-  typedef typename InputImageType::PixelType          InputPixelType;
+  typedef typename InputImageType::PixelType                  InputPixelType;
+  typedef typename InputImageType::InternalPixelType          ScalarPixelType;
+  typedef itk::Image<ScalarPixelType, InputImageType::ImageDimension> ScalarImageType;
   typedef itk::ImageToImageFilter<
-    InputImageType, InputImageType >                  BaseFilterType;
+    ScalarImageType, ScalarImageType>                  BaseFilterType;
   /** \todo: write a real dummy filter which does really nothing */
   typedef itk::CastImageFilter<
-    InputImageType,InputImageType >                   DummyFilterType;
+    ScalarImageType,ScalarImageType >                   DummyFilterType;
   typedef itk::ImageFileReader< InputImageType >      ReaderType;
   typedef itk::ImageFileWriter< InputImageType >      WriterType;
 
@@ -196,6 +200,8 @@ void LogicalImageOperator(
     logicalFilter = (DummyFilterType::New()).GetPointer();
   }
 
+  typedef itk::VectorIndexSelectionCastImageFilter<InputImageType, ScalarImageType> ComponentExtractionType;
+  
   InstantiateUnaryLogicalFilter( EQUAL );
   InstantiateUnaryLogicalFilter( NOT );
 
@@ -208,33 +214,57 @@ void LogicalImageOperator(
   InstantiateBinaryLogicalFilter( ANDNOT );
   InstantiateBinaryLogicalFilter( ORNOT );
 
-  if ( swapArguments )
-  {
-    /** swap the input files */
-    logicalFilter->SetInput( 1, reader1->GetOutput() );
-    logicalFilter->SetInput( 0, reader2->GetOutput() );
-  }
-  else
-  {
-    logicalFilter->SetInput( 0, reader1->GetOutput() );
-    if ( reader2.IsNotNull() )
-    {
-      logicalFilter->SetInput( 1, reader2->GetOutput() );
-    }
-  }
-
+  // Create the filter which will assemble the component into the output image
+  typedef itk::ImageToVectorImageFilter<ScalarImageType> ImageToVectorImageFilterType;
+  typename ImageToVectorImageFilterType::Pointer imageToVectorImageFilter = ImageToVectorImageFilterType::New();
+  
   std::cout
     << "Performing logical operation, "
     << logicalOperatorName
     << ", on input image(s)..."
     << std::endl;
-  logicalFilter->Update();
+    
+  for(unsigned int component = 0; component < reader1->GetOutput()->GetNumberOfComponentsPerPixel(); component++)
+  {
+    typename ComponentExtractionType::Pointer componentExtractor1 = ComponentExtractionType::New();
+    componentExtractor1->SetIndex(component);
+    componentExtractor1->SetInput(reader1->GetOutput());
+    componentExtractor1->Update();
+    
+    typename ComponentExtractionType::Pointer componentExtractor2 = ComponentExtractionType::New();
+    if ( reader2.IsNotNull() )
+      {
+      componentExtractor2->SetIndex(component);
+      componentExtractor2->SetInput(reader2->GetOutput());
+      componentExtractor2->Update();
+      }
+
+    if ( swapArguments )
+    {
+      /** swap the input files */
+      // Is this safe? It seems like this only makes sense if reader2 is specified.
+      logicalFilter->SetInput( 1, componentExtractor1->GetOutput() );
+      logicalFilter->SetInput( 0, componentExtractor2->GetOutput() );
+    }
+    else
+    {
+      logicalFilter->SetInput( 0, componentExtractor1->GetOutput() );
+      if ( reader2.IsNotNull() )
+      {
+        logicalFilter->SetInput( 1, componentExtractor2->GetOutput() );
+      }
+    }
+    logicalFilter->Update();
+    
+    imageToVectorImageFilter->SetNthInput(component, logicalFilter->GetOutput());
+  }//end component loop
+
   std::cout << "Done performing logical operation." << std::endl;
 
   /** Write the image to disk */
   writer->SetFileName( outputFileName.c_str() );
-  writer->SetInput( logicalFilter->GetOutput() );
-	writer->SetUseCompression( useCompression );
+  writer->SetInput( imageToVectorImageFilter->GetOutput() );
+  writer->SetUseCompression( useCompression );
   std::cout << "Writing output to disk as: " << outputFileName << std::endl;
   writer->Update();
   std::cout << "Done writing output to disk." << std::endl;
@@ -249,6 +279,13 @@ void LogicalImageOperator(
 void PrintHelp( void )
 {
   std::cout << "Logical operations on one or two images." << std::endl;
+
+  std::cout << "NOTE: The output of this filter is an image with pixels of values 0 and 1." << std::endl;
+  std::cout << "An appropriate scaling must be performed either manually (with pxrescaleintensityimagefilter)" << std::endl;
+  std::cout << "or with the application used to view the image." << std::endl << std::endl;
+
+  std::cout << "In the case of a vector image, this is a componentwise logical operator." << std::endl;
+
   std::cout << "Usage:" << std::endl << "pxlogicalimageoperator" << std::endl;
   std::cout << "  -in      inputFilename1 [inputFilename2]" << std::endl;
   std::cout << "  [-out]   outputFilename, default in1 + <ops> + in2 + .mhd" << std::endl;
@@ -266,9 +303,8 @@ void PrintHelp( void )
             << "             XOR = A ^ B\n"
             << "             NOT = !A \n"
             << "             NOT_NOT = A \n"
-            << "           Internally this expression is simplified.\n"
-            << std::endl;
-	std::cout << "  [-z]     compression flag; if provided, the output image is compressed" << std::endl;;
+            << "           Internally this expression is simplified.\n";
+  std::cout << "  [-z]     compression flag; if provided, the output image is compressed" << std::endl;;
   std::cout << "  [-arg]   argument, necessary for some ops" << std::endl;
   std::cout << "  [-dim]   dimension, default: automatically determined from inputimage1" << std::endl;
   std::cout << "  [-pt]    pixelType, default: automatically determined from inputimage1" << std::endl;

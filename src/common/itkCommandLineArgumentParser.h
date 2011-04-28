@@ -76,7 +76,10 @@ public:
 
   /** Set the command line arguments in a vector of strings. */
   void SetCommandLineArguments( int argc, char **argv );
-
+  
+  /** Ensure that all required arguments have been passed. */
+  bool CheckForRequiredArguments() const;
+  
   /** Map to store the arguments and their indices. */
   typedef std::size_t                           IndexType;
   typedef std::map< std::string, IndexType >    ArgumentMapType;
@@ -87,6 +90,12 @@ public:
 
   /** Function that checks if an argument is given. */
   bool ArgumentExists( const std::string & key ) const;
+
+  /** Mark an argument as required. */
+  void MarkArgumentAsRequired(const std::string & argument, const std::string & helpText);
+
+  itkSetMacro( ProgramHelpText, std::string);
+  itkGetMacro( ProgramHelpText, std::string);
 
   /** Get command line argument if arg is a vector type. */
   template <class T>
@@ -163,7 +172,10 @@ public:
 
   }; // end GetCommandLineArgument()
 
-  /** Get command line argument if arg is not a vector type. */
+  /** Get command line argument if arg is not a vector type. 
+    * We do this by creating a 1D vector, using the GetCommandLineArgument
+    * for vector types, and then returning the first element.
+    */
   template <class T>
     bool GetCommandLineArgument( const std::string & key, T & arg )
   {
@@ -211,8 +223,15 @@ protected:
   /** A vector of strings to store the command line arguments. */
   std::vector<std::string> m_Argv;
 
-  /** A map to store the arguments and their indices. */
+  /** A map to store the arguments and their indices. The arguments are stored
+    * INCLUDING the leading dash. I.e. an example pair is ("-test", 2)
+    */
   ArgumentMapType m_ArgumentMap;
+
+  /** The list of required arguments. They are stored with an accompanying help text string. */
+  std::vector<std::pair<std::string, std::string> > m_RequiredArguments;
+
+  std::string m_ProgramHelpText;
 
 private:
   CommandLineArgumentParser( const Self & ); // purposely not implemented

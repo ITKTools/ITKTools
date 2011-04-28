@@ -3,6 +3,8 @@
 
 #include "itkCommandLineArgumentParser.h"
 
+#include <limits>
+
 namespace itk
 {
 
@@ -15,7 +17,7 @@ CommandLineArgumentParser
 {
   this->m_Argv.clear();
   this->m_ArgumentMap.clear();
-
+  this->m_ProgramHelpText = "No help text provided.";
 } // end Constructor
 
 
@@ -153,6 +155,57 @@ CommandLineArgumentParser
 
 } // end StringCast()
 
+/**
+ * **************** MarkArgumentAsRequired ***************
+ */
+
+void
+CommandLineArgumentParser
+::MarkArgumentAsRequired(const std::string & argument, const std::string & helpText)
+{
+  std::pair<std::string, std::string> requiredArgument;
+  requiredArgument.first = argument;
+  requiredArgument.second = helpText;
+  m_RequiredArguments.push_back(requiredArgument);
+} // end MarkArgumentAsRequired()
+
+/**
+ * **************** CheckForRequiredArguments ***************
+ */
+
+bool
+CommandLineArgumentParser
+::CheckForRequiredArguments() const
+{
+  // If no arguments were specified at all, display the help text.
+  if(m_Argv.size() == 1)
+    {
+    std::cerr << m_ProgramHelpText << std::endl;
+    return false;
+    }
+    
+  // Display the help text if the user asked for it.
+  if(ArgumentExists("--help"))
+    {
+    std::cerr << m_ProgramHelpText << std::endl;
+    return false;
+    }
+
+  // Loop through all required arguments. Check them all even if one fails.
+
+  bool allRequiredArgumentsSpecified = true;
+
+  for(unsigned int i = 0; i < m_RequiredArguments.size(); i++)
+    {
+    if(!ArgumentExists(m_RequiredArguments[i].first))
+      {
+      std::cout << "Argument " << m_RequiredArguments[i].first << " is required but not specified." << std::endl
+                << "This argument is: " << m_RequiredArguments[i].second << std::endl;
+      allRequiredArgumentsSpecified = false;
+      }
+    }
+  return allRequiredArgumentsSpecified;
+} // end CheckForRequiredArguments()
 
 } // end namespace itk
 

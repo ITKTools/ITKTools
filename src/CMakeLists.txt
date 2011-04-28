@@ -52,7 +52,7 @@ SUBDIRS(
  giplconvert
  histogramequalizeimage
  imagecompare
- imagetovectorimage
+ imagestovectorimage
  intensityreplace
  intensitywindowing
  invertintensityimagefilter
