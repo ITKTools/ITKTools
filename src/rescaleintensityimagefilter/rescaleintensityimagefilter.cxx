@@ -319,5 +319,6 @@ void PrintHelp()
   std::cout << "           default: automatically determined from the first input image." << std::endl;
   std::cout << "Either \"-mm\" or \"-mv\" need to be specified." << std::endl;
   std::cout << "Supported: 2D, 3D, (unsigned) short, (unsigned) char, float." << std::endl;
+  std::cout << "When applied to vector images, this program performs the operation on each channel separately." << std::endl;
 
 } // end PrintHelp()
