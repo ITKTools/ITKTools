@@ -26,26 +26,30 @@ void Reshape(
   const std::vector<unsigned long> & outputSize );
 
 /** Declare other functions. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char **argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 3 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
+
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+  parser->MarkArgumentAsRequired( "-s", "Output size." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
 
   /** Get arguments. */
   std::string inputFilename = "";
-  bool retin = parser->GetCommandLineArgument( "-in", inputFilename );
+  parser->GetCommandLineArgument( "-in", inputFilename );
 
   std::string base = itksys::SystemTools::GetFilenameWithoutLastExtension(
     inputFilename );
@@ -55,19 +59,7 @@ int main( int argc, char **argv )
   parser->GetCommandLineArgument( "-out", outputFilename );
 
   std::vector<unsigned long> outputSize;
-  bool rets = parser->GetCommandLineArgument( "-s", outputSize );
-
-  /** Check if the required arguments are given. */
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
-  if ( !rets )
-  {
-    std::cerr << "ERROR: You should specify \"-s\"." << std::endl;
-    return 1;
-  }
+  parser->GetCommandLineArgument( "-s", outputSize );
 
   /** Determine image properties. */
   std::string ComponentTypeIn = "short";
@@ -201,13 +193,16 @@ void Reshape(
  * ******************* PrintHelp *******************
  */
 
-void PrintHelp( void )
+std::string PrintHelp( void )
 {
-  std::cout << "Usage:" << std::endl << "pxpca" << std::endl;
-  std::cout << "  -in      inputFilename" << std::endl;
-  std::cout << "  [-out]   outputFileName, default inputFileName_reshaped" << std::endl;
-  std::cout << "  -s       size of the output image" << std::endl;
-  std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
+  std::string helpText = "Usage: \
+  pxpca \
+    -in      inputFilename \
+    [-out]   outputFileName, default inputFileName_reshaped \
+    -s       size of the output image \
+  Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
+
+  return helpText;
 
 } // end PrintHelp()
 
