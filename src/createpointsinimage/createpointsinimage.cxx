@@ -4,20 +4,28 @@
 #include "itkImageRegionIterator.h"
 #include "itkImageFileWriter.h"
 
+#include "itkCommandLineArgumentParser.h"
+#include "CommandLineArgumentHelper.h"
+
 #include <fstream>
 
-
 //-------------------------------------------------------------------------------------
+std::string GetHelpText();
 
 int main( int argc, char *argv[] )
 {
-  /** Check number of arguments. */
-  if ( argc < 5 )
+  /** Create a command line argument parser. */
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
+  parser->MarkArgumentAsRequired( "-pointfilename", "The point filename." );
+  parser->MarkArgumentAsRequired( "-imagefilename", "The image filename." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
   {
-    std::cout << "Usage:" << std::endl;
-    std::cout << "pxcreatepointsinimage pointsfilename imagename -s imagesize [-sp spacing]" << std::endl;
-    std::cout << "NOTE: only 2D short are created and arguments should be in above order." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   // Some consts.
@@ -36,8 +44,12 @@ int main( int argc, char *argv[] )
   typedef ImageType::SpacingType    SpacingType;
 
   /** Get arguments. */
-  std::string pointfilename = argv[ 1 ];
-  std::string imagefilename = argv[ 2 ];
+  std::string pointfilename = "";
+  parser->GetCommandLineArgument( "-pointfilename", pointfilename);
+
+  std::string imagefilename = "";
+  parser->GetCommandLineArgument( "-imagefilename", imagefilename);
+
   unsigned int pos_s, pos_sp;
   pos_s = pos_sp = 0;
 
@@ -160,5 +172,12 @@ int main( int argc, char *argv[] )
 
 } // end main
 
+std::string GetHelpText()
+{
+  std::string helpText = "Usage: \
+  pxcreatepointsinimage pointsfilename imagename -s imagesize [-sp spacing] \
+  NOTE: only 2D short are created and arguments should be in above order.";
+  return helpText;
+}
 
 #endif // #ifndef __CreatePointsInImage_CXX__
