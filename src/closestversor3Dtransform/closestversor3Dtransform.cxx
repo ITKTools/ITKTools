@@ -13,7 +13,7 @@
 
 //-------------------------------------------------------------------------------------
 
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 void ComputeClosestVersor(
   std::string fixedLandmarkFileName,
@@ -33,35 +33,26 @@ void ConvertVersorToEuler(
 
 int main( int argc, char *argv[] )
 {
-  /** Check arguments for help. */
-  if ( argc < 5 || argc > 5 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
+
+  parser->MarkArgumentAsRequired( "-f", "The fixed landmark filename." );
+  parser->MarkArgumentAsRequired( "-m", "The moving landmark filename." );
 
   /** Get arguments. */
   std::string fixedLandmarkFileName = "";
-  bool retf = parser->GetCommandLineArgument( "-f", fixedLandmarkFileName );
+  parser->GetCommandLineArgument( "-f", fixedLandmarkFileName );
 
   std::string movingLandmarkFileName = "";
-  bool retm = parser->GetCommandLineArgument( "-m", movingLandmarkFileName );
+  parser->GetCommandLineArgument( "-m", movingLandmarkFileName );
 
-  /** Check if the required arguments are given. */
-  if ( !retf )
-  {
-    std::cerr << "ERROR: You should specify \"-f\"." << std::endl;
-    return 1;
-  }
+  bool validateArguments = parser->CheckForRequiredArguments();
 
-  if ( !retm )
+  if(!validateArguments)
   {
-    std::cerr << "ERROR: You should specify \"-m\"." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   /** Compute the closest rigid transformation. */
@@ -260,12 +251,13 @@ void ConvertVersorToEuler(
  * ******************* PrintHelp *******************
  */
 
-void PrintHelp( void )
+std::string PrintHelp( void )
 {
-  std::cout << "Calculates the closest rigid transform (VersorRigid3D) between" << std::endl;
-  std::cout << "two sets of landmarks. The two sets should be of equal size." << std::endl;
-  std::cout << "Usage:" << std::endl << "pxclosestversor3Dtransform" << std::endl;
-  std::cout << "  -f       the file containing the fixed landmarks" << std::endl;
-  std::cout << "  -m       the file containing the moving landmarks" << std::endl;
-
+  std::string helpString = "Calculates the closest rigid transform (VersorRigid3D) between \
+  two sets of landmarks. The two sets should be of equal size. \
+  Usage:\n \
+  pxclosestversor3Dtransform \
+    -f       the file containing the fixed landmarks \
+    -m       the file containing the moving landmarks";
+  return helpString;
 } // end PrintHelp()
