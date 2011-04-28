@@ -27,7 +27,7 @@ int main( int argc, char **argv )
   double argument = 0.0;
   bool retarg = parser->GetCommandLineArgument( "-arg", argument );
 
-	const bool useCompression = parser->ArgumentExists( "-z" );
+  const bool useCompression = parser->ArgumentExists( "-z" );
 
   /** Check if the required arguments are given. */
   if ( !retin )
@@ -91,13 +91,6 @@ int main( int argc, char **argv )
     std::cout << "\tPixelType:          " << ComponentType << std::endl;
     std::cout << "\tDimension:          " << Dimension << std::endl;
     std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
-  }
-
-  if ( NumberOfComponents > 1 )
-  {
-    std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
-    std::cerr << "Vector images are not supported!" << std::endl;
-    return 1;
   }
 
   /** Get rid of the possible "_" in ComponentType. */
