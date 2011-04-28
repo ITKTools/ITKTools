@@ -28,26 +28,29 @@ void ComposeVectorImage(
   const unsigned int & numberOfStreams );
 
 /** Declare PrintHelp. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char ** argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 4 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
+
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
 
   /** Get arguments. */
   std::vector<std::string>  inputFileNames( 0, "" );
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileNames );
+  parser->GetCommandLineArgument( "-in", inputFileNames );
 
   std::string outputFileName = "VECTOR.mhd";
   parser->GetCommandLineArgument( "-out", outputFileName );
@@ -57,11 +60,6 @@ int main( int argc, char ** argv )
   parser->GetCommandLineArgument( "-s", numberOfStreams );
 
   /** Check if the required arguments are given. */
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
   if ( inputFileNames.size() < 2 )
   {
     std::cerr << "ERROR: You should specify at least two (2) input files." << std::endl;
@@ -203,15 +201,18 @@ void ComposeVectorImage(
  * ******************* PrintHelp *******************
  */
 
-void PrintHelp( void )
+std::string PrintHelp( void )
 {
-  std::cout << "Usage:" << std::endl << "pximagetovectorimage\n";
-  std::cout << "  -in      inputFilenames, at least 2\n";
-  std::cout << "  [-out]   outputFilename, default VECTOR.mhd\n";
-  std::cout << "  [-s]     number of streams, default 1.\n";
-  std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, "
-    << "(unsigned) int, (unsigned) long, float, double.\n";
-  std::cout << "Note: make sure that the input images are of the same type, size, etc." << std::endl;
+  std::string helpText = "Usage: \
+  pximagetovectorimage\n \
+    -in      inputFilenames, at least 2\n \
+    [-out]   outputFilename, default VECTOR.mhd\n \
+    [-s]     number of streams, default 1.\n \
+  Supported: 2D, 3D, (unsigned) char, (unsigned) short, \
+  (unsigned) int, (unsigned) long, float, double.\n \
+  Note: make sure that the input images are of the same type, size, etc.";
+
+  return helpText;
 
 } // end PrintHelp()
 
