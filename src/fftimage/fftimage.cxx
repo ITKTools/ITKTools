@@ -41,50 +41,42 @@ void IFFTImage( const std::vector<std::string> & inputFileNames,
   const std::string & xdim );
 
 /** Declare other functions. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char **argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 5 || argc > 14 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
+
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+  parser->MarkArgumentAsRequired( "-op", "The operation to perform." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
 
   /** Get arguments. */
   std::vector<std::string>  inputFileNames;
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileNames );
+  parser->GetCommandLineArgument( "-in", inputFileNames );
 
   std::vector<std::string>  outputFileNames;
   bool retout = parser->GetCommandLineArgument( "-out", outputFileNames );
 
   std::string op = "";
-  bool retop = parser->GetCommandLineArgument( "-op", op );
+  parser->GetCommandLineArgument( "-op", op );
 
   std::string componentType = "float";
   bool retopct = parser->GetCommandLineArgument( "-opct", componentType );
 
   std::string xdim = "even";
   bool retxdim = parser->GetCommandLineArgument( "-xdim", xdim );
-
-  /** Check if the required arguments are given. */
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
-  if ( !retop )
-  {
-    std::cerr << "ERROR: You should specify \"-op\"." << std::endl;
-    return 1;
-  }
 
   /** Check operator. */
   op = itksys::SystemTools::LowerCase( op );
@@ -333,25 +325,28 @@ void IFFTImage( const std::vector<std::string> & inputFileNames,
   /**
    * ******************* PrintHelp *******************
    */
-void PrintHelp( void )
+std::string PrintHelp( void )
 {
-  std::cout << "Usage:" << std::endl << "pxfftimage" << std::endl;
-  std::cout << "  -in      inputFilenames\n";
-  std::cout << "             forward: only one input\n";
-  std::cout << "             backward, # given:\n";
-  std::cout << "               1: a complex image\n";
-  std::cout << "               2: a real and imaginary part" << std::endl;
-  std::cout << "  -op      operator, {forward, backward} FFT" << std::endl;
-  std::cout << "  [-out]   outputFilenames\n";
-  std::cout << "             forward, # given:\n";
-  std::cout << "               1: write the complex image, default in + Complex.mhd\n";
-  std::cout << "               2: write the real and imaginary images, default in + Real.mhd and in + Imaginary.mhd\n";
-  std::cout << "               3: write the complex, real and imaginary images\n";
-  std::cout << "             backward: only one output, default in + IFFT" << std::endl;
-  std::cout << "  [-opct]  the output type\n";
-  std::cout << "             choose from {float, double}, default float" << std::endl;
-  std::cout << "  [-xdim]  the backward transform needs to know if the actual x-dimension was odd or even.\n";
-  std::cout << "             choose from {odd, even}, default even" << std::endl;
-  std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
+  std::string helpText = "Usage:\
+  pxfftimage \
+    -in      inputFilenames\n \
+               forward: only one input\n \
+               backward, # given:\n \
+                 1: a complex image\n \
+                 2: a real and imaginary part \
+    -op      operator, {forward, backward} FFT \
+    [-out]   outputFilenames\n \
+               forward, # given:\n \
+                 1: write the complex image, default in + Complex.mhd\n \
+                 2: write the real and imaginary images, default in + Real.mhd and in + Imaginary.mhd\n \
+                 3: write the complex, real and imaginary images\n \
+               backward: only one output, default in + IFFT \
+    [-opct]  the output type\n \
+               choose from {float, double}, default float \
+    [-xdim]  the backward transform needs to know if the actual x-dimension was odd or even.\n \
+               choose from {odd, even}, default even \
+  Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
+
+  return helpText;
 
 } // end PrintHelp()
