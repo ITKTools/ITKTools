@@ -51,26 +51,29 @@ void PerformTextureAnalysis(
   unsigned int numberOfOutputs );
 
 /** Declare other functions. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char **argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 3 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
 
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
+  
   /** Get arguments. */
   std::string inputFileName = "";
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  parser->GetCommandLineArgument( "-in", inputFileName );
 
   std::string base = itksys::SystemTools::GetFilenamePath( inputFileName );
   if ( base != "" ) base = base + "/";
@@ -93,13 +96,6 @@ int main( int argc, char **argv )
 
   std::string componentTypeOut = "float";
   parser->GetCommandLineArgument( "-opct", componentTypeOut );
-
-  /** Check if the required arguments are given. */
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
 
   /** Check that numberOfOutputs <= 8. */
   if ( numberOfOutputs > 8 )
@@ -244,18 +240,21 @@ void PerformTextureAnalysis(
  * ******************* PrintHelp *******************
  */
 
-void PrintHelp( void )
+std::string PrintHelp( void )
 {
-  std::cout << "Usage:" << std::endl << "pxtexture" << std::endl;
-  std::cout << "This program computes texture features based on the gray-level co-occurrence matrix (GLCM).\n";
-  std::cout << "  -in      inputFilename\n";
-  std::cout << "  [-out]   outputDirectory, default equal to the inputFilename directory\n";
-  std::cout << "  [-r]     the radius of the neighborhood on which to construct the GLCM, default 3\n";
-  std::cout << "  [-os]    the desired offset scales to compute the GLCM, default 1, but can be e.g. 1 2 4\n";
-  std::cout << "  [-b]     the number of bins of the GLCM, default 128\n";
-  std::cout << "  [-noo]   the number of texture feature outputs, default all 8\n";
-  std::cout << "  [-opct]  output pixel component type, default float\n";
-  std::cout << "Supported: 2D, 3D, any input image type, float or double output type. " << std::endl;
+  std::string helpText = "Usage: \
+  pxtexture \
+  This program computes texture features based on the gray-level co-occurrence matrix (GLCM).\n \
+    -in      inputFilename\n \
+    [-out]   outputDirectory, default equal to the inputFilename directory\n \
+    [-r]     the radius of the neighborhood on which to construct the GLCM, default 3\n \
+    [-os]    the desired offset scales to compute the GLCM, default 1, but can be e.g. 1 2 4\n \
+    [-b]     the number of bins of the GLCM, default 128\n \
+    [-noo]   the number of texture feature outputs, default all 8\n \
+    [-opct]  output pixel component type, default float\n \
+  Supported: 2D, 3D, any input image type, float or double output type.";
+
+  return helpText;
 
 } // end PrintHelp()
 
