@@ -25,33 +25,37 @@
  * ******************* PrintHelp *******************
  */
 
-void PrintHelp( void )
+std::string PrintHelp( void )
 {
-  std::cout << "Usage:" << std::endl << "pxcastconvert\n";
-  std::cout << "  -in      inputfilename\n";
-  std::cout << "  -out     outputfilename\n";
-  std::cout << "  [-opct]  outputPixelComponentType\n";
-  std::cout << "  [-z]     compression flag; if provided, the output image "
-    << "is compressed\n";
-  std::cout << "OR pxcastconvert\n";
-  std::cout << "  -in      dicomDirectory\n";
-  std::cout << "  -out     outputfilename\n";
-  std::cout << "  [-opct]  outputPixelComponentType\n";
-  std::cout << "  [-s]     seriesUID\n";
-  std::cout << "  [-r]     add restrictions to generate a unique seriesUID\n";
-  std::cout << "           e.g. \"0020|0012\" to add a check for acquisition number.\n";
-  std::cout << "  [-z]     compression flag; if provided, the output image "
-    << "is compressed\n";
-  std::cout << "where outputPixelComponentType is one of:\n";
-  std::cout << "  [unsigned_]char, [unsigned_]short, [unsigned_]int,\n";
-  std::cout << "  [unsigned_]long, float, double,\n";
-  std::cout << "provided that the outputPixelComponentType is supported by "
-    << "the output file format.\n";
-  std::cout << "By default the outputPixelComponentType is set to the "
-    << "inputPixelComponentType.\n";
-  std::cout << "By default the seriesUID is the first UID found.\n";
-  std::cout << "The compression flag \"-z\" may be ignored by some output "
-    << "image formats." << std::endl;
+  std::string helpText = \
+  "Usage:\n \
+  pxcastconvert\n \
+    -in      inputfilename\n \
+    -out     outputfilename\n \
+    [-opct]  outputPixelComponentType\n \
+    [-z]     compression flag; if provided, the output image \
+  is compressed\n \
+  OR pxcastconvert\n \
+    -in      dicomDirectory\n \
+    -out     outputfilename\n \
+    [-opct]  outputPixelComponentType\n \
+    [-s]     seriesUID\n \
+    [-r]     add restrictions to generate a unique seriesUID\n \
+             e.g. \"0020|0012\" to add a check for acquisition number.\n \
+    [-z]     compression flag; if provided, the output image \
+  is compressed\n \
+  where outputPixelComponentType is one of:\n \
+    [unsigned_]char, [unsigned_]short, [unsigned_]int,\n \
+    [unsigned_]long, float, double,\n \
+  provided that the outputPixelComponentType is supported by \
+  the output file format.\n \
+  By default the outputPixelComponentType is set to the \
+  inputPixelComponentType.\n \
+  By default the seriesUID is the first UID found.\n \
+  The compression flag \"-z\" may be ignored by some output \
+  image formats.";
+
+  return helpText;
 
 } // end PrintHelp()
 
@@ -60,8 +64,7 @@ void PrintHelp( void )
  * ******************* GetCommandLineArguments *******************
  */
 
-int GetCommandLineArguments( int argc, char **argv,
-  std::string & errorMessage,
+bool GetCommandLineArguments( itk::CommandLineArgumentParser::Pointer parser,
   std::string & input,
   std::string & outputFileName,
   std::string & outputPixelComponentType,
@@ -69,29 +72,13 @@ int GetCommandLineArguments( int argc, char **argv,
   std::vector<std::string> & restrictions,
   bool & useCompression )
 {
-  /** Create a command line argument parser. */
-  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
-  parser->SetCommandLineArguments( argc, argv );
-
   /** Get arguments. */
-  bool retin = parser->GetCommandLineArgument( "-in", input );
-  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  parser->GetCommandLineArgument( "-in", input );
+  parser->GetCommandLineArgument( "-out", outputFileName );
   parser->GetCommandLineArgument( "-opct", outputPixelComponentType );
   parser->GetCommandLineArgument( "-s", seriesUID );
   parser->GetCommandLineArgument( "-r", restrictions );
   useCompression = parser->ArgumentExists( "-z" );
-
-  /** Check if necessary command line arguments are available. */
-  if ( !retin )
-  {
-    errorMessage = "ERROR: You should specify \"-in\".";
-    return 1;
-  }
-  if ( !retout )
-  {
-    errorMessage = "ERROR: You should specify \"-out\".";
-    return 1;
-  }
 
   /** Check outputPixelType. */
   if ( outputPixelComponentType != ""
@@ -107,14 +94,12 @@ int GetCommandLineArguments( int argc, char **argv,
     && outputPixelComponentType != "double" )
   {
     /** In this case an illegal outputPixelComponentType is given. */
-    errorMessage = "The given outputPixelComponentType is \""
-      + outputPixelComponentType + "\", which is not supported.";
-    return 1;
+    std::cerr << "The given outputPixelComponentType is " << 
+      outputPixelComponentType << " which is not supported.";
+    return false;
   }
 
-  /** Return a value. */
-  return 0;
-
+  return true; // everything went well
 } // end GetCommandLineArguments()
 
 
