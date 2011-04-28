@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE( pxgetpointsinimage getpointsinimage.cxx )
 
-TARGET_LINK_LIBRARIES( pxgetpointsinimage ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxgetpointsinimage ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxgetpointsinimage
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

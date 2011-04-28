@@ -4,20 +4,30 @@
 #include "itkImageRegionIteratorWithIndex.h"
 #include "itkImageFileReader.h"
 
+#include "itkCommandLineArgumentParser.h"
+#include "CommandLineArgumentHelper.h"
+
 #include <fstream>
 
+std::string GetHelpText();
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char *argv[] )
 {
-  /** Check number of arguments. */
-  if ( argc != 3 )
+  /** Create a command line argument parser. */
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(GetHelpText());
+
+  parser->MarkArgumentAsRequired( "-points", "Points filename." );
+  parser->MarkArgumentAsRequired( "-image", "Image filename." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
   {
-    std::cout << "Usage:" << std::endl;
-    std::cout << "pxgetpointsinimage pointsfilename imagename" << std::endl;
-    std::cout << "NOTE: only 2D short are created and arguments should be in above order." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   // Some consts.
@@ -36,8 +46,11 @@ int main( int argc, char *argv[] )
   typedef ImageType::SpacingType    SpacingType;
 
   /** Get arguments. */
-  std::string pointfilename = argv[ 1 ];
-  std::string imagefilename = argv[ 2 ];
+  std::string pointfilename;
+  parser->GetCommandLineArgument( "-points", pointfilename);
+  
+  std::string imagefilename;
+  parser->GetCommandLineArgument( "-image", imagefilename);
 
   /** Read the image. */
   ReaderType::Pointer reader = ReaderType::New();
@@ -124,5 +137,13 @@ int main( int argc, char *argv[] )
 
 } // end main
 
+std::string GetHelpText()
+{
+  std::string helpText = "Usage: \
+  pxgetpointsinimage pointsfilename imagename \
+  NOTE: only 2D short are created.";
+
+  return helpText;
+}
 
 #endif // #ifndef __GetPointsInImage_CXX__
