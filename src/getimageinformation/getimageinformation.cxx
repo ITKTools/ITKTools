@@ -6,26 +6,29 @@
 #include <iomanip>
 
 /** Declare PrintHelp. */
-void PrintHelp(void);
+std::string PrintHelp(void);
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char **argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 4 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
+
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
 
   /** Get arguments. */
   std::string inputFileName = "";
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  parser->GetCommandLineArgument( "-in", inputFileName );
 
   int index = -1;
   bool reti = parser->GetCommandLineArgument( "-i", index );
@@ -41,13 +44,6 @@ int main( int argc, char **argv )
   bool exvol = parser->ArgumentExists( "-vol" );
   bool exo = parser->ArgumentExists( "-o" );
   bool exall = parser->ArgumentExists( "-all" );
-
-  /** Check if the required arguments are given. */
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
 
   /** Typedef's. */
   const unsigned int Dimension = 3;
@@ -301,23 +297,26 @@ int main( int argc, char **argv )
   /**
    * ******************* PrintHelp *******************
    */
-void PrintHelp()
+std::string PrintHelp()
 {
-  std::cout << "Usage:\n" << "pxgetimageinformation\n";
-  std::cout << "  -in      inputFileName\n";
-  std::cout << "  [-dim]   dimension\n";
-  std::cout << "  [-pt]    pixelType\n";
-  std::cout << "  [-ct]    componentType\n";
-  std::cout << "  [-noc]   #components\n";
-  std::cout << "  [-sz]    size\n";
-  std::cout << "  [-sp]    spacing\n";
-  std::cout << "  [-vol]   voxel volume\n";
-  std::cout << "  [-o]     origin\n";
-  std::cout << "  [-dc]    direction cosines\n";
-  std::cout << "  [-all]   all of the above\n";
-  std::cout << "Image information about the inputFileName is printed to screen.\n";
-  std::cout << "Only one option should be given, e.g. -sp, then the spacing is printed.\n";
-  std::cout << "  [-i]     index, if this option is given only e.g. "
-    << "spacing[index] is printed." << std::endl;
+  std::string helpText = "Usage:\n \
+  pxgetimageinformation\n \
+    -in      inputFileName\n \
+    [-dim]   dimension\n \
+    [-pt]    pixelType\n \
+    [-ct]    componentType\n \
+    [-noc]   #components\n \
+    [-sz]    size\n \
+    [-sp]    spacing\n \
+    [-vol]   voxel volume\n \
+    [-o]     origin\n \
+    [-dc]    direction cosines\n \
+    [-all]   all of the above\n \
+  Image information about the inputFileName is printed to screen.\n \
+  Only one option should be given, e.g. -sp, then the spacing is printed.\n \
+    [-i]     index, if this option is given only e.g. \
+  spacing[index] is printed.";
+
+  return helpText;
 
 } // end PrintHelp()
