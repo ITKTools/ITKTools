@@ -8,26 +8,30 @@
 
 int main( int argc, char **argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 5 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
 
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+  parser->MarkArgumentAsRequired( "-out", "The output filename." );
+  parser->MarkArgumentAsRequired( "-ops", "Operation." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
+
   /** Get arguments. */
   std::vector<std::string> inputFileNames;
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileNames );
+  parser->GetCommandLineArgument( "-in", inputFileNames );
 
   std::string outputFileName = "";
-  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  parser->GetCommandLineArgument( "-out", outputFileName );
 
   std::string ops = "";
-  bool retops = parser->GetCommandLineArgument( "-ops", ops );
+  parser->GetCommandLineArgument( "-ops", ops );
 
   std::string argument = "0";
   bool retarg = parser->GetCommandLineArgument( "-arg", argument );
@@ -40,23 +44,6 @@ int main( int argc, char **argv )
   /** Support for streaming. */
   unsigned int numberOfStreams = inputFileNames.size();
   parser->GetCommandLineArgument( "-s", numberOfStreams );
-
-  /** Check if the required arguments are given. */
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
-  if ( !retout )
-  {
-    std::cerr << "ERROR: You should specify \"-out\"." << std::endl;
-    return 1;
-  }
-  if ( !retops )
-  {
-    std::cerr << "ERROR: You should specify \"-ops\"." << std::endl;
-    return 1;
-  }
 
   /** You should specify at least two input files. */
   if ( inputFileNames.size() < 2 )
