@@ -39,7 +39,7 @@ if ( ComponentType == #type && Dimension == dim ) \
 //-------------------------------------------------------------------------------------
 
 /** Declare PrintHelp. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 template< class TImage>
 void ComputeOverlapOld(
@@ -63,13 +63,6 @@ void ComputeOverlap3(
 
 int main( int argc, char ** argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 3 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
@@ -77,6 +70,15 @@ int main( int argc, char ** argv )
   /** Get arguments. */
   std::vector<std::string> inputFileNames;
   bool retin = parser->GetCommandLineArgument( "-in", inputFileNames );
+
+  parser->MarkArgumentAsRequired( "-in", "Two input filenames." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
 
   std::string maskFileName1 = "";
   parser->GetCommandLineArgument( "-mask1", maskFileName1 );
@@ -180,28 +182,30 @@ int main( int argc, char ** argv )
  * ******************* PrintHelp *******************
  */
 
-void PrintHelp( void )
+std::string PrintHelp( void )
 {
-  std::cout << "Usage:" << std::endl << "pxcomputeoverlap\n";
-  std::cout << "This program computes the overlap of two images.\n"
-    << "By default the overlap of nonzero regions is computed.\n"
-    << "Masks of a valid region are also taken into account.\n"
-    << "If the images are not binary, you can specify threshold values.\n";
-  std::cerr << "\nThe results is computed as:\n";
-  std::cerr << "   2 * L1( (im1 AND mask2) AND (im2 AND mask1) )\n";
-  std::cerr << "  ----------------------------------------------\n";
-  std::cerr << "       L1(im1 AND mask2) + L1(im2 AND mask1)    \n" << std::endl;
-  std::cout << "  -in      inputFilename1 inputFilename2\n";
-  std::cout << "  [-mask1] maskFilename1\n";
-  std::cout << "  [-mask2] maskFilename2\n";
-  std::cout << "  [-t1]    threshold1\n";
-  std::cout << "  [-t2]    threshold2\n";
-  std::cout << "  [-l]     alternative implementation using label values\n";
-  std::cout << "           the overlap of exactly corresponding labels is computed\n";
-  std::cout << "           if \"-l\" is specified with no arguments, all labels in im1 are used,\n";
-  std::cout << "           otherwise (e.g. \"-l 1 6 19\") the specified labels are used.\n";
-  std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short" << std::endl;
+  std::string helpText = "Usage: \
+  pxcomputeoverlap\n \
+  This program computes the overlap of two images.\n \
+  By default the overlap of nonzero regions is computed.\n \
+  Masks of a valid region are also taken into account.\n \
+  If the images are not binary, you can specify threshold values.\n \
+  \nThe results is computed as:\n \
+     2 * L1( (im1 AND mask2) AND (im2 AND mask1) )\n \
+    ----------------------------------------------\n \
+         L1(im1 AND mask2) + L1(im2 AND mask1)    \n \
+    -in      inputFilename1 inputFilename2\n \
+    [-mask1] maskFilename1\n \
+    [-mask2] maskFilename2\n \
+    [-t1]    threshold1\n \
+    [-t2]    threshold2\n \
+    [-l]     alternative implementation using label values\n \
+             the overlap of exactly corresponding labels is computed\n \
+             if \"-l\" is specified with no arguments, all labels in im1 are used,\n \
+             otherwise (e.g. \"-l 1 6 19\") the specified labels are used.\n \
+  Supported: 2D, 3D, (unsigned) char, (unsigned) short";
 
+  return helpText;
 } // end PrintHelp()
 
 
