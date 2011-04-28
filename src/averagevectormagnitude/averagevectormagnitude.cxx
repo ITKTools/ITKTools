@@ -1,6 +1,9 @@
 #ifndef __avm_cxx
 #define __avm_cxx
 
+#include "itkCommandLineArgumentParser.h"
+#include "CommandLineArgumentHelper.h"
+
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "itkVector.h"
@@ -13,6 +16,7 @@
 #include <iostream>
 #include <string>
 
+std::string PrintUsageString();
 
 template <
   unsigned int NImageDimension,
@@ -97,105 +101,44 @@ ValueType run_avm(const char * inputFileName, const char * outputFileName = 0)
 
 } // end function run_avm
 
-void PrintUsageString(void)
-{
-  std::cerr
-    << "Calculate the average magnitude of the vectors in a vector image.\n\n"
-    << "Usage:\n"
-    << "AverageVectorMagnitude\n"
-    << "\t-in InputVectorImageFileName\n"
-    << "\t[-out OutputImageFileName]\n"
-    << "\t-id ImageDimension\n"
-    << "\t-sd SpaceDimension (the dimension of the vectors)\n"
-    << std::endl;
-}
 
 
 int main( int argc, char** argv )
 {
-  typedef std::map<std::string, std::string> ArgMapType;
-  typedef float ValueType;
-
-  ArgMapType argmap;
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
+  
   std::string inputFileName("");
-  std::string outputFileName("");
+  std::string outputFileName(inputFileName + "AverageVectorMagnitude.mhd");
   std::string imageDimension("");
   std::string spaceDimension("");
+  parser->SetProgramHelpText(PrintUsageString());
+  
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+  parser->MarkArgumentAsRequired( "-id", "Image dimension." );
+  parser->MarkArgumentAsRequired( "-sd", "Space dimension." );
 
-  /** Fill the argument map */
-  for (unsigned int i = 1; i < static_cast<unsigned int>(argc); i+=2)
+  parser->GetCommandLineArgument( "-in", inputFileName );
+  
+  float averageVectorMagnitude = 0.0f;
+  if (imageDimension.compare("2") == 0)
   {
-    if ( (i+1) < static_cast<unsigned int>(argc))
-    {
-      argmap[ argv[i] ] = argv[i+1];
-    }
-    else
-    {
-      argmap[ argv[i] ] = "";
-    }
-  }
-
-  /** Help needed? */
-  if (argmap.count("-h") || argmap.count("-help") || argmap.count("--help") )
-  {
-    PrintUsageString();
-    return -1;
-  }
-
-  if ( argmap.count("-in") )
-  {
-    inputFileName = argmap["-in"];
-  }
-  else
-  {
-    std::cerr << "Not enough arguments\n";
-    PrintUsageString();
-    return -1;
-  }
-  if ( argmap.count("-out") )
-  {
-    outputFileName = argmap["-out"];
-  }
-  if ( argmap.count("-id") )
-  {
-    imageDimension = argmap["-id"];
-  }
-  else
-  {
-    std::cerr << "Not enough arguments\n";
-    PrintUsageString();
-    return -1;
-  }
-  if ( argmap.count("-sd") )
-  {
-    spaceDimension = argmap["-sd"];
-  }
-  else
-  {
-    std::cerr << "Not enough arguments\n";
-    PrintUsageString();
-    return -1;
-  }
-
-  ValueType averageVectorMagnitude = 0.0f;
-  if (imageDimension == "2")
-  {
-    if (spaceDimension == "2")
+    if (spaceDimension.compare("2") == 0)
     {
        averageVectorMagnitude = run_avm<2,2,float>(inputFileName.c_str(), outputFileName.c_str() );
     }
-    else if (spaceDimension == "3")
+    else if (spaceDimension.compare("3") == 0)
     {
        averageVectorMagnitude = run_avm<2,3,float>(inputFileName.c_str(), outputFileName.c_str());
     }
   }
-  else if (imageDimension == "3")
+  else if (imageDimension.compare("3") == 0)
   {
-    if (spaceDimension == "2")
+    if (spaceDimension.compare("2") == 0)
     {
        averageVectorMagnitude = run_avm<3,2,float>(inputFileName.c_str(), outputFileName.c_str());
     }
-    else if (spaceDimension == "3")
+    else if (spaceDimension.compare("3") == 0)
     {
        averageVectorMagnitude = run_avm<3,3,float>(inputFileName.c_str(), outputFileName.c_str());
     }
@@ -211,6 +154,20 @@ int main( int argc, char** argv )
   return 0;
 
 } // end function main
+
+std::string PrintUsageString()
+{
+  std::string helpString =
+    "Calculate the average magnitude of the vectors in a vector image.\n\n \
+    Usage:\n \
+    AverageVectorMagnitude\n \
+    \t-in InputVectorImageFileName\n \
+    \t[-out OutputImageFileName]\n \
+    \t-id ImageDimension\n \
+    \t-sd SpaceDimension (the dimension of the vectors)\n";
+
+  return helpString;
+}
 
 #endif // #ifndef __avm_cxx
 
