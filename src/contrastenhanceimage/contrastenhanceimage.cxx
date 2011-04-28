@@ -3,41 +3,32 @@
 
 #include "contrastenhanceimage.h"
 
+#include "itkCommandLineArgumentParser.h"
+#include "CommandLineArgumentHelper.h"
 
 int main(int argc, char** argv)
 {
-  ArgMapType argmap;
+  /** Create a command line argument parser. */
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintUsageString());
+
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+  parser->MarkArgumentAsRequired( "-id", "The image dimension." );
+  parser->MarkArgumentAsRequired( "-pt", "The pixel type." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
+
   std::string imageDimension("0");
   unsigned int iDim = 0;
 
-  /** Fill the argument map */
-  for (unsigned int i = 1; i < static_cast<unsigned int>(argc); i+=2)
-  {
-    if ( (i+1) < static_cast<unsigned int>(argc))
-    {
-      argmap[ argv[i] ] = argv[i+1];
-    }
-    else
-    {
-      argmap[ argv[i] ] = "";
-    }
-  }
-
-  /** Help needed? */
-  if ( (argc == 1) || argmap.count("-h") || argmap.count("-help") || argmap.count("--help") )
-  {
-    PrintUsageString();
-    return -1;
-  }
-
   /** Read the dimension. */
-  int returndummy = 0;
-  returndummy |= ReadArgument(argmap, "-id", imageDimension, false);
-
-  if ( returndummy !=0 )
-  {
-    return returndummy;
-  }
+  parser->GetCommandLineArgument( "-id", imageDimension);
 
   iDim = atoi( imageDimension.c_str() );
   if (iDim ==0)
@@ -47,13 +38,14 @@ int main(int argc, char** argv)
   }
 
   /** Instantiate the pixeltypeselector */
+  bool returndummy;
   if (imageDimension == "2")
   {
-    returndummy = ptswrap<2>::PixelTypeSelector( argmap );
+    returndummy = ptswrap<2>::PixelTypeSelector(parser);
   }
   else if (imageDimension == "3")
   {
-     returndummy = ptswrap<3>::PixelTypeSelector( argmap );
+     returndummy = ptswrap<3>::PixelTypeSelector(parser);
   }
   else
   {
