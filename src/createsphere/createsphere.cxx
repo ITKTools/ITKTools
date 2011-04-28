@@ -28,35 +28,33 @@ void CreateSphere(
   const double & radius );
 
 /** Declare PrintHelp. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char *argv[] )
 {
-  /** Check arguments for help. */
-  if ( argc < 5 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
 
+  parser->MarkArgumentAsRequired( "-out", "The output filename." );
+  parser->MarkArgumentAsRequired( "-sz", "Size." );
+  parser->MarkArgumentAsRequired( "-c", "Center." );
+  parser->MarkArgumentAsRequired( "-r", "Radius." );
+
   /** Get arguments. */
   std::string outputFileName = "";
-  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  parser->GetCommandLineArgument( "-out", outputFileName );
 
   std::vector<unsigned int> size;
-  bool retsz = parser->GetCommandLineArgument( "-sz", size );
+  parser->GetCommandLineArgument( "-sz", size );
 
   std::vector<double> center;
-  bool retc = parser->GetCommandLineArgument( "-c", center );
+  parser->GetCommandLineArgument( "-c", center );
 
   double radius;
-  bool retr = parser->GetCommandLineArgument( "-r", radius );
+  parser->GetCommandLineArgument( "-r", radius );
 
   unsigned int Dimension = 3;
   parser->GetCommandLineArgument( "-dim", Dimension );
@@ -66,28 +64,6 @@ int main( int argc, char *argv[] )
 
   std::vector<double> spacing( Dimension, 1.0 );
   parser->GetCommandLineArgument( "-sp", spacing );
-
-  /** Check if the required arguments are given. */
-  if ( !retout )
-  {
-    std::cerr << "ERROR: You should specify \"-out\"." << std::endl;
-    return 1;
-  }
-  if ( !retsz )
-  {
-    std::cerr << "ERROR: You should specify \"-sz\"." << std::endl;
-    return 1;
-  }
-  if ( !retc )
-  {
-    std::cerr << "ERROR: You should specify \"-c\"." << std::endl;
-    return 1;
-  }
-  if ( !retr )
-  {
-    std::cerr << "ERROR: You should specify \"-r\"." << std::endl;
-    return 1;
-  }
 
   /** Get rid of the possible "_" in PixelType. */
   ReplaceUnderscoreWithSpace( PixelType );
@@ -207,16 +183,18 @@ void CreateSphere(
   /**
    * ******************* PrintHelp *******************
    */
-void PrintHelp( void )
+std::string PrintHelp( void )
 {
-  std::cout << "Usage:" << std::endl << "pxcreatesphere" << std::endl;
-  std::cout << "  -out     outputFilename" << std::endl;
-  std::cout << "  -sz      image size (voxels)" << std::endl;
-  std::cout << "  [-sp]    image spacing (mm)" << std::endl;
-  std::cout << "  -c       center (mm)" << std::endl;
-  std::cout << "  -r       radii (mm)" << std::endl;
-  std::cout << "  [-dim]   dimension, default 3" << std::endl;
-  std::cout << "  [-pt]    pixelType, default short" << std::endl;
-  std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double." << std::endl;
+  std::string helpText = "Usage: \
+  pxcreatesphere \
+    -out     outputFilename \
+    -sz      image size (voxels) \
+    [-sp]    image spacing (mm) \
+    -c       center (mm) \
+    -r       radii (mm) \
+    [-dim]   dimension, default 3 \
+    [-pt]    pixelType, default short \
+  Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
+  return helpText;
 } // end PrintHelp
 
