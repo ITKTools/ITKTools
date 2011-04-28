@@ -10,6 +10,8 @@
 #include "itkImageFileWriter.h"
 #include "itkHistogramEqualizationImageFilter.h"
 
+#include "itkCommandLineArgumentParser.h"
+
 typedef std::map<std::string, std::string> ArgMapType;
 
 void PrintUsageString(void)
@@ -68,7 +70,7 @@ class runwrap
 {
   public:
 
-  static int run_cri(const ArgMapType & argmap )
+  static int run_cri(itk::CommandLineArgumentParser::Pointer parser)
   {
     const unsigned int ImageDimension = NImageDimension;
     typedef TPixel                                PixelType;
@@ -89,17 +91,13 @@ class runwrap
     /** vars */
     std::string inputImageFileName("");
     std::string outputImageFileName("");
-    int returndummy = 0;
+
     WriterPointer writer = WriterType::New();
     EnhancerPointer enhancer = EnhancerType::New();
 
     /** Read filenames */
-    returndummy |= ReadArgument(argmap, "-in", inputImageFileName, false);
-    returndummy |= ReadArgument(argmap, "-out", outputImageFileName, false);
-    if ( returndummy !=0 )
-    {
-      return returndummy;
-    }
+    parser->GetCommandLineArgument("-in", inputImageFileName);
+    parser->GetCommandLineArgument("-out", outputImageFileName);
 
     /** Try to read input image */
     ReaderPointer reader = ReaderType::New();
@@ -154,15 +152,11 @@ template < unsigned int NImageDimension>
 class ptswrap
 { public:
 
-  static int PixelTypeSelector(const ArgMapType & argmap )
+  static int PixelTypeSelector(itk::CommandLineArgumentParser::Pointer parser)
   {
     const unsigned int ImageDimension = NImageDimension;
     std::string pixelType("");
-    int returndummy = ReadArgument(argmap, "-pt", pixelType, false);
-    if ( returndummy !=0 )
-    {
-      return returndummy;
-    }
+    parser->GetCommandLineArgument("-pt", pixelType);
 
     std::map<std::string, enum_type> typemap;
     typemap["FLOAT"] = eFLOAT;
@@ -181,13 +175,13 @@ class ptswrap
     switch( pt )
     {
     case eSHORT :
-      return  runwrap<ImageDimension, short>::run_cri(argmap);
+      return  runwrap<ImageDimension, short>::run_cri(parser);
     case eUSHORT :
-      return  runwrap<ImageDimension, unsigned short>::run_cri(argmap);
+      return  runwrap<ImageDimension, unsigned short>::run_cri(parser);
     case eCHAR :
-      return  runwrap<ImageDimension, char>::run_cri(argmap);
+      return  runwrap<ImageDimension, char>::run_cri(parser);
     case eUCHAR :
-      return  runwrap<ImageDimension, unsigned char>::run_cri(argmap);
+      return  runwrap<ImageDimension, unsigned char>::run_cri(parser);
     default :
       std::cerr << "ERROR: PixelType not supported" << std::endl;
       return 1;

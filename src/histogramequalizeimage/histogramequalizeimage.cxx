@@ -3,57 +3,45 @@
 
 #include "histogramequalizeimage.h"
 
+#include "itkCommandLineArgumentParser.h"
+#include "CommandLineArgumentHelper.h"
 
 int main(int argc, char** argv)
 {
-  ArgMapType argmap;
-  std::string imageDimension("0");
-  unsigned int iDim = 0;
+  /** Create a command line argument parser. */
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
 
-  /** Fill the argument map */
-  for (unsigned int i = 1; i < static_cast<unsigned int>(argc); i+=2)
-  {
-    if ( (i+1) < static_cast<unsigned int>(argc))
-    {
-      argmap[ argv[i] ] = argv[i+1];
-    }
-    else
-    {
-      argmap[ argv[i] ] = "";
-    }
-  }
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+  parser->MarkArgumentAsRequired( "-out", "The output filename." );
+  parser->MarkArgumentAsRequired( "-pt", "Pixel type." );
 
-  /** Help needed? */
-  if ( (argc == 1) || argmap.count("-h") || argmap.count("-help") || argmap.count("--help") )
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
   {
-    PrintUsageString();
-    return -1;
+    return EXIT_FAILURE;
   }
 
   /** Read the dimension. */
-  int returndummy = 0;
-  returndummy |= ReadArgument(argmap, "-id", imageDimension, false);
+  unsigned int imageDimension = 0;
+  parser->GetCommandLineArgument( "-id", imageDimension );
 
-  if ( returndummy !=0 )
-  {
-    return returndummy;
-  }
-
-  iDim = atoi( imageDimension.c_str() );
-  if (iDim ==0)
+  if (imageDimension == 0)
   {
     std::cerr << "ERROR: Image dimension cannot be 0" <<std::endl;
     return 1;
   }
 
   /** Instantiate the pixeltypeselector */
-  if (imageDimension == "2")
+  bool success = false;
+  if (imageDimension == 2)
   {
-    returndummy = ptswrap<2>::PixelTypeSelector( argmap );
+    success = ptswrap<2>::PixelTypeSelector( parser );
   }
-  else if (imageDimension == "3")
+  else if (imageDimension == 3)
   {
-     returndummy = ptswrap<3>::PixelTypeSelector( argmap );
+    success = ptswrap<3>::PixelTypeSelector( parser );
   }
   else
   {
@@ -61,12 +49,7 @@ int main(int argc, char** argv)
     return 1;
   }
 
-  if (returndummy)
-  {
-    std::cerr << "Errors occured." << std::endl;
-  }
-
-  return returndummy;
+  return success;
 
 } // end function main
 
