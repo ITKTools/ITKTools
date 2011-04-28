@@ -26,53 +26,41 @@ void ReplaceVoxel(
   const double & value );
 
 /** Declare PrintHelp. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char ** argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 7 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
+
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+  parser->MarkArgumentAsRequired( "-vox", "Voxel." );
+  parser->MarkArgumentAsRequired( "-val", "Value." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
 
   /** Get arguments. */
   std::string inputFileName = "";
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  parser->GetCommandLineArgument( "-in", inputFileName );
 
   std::string outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
   outputFileName += "VOXELREPLACED.mhd";
   parser->GetCommandLineArgument( "-out", outputFileName );
 
   std::vector< unsigned int > voxel;
-  bool retvox = parser->GetCommandLineArgument( "-vox", voxel );
+  parser->GetCommandLineArgument( "-vox", voxel );
 
   double value;
-  bool retval = parser->GetCommandLineArgument( "-val", value );
-
-  /** Check if the required arguments are given. */
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
-  if ( !retvox )
-  {
-    std::cerr << "ERROR: You should specify \"-vox\"." << std::endl;
-    return 1;
-  }
-  if ( !retval )
-  {
-    std::cerr << "ERROR: You should specify \"-val\"." << std::endl;
-    return 1;
-  }
+  parser->GetCommandLineArgument( "-val", value );
 
   /** Determine image properties. */
   std::string ComponentTypeIn = "short";
@@ -219,17 +207,19 @@ void ReplaceVoxel( const std::string & inputFileName,
 /**
  * ******************* PrintHelp *******************
  */
-void PrintHelp()
+std::string PrintHelp()
 {
-  std::cout << "This program replaces the value of a user specified voxel.\n";
-  std::cout << "Usage:\n"
-            << "pxreplacevoxel\n";
-  std::cout << "  -in      inputFilename\n";
-  std::cout << "  [-out]   outputFilename, default in + VOXELREPLACED.mhd\n";
-  std::cout << "  -vox     input voxel index\n";
-  std::cout << "  -val     value that replaces the voxel\n";
-  std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int,\n"
-            << "(unsigned) long, float, double.\n";
-  std::cout << std::endl;
+  std::string helpString = "This program replaces the value of a user specified voxel.\n \
+  Usage:\n \
+  pxreplacevoxel\n \
+    -in      inputFilename\n \
+    [-out]   outputFilename, default in + VOXELREPLACED.mhd\n \
+    -vox     input voxel index\n \
+    -val     value that replaces the voxel\n \
+  Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int,\n \
+  (unsigned) long, float, double.\n";
+
+  return helpString;
+
 } // end PrintHelp()
 
