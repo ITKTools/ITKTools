@@ -29,35 +29,41 @@ void CreateEllipsoid(
   const std::vector<double> & orientation );
 
 /** Declare PrintHelp. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char *argv[] )
 {
-  /** Check arguments for help. */
-  if ( argc < 5 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
 
+  parser->MarkArgumentAsRequired( "-out", "The output filename." );
+  parser->MarkArgumentAsRequired( "-sz", "The size." );
+  parser->MarkArgumentAsRequired( "-c", "The center." );
+  parser->MarkArgumentAsRequired( "-r", "The radius." );
+  
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
+  
   /** Get arguments. */
   std::string outputFileName = "";
-  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  parser->GetCommandLineArgument( "-out", outputFileName );
 
   std::vector<unsigned int> size;
-  bool retsz = parser->GetCommandLineArgument( "-sz", size );
+  parser->GetCommandLineArgument( "-sz", size );
 
   std::vector<double> center;
-  bool retc = parser->GetCommandLineArgument( "-c", center );
+  parser->GetCommandLineArgument( "-c", center );
 
   std::vector<double> radius;
-  bool retr = parser->GetCommandLineArgument( "-r", radius );
+  parser->GetCommandLineArgument( "-r", radius );
 
   unsigned int Dimension = 3;
   parser->GetCommandLineArgument( "-dim", Dimension );
@@ -71,27 +77,6 @@ int main( int argc, char *argv[] )
   std::vector<double> orientation( Dimension * Dimension, 0.0 );
   bool reto = parser->GetCommandLineArgument( "-o", orientation );
 
-  /** Check if the required arguments are given. */
-  if ( !retout )
-  {
-    std::cerr << "ERROR: You should specify \"-out\"." << std::endl;
-    return 1;
-  }
-  if ( !retsz )
-  {
-    std::cerr << "ERROR: You should specify \"-sz\"." << std::endl;
-    return 1;
-  }
-  if ( !retc )
-  {
-    std::cerr << "ERROR: You should specify \"-c\"." << std::endl;
-    return 1;
-  }
-  if ( !retr )
-  {
-    std::cerr << "ERROR: You should specify \"-r\"." << std::endl;
-    return 1;
-  }
   if ( !reto )
   {
     for ( unsigned int i = 0; i < Dimension; i++ )
@@ -230,19 +215,21 @@ void CreateEllipsoid(
   /**
    * ******************* PrintHelp *******************
    */
-void PrintHelp( void )
+std::string PrintHelp( void )
 {
-  std::cout << "Usage:" << std::endl << "pxcreateellipsoid" << std::endl;
-  std::cout << "  -out     outputFilename" << std::endl;
-  std::cout << "  -sz      image size (voxels)" << std::endl;
-  std::cout << "  [-sp]    image spacing (mm)" << std::endl;
-  std::cout << "  -c       center (mm)" << std::endl;
-  std::cout << "  -r       radii (mm)" << std::endl;
-  std::cout << "  [-o]     orientation, default xyz" << std::endl;
-  std::cout << "  [-dim]   dimension, default 3" << std::endl;
-  std::cout << "  [-pt]    pixelType, default short" << std::endl;
-  std::cout << "The orientation is a dim*dim matrix, specified in row order." << std::endl;
-  std::cout << "The user should take care of supplying an orthogonal matrix." << std::endl;
-  std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double." << std::endl;
+  std::string helpText = "Usage: \
+  pxcreateellipsoid \
+    -out     outputFilename \
+    -sz      image size (voxels) \
+    [-sp]    image spacing (mm) \
+    -c       center (mm) \
+    -r       radii (mm) \
+    [-o]     orientation, default xyz \
+    [-dim]   dimension, default 3 \
+    [-pt]    pixelType, default short \
+  The orientation is a dim*dim matrix, specified in row order. \
+  The user should take care of supplying an orthogonal matrix. \
+  Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
+  return helpText;
 } // end PrintHelp
 
