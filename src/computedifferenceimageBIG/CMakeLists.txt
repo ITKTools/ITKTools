@@ -13,7 +13,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE( pxcomputedifferenceimageBIG computeDifferenceImage.cxx computeDifferenceImageVector.cxx computeDifferenceImageVector2D.cxx computeDifferenceImageVector3D.cxx computeDifferenceImageVector4D.cxx )
 
-TARGET_LINK_LIBRARIES( pxcomputedifferenceimageBIG ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxcomputedifferenceimageBIG ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxcomputedifferenceimageBIG
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )
