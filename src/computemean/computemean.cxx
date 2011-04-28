@@ -11,26 +11,28 @@
 #include <algorithm>
 
 /** Declare PrintHelp. */
-void PrintHelp(void);
+std::string PrintHelp(void);
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char *argv[] )
 {
-  /** Check arguments for help. */
-  if ( argc < 3 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
 
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
+  
   /** Get arguments. */
   std::string inputTextFile = "";
-  bool retin = parser->GetCommandLineArgument( "-in", inputTextFile );
+  parser->GetCommandLineArgument( "-in", inputTextFile );
 
   std::string whichMean = "arithmetic";
   parser->GetCommandLineArgument( "-m", whichMean );
@@ -47,12 +49,6 @@ int main( int argc, char *argv[] )
   unsigned int precision = 6;
   parser->GetCommandLineArgument( "-p", precision );
 
-  /** Check if the required arguments are given. */
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
   if ( whichMean != "arithmetic" && whichMean != "geometric" && whichMean != "median" )
   {
     std::cerr << "ERROR: \"-m\" should be one of { arithmetic, geometric }." << std::endl;
@@ -208,16 +204,19 @@ int main( int argc, char *argv[] )
   /**
    * ******************* PrintHelp *******************
    */
-void PrintHelp()
+std::string PrintHelp()
 {
-  std::cout << "Usage:" << std::endl << "pxcomputemean" << std::endl;
-  std::cout << "  -in      input text file" << std::endl;
-  std::cout << "  [-m]     what kind of mean" << std::endl;
-  std::cout << "  [-c]     column of which the mean is taken" << std::endl;
-  std::cout << "  [-s]     skip: how many rows are skipped" << std::endl;
-  std::cout << "  [-p]     output precision" << std::endl;
-  std::cout << "-m should be \"arithmetic\", \"geometric\" or \"median\", the default is \"arithmetic\"." << std::endl;
-  std::cout << "The default output precision is 6." << std::endl;
-  std::cout << "The output for median is: minimum, first quartile, median, third quartile, maximum." << std::endl;
+  std::string helpText ="Usage: \
+  pxcomputemean \
+    -in      input text file \
+    [-m]     what kind of mean \
+    [-c]     column of which the mean is taken \
+    [-s]     skip: how many rows are skipped \
+    [-p]     output precision \
+  -m should be \"arithmetic\", \"geometric\" or \"median\", the default is \"arithmetic\". \
+  The default output precision is 6. \
+  The output for median is: minimum, first quartile, median, third quartile, maximum.";
+
+  return helpText;
 } // end PrintHelp
 
