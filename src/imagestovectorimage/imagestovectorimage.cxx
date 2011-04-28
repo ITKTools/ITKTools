@@ -4,6 +4,7 @@
 #include "itkImageFileReader.h"
 #include "itkImageToVectorImageFilter.h"
 #include "itkImageFileWriter.h"
+#include "itkVectorIndexSelectionCastImageFilter.h"
 
 //-------------------------------------------------------------------------------------
 
@@ -11,7 +12,7 @@
 #define run( function, type, dim ) \
 if ( ComponentTypeIn == #type && Dimension == dim ) \
 { \
-  typedef itk::Image< type, dim >       InputImageType; \
+  typedef itk::VectorImage< type, dim >       InputImageType; \
   typedef itk::VectorImage< type, dim > OutputImageType; \
   function< InputImageType, OutputImageType >( inputFileNames, outputFileName, numberOfStreams ); \
   supported = true; \
@@ -85,14 +86,6 @@ int main( int argc, char ** argv )
     return 1;
   }
 
-  /** Check for vector images. */
-  if ( NumberOfComponents > 1 )
-  {
-    std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
-    std::cerr << "Cannot make vector of vector images." << std::endl;
-    return 1;
-  }
-
   /** Get rid of the possible "_" in ComponentType. */
   ReplaceUnderscoreWithSpace( ComponentTypeIn );
 
@@ -155,28 +148,51 @@ void ComposeVectorImage(
 {
   /** Typedef's. */
   typedef itk::ImageFileReader< InputImageType >          ReaderType;
-  typedef itk::ImageToVectorImageFilter< InputImageType > FilterType;;
+  typedef itk::Image<typename InputImageType::InternalPixelType, InputImageType::ImageDimension> ScalarImageType;
+  typedef itk::ImageToVectorImageFilter< ScalarImageType > ImageToVectorImageFilterType;
   typedef itk::ImageFileWriter< OutputImageType >         WriterType;
-
+  
   /** Read in the input images. */
   std::vector<typename ReaderType::Pointer> readers( inputFileNames.size() );
   for ( unsigned int i = 0; i < inputFileNames.size(); ++i )
   {
     readers[ i ] = ReaderType::New();
     readers[ i ]->SetFileName( inputFileNames[ i ] );
+    readers[ i ]->Update();
   }
 
   /** Create index extractor and writer. */
-  typename FilterType::Pointer composer = FilterType::New();
-  for ( unsigned int i = 0; i < inputFileNames.size(); ++i )
+  typename ImageToVectorImageFilterType::Pointer imageToVectorImageFilter = ImageToVectorImageFilterType::New();
+  // For each input image
+  std::cout << "There are " << inputFileNames.size() << " input images." << std::endl;
+  unsigned int currentOutputIndex = 0;
+  for ( unsigned int inputImageIndex = 0; inputImageIndex < inputFileNames.size(); ++inputImageIndex )
   {
-    composer->SetNthInput( i, readers[ i ]->GetOutput() );
+    typedef itk::VectorIndexSelectionCastImageFilter<InputImageType, ScalarImageType> ComponentExtractionType;
+
+    // For each component of the current image
+    std::cout << "There are " << readers[inputImageIndex]->GetOutput()->GetNumberOfComponentsPerPixel() << " components in image " 
+              << inputImageIndex << std::endl;
+    for ( unsigned int component = 0; component < readers[inputImageIndex]->GetOutput()->GetNumberOfComponentsPerPixel(); ++component )
+    {
+      typename ComponentExtractionType::Pointer componentExtractionFilter = ComponentExtractionType::New();
+      componentExtractionFilter->SetIndex(component);
+      componentExtractionFilter->SetInput(readers[inputImageIndex]->GetOutput());
+      componentExtractionFilter->Update();
+      
+      imageToVectorImageFilter->SetNthInput( currentOutputIndex, componentExtractionFilter->GetOutput());
+      currentOutputIndex++;
+    }
   }
+  
+  imageToVectorImageFilter->Update();
+  
+  std::cout << "Output image has " << imageToVectorImageFilter->GetOutput()->GetNumberOfComponentsPerPixel() << " components." << std::endl;
 
   /** Write vector image. */
   typename WriterType::Pointer writer = WriterType::New();
   writer->SetFileName( outputFileName );
-  writer->SetInput( composer->GetOutput() );
+  writer->SetInput( imageToVectorImageFilter->GetOutput() );
   writer->SetNumberOfStreamDivisions( numberOfStreams );
   writer->Update();
 
