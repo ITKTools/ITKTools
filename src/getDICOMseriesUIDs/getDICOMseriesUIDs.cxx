@@ -8,32 +8,25 @@
 #include "itkGDCMSeriesFileNames.h"
 
 /** PrintHelp. */
-void PrintHelp( void )
-{
-  std::cout << "Usage:\npxgetDICOMseriesUIDs\n";
-  std::cout << "  -in      inputDirectoryName\n";
-  std::cout << "  [-r]     add restrictions to generate a unique seriesUID\n";
-  std::cout << "           e.g. \"0020|0012\" to add a check for acquisition "
-    << "number." << std::endl;
-
-} // end PrintHelp()
-
-
+std::string PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char **argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 3 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
+
+  parser->MarkArgumentAsRequired( "-in", "The input directory name." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
 
   /** Get arguments. */
   std::string inputDirectoryName;
@@ -93,3 +86,15 @@ int main( int argc, char **argv )
 
 }  // end main
 
+std::string PrintHelp( void )
+{
+  std::string helpText = "Usage: \
+  pxgetDICOMseriesUIDs \
+    -in      inputDirectoryName\n \
+    [-r]     add restrictions to generate a unique seriesUID\n \
+             e.g. \"0020|0012\" to add a check for acquisition \
+  number.";
+
+  return helpText;
+
+} // end PrintHelp()
