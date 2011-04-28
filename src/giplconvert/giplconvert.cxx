@@ -26,38 +26,32 @@ void GiplConvert(
   const std::string & outputFileName );
 
 /** Declare other functions. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char **argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 3 || argc > 9 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
 
   /** Get arguments. */
   std::string inputFileName = "";
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  parser->GetCommandLineArgument( "-in", inputFileName );
 
   std::string outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
   outputFileName += ".gipl";
   parser->GetCommandLineArgument( "-out", outputFileName );
-
-  /** Check if the required arguments are given. */
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
 
   /** Dummy image type. */
   const unsigned int DummyDimension = 3;
@@ -229,16 +223,16 @@ void GiplConvert(
   /**
    * ******************* PrintHelp *******************
    */
-void PrintHelp()
+std::string PrintHelp()
 {
-  std::cout << "This program converts gipls that cannot be converted by pxcastconvert." << std::endl;
-  std::cout << "Usage:" << std::endl << "pxgiplconvert" << std::endl;
-  std::cout << "  -in      inputFilename" << std::endl;
-  std::cout << "  [-out]   outputFilename, default in + .mhd" << std::endl;
-  std::cout << "  [-dim]   dimension, default 3" << std::endl;
-  std::cout << "  [-pt]    pixelType, default short" << std::endl;
-  std::cout << "Supported: 3D, (unsigned) short, (unsigned) char." << std::endl;
+  std::string helpText = "This program converts gipls that cannot be converted by pxcastconvert. \
+  Usage: \
+  pxgiplconvert \
+    -in      inputFilename \
+    [-out]   outputFilename, default in + .mhd \
+    [-dim]   dimension, default 3 \
+    [-pt]    pixelType, default short \
+  Supported: 3D, (unsigned) short, (unsigned) char.";
+
+  return helpText;
 } // end PrintHelp
-
-
-
