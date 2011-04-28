@@ -11,33 +11,33 @@
 #include "itkSimpleBoxSpatialFunction.h"
 #include "itkSpatialFunctionImageEvaluatorFilter.h"
 
+#include "itkCommandLineArgumentParser.h"
 
 typedef std::map<std::string, std::string> ArgMapType;
 
-void PrintUsageString(void)
+std::string PrintUsageString(void)
 {
-  std::cerr
-    << "\nThis program creates an image containing a white box, defined by point A and B.\n\n"
-    << "Usage:\n"
-    << "pxcreatesimplebox\n"
-    << "\t[-in]  \tInputImageFileName\t\n"
-    << "\t\tSize, origin, and spacing for the output image will be taken\n"
-    << "\t\tfrom this image. NB: not the dimension and the pixeltype;\n"
-    << "\t\tyou must set them anyway!\n"
-    << "\t-out   \tOutputImageFileName\n"
-    << "\t-pt    \tPixelType <FLOAT, SHORT, USHORT, INT, UINT, CHAR, UCHAR>\n"
-    << "\t\tCurrently only char, uchar and short are supported.\n"
-    << "\t-id    \tImageDimension <2,3>\n"
-    << "\t[-d0]  \tSize of dimension 0\n"
-    << "\t[-d1]  \tSize of dimension 1\n"
-    << "\t[-d2]  \tSize of dimension 2\n"
-    << "\t-pA0  \tIndex 0 of pointA\n"
-    << "\t-pA1  \tIndex 1 of pointA\n"
-    << "\t[-pA2]\tIndex 2 of pointA\n"
-    << "\t-pB0  \tIndex 0 of pointB\n"
-    << "\t-pB1  \tIndex 1 of pointB\n"
-    << "\t[-pB2]\tIndex 2 of pointB\n"
-    << std::endl;
+  std::string helpText = "\nThis program creates an image containing a white box, defined by point A and B.\n\n \
+    Usage:\n \
+    pxcreatesimplebox\n \
+    \t[-in]  \tInputImageFileName\t\n \
+    \t\tSize, origin, and spacing for the output image will be taken\n \
+    \t\tfrom this image. NB: not the dimension and the pixeltype;\n \
+    \t\tyou must set them anyway!\n \
+    \t-out   \tOutputImageFileName\n \
+    \t-pt    \tPixelType <FLOAT, SHORT, USHORT, INT, UINT, CHAR, UCHAR>\n \
+    \t\tCurrently only char, uchar and short are supported.\n \
+    \t-id    \tImageDimension <2,3>\n \
+    \t[-d0]  \tSize of dimension 0\n \
+    \t[-d1]  \tSize of dimension 1\n \
+    \t[-d2]  \tSize of dimension 2\n \
+    \t-pA0  \tIndex 0 of pointA\n \
+    \t-pA1  \tIndex 1 of pointA\n \
+    \t[-pA2]\tIndex 2 of pointA\n \
+    \t-pB0  \tIndex 0 of pointB\n \
+    \t-pB1  \tIndex 1 of pointB\n \
+    \t[-pB2]\tIndex 2 of pointB\n";
+  return helpText;
 } // end PrintUsageString
 
 
@@ -81,7 +81,7 @@ class runwrap
 {
   public:
 
-  static int run_cri(const ArgMapType & argmap )
+  static int run_cri(itk::CommandLineArgumentParser::Pointer parser)
   {
     const unsigned int ImageDimension = NImageDimension;
     typedef TPixel                                PixelType;
@@ -106,27 +106,20 @@ class runwrap
 
     /** vars */
     std::string inputImageFileName("");
-    std::string outputImageFileName("");
-    int returndummy = 0;
+    std::string outputImageFileName(inputImageFileName + "Output.mhd");
     SizeType sizes;
     OriginType origin;
     SpacingType spacing;
     WriterPointer writer = WriterType::New();
     ImagePointer tempImage = ImageType::New();
     BoxFunctionPointer boxfunc = BoxFunctionType::New();
-    IndexType indexA;
-    IndexType indexB;
     PointType pointA;
     PointType pointB;
     FunctionEvaluatorPointer boxGenerator = FunctionEvaluatorType::New();
 
     /** Read filenames */
-    returndummy |= ReadArgument(argmap, "-out", outputImageFileName, false);
-    returndummy |= ReadArgument(argmap, "-in", inputImageFileName, true);
-    if ( returndummy !=0 )
-    {
-      return returndummy;
-    }
+    parser->GetCommandLineArgument("-out", outputImageFileName);
+    parser->GetCommandLineArgument("-in", inputImageFileName);
 
     /** Determine size, origin and spacing */
     if (inputImageFileName == "")
@@ -136,17 +129,9 @@ class runwrap
       {
         std::ostringstream makeString("");
         makeString << "-d" << i;
-        std::string tempstring("");
-        returndummy |= ReadArgument(argmap, makeString.str(), tempstring, false);
-        if (returndummy ==0)
-        {
-          sizes[i] = atoi( tempstring.c_str() );
-        }
-      }
-
-      if ( returndummy !=0 )
-      {
-        return returndummy;
+        unsigned int sizeValue;
+        parser->GetCommandLineArgument(makeString.str(), sizeValue);
+        sizes[i] = sizeValue;
       }
 
       /** make some assumptions */
@@ -176,26 +161,17 @@ class runwrap
     }
 
     /** read point A and B from the commandline.*/
-
+    IndexType indexA;
+    IndexType indexB;
     for (unsigned int i=0; i< ImageDimension ; i++)
     {
       std::ostringstream makeStringA("");
       std::ostringstream makeStringB("");
       makeStringA << "-pA" << i;
       makeStringB << "-pB" << i;
-      std::string tempstringA("");
-      std::string tempstringB("");
-      returndummy |= ReadArgument(argmap, makeStringA.str(), tempstringA, false);
-      returndummy |= ReadArgument(argmap, makeStringB.str(), tempstringB, false);
-      if (returndummy ==0)
-      {
-        indexA[i] = atoi( tempstringA.c_str() );
-        indexB[i] = atoi( tempstringB.c_str() );
-      }
-    }
-    if ( returndummy !=0 )
-    {
-      return returndummy;
+
+      parser->GetCommandLineArgument(makeStringA.str(), indexA[i]);
+      parser->GetCommandLineArgument(makeStringB.str(), indexB[i]);
     }
 
     /** Setup pipeline and configure its components */
@@ -264,15 +240,12 @@ template < unsigned int NImageDimension>
 class ptswrap
 { public:
 
-  static int PixelTypeSelector(const ArgMapType & argmap )
+  static int PixelTypeSelector(itk::CommandLineArgumentParser::Pointer parser)
   {
     const unsigned int ImageDimension = NImageDimension;
     std::string pixelType("");
-    int returndummy = ReadArgument(argmap, "-pt", pixelType, false);
-    if ( returndummy !=0 )
-    {
-      return returndummy;
-    }
+
+    parser->GetCommandLineArgument( "-pt", pixelType );
 
     std::map<std::string, enum_type> typemap;
     typemap["FLOAT"] = eFLOAT;
@@ -291,11 +264,11 @@ class ptswrap
     switch( pt )
     {
     case eSHORT :
-      return  runwrap<ImageDimension, short>::run_cri(argmap);
+      return  runwrap<ImageDimension, short>::run_cri(parser);
     case eCHAR :
-      return  runwrap<ImageDimension, char>::run_cri(argmap);
+      return  runwrap<ImageDimension, char>::run_cri(parser);
     case eUCHAR :
-      return  runwrap<ImageDimension, unsigned char>::run_cri(argmap);
+      return  runwrap<ImageDimension, unsigned char>::run_cri(parser);
     default :
       std::cerr << "ERROR: PixelType not supported" << std::endl;
       return 1;
