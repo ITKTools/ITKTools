@@ -249,6 +249,9 @@ void LogicalImageOperator(
 void PrintHelp( void )
 {
   std::cout << "Logical operations on one or two images." << std::endl;
+  std::cout << "NOTE: The output of this filter is an image with pixels of values 0 and 1." << std::endl;
+  std::cout << "An appropriate scaling must be performed either manually (with pxrescaleintensityimagefilter)" << std::endl;
+  std::cout << "or with the application used to view the image." << std::endl << std::endl;
   std::cout << "Usage:" << std::endl << "pxlogicalimageoperator" << std::endl;
   std::cout << "  -in      inputFilename1 [inputFilename2]" << std::endl;
   std::cout << "  [-out]   outputFilename, default in1 + <ops> + in2 + .mhd" << std::endl;
