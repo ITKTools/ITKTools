@@ -88,11 +88,17 @@ public:
   /** Copy argv in a map. */
   void CreateArgumentMap( void );
 
-  /** Function that checks if an argument is given. */
+  /** Checks if an argument is given. */
   bool ArgumentExists( const std::string & key ) const;
+
+  /** Checks if exactly one of the specified arguments is given. */
+  bool ExactlyOneExists( const std::vector<std::string> & keys ) const;
 
   /** Mark an argument as required. */
   void MarkArgumentAsRequired(const std::string & argument, const std::string & helpText);
+
+  /** Mark exactly one of the specified arguments as required. */
+  void MarkExactlyOneOfArgumentsAsRequired(const std::vector<std::string> & arguments);
 
   itkSetMacro( ProgramHelpText, std::string);
   itkGetMacro( ProgramHelpText, std::string);
@@ -230,6 +236,9 @@ protected:
 
   /** The list of required arguments. They are stored with an accompanying help text string. */
   std::vector<std::pair<std::string, std::string> > m_RequiredArguments;
+
+  /** A list of arguments with the condition that exactly one in each set must exist. */
+  std::vector<std::vector<std::string> > m_RequiredExactlyOneArguments;
 
   std::string m_ProgramHelpText;
 
