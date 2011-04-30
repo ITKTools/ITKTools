@@ -138,11 +138,11 @@ int main( int argc, char ** argv )
 
 //------------------------------------------------------------------
 
+// @cond PRIVATE
 /** Function that does (x-b)^2 */
 namespace itk
 {
   namespace Function {
-// @cond PRIVATE
   template< class TInput, class TOutput = TInput>
   class SubtractSquare
   {
@@ -183,9 +183,10 @@ namespace itk
     RealType m_ScalarToSubtract;
 
   }; // end class
-//@endcond
+
   } // end Function namespace
 } // end itk namespace
+//@endcond
 
 //---------------------------------------------------------------------
 
