@@ -10,6 +10,7 @@
 //-------------------------------------------------------------------------------------
 
 // To print the progress
+// @cond PRIVATE
 class ShowProgressObject
 {
 public:
@@ -24,6 +25,7 @@ public:
   }
   itk::ProcessObject::Pointer m_Process;
 };
+//@endcond
 
 //-------------------------------------------------------------------------------------
 
