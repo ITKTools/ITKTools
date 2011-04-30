@@ -13,7 +13,11 @@
 #include <iostream>
 #include <string>
 
+/*! \class averagevectormagnitude
+    \brief Computes the average magnitude of all pixels in a vector valued image.
 
+    Computes the average magnitude of all pixels in a vector valued image.
+*/
 template <
   unsigned int NImageDimension,
   unsigned int NSpaceDimension,
