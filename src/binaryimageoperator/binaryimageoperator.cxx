@@ -5,7 +5,11 @@
 #include "BinaryImageOperatorHelper.h"
 
 //-------------------------------------------------------------------------------------
+/*! \class binaryimageoperator
+    \brief Performs binary operations on two images.
 
+    Performs binary operations on two images.
+*/
 int main( int argc, char **argv )
 {
   /** Check arguments for help. */

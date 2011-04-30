@@ -5,6 +5,11 @@
 #include "itkBinaryThinningImageFilter.h"
 #include "itkImageFileWriter.h"
 
+/*! \class binarythinning
+    \brief Performs binary thinning on an image.
+
+    Performs binary thinning on an image.
+*/
 //-------------------------------------------------------------------------------------
 
 /** run: A macro to call a function. */
