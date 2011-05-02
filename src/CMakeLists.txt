@@ -2,6 +2,7 @@ CMAKE_MINIMUM_REQUIRED( VERSION 2.6 )
 
 # This project is intended to be built outside the Insight source tree
 PROJECT( ITKTools )
+ENABLE_TESTING()
 
 # Define where to install ITKTools
 IF( WIN32 )
@@ -100,3 +101,6 @@ SET( ITKTools_LIBRARY_PATH    "${LIBRARY_OUTPUT_PATH}" )
 SET( ITKTools_EXECUTABLE_PATH "${EXECUTABLE_OUTPUT_PATH}" )
 INCLUDE_DIRECTORIES( ${ITKTools_SOURCE_DIR}/common )
 
+#---------------------------------------------------------------------
+# Tests
+add_test(NAME AverageVectorMagnitudeTest COMMAND ${CMAKE_COMMAND} -Dcommand1=averagevectormagnitude -Dcommand2=imagecompare -P ${CMAKE_CURRENT_SOURCE_DIR}/script.cmake)
