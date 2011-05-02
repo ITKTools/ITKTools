@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE( pximagecompare ImageCompare.cxx )
 
-TARGET_LINK_LIBRARIES( pximagecompare ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pximagecompare ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pximagecompare
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )
