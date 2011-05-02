@@ -1,0 +1,24 @@
+\BOOKMARK [1][]{section.1}{Introduction}{}
+\BOOKMARK [1][]{section.2}{Argument Syntax}{}
+\BOOKMARK [1][]{section.3}{Usage}{}
+\BOOKMARK [2][]{subsection.3.1}{Instantiating the Parser}{section.3}
+\BOOKMARK [2][]{subsection.3.2}{Checking If An Argument Exists}{section.3}
+\BOOKMARK [2][]{subsection.3.3}{Retrieving a Single Argument}{section.3}
+\BOOKMARK [2][]{subsection.3.4}{Retrieving an Argument List}{section.3}
+\BOOKMARK [2][]{subsection.3.5}{Marking an Argument as Required}{section.3}
+\BOOKMARK [2][]{subsection.3.6}{Requiring Exactly One of a Group of Arguments}{section.3}
+\BOOKMARK [2][]{subsection.3.7}{Setting and Showing Help Text}{section.3}
+\BOOKMARK [2][]{subsection.3.8}{Validating Input Arguments}{section.3}
+\BOOKMARK [2][]{subsection.3.9}{Default values}{section.3}
+\BOOKMARK [2][]{subsection.3.10}{Single Argument}{section.3}
+\BOOKMARK [2][]{subsection.3.11}{List of Arguments}{section.3}
+\BOOKMARK [1][]{section.4}{Internals}{}
+\BOOKMARK [1][]{section.5}{Examples of usage}{}
+\BOOKMARK [2][]{subsection.5.1}{Passing a boolean argument}{section.5}
+\BOOKMARK [2][]{subsection.5.2}{Passing an integer argument}{section.5}
+\BOOKMARK [2][]{subsection.5.3}{Passing a floating argument}{section.5}
+\BOOKMARK [2][]{subsection.5.4}{Passing a string argument}{section.5}
+\BOOKMARK [2][]{subsection.5.5}{Passing a vector argument}{section.5}
+\BOOKMARK [2][]{subsection.5.6}{Setting argument defaults}{section.5}
+\BOOKMARK [2][]{subsection.5.7}{Combined example}{section.5}
+\BOOKMARK [1][]{section.6}{Conclusion}{}
