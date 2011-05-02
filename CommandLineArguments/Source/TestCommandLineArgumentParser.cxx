@@ -22,7 +22,15 @@ int main( int argc, char** argv )
   exactlyOneArguments.push_back("-that");
   parser->MarkExactlyOneOfArgumentsAsRequired(exactlyOneArguments);
 
-  /** Get a list of string arguments. */
+  /** Validate the input arguments. */
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
+  
+  /** Get a list of string arguments with key -in. */
   std::vector<std::string> inputFileNames; // no default
   parser->GetCommandLineArgument( "-in", inputFileNames );
   
@@ -32,17 +40,17 @@ int main( int argc, char** argv )
   }
   std::cout << std::endl;
 
-  /** Get a single string argument. */
+  /** Get a single string argument with key -out. */
   std::string outputFileName = "";
   parser->GetCommandLineArgument( "-out", outputFileName );
   std::cout << "-out: " << outputFileName << std::endl;
 
-  /** A single int argument. */
+  /** A single int argument with key -myint. */
   short myint = 3; // default
   parser->GetCommandLineArgument( "-myint", myint );
   std::cout << "-myint: " << myint << std::endl;
 
-  /** A single float argument. */
+  /** A single float argument with key -myfloat. */
   float myfloat = 4.1; // no default
   parser->GetCommandLineArgument( "-myfloat", myfloat );
   std::cout << "-myfloat: " << myfloat << std::endl;
