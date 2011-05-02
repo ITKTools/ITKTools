@@ -109,9 +109,9 @@ int main( int argc, char *argv[] )
     std::cerr << "ERROR: \"-type\" should be one of {grayscale, binary, parabolic}." << std::endl;
     return 1;
   }
-  if ( retbin && bin.size() != 3 )
+  if ( retbin && bin.size() != 2 )
   {
-    std::cerr << "ERROR: \"-bin\" should contain three value: foreground, background, erosion." << std::endl;
+    std::cerr << "ERROR: \"-bin\" should contain two values: foreground and background." << std::endl;
     return 1;
   }
   if ( reta && ( algorithm < 0 || algorithm > 3 ) )

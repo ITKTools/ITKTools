@@ -492,5 +492,6 @@ void PrintHelp()
   std::cout << "  OR the positions of two opposite corner indices." << std::endl;
   std::cout << "- The orientation is a vector with Euler angles (rad)." << std::endl;
   std::cout << "- Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double." << std::endl;
+
 } // end PrintHelp()
 

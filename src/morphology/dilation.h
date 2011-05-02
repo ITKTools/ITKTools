@@ -120,10 +120,9 @@ void dilationBinary(
   std::vector<PixelType> values( 3 );
   values[ 0 ] = itk::NumericTraits<PixelType>::One;
   values[ 1 ] = itk::NumericTraits<PixelType>::Zero;
-  values[ 2 ] = itk::NumericTraits<PixelType>::One;
-  if ( bin.size() == 3 )
+  if ( bin.size() == 2 )
   {
-    for ( unsigned int i = 0; i < 3; ++i )
+    for ( unsigned int i = 0; i < 2; ++i )
     {
       if ( itk::NumericTraits<PixelType>::is_integer )
       {
@@ -149,7 +148,7 @@ void dilationBinary(
   /** Setup the dilation filter. */
   dilation->SetForegroundValue( values[ 0 ] );
   dilation->SetBackgroundValue( values[ 1 ] );
-  dilation->SetDilateValue( values[ 2 ] );
+  //dilation->SetDilateValue( values[ 2 ] );
   dilation->SetBoundaryToForeground( false );
   dilation->SetKernel( S_ball );
   dilation->SetInput( reader->GetOutput() );
