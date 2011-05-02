@@ -1,5 +1,0 @@
-- Code is horrible.
-- Template function run_cri should be split.
-- Internal Image stuff doesn't have to be in the template etc.
-- template over spacedimension necessary??
-
