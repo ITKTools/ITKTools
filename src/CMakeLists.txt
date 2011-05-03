@@ -49,7 +49,7 @@ SET( ITKTOOLS_BUILD_TESTING OFF CACHE BOOL
   "Perform some tests on basic functionality of ITKTools." )
 IF( ITKTOOLS_BUILD_TESTING )
  ENABLE_TESTING()
- ADD_SUBDIRECTORY( ../Testing )
+ ADD_SUBDIRECTORY( ${ITKTools_SOURCE_DIR}/../Testing ${ITKTools_BINARY_DIR}/Testing )
  INCLUDE( CTest )
 ENDIF()
 
