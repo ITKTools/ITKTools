@@ -1,0 +1,117 @@
+%
+% Complete documentation on the extended LaTeX markup used for Insight
+% documentation is available in ``Documenting Insight'', which is part
+% of the standard documentation for Insight.  It may be found online
+% at:
+%
+%     http://www.itk.org/
+
+\documentclass{InsightArticle}
+
+\usepackage[dvips]{graphicx}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  hyperref should be the last package to be loaded.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[dvips,
+bookmarks,
+bookmarksopen,
+backref,
+colorlinks,linkcolor={blue},citecolor={blue},urlcolor={blue},
+]{hyperref}
+
+\usepackage{bm}
+\usepackage{amsmath}
+\usepackage{amsfonts,amssymb}
+
+\usepackage{subfigure}
+
+
+%  This is a template for Papers to the Insight Journal.
+%  It is comparable to a technical report format.
+
+% The title should be descriptive enough for people to be able to find
+% the relevant document.
+\title{A Suite of Command Line Tools for Image Processing Using ITK}
+
+%
+% NOTE: This is the last number of the "handle" URL that
+% The Insight Journal assigns to your paper as part of the
+% submission process. Please replace the number "1338" with
+% the actual handle number that you get assigned.
+%
+\newcommand{\IJhandlerIDnumber}{3258}
+
+% Increment the release number whenever significant changes are made.
+% The author and/or editor can define 'significant' however they like.
+\release{1.0}
+
+% At minimum, give your name and an email address.  You can include a
+% snail-mail address if you like.
+\author{Marius Staring$^{1}$ and Stefan Klein$^{2}$ and David Doria$^{3}$ }
+\authoraddress{$^{1}$Division of Image Processing, Leiden University Medical Center, Leiden, The Netherlands\\
+               $^{2}$Biomedical Imaging Group Rotterdam, Departments of Radiology \& Medical Informatics, Erasmus MC, Rotterdam, The Netherlands\\
+	       $^{3}$Rensselaer Polytechnic Institue}
+
+\begin{document}
+
+%
+% Add hyperlink to the web location and license of the paper.
+% The argument of this command is the handler identifier given
+% by the Insight Journal to this paper.
+%
+\IJhandlefooter{\IJhandlerIDnumber}
+
+
+\ifpdf
+\else
+   %
+   % Commands for including Graphics when using latex
+   %
+   \DeclareGraphicsExtensions{.eps,.jpg,.gif,.tiff,.bmp,.png}
+   \DeclareGraphicsRule{.jpg}{eps}{.jpg.bb}{`convert #1 eps:-}
+   \DeclareGraphicsRule{.gif}{eps}{.gif.bb}{`convert #1 eps:-}
+   \DeclareGraphicsRule{.tiff}{eps}{.tiff.bb}{`convert #1 eps:-}
+   \DeclareGraphicsRule{.bmp}{eps}{.bmp.bb}{`convert #1 eps:-}
+   \DeclareGraphicsRule{.png}{eps}{.png.bb}{`convert #1 eps:-}
+\fi
+
+\maketitle
+
+\ifhtml
+\chapter*{Front Matter\label{front}}
+\fi
+
+\begin{abstract}
+\noindent The purpose of this document is to announce the availability of a suite of tools, titled ITKTools, to allow users 
+to perform command line image processing operations from the command line. ITK is typically though of as library which must be called via a programming language. ITKTools exposes many functionalities of ITK directly to the command line. This allows users to use a ``unix pipe'' style workflow, which is often convenient for experimentation.
+
+\end{abstract}
+
+\IJhandlenote{\IJhandlerIDnumber}
+
+\tableofcontents
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}
+
+\section{List of Tools}
+
+\section{Documentation}
+
+Documentation for ITKTools is created with Doxygen and hosted as a github project page:
+http://itktools.github.com/ITKTools/
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\appendix
+%\section{This is an Appendix}
+
+% Bibliography
+%\bibliographystyle{plain}
+%\bibliography{InsightJournal}
+
+\end{document}

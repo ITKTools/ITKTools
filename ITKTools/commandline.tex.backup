@@ -1,0 +1,318 @@
+%
+% Complete documentation on the extended LaTeX markup used for Insight
+% documentation is available in ``Documenting Insight'', which is part
+% of the standard documentation for Insight.  It may be found online
+% at:
+%
+%     http://www.itk.org/
+
+\documentclass{InsightArticle}
+
+\usepackage[dvips]{graphicx}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  hyperref should be the last package to be loaded.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[dvips,
+bookmarks,
+bookmarksopen,
+backref,
+colorlinks,linkcolor={blue},citecolor={blue},urlcolor={blue},
+]{hyperref}
+
+\usepackage{bm}
+\usepackage{amsmath}
+\usepackage{amsfonts,amssymb}
+
+\usepackage{subfigure}
+
+
+%  This is a template for Papers to the Insight Journal.
+%  It is comparable to a technical report format.
+
+% The title should be descriptive enough for people to be able to find
+% the relevant document.
+\title{A Simple Command Line Argument Parser}
+
+%
+% NOTE: This is the last number of the "handle" URL that
+% The Insight Journal assigns to your paper as part of the
+% submission process. Please replace the number "1338" with
+% the actual handle number that you get assigned.
+%
+\newcommand{\IJhandlerIDnumber}{3258}
+
+% Increment the release number whenever significant changes are made.
+% The author and/or editor can define 'significant' however they like.
+\release{1.0}
+
+% At minimum, give your name and an email address.  You can include a
+% snail-mail address if you like.
+\author{Marius Staring$^{1}$ and Stefan Klein$^{2}$ and David Doria$^{3}$ }
+\authoraddress{$^{1}$Division of Image Processing, Leiden University Medical Center, Leiden, The Netherlands\\
+               $^{2}$Biomedical Imaging Group Rotterdam, Departments of Radiology \& Medical Informatics, Erasmus MC, Rotterdam, The Netherlands\\
+	       $^{3}$Rensselaer Polytechnic Institue}
+
+\begin{document}
+
+%
+% Add hyperlink to the web location and license of the paper.
+% The argument of this command is the handler identifier given
+% by the Insight Journal to this paper.
+%
+\IJhandlefooter{\IJhandlerIDnumber}
+
+
+\ifpdf
+\else
+   %
+   % Commands for including Graphics when using latex
+   %
+   \DeclareGraphicsExtensions{.eps,.jpg,.gif,.tiff,.bmp,.png}
+   \DeclareGraphicsRule{.jpg}{eps}{.jpg.bb}{`convert #1 eps:-}
+   \DeclareGraphicsRule{.gif}{eps}{.gif.bb}{`convert #1 eps:-}
+   \DeclareGraphicsRule{.tiff}{eps}{.tiff.bb}{`convert #1 eps:-}
+   \DeclareGraphicsRule{.bmp}{eps}{.bmp.bb}{`convert #1 eps:-}
+   \DeclareGraphicsRule{.png}{eps}{.png.bb}{`convert #1 eps:-}
+\fi
+
+\maketitle
+
+\ifhtml
+\chapter*{Front Matter\label{front}}
+\fi
+
+\begin{abstract}
+\noindent This document describes the implementation of a simple
+command line argument parser using the Insight Toolkit ITK
+\url{www.itk.org}. Such a parser may be useful for use in the
+examples of the ITK.
+
+This paper is accompanied with the source code.
+\end{abstract}
+
+\IJhandlenote{\IJhandlerIDnumber}
+
+\tableofcontents
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}
+
+Command line argument parsing is a common task for many (small)
+programs. There are many tools already available for parsing command
+line options. These tools, however, typically require the inclusion
+of a large library (Boost, Wx, etc). The advantage of our proposed
+parser is that it is very small and non-intrusive while remaining
+versatile enough to fulfill the needs of the ITK examples and tests. The
+proposed parser has been used extensively for many years in the
+toolkit \texttt{praxix}: \url{http://code.google.com/p/praxix/}.
+
+\section{Argument Syntax}
+The tool assumes that arguments are passed in key-value
+combinations. For example:
+\begin{verbatim}
+ -key value1 $\cdots$ valueN
+\end{verbatim}
+Keys are identified as a ``-'' followed by a string. Subsequent entries that are not keys are the values. Zero or more values can be specified for each key.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Usage}
+
+\subsection{Checking If An Argument Exists}
+The \verb|GetCommandLineArgument| function returns a bool indicating whether or not the argument existed:
+
+\small
+\begin{verbatim}
+std::string stringarg;
+bool exists = parser->GetCommandLineArgument( "-mystring", stringarg );
+\end{verbatim}
+
+You can also just check to see if an argument has been passed without retrieving its value with:
+\small
+\begin{verbatim}
+bool exists = parser->ArgumentExists( "-key" );
+\end{verbatim}
+\normalsize 
+
+\subsection{Instantiating the Parser}
+The parser is created by instantiating it as you would a normal ITK class, and then passing the \verb|argc| and \verb|argv| from \verb|main| to the \verb|SetCommandLineArguments| function:
+\small
+\begin{verbatim}
+itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+parser->SetCommandLineArguments( argc, argv );
+\end{verbatim}
+\normalsize 
+
+\subsection{Retrieving a Single Argument}
+To retrieve a single argument from the command line, one should use the \verb|GetCommandLineArgument| function. The argument can be of any type. For example, to fetch a string argument, one can use:
+
+\small
+\begin{verbatim}
+std::string stringarg;
+parser->GetCommandLineArgument( "-mystring", stringarg );
+\end{verbatim}
+\normalsize 
+
+\subsection{Retrieving an Argument List}
+It is also possible to retrieve a list of arguments from the command line. The argument must all be of the same type. This is done simply by retrieving a \verb|vector| of the argument type. For example, to fetch a list of filenames (strings), one can use:
+
+\small
+\begin{verbatim}
+std::vector<std::string> filenames;
+parser->GetCommandLineArgument( "-filenames", filenames);
+\end{verbatim}
+\normalsize 
+
+
+\subsection{Default values}
+
+Arguments can be initialized to default values, which will be left
+untouched if the key is not provided at the command line. If an
+argument is initialized with a vector of $\texttt{size} > 1$, and if
+only one (1) argument is provided in the command line, a vector of
+size $\texttt{size}$ is created and filled with the single argument.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Internals}
+
+Internally, the command line arguments are stored in an
+\code{std::map} of the argument or key as an \code{std::string}
+together with the index. We make use of the casting functionality of
+string streams to automatically cast the stored string to the
+requested type.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Examples of usage}
+
+In this section we demonstrate the ease with which the parser can be
+constructed and used for many different types of arguments.
+
+\subsection{Constructing the parser}
+
+The command line argument parser is constructed as follows.
+
+ \small
+\begin{verbatim}
+#include "itkCommandLineArgumentParser.h"
+ ...
+// Create a command line argument parser
+itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+parser->SetCommandLineArguments( argc, argv );
+\end{verbatim}
+\normalsize
+
+\subsection{Passing a boolean argument}
+
+A boolean argument is set to true by simply passing the flag:
+
+\small\code{executablename -z}\normalsize
+
+This code \small
+\begin{verbatim}
+bool compress = parser->ArgumentExists( "-z" );
+\end{verbatim}
+\normalsize will return true if \texttt{-z} was part of the list of
+arguments, and false otherwise.
+
+\subsection{Passing an integer argument}
+
+\small\code{executablename -num 5}\normalsize
+
+\small
+\begin{verbatim}
+int intValue; // no default
+bool retnum = parser->GetCommandLineArgument( "-num", intValue );
+\end{verbatim}
+\normalsize
+
+\subsection{Passing a floating argument}
+
+\small\code{executablename -pi 3.1415926}\normalsize
+
+\small
+\begin{verbatim}
+float pi = 3.0; // default
+bool retpi = parser->GetCommandLineArgument( "-pi", pi );
+\end{verbatim}
+\normalsize
+
+\subsection{Passing a string argument}
+
+\small\code{executablename -m Wavelet}\normalsize
+
+\small
+\begin{verbatim}
+std::string method = "Fourier"; // default
+bool retm = parser->GetCommandLineArgument( "-m", method );
+\end{verbatim}
+\normalsize
+
+\subsection{Passing a vector argument}
+
+\small\code{executablename -in file1.png file2.bmp}\normalsize
+
+\small
+\begin{verbatim}
+std::vector<std::string> inputFileNames; // no default
+bool retin = parser->GetCommandLineArgument( "-in", inputFileNames );
+\end{verbatim}
+\normalsize
+
+\subsection{Setting argument defaults}
+
+Behavior when the argument is passed:
+
+\small\code{executablename -pA 2 5 9 4}\normalsize
+
+\small
+\begin{verbatim}
+std::vector<int> vecA( 3, 1 ); // using default values
+bool retpA = parser->GetCommandLineArgument( "-pA", vecA );
+// The value of vecA is {2, 5, 9, 4}
+\end{verbatim}
+\normalsize
+
+Behavior when the argument is NOT passed:
+
+\small\code{executablename}\normalsize
+
+\small
+\begin{verbatim}
+std::vector<int> vecA( 3, 1 ); // using default values
+bool retpA = parser->GetCommandLineArgument( "-pA", vecA );
+// The value of vecA is {1, 1, 1}
+\end{verbatim}
+\normalsize
+
+\subsection{Combined example}
+
+Multiple arguments can be passed to the command as follows:
+
+\small\code{executablename -in input1.mhd input2.mhd -z -out output.png -pi 3.1415926535}\normalsize
+
+These arguments are retrieved identically as in the individual examples above.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Conclusion}
+
+This document describes the implementation of a simple command line
+argument parser using the Insight Toolkit ITK \url{www.itk.org}.
+Such a parser may be useful for use in the examples of the ITK or on
+it's wiki.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\appendix
+%\section{This is an Appendix}
+
+% Bibliography
+%\bibliographystyle{plain}
+%\bibliography{InsightJournal}
+
+\end{document}
