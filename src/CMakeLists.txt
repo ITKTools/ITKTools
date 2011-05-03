@@ -12,71 +12,12 @@ ELSE()
 ENDIF()
 
 # Include all subdirs
-SUBDIRS(
- averagevectormagnitude
- binaryimageoperator
- binarythinning
- braindistance
- castconvert
- closestversor3Dtransform
- combinesegmentations
- common
- computeboundingbox
- computedifferenceimageBIG
- computemean
- computeoverlap
- contrastenhanceimage
- countnonzerovoxels
- createbox
- createcylinder
- createellipsoid
- creategridimage
- createpointsinimage
- createrandomimage
- createsimplebox
- createsphere
- createzeroimage
- cropimage
- deformationfieldgenerator
- deformationfieldoperator
- detectgoldmarkers
- distancetransform
- extracteveryotherslice
- extractindexfromvectorimage
- extractslice
- fftimage
- gaussianimagefilter
- getdicominformation
- getDICOMseriesUIDs
- getimageinformation
- getpointsinimage
- giplconvert
- histogramequalizeimage
- imagecompare
- imagestovectorimage
- intensityreplace
- intensitywindowing
- invertintensityimagefilter
- kappastatistic
- logicalimageoperator
- morphology
- naryimageoperator
- pca
- reflect
- replacevoxel
- rescaleintensityimagefilter
- reshape
- resizeimage
- scripts
- segmentationdistance
- statisticsonimage
- texture
- tileimages # "could not convert template argument" gcc4.6 bug
- ttest
- thresholdimage
- unaryimageoperator
- weightedaddition )
-
+file( GLOB listOfTools RELATIVE ${CMAKE_SOURCE_DIR} "*/CMakeLists.txt" )
+foreach( tool ${listOfTools} )
+  get_filename_component( path_to_tool ${tool} PATH )
+  subdirs( ${path_to_tool} )
+  #add_subdirectory( ${path_to_tool} )
+endforeach()
 
 #---------------------------------------------------------------------
 # Kill the anoying MS VS warning about non-safe functions.
