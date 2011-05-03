@@ -29,26 +29,29 @@ void PerformPCA(
   unsigned int numberOfPCs );
 
 /** Declare other functions. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char **argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 4 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
+
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
 
   /** Get arguments. */
   std::vector<std::string>  inputFileNames( 0, "" );
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileNames );
+  parser->GetCommandLineArgument( "-in", inputFileNames );
 
   std::string base = itksys::SystemTools::GetFilenamePath( inputFileNames[ 0 ] );
   if ( base != "" ) base = base + "/";
@@ -62,13 +65,6 @@ int main( int argc, char **argv )
 
   std::string componentType = "";
   bool retpt = parser->GetCommandLineArgument( "-opct", componentType );
-
-  /** Check if the required arguments are given. */
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
 
   /** Check that numberOfOutputs <= numberOfInputs. */
   if ( numberOfPCs > inputFileNames.size() )
@@ -246,14 +242,16 @@ void PerformPCA(
    * ******************* PrintHelp *******************
    */
 
-void PrintHelp( void )
+std::string PrintHelp( void )
 {
-  std::cout << "Usage:" << std::endl << "pxpca" << std::endl;
-  std::cout << "  -in      inputFilenames" << std::endl;
-  std::cout << "  [-out]   outputDirectory, default equal to the inputFilename directory" << std::endl;
-  std::cout << "  [-opc]   the number of principal components that you want to output, default all" << std::endl;
-  std::cout << "  [-opct]  output pixel component type, default derived from the input image" << std::endl;
-  std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
+  std::string helpText = "Usage: \
+  pxpca \
+    -in      inputFilenames \
+    [-out]   outputDirectory, default equal to the inputFilename directory \
+    [-opc]   the number of principal components that you want to output, default all \
+    [-opct]  output pixel component type, default derived from the input image \
+  Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
 
+  return helpText;
 } // end PrintHelp()
 

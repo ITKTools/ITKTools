@@ -12,7 +12,7 @@
 //-------------------------------------------------------------------------------------
 
 /** Declare PrintHelp. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 /** Declare GetInputData. */
 bool GetInputData( const std::string & filename,

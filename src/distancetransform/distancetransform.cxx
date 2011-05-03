@@ -25,26 +25,23 @@ void DistanceTransform(
   const unsigned int & K );
 
 /** Declare PrintHelp. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char **argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 3 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
+
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+  parser->MarkArgumentAsRequired( "-out", "The output filename." );
 
   /** Get the input segmentation file name (mandatory). */
   std::string inputFileName;
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  parser->GetCommandLineArgument( "-in", inputFileName );
 
   /** Get whether the squared distance should be returned instead of the
    * distance. Default: false, which is faster.
@@ -53,7 +50,7 @@ int main( int argc, char **argv )
 
   /** Get the outputFileName */
   std::vector<std::string> outputFileNames;
-  bool retout = parser->GetCommandLineArgument( "-out", outputFileNames );
+  parser->GetCommandLineArgument( "-out", outputFileNames );
 
   std::string method = "Maurer";
   parser->GetCommandLineArgument( "-m", method );
@@ -62,17 +59,6 @@ int main( int argc, char **argv )
   parser->GetCommandLineArgument( "-k", K );
 
   /** Checks. */
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
-  if ( !retout )
-  {
-    std::cerr << "ERROR: You should specify \"-out\"." << std::endl;
-    return 1;
-  }
-
   if ( method != "Maurer" && method != "Danielsson"
     && method != "Morphological" && method != "MorphologicalSigned" )
   {
@@ -327,19 +313,19 @@ void DistanceTransform(
  * ******************* PrintHelp *******************
  */
 
-void PrintHelp( void )
+std::string PrintHelp( void )
 {
-  std::cout << "This program creates a signed distance transform.\n\n";
-  std::cout << "Usage:\npxdistancetransform\n";
-  std::cout << "  -in      inputFilename: the input image (a binary mask; "
-    << "threshold at 0 is performed if the image is not binary).\n";
-  std::cout << "  -out     outputFilename: the output of distance transform\n";
-  std::cout << "  [-s]     flag: if set, output squared distances instead of distances\n";
-  //std::cout << "  [-m]     method, one of {Maurer, Danielsson, OrderK}, default Maurer\n";
-  std::cout << "  [-m]     method, one of {Maurer, Danielsson, Morphological, MorphologicalSigned}, default Maurer\n";
+  std::string helpText = "This program creates a signed distance transform.\n\n \
+  Usage:\npxdistancetransform\n \
+    -in      inputFilename: the input image (a binary mask; \
+  threshold at 0 is performed if the image is not binary).\n \
+    -out     outputFilename: the output of distance transform\n \
+    [-s]     flag: if set, output squared distances instead of distances\n \
+    [-m]     method, one of {Maurer, Danielsson, Morphological, MorphologicalSigned}, default Maurer\n \
+  Note: voxel spacing is taken into account. Voxels inside the \
+  object (=1) receive a negative distance.\n \
+  Supported: 2D/3D. input: unsigned char, output: float";
+//std::cout << "  [-m]     method, one of {Maurer, Danielsson, OrderK}, default Maurer\n";
   //std::cout << "  [-K]     for method \"OrderK\", specify K, default 5\n";
-  std::cout << "Note: voxel spacing is taken into account. Voxels inside the "
-    << "object (=1) receive a negative distance.\n";
-  std::cout << "Supported: 2D/3D. input: unsigned char, output: float" << std::endl;
-
+  return helpText;
 } // end PrintHelp()

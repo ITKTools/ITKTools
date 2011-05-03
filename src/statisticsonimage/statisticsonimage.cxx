@@ -20,32 +20,30 @@ if ( ComponentType == #type && Dimension == dim && NumberOfComponents == nrofcom
 }
 
 /** Declare PrintHelp, implemented at the bottom of this file. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
 
 int main( int argc, char ** argv )
 {
-
-  if ( argc < 3 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
 
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
+  
   /** Get arguments. */
   std::string inputFileName = "";
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
+  parser->GetCommandLineArgument( "-in", inputFileName );
 
   std::string maskFileName = "";
   parser->GetCommandLineArgument( "-mask", maskFileName );
@@ -132,23 +130,26 @@ int main( int argc, char ** argv )
  * ******************* PrintHelp *******************
  */
 
-void PrintHelp( void )
+std::string PrintHelp( void )
 {
-  std::cout << "Compute statistics on an image. For vector images, the magnitude is used." << std::endl;
-  std::cout << "Usage:" << std::endl << "pxstatisticsonimage" << std::endl;
-  std::cout << "  -in      inputFilename" << std::endl;
-  std::cout << "  [-out]   outputFileName for histogram;\n";
-  std::cout << "           if omitted, no histogram is written; default: <empty>" << std::endl;
-  std::cout << "  [-mask]  MaskFileName, mask should have the same size as the input image\n";
-  std::cout << "           and be of pixeltype (convertable to) unsigned char,\n";
-  std::cout << "           1 = within mask, 0 = outside mask;" << std::endl;
-  std::cout << "  [-b]     NumberOfBins to use for histogram, default: 100;\n";
-  std::cout << "           for an accurate estimate of median and quartiles\n";
-  std::cout << "           for integer images, choose the number of bins\n";
-  std::cout << "           much larger (~100x) than the number of gray values." << std::endl;
-  std::cout << "           if equal 0, then the intensity range (max - min) is chosen." << std::endl;
-  std::cout << "  [-s]     select which to compute {arithmetic, geometric, histogram}, default all;\n";
-  std::cout << "Supported: 2D, 3D, 4D, float, (unsigned) short, (unsigned) char, 1, 2 or 3 components per pixel.\n";
-	std::cout << "For 4D, only 1 or 4 components per pixel are supported." << std::endl;
+  std::string helpText = "Compute statistics on an image. For vector images, the magnitude is used. \
+  Usage: \
+  pxstatisticsonimage \
+    -in      inputFilename \
+    [-out]   outputFileName for histogram;\n \
+             if omitted, no histogram is written; default: <empty> \
+    [-mask]  MaskFileName, mask should have the same size as the input image\n \
+             and be of pixeltype (convertable to) unsigned char,\n \
+             1 = within mask, 0 = outside mask; \
+    [-b]     NumberOfBins to use for histogram, default: 100;\n \
+             for an accurate estimate of median and quartiles\n \
+             for integer images, choose the number of bins\n \
+             much larger (~100x) than the number of gray values. \
+             if equal 0, then the intensity range (max - min) is chosen. \
+    [-s]     select which to compute {arithmetic, geometric, histogram}, default all;\n \
+  Supported: 2D, 3D, 4D, float, (unsigned) short, (unsigned) char, 1, 2 or 3 components per pixel.\n \
+	For 4D, only 1 or 4 components per pixel are supported.";
+
+  return helpText;
 
 } // end PrintHelp()

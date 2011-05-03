@@ -11,26 +11,28 @@
  * ******************* PrintHelp *******************
  */
 
-void PrintHelp( void )
+std::string PrintHelp( void )
 {
-  std::cout << "Unary operations on one image." << std::endl;
-  std::cout << "Usage:" << std::endl << "pxunaryimageoperator" << std::endl;
-  std::cout << "  -in      inputFilename" << std::endl;
-  std::cout << "  -ops     UnaryOperator of the following form:\n"
-            << "           {+,-,*,/,^,%}\n"
-            << "           notation:\n"
-            << "             {PLUS,{R,L}MINUS,TIMES,{R,L}DIVIDE,{R,L}POWER,{R,L}MOD,\n"
-            << "             NEG,SIGN,ABS,FLOOR,CEIL,ROUND,\n"
-            << "             LN,LOG10,NLOG,EXP,[ARC]SIN,[ARC]COS,[ARC]TAN}\n"
-            << "           notation examples:\n"
-            << "             RMINUS = A - arg\n"
-            << "             LMINUS = arg - A\n"
-            << "             SIN = sin(A)\n"
-            << "             RPOWER = A ^ arg\n";
-  std::cout << "  [-arg]   argument, necessary for some ops" << std::endl;
-  std::cout << "  [-out]   outputFilename, default in + <ops> + <arg> + .mhd" << std::endl;
-  std::cout << "  [-pto]   outputPixelType, default: same as inputimage" << std::endl;
-  std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, float." << std::endl;
+  std::string helpText = "Unary operations on one image. \
+  Usage: \
+  pxunaryimageoperator \
+    -in      inputFilename \
+    -ops     UnaryOperator of the following form:\n \
+             {+,-,*,/,^,%}\n \
+             notation:\n \
+               {PLUS,{R,L}MINUS,TIMES,{R,L}DIVIDE,{R,L}POWER,{R,L}MOD,\n \
+               NEG,SIGN,ABS,FLOOR,CEIL,ROUND,\n \
+               LN,LOG10,NLOG,EXP,[ARC]SIN,[ARC]COS,[ARC]TAN}\n \
+             notation examples:\n \
+               RMINUS = A - arg\n \
+               LMINUS = arg - A\n \
+               SIN = sin(A)\n \
+               RPOWER = A ^ arg\n \
+    [-arg]   argument, necessary for some ops \
+    [-out]   outputFilename, default in + <ops> + <arg> + .mhd \
+    [-pto]   outputPixelType, default: same as inputimage \
+  Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, float.";
+  return helpText;
 } // end PrintHelp()
 
 

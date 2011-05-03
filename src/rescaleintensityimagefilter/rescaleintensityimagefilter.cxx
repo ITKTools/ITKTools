@@ -34,26 +34,34 @@ void RescaleIntensity(
   const bool & valuesAreExtrema );
 
 /** Declare PrintHelp. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char **argv )
 {
-  /** Check number of arguments. */
-  if ( argc < 3 || argc > 12 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
+
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+
+  std::vector<std::string> exactlyOneArguments;
+  exactlyOneArguments.push_back("-mm");
+  exactlyOneArguments.push_back("-mv");
+  parser->MarkExactlyOneOfArgumentsAsRequired(exactlyOneArguments);
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
 
   /** Get arguments. */
   std::string inputFileName = "";
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  parser->GetCommandLineArgument( "-in", inputFileName );
 
   std::string outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
   outputFileName += "INTENSITYRESCALED.mhd";
@@ -65,19 +73,6 @@ int main( int argc, char **argv )
   std::vector<double> meanvariance( 2, 0.0 );
   meanvariance[ 1 ] = 1.0;
   bool retmv = parser->GetCommandLineArgument( "-mv", meanvariance );
-
-  /** Check if the required arguments are given. */
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
-
-  if ( ( retmm && retmv ) || ( !retmm && !retmv ) )
-  {
-    std::cerr << "ERROR: you should specify either \"-mm\" or \"-mv\"" << std::endl;
-    return 1;
-  }
 
   /** Check if the extrema are given (correctly). */
   if ( retmm )
@@ -308,17 +303,20 @@ void RescaleIntensity(
 /**
  * ******************* PrintHelp *******************
  */
-void PrintHelp()
+std::string PrintHelp()
 {
-  std::cout << "Usage:" << std::endl << "pxrescaleintensityimagefilter" << std::endl;
-  std::cout << "  -in      inputFilename" << std::endl;
-  std::cout << "  [-out]   outputFilename, default in + INTENSITYRESCALED.mhd" << std::endl;
-  std::cout << "  [-mm]    minimum maximum, default: range of pixeltype" << std::endl;
-  std::cout << "  [-mv]    mean variance, default: 0.0 1.0" << std::endl;
-  std::cout << "  [-pt]    pixel type of input and output images;" << std::endl;
-  std::cout << "           default: automatically determined from the first input image." << std::endl;
-  std::cout << "Either \"-mm\" or \"-mv\" need to be specified." << std::endl;
-  std::cout << "Supported: 2D, 3D, (unsigned) short, (unsigned) char, float." << std::endl;
-  std::cout << "When applied to vector images, this program performs the operation on each channel separately." << std::endl;
+  std::string helpString = "Usage: \
+  pxrescaleintensityimagefilter \
+    -in      inputFilename \
+    [-out]   outputFilename, default in + INTENSITYRESCALED.mhd \
+    [-mm]    minimum maximum, default: range of pixeltype \
+    [-mv]    mean variance, default: 0.0 1.0 \
+    [-pt]    pixel type of input and output images; \
+             default: automatically determined from the first input image. \
+  Either \"-mm\" or \"-mv\" need to be specified. \
+  Supported: 2D, 3D, (unsigned) short, (unsigned) char, float. \
+  When applied to vector images, this program performs the operation on each channel separately.";
+
+  return helpString;
 
 } // end PrintHelp()

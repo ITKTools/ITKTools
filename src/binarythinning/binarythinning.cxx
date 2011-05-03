@@ -25,36 +25,32 @@ void BinaryThinning(
   const std::string & outputFileName );
 
 /** Declare PrintHelp. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char ** argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 3 || argc > 5 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
+
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
 
   /** Get arguments. */
   std::string inputFileName = "";
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  parser->GetCommandLineArgument( "-in", inputFileName );
 
   std::string outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
   outputFileName += "THINNED.mhd";
   parser->GetCommandLineArgument( "-out", outputFileName );
 
-  /** Check if the required arguments are given. */
-  if ( !retin )
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
   {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   /** Determine image properties. */
@@ -167,14 +163,16 @@ void BinaryThinning( const std::string & inputFileName,
   /**
    * ******************* PrintHelp *******************
    */
-void PrintHelp()
+std::string PrintHelp()
 {
-  std::cout << "Usage:" << std::endl << "pxbinarythinning" << std::endl;
-  std::cout << "  -in      inputFilename" << std::endl;
-  std::cout << "  [-out]   outputFilename, default in + THINNED.mhd" << std::endl;
-  std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
-  std::cout << "Note that the thinning algorithm used here is really a 2D thinning algortihm." << std::endl;
-  std::cout << "In 3D the thinning is performed slice by slice." << std::endl;
-
+  std::string helpString =
+  "Usage:\n \
+  pxbinarythinning \
+    -in      inputFilename \
+    [-out]   outputFilename, default in + THINNED.mhd \
+  Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double. \
+  Note that the thinning algorithm used here is really a 2D thinning algortihm. \
+  In 3D the thinning is performed slice by slice.\n";
+  return helpString;
 } // end PrintHelp()
 

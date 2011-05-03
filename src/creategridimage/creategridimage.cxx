@@ -19,7 +19,7 @@ if ( imageDimension == dim ) \
 //-------------------------------------------------------------------------------------
 
 /** Declare functions. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 template<unsigned int Dimension>
 void CreateGridImage(
@@ -34,23 +34,26 @@ void CreateGridImage(
 
 int main( int argc, char *argv[] )
 {
-  /** Check arguments for help. */
-  if ( argc < 7 || argc > 17 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
 
+  parser->MarkArgumentAsRequired( "-out", "The output filename." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
+  
   /** Get arguments. */
   std::string inputFileName = "";
   bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
 
   std::string outputFileName = "";
-  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  parser->GetCommandLineArgument( "-out", outputFileName );
 
   std::vector<unsigned int> imageSize;
   bool retsz = parser->GetCommandLineArgument( "-sz", imageSize );
@@ -58,11 +61,6 @@ int main( int argc, char *argv[] )
   const bool is2DStack = parser->ArgumentExists( "-stack" );
 
   /** Check if the required arguments are given. */
-  if ( !retout )
-  {
-    std::cerr << "ERROR: You should specify \"-out\"." << std::endl;
-    return 1;
-  }
   if ( ( !retin && !retsz ) || ( retin && retsz ) )
   {
     std::cerr << "ERROR: You should specify \"-in\" or \"-sz\"." << std::endl;
@@ -251,15 +249,17 @@ void CreateGridImage(
  * ******************* PrintHelp *******************
  */
 
-void PrintHelp( void )
+std::string PrintHelp( void )
 {
-  std::cout << "Usage:" << std::endl << "pxcreategridimage" << std::endl;
-  std::cout << "  [-in]    inputFilename, information about size, etc, is taken from it" << std::endl;
-  std::cout << "  -out     outputFilename" << std::endl;
-  std::cout << "  -sz      image size for each dimension" << std::endl;
-  std::cout << "  [-sp]    image spacing, default 1.0" << std::endl;
-  std::cout << "  -d       distance in pixels between two gridlines" << std::endl;
-  std::cout << "  [-stack] for 3D images, create a stack of 2D images, default false" << std::endl;
-  std::cout << "Supported: 2D, 3D, short." << std::endl;
+  std::string helpText ="Usage: \
+  pxcreategridimage \
+    [-in]    inputFilename, information about size, etc, is taken from it \
+    -out     outputFilename \
+    -sz      image size for each dimension \
+    [-sp]    image spacing, default 1.0 \
+    -d       distance in pixels between two gridlines \
+    [-stack] for 3D images, create a stack of 2D images, default false \
+  Supported: 2D, 3D, short.";
+  return helpText;
 
 } // end PrintHelp()

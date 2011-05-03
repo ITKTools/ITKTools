@@ -77,6 +77,45 @@ CommandLineArgumentParser
 
 
 /**
+ * ******************* MarkExactlyOneOfArgumentsAsRequired *******************
+ */
+
+void
+CommandLineArgumentParser
+::MarkExactlyOneOfArgumentsAsRequired( const std::vector<std::string> & arguments )
+{
+  m_RequiredExactlyOneArguments.push_back(arguments);
+} // end MarkExactlyOneOfArgumentsAsRequired()
+
+/**
+ * ******************* ExactlyOneExists *******************
+ */
+
+bool
+CommandLineArgumentParser
+::ExactlyOneExists( const std::vector<std::string> & keys ) const
+{
+  unsigned int counter = 0;
+  for(unsigned int i = 0; i < keys.size(); i++)
+  {
+    if ( ArgumentExists(keys[i]) )
+    {
+      counter++;
+    }
+  }
+
+  if(counter == 1)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+
+} // end ExactlyOneExists()
+
+/**
  * ******************* FindKey *******************
  */
 
@@ -185,7 +224,7 @@ CommandLineArgumentParser
     }
     
   // Display the help text if the user asked for it.
-  if(ArgumentExists("--help"))
+  if(ArgumentExists("--help") || ArgumentExists("-help") || ArgumentExists("--h"))
     {
     std::cerr << m_ProgramHelpText << std::endl;
     return false;
@@ -195,7 +234,7 @@ CommandLineArgumentParser
 
   bool allRequiredArgumentsSpecified = true;
 
-  for(unsigned int i = 0; i < m_RequiredArguments.size(); i++)
+  for(unsigned int i = 0; i < m_RequiredArguments.size(); ++i)
     {
     if(!ArgumentExists(m_RequiredArguments[i].first))
       {
@@ -204,6 +243,16 @@ CommandLineArgumentParser
       allRequiredArgumentsSpecified = false;
       }
     }
+
+  // Loop through ExactlyOneOf argument sets
+  for(unsigned int i = 0; i < m_RequiredExactlyOneArguments.size(); ++i)
+  {
+    if(!ExactlyOneExists(m_RequiredExactlyOneArguments[i]))
+    {
+      allRequiredArgumentsSpecified = false;
+    }
+  }
+  
   return allRequiredArgumentsSpecified;
 } // end CheckForRequiredArguments()
 

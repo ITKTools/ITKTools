@@ -33,23 +33,27 @@ extern bool Morphology3D(
 
 int main( int argc, char *argv[] )
 {
-  /** Check arguments for help. */
-  if ( argc < 5 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
 
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+  parser->MarkArgumentAsRequired( "-op", "Operation." );
+  parser->MarkArgumentAsRequired( "-r", "Radius." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
+
   /** Get arguments. */
   std::string inputFileName = "";
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  parser->GetCommandLineArgument( "-in", inputFileName );
 
   std::string operation = "";
-  bool retop = parser->GetCommandLineArgument( "-op", operation );
+  parser->GetCommandLineArgument( "-op", operation );
   operation = itksys::SystemTools::UnCapitalizedWords( operation );
 
   std::string type = "grayscale";
@@ -77,22 +81,6 @@ int main( int argc, char *argv[] )
 
 	const bool useCompression = parser->ArgumentExists( "-z" );
 
-  /** Check if the required arguments are given. */
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
-  if ( !retop )
-  {
-    std::cerr << "ERROR: You should specify \"-op\"." << std::endl;
-    return 1;
-  }
-  if ( !retr )
-  {
-    std::cerr << "ERROR: You should specify \"-r\"." << std::endl;
-    return 1;
-  }
 
   /** Check for valid input options. */
   if ( operation != "erosion"

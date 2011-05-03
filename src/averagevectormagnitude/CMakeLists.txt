@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE( pxaveragevectormagnitude averagevectormagnitude.cxx )
 
-TARGET_LINK_LIBRARIES( pxaveragevectormagnitude ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxaveragevectormagnitude ${ITK_LIBRARIES} ITKTools-Common )
 
 INSTALL( TARGETS pxaveragevectormagnitude
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

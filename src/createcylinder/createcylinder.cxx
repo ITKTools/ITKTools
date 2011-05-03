@@ -27,57 +27,41 @@ void CreateCylinder(
   const double & radius );
 
 /** Declare PrintHelp. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char *argv[] )
 {
-  /** Check arguments for help. */
-  if ( argc < 5 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
 
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+  parser->MarkArgumentAsRequired( "-out", "The output filename." );
+  parser->MarkArgumentAsRequired( "-c", "The center." );
+  parser->MarkArgumentAsRequired( "-r", "The radius." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
+  
   /** Get arguments. */
   std::string inputFileName = "";
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  parser->GetCommandLineArgument( "-in", inputFileName );
 
   std::string outputFileName = "";
-  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  parser->GetCommandLineArgument( "-out", outputFileName );
 
   std::vector<unsigned int> center;
-  bool retc = parser->GetCommandLineArgument( "-c", center );
+  parser->GetCommandLineArgument( "-c", center );
 
   double radius;
-  bool retr = parser->GetCommandLineArgument( "-r", radius );
-
-  /** Check if the required arguments are given. */
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
-  if ( !retout )
-  {
-    std::cerr << "ERROR: You should specify \"-out\"." << std::endl;
-    return 1;
-  }
-  if ( !retc )
-  {
-    std::cerr << "ERROR: You should specify \"-c\"." << std::endl;
-    return 1;
-  }
-  if ( !retr )
-  {
-    std::cerr << "ERROR: You should specify \"-r\"." << std::endl;
-    return 1;
-  }
+  parser->GetCommandLineArgument( "-r", radius );
 
   /** Determine image properties. */
   std::string ComponentTypeIn = "short";
@@ -202,14 +186,15 @@ void CreateCylinder(
  * ******************* PrintHelp *******************
  */
 
-void PrintHelp( void )
+std::string PrintHelp( void )
 {
-  std::cout << "Usage:" << std::endl << "pxcreatecylinder" << std::endl;
-  std::cout << "  -in      inputFilename" << std::endl;
-  std::cout << "  -out     outputFilename" << std::endl;
-  std::cout << "  -c       center (mm)" << std::endl;
-  std::cout << "  -r       radii (mm)" << std::endl;
-  std::cout << "Supported: 2D, 3D." << std::endl;
-
+  std::string helpText = "Usage: \
+  pxcreatecylinder \
+    -in      inputFilename \
+    -out     outputFilename \
+    -c       center (mm) \
+    -r       radii (mm) \
+  Supported: 2D, 3D.";
+  return helpText;
 } // end PrintHelp()
 

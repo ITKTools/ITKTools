@@ -72,7 +72,9 @@
 
 #include <iostream>
 #include "castconverthelpers2.h"
+
 #include "CommandLineArgumentHelper.h"
+#include "itkCommandLineArgumentParser.h"
 
 #include "itkImageFileReader.h"
 #include "itkGDCMImageIO.h"
@@ -119,15 +121,7 @@ extern int FileConverterMultiComponent(
 
 int main( int argc, char **argv )
 {
-  /** TASK 1:
-   * Check arguments.
-   * *******************************************************************
-   */
-  if ( argc  < 5 )
-  {
-    PrintHelp();
-    return 1;
-  }
+
 
   /** Register some non-standard IO Factories to make the tool more useful.
    * Copied from the Insight Applications.
@@ -138,6 +132,13 @@ int main( int argc, char **argv )
   itk::GEAdwImageIOFactory::RegisterOneFactory();
   itk::PhilipsRECImageIOFactory::RegisterOneFactory();
 
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
+
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+  parser->MarkArgumentAsRequired( "-out", "The output filename." );
+
   /** Get the command line arguments. */
   std::string input = "";
   std::string outputFileName = "";
@@ -146,13 +147,13 @@ int main( int argc, char **argv )
   std::vector<std::string> restrictions;
   std::string errorMessage = "";
   bool useCompression = false;
-  int returnValue1 = GetCommandLineArguments( argc, argv,
-    errorMessage, input, outputFileName, outputPixelComponentType,
+  bool argsRetrievedSuccessfully = GetCommandLineArguments( parser,
+    input, outputFileName, outputPixelComponentType,
     seriesUID, restrictions, useCompression );
-  if ( returnValue1 )
+
+  if(!parser->CheckForRequiredArguments() || !argsRetrievedSuccessfully)
   {
-    std::cout << errorMessage << std::endl;
-    return returnValue1;
+    return EXIT_FAILURE;
   }
 
   /** Are we dealing with an image or a dicom series? */

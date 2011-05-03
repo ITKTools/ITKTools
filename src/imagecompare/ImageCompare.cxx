@@ -109,3 +109,4 @@ std::string GetHelpText( void )
     -base      baseline image filename";
   return helpString;
 } // end PrintHelp
+

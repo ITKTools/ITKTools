@@ -1,5 +1,3 @@
-
-
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 #include "itkImageFileReader.h"
@@ -33,30 +31,30 @@ void ExtractSlice(
   const unsigned int & which_dimension );
 
 /** Declare PrintHelp function. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char ** argv )
 {
-  if ( argc < 5 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
 
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+  parser->MarkArgumentAsRequired( "-sn", "The slice number." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
+  
   /** Get the input file name. */
   std::string inputFileName;
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
+  parser->GetCommandLineArgument( "-in", inputFileName );
 
   /** Determine input image properties. */
   std::string ComponentType = "short";
@@ -90,12 +88,8 @@ int main( int argc, char ** argv )
 
   /** Get the slicenumber which is to be extracted. */
   unsigned int slicenumber;
-  bool retsn = parser->GetCommandLineArgument( "-sn", slicenumber );
-  if ( !retsn )
-  {
-    std::cerr << "ERROR: You should specify \"-sn\"." << std::endl;
-    return 1;
-  }
+  parser->GetCommandLineArgument( "-sn", slicenumber );
+
   std::string slicenumberstring;
   parser->GetCommandLineArgument( "-sn", slicenumberstring );
 
@@ -227,17 +221,20 @@ void ExtractSlice(
 //-------------------------------------------------------------------------------------
 
 /** Define PrintHelp. */
-void PrintHelp( void )
+std::string PrintHelp( void )
 {
-  std::cout << "pxextractslice extracts a 2D slice from a 3D image." << std::endl;
-  std::cout << "Usage:  \npxextractslice" << std::endl;
-  std::cout << "  -in      input image filename" << std::endl;
-  std::cout << "  [-out]   output image filename" << std::endl;
-  std::cout << "  [-pt]    pixel type of input and output images;" << std::endl;
-  std::cout << "           default: automatically determined from the first input image." << std::endl;
-  std::cout << "  -sn      slice number" << std::endl;
-  std::cout << "  [-d]     the dimension from which a slice is extracted, default the z dimension" << std::endl;
-  std::cout << "Supported pixel types: (unsigned) char, (unsigned) short, float.\n" << std::endl;
+  std::string helpText = "pxextractslice extracts a 2D slice from a 3D image. \
+  Usage:\n \
+  pxextractslice \
+    -in      input image filename \
+    [-out]   output image filename \
+    [-pt]    pixel type of input and output images; \
+             default: automatically determined from the first input image. \
+    -sn      slice number \
+    [-d]     the dimension from which a slice is extracted, default the z dimension \
+  Supported pixel types: (unsigned) char, (unsigned) short, float.\n";
+
+  return helpText;
 
 } // end PrintHelp
 

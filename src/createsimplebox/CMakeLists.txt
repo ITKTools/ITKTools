@@ -11,7 +11,7 @@ ADD_EXECUTABLE( pxcreatesimplebox
   itkSimpleBoxSpatialFunction.txx
   itkSimpleBoxSpatialFunction.h )
 
-TARGET_LINK_LIBRARIES( pxcreatesimplebox ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxcreatesimplebox ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxcreatesimplebox
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

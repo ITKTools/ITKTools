@@ -8,26 +8,31 @@
 
 int main( int argc, char **argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 6 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
+
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+  parser->MarkArgumentAsRequired( "-type", "The type." );
+  parser->MarkArgumentAsRequired( "-c", "Columns." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
 
   /** Get arguments. */
   std::string inputFileName = "";
   bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
 
   std::vector<unsigned int> columns;
-  bool retc = parser->GetCommandLineArgument( "-c", columns );
+  parser->GetCommandLineArgument( "-c", columns );
 
   std::string type = "";
-  bool rettype = parser->GetCommandLineArgument( "-type", type );
+  parser->GetCommandLineArgument( "-type", type );
 
   std::string weights = "linear";
   parser->GetCommandLineArgument( "-w", weights );
@@ -42,23 +47,6 @@ int main( int argc, char **argv )
 
   double kappacmp = 0.0;
   bool retcmp = parser->GetCommandLineArgument( "-cmp", kappacmp );
-
-  /** Check if the required arguments are given. */
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
-  if ( !rettype )
-  {
-    std::cerr << "ERROR: You should specify \"-type\"." << std::endl;
-    return 1;
-  }
-  if ( !retc )
-  {
-    std::cerr << "ERROR: You should specify \"-c\"." << std::endl;
-    return 1;
-  }
 
   /** Check command line arguments. */
   type = itksys::SystemTools::LowerCase( type );

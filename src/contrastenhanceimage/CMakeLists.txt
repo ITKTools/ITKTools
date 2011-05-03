@@ -7,7 +7,7 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE( pxcontrastenhanceimage contrastenhanceimage.cxx contrastenhanceimage.h )
 
-TARGET_LINK_LIBRARIES( pxcontrastenhanceimage ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxcontrastenhanceimage ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxcontrastenhanceimage
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

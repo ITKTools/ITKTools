@@ -15,38 +15,30 @@ extern int UnaryImageOperatorScalar( const std::string & inputFileName,
 
 int main( int argc, char **argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 5 || argc > 11 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
+
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+  parser->MarkArgumentAsRequired( "-ops", "Operation." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
 
   /** Get arguments. */
   std::string inputFileName = "";
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  parser->GetCommandLineArgument( "-in", inputFileName );
   std::string outputFileName = "";
   parser->GetCommandLineArgument( "-out", outputFileName );
   std::string ops = "PLUS";
-  bool retops = parser->GetCommandLineArgument( "-ops", ops );
+  parser->GetCommandLineArgument( "-ops", ops );
   std::string argument = "1";
   bool retarg = parser->GetCommandLineArgument( "-arg", argument );
-
-  /** Check if the required arguments are given. */
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
-  if ( !retops )
-  {
-    std::cerr << "ERROR: You should specify \"-ops\"." << std::endl;
-    return 1;
-  }
 
   /** Create outputFileName. */
   if ( outputFileName == "" )
@@ -144,4 +136,3 @@ int main( int argc, char **argv )
   return 0;
 
 } // end main
-

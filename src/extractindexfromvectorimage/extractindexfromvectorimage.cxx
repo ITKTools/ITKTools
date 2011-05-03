@@ -29,46 +29,37 @@ void ExtractIndex(
   const unsigned int & index );
 
 /** Declare PrintHelp. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char ** argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 5 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
 
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+  parser->MarkArgumentAsRequired( "-ind", "The index to extract." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
+  
   /** Get arguments. */
   std::string inputFileName = "";
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  parser->GetCommandLineArgument( "-in", inputFileName );
 
   std::string outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
   outputFileName += "INDEXEXTRACTED.mhd";
   parser->GetCommandLineArgument( "-out", outputFileName );
 
   unsigned int index = 0;
-  bool retind = parser->GetCommandLineArgument( "-ind", index );
-
-  /** Check if the required arguments are given. */
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
-  /** Check if the required arguments are given. */
-  if ( !retind )
-  {
-    std::cerr << "ERROR: You should specify \"-ind\"." << std::endl;
-    return 1;
-  }
+  parser->GetCommandLineArgument( "-ind", index );
 
   /** Determine image properties. */
   std::string ComponentTypeIn = "short";
@@ -202,16 +193,16 @@ void ExtractIndex(
  * ******************* PrintHelp *******************
  */
 
-void PrintHelp()
+std::string PrintHelp()
 {
-  std::cout << "This program extracts a user specified component from a vector image.\n";
-  std::cout << "Usage:\n"
-            << "pxextractindexfromvectorimage\n";
-  std::cout << "  -in      inputFilename\n";
-  std::cout << "  [-out]   outputFilename, default in + INDEXEXTRACTED.mhd\n";
-  std::cout << "  -ind     a valid index\n";
-  std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int,\n"
-            << "long, float, double." << std::endl;
-
+  std::string helpText = "This program extracts a user specified component from a vector image.\n \
+  Usage:\n \
+  pxextractindexfromvectorimage\n \
+    -in      inputFilename\n \
+    [-out]   outputFilename, default in + INDEXEXTRACTED.mhd\n \
+    -ind     a valid index\n \
+  Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int,\n \
+  long, float, double.";
+  return helpText;
 } // end PrintHelp()
 

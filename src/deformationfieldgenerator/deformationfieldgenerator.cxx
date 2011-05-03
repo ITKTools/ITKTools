@@ -46,24 +46,23 @@ void DeformationFieldGenerator(
   double stiffness );
 
 /** Declare other functions. */
-void PrintHelp(void);
+std::string PrintHelp(void);
 
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char **argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 9 || argc > 15 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-
+  parser->SetProgramHelpText(PrintHelp());
+  
+  parser->MarkArgumentAsRequired( "-in1", "The inputImage1 filename." );
+  parser->MarkArgumentAsRequired( "-ipp1", "The inputPoints1 filename." );
+  parser->MarkArgumentAsRequired( "-ipp2", "The inputPoints2 filename." );
+  parser->MarkArgumentAsRequired( "-out", "The output filename." );
+  
   std::string inputImage1FileName = "";
   std::string inputImage2FileName = "";
   std::string inputPoints1FileName = "";
@@ -74,35 +73,13 @@ int main( int argc, char **argv )
 
   /** Get arguments. */
 
-  bool retin1  = parser->GetCommandLineArgument( "-in1", inputImage1FileName );
+  parser->GetCommandLineArgument( "-in1", inputImage1FileName );
   parser->GetCommandLineArgument( "-in2", inputImage2FileName );
-  bool retipp1 = parser->GetCommandLineArgument( "-ipp1", inputPoints1FileName );
-  bool retipp2 = parser->GetCommandLineArgument( "-ipp2", inputPoints2FileName );
-  bool retout  = parser->GetCommandLineArgument( "-out", outputImageFileName );
+  parser->GetCommandLineArgument( "-ipp1", inputPoints1FileName );
+  parser->GetCommandLineArgument( "-ipp2", inputPoints2FileName );
+  parser->GetCommandLineArgument( "-out", outputImageFileName );
   parser->GetCommandLineArgument( "-k", kernelName );
   parser->GetCommandLineArgument( "-s", stiffness );
-
-  /** Check if the required arguments are given. */
-  if ( !retin1 )
-  {
-    std::cerr << "ERROR: You should specify \"-in1\"." << std::endl;
-    return 1;
-  }
-  if ( !retipp1 )
-  {
-    std::cerr << "ERROR: You should specify \"-ipp1\"." << std::endl;
-    return 1;
-  }
-  if ( !retipp2 )
-  {
-    std::cerr << "ERROR: You should specify \"-ipp2\"." << std::endl;
-    return 1;
-  }
-  if ( !retout )
-  {
-    std::cerr << "ERROR: You should specify \"-out\"." << std::endl;
-    return 1;
-  }
 
   /** Determine image properties. */
   std::string ComponentType = "short";
@@ -413,37 +390,39 @@ void DeformationFieldGenerator(
   /**
    * ******************* PrintHelp *******************
    */
-void PrintHelp()
+std::string PrintHelp()
 {
-  std::cout << "This program generates a deformation field (from fixed " << std::endl;
-  std::cout << "to moving image) based on some corresponding points." << std::endl;
-  std::cout << "Usage:" << std::endl << "pxdeformationfieldgenerator" << std::endl;
-  std::cout << "  -in1     inputFilename1: the fixed image on which the" << std::endl;
-  std::cout << "            deformaton field must be defined." << std::endl;
-  std::cout << "  [-in2]   inputFilename2: only needed to convert from" << std::endl;
-  std::cout << "            indices to point if the second input point" << std::endl;
-  std::cout << "            contains indices." << std::endl;
-  std::cout << "  -ipp1    inputPointFile1: a transformix style input point file" << std::endl;
-  std::cout << "            with points in the fixed image." << std::endl;
-  std::cout << "  -ipp2    inputPointFile2: a transformix style input point file" << std::endl;
-  std::cout << "            with the corresponding points in the moving image." << std::endl;
-  std::cout << "  [-s]     stiffness: a number that allows to vary between" << std::endl;
-  std::cout << "            interpolating and approximating spline." << std::endl;
-  std::cout << "            0.0 = interpolating = default." << std::endl;
-  std::cout << "            Stiffness values are usually rather small," << std::endl;
-  std::cout << "            typically in the range of 0.001 to 0.1." << std::endl;
-  std::cout << "  [-k]     kernelType: the type of kernel transform that's used to" << std::endl;
-  std::cout << "            generate the deformation field." << std::endl;
-  std::cout << "            TPS: thin plate spline (default)" << std::endl;
-  std::cout << "            TPSR2LOGR: thin plate spline R2logR" << std::endl;
-  std::cout << "            VS: volume spline" << std::endl;
-  std::cout << "            EBS: elastic body spline" << std::endl;
-  std::cout << "            EBSR: elastic body reciprocal spline" << std::endl;
-  std::cout << "            See ITK documentation and the there cited paper" << std::endl;
-  std::cout << "            for more information on these methods." << std::endl;
-  std::cout << "  -out     outputFilename: the name of the resulting deformation field," << std::endl;
-  std::cout << "            which is written as a vector<float,dim> image." << std::endl;
-  std::cout << "Supported: 2D, 3D, any scalar pixeltype." << std::endl;
+  std::string helpText = "This program generates a deformation field (from fixed \
+  to moving image) based on some corresponding points. \
+  Usage: \
+  pxdeformationfieldgenerator \
+    -in1     inputFilename1: the fixed image on which the \
+              deformaton field must be defined. \
+    [-in2]   inputFilename2: only needed to convert from \
+              indices to point if the second input point \
+              contains indices. \
+    -ipp1    inputPointFile1: a transformix style input point file \
+              with points in the fixed image. \
+    -ipp2    inputPointFile2: a transformix style input point file \
+              with the corresponding points in the moving image. \
+    [-s]     stiffness: a number that allows to vary between \
+              interpolating and approximating spline. \
+              0.0 = interpolating = default. \
+              Stiffness values are usually rather small, \
+              typically in the range of 0.001 to 0.1. \
+    [-k]     kernelType: the type of kernel transform that's used to \
+              generate the deformation field. \
+              TPS: thin plate spline (default) \
+              TPSR2LOGR: thin plate spline R2logR \
+              VS: volume spline \
+              EBS: elastic body spline \
+              EBSR: elastic body reciprocal spline \
+              See ITK documentation and the there cited paper \
+              for more information on these methods. \
+    -out     outputFilename: the name of the resulting deformation field, \
+              which is written as a vector<float,dim> image. \
+  Supported: 2D, 3D, any scalar pixeltype.";
+  return helpText;
 } // end PrintHelp
 
 

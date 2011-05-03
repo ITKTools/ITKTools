@@ -8,31 +8,34 @@
  * ******************* PrintHelp *******************
  */
 
-void PrintHelp( void )
+std::string PrintHelp( void )
 {
-  std::cout << "Usage:" << std::endl << "pxkappastatistic" << std::endl;
-  std::cout << "  -in      inputFilename" << std::endl;
-  std::cout << "  -type    the type of the kappa test:\n";
-  std::cout << "             fleiss: unweighted, for many observers\n";
-  std::cout << "             cohen: weighted, for two observers only" << std::endl;
-  std::cout << "  -c       the data columns on which the kappa test is performed" << std::endl;
-  std::cout << "  [-w]     the weights used in the Cohen kappa test, default linear:\n";
-  std::cout << "             linear:    1 - | i - j | / ( k - 1 )\n";
-  std::cout << "             quadratic: 1 - [ (i - j ) / ( k - 1 ) ]^2\n";
-  std::cout << "             identity:  I_k, the identity matrix" << std::endl;
-  std::cout << "  [-std]   use this option to calculate the standard deviation" << std::endl;
-  std::cout << "  [-cmp]   use this option to specify a kappa to which you want to compare\n";
-  std::cout << "           the found kappa. The returned standard deviation is different if\n";
-  std::cout << "           this option is not specified." << std::endl;
-  std::cout << "  [-out]   output, choose one of {kappa,all,ALL}, default all\n";
-  std::cout << "             kappa: only print the kappa-value\n";
-  std::cout << "             all: print all\n";
-  std::cout << "             ALL: print more" << std::endl;
-  std::cout << "  [-p]     the output precision, default = 8:" << std::endl;
-  std::cout << "The input file should be in a certain format. No text is allowed." << std::endl;
-  std::cout << "No headers are allowed. The data samples should be displayed in columns." << std::endl;
-  std::cout << "Columns should be separated by a single space or tab." << std::endl;
-  std::cout << "For more information about the kappa statistic and this implementation, read the tex-file found in the repository." << std::endl;
+  std::string helpText = "Usage: \
+  pxkappastatistic \
+    -in      inputFilename \
+    -type    the type of the kappa test:\n \
+               fleiss: unweighted, for many observers\n \
+               cohen: weighted, for two observers only \
+    -c       the data columns on which the kappa test is performed \
+    [-w]     the weights used in the Cohen kappa test, default linear:\n \
+               linear:    1 - | i - j | / ( k - 1 )\n \
+               quadratic: 1 - [ (i - j ) / ( k - 1 ) ]^2\n \
+               identity:  I_k, the identity matrix \
+    [-std]   use this option to calculate the standard deviation \
+    [-cmp]   use this option to specify a kappa to which you want to compare\n \
+             the found kappa. The returned standard deviation is different if\n \
+             this option is not specified. \
+    [-out]   output, choose one of {kappa,all,ALL}, default all\n \
+               kappa: only print the kappa-value\n \
+               all: print all\n \
+               ALL: print more \
+    [-p]     the output precision, default = 8: \
+  The input file should be in a certain format. No text is allowed. \
+  No headers are allowed. The data samples should be displayed in columns. \
+  Columns should be separated by a single space or tab. \
+  For more information about the kappa statistic and this implementation, read the tex-file found in the repository.";
+
+  return helpText;
 } // end PrintHelp()
 
 

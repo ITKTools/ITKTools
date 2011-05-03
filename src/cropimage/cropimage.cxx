@@ -32,7 +32,7 @@ void CropImage(
   const bool force );
 
 /** Declare other functions. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 bool CheckWhichInputOption( const bool pAGiven, const bool pBGiven, const bool szGiven,
   const bool lbGiven, const bool ubGiven, unsigned int & arg );
@@ -53,20 +53,22 @@ std::vector<int> GetUpperBoundary( const std::vector<int> & input1,
 
 int main( int argc, char **argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 5 || argc > 14 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
 
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
+  
   /** Get arguments. */
   std::string inputFileName = "";
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  parser->GetCommandLineArgument( "-in", inputFileName );
 
   std::string outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
   outputFileName += "CROPPED.mhd";
@@ -88,13 +90,6 @@ int main( int argc, char **argv )
   bool retub = parser->GetCommandLineArgument( "-ub", upBound );
 
   bool force = parser->ArgumentExists( "-force" );
-
-  /** Check if the required arguments are given. */
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
 
   /** Determine image properties. */
   std::string ComponentTypeIn = "short";
@@ -345,23 +340,25 @@ void CropImage( const std::string & inputFileName, const std::string & outputFil
    * ******************* PrintHelp *******************
    */
 
-void PrintHelp( void )
+std::string PrintHelp( void )
 {
-  std::cout << "Usage:" << std::endl << "pxcropimage" << std::endl;
-  std::cout << "  -in      inputFilename" << std::endl;
-  std::cout << "  [-out]   outputFilename, default in + CROPPED.mhd" << std::endl;
-  std::cout << "  [-pA]    a point A" << std::endl;
-  std::cout << "  [-pB]    a point B" << std::endl;
-  std::cout << "  [-sz]    size" << std::endl;
-  std::cout << "  [-lb]    lower bound" << std::endl;
-  std::cout << "  [-ub]    upper bound" << std::endl;
-  std::cout << "  [-force] force to extract a region of size sz, pad if necessary" << std::endl;
-  std::cout << "pxcropimage can be called in different ways:" << std::endl;
-  std::cout << "  1: supply two points with \"-pA\" and \"-pB\"." << std::endl;
-  std::cout << "  2: supply a points and a size with \"-pA\" and \"-sz\"." << std::endl;
-  std::cout << "  3: supply a lower and an upper bound with \"-lb\" and \"-ub\"." << std::endl;
-  std::cout << "The points are supplied in index coordinates." << std::endl;
-  std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
+  std::string helpString = "Usage: \
+  pxcropimage \
+    -in      inputFilename \
+    [-out]   outputFilename, default in + CROPPED.mhd \
+    [-pA]    a point A \
+    [-pB]    a point B \
+    [-sz]    size \
+    [-lb]    lower bound \
+    [-ub]    upper bound \
+    [-force] force to extract a region of size sz, pad if necessary \
+  pxcropimage can be called in different ways: \
+    1: supply two points with \"-pA\" and \"-pB\". \
+    2: supply a points and a size with \"-pA\" and \"-sz\". \
+    3: supply a lower and an upper bound with \"-lb\" and \"-ub\". \
+  The points are supplied in index coordinates. \
+  Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
+  return helpString;
 } // end PrintHelp()
 
 

@@ -25,52 +25,40 @@ void ReflectImageFilter(
   const unsigned int direction );
 
 /** Declare PrintHelp. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char ** argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 7 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
+
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+  parser->MarkArgumentAsRequired( "-out", "The output filename." );
+  parser->MarkArgumentAsRequired( "-d", "Direction." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
 
   /** Get arguments. */
   std::string inputFileName = "";
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  parser->GetCommandLineArgument( "-in", inputFileName );
 
   std::string outputFileName = "";
-  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  parser->GetCommandLineArgument( "-out", outputFileName );
 
   unsigned int direction;
-  bool retd = parser->GetCommandLineArgument( "-d", direction );
+  parser->GetCommandLineArgument( "-d", direction );
 
   std::string ComponentType = "";
   bool retpt = parser->GetCommandLineArgument( "-opct", ComponentType );
-
-  /** Check if the required arguments are given. */
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
-  if ( !retout )
-  {
-    std::cerr << "ERROR: You should specify \"-out\"." << std::endl;
-    return 1;
-  }
-  if ( !retd )
-  {
-    std::cerr << "ERROR: You should specify \"-d\"." << std::endl;
-    return 1;
-  }
 
   /** Determine image properties. */
   std::string ComponentTypeIn = "short";
@@ -207,18 +195,19 @@ void ReflectImageFilter( const std::string & inputFileName,
 /**
  * ******************* PrintHelp *******************
  */
-void PrintHelp()
+std::string PrintHelp()
 {
-  std::cout << "This program reflects an image.\n";
-  std::cout << "Usage:\n"
-            << "pxreflect\n";
-  std::cout << "  -in      inputFilename\n";
-  std::cout << "  -out     outputFilename\n";
-  std::cout << "  -d       the image direction that should be reflected\n";
-  std::cout << "  [-opct]  output pixel type, default equal to input\n";
-  std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int,\n"
-            << "(unsigned) long, float, double.\n";
-  std::cout << std::endl;
+  std::string helpText = "This program reflects an image.\n \
+  Usage:\n \
+  pxreflect\n \
+    -in      inputFilename\n \
+    -out     outputFilename\n \
+    -d       the image direction that should be reflected\n \
+    [-opct]  output pixel type, default equal to input\n \
+  Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int,\n \
+  (unsigned) long, float, double.\n";
+
+  return helpText;
 
 } // end PrintHelp()
 

@@ -1,4 +1,3 @@
-
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 #include "itkImage.h"
@@ -30,40 +29,34 @@ void WeightedAddition(
   );
 
 /** Declare PrintHelp. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char **argv )
 {
-  /** Check number of arguments. */
-  if ( argc < 6 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
+
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+  parser->MarkArgumentAsRequired( "-w", "The weight filename." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
 
   /** Get arguments. */
   std::vector<std::string> inputFileNames;
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileNames );
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
+  parser->GetCommandLineArgument( "-in", inputFileNames );
 
   /** Get arguments. */
   std::vector<std::string> weightFileNames;
-  bool retw = parser->GetCommandLineArgument( "-w", weightFileNames );
-  if ( !retw )
-  {
-    std::cerr << "ERROR: You should specify \"-w\"." << std::endl;
-    return 1;
-  }
+  parser->GetCommandLineArgument( "-w", weightFileNames );
 
   std::string outputFileName("");
   parser->GetCommandLineArgument( "-out", outputFileName );
@@ -200,12 +193,15 @@ void WeightedAddition(
 /**
  * ******************* PrintHelp *******************
  */
-void PrintHelp()
+std::string PrintHelp()
 {
-  std::cout << "Usage:" << std::endl << "pxweightedaddition" << std::endl;
-  std::cout << "  -in      inputFilenames" << std::endl;
-  std::cout << "  -w       weightFilenames" << std::endl;
-  std::cout << "  -out     outputFilename; always written as float" << std::endl;
-  std::cout << "Supported: 2D, 3D, (unsigned) short, (unsigned) char, float." << std::endl;
+  std::string helpText = "Usage: \
+  pxweightedaddition \
+    -in      inputFilenames \
+    -w       weightFilenames \
+    -out     outputFilename; always written as float \
+  Supported: 2D, 3D, (unsigned) short, (unsigned) char, float.";
+  
+  return helpText;
 
 } // end PrintHelp()

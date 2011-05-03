@@ -11,7 +11,7 @@ ADD_EXECUTABLE( pxhistogramequalizeimage
   itkHistogramEqualizationImageFilter.h
   itkHistogramEqualizationImageFilter.hxx )
 
-TARGET_LINK_LIBRARIES( pxhistogramequalizeimage ${ITK_LIBRARIES} )
+TARGET_LINK_LIBRARIES( pxhistogramequalizeimage ITKTools-Common ${ITK_LIBRARIES} )
 
 INSTALL( TARGETS pxhistogramequalizeimage
   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )

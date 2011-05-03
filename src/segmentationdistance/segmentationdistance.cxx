@@ -49,31 +49,30 @@ void SegmentationDistance(
   bool cartesianonly );
 
 /** Declare PrintHelp. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char **argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 4 || argc > 16 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
 
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
+  
   /** Get the input file names. */
   std::vector< std::string >  inputFileNames;
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileNames );
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
+  parser->GetCommandLineArgument( "-in", inputFileNames );
+
   if( (inputFileNames.size() != 2)  )
   {
     std::cout << "ERROR: You should specify two input images." << std::endl;
@@ -641,22 +640,22 @@ void SegmentationDistance(
   /**
    * ******************* PrintHelp *******************
    */
-void PrintHelp()
+std::string PrintHelp()
 {
-  std::cout << "This program computes a spatial segmentation error map.\n" << std::endl;
-  std::cout << "Usage:" << std::endl << "pxsegmentationdistance" << std::endl;
-  std::cout << "  -in      inputFilename1 inputFileName2" << std::endl;
-  std::cout << "  [-out]   outputFilename, default <in1>DISTANCE<in2>.mhd" << std::endl;
-  std::cout << "  [-c]     Center of rotation, used to compute the spherical transform. In world coordinates." << std::endl;
-  std::cout << "  [-s]     samples [unsigned int]; maximum number of samples per pixel, used to do the spherical transform; default 20." << std::endl;
-  std::cout << "  [-t]     theta size; the size of the theta dimension. default: 180, which yields a spacing of 2 degrees." << std::endl;
-  std::cout << "  [-p]     phi size; the size of the phi dimension. default: 90, which yields a spacing of 2 degrees." << std::endl;
-  std::cout << "  [-car]   skip the polar transform and return two output images (outputFileNameDIST and outputFileNameEDGE): true or false; default = false" << std::endl;
-  std::cout << "           The EDGE output image is an edge mask for inputfile2. The DIST output image contains the distance at each edge pixel to the first inputFile." << std::endl;
-  std::cout << "Supported: 3D short for inputImage1, and everything convertable to short." << std::endl;
-  std::cout << "           3D short for inputImage2, and everything convertable to short." << std::endl;
+  std::string helpText = "This program computes a spatial segmentation error map.\n \
+  Usage: \
+  pxsegmentationdistance \
+    -in      inputFilename1 inputFileName2 \
+    [-out]   outputFilename, default <in1>DISTANCE<in2>.mhd \
+    [-c]     Center of rotation, used to compute the spherical transform. In world coordinates. \
+    [-s]     samples [unsigned int]; maximum number of samples per pixel, used to do the spherical transform; default 20. \
+    [-t]     theta size; the size of the theta dimension. default: 180, which yields a spacing of 2 degrees. \
+    [-p]     phi size; the size of the phi dimension. default: 90, which yields a spacing of 2 degrees. \
+    [-car]   skip the polar transform and return two output images (outputFileNameDIST and outputFileNameEDGE): true or false; default = false \
+             The EDGE output image is an edge mask for inputfile2. The DIST output image contains the distance at each edge pixel to the first inputFile. \
+  Supported: 3D short for inputImage1, and everything convertable to short. \
+             3D short for inputImage2, and everything convertable to short.";
+
+  return helpText;
 } // end PrintHelp
-
-
-
 

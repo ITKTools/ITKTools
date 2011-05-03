@@ -16,6 +16,9 @@
  */
 #include <itksys/SystemTools.hxx>
 
+#include "itkCommandLineArgumentParser.h"
+#include "CommandLineArgumentHelper.h"
+
 // extern int ComputeScalarDifferenceImage( const std::string &inputPixelComponentType1,
 //   const std::string &inputPixelComponentType2, const std::string &outputPixelComponentType,
 //   const std::string &image1FileName, const std::string &image2FileName,
@@ -28,61 +31,44 @@ extern int ComputeVectorDifferenceImage( const std::string &inputPixelComponentT
 
 //-------------------------------------------------------------------------------------
 
+std::string GetHelpText();
+
 int  main(  int  argc,  char *argv[] )
 {
-  /** TASK 1:
-   * Check arguments.
-   * *******************************************************************
-   */
-  if ( argc  < 3 || strcmp(argv[ 1 ], "--help") == 0 )
-  {
-    std::cout  << "Usage:"  << std::endl;
-    std::cout  << "\tpxcomputedifferenceimage inputimage1filename inputimage2filename [outputimagefilename] [outputPixelComponentType]" << std::endl;
-    std::cout  << "\twhere outputPixelComponentType is one of:" << std::endl;
-    std::cout  << "\t\t- unsigned_char" << std::endl;
-    std::cout  << "\t\t- char" << std::endl;
-    std::cout  << "\t\t- unsigned_short" << std::endl;
-    std::cout  << "\t\t- short" << std::endl;
-    std::cout  << "\t\t- unsigned_int" << std::endl;
-    std::cout  << "\t\t- int" << std::endl;
-    std::cout  << "\t\t- unsigned_long" << std::endl;
-    std::cout  << "\t\t- long" << std::endl;
-    std::cout  << "\t\t- float" << std::endl;
-    std::cout  << "\t\t- double" << std::endl;
-    std::cout  << "\tprovided that the outputPixelComponentType is supported by the output file format." << std::endl;
-    std::cout  << "\tBy default the outputPixelComponentType is set to the inputPixelComponentType of image1." << std::endl;
-    return 1;
-  }
+  /** Create a command line argument parser. */
+  itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
+  parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(GetHelpText());
+  parser->MarkArgumentAsRequired( "-in1", "The input1 filename." );
+  parser->MarkArgumentAsRequired( "-in2", "The input2 filename." );
 
-  /** Print arguments. */
-  std::cout << "pxcomputedifferenceimage ";
-  for ( unsigned int i = 1; i < static_cast<unsigned int>(argc); i++ )
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
   {
-    std::cout << argv[ i ] << " ";
+    return EXIT_FAILURE;
   }
-  std::cout << std::endl;
 
   /** Get the image names. */
-  std::string image1FileName = argv[ 1 ];
-  std::string image2FileName = argv[ 2 ];
+  std::string image1FileName;
+  std::string image2FileName;
   std::string outputFileName = "";
   std::string outputPixelComponentType = "";
-  if ( argc == 3 )
+
+  parser->GetCommandLineArgument( "-in1", image1FileName );
+  parser->GetCommandLineArgument( "-in2", image2FileName );
+  parser->GetCommandLineArgument( "-out", outputFileName );
+  parser->GetCommandLineArgument( "-pct", outputPixelComponentType );
+  
+  bool gotOutputFileName = parser->GetCommandLineArgument( "-out", outputFileName );
+  
+  if ( !gotOutputFileName )
   {
     std::string::size_type slash = image2FileName.find_last_of( "/" ) + 1;
     outputFileName = image1FileName.substr( 0, image1FileName.rfind( "." ) );
     outputFileName += "MINUS";
     outputFileName += image2FileName.substr( slash, image2FileName.rfind( "." ) - slash );
     outputFileName += ".mhd";
-  }
-  else if ( argc == 4 )
-  {
-    outputFileName = argv[ 3 ];
-  }
-  else if ( argc == 5 )
-  {
-    outputFileName = argv[ 3 ];
-    outputPixelComponentType = argv[ 4 ];
   }
 
   /** Check if image1FileName and image2FileName exist. */
@@ -318,3 +304,23 @@ int  main(  int  argc,  char *argv[] )
   return 0;
 
 }  // end main
+
+std::string GetHelpText()
+{
+  std::string helpText = "Usage: \n \
+  \tpxcomputedifferenceimage inputimage1filename inputimage2filename [outputimagefilename] [outputPixelComponentType] \
+  \twhere outputPixelComponentType is one of: \
+  \t\t- unsigned_char \
+  \t\t- char \
+  \t\t- unsigned_short \
+  \t\t- short \
+  \t\t- unsigned_int \
+  \t\t- int \
+  \t\t- unsigned_long \
+  \t\t- long \
+  \t\t- float \
+  \t\t- double \
+  \tprovided that the outputPixelComponentType is supported by the output file format. \
+  \tBy default the outputPixelComponentType is set to the inputPixelComponentType of image1.";
+  return helpText;
+}

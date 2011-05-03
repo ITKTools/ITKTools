@@ -10,56 +10,31 @@
 #include "itkImageFileWriter.h"
 #include "itkAdaptiveHistogramEqualizationImageFilter.h"
 
+#include "itkCommandLineArgumentParser.h"
+
 typedef std::map<std::string, std::string> ArgMapType;
 
-void PrintUsageString(void)
+std::string PrintUsageString(void)
 {
-  std::cerr
-    << "\nThis program enhances an image.\n"
-    << "alpha and beta control the exact behaviour of the filter. See the\n"
-    << "ITK documentation of the AdaptiveHistogramEqualizationImageFilter\n"
-    << "Usage:\n"
-    << "pxcontrastenhanceimage\n"
-    << "\t-in    \tInputImageFileName\t\n"
-    << "\t-out   \tOutputImageFileName\n"
-    << "\t-pt    \tPixelType <FLOAT, SHORT, USHORT, INT, UINT, CHAR, UCHAR>\n"
-    << "\t\tCurrently only char, uchar and short are supported.\n"
-    << "\t-id    \tImageDimension <2,3>\n"
-    << "\t-alpha \t0.0 < alpha < 1.0\n"
-    << "\t-beta  \t0.0 < beta < 1.0\n"
-    << "\t-r0    \tInteger radius of window, dimension 0\n"
-    << "\t-r1    \tInteger radius of window, dimension 1\n"
-    << "\t[-r2]  \tInteger radius of window, dimension 2\n"
-    << "\t[-LUT] \tUse Lookup-table <true, false>;\n"
-    << "\t\tdefault = true; Faster, but requires more memory.\n"
-    << std::endl;
+  std::string helpString = "This program enhances an image. \
+    alpha and beta control the exact behaviour of the filter. See the\n \
+    ITK documentation of the AdaptiveHistogramEqualizationImageFilter\n \
+    Usage:\n \
+    pxcontrastenhanceimage\n \
+    \t-in    \tInputImageFileName\t\n \
+    \t-out   \tOutputImageFileName\n \
+    \t-pt    \tPixelType <FLOAT, SHORT, USHORT, INT, UINT, CHAR, UCHAR>\n \
+    \t\tCurrently only char, uchar and short are supported.\n \
+    \t-id    \tImageDimension <2,3>\n \
+    \t-alpha \t0.0 < alpha < 1.0\n \
+    \t-beta  \t0.0 < beta < 1.0\n \
+    \t-r0    \tInteger radius of window, dimension 0\n \
+    \t-r1    \tInteger radius of window, dimension 1\n \
+    \t[-r2]  \tInteger radius of window, dimension 2\n \
+    \t[-LUT] \tUse Lookup-table <true, false>;\n \
+    \t\tdefault = true; Faster, but requires more memory.";
+  return helpString;
 } // end PrintUsageString
-
-
-int ReadArgument(const ArgMapType & argmap, const std::string & key, std::string & value, bool optional)
-{
-
-  if ( argmap.count(key) )
-  {
-    value = argmap.find(key)->second;
-    return 0;
-  }
-  else
-  {
-    if (!optional)
-    {
-      std::cerr << "Not enough arguments\n";
-      std::cerr << "Missing argument: " << key << std::endl;
-      PrintUsageString();
-      return 1;
-    }
-    else
-    {
-      return 0;
-    }
-  }
-
-} // end ReadArgument
 
 
 //strange hack:
@@ -76,7 +51,7 @@ class runwrap
 {
   public:
 
-  static int run_cri(const ArgMapType & argmap )
+  static int run_cri(itk::CommandLineArgumentParser::Pointer parser)
   {
     const unsigned int ImageDimension = NImageDimension;
     typedef TPixel                                PixelType;
@@ -96,23 +71,15 @@ class runwrap
     typedef typename EnhancerType::ImageSizeType  RadiusType;
 
     /** vars */
-    std::string inputImageFileName("");
-    std::string outputImageFileName("");
-    int returndummy = 0;
     WriterPointer writer = WriterType::New();
     EnhancerPointer enhancer = EnhancerType::New();
     RadiusType radius;
-    float alpha = 0.0;
-    float beta = 0.0;
-    bool lutbool = true;
 
-    /** Read filenames */
-    returndummy |= ReadArgument(argmap, "-in", inputImageFileName, false);
-    returndummy |= ReadArgument(argmap, "-out", outputImageFileName, false);
-    if ( returndummy !=0 )
-    {
-      return returndummy;
-    }
+    std::string inputImageFileName = "";
+    std::string outputImageFileName = "";
+
+    parser->GetCommandLineArgument( "-in", inputImageFileName);
+    parser->GetCommandLineArgument( "-out", outputImageFileName);
 
     /** Try to read input image */
     ReaderPointer reader = ReaderType::New();
@@ -130,25 +97,14 @@ class runwrap
 
     /** read alpha and beta from the commandline */
 
-    std::string alphaString("0.0");
-    std::string betaString("0.0");
-    returndummy |= ReadArgument(argmap, "-alpha", alphaString, false);
-    returndummy |= ReadArgument(argmap, "-beta", betaString, false);
-    if ( returndummy !=0 )
-    {
-      return returndummy;
-    }
-    alpha = static_cast<float>( atof( alphaString.c_str() ) );
-    beta  = static_cast<float>( atof( betaString.c_str()  ) );
+    float alpha = 0.0f;
+    float beta = 0.0f;
+    parser->GetCommandLineArgument( "-alpha", alpha);
+    parser->GetCommandLineArgument( "-beta", beta);
 
     /** read LUT */
-    std::string lutString("true");
-    returndummy |= ReadArgument(argmap, "-LUT", lutString, true);
-    if ( lutString == "false" )
-    {
-      lutbool = false;
-    }
-
+    bool lut = true;
+    parser->GetCommandLineArgument( "-LUT", lut);
 
     /** read radius from the commandline. */
 
@@ -156,21 +112,15 @@ class runwrap
     {
       std::ostringstream key("");
       key << "-r" << i;
-      std::string tempvalue("");
-      returndummy |= ReadArgument(argmap, key.str(), tempvalue, false);
-      if (returndummy ==0)
-      {
-        radius[i] = atoi( tempvalue.c_str() );
-      }
-    }
-    if ( returndummy !=0 )
-    {
-      return returndummy;
+      unsigned int r;
+      parser->GetCommandLineArgument( key.str(), r);
+
+      radius[i] = r;
     }
 
     /** Setup pipeline and configure its components */
 
-    enhancer->SetUseLookupTable(lutbool);
+    enhancer->SetUseLookupTable(lut);
     enhancer->SetAlpha(alpha);
     enhancer->SetBeta(beta);
     enhancer->SetRadius(radius);
@@ -211,15 +161,12 @@ template < unsigned int NImageDimension>
 class ptswrap
 { public:
 
-  static int PixelTypeSelector(const ArgMapType & argmap )
+  static int PixelTypeSelector(itk::CommandLineArgumentParser::Pointer parser)
   {
-    const unsigned int ImageDimension = NImageDimension;
     std::string pixelType("");
-    int returndummy = ReadArgument(argmap, "-pt", pixelType, false);
-    if ( returndummy !=0 )
-    {
-      return returndummy;
-    }
+    parser->GetCommandLineArgument("-pt", pixelType);
+
+    const unsigned int ImageDimension = NImageDimension;
 
     std::map<std::string, enum_type> typemap;
     typemap["FLOAT"] = eFLOAT;
@@ -238,11 +185,11 @@ class ptswrap
     switch( pt )
     {
     case eSHORT :
-      return  runwrap<ImageDimension, short>::run_cri(argmap);
+      return  runwrap<ImageDimension, short>::run_cri(parser);
     case eCHAR :
-      return  runwrap<ImageDimension, char>::run_cri(argmap);
+      return  runwrap<ImageDimension, char>::run_cri(parser);
     case eUCHAR :
-      return  runwrap<ImageDimension, unsigned char>::run_cri(argmap);
+      return  runwrap<ImageDimension, unsigned char>::run_cri(parser);
     default :
       std::cerr << "ERROR: PixelType not supported" << std::endl;
       return 1;

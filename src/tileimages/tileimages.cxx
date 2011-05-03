@@ -46,30 +46,31 @@ void TileImages(
   const double & defaultvalue );
 
 /** Declare PrintHelp function. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char ** argv )
 {
-  if ( argc < 6 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
 
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+  parser->MarkArgumentAsRequired( "-out", "The output filename." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
+  
   /** Get the input file names. */
   std::vector< std::string >  inputFileNames;
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileNames );
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
+  parser->GetCommandLineArgument( "-in", inputFileNames );
+
   if ( inputFileNames.size() < 2 )
   {
     std::cout << "ERROR: You should specify at least two input images." << std::endl;
@@ -78,12 +79,7 @@ int main( int argc, char ** argv )
 
   /** Get the outputFileName. */
   std::string outputFileName = "";
-  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
-  if ( !retout )
-  {
-    std::cerr << "ERROR: You should specify \"-out\"." << std::endl;
-    return 1;
-  }
+  parser->GetCommandLineArgument( "-out", outputFileName );
 
   /** Read the z-spacing. */
   double zspacing = -1.0;
@@ -295,31 +291,32 @@ void TileImages(
 //-------------------------------------------------------------------------------------
 
 /** Define PrintHelp. */
-void PrintHelp( void )
+std::string PrintHelp( void )
 {
-  std::cout << "pxtileimages EITHER tiles a stack of 2D images into a 3D image," << std::endl;
-  std::cout << "OR tiles nD images to form another nD image." << std::endl;
-  std::cout << "In the last case the way to tile is specified by a layout." << std::endl;
-  std::cout << "To stack a pile of 2D images an itk::SeriesFileReader is employed." << std::endl;
-  std::cout << "If no layout is specified with \"-ly\" 2D-3D tiling is done," << std::endl;
-  std::cout << "otherwise 2D-2D or 3D-3D tiling is performed.\n" << std::endl;
+  std::string helpText = "pxtileimages EITHER tiles a stack of 2D images into a 3D image, \
+  OR tiles nD images to form another nD image. \
+  In the last case the way to tile is specified by a layout. \
+  To stack a pile of 2D images an itk::SeriesFileReader is employed. \
+  If no layout is specified with \"-ly\" 2D-3D tiling is done, \
+  otherwise 2D-2D or 3D-3D tiling is performed.\n\n \
+  Usage:  \npxtileimages \
+    -in      input image filenames, at least 2 \
+    -out     output image filename \
+    [-pt]    pixel type of input and output images \
+             default: automatically determined from the first input image \
+    [-sp]    spacing in z-direction for 2D-3D tiling [double]; \
+             if omitted, the origins of the 2d images are used to find the spacing; \
+             if these are identical, a spacing of 1.0 is assumed \
+    [-ly]    layout of the nD-nD tiling \
+             example: in 2D for 4 images \"-ly 2 2\" results in \
+               im1 im2 \
+               im3 im4 \
+             example: in 2D for 4 images \"-ly 4 1\" (or \"-ly 0 1\") results in \
+               im1 im2 im3 im4 \
+    [-d]     default value, by default 0. \
+  Supported pixel types: (unsigned) char, (unsigned) short, float.\n";
 
-  std::cout << "Usage:  \npxtileimages" << std::endl;
-  std::cout << "  -in      input image filenames, at least 2" << std::endl;
-  std::cout << "  -out     output image filename" << std::endl;
-  std::cout << "  [-pt]    pixel type of input and output images" << std::endl;
-  std::cout << "           default: automatically determined from the first input image" << std::endl;
-  std::cout << "  [-sp]    spacing in z-direction for 2D-3D tiling [double];" << std::endl;
-  std::cout << "           if omitted, the origins of the 2d images are used to find the spacing;" << std::endl;
-  std::cout << "           if these are identical, a spacing of 1.0 is assumed" << std::endl;
-  std::cout << "  [-ly]    layout of the nD-nD tiling" << std::endl;
-  std::cout << "           example: in 2D for 4 images \"-ly 2 2\" results in" << std::endl;
-  std::cout << "             im1 im2" << std::endl;
-  std::cout << "             im3 im4" << std::endl;
-  std::cout << "           example: in 2D for 4 images \"-ly 4 1\" (or \"-ly 0 1\") results in" << std::endl;
-  std::cout << "             im1 im2 im3 im4" << std::endl;
-  std::cout << "  [-d]     default value, by default 0." << std::endl;
-  std::cout << "Supported pixel types: (unsigned) char, (unsigned) short, float.\n" << std::endl;
+  return helpText;
 
 } // end PrintHelp
 

@@ -26,29 +26,37 @@ void CreateZeroImage(
   const std::vector<double> & origin );
 
 /** Declare PrintHelp. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char **argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 2 || argc > 19 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
 
+  parser->MarkArgumentAsRequired( "-out", "The output filename." );
+  
+  std::vector<std::string> exactlyOneArguments;
+  exactlyOneArguments.push_back("-sz");
+  exactlyOneArguments.push_back("-in");
+  
+  parser->MarkExactlyOneOfArgumentsAsRequired(exactlyOneArguments);
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
+  
   /** Get arguments. */
   std::string fileNameIn = "";
   bool retin = parser->GetCommandLineArgument( "-in", fileNameIn );
 
   std::string fileName = "";
-  bool retout = parser->GetCommandLineArgument( "-out", fileName );
+  parser->GetCommandLineArgument( "-out", fileName );
 
   unsigned int Dimension = 3;
   parser->GetCommandLineArgument( "-dim", Dimension );
@@ -64,18 +72,6 @@ int main( int argc, char **argv )
 
   std::vector<double> origin( Dimension, 0.0 );
   bool reto = parser->GetCommandLineArgument( "-o", origin );
-
-  /** Check if the required arguments are given. */
-  if ( !retout )
-  {
-    std::cerr << "ERROR: You should specify \"-out\"." << std::endl;
-    return 1;
-  }
-  if ( (!retsz && !retin ) || ( retsz && retin ) )
-  {
-    std::cerr << "ERROR: You should specify either \"-in\" or \"-sz\"." << std::endl;
-    return 1;
-  }
 
   if ( retin )
   {
@@ -226,16 +222,18 @@ void CreateZeroImage(
   /**
    * ******************* PrintHelp *******************
    */
-void PrintHelp( void )
+std::string PrintHelp( void )
 {
-  std::cout << "Usage:" << std::endl << "pxcreatezeroimage" << std::endl;
-  std::cout << "  [-in]    inputFilename" << std::endl;
-  std::cout << "  -out     outputFilename" << std::endl;
-  std::cout << "  -sz      size" << std::endl;
-  std::cout << "  [-sp]    spacing" << std::endl;
-  std::cout << "  [-o]     origin" << std::endl;
-  std::cout << "  [-dim]   dimension, default 3" << std::endl;
-  std::cout << "  [-pt]    pixelType, default short" << std::endl;
-  std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double." << std::endl;
+  std::string helpText = "Usage: \
+  pxcreatezeroimage \
+    [-in]    inputFilename \
+    -out     outputFilename \
+    -sz      size \
+    [-sp]    spacing \
+    [-o]     origin \
+    [-dim]   dimension, default 3 \
+    [-pt]    pixelType, default short \
+  Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
+  return helpText;
 } // end PrintHelp
 

@@ -27,31 +27,29 @@ void IntensityWindowing(
   const std::vector<double> & window );
 
 /** Declare PrintHelp. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char **argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 6 || argc > 10 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
+
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
 
   /** Get input file name. */
   std::string inputFileName = "";
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
+  parser->GetCommandLineArgument( "-in", inputFileName );
 
   /** Determine input image properties. */
   std::string ComponentType = "short";
@@ -201,15 +199,18 @@ void IntensityWindowing(
 /**
  * ******************* PrintHelp *******************
  */
-void PrintHelp()
+std::string PrintHelp()
 {
-  std::cout << "Usage:" << std::endl << "pxintensitywindowing" << std::endl;
-  std::cout << "  -in      inputFilename" << std::endl;
-  std::cout << "  [-out]   outputFilename, default in + WINDOWED.mhd" << std::endl;
-  std::cout << "  -w       windowMinimum windowMaximum" << std::endl;
-  std::cout << "  [-pt]    pixel type of input and output images;" << std::endl;
-  std::cout << "           default: automatically determined from the first input image." << std::endl;
-  std::cout << "Supported: 2D, 3D, (unsigned) short, (unsigned) char, float." << std::endl;
+  std::string helpText = "Usage: \
+  pxintensitywindowing \
+    -in      inputFilename \
+    [-out]   outputFilename, default in + WINDOWED.mhd \
+    -w       windowMinimum windowMaximum \
+    [-pt]    pixel type of input and output images; \
+             default: automatically determined from the first input image. \
+  Supported: 2D, 3D, (unsigned) short, (unsigned) char, float.";
+
+  return helpText;
 
 } // end PrintHelp
 

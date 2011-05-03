@@ -26,32 +26,36 @@ void ComputeMeanAndStandardDeviation(
   double & std1, double & std2, double & stddiff );
 
 /** Declare PrintHelp. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char **argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 6 || argc > 14 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
+
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+  parser->MarkArgumentAsRequired( "-c", "Columns." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
 
   /** Get arguments. */
   std::string inputFileName = "";
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  parser->GetCommandLineArgument( "-in", inputFileName );
 
   std::string output = "p";
   parser->GetCommandLineArgument( "-out", output );
 
   std::vector<unsigned int> columns( 2, 0 );
-  bool retc = parser->GetCommandLineArgument( "-c", columns );
+  parser->GetCommandLineArgument( "-c", columns );
 
   unsigned int tail = 2;
   parser->GetCommandLineArgument( "-tail", tail );
@@ -61,18 +65,6 @@ int main( int argc, char **argv )
 
   unsigned int precision = 8;
   parser->GetCommandLineArgument( "-p", precision );
-
-  /** Check if the required arguments are given. */
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
-  if ( !retc )
-  {
-    std::cerr << "ERROR: You should specify \"-c\"." << std::endl;
-    return 1;
-  }
 
   /** Check command line arguments. */
   if ( columns.size() != 2 )
@@ -93,8 +85,8 @@ int main( int argc, char **argv )
 
   /** Read the input file. */
   std::vector< std::vector<double> > matrix;
-  retin = ReadInputData( inputFileName, matrix );
-  if ( !retin )
+  bool readSuccess = ReadInputData( inputFileName, matrix );
+  if ( !readSuccess)
   {
     std::cerr << "ERROR: Something went wrong reading \""
       << inputFileName << "\"." << std::endl;
@@ -335,21 +327,24 @@ void ComputeMeanAndStandardDeviation(
    * ******************* PrintHelp *******************
    */
 
-void PrintHelp( void )
+std::string PrintHelp( void )
 {
-  std::cout << "Usage:" << std::endl << "pxttest" << std::endl;
-  std::cout << "  -in      inputFilename" << std::endl;
-  std::cout << "  [-out]   output, choose one of {p,all}, default p" << std::endl;
-  std::cout << "             p: only print the p-value" << std::endl;
-  std::cout << "             all: print all" << std::endl;
-  std::cout << "  -c       the two data sample columns" << std::endl;
-  std::cout << "  [-tail]  one or two tailed, defauls = 2" << std::endl;
-  std::cout << "  [-type]  the type of the t-test, default = 1:" << std::endl;
-  std::cout << "             1: paired" << std::endl;
-  std::cout << "             2: two-sample equal variance" << std::endl;
-  std::cout << "             3: two-sample unequal variance" << std::endl;
-  std::cout << "  [-p]     the output precision, default = 8:" << std::endl;
-  std::cout << "The input file should be in a certain format. No text is allowed." << std::endl;
-  std::cout << "No headers are allowed. The data samples should be displayed in columns." << std::endl;
-  std::cout << "Columns should be separated by a single space or tab." << std::endl;
+  std::string helpText = "Usage: \
+  pxttest \
+    -in      inputFilename \
+    [-out]   output, choose one of {p,all}, default p \
+               p: only print the p-value \
+               all: print all \
+    -c       the two data sample columns \
+    [-tail]  one or two tailed, defauls = 2 \
+    [-type]  the type of the t-test, default = 1: \
+               1: paired \
+               2: two-sample equal variance \
+               3: two-sample unequal variance \
+    [-p]     the output precision, default = 8: \
+  The input file should be in a certain format. No text is allowed. \
+  No headers are allowed. The data samples should be displayed in columns. \
+  Columns should be separated by a single space or tab.";
+    
+  return helpText;
 } // end PrintHelp()

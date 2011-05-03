@@ -34,7 +34,9 @@ int main( int argc, char **argv )
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
   parser->SetProgramHelpText(PrintHelp());
+
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
+
   bool validateArguments = parser->CheckForRequiredArguments();
 
   if(!validateArguments)
@@ -44,14 +46,7 @@ int main( int argc, char **argv )
 
   /** Get arguments. */
   std::string inputFileName = "";
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
-
-  /** Check if the required arguments are given. */
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
+  parser->GetCommandLineArgument( "-in", inputFileName );
 
   /** Determine image properties. */
   std::string ComponentType = "short";

@@ -26,33 +26,38 @@ void IntensityReplaceImageFilter(
   const std::vector<std::string> & outValues );
 
 /** Declare PrintHelp. */
-void PrintHelp( void );
+std::string PrintHelp( void );
 
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char ** argv )
 {
-  /** Check arguments for help. */
-  if ( argc < 7 )
-  {
-    PrintHelp();
-    return 1;
-  }
-
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(PrintHelp());
+
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+  parser->MarkArgumentAsRequired( "-i", "In values." );
+  parser->MarkArgumentAsRequired( "-o", "Out values." );
+
+  bool validateArguments = parser->CheckForRequiredArguments();
+
+  if(!validateArguments)
+  {
+    return EXIT_FAILURE;
+  }
 
   /** Get arguments. */
   std::string inputFileName = "";
-  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
+  parser->GetCommandLineArgument( "-in", inputFileName );
 
   /** Read as vector of strings, since we don't know yet if it will be
    * integers or floats */
   std::vector< std::string > inValues;
-  bool reti = parser->GetCommandLineArgument( "-i", inValues );
+  parser->GetCommandLineArgument( "-i", inValues );
   std::vector< std::string > outValues;
-  bool reto = parser->GetCommandLineArgument( "-o", outValues );
+  parser->GetCommandLineArgument( "-o", outValues );
 
   std::string outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
   outputFileName += "LUTAPPLIED.mhd";
@@ -62,21 +67,6 @@ int main( int argc, char ** argv )
   bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
 
   /** Check if the required arguments are given. */
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
-  if ( !reti )
-  {
-    std::cerr << "ERROR: You should specify \"-i\"." << std::endl;
-    return 1;
-  }
-  if ( !reto )
-  {
-    std::cerr << "ERROR: You should specify \"-o\"." << std::endl;
-    return 1;
-  }
   if ( inValues.size() != outValues.size() )
   {
     std::cerr << "ERROR: \"-i\" and \"-o\" should be followed by an equal number of values!" << std::endl;
@@ -234,20 +224,21 @@ void IntensityReplaceImageFilter( const std::string & inputFileName,
 /**
  * ******************* PrintHelp *******************
  */
-void PrintHelp()
+std::string PrintHelp()
 {
-  std::cout << "This program replaces some user specified intensity values in an image.\n";
-  std::cout << "Usage:\n"
-            << "pxintensityreplace\n";
-  std::cout << "  -in      inputFilename\n";
-  std::cout << "  [-out]   outputFilename, default in + LUTAPPLIED.mhd\n";
-  std::cout << "  -i       input pixel values that should be replaced\n";
-  std::cout << "  -o       output pixel values that replace the corresponding input values\n";
-  std::cout << "  [-pt]    output pixel type, default equal to input\n";
-  std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int,\n"
-            << "(unsigned) long, float, double.\n";
-  std::cout << "If \"-pt\" is used, the input is immediately converted to that particular\n"
-            << "type, after which the intensity replacement is performed.\n";
-  std::cout << std::endl;
+  std::string helpText = "This program replaces some user specified intensity values in an image.\n \
+  Usage:\n \
+  pxintensityreplace\n \
+    -in      inputFilename\n \
+    [-out]   outputFilename, default in + LUTAPPLIED.mhd\n \
+    -i       input pixel values that should be replaced\n \
+    -o       output pixel values that replace the corresponding input values\n \
+    [-pt]    output pixel type, default equal to input\n \
+  Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int,\n \
+  (unsigned) long, float, double.\n \
+  If \"-pt\" is used, the input is immediately converted to that particular\n \
+  type, after which the intensity replacement is performed.\n";
+
+  return helpText;
 } // end PrintHelp()
 
