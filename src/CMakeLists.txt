@@ -231,8 +231,8 @@ add_test(NAME HistogramEqualizeImageTest COMMAND imagecompare DEPENDS HistogramE
 add_test(NAME ImageCompareOutput COMMAND imagecompare )
 add_test(NAME ImageCompareTest COMMAND imagecompare DEPENDS ImageCompareOutput)
  
-add_test(NAME ImagesToVectorImageOutput COMMAND imagestovectorimage )
-add_test(NAME ImagesToVectorImageTest COMMAND imagecompare DEPENDS ImagesToVectorImageOutput)
+add_test(NAME ImagesToVectorImageOutput COMMAND imagestovectorimage -in ${DataDir}/BlackSquare.png ${DataDir}/WhiteSquare.png -out imagestovectorimage.mhd)
+add_test(NAME ImagesToVectorImageTest COMMAND imagecompare -base ${BaselineDir}/ImagesToVectorImage.mhd -test imagestovectorimage.mhd DEPENDS ImagesToVectorImageOutput)
  
 add_test(NAME IntensityReplaceOutput COMMAND intensityreplace )
 add_test(NAME IntensityReplaceTest COMMAND imagecompare DEPENDS IntensityReplaceOutput)
