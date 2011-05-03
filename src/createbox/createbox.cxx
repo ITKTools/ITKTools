@@ -178,15 +178,11 @@ int main( int argc, char** argv )
       run2( CreateBox, char, 2 );
       run2( CreateBox, unsigned short, 2 );
       run2( CreateBox, short, 2 );
-      run2( CreateBox, float, 2 );
-      run2( CreateBox, double, 2 );
 
       run2( CreateBox, unsigned char, 3 );
       run2( CreateBox, char, 3 );
       run2( CreateBox, unsigned short, 3 );
       run2( CreateBox, short, 3 );
-      run2( CreateBox, float, 3 );
-      run2( CreateBox, double, 3 );
     }
     else if ( retsz )
     {
@@ -194,15 +190,11 @@ int main( int argc, char** argv )
       run1( CreateBox, char, 2 );
       run1( CreateBox, unsigned short, 2 );
       run1( CreateBox, short, 2 );
-      run1( CreateBox, float, 2 );
-      run1( CreateBox, double, 2 );
 
       run1( CreateBox, unsigned char, 3 );
       run1( CreateBox, char, 3 );
       run1( CreateBox, unsigned short, 3 );
       run1( CreateBox, short, 3 );
-      run1( CreateBox, float, 3 );
-      run1( CreateBox, double, 3 );
     }
   }
   catch( itk::ExceptionObject &e )
@@ -492,5 +484,6 @@ void PrintHelp()
   std::cout << "  OR the positions of two opposite corner indices." << std::endl;
   std::cout << "- The orientation is a vector with Euler angles (rad)." << std::endl;
   std::cout << "- Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double." << std::endl;
+
 } // end PrintHelp()
 
