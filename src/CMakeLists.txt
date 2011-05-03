@@ -108,11 +108,14 @@ INCLUDE_DIRECTORIES( ${ITKTools_SOURCE_DIR}/common )
 # The second is [name]Test. This runs the imagecompare program to compaer the baseline for the given test
 # to the output of [name]Output.
 
+#########
 # This tests the magnitude image. Also should test the average vector magnitude (not an image)
 add_test(NAME AverageVectorMagnitudeOutput COMMAND averagevectormagnitude -in ${ITKTools_SOURCE_DIR}/Testing/Data/BlackSquare.png -out )
 add_test(NAME AverageVectorMagnitudeTest COMMAND imagecompare DEPENDS AverageVectorMagnitudeOutput)
 
-add_test(NAME BinaryImageOperatorOutput COMMAND binaryimageoperator )
+#########
+# Add images
+add_test(NAME BinaryImageOperatorOutput COMMAND binaryimageoperator -in ${ITKTools_SOURCE_DIR}/Testing/Data/BlackSquare.png ${ITKTools_SOURCE_DIR}/Testing/Data/WhiteSquare.png -ops ADDITION -out added.png)
 add_test(NAME BinaryImageOperatorTest COMMAND imagecompare DEPENDS BinaryImageOperatorOutput)
 
 add_test(NAME BinaryThinningOutput COMMAND binarythinning )
