@@ -119,8 +119,8 @@ add_test(NAME AverageVectorMagnitudeTest COMMAND imagecompare DEPENDS AverageVec
 
 #########
 # Add images
-add_test(NAME BinaryImageOperatorOutput_Add COMMAND binaryimageoperator -in ${DataDir}/BlackSquare.png ${DataDir}/WhiteSquare.png -ops ADDITION -out added.png)
-add_test(NAME BinaryImageOperatorTest_Add COMMAND imagecompare -base ${BaselineDir}/BinaryImageOperator_Add.png -test added.png DEPENDS BinaryImageOperatorOutput_Add)
+add_test(NAME BinaryImageOperatorOutput_Add COMMAND binaryimageoperator -in ${DataDir}/BlackSquare.png ${DataDir}/WhiteSquare.png -ops ADDITION -out binaryimageoperator_add.png)
+add_test(NAME BinaryImageOperatorTest_Add COMMAND imagecompare -base ${BaselineDir}/BinaryImageOperator_Add.png -test binaryimageoperator_add.png DEPENDS BinaryImageOperatorOutput_Add)
 
 #########
 add_test(NAME BinaryThinningOutput COMMAND binarythinning )
@@ -129,8 +129,8 @@ add_test(NAME BinaryThinningTest COMMAND imagecompare DEPENDS BinaryThinningOutp
 add_test(NAME BrainDistanceOutput COMMAND braindistance )
 add_test(NAME BrainDistanceTest COMMAND imagecompare DEPENDS BrainDistanceOutput)
 
-add_test(NAME CastConvertOutput COMMAND castconvert )
-add_test(NAME CastConvertTest COMMAND imagecompare DEPENDS CastConvertOutput)
+add_test(NAME CastConvertOutput COMMAND castconvert -in ${DataDir}/WhiteSquare.png -out castconvert.mhd)
+add_test(NAME CastConvertTest COMMAND imagecompare -base ${BaselineDir}/CastConvert.mhd -test castconvert.mhd DEPENDS CastConvertOutput)
 
 add_test(NAME ClosestVersor3DTransformOutput COMMAND closestversor3Dtransform )
 add_test(NAME ClosestVersor3DTransformTest COMMAND imagecompare DEPENDS ClosestVersor3DTransformOutput)
@@ -247,11 +247,11 @@ add_test(NAME KappaStatisticOutput COMMAND kappastatistic )
 add_test(NAME KappaStatisticTest COMMAND imagecompare DEPENDS KappaStatisticOutput)
  
 #########
-add_test(NAME LogicalImageOperatorOutput_AND COMMAND logicalimageoperator -in ${DataDir}/BlackSquare.png ${DataDir}/WhiteSquare.png -ops AND -out and.png)
-add_test(NAME LogicalImageOperatorTest_AND COMMAND imagecompare -base ${BaselineDir}/LogicalImageOperator_And.png -test and.png DEPENDS LogicalImageOperatorOutput_AND)
+add_test(NAME LogicalImageOperatorOutput_AND COMMAND logicalimageoperator -in ${DataDir}/BlackSquare.png ${DataDir}/WhiteSquare.png -ops AND -out logicalimageoperator_and.png)
+add_test(NAME LogicalImageOperatorTest_AND COMMAND imagecompare -base ${BaselineDir}/LogicalImageOperator_And.png -test logicalimageoperator_and.png DEPENDS LogicalImageOperatorOutput_AND)
 
-add_test(NAME LogicalImageOperatorOutput_OR COMMAND logicalimageoperator -in ${DataDir}/BlackSquare.png ${DataDir}/WhiteSquare.png -ops OR -out or.png)
-add_test(NAME LogicalImageOperatorTest_OR COMMAND imagecompare -base ${BaselineDir}/LogicalImageOperator_Or.png -test or.png DEPENDS LogicalImageOperatorOutput_OR)
+add_test(NAME LogicalImageOperatorOutput_OR COMMAND logicalimageoperator -in ${DataDir}/BlackSquare.png ${DataDir}/WhiteSquare.png -ops OR -out logicalimageoperator_or.png)
+add_test(NAME LogicalImageOperatorTest_OR COMMAND imagecompare -base ${BaselineDir}/LogicalImageOperator_Or.png -test logicalimageoperator_or.png DEPENDS LogicalImageOperatorOutput_OR)
 
 #########
 add_test(NAME MorphologyOutput COMMAND morphology )
