@@ -11,4 +11,4 @@ DimSize = 5 5
 AnatomicalOrientation = ??
 ElementNumberOfChannels = 3
 ElementType = MET_UCHAR
-ElementDataFile = mhd.raw
+ElementDataFile = CastConvert.raw

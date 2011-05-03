@@ -8,6 +8,7 @@
 #include "itkRescaleIntensityImageFilter.h"
 #include "itkExtractImageFilter.h"
 #include "itkDifferenceImageFilter.h"
+#include "itksys/SystemTools.hxx"
 
 #include "itkImageSource.h" // This should not be necessary after ITK patch is merged
 #include "itkTestingComparisonImageFilter.h"
@@ -47,12 +48,28 @@ int main( int argc, char **argv )
   // Read the baseline file
   ReaderType::Pointer baselineReader = ReaderType::New();
   baselineReader->SetFileName( baselineImageFileName );
-  baselineReader->Update();
+  try
+  {
+    baselineReader->Update();
+  }
+  catch ( itk::ExceptionObject & err )
+  {
+    std::cerr << "Error during reading baseline image: " << err << std::endl;
+    return EXIT_FAILURE;
+  }
 
   // Read the file to test
   ReaderType::Pointer testReader = ReaderType::New();
   testReader->SetFileName( testImageFileName );
-  testReader->Update();
+  try
+  {
+    testReader->Update();
+  }
+  catch ( itk::ExceptionObject & err )
+  {
+    std::cerr << "Error during reading test image: " << err << std::endl;
+    return EXIT_FAILURE;
+  }
 
   // The sizes of the baseline and test image must match
   ImageType::SizeType baselineSize;
@@ -75,27 +92,60 @@ int main( int argc, char **argv )
   ComparisonFilterType::Pointer comparisonFilter = ComparisonFilterType::New();
   comparisonFilter->SetTestInput(testReader->GetOutput());
   comparisonFilter->SetValidInput(baselineReader->GetOutput());
-  comparisonFilter->Update();
+  try
+  {
+    comparisonFilter->Update();
+  }
+  catch ( itk::ExceptionObject & err )
+  {
+    std::cerr << "Error during comparing image: " << err << std::endl;
+    return EXIT_FAILURE;
+  }
 
   itk::SizeValueType numberOfDifferentPixels = comparisonFilter->GetNumberOfPixelsWithDifferences();
 
   if(numberOfDifferentPixels > 0)
-    {
+  {
     std::cerr << "There are " << numberOfDifferentPixels << " different pixels!" << std::endl;
-    return EXIT_FAILURE;
-    }
     
-  // If there are discrepencies, create a difference image
-  typedef itk::DifferenceImageFilter<ImageType,ImageType>   DiffType;
-  DiffType::Pointer diff = DiffType::New();
-  diff->SetValidInput( baselineReader->GetOutput() );
-  diff->SetTestInput( testReader->GetOutput() );
-  diff->Update();
+    // If there are discrepencies, create a difference image
+    typedef itk::DifferenceImageFilter<ImageType,ImageType>   DiffType;
+    DiffType::Pointer diff = DiffType::New();
+    diff->SetValidInput( baselineReader->GetOutput() );
+    diff->SetTestInput( testReader->GetOutput() );
+    try
+    {
+      diff->Update();
+    }
+    catch ( itk::ExceptionObject & err )
+    {
+      std::cerr << "Error during computing difference image: " << err << std::endl;
+      return EXIT_FAILURE;
+    }
 
-  typedef itk::ImageFileWriter<ImageType>                    WriterType;
-  WriterType::Pointer writer = WriterType::New();
-  writer->SetInput( diff->GetOutput() );
-  writer->Write();
+    // Create name for diff image
+    std::string diffImageFileName =
+      itksys::SystemTools::GetFilenameWithoutLastExtension( testImageFileName );
+    diffImageFileName += "_DIFF";
+    diffImageFileName += itksys::SystemTools::GetFilenameLastExtension( testImageFileName );
+
+    typedef itk::ImageFileWriter<ImageType>                    WriterType;
+    WriterType::Pointer writer = WriterType::New();
+    writer->SetFileName( diffImageFileName );
+    writer->SetInput( diff->GetOutput() );
+    try
+    {
+      writer->Write();
+    }
+    catch ( itk::ExceptionObject & err )
+    {
+      std::cerr << "Error during writing difference image: " << err << std::endl;
+      return EXIT_FAILURE;
+    }
+
+    return EXIT_FAILURE;
+
+  } // end if discrepancies
 
   return EXIT_SUCCESS;
 

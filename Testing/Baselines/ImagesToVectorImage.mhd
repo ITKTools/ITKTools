@@ -11,4 +11,4 @@ DimSize = 5 5
 AnatomicalOrientation = ??
 ElementNumberOfChannels = 6
 ElementType = MET_UCHAR
-ElementDataFile = imagestovectorimage.raw
+ElementDataFile = ImagesToVectorImage.raw

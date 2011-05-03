@@ -9,8 +9,11 @@ Project( ITKToolsTesting )
 # Additionally, a _[something] after the name means this is a specific type of test for this program.
 # E.g. BinaryImageOperatorOutput_Add means that this test tests the ADD functionality of BinaryImageOperator.
 
-set(BaselineDir ${ITKTools_SOURCE_DIR}/Testing/Baselines/)
-set(DataDir ${ITKTools_SOURCE_DIR}/Testing/Data/)
+set(BaselineDir ${ITKTools_SOURCE_DIR}/../Testing/Baselines/)
+set(DataDir ${ITKTools_SOURCE_DIR}/../Testing/Data/)
+set(ExeDir ${EXECUTABLE_OUTPUT_PATH})
+set(OutDir ${ITKTools_BINARY_DIR}/Testing/)
+
 #########
 # This tests the magnitude image. Also should test the average vector magnitude (not an image)
 # add_test(NAME AverageVectorMagnitudeOutput COMMAND averagevectormagnitude -in ${DataDir}/BlackSquare.png -out )
@@ -18,8 +21,8 @@ set(DataDir ${ITKTools_SOURCE_DIR}/Testing/Data/)
 
 #########
 # Add images
-add_test(NAME BinaryImageOperatorOutput_Add COMMAND binaryimageoperator -in ${DataDir}/BlackSquare.png ${DataDir}/WhiteSquare.png -ops ADDITION -out binaryimageoperator_add.png)
-add_test(NAME BinaryImageOperatorTest_Add COMMAND imagecompare -base ${BaselineDir}/BinaryImageOperator_Add.png -test binaryimageoperator_add.png DEPENDS BinaryImageOperatorOutput_Add)
+add_test(NAME BinaryImageOperatorOutput_Add COMMAND ${ExeDir}/pxbinaryimageoperator -in ${DataDir}/BlackSquare.png ${DataDir}/WhiteSquare.png -ops ADDITION -out ${OutDir}/binaryimageoperator_add.png)
+add_test(NAME BinaryImageOperatorTest_Add COMMAND ${ExeDir}/pximagecompare -base ${BaselineDir}/BinaryImageOperator_Add.png -test ${OutDir}/binaryimageoperator_add.png DEPENDS BinaryImageOperatorOutput_Add)
 
 #########
 # add_test(NAME BinaryThinningOutput COMMAND binarythinning )
@@ -28,8 +31,8 @@ add_test(NAME BinaryImageOperatorTest_Add COMMAND imagecompare -base ${BaselineD
 # add_test(NAME BrainDistanceOutput COMMAND braindistance )
 # add_test(NAME BrainDistanceTest COMMAND imagecompare DEPENDS BrainDistanceOutput)
 
-add_test(NAME CastConvertOutput COMMAND castconvert -in ${DataDir}/WhiteSquare.png -out castconvert.mhd)
-add_test(NAME CastConvertTest COMMAND imagecompare -base ${BaselineDir}/CastConvert.mhd -test castconvert.mhd DEPENDS CastConvertOutput)
+add_test(NAME CastConvertOutput COMMAND ${ExeDir}/pxcastconvert -in ${DataDir}/WhiteSquare.png -out ${OutDir}/castconvert.mhd)
+add_test(NAME CastConvertTest COMMAND ${ExeDir}/pximagecompare -base ${BaselineDir}/CastConvert.mhd -test ${OutDir}/castconvert.mhd DEPENDS CastConvertOutput)
 # 
 # add_test(NAME ClosestVersor3DTransformOutput COMMAND closestversor3Dtransform )
 # add_test(NAME ClosestVersor3DTransformTest COMMAND imagecompare DEPENDS ClosestVersor3DTransformOutput)
@@ -130,8 +133,8 @@ add_test(NAME CastConvertTest COMMAND imagecompare -base ${BaselineDir}/CastConv
 # add_test(NAME ImageCompareOutput COMMAND imagecompare )
 # add_test(NAME ImageCompareTest COMMAND imagecompare DEPENDS ImageCompareOutput)
 #  
-add_test(NAME ImagesToVectorImageOutput COMMAND imagestovectorimage -in ${DataDir}/BlackSquare.png ${DataDir}/WhiteSquare.png -out imagestovectorimage.mhd)
-add_test(NAME ImagesToVectorImageTest COMMAND imagecompare -base ${BaselineDir}/ImagesToVectorImage.mhd -test imagestovectorimage.mhd DEPENDS ImagesToVectorImageOutput)
+add_test(NAME ImagesToVectorImageOutput COMMAND ${ExeDir}/pximagestovectorimage -in ${DataDir}/BlackSquare.png ${DataDir}/WhiteSquare.png -out ${OutDir}/imagestovectorimage.mhd)
+add_test(NAME ImagesToVectorImageTest COMMAND ${ExeDir}/pximagecompare -base ${BaselineDir}/ImagesToVectorImage.mhd -test ${OutDir}/imagestovectorimage.mhd DEPENDS ImagesToVectorImageOutput)
 #  
 # add_test(NAME IntensityReplaceOutput COMMAND intensityreplace )
 # add_test(NAME IntensityReplaceTest COMMAND imagecompare DEPENDS IntensityReplaceOutput)
@@ -146,11 +149,11 @@ add_test(NAME ImagesToVectorImageTest COMMAND imagecompare -base ${BaselineDir}/
 # add_test(NAME KappaStatisticTest COMMAND imagecompare DEPENDS KappaStatisticOutput)
 #  
 #########
-add_test(NAME LogicalImageOperatorOutput_AND COMMAND logicalimageoperator -in ${DataDir}/BlackSquare.png ${DataDir}/WhiteSquare.png -ops AND -out logicalimageoperator_and.png)
-add_test(NAME LogicalImageOperatorTest_AND COMMAND imagecompare -base ${BaselineDir}/LogicalImageOperator_And.png -test logicalimageoperator_and.png DEPENDS LogicalImageOperatorOutput_AND)
+add_test(NAME LogicalImageOperatorOutput_AND COMMAND ${ExeDir}/pxlogicalimageoperator -in ${DataDir}/BlackSquare.png ${DataDir}/WhiteSquare.png -ops AND -out ${OutDir}/logicalimageoperator_and.png)
+add_test(NAME LogicalImageOperatorTest_AND COMMAND ${ExeDir}/pximagecompare -base ${BaselineDir}/LogicalImageOperator_And.png -test ${OutDir}/logicalimageoperator_and.png DEPENDS LogicalImageOperatorOutput_AND)
 
-add_test(NAME LogicalImageOperatorOutput_OR COMMAND logicalimageoperator -in ${DataDir}/BlackSquare.png ${DataDir}/WhiteSquare.png -ops OR -out logicalimageoperator_or.png)
-add_test(NAME LogicalImageOperatorTest_OR COMMAND imagecompare -base ${BaselineDir}/LogicalImageOperator_Or.png -test logicalimageoperator_or.png DEPENDS LogicalImageOperatorOutput_OR)
+add_test(NAME LogicalImageOperatorOutput_OR COMMAND ${ExeDir}/pxlogicalimageoperator -in ${DataDir}/BlackSquare.png ${DataDir}/WhiteSquare.png -ops OR -out ${OutDir}/logicalimageoperator_or.png)
+add_test(NAME LogicalImageOperatorTest_OR COMMAND ${ExeDir}/pximagecompare -base ${BaselineDir}/LogicalImageOperator_Or.png -test ${OutDir}/logicalimageoperator_or.png DEPENDS LogicalImageOperatorOutput_OR)
 
 #########
 # add_test(NAME MorphologyOutput COMMAND morphology )
