@@ -107,17 +107,22 @@ INCLUDE_DIRECTORIES( ${ITKTools_SOURCE_DIR}/common )
 # The first is [name]Output. This runs the executable with the specified parameters to produce an output.
 # The second is [name]Test. This runs the imagecompare program to compaer the baseline for the given test
 # to the output of [name]Output.
+# Additionally, a _[something] after the name means this is a specific type of test for this program.
+# E.g. BinaryImageOperatorOutput_Add means that this test tests the ADD functionality of BinaryImageOperator.
 
+set(BaselineDir ${ITKTools_SOURCE_DIR}/Testing/Baselines/)
+set(DataDir ${ITKTools_SOURCE_DIR}/Testing/Data/)
 #########
 # This tests the magnitude image. Also should test the average vector magnitude (not an image)
-add_test(NAME AverageVectorMagnitudeOutput COMMAND averagevectormagnitude -in ${ITKTools_SOURCE_DIR}/Testing/Data/BlackSquare.png -out )
+add_test(NAME AverageVectorMagnitudeOutput COMMAND averagevectormagnitude -in ${DataDir}/BlackSquare.png -out )
 add_test(NAME AverageVectorMagnitudeTest COMMAND imagecompare DEPENDS AverageVectorMagnitudeOutput)
 
 #########
 # Add images
-add_test(NAME BinaryImageOperatorOutput COMMAND binaryimageoperator -in ${ITKTools_SOURCE_DIR}/Testing/Data/BlackSquare.png ${ITKTools_SOURCE_DIR}/Testing/Data/WhiteSquare.png -ops ADDITION -out added.png)
-add_test(NAME BinaryImageOperatorTest COMMAND imagecompare DEPENDS BinaryImageOperatorOutput)
+add_test(NAME BinaryImageOperatorOutput_Add COMMAND binaryimageoperator -in ${DataDir}/BlackSquare.png ${DataDir}/WhiteSquare.png -ops ADDITION -out added.png)
+add_test(NAME BinaryImageOperatorTest_Add COMMAND imagecompare -base ${BaselineDir}/BinaryImageOperator_Add.png -test added.png DEPENDS BinaryImageOperatorOutput_Add)
 
+#########
 add_test(NAME BinaryThinningOutput COMMAND binarythinning )
 add_test(NAME BinaryThinningTest COMMAND imagecompare DEPENDS BinaryThinningOutput)
 
@@ -241,9 +246,14 @@ add_test(NAME InvertIntensityImageFilterTest COMMAND imagecompare DEPENDS Invert
 add_test(NAME KappaStatisticOutput COMMAND kappastatistic )
 add_test(NAME KappaStatisticTest COMMAND imagecompare DEPENDS KappaStatisticOutput)
  
-add_test(NAME LogicalImageOperatorOutput COMMAND logicalimageoperator )
-add_test(NAME LogicalImageOperatorTest COMMAND imagecompare DEPENDS LogicalImageOperatorOutput)
-  
+#########
+add_test(NAME LogicalImageOperatorOutput_AND COMMAND logicalimageoperator -in ${DataDir}/BlackSquare.png ${DataDir}/WhiteSquare.png -ops AND -out and.png)
+add_test(NAME LogicalImageOperatorTest_AND COMMAND imagecompare -base ${BaselineDir}/LogicalImageOperator_And.png -test and.png DEPENDS LogicalImageOperatorOutput_AND)
+
+add_test(NAME LogicalImageOperatorOutput_OR COMMAND logicalimageoperator -in ${DataDir}/BlackSquare.png ${DataDir}/WhiteSquare.png -ops OR -out or.png)
+add_test(NAME LogicalImageOperatorTest_OR COMMAND imagecompare -base ${BaselineDir}/LogicalImageOperator_Or.png -test or.png DEPENDS LogicalImageOperatorOutput_OR)
+
+#########
 add_test(NAME MorphologyOutput COMMAND morphology )
 add_test(NAME MorphologyTest COMMAND imagecompare DEPENDS MorphologyOutput)
  
