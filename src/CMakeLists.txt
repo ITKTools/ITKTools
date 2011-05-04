@@ -53,10 +53,10 @@ IF( ITKTOOLS_BUILD_TESTING )
  INCLUDE( CTest )
 ENDIF()
 
+#---------------------------------------------------------------------
+# Documentation
 SET( ITKTOOLS_BUILD_DOCUMENTATION OFF CACHE BOOL
   "Create the documentation of ITKTools." )
 IF( ITKTOOLS_BUILD_DOCUMENTATION)
- ENABLE_TESTING()
  ADD_SUBDIRECTORY( ${ITKTools_SOURCE_DIR}/../Documentation ${ITKTools_BINARY_DIR}/Documentation )
- INCLUDE( CTest )
 ENDIF()
