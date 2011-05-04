@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /*=========================================================================
 *
 * Copyright Marius Staring, Stefan Klein, David Doria. 2011.
