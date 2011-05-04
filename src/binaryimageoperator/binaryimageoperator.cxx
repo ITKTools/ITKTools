@@ -15,6 +15,17 @@ int main( int argc, char **argv )
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
   parser->MarkArgumentAsRequired( "-ops", "The operation to perform." );
 
+  itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
+
+  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  {
+    return EXIT_FAILURE;
+  }
+  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  {
+    return EXIT_SUCCESS;
+  }
+  
   /** Get arguments. */
   std::vector<std::string> inputFileNames;
   parser->GetCommandLineArgument( "-in", inputFileNames );
@@ -39,17 +50,6 @@ int main( int argc, char **argv )
   bool retopct = parser->GetCommandLineArgument( "-opct", opct );
 
   const bool useCompression = parser->ArgumentExists( "-z" );
-
-  itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
-
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
-  {
-    return EXIT_FAILURE;
-  }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
-  {
-    return EXIT_SUCCESS;
-  }
 
   /** Create outputFileName. */
   if ( outputFileName == "" )
