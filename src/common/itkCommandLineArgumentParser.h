@@ -95,13 +95,15 @@ public:
   bool ExactlyOneExists( const std::vector<std::string> & keys ) const;
 
   /** Mark an argument as required. */
-  void MarkArgumentAsRequired(const std::string & argument, const std::string & helpText);
+  void MarkArgumentAsRequired(
+    const std::string & argument, const std::string & helpText = "" );
 
   /** Mark exactly one of the specified arguments as required. */
-  void MarkExactlyOneOfArgumentsAsRequired(const std::vector<std::string> & arguments);
+  void MarkExactlyOneOfArgumentsAsRequired(
+    const std::vector<std::string> & arguments, const std::string & helpText = "" );
 
-  itkSetMacro( ProgramHelpText, std::string);
-  itkGetMacro( ProgramHelpText, std::string);
+  itkSetMacro( ProgramHelpText, std::string );
+  itkGetMacro( ProgramHelpText, std::string );
 
   /** Get command line argument if arg is a vector type. */
   template <class T>
@@ -238,7 +240,7 @@ protected:
   std::vector<std::pair<std::string, std::string> > m_RequiredArguments;
 
   /** A list of arguments with the condition that exactly one in each set must exist. */
-  std::vector<std::vector<std::string> > m_RequiredExactlyOneArguments;
+  std::vector< std::pair<std::vector<std::string>, std::string > > m_RequiredExactlyOneArguments;
 
   std::string m_ProgramHelpText;
 

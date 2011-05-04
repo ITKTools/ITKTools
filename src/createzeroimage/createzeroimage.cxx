@@ -73,6 +73,13 @@ int main( int argc, char **argv )
   std::vector<double> origin( Dimension, 0.0 );
   bool reto = parser->GetCommandLineArgument( "-o", origin );
 
+  std::vector<double> direction( Dimension * Dimension, 0.0 );
+  for ( unsigned int i = 0; i < Dimension; i++ )
+  {
+    direction[ i * ( Dimension + 1 ) ] = 1.0;
+  }
+  bool retd = parser->GetCommandLineArgument( "-d", direction );
+
   if ( retin )
   {
     /** Determine image properties. */
@@ -81,7 +88,7 @@ int main( int argc, char **argv )
     int retgip = GetImageProperties(
       fileNameIn,
       dummyPixelType, PixelType, Dimension, NumberOfComponents,
-      size, spacing, origin );
+      size, spacing, origin, direction );
     if ( retgip != 0 )
     {
       return 1;

@@ -30,7 +30,7 @@ public:
   typedef SmartPointer<const Self>                      ConstPointer;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Run-time type information (and related methods). */
   itkTypeMacro( BoxSpatialFunction, InteriorExteriorSpatialFunction );
@@ -66,8 +66,8 @@ public:
   /** Set the orientation vector, which are Euler angles. */
   virtual void SetOrientation( const InputType _arg );
 
-  /** Evaluates the function at a given position */
-  OutputType Evaluate(const InputType& position) const;
+  /** Evaluates the function at a given position. Returns a boolean. */
+  OutputType Evaluate( const InputType & position ) const;
 
 protected:
   BoxSpatialFunction();
