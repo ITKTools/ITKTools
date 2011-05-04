@@ -16,56 +16,11 @@
 *
 *=========================================================================*/
 /** \file
- \brief Cast or convert an image.
+ \brief This program converts and possibly casts images.
  
  \verbinclude castconvert.help
  */
-/**
- * castconvert
- *
- * This program converts and possibly casts images.
- *
- * This is done by reading in an image, possibly casting of the image,
- * and subsequently writing the image to some format.
- * With converting we mean changing the extension of the image,
- * such as bmp, mhd, etc. With casting we mean changing the component
- * type of a voxel, such as short, unsigned long, float.
- *
- * Casting is currently done for scalar images using the ShiftScaleImageFilter,
- * where values are mapped to itself, leaving the intensity range
- * the same. NOTE that when casting to a component type with a
- * smaller dynamic range, information might get lost. In this case
- * we might use the RescaleIntensityImageFilter to linearly
- * rescale the image values. For multi-component images, such as vector
- * or RGB images, casting is done using the itk::VectorCastImageFilter.
- *
- * Currently supported are the SCALAR pixel types and also multi-
- * component pixel types, such as vector and RGB pixels. For multi-
- * component pixel types, everything is read in as an itk::Vector with
- * the correct pixel component type and number of components. This is
- * also the case for the writer.
- *
- * Input images can be in all file formats ITK supports and for which
- * the ImageFileReader works, and additionally 3D dicom series
- * using the ImageSeriesReader. It is also possible to extract a specific
- * DICOM series from a directory by supplying the seriesUID. The pixel
- * component type should of course be a component type supported by the
- * file format. Output images can be in all file formats ITK supports and
- * for which the ImageFileReader works, so no dicom output is
- * currently supported.
- *
- * Usage:
- *   pxcastconvert -in inputFileName -out outputFileName [-opct outputPixelComponentType]
- * OR:
- *   pxcastconvert -in dicomDirectoryName -out outputFileName
- *                [-opct outputPixelComponentType] [-s seriesUID]
- *
- * Where outputPixelComponentType is one of: unsigned_char, char,
- * unsigned_short, short, unsigned_int, int, unsigned_long, long,
- * float or double.
- * By default the outputPixelComponentType is set to the inputPixelComponentType.
- * By default the seriesUID is the first UID found.
- *
+/*
  * authors:       Marius Staring and Stefan Klein
  *
  * Thanks to Hans J. Johnson for a modification to this program. This
