@@ -11,10 +11,10 @@
 
 
 /**
- * ******************* GetHelpText *******************
+ * ******************* GetHelpString *******************
  */
 
-std::string GetHelpText( void )
+std::string GetHelpString( void )
 {
   std::stringstream helpText( "" );
   helpText << "Usage:" << std::endl << "pxcreatebox\n"
@@ -42,9 +42,9 @@ std::string GetHelpText( void )
     << "- The orientation is a vector with Euler angles (rad).\n"
     << "- Supported: 2D, 3D, (unsigned) char, (unsigned) short." << std::endl;
 
-  return helpText.str();
+  return helpText;
 
-} // end GetHelpText()
+} // end GetHelpString()
 
 
 /**

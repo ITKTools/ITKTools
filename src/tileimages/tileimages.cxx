@@ -67,8 +67,8 @@ void TileImages(
   const std::vector<unsigned int> & layout,
   const double & defaultvalue );
 
-/** Declare PrintHelp function. */
-std::string PrintHelp( void );
+/** Declare GetHelpString function. */
+std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -77,7 +77,7 @@ int main( int argc, char ** argv )
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(PrintHelp());
+  parser->SetProgramHelpText(GetHelpString());
 
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
   parser->MarkArgumentAsRequired( "-out", "The output filename." );
@@ -316,8 +316,8 @@ void TileImages(
 
 //-------------------------------------------------------------------------------------
 
-/** Define PrintHelp. */
-std::string PrintHelp( void )
+/** Define GetHelpString. */
+std::string GetHelpString( void )
 {
   std::string helpText = "pxtileimages EITHER tiles a stack of 2D images into a 3D image, \
   OR tiles nD images to form another nD image. \
@@ -344,6 +344,4 @@ std::string PrintHelp( void )
 
   return helpText;
 
-} // end PrintHelp
-
-
+} // end GetHelpString

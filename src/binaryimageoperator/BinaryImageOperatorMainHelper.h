@@ -44,7 +44,7 @@ if ( ComponentTypeIn1 == #typeIn1 && ComponentTypeIn2 == #typeIn2 \
   /**
    * ******************* PrintHelp *******************
    */
-std::string PrintHelp()
+std::string GetHelpString()
 {
   std::string helpString = \
   "Performs binary operations on two images. \

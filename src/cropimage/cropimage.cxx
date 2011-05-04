@@ -54,7 +54,7 @@ void CropImage(
   const bool force );
 
 /** Declare other functions. */
-std::string PrintHelp( void );
+std::string GetHelpString( void );
 
 bool CheckWhichInputOption( const bool pAGiven, const bool pBGiven, const bool szGiven,
   const bool lbGiven, const bool ubGiven, unsigned int & arg );
@@ -78,6 +78,7 @@ int main( int argc, char **argv )
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(GetHelpString());
 
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
 
@@ -363,10 +364,10 @@ void CropImage( const std::string & inputFileName, const std::string & outputFil
 
 
   /**
-   * ******************* PrintHelp *******************
+   * ******************* GetHelpString *******************
    */
 
-std::string PrintHelp( void )
+std::string GetHelpString( void )
 {
   std::string helpString = "Usage: \
   pxcropimage \
@@ -385,7 +386,7 @@ std::string PrintHelp( void )
   The points are supplied in index coordinates. \
   Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
   return helpString;
-} // end PrintHelp()
+} // end GetHelpString()
 
 
   /**

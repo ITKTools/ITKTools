@@ -14,7 +14,7 @@
 
 typedef std::map<std::string, std::string> ArgMapType;
 
-std::string PrintUsageString(void)
+std::string GetHelpString(void)
 {
   std::string helpString = "This program enhances an image. \
     alpha and beta control the exact behaviour of the filter. See the\n \

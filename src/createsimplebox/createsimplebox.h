@@ -15,7 +15,7 @@
 
 typedef std::map<std::string, std::string> ArgMapType;
 
-std::string PrintUsageString(void)
+std::string GetHelpString(void)
 {
   std::string helpText = "\nThis program creates an image containing a white box, defined by point A and B.\n\n \
     Usage:\n \

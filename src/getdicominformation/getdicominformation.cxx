@@ -28,15 +28,15 @@
 #include "itkGDCMImageIO.h"
 #include "itkGDCMSeriesFileNames.h"
 
-/** Declare PrintHelp. */
-std::string PrintHelp( void );
+/** Declare GetHelpString. */
+std::string GetHelpString( void );
 
 int main( int argc, char **argv )
 {
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(PrintHelp());
+  parser->SetProgramHelpText(GetHelpString());
 
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
 
@@ -290,9 +290,9 @@ int main( int argc, char **argv )
 }  // end main
 
 /**
- * ******************* PrintHelp *******************
+ * ******************* GetHelpString *******************
  */
-std::string PrintHelp()
+std::string GetHelpString()
 {
   std::string helpText = "Usage: \
   pxgetdicominformation \
@@ -304,4 +304,4 @@ std::string PrintHelp()
 
   return helpText;
 
-} // end PrintHelp()
+} // end GetHelpString()

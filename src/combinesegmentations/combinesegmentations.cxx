@@ -63,8 +63,8 @@ void CombineSegmentations(
   const std::vector<unsigned int> & inValues,
   const std::vector<unsigned int> & outValues );
 
-/** Declare PrintHelp. */
-std::string PrintHelp( void );
+/** Declare GetHelpString. */
+std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -73,7 +73,7 @@ int main( int argc, char **argv )
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(PrintHelp());
+  parser->SetProgramHelpText(GetHelpString());
 
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
   
@@ -973,10 +973,10 @@ void CombineSegmentations(
 
 
 /**
- * ******************* PrintHelp *******************
+ * ******************* GetHelpString *******************
  */
 
-std::string PrintHelp()
+std::string GetHelpString()
 {
   std::string helpText = "This program combines multiple segmentations into one.\n \
   Usage:\n \
@@ -1030,6 +1030,4 @@ std::string PrintHelp()
   Supported: 2D/3D.";
 
   return helpText;
-} // end PrintHelp
-
-
+} // end GetHelpString

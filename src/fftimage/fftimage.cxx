@@ -63,7 +63,7 @@ void IFFTImage( const std::vector<std::string> & inputFileNames,
   const std::string & xdim );
 
 /** Declare other functions. */
-std::string PrintHelp( void );
+std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -72,7 +72,7 @@ int main( int argc, char **argv )
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(PrintHelp());
+  parser->SetProgramHelpText(GetHelpString());
 
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
   parser->MarkArgumentAsRequired( "-op", "The operation to perform." );
@@ -349,9 +349,9 @@ void IFFTImage( const std::vector<std::string> & inputFileNames,
 
 
   /**
-   * ******************* PrintHelp *******************
+   * ******************* GetHelpString *******************
    */
-std::string PrintHelp( void )
+std::string GetHelpString( void )
 {
   std::string helpText = "Usage:\
   pxfftimage \
@@ -375,4 +375,4 @@ std::string PrintHelp( void )
 
   return helpText;
 
-} // end PrintHelp()
+} // end GetHelpString()

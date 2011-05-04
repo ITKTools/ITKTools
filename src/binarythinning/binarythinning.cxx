@@ -47,7 +47,7 @@ void BinaryThinning(
   const std::string & outputFileName );
 
 /** Declare PrintHelp. */
-std::string PrintHelp( void );
+std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -56,7 +56,7 @@ int main( int argc, char ** argv )
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(PrintHelp());
+  parser->SetProgramHelpText(GetHelpString());
 
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
 
@@ -187,9 +187,9 @@ void BinaryThinning( const std::string & inputFileName,
 
 
   /**
-   * ******************* PrintHelp *******************
+   * ******************* GetHelpString *******************
    */
-std::string PrintHelp()
+std::string GetHelpString()
 {
   std::string helpString =
   "Usage:\n \

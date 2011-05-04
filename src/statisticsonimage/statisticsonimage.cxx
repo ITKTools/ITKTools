@@ -41,8 +41,8 @@ if ( ComponentType == #type && Dimension == dim && NumberOfComponents == nrofcom
   supported = true; \
 }
 
-/** Declare PrintHelp, implemented at the bottom of this file. */
-std::string PrintHelp( void );
+/** Declare GetHelpString, implemented at the bottom of this file. */
+std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -52,7 +52,7 @@ int main( int argc, char ** argv )
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(PrintHelp());
+  parser->SetProgramHelpText(GetHelpString());
 
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
 
@@ -153,10 +153,10 @@ int main( int argc, char ** argv )
 
 
 /**
- * ******************* PrintHelp *******************
+ * ******************* GetHelpString *******************
  */
 
-std::string PrintHelp( void )
+std::string GetHelpString( void )
 {
   std::string helpText = "Compute statistics on an image. For vector images, the magnitude is used. \
   Usage: \
@@ -178,4 +178,4 @@ std::string PrintHelp( void )
 
   return helpText;
 
-} // end PrintHelp()
+} // end GetHelpString()

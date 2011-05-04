@@ -23,10 +23,10 @@
 #include "itkGDCMSeriesFileNames.h"
 
 /**
- * ******************* PrintHelp *******************
+ * ******************* GetHelpString *******************
  */
 
-std::string PrintHelp( void )
+std::string GetHelpString( void )
 {
   std::string helpText = "Description:\
    This is done by reading in an image, possibly casting of the image,\

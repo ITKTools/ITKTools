@@ -285,10 +285,10 @@ void GaussianImageFilterInvariants(
 
 
   /**
-   * ******************* PrintHelp *******************
+   * ******************* GetHelpString *******************
    */
 
-std::string PrintHelp( void )
+std::string GetHelpString( void )
 {
   std::string helpText = "Usage: \
   pxgaussianimagefilter \
@@ -308,6 +308,6 @@ std::string PrintHelp( void )
 
   return helpText;
 
-} // end PrintHelp()
+} // end GetHelpString()
 
 #endif // end #ifndef __gaussianImageFilterHelper_h

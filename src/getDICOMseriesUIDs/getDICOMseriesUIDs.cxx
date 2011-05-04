@@ -26,8 +26,8 @@
 #include <itksys/SystemTools.hxx>
 #include "itkGDCMSeriesFileNames.h"
 
-/** PrintHelp. */
-std::string PrintHelp( void );
+/** GetHelpString. */
+std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -36,7 +36,7 @@ int main( int argc, char **argv )
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(PrintHelp());
+  parser->SetProgramHelpText(GetHelpString());
 
   parser->MarkArgumentAsRequired( "-in", "The input directory name." );
 
@@ -109,7 +109,7 @@ int main( int argc, char **argv )
 
 }  // end main
 
-std::string PrintHelp( void )
+std::string GetHelpString( void )
 {
   std::string helpText = "Usage: \
   pxgetDICOMseriesUIDs \
@@ -120,4 +120,4 @@ std::string PrintHelp( void )
 
   return helpText;
 
-} // end PrintHelp()
+} // end GetHelpString()

@@ -31,7 +31,7 @@
 typedef std::map<std::string, std::string> ArgMapType;
 ArgMapType argmap;
 
-std::string GetUsageString(void);
+std::string GetHelpString(void);
 
 /**
  * ********************* main ***********************************
@@ -57,10 +57,9 @@ int main(int argc, char** argv)
 
   unsigned long nrOfPixels = 1;
 
-
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(GetUsageString());
+  parser->SetProgramHelpText(GetHelpString());
   
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
   
@@ -204,7 +203,7 @@ int main(int argc, char** argv)
 } // end function main
 
 
-std::string GetUsageString(void)
+std::string GetHelpString(void)
 {
   std::string helpString = "\nThis program creates a random image.\n\n \
     Usage:\n \
@@ -226,6 +225,6 @@ std::string GetUsageString(void)
   //<< "\t[-d3]  \tSize of dimension 3\n"
   //<< "\t[-d4]  \tSize of dimension 4\n"
   return helpString;
-} // end PrintUsageString
+} // end GetHelpString
 
 #endif // #ifndef __createrandomimage_cxx

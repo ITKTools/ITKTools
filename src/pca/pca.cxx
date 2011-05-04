@@ -51,7 +51,7 @@ void PerformPCA(
   unsigned int numberOfPCs );
 
 /** Declare other functions. */
-std::string PrintHelp( void );
+std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -60,7 +60,7 @@ int main( int argc, char **argv )
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(PrintHelp());
+  parser->SetProgramHelpText(GetHelpString());
 
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
 
@@ -265,10 +265,10 @@ void PerformPCA(
 
 
   /**
-   * ******************* PrintHelp *******************
+   * ******************* GetHelpString *******************
    */
 
-std::string PrintHelp( void )
+std::string GetHelpString( void )
 {
   std::string helpText = "Usage: \
   pxpca \
@@ -279,5 +279,5 @@ std::string PrintHelp( void )
   Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
 
   return helpText;
-} // end PrintHelp()
+} // end GetHelpString()
 

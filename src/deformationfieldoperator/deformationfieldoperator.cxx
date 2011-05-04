@@ -41,8 +41,8 @@ if ( ComponentType == #type && Dimension == dim ) \
 
 //-------------------------------------------------------------------------------------
 
-/** Declare PrintHelp. */
-std::string PrintHelp( void );
+/** Declare GetHelpString. */
+std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -51,7 +51,7 @@ int main( int argc, char **argv )
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(PrintHelp());
+  parser->SetProgramHelpText(GetHelpString());
 
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
 
@@ -158,10 +158,10 @@ int main( int argc, char **argv )
 
 
 /**
- * ******************* PrintHelp *******************
+ * ******************* GetHelpString *******************
  */
 
-std::string PrintHelp( void )
+std::string GetHelpString( void )
 {
   std::string helpText ="Usage: \
   pxdeformationfieldoperator\n \
@@ -179,4 +179,4 @@ std::string PrintHelp( void )
   Supported: 2D, 3D, vector of floats or doubles, number of components \
   must equal number of dimensions.";
   return helpText;
-} // end PrintHelp()
+} // end GetHelpString()

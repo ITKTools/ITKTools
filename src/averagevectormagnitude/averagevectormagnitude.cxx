@@ -40,7 +40,7 @@
 #include <iostream>
 #include <string>
 
-std::string PrintUsageString();
+std::string GetHelpString();
 
 template <
   unsigned int NImageDimension,
@@ -131,7 +131,7 @@ int main( int argc, char** argv )
 {
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(PrintUsageString());
+  parser->SetProgramHelpText(GetHelpString());
 
   std::string inputFileName("");
   std::string outputFileName(inputFileName + "AverageVectorMagnitude.mhd");
@@ -193,7 +193,7 @@ int main( int argc, char** argv )
 
 } // end function main
 
-std::string PrintUsageString()
+std::string GetHelpString()
 {
   std::string helpString =
     "Calculate the average magnitude of the vectors in a vector image.\n\n \

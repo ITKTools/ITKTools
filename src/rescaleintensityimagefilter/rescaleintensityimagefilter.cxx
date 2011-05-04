@@ -55,8 +55,8 @@ void RescaleIntensity(
   const std::vector<double> & values,
   const bool & valuesAreExtrema );
 
-/** Declare PrintHelp. */
-std::string PrintHelp( void );
+/** Declare GetHelpString. */
+std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -65,7 +65,7 @@ int main( int argc, char **argv )
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(PrintHelp());
+  parser->SetProgramHelpText(GetHelpString());
 
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
 
@@ -327,9 +327,9 @@ void RescaleIntensity(
 
 
 /**
- * ******************* PrintHelp *******************
+ * ******************* GetHelpString *******************
  */
-std::string PrintHelp()
+std::string GetHelpString()
 {
   std::string helpString = "Usage: \
   pxrescaleintensityimagefilter \
@@ -345,4 +345,4 @@ std::string PrintHelp()
 
   return helpString;
 
-} // end PrintHelp()
+} // end GetHelpString()

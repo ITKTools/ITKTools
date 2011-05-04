@@ -53,8 +53,8 @@ void InvertIntensity(
   const std::string & inputFileName,
   const std::string & outputFileName );
 
-/** Declare PrintHelp. */
-std::string PrintHelp( void );
+/** Declare GetHelpString. */
+std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -63,7 +63,7 @@ int main( int argc, char ** argv )
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(PrintHelp());
+  parser->SetProgramHelpText(GetHelpString());
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
@@ -201,10 +201,10 @@ void InvertIntensity( const std::string & inputFileName,
 
 
 /**
- * ******************* PrintHelp *******************
+ * ******************* GetHelpString *******************
  */
 
-std::string PrintHelp( void )
+std::string GetHelpString( void )
 {
   std::string helpText = "This program inverts the intensities of an image. \
   Usage:\
@@ -215,5 +215,4 @@ std::string PrintHelp( void )
 
   return helpText;
 
-} // end PrintHelp()
-
+} // end GetHelpString()

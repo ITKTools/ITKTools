@@ -5,10 +5,10 @@
 
 
 /**
- * ******************* PrintHelp *******************
+ * ******************* GetHelpString *******************
  */
 
-std::string PrintHelp( void )
+std::string GetHelpString( void )
 {
   std::string helpText = "Usage: \
   pxkappastatistic \
@@ -36,7 +36,7 @@ std::string PrintHelp( void )
   For more information about the kappa statistic and this implementation, read the tex-file found in the repository.";
 
   return helpText;
-} // end PrintHelp()
+} // end GetHelpString()
 
 
 /**

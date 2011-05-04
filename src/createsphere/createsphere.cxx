@@ -49,8 +49,8 @@ void CreateSphere(
   const std::vector<double> & center,
   const double & radius );
 
-/** Declare PrintHelp. */
-std::string PrintHelp( void );
+/** Declare GetHelpString. */
+std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -59,6 +59,7 @@ int main( int argc, char *argv[] )
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
+  parser->SetProgramHelpText(GetHelpString());
 
   parser->MarkArgumentAsRequired( "-out", "The output filename." );
   parser->MarkArgumentAsRequired( "-sz", "Size." );
@@ -214,9 +215,9 @@ void CreateSphere(
 
 
   /**
-   * ******************* PrintHelp *******************
+   * ******************* GetHelpString *******************
    */
-std::string PrintHelp( void )
+std::string GetHelpString( void )
 {
   std::string helpText = "Usage: \
   pxcreatesphere \
@@ -229,5 +230,5 @@ std::string PrintHelp( void )
     [-pt]    pixelType, default short \
   Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
   return helpText;
-} // end PrintHelp
+} // end GetHelpString
 

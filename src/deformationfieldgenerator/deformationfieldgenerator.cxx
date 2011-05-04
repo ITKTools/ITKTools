@@ -68,7 +68,7 @@ void DeformationFieldGenerator(
   double stiffness );
 
 /** Declare other functions. */
-std::string PrintHelp(void);
+std::string GetHelpString(void);
 
 
 //-------------------------------------------------------------------------------------
@@ -78,7 +78,7 @@ int main( int argc, char **argv )
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(PrintHelp());
+  parser->SetProgramHelpText(GetHelpString());
   
   parser->MarkArgumentAsRequired( "-in1", "The inputImage1 filename." );
   parser->MarkArgumentAsRequired( "-ipp1", "The inputPoints1 filename." );
@@ -421,9 +421,9 @@ void DeformationFieldGenerator(
 
 
   /**
-   * ******************* PrintHelp *******************
+   * ******************* GetHelpString *******************
    */
-std::string PrintHelp()
+std::string GetHelpString()
 {
   std::string helpText = "This program generates a deformation field (from fixed \
   to moving image) based on some corresponding points. \
@@ -455,5 +455,5 @@ std::string PrintHelp()
     -out     outputFilename: the name of the resulting deformation field, \
               which is written as a vector<float,dim> image. \
   Supported: 2D, 3D, any scalar pixeltype.";
-  return helpText;
+  return GetHelpString;
 } // end PrintHelp

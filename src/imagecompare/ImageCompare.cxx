@@ -39,13 +39,13 @@
 // must be compared, change this variable.
 static const unsigned int ITK_TEST_DIMENSION_MAX = 6;
 
-std::string GetHelpText( void );
+std::string GetHelpString( void );
 
 int main( int argc, char **argv )
 {
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(GetHelpText());
+  parser->SetProgramHelpText(GetHelpString());
 
   parser->MarkArgumentAsRequired( "-test", "The input filename." );
   parser->MarkArgumentAsRequired( "-base", "The baseline image filename." );
@@ -177,12 +177,12 @@ int main( int argc, char **argv )
 
 } // end main
 
-std::string GetHelpText( void )
+std::string GetHelpString( void )
 {
   std::string helpString = "Usage:\n\
   pximagecompare\n\
     -test      image filename to test against baseline\
     -base      baseline image filename";
   return helpString;
-} // end PrintHelp
+} // end GetHelpString
 

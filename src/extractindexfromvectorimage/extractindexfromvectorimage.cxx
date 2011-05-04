@@ -50,8 +50,8 @@ void ExtractIndex(
   const std::string & outputFileName,
   const unsigned int & index );
 
-/** Declare PrintHelp. */
-std::string PrintHelp( void );
+/** Declare GetHelpString. */
+std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -60,7 +60,7 @@ int main( int argc, char ** argv )
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(PrintHelp());
+  parser->SetProgramHelpText(GetHelpString());
 
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
   parser->MarkArgumentAsRequired( "-ind", "The index to extract." );
@@ -216,10 +216,10 @@ void ExtractIndex(
 
 
 /**
- * ******************* PrintHelp *******************
+ * ******************* GetHelpString *******************
  */
 
-std::string PrintHelp()
+std::string GetHelpString()
 {
   std::string helpText = "This program extracts a user specified component from a vector image.\n \
   Usage:\n \
@@ -230,5 +230,5 @@ std::string PrintHelp()
   Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int,\n \
   long, float, double.";
   return helpText;
-} // end PrintHelp()
+} // end GetHelpString()
 

@@ -45,8 +45,8 @@ void DistanceTransform(
   const std::string & method,
   const unsigned int & K );
 
-/** Declare PrintHelp. */
-std::string PrintHelp( void );
+/** Declare GetHelpString. */
+std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -55,7 +55,7 @@ int main( int argc, char **argv )
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(PrintHelp());
+  parser->SetProgramHelpText(GetHelpString());
 
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
   parser->MarkArgumentAsRequired( "-out", "The output filename." );
@@ -342,10 +342,10 @@ void DistanceTransform(
 
 
 /**
- * ******************* PrintHelp *******************
+ * ******************* GetHelpString *******************
  */
 
-std::string PrintHelp( void )
+std::string GetHelpString( void )
 {
   std::string helpText = "This program creates a signed distance transform.\n\n \
   Usage:\npxdistancetransform\n \
@@ -360,4 +360,4 @@ std::string PrintHelp( void )
 //std::cout << "  [-m]     method, one of {Maurer, Danielsson, OrderK}, default Maurer\n";
   //std::cout << "  [-K]     for method \"OrderK\", specify K, default 5\n";
   return helpText;
-} // end PrintHelp()
+} // end GetHelpString()

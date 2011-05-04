@@ -35,7 +35,7 @@
 
 //-------------------------------------------------------------------------------------
 
-std::string PrintHelp( void );
+std::string GetHelpString( void );
 
 void ComputeClosestVersor(
   std::string fixedLandmarkFileName,
@@ -58,7 +58,7 @@ int main( int argc, char *argv[] )
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(PrintHelp());
+  parser->SetProgramHelpText(GetHelpString());
 
   parser->MarkArgumentAsRequired( "-f", "The fixed landmark filename." );
   parser->MarkArgumentAsRequired( "-m", "The moving landmark filename." );
@@ -274,10 +274,10 @@ void ConvertVersorToEuler(
 
 
 /**
- * ******************* PrintHelp *******************
+ * ******************* GetHelpString *******************
  */
 
-std::string PrintHelp( void )
+std::string GetHelpString( void )
 {
   std::string helpString = "Calculates the closest rigid transform (VersorRigid3D) between \
   two sets of landmarks. The two sets should be of equal size. \

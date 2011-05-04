@@ -47,8 +47,8 @@ void ComputeBrainDistance(
   const std::vector<std::string> & outputFileNames,
   unsigned int method);
 
-/** Declare PrintHelp. */
-std::string PrintHelp( void );
+/** Declare GetHelpString. */
+std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -59,7 +59,7 @@ int main( int argc, char ** argv )
   itk::CommandLineArgumentParser::Pointer parser
     = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(PrintHelp());
+  parser->SetProgramHelpText(GetHelpString());
 
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
   parser->MarkArgumentAsRequired( "-mask", "The mask filename." );
@@ -467,9 +467,9 @@ void ComputeBrainDistance(
 
 
 /**
- * ******************* PrintHelp *******************
+ * ******************* GetHelpString *******************
  */
-std::string PrintHelp()
+std::string GetHelpString()
 {
   std::string helpText = "This program computes the distance between brains, based on \
   a label mask image of one of the brains and a deformation field.\n \

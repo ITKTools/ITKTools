@@ -41,7 +41,7 @@ if ( imageDimension == dim ) \
 //-------------------------------------------------------------------------------------
 
 /** Declare functions. */
-std::string PrintHelp( void );
+std::string GetHelpString( void );
 
 template<unsigned int Dimension>
 void CreateGridImage(
@@ -59,7 +59,7 @@ int main( int argc, char *argv[] )
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(PrintHelp());
+  parser->SetProgramHelpText(GetHelpString());
 
   parser->MarkArgumentAsRequired( "-out", "The output filename." );
 
@@ -272,10 +272,10 @@ void CreateGridImage(
 
 
 /**
- * ******************* PrintHelp *******************
+ * ******************* GetHelpString *******************
  */
 
-std::string PrintHelp( void )
+std::string GetHelpString( void )
 {
   std::string helpText ="Usage: \
   pxcreategridimage \
@@ -288,4 +288,4 @@ std::string PrintHelp( void )
   Supported: 2D, 3D, short.";
   return helpText;
 
-} // end PrintHelp()
+} // end GetHelpString()

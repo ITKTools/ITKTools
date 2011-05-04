@@ -25,10 +25,10 @@
 
 
 /**
- * ******************* PrintHelp *******************
+ * ******************* GetHelpString *******************
  */
 
-std::string PrintHelp( void )
+std::string GetHelpString( void )
 {
   std::string helpText = "Unary operations on one image. \
   Usage: \
@@ -50,7 +50,7 @@ std::string PrintHelp( void )
     [-pto]   outputPixelType, default: same as inputimage \
   Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, float.";
   return helpText;
-} // end PrintHelp()
+} // end GetHelpString()
 
 
 /**

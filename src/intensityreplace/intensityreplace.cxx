@@ -47,8 +47,8 @@ void IntensityReplaceImageFilter(
   const std::vector<std::string> & inValues,
   const std::vector<std::string> & outValues );
 
-/** Declare PrintHelp. */
-std::string PrintHelp( void );
+/** Declare GetHelpString. */
+std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -57,7 +57,7 @@ int main( int argc, char ** argv )
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(PrintHelp());
+  parser->SetProgramHelpText(GetHelpString());
 
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
   parser->MarkArgumentAsRequired( "-i", "In values." );
@@ -248,9 +248,9 @@ void IntensityReplaceImageFilter( const std::string & inputFileName,
 
 
 /**
- * ******************* PrintHelp *******************
+ * ******************* GetHelpString *******************
  */
-std::string PrintHelp()
+std::string GetHelpString()
 {
   std::string helpText = "This program replaces some user specified intensity values in an image.\n \
   Usage:\n \
@@ -266,5 +266,5 @@ std::string PrintHelp()
   type, after which the intensity replacement is performed.\n";
 
   return helpText;
-} // end PrintHelp()
+} // end GetHelpString()
 

@@ -44,14 +44,14 @@ extern int ComputeVectorDifferenceImage( const std::string &inputPixelComponentT
 
 //-------------------------------------------------------------------------------------
 
-std::string GetHelpText();
+std::string GetHelpString();
 
 int  main(  int  argc,  char *argv[] )
 {
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(GetHelpText());
+  parser->SetProgramHelpText(GetHelpString());
   parser->MarkArgumentAsRequired( "-in1", "The input1 filename." );
   parser->MarkArgumentAsRequired( "-in2", "The input2 filename." );
 
@@ -322,7 +322,7 @@ int  main(  int  argc,  char *argv[] )
 
 }  // end main
 
-std::string GetHelpText()
+std::string GetHelpString()
 {
   std::string helpText = "Usage: \n \
   \tpxcomputedifferenceimage inputimage1filename inputimage2filename [outputimagefilename] [outputPixelComponentType] \

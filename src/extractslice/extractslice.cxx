@@ -52,8 +52,8 @@ void ExtractSlice(
   const unsigned int & slicenumber,
   const unsigned int & which_dimension );
 
-/** Declare PrintHelp function. */
-std::string PrintHelp( void );
+/** Declare GetHelpString function. */
+std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -62,7 +62,7 @@ int main( int argc, char ** argv )
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(PrintHelp());
+  parser->SetProgramHelpText(GetHelpString());
 
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
   parser->MarkArgumentAsRequired( "-sn", "The slice number." );
@@ -246,8 +246,8 @@ void ExtractSlice(
 
 //-------------------------------------------------------------------------------------
 
-/** Define PrintHelp. */
-std::string PrintHelp( void )
+/** Define GetHelpString. */
+std::string GetHelpString( void )
 {
   std::string helpText = "pxextractslice extracts a 2D slice from a 3D image. \
   Usage:\n \
@@ -262,6 +262,4 @@ std::string PrintHelp( void )
 
   return helpText;
 
-} // end PrintHelp
-
-
+} // end GetHelpString

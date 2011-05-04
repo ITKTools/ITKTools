@@ -47,8 +47,8 @@ void ComputeMeanAndStandardDeviation(
   double & mean1, double & mean2, double & meandiff,
   double & std1, double & std2, double & stddiff );
 
-/** Declare PrintHelp. */
-std::string PrintHelp( void );
+/** Declare GetHelpString. */
+std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -57,7 +57,7 @@ int main( int argc, char **argv )
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(PrintHelp());
+  parser->SetProgramHelpText(GetHelpString());
 
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
   parser->MarkArgumentAsRequired( "-c", "Columns." );
@@ -350,10 +350,10 @@ void ComputeMeanAndStandardDeviation(
 
 
   /**
-   * ******************* PrintHelp *******************
+   * ******************* GetHelpString *******************
    */
 
-std::string PrintHelp( void )
+std::string GetHelpString( void )
 {
   std::string helpText = "Usage: \
   pxttest \
@@ -373,4 +373,4 @@ std::string PrintHelp( void )
   Columns should be separated by a single space or tab.";
     
   return helpText;
-} // end PrintHelp()
+} // end GetHelpString()

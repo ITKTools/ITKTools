@@ -33,7 +33,7 @@ int main(int argc, char** argv)
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(PrintUsageString());
+  parser->SetProgramHelpText(GetHelpString());
 
   parser->MarkArgumentAsRequired( "-pt", "Pixel type." );
   parser->MarkArgumentAsRequired( "-in", "Input filename." );

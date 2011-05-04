@@ -4,10 +4,10 @@
 
 
 /**
- * ******************* PrintHelp *******************
+ * ******************* GetHelpString *******************
  */
 
-void PrintHelp( void )
+void GetHelpString( void )
 {
   std::cout << "Usage:" << std::endl << "pxmorphology\n";
   std::cout << "  -in      inputFilename\n";
@@ -36,4 +36,4 @@ void PrintHelp( void )
   std::cout << "    pxmorphology -in input.mhd -op dilation -type binary -out output.mhd -r 1 -bin 255 0\n";
   std::cout << "Supported: 2D, 3D, (unsigned) char, (unsigned) short." << std::endl;
 
-} // end PrintHelp()
+} // end GetHelpString()

@@ -27,8 +27,8 @@
 #include "itkImageFileReader.h"
 #include <iomanip>
 
-/** Declare PrintHelp. */
-std::string PrintHelp(void);
+/** Declare GetHelpString. */
+std::string GetHelpString(void);
 
 //-------------------------------------------------------------------------------------
 
@@ -37,7 +37,7 @@ int main( int argc, char **argv )
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(PrintHelp());
+  parser->SetProgramHelpText(GetHelpString());
 
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
 
@@ -321,9 +321,9 @@ int main( int argc, char **argv )
 
 
   /**
-   * ******************* PrintHelp *******************
+   * ******************* GetHelpString *******************
    */
-std::string PrintHelp()
+std::string GetHelpString()
 {
   std::string helpText = "Usage:\n \
   pxgetimageinformation\n \
@@ -345,4 +345,4 @@ std::string PrintHelp()
 
   return helpText;
 
-} // end PrintHelp()
+} // end GetHelpString()

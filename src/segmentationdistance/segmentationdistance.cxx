@@ -70,8 +70,8 @@ void SegmentationDistance(
   unsigned int phisize,
   bool cartesianonly );
 
-/** Declare PrintHelp. */
-std::string PrintHelp( void );
+/** Declare GetHelpString. */
+std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -80,7 +80,7 @@ int main( int argc, char **argv )
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(PrintHelp());
+  parser->SetProgramHelpText(GetHelpString());
 
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
 
@@ -664,9 +664,9 @@ void SegmentationDistance(
 
 
   /**
-   * ******************* PrintHelp *******************
+   * ******************* GetHelpString *******************
    */
-std::string PrintHelp()
+std::string GetHelpString()
 {
   std::string helpText = "This program computes a spatial segmentation error map.\n \
   Usage: \
@@ -683,5 +683,5 @@ std::string PrintHelp()
              3D short for inputImage2, and everything convertable to short.";
 
   return helpText;
-} // end PrintHelp
+} // end GetHelpString
 

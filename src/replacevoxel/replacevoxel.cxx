@@ -47,8 +47,8 @@ void ReplaceVoxel(
   const std::vector<unsigned int> & voxel,
   const double & value );
 
-/** Declare PrintHelp. */
-std::string PrintHelp( void );
+/** Declare GetHelpString. */
+std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -57,7 +57,7 @@ int main( int argc, char ** argv )
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(PrintHelp());
+  parser->SetProgramHelpText(GetHelpString());
 
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
   parser->MarkArgumentAsRequired( "-vox", "Voxel." );
@@ -231,9 +231,9 @@ void ReplaceVoxel( const std::string & inputFileName,
 
 
 /**
- * ******************* PrintHelp *******************
+ * ******************* GetHelpString *******************
  */
-std::string PrintHelp()
+std::string GetHelpString()
 {
   std::string helpString = "This program replaces the value of a user specified voxel.\n \
   Usage:\n \
@@ -247,5 +247,4 @@ std::string PrintHelp()
 
   return helpString;
 
-} // end PrintHelp()
-
+} // end GetHelpString()
