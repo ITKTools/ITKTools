@@ -89,6 +89,9 @@ public:
 
   /** Copy argv in a map. */
   void CreateArgumentMap( void );
+  
+  /** Print all arguments. */
+  void PrintAllArguments( void ) const;
 
   /** Checks if an argument is given. */
   bool ArgumentExists( const std::string & key ) const;
