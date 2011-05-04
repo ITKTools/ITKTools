@@ -114,7 +114,7 @@ int main(int argc, char** argv)
   {
     if (spaceDimension == "1")
     {
-       returndummy = ptswrap<2,1>::PixelTypeSelector(
+       ptswrap<2,1>::PixelTypeSelector(
          pixelType.c_str(),
          outputImageFileName.c_str(),
          sizes,
@@ -125,7 +125,7 @@ int main(int argc, char** argv)
     }
     else if (spaceDimension == "2")
     {
-       returndummy = ptswrap<2,2>::PixelTypeSelector(
+       ptswrap<2,2>::PixelTypeSelector(
          pixelType.c_str(),
          outputImageFileName.c_str(),
          sizes,
@@ -136,7 +136,7 @@ int main(int argc, char** argv)
     }
     else if (spaceDimension == "3")
     {
-       returndummy = ptswrap<2,3>::PixelTypeSelector(
+       ptswrap<2,3>::PixelTypeSelector(
          pixelType.c_str(),
          outputImageFileName.c_str(),
          sizes,
@@ -155,7 +155,7 @@ int main(int argc, char** argv)
   {
     if (spaceDimension == "1")
     {
-       returndummy = ptswrap<3,1>::PixelTypeSelector(
+       ptswrap<3,1>::PixelTypeSelector(
          pixelType.c_str(),
          outputImageFileName.c_str(),
          sizes,
@@ -166,7 +166,7 @@ int main(int argc, char** argv)
     }
     else if (spaceDimension == "2")
     {
-       returndummy = ptswrap<3,2>::PixelTypeSelector(
+       ptswrap<3,2>::PixelTypeSelector(
          pixelType.c_str(),
          outputImageFileName.c_str(),
          sizes,
@@ -177,7 +177,7 @@ int main(int argc, char** argv)
     }
     else if (spaceDimension == "3")
     {
-       returndummy = ptswrap<3,3>::PixelTypeSelector(
+       ptswrap<3,3>::PixelTypeSelector(
          pixelType.c_str(),
          outputImageFileName.c_str(),
          sizes,
