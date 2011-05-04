@@ -129,7 +129,7 @@ class runwrap
       {
         std::ostringstream makeString("");
         makeString << "-d" << i;
-        unsigned int sizeValue;
+        unsigned int sizeValue = 0;
         parser->GetCommandLineArgument(makeString.str(), sizeValue);
         sizes[i] = sizeValue;
       }

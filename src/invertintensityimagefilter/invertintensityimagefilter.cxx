@@ -43,11 +43,16 @@ int main( int argc, char ** argv )
   parser->SetCommandLineArguments( argc, argv );
   parser->SetProgramHelpText(PrintHelp());
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
-  bool validateArguments = parser->CheckForRequiredArguments();
 
-  if(!validateArguments)
+  itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
+
+  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
   {
     return EXIT_FAILURE;
+  }
+  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  {
+    return EXIT_SUCCESS;
   }
 
   /** Get arguments. */

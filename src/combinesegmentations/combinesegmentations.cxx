@@ -53,18 +53,26 @@ int main( int argc, char **argv )
   parser->SetCommandLineArguments( argc, argv );
   parser->SetProgramHelpText(PrintHelp());
 
+  parser->MarkArgumentAsRequired( "-in", "The input filename." );
+  
+  itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
+
+  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  {
+    return EXIT_FAILURE;
+  }
+  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  {
+    return EXIT_SUCCESS;
+  }
+  
     /** Get the combination method (mandatory) */
   std::string combinationMethod = "MULTISTAPLE2";
   parser->GetCommandLineArgument( "-m", combinationMethod );
 
   /** Get the input segmentation file names (mandatory). */
   std::vector< std::string >  inputSegmentationFileNames;
-  bool retin = parser->GetCommandLineArgument( "-in", inputSegmentationFileNames );
-  if ( !retin )
-  {
-    std::cerr << "ERROR: You should specify \"-in\"." << std::endl;
-    return 1;
-  }
+  parser->GetCommandLineArgument( "-in", inputSegmentationFileNames );
 
   /** Get the settings for the change label image filter (not mandatory) */
   std::vector<unsigned int>  inValues;

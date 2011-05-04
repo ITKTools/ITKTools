@@ -151,9 +151,15 @@ int main( int argc, char **argv )
     input, outputFileName, outputPixelComponentType,
     seriesUID, restrictions, useCompression );
 
-  if(!parser->CheckForRequiredArguments() || !argsRetrievedSuccessfully)
+  itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
+
+  if(validateArguments == itk::CommandLineArgumentParser::FAILED || !argsRetrievedSuccessfully)
   {
     return EXIT_FAILURE;
+  }
+  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  {
+    return EXIT_SUCCESS;
   }
 
   /** Are we dealing with an image or a dicom series? */

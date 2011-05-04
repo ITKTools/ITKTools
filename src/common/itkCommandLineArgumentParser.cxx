@@ -224,7 +224,7 @@ CommandLineArgumentParser
  * **************** CheckForRequiredArguments ***************
  */
 
-bool
+CommandLineArgumentParser::ReturnValue
 CommandLineArgumentParser
 ::CheckForRequiredArguments() const
 {
@@ -232,7 +232,7 @@ CommandLineArgumentParser
   if ( this->m_Argv.size() == 1 )
   {
     std::cerr << this->m_ProgramHelpText << std::endl;
-    return false;
+    return HELPREQUESTED;
   }
     
   // Display the help text if the user asked for it.
@@ -241,7 +241,7 @@ CommandLineArgumentParser
     || this->ArgumentExists( "--h" ) )
   {
     std::cerr << this->m_ProgramHelpText << std::endl;
-    return false;
+    return HELPREQUESTED;
   }
 
   // Loop through all required arguments. Check them all even if one fails.
@@ -278,7 +278,12 @@ CommandLineArgumentParser
     }
   }
   
-  return allRequiredArgumentsSpecified;
+  if(!allRequiredArgumentsSpecified)
+  {
+    return FAILED;
+  }
+  
+  return PASSED;
 
 } // end CheckForRequiredArguments()
 
