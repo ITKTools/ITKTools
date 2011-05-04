@@ -17,7 +17,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
@@ -52,8 +52,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">src/castconvert/castconvertScalar.cxx File Reference</div>  </div>
 </div>
 <div class="contents">
-<div class="textblock"><code>#include &quot;castconverthelpers.h&quot;</code><br/>
-</div><table class="memberdecls">
+<table class="memberdecls">
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="castconvertScalar_8cxx.html#aa9b3d48dd40541e36ae070f8d5608a37">FileConverterScalar2DA</a> (const std::string &amp;inputPixelComponentType, const std::string &amp;outputPixelComponentType, const std::string &amp;inputFileName, const std::string &amp;outputFileName, const unsigned int inputDimension, bool useCompression)</td></tr>
@@ -113,17 +112,7 @@ Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<p>castconvert</p>
-<p>This program converts and possibly casts images.</p>
-<p>This is done by reading in an image, possibly casting of the image, and subsequently writing the image to some format. With converting we mean changing the extension of the image, such as bmp, mhd, etc. With casting we mean changing the component type of a voxel, such as short, unsigned long, float.</p>
-<p>Casting is currently done for scalar images using the ShiftScaleImageFilter, where values are mapped to itself, leaving the intensity range the same. NOTE that when casting to a component type with a smaller dynamic range, information might get lost. In this case we might use the RescaleIntensityImageFilter to linearly rescale the image values. For multi-component images, such as vector or RGB images, casting is done using the itk::VectorCastImageFilter.</p>
-<p>Currently supported are the SCALAR pixel types and also multi- component pixel types, such as vector and RGB pixels. For multi- component pixel types, everything is read in as an itk::Vector with the correct pixel component type and number of components. This is also the case for the writer.</p>
-<p>Input images can be in all file formats ITK supports and for which the ImageFileReader works, and additionally 3D dicom series using the ImageSeriesReader. It is also possible to extract a specific DICOM series from a directory by supplying the seriesUID. The pixel component type should of course be a component type supported by the file format. Output images can be in all file formats ITK supports and for which the ImageFileReader works, so no dicom output is currently supported.</p>
-<p>Usage: pxcastconvert -in inputFileName -out outputFileName [-opct outputPixelComponentType] OR: pxcastconvert -in dicomDirectoryName -out outputFileName [-opct outputPixelComponentType] [-s seriesUID]</p>
-<p>Where outputPixelComponentType is one of: unsigned_char, char, unsigned_short, short, unsigned_int, int, unsigned_long, long, float or double. By default the outputPixelComponentType is set to the inputPixelComponentType. By default the seriesUID is the first UID found.</p>
-<p>authors: Marius Staring and Stefan Klein</p>
-<p>Thanks to Hans J. Johnson for a modification to this program. This modification breaks down the program into smaller compilation units, so that the compiler does not overflow.</p>
-<p>ENH: on 23-05-2006 we added multi-component support. ENH: on 09-06-2006 we added support for extracting a specific DICOM serie. Functions to do the actual conversion. </p>
+<p>Functions to do the actual conversion. </p>
 
 <p><p>Support for 2D images.</p>
 <p>Return a succes value. </p>
@@ -482,7 +471,7 @@ Functions</h2></td></tr>
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Defines</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -491,7 +480,7 @@ Functions</h2></td></tr>
 </iframe>
 </div>
 
-<hr class="footer"/><address class="footer"><small>Generated on Sat Apr 30 2011 by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Wed May 4 2011 by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>

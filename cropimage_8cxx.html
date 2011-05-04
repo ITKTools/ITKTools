@@ -17,8 +17,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="annotated.html"><span>Classes</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -47,77 +46,29 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <div class="header">
   <div class="summary">
-<a href="#define-members">Defines</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">src/cropimage/cropimage.cxx File Reference</div>  </div>
 </div>
 <div class="contents">
-<div class="textblock"><code>#include &quot;itkCommandLineArgumentParser.h&quot;</code><br/>
-<code>#include &quot;CommandLineArgumentHelper.h&quot;</code><br/>
-<code>#include &quot;itkImage.h&quot;</code><br/>
-<code>#include &quot;itkCropImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkConstantPadImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkImageFileReader.h&quot;</code><br/>
-<code>#include &quot;itkImageFileWriter.h&quot;</code><br/>
-</div><table class="memberdecls">
-<tr><td colspan="2"><h2><a name="define-members"></a>
-Defines</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cropimage_8cxx.html#ad7a0ffcf077a5978e48ad004f5767d01">run</a>(function, type, dim)</td></tr>
+
+<p>Crop an image.  
+<a href="#details">More...</a></p>
+<table class="memberdecls">
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr><td class="memTemplParams" colspan="2">template&lt;class InputImageType &gt; </td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="cropimage_8cxx.html#a0aae503b1a4b374d6340e63e157d3b28">CropImage</a> (const std::string &amp;inputFileName, const std::string &amp;outputFileName, const std::vector&lt; int &gt; &amp;input1, const std::vector&lt; int &gt; &amp;input2, const unsigned int option, const bool force)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cropimage_8cxx.html#a21377f0653d476392ed1160cd6b61665">PrintHelp</a> (void)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cropimage_8cxx.html#af30e8a8996bbd91b28de2eb826b4cbcd">CheckWhichInputOption</a> (const bool pAGiven, const bool pBGiven, const bool szGiven, const bool lbGiven, const bool ubGiven, unsigned int &amp;arg)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cropimage_8cxx.html#a1d32e31f5f07243e37da9a29e886d8dd">ProcessArgument</a> (std::vector&lt; int &gt; &amp;arg, const unsigned int dimension, const bool positive)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cropimage_8cxx.html#a878c44f07b64f559c990d1382307369b">GetBox</a> (std::vector&lt; int &gt; &amp;pA, std::vector&lt; int &gt; &amp;pB, const unsigned int dimension)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cropimage_8cxx.html#a8c3e4334b8ba35d64558012294a80f27">GetLowerBoundary</a> (const std::vector&lt; int &gt; &amp;input1, const unsigned int dimension, const bool force, std::vector&lt; unsigned long &gt; &amp;padLowerBound)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cropimage_8cxx.html#a8bcb59d4b31415b642e492f32123f1f0">GetUpperBoundary</a> (const std::vector&lt; int &gt; &amp;input1, const std::vector&lt; int &gt; &amp;input2, const std::vector&lt; int &gt; &amp;imageSize, const unsigned int dimension, const unsigned int option, const bool force, std::vector&lt; unsigned long &gt; &amp;padUpperBound)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cropimage_8cxx.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a> (int argc, char **argv)</td></tr>
 </table>
-<hr/><h2>Define Documentation</h2>
-<a class="anchor" id="ad7a0ffcf077a5978e48ad004f5767d01"></a><!-- doxytag: member="cropimage.cxx::run" ref="ad7a0ffcf077a5978e48ad004f5767d01" args="(function, type, dim)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define run</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">function, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">type, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">dim&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<b>Value:</b><div class="fragment"><pre class="fragment"><span class="keywordflow">if</span> ( ComponentTypeIn == #type &amp;&amp; Dimension == dim ) \
-{ \
-  <span class="keyword">typedef</span> itk::Image&lt; type, dim &gt; InputImageType; \
-  function&lt; InputImageType &gt;( inputFileName, outputFileName, input1, input2, option, force ); \
-  supported = <span class="keyword">true</span>; \
-}
-</pre></div><p>run: A macro to call a function. </p>
-
-</div>
-</div>
-<hr/><h2>Function Documentation</h2>
+<hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
+<div class="textblock"><p>Crop an image. </p>
+<div class="fragment"><pre class="fragment">No help text provided.
+</pre></div> </div><hr/><h2>Function Documentation</h2>
 <a class="anchor" id="af30e8a8996bbd91b28de2eb826b4cbcd"></a><!-- doxytag: member="cropimage.cxx::CheckWhichInputOption" ref="af30e8a8996bbd91b28de2eb826b4cbcd" args="(const bool pAGiven, const bool pBGiven, const bool szGiven, const bool lbGiven, const bool ubGiven, unsigned int &amp;arg)" -->
 <div class="memitem">
 <div class="memproto">
@@ -389,70 +340,6 @@ template&lt;class InputImageType &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a3c04138a5bfe5d72780bb7e82a18e627"></a><!-- doxytag: member="cropimage.cxx::main" ref="a3c04138a5bfe5d72780bb7e82a18e627" args="(int argc, char **argv)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int main </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>argc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">char **&#160;</td>
-          <td class="paramname"><em>argv</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p><p>Check arguments for help.</p>
-<p>Create a command line argument parser.</p>
-<p>Get arguments.</p>
-<p>Check if the required arguments are given.</p>
-<p>Determine image properties.</p>
-<p>Check for vector images.</p>
-<p>Get rid of the possible "_" in ComponentType.</p>
-<p>Check which input option is used: 1: supply two points with -pA and -pB 2: supply a points and a size with -pA and -sz 3: supply a lower and an upper bound with -lb and -ub</p>
-<p>Check argument pA. Point A should only be positive if not force.</p>
-<p>Check argument pB. Point B should always be positive.</p>
-<p>Check argument sz. Size should always be positive.</p>
-<p>Check argument lb.</p>
-<p>Check argument ub.</p>
-<p>Get inputs.</p>
-<p>Run the program.</p>
-<p>End program. </p>
-</p>
-
-</div>
-</div>
-<a class="anchor" id="a21377f0653d476392ed1160cd6b61665"></a><!-- doxytag: member="cropimage.cxx::PrintHelp" ref="a21377f0653d476392ed1160cd6b61665" args="(void)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void PrintHelp </td>
-          <td>(</td>
-          <td class="paramtype">void&#160;</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Declare other functions.</p>
-<p>******************* PrintHelp ******************* </p>
-
-</div>
-</div>
 <a class="anchor" id="a1d32e31f5f07243e37da9a29e886d8dd"></a><!-- doxytag: member="cropimage.cxx::ProcessArgument" ref="a1d32e31f5f07243e37da9a29e886d8dd" args="(std::vector&lt; int &gt; &amp;arg, const unsigned int dimension, const bool positive)" -->
 <div class="memitem">
 <div class="memproto">
@@ -504,7 +391,7 @@ template&lt;class InputImageType &gt; </div>
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Defines</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -513,7 +400,7 @@ template&lt;class InputImageType &gt; </div>
 </iframe>
 </div>
 
-<hr class="footer"/><address class="footer"><small>Generated on Sat Apr 30 2011 by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Wed May 4 2011 by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>

@@ -17,8 +17,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="annotated.html"><span>Classes</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -47,79 +46,24 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <div class="header">
   <div class="summary">
-<a href="#define-members">Defines</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">src/deformationfieldgenerator/deformationfieldgenerator.cxx File Reference</div>  </div>
 </div>
 <div class="contents">
-<div class="textblock"><code>#include &quot;itkCommandLineArgumentParser.h&quot;</code><br/>
-<code>#include &quot;CommandLineArgumentHelper.h&quot;</code><br/>
-<code>#include &quot;itkImageRegionIteratorWithIndex.h&quot;</code><br/>
-<code>#include &quot;itkImageFileReader.h&quot;</code><br/>
-<code>#include &quot;itkImageFileWriter.h&quot;</code><br/>
-<code>#include &quot;itkTransformixInputPointFileReader.h&quot;</code><br/>
-<code>#include &quot;itkVector.h&quot;</code><br/>
-<code>#include &quot;itkImage.h&quot;</code><br/>
-<code>#include &quot;itkThinPlateSplineKernelTransform.h&quot;</code><br/>
-<code>#include &quot;itkThinPlateR2LogRSplineKernelTransform.h&quot;</code><br/>
-<code>#include &quot;itkVolumeSplineKernelTransform.h&quot;</code><br/>
-<code>#include &quot;itkElasticBodySplineKernelTransform.h&quot;</code><br/>
-<code>#include &quot;itkElasticBodyReciprocalSplineKernelTransform.h&quot;</code><br/>
-<code>#include &quot;vnl/vnl_math.h&quot;</code><br/>
-</div><table class="memberdecls">
-<tr><td colspan="2"><h2><a name="define-members"></a>
-Defines</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="deformationfieldgenerator_8cxx.html#ac6ad26e6aab9e1ccc803422b251d19af">run</a>(function, dim)</td></tr>
+
+<p>This program generates a deformation field (from fixed to moving image) based on some corresponding points.  
+<a href="#details">More...</a></p>
+<table class="memberdecls">
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr><td class="memTemplParams" colspan="2">template&lt;unsigned int Dimension&gt; </td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="deformationfieldgenerator_8cxx.html#ac3af21a71db51271006b4b3969289a34">DeformationFieldGenerator</a> (const std::string &amp;inputImage1FileName, const std::string &amp;inputImage2FileName, const std::string &amp;inputPoints1FileName, const std::string &amp;inputPoints2FileName, const std::string &amp;outputImageFileName, const std::string &amp;kernelName, double stiffness)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="deformationfieldgenerator_8cxx.html#a21377f0653d476392ed1160cd6b61665">PrintHelp</a> (void)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="deformationfieldgenerator_8cxx.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a> (int argc, char **argv)</td></tr>
 </table>
-<hr/><h2>Define Documentation</h2>
-<a class="anchor" id="ac6ad26e6aab9e1ccc803422b251d19af"></a><!-- doxytag: member="deformationfieldgenerator.cxx::run" ref="ac6ad26e6aab9e1ccc803422b251d19af" args="(function, dim)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define run</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">function, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">dim&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<b>Value:</b><div class="fragment"><pre class="fragment"><span class="keywordflow">if</span> ( Dimension == dim ) \
-{ \
-    function&lt; dim &gt;(  \
-      inputImage1FileName, \
-      inputImage2FileName, \
-      inputPoints1FileName, \
-      inputPoints2FileName, \
-      outputImageFileName, \
-      kernelName,          \
-      stiffness );        \
-    supported = <span class="keyword">true</span>; \
-}
-</pre></div><p>run: A macro to call a function. </p>
-
-</div>
-</div>
-<hr/><h2>Function Documentation</h2>
+<hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
+<div class="textblock"><p>This program generates a deformation field (from fixed to moving image) based on some corresponding points. </p>
+<div class="fragment"><pre class="fragment">This program generates a deformation field (from fixed   to moving image) based on some corresponding points.   Usage:   pxdeformationfieldgenerator     -in1     inputFilename1: the fixed image on which the               deformaton field must be defined.     [-in2]   inputFilename2: only needed to convert from               indices to point if the second input point               contains indices.     -ipp1    inputPointFile1: a transformix style input point file               with points in the fixed image.     -ipp2    inputPointFile2: a transformix style input point file               with the corresponding points in the moving image.     [-s]     stiffness: a number that allows to vary between               interpolating and approximating spline.               0.0 = interpolating = default.               Stiffness values are usually rather small,               typically in the range of 0.001 to 0.1.     [-k]     kernelType: the type of kernel transform that's used to               generate the deformation field.               TPS: thin plate spline (default)               TPSR2LOGR: thin plate spline R2logR               VS: volume spline               EBS: elastic body spline               EBSR: elastic body reciprocal spline               See ITK documentation and the there cited paper               for more information on these methods.     -out     outputFilename: the name of the resulting deformation field,               which is written as a vector&lt;float,dim&gt; image.   Supported: 2D, 3D, any scalar pixeltype.
+</pre></div> </div><hr/><h2>Function Documentation</h2>
 <a class="anchor" id="ac3af21a71db51271006b4b3969289a34"></a><!-- doxytag: member="deformationfieldgenerator.cxx::DeformationFieldGenerator" ref="ac3af21a71db51271006b4b3969289a34" args="(const std::string &amp;inputImage1FileName, const std::string &amp;inputImage2FileName, const std::string &amp;inputPoints1FileName, const std::string &amp;inputPoints2FileName, const std::string &amp;outputImageFileName, const std::string &amp;kernelName, double stiffness)" -->
 <div class="memitem">
 <div class="memproto">
@@ -189,69 +133,13 @@ template&lt;unsigned int Dimension&gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a3c04138a5bfe5d72780bb7e82a18e627"></a><!-- doxytag: member="deformationfieldgenerator.cxx::main" ref="a3c04138a5bfe5d72780bb7e82a18e627" args="(int argc, char **argv)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int main </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>argc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">char **&#160;</td>
-          <td class="paramname"><em>argv</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p><p>Check arguments for help.</p>
-<p>Create a command line argument parser.</p>
-<p>Get arguments.</p>
-<p>Check if the required arguments are given.</p>
-<p>Determine image properties.</p>
-<p>Do not bother the user with the difference between pixeltype and componenttype:</p>
-<p>Run the program for 2D and 3D.</p>
-<p>End program. </p>
-</p>
-
-</div>
-</div>
-<a class="anchor" id="a21377f0653d476392ed1160cd6b61665"></a><!-- doxytag: member="deformationfieldgenerator.cxx::PrintHelp" ref="a21377f0653d476392ed1160cd6b61665" args="(void)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void PrintHelp </td>
-          <td>(</td>
-          <td class="paramtype">void&#160;</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Declare other functions.</p>
-<p>******************* PrintHelp ******************* </p>
-
-</div>
-</div>
 </div>
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Defines</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -260,7 +148,7 @@ template&lt;unsigned int Dimension&gt; </div>
 </iframe>
 </div>
 
-<hr class="footer"/><address class="footer"><small>Generated on Sat Apr 30 2011 by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Wed May 4 2011 by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>

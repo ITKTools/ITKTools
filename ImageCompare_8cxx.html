@@ -17,8 +17,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="annotated.html"><span>Classes</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -46,153 +45,27 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <div class="header">
-  <div class="summary">
-<a href="#define-members">Defines</a> &#124;
-<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">src/imagecompare/ImageCompare.cxx File Reference</div>  </div>
 </div>
 <div class="contents">
-<div class="textblock"><code>#include &quot;itkWin32Header.h&quot;</code><br/>
-<code>#include &lt;iostream&gt;</code><br/>
-<code>#include &lt;fstream&gt;</code><br/>
-<code>#include &quot;itkNumericTraits.h&quot;</code><br/>
-<code>#include &quot;itkImage.h&quot;</code><br/>
-<code>#include &quot;itkImageFileReader.h&quot;</code><br/>
-<code>#include &quot;itkImageFileWriter.h&quot;</code><br/>
-<code>#include &quot;itkRescaleIntensityImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkExtractImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkDifferenceImageFilter.h&quot;</code><br/>
-</div><table class="memberdecls">
-<tr><td colspan="2"><h2><a name="define-members"></a>
-Defines</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ImageCompare_8cxx.html#a5ae87fb2158f30c533661f95f07f4fae">ITK_TEST_DIMENSION_MAX</a>&#160;&#160;&#160;6</td></tr>
-<tr><td colspan="2"><h2><a name="func-members"></a>
-Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ImageCompare_8cxx.html#a913b570423c916868d871ef990625417">RegressionTestImage</a> (const char *, const char *, int, double, int)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ImageCompare_8cxx.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a> (int argc, char **argv)</td></tr>
+
+<p>Compare two images.  
+<a href="#details">More...</a></p>
+<table class="memberdecls">
 </table>
-<hr/><h2>Define Documentation</h2>
-<a class="anchor" id="a5ae87fb2158f30c533661f95f07f4fae"></a><!-- doxytag: member="ImageCompare.cxx::ITK_TEST_DIMENSION_MAX" ref="a5ae87fb2158f30c533661f95f07f4fae" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define ITK_TEST_DIMENSION_MAX&#160;&#160;&#160;6</td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Define maximum dimension of an image. </p>
-
-</div>
-</div>
-<hr/><h2>Function Documentation</h2>
-<a class="anchor" id="a3c04138a5bfe5d72780bb7e82a18e627"></a><!-- doxytag: member="ImageCompare.cxx::main" ref="a3c04138a5bfe5d72780bb7e82a18e627" args="(int argc, char **argv)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int main </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>argc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">char **&#160;</td>
-          <td class="paramname"><em>argv</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p><p>Check arguments.</p>
-<p>Defaults for the difference filter.</p>
-<p>Get the command line arguments.</p>
-<p>Check for the difference threshold.</p>
-<p>Check for the difference tolerance radius.</p>
-<p>Get the testImage.</p>
-<p>Get the starting baselineImage.</p>
-<p>Get the ending baselineImage.</p>
-<p>Print arguments.</p>
-<p>Run the comparison(s).</p>
-<p>Return a value. </p>
-</p>
-
-</div>
-</div>
-<a class="anchor" id="a913b570423c916868d871ef990625417"></a><!-- doxytag: member="ImageCompare.cxx::RegressionTestImage" ref="a913b570423c916868d871ef990625417" args="(const char *, const char *, int, double, int)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int RegressionTestImage </td>
-          <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>testImageFilename</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>baselineImageFilename</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>reportErrors</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>differenceThreshold</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>toleranceRadius</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Declare function to compare two images. </p>
-
-<p><p>Rescale difference image.</p>
-<p>Write extracted difference image slice.</p>
-<p>Dart output.</p>
-<p>Rescale baseline image.</p>
-<p>Write extracted baseline image slice.</p>
-<p>Dart output.</p>
-<p>Rescale test image.</p>
-<p>Write extracted test image slice.</p>
-<p>Dart output.</p>
-<p>Return a value. </p>
-</p>
-
-</div>
-</div>
-</div>
+<hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
+<div class="textblock"><p>Compare two images. </p>
+<div class="fragment"><pre class="fragment">Usage:
+  pximagecompare
+    -test      image filename to test against baseline    -base      baseline image filename
+</pre></div> </div></div>
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Defines</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -201,7 +74,7 @@ Functions</h2></td></tr>
 </iframe>
 </div>
 
-<hr class="footer"/><address class="footer"><small>Generated on Sat Apr 30 2011 by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Wed May 4 2011 by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>

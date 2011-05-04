@@ -17,8 +17,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="annotated.html"><span>Classes</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -47,137 +46,24 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <div class="header">
   <div class="summary">
-<a href="#define-members">Defines</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">src/rescaleintensityimagefilter/rescaleintensityimagefilter.cxx File Reference</div>  </div>
 </div>
 <div class="contents">
-<div class="textblock"><code>#include &quot;itkCommandLineArgumentParser.h&quot;</code><br/>
-<code>#include &quot;CommandLineArgumentHelper.h&quot;</code><br/>
-<code>#include &quot;itkImage.h&quot;</code><br/>
-<code>#include &quot;itkImageFileReader.h&quot;</code><br/>
-<code>#include &quot;itkImageFileWriter.h&quot;</code><br/>
-<code>#include &quot;itkImageToVectorImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkRescaleIntensityImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkShiftScaleImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkStatisticsImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkVectorIndexSelectionCastImageFilter.h&quot;</code><br/>
-<code>#include &quot;vnl/vnl_math.h&quot;</code><br/>
-</div><table class="memberdecls">
-<tr><td colspan="2"><h2><a name="define-members"></a>
-Defines</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="rescaleintensityimagefilter_8cxx.html#ad7a0ffcf077a5978e48ad004f5767d01">run</a>(function, type, dim)</td></tr>
+
+<p>Rescale the intensities of an image.  
+<a href="#details">More...</a></p>
+<table class="memberdecls">
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr><td class="memTemplParams" colspan="2">template&lt;class InputImageType &gt; </td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="rescaleintensityimagefilter_8cxx.html#a3b76c6553eda81d1139fab90192c7087">RescaleIntensity</a> (const std::string &amp;inputFileName, const std::string &amp;outputFileName, const std::vector&lt; double &gt; &amp;values, const bool &amp;valuesAreExtrema)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="rescaleintensityimagefilter_8cxx.html#a21377f0653d476392ed1160cd6b61665">PrintHelp</a> (void)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="rescaleintensityimagefilter_8cxx.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a> (int argc, char **argv)</td></tr>
 </table>
-<hr/><h2>Define Documentation</h2>
-<a class="anchor" id="ad7a0ffcf077a5978e48ad004f5767d01"></a><!-- doxytag: member="rescaleintensityimagefilter.cxx::run" ref="ad7a0ffcf077a5978e48ad004f5767d01" args="(function, type, dim)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define run</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">function, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">type, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">dim&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<b>Value:</b><div class="fragment"><pre class="fragment"><span class="keywordflow">if</span> ( ComponentType == #type &amp;&amp; Dimension == dim ) \
-{ \
-  <span class="keyword">typedef</span>  itk::VectorImage&lt; type, dim &gt;   InputImageType; \
-  function&lt; InputImageType &gt;( inputFileName, outputFileName, values, valuesAreExtrema ); \
-  supported = <span class="keyword">true</span>; \
-}
-</pre></div><p>run: A macro to call a function. </p>
-
-</div>
-</div>
-<hr/><h2>Function Documentation</h2>
-<a class="anchor" id="a3c04138a5bfe5d72780bb7e82a18e627"></a><!-- doxytag: member="rescaleintensityimagefilter.cxx::main" ref="a3c04138a5bfe5d72780bb7e82a18e627" args="(int argc, char **argv)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int main </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>argc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">char **&#160;</td>
-          <td class="paramname"><em>argv</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p><p>Check number of arguments.</p>
-<p>Create a command line argument parser.</p>
-<p>Get arguments.</p>
-<p>Check if the required arguments are given.</p>
-<p>Check if the extrema are given (correctly).</p>
-<p>Check if the mean and variance are given correctly.</p>
-<p>Check which option is selected.</p>
-<p>Determine input image properties.</p>
-<p>Let the user overrule this.</p>
-<p>Get rid of the possible "_" in ComponentType.</p>
-<p>Get the values.</p>
-<p>Run the program.</p>
-<p>End program. </p>
-</p>
-
-</div>
-</div>
-<a class="anchor" id="a21377f0653d476392ed1160cd6b61665"></a><!-- doxytag: member="rescaleintensityimagefilter.cxx::PrintHelp" ref="a21377f0653d476392ed1160cd6b61665" args="(void)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void PrintHelp </td>
-          <td>(</td>
-          <td class="paramtype">void&#160;</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Declare PrintHelp.</p>
-<p>******************* PrintHelp ******************* </p>
-
-</div>
-</div>
+<hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
+<div class="textblock"><p>Rescale the intensities of an image. </p>
+<div class="fragment"><pre class="fragment">Usage:   pxrescaleintensityimagefilter     -in      inputFilename     [-out]   outputFilename, default in + INTENSITYRESCALED.mhd     [-mm]    minimum maximum, default: range of pixeltype     [-mv]    mean variance, default: 0.0 1.0     [-pt]    pixel type of input and output images;              default: automatically determined from the first input image.   Either "-mm" or "-mv" need to be specified.   Supported: 2D, 3D, (unsigned) short, (unsigned) char, float.   When applied to vector images, this program performs the operation on each channel separately.
+</pre></div> </div><hr/><h2>Function Documentation</h2>
 <a class="anchor" id="a3b76c6553eda81d1139fab90192c7087"></a><!-- doxytag: member="rescaleintensityimagefilter.cxx::RescaleIntensity" ref="a3b76c6553eda81d1139fab90192c7087" args="(const std::string &amp;inputFileName, const std::string &amp;outputFileName, const std::vector&lt; double &gt; &amp;values, const bool &amp;valuesAreExtrema)" -->
 <div class="memitem">
 <div class="memproto">
@@ -243,7 +129,7 @@ template&lt;class InputImageType &gt; </div>
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Defines</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -252,7 +138,7 @@ template&lt;class InputImageType &gt; </div>
 </iframe>
 </div>
 
-<hr class="footer"/><address class="footer"><small>Generated on Sat Apr 30 2011 by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Wed May 4 2011 by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>

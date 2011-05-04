@@ -17,8 +17,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="annotated.html"><span>Classes</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -46,323 +45,50 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <div class="header">
-  <div class="summary">
-<a href="#define-members">Defines</a> &#124;
-<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">src/createbox/createbox.cxx File Reference</div>  </div>
 </div>
 <div class="contents">
-<div class="textblock"><code>#include &quot;itkCommandLineArgumentParser.h&quot;</code><br/>
-<code>#include &quot;CommandLineArgumentHelper.h&quot;</code><br/>
-<code>#include &quot;itkImageDuplicator.h&quot;</code><br/>
-<code>#include &quot;itkBoxSpatialFunction.h&quot;</code><br/>
-<code>#include &quot;itkImageRegionIterator.h&quot;</code><br/>
-<code>#include &quot;itkImageFileReader.h&quot;</code><br/>
-<code>#include &quot;itkImageFileWriter.h&quot;</code><br/>
-<code>#include &quot;vnl/vnl_math.h&quot;</code><br/>
-</div><table class="memberdecls">
-<tr><td colspan="2"><h2><a name="define-members"></a>
-Defines</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="createbox_8cxx.html#adc6b64f3ab3bc3e991c87be33336c434">run1</a>(function, type, dim)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="createbox_8cxx.html#ac5fa464c271be5b12c310be7a0e368c5">run2</a>(function, type, dim)</td></tr>
-<tr><td colspan="2"><h2><a name="func-members"></a>
-Functions</h2></td></tr>
-<tr><td class="memTemplParams" colspan="2">template&lt;class ImageType &gt; </td></tr>
-<tr><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="createbox_8cxx.html#a3a4dae0fc692c7b9ab290ea2831338fc">CreateBox</a> (std::string outputFileName, std::vector&lt; unsigned int &gt; size, std::vector&lt; double &gt; spacing, std::vector&lt; double &gt; input1, std::vector&lt; double &gt; input2, std::string input, std::vector&lt; double &gt; orientation)</td></tr>
-<tr><td class="memTemplParams" colspan="2">template&lt;class ImageType &gt; </td></tr>
-<tr><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="createbox_8cxx.html#a27bf33afdcb182ff939789298305768f">CreateBox</a> (std::string inputFileName, std::string outputFileName, std::vector&lt; double &gt; input1, std::vector&lt; double &gt; input2, std::string input, std::vector&lt; double &gt; orientation)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="createbox_8cxx.html#a21377f0653d476392ed1160cd6b61665">PrintHelp</a> (void)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="createbox_8cxx.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a> (int argc, char **argv)</td></tr>
+
+<p>Create a box image.  
+<a href="#details">More...</a></p>
+<table class="memberdecls">
 </table>
-<hr/><h2>Define Documentation</h2>
-<a class="anchor" id="adc6b64f3ab3bc3e991c87be33336c434"></a><!-- doxytag: member="createbox.cxx::run1" ref="adc6b64f3ab3bc3e991c87be33336c434" args="(function, type, dim)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define run1</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">function, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">type, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">dim&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<b>Value:</b><div class="fragment"><pre class="fragment"><span class="keywordflow">if</span> ( ComponentType == #type &amp;&amp; Dimension == dim ) \
-{ \
-  <span class="keyword">typedef</span> itk::Image&lt; type, dim &gt; ImageType; \
-  function&lt; ImageType &gt;( outputFileName, size, spacing, input1, input2, input, orientation ); \
-  supported = <span class="keyword">true</span>; \
-}
-</pre></div><p>run: A macro to call a function. </p>
+<hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
+<div class="textblock"><p>Create a box image. </p>
+<div class="fragment"><pre class="fragment">Usage:
+pxcreatebox
+  -out     outputFilename
+  Arguments to specify the output image:
+  [-in]    inputFilename, to copy image information from
+  [-sz]    image size (voxels)
+  [-sp]    image spacing (mm), default 1.0
+  [-io]    image origin, default 0.0
+  [-d]     image direction, default identity
+  [-dim]   dimension, default 3
+  [-pt]    pixelType, default short
+  Arguments to specify the box:
+  [-c]     center (mm)
+  [-r]     radii (mm)
+  [-cp1]   cornerpoint 1 (mm)
+  [-cp2]   cornerpoint 2 (mm)
+  [-ci1]   cornerindex 1
+  [-ci2]   cornerindex 2
+  [-o]     orientation of the box, default xyz
+- The user should EITHER specify the input filename OR the output image size.
+- The user should EITHER specify the center and the radius,
+    OR the positions of two opposite corner points.
+    OR the positions of two opposite corner indices.
+- The orientation is a vector with Euler angles (rad).
+- Supported: 2D, 3D, (unsigned) char, (unsigned) short.
 
-</div>
-</div>
-<a class="anchor" id="ac5fa464c271be5b12c310be7a0e368c5"></a><!-- doxytag: member="createbox.cxx::run2" ref="ac5fa464c271be5b12c310be7a0e368c5" args="(function, type, dim)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define run2</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">function, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">type, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">dim&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<b>Value:</b><div class="fragment"><pre class="fragment"><span class="keywordflow">if</span> ( ComponentType == #type &amp;&amp; Dimension == dim ) \
-{ \
-  <span class="keyword">typedef</span> itk::Image&lt; type, dim &gt; ImageType; \
-  function&lt; ImageType &gt;( inputFileName, outputFileName, input1, input2, input, orientation ); \
-  supported = <span class="keyword">true</span>; \
-}
-</pre></div>
-</div>
-</div>
-<hr/><h2>Function Documentation</h2>
-<a class="anchor" id="a3a4dae0fc692c7b9ab290ea2831338fc"></a><!-- doxytag: member="createbox.cxx::CreateBox" ref="a3a4dae0fc692c7b9ab290ea2831338fc" args="(std::string outputFileName, std::vector&lt; unsigned int &gt; size, std::vector&lt; double &gt; spacing, std::vector&lt; double &gt; input1, std::vector&lt; double &gt; input2, std::string input, std::vector&lt; double &gt; orientation)" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class ImageType &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void CreateBox </td>
-          <td>(</td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>filename</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::vector&lt; unsigned int &gt;&#160;</td>
-          <td class="paramname"><em>size</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::vector&lt; double &gt;&#160;</td>
-          <td class="paramname"><em>spacing</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::vector&lt; double &gt;&#160;</td>
-          <td class="paramname"><em>input1</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::vector&lt; double &gt;&#160;</td>
-          <td class="paramname"><em>input2</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>input</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::vector&lt; double &gt;&#160;</td>
-          <td class="paramname"><em>orientation</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Declare CreateBox.</p>
-<p>******************* CreateBox ******************* </p>
-
-<p><p>Typedefs.</p>
-<p>Parse the arguments.</p>
-<p>Create image.</p>
-<p>Translate input of two opposite corners to center + radius input.</p>
-<p>The input is points, copy it.</p>
-<p>The input is indices, copy and transform to the point.</p>
-<p>Compute the center and radius.</p>
-<p>Create and initialize box.</p>
-<p>Create iterator, index and point.</p>
-<p>Walk over the image.</p>
-<p>Write image. </p>
-</p>
-
-</div>
-</div>
-<a class="anchor" id="a27bf33afdcb182ff939789298305768f"></a><!-- doxytag: member="createbox.cxx::CreateBox" ref="a27bf33afdcb182ff939789298305768f" args="(std::string inputFileName, std::string outputFileName, std::vector&lt; double &gt; input1, std::vector&lt; double &gt; input2, std::string input, std::vector&lt; double &gt; orientation)" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class ImageType &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void CreateBox </td>
-          <td>(</td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>inputFileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>outputFileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::vector&lt; double &gt;&#160;</td>
-          <td class="paramname"><em>input1</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::vector&lt; double &gt;&#160;</td>
-          <td class="paramname"><em>input2</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>input</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::vector&lt; double &gt;&#160;</td>
-          <td class="paramname"><em>orientation</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>******************* CreateBox ******************* </p>
-
-<p><p>Typedefs.</p>
-<p>Parse the arguments.</p>
-<p>Read input image.</p>
-<p>Copy input image.</p>
-<p>Translate input of two opposite corners to center + radius input.</p>
-<p>The input is points, copy it.</p>
-<p>The input is indices, copy and transform to the point.</p>
-<p>Compute the center and radius.</p>
-<p>Create and initialize box.</p>
-<p>Create iterator, index and point.</p>
-<p>Walk over the image.</p>
-<p>Write image. </p>
-</p>
-
-</div>
-</div>
-<a class="anchor" id="a3c04138a5bfe5d72780bb7e82a18e627"></a><!-- doxytag: member="createbox.cxx::main" ref="a3c04138a5bfe5d72780bb7e82a18e627" args="(int argc, char **argv)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int main </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>argc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">char **&#160;</td>
-          <td class="paramname"><em>argv</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p><p>Check arguments for help.</p>
-<p>Create a command line argument parser.</p>
-<p>Get arguments.</p>
-<p>Check if the required arguments are given.</p>
-<p>Determine input image properties.</p>
-<p>Let the user overrule this.</p>
-<p>Get rid of the possible "_" in ComponentType.</p>
-<p>How was the input supplied by the user?</p>
-<p>Run the program.</p>
-<p>End program. Return a value. </p>
-</p>
-
-</div>
-</div>
-<a class="anchor" id="a21377f0653d476392ed1160cd6b61665"></a><!-- doxytag: member="createbox.cxx::PrintHelp" ref="a21377f0653d476392ed1160cd6b61665" args="(void)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void PrintHelp </td>
-          <td>(</td>
-          <td class="paramtype">void&#160;</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Declare PrintHelp.</p>
-<p>******************* PrintHelp ******************* </p>
-
-</div>
-</div>
-</div>
+</pre></div> </div></div>
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Defines</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -371,7 +97,7 @@ template&lt;class ImageType &gt; </div>
 </iframe>
 </div>
 
-<hr class="footer"/><address class="footer"><small>Generated on Sat Apr 30 2011 by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Wed May 4 2011 by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>

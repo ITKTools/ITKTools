@@ -17,8 +17,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="annotated.html"><span>Classes</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -52,22 +51,20 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">src/ttest/ttest.cxx File Reference</div>  </div>
 </div>
 <div class="contents">
-<div class="textblock"><code>#include &quot;itkCommandLineArgumentParser.h&quot;</code><br/>
-<code>#include &lt;vector&gt;</code><br/>
-<code>#include &lt;fstream&gt;</code><br/>
-<code>#include &lt;iomanip&gt;</code><br/>
-<code>#include &lt;itksys/SystemTools.hxx&gt;</code><br/>
-<code>#include &quot;itkTDistribution.h&quot;</code><br/>
-</div><table class="memberdecls">
+
+<p>Perform T-test.  
+<a href="#details">More...</a></p>
+<table class="memberdecls">
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ttest_8cxx.html#a19178f10e7d2eb3d00fa53af19d7793f">ReadInputData</a> (const std::string &amp;filename, std::vector&lt; std::vector&lt; double &gt; &gt; &amp;matrix)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ttest_8cxx.html#ac7f606fc4860b696e9e04d985d7f4411">ComputeTValue</a> (const std::vector&lt; double &gt; &amp;samples1, const std::vector&lt; double &gt; &amp;samples2, const unsigned int type, double &amp;tValue, double &amp;mean1, double &amp;mean2, double &amp;meandiff, double &amp;std1, double &amp;std2, double &amp;stddiff)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ttest_8cxx.html#ae65a91835066e6249eaaef6551be496e">ComputeMeanAndStandardDeviation</a> (const std::vector&lt; double &gt; &amp;samples1, const std::vector&lt; double &gt; &amp;samples2, double &amp;mean1, double &amp;mean2, double &amp;meandiff, double &amp;std1, double &amp;std2, double &amp;stddiff)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ttest_8cxx.html#a21377f0653d476392ed1160cd6b61665">PrintHelp</a> (void)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ttest_8cxx.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a> (int argc, char **argv)</td></tr>
 </table>
-<hr/><h2>Function Documentation</h2>
+<hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
+<div class="textblock"><p>Perform T-test. </p>
+<div class="fragment"><pre class="fragment">Usage:   pxttest     -in      inputFilename     [-out]   output, choose one of {p,all}, default p                p: only print the p-value                all: print all     -c       the two data sample columns     [-tail]  one or two tailed, defauls = 2     [-type]  the type of the t-test, default = 1:                1: paired                2: two-sample equal variance                3: two-sample unequal variance     [-p]     the output precision, default = 8:   The input file should be in a certain format. No text is allowed.   No headers are allowed. The data samples should be displayed in columns.   Columns should be separated by a single space or tab.
+</pre></div> </div><hr/><h2>Function Documentation</h2>
 <a class="anchor" id="ae65a91835066e6249eaaef6551be496e"></a><!-- doxytag: member="ttest.cxx::ComputeMeanAndStandardDeviation" ref="ae65a91835066e6249eaaef6551be496e" args="(const std::vector&lt; double &gt; &amp;samples1, const std::vector&lt; double &gt; &amp;samples2, double &amp;mean1, double &amp;mean2, double &amp;meandiff, double &amp;std1, double &amp;std2, double &amp;stddiff)" -->
 <div class="memitem">
 <div class="memproto">
@@ -221,68 +218,6 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a3c04138a5bfe5d72780bb7e82a18e627"></a><!-- doxytag: member="ttest.cxx::main" ref="a3c04138a5bfe5d72780bb7e82a18e627" args="(int argc, char **argv)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int main </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>argc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">char **&#160;</td>
-          <td class="paramname"><em>argv</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p><p>Check arguments for help.</p>
-<p>Create a command line argument parser.</p>
-<p>Get arguments.</p>
-<p>Check if the required arguments are given.</p>
-<p>Check command line arguments.</p>
-<p>Read the input file.</p>
-<p>Check if there are at least two data points.</p>
-<p>Check if the requested columns exists.</p>
-<p>Extract the two requested columns.</p>
-<p>Compute the t value.</p>
-<p>Compute the p-value.</p>
-<p>For a 2-tailed t-test, multiply with 2.</p>
-<p>Print the p-value to screen.</p>
-<p>End program. </p>
-</p>
-
-</div>
-</div>
-<a class="anchor" id="a21377f0653d476392ed1160cd6b61665"></a><!-- doxytag: member="ttest.cxx::PrintHelp" ref="a21377f0653d476392ed1160cd6b61665" args="(void)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void PrintHelp </td>
-          <td>(</td>
-          <td class="paramtype">void&#160;</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Declare PrintHelp.</p>
-<p>******************* PrintHelp ******************* </p>
-
-</div>
-</div>
 <a class="anchor" id="a19178f10e7d2eb3d00fa53af19d7793f"></a><!-- doxytag: member="ttest.cxx::ReadInputData" ref="a19178f10e7d2eb3d00fa53af19d7793f" args="(const std::string &amp;filename, std::vector&lt; std::vector&lt; double &gt; &gt; &amp;matrix)" -->
 <div class="memitem">
 <div class="memproto">
@@ -329,7 +264,7 @@ Functions</h2></td></tr>
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Defines</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -338,7 +273,7 @@ Functions</h2></td></tr>
 </iframe>
 </div>
 
-<hr class="footer"/><address class="footer"><small>Generated on Sat Apr 30 2011 by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Wed May 4 2011 by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>

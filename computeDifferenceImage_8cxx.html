@@ -17,8 +17,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="annotated.html"><span>Classes</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -52,16 +51,17 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">src/computedifferenceimageBIG/computeDifferenceImage.cxx File Reference</div>  </div>
 </div>
 <div class="contents">
-<div class="textblock"><code>#include &lt;iostream&gt;</code><br/>
-<code>#include &quot;itkImageFileReader.h&quot;</code><br/>
-<code>#include &lt;itksys/SystemTools.hxx&gt;</code><br/>
-</div><table class="memberdecls">
+
+<p>Compute the difference image between two images.  
+<a href="#details">More...</a></p>
+<table class="memberdecls">
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="computeDifferenceImage_8cxx.html#ab2df6bf2bec1cad0a6df37d55f6817d1">ComputeVectorDifferenceImage</a> (const std::string &amp;inputPixelComponentType1, const std::string &amp;inputPixelComponentType2, const std::string &amp;outputPixelComponentType, const std::string &amp;image1FileName, const std::string &amp;image2FileName, const std::string &amp;outputFileName, int inputDimension, int vectorDimension)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="computeDifferenceImage_8cxx.html#a0ddf1224851353fc92bfbff6f499fa97">main</a> (int argc, char *argv[])</td></tr>
 </table>
-<hr/><h2>Function Documentation</h2>
+<hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
+<div class="textblock"><p>Compute the difference image between two images. </p>
+<div class="fragment"><pre class="fragment"></pre></div> </div><hr/><h2>Function Documentation</h2>
 <a class="anchor" id="ab2df6bf2bec1cad0a6df37d55f6817d1"></a><!-- doxytag: member="computeDifferenceImage.cxx::ComputeVectorDifferenceImage" ref="ab2df6bf2bec1cad0a6df37d55f6817d1" args="(const std::string &amp;inputPixelComponentType1, const std::string &amp;inputPixelComponentType2, const std::string &amp;outputPixelComponentType, const std::string &amp;image1FileName, const std::string &amp;image2FileName, const std::string &amp;outputFileName, int inputDimension, int vectorDimension)" -->
 <div class="memitem">
 <div class="memproto">
@@ -122,75 +122,7 @@ Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<p>computeDifferenceImage</p>
-<p>This program computes the difference between images.</p>
-<p>authors: Marius Staring In order to determine if argv[1] is a directory or a file, so that we can distinguish between dicom and other files. </p>
-
-<p><p>Support for 2D images.</p>
-<p>Return a succes value. </p>
-</p>
-
-</div>
-</div>
-<a class="anchor" id="a0ddf1224851353fc92bfbff6f499fa97"></a><!-- doxytag: member="computeDifferenceImage.cxx::main" ref="a0ddf1224851353fc92bfbff6f499fa97" args="(int argc, char *argv[])" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int main </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>argc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">char *&#160;</td>
-          <td class="paramname"><em>argv</em>[]&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p><p>TASK 1: Check arguments. *******************************************************************</p>
-<p>Print arguments.</p>
-<p>Get the image names.</p>
-<p>Check if image1FileName and image2FileName exist.</p>
-<p>Something is wrong.</p>
-<p>Check outputPixelType.</p>
-<p>In this case an illegal outputPixelComponentType is given.</p>
-<p>TASK 2: Typedefs and test reading to determine correct image types. *******************************************************************</p>
-<p>Initial image type.</p>
-<p>Some typedef's.</p>
-<p>Create testReaders.</p>
-<p>Setup the testReaders.</p>
-<p>Generate all information.</p>
-<p>Extract the ImageIO from the testReaders.</p>
-<p>Get the component type, number of components, dimension and pixel type of image1.</p>
-<p>Get the component type, number of components, dimension and pixel type of image2.</p>
-<p>TASK 3: Do some preparations and checks. *******************************************************************</p>
-<p>Check dimension equality.</p>
-<p>Check equality of the pixel type.</p>
-<p>Check equality of the number of components.</p>
-<p>Check inputPixelComponentType1.</p>
-<p>In this case an illegal inputPixelComponentType is found.</p>
-<p>Check inputPixelType2.</p>
-<p>In this case an illegal inputPixelComponentType is found.</p>
-<p>Check outputPixelType.</p>
-<p>In this case this option is not given, and by default we set it to the inputPixelComponentType.</p>
-<p>Get rid of the "_" in inputPixelComponentTypes and outputPixelComponentType.</p>
-<p>TASK 4: Now we are ready to check on image type and subsequently call the correct ComputeDifference-function. *******************************************************************</p>
-<p>****************** Support for SCALAR pixel types. **********************************</p>
-<p>if ( strcmp( pixelType1.c_str(), "scalar" ) == 0 &amp;&amp; numberOfComponents1 == 1 ) { const int ret_value = ComputeScalarDifferenceImage( inputPixelComponentType1, inputPixelComponentType2, outputPixelComponentType, image1FileName, image2FileName, outputFileName, inputDimension1 ); if ( ret_value != 0 ) { return ret_value; } } // end scalar support</p>
-<p>****************** Support for VECTOR pixel types. **********************************</p>
-<p>If any errors have occurred, catch and print the exception and return false.</p>
-<p>End program. Return success. </p>
-</p>
+<p>In order to determine if argv[1] is a directory or a file, so that we can distinguish between dicom and other files. </p>
 
 </div>
 </div>
@@ -200,7 +132,7 @@ Functions</h2></td></tr>
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Defines</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -209,7 +141,7 @@ Functions</h2></td></tr>
 </iframe>
 </div>
 
-<hr class="footer"/><address class="footer"><small>Generated on Sat Apr 30 2011 by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Wed May 4 2011 by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>

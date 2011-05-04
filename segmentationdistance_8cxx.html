@@ -17,8 +17,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="annotated.html"><span>Classes</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -47,148 +46,27 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <div class="header">
   <div class="summary">
-<a href="#define-members">Defines</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">src/segmentationdistance/segmentationdistance.cxx File Reference</div>  </div>
 </div>
 <div class="contents">
-<div class="textblock"><code>#include &quot;itkCommandLineArgumentParser.h&quot;</code><br/>
-<code>#include &quot;CommandLineArgumentHelper.h&quot;</code><br/>
-<code>#include &quot;itkImage.h&quot;</code><br/>
-<code>#include &quot;itkExceptionObject.h&quot;</code><br/>
-<code>#include &quot;itkImageFileReader.h&quot;</code><br/>
-<code>#include &quot;itkConstantPadImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkSignedMaurerDistanceMapImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkBinaryThresholdImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkSubtractImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkMultiplyImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkImageMomentsCalculator.h&quot;</code><br/>
-<code>#include &quot;itkCastImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkCartesianToSphericalCoordinateImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkAccumulateImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkImageRegionIterator.h&quot;</code><br/>
-<code>#include &quot;itkImageRegionConstIterator.h&quot;</code><br/>
-<code>#include &quot;itkAddImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkDivideImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkExtractImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkImageFileWriter.h&quot;</code><br/>
-<code>#include &quot;itkLinearInterpolateImageFunction.h&quot;</code><br/>
-</div><table class="memberdecls">
-<tr><td colspan="2"><h2><a name="define-members"></a>
-Defines</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="segmentationdistance_8cxx.html#ad7a0ffcf077a5978e48ad004f5767d01">run</a>(function, type, dim)</td></tr>
+
+<p>This program computes a spatial segmentation error map.  
+<a href="#details">More...</a></p>
+<table class="memberdecls">
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr><td class="memTemplParams" colspan="2">template&lt;class InputImageType &gt; </td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="segmentationdistance_8cxx.html#ae0a7a10564c3c6d1573104c770a64407">SegmentationDistance</a> (const std::string &amp;inputFileName1, const std::string &amp;inputFileName2, const std::string &amp;outputFileName, const std::vector&lt; double &gt; &amp;mancor, unsigned int samples, unsigned int thetasize, unsigned int phisize, bool cartesianonly)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="segmentationdistance_8cxx.html#a21377f0653d476392ed1160cd6b61665">PrintHelp</a> (void)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="segmentationdistance_8cxx.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a> (int argc, char **argv)</td></tr>
 <tr><td class="memTemplParams" colspan="2">template&lt;class InputImageType1 , class InputImageType2 , class ImageType &gt; </td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="segmentationdistance_8cxx.html#a422480551a5584b50a398d1ebb441168">SegmentationDistanceHelper</a> (const InputImageType1 *inputImage1, const InputImageType2 *inputImage2, typename ImageType::Pointer &amp;accum1, typename ImageType::Pointer &amp;accum2, typename ImageType::Pointer &amp;distanceTransformOnEdge, typename ImageType::Pointer &amp;edgeImage, std::vector&lt; double &gt; &amp;mancor, unsigned int samples, unsigned int thetasize, unsigned int phisize, bool cartesianonly, bool invertedImage)</td></tr>
 </table>
-<hr/><h2>Define Documentation</h2>
-<a class="anchor" id="ad7a0ffcf077a5978e48ad004f5767d01"></a><!-- doxytag: member="segmentationdistance.cxx::run" ref="ad7a0ffcf077a5978e48ad004f5767d01" args="(function, type, dim)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define run</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">function, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">type, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">dim&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<b>Value:</b><div class="fragment"><pre class="fragment"><span class="keywordflow">if</span> ( PixelType == #type &amp;&amp; Dimension == dim ) \
-{ \
-  <span class="keyword">typedef</span> itk::Image&lt; type, dim &gt; InputImageType; \
-  function&lt; InputImageType &gt;( inputFileName1, inputFileName2, outputFileName,\
-    manualcor, samples, thetasize, phisize, cartesianonly ); \
-  supported = <span class="keyword">true</span>; \
-}
-</pre></div><p>run: A macro to call a function. </p>
-
-</div>
-</div>
-<hr/><h2>Function Documentation</h2>
-<a class="anchor" id="a3c04138a5bfe5d72780bb7e82a18e627"></a><!-- doxytag: member="segmentationdistance.cxx::main" ref="a3c04138a5bfe5d72780bb7e82a18e627" args="(int argc, char **argv)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int main </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>argc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">char **&#160;</td>
-          <td class="paramname"><em>argv</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p><p>Check arguments for help.</p>
-<p>Create a command line argument parser.</p>
-<p>Get the input file names.</p>
-<p>Get the outputFileName</p>
-<p>get file name without its last (shortest) extension</p>
-<p>get file name of a full filename (i.e. file name without path)</p>
-<p>compose outputfilename</p>
-<p>This program supports only the following INTERNAL pixel type. The input images are assumed to be short. Input images other than short are supported, but automatically converted to short.</p>
-<p>Get rid of the possible "_" in PixelType.</p>
-<p>Run the program.</p>
-<p>End program. </p>
-</p>
-
-</div>
-</div>
-<a class="anchor" id="a21377f0653d476392ed1160cd6b61665"></a><!-- doxytag: member="segmentationdistance.cxx::PrintHelp" ref="a21377f0653d476392ed1160cd6b61665" args="(void)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void PrintHelp </td>
-          <td>(</td>
-          <td class="paramtype">void&#160;</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Declare PrintHelp.</p>
-<p>******************* PrintHelp ******************* </p>
-
-</div>
-</div>
+<hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
+<div class="textblock"><p>This program computes a spatial segmentation error map. </p>
+<div class="fragment"><pre class="fragment">This program computes a spatial segmentation error map.
+   Usage:   pxsegmentationdistance     -in      inputFilename1 inputFileName2     [-out]   outputFilename, default &lt;in1&gt;DISTANCE&lt;in2&gt;.mhd     [-c]     Center of rotation, used to compute the spherical transform. In world coordinates.     [-s]     samples [unsigned int]; maximum number of samples per pixel, used to do the spherical transform; default 20.     [-t]     theta size; the size of the theta dimension. default: 180, which yields a spacing of 2 degrees.     [-p]     phi size; the size of the phi dimension. default: 90, which yields a spacing of 2 degrees.     [-car]   skip the polar transform and return two output images (outputFileNameDIST and outputFileNameEDGE): true or false; default = false              The EDGE output image is an edge mask for inputfile2. The DIST output image contains the distance at each edge pixel to the first inputFile.   Supported: 3D short for inputImage1, and everything convertable to short.              3D short for inputImage2, and everything convertable to short.
+</pre></div> </div><hr/><h2>Function Documentation</h2>
 <a class="anchor" id="ae0a7a10564c3c6d1573104c770a64407"></a><!-- doxytag: member="segmentationdistance.cxx::SegmentationDistance" ref="ae0a7a10564c3c6d1573104c770a64407" args="(const std::string &amp;inputFileName1, const std::string &amp;inputFileName2, const std::string &amp;outputFileName, const std::vector&lt; double &gt; &amp;mancor, unsigned int samples, unsigned int thetasize, unsigned int phisize, bool cartesianonly)" -->
 <div class="memitem">
 <div class="memproto">
@@ -390,7 +268,7 @@ template&lt;class InputImageType1 , class InputImageType2 , class ImageType &gt;
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Defines</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -399,7 +277,7 @@ template&lt;class InputImageType1 , class InputImageType2 , class ImageType &gt;
 </iframe>
 </div>
 
-<hr class="footer"/><address class="footer"><small>Generated on Sat Apr 30 2011 by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Wed May 4 2011 by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>

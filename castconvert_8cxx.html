@@ -17,8 +17,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="annotated.html"><span>Classes</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -52,25 +51,41 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">src/castconvert/castconvert.cxx File Reference</div>  </div>
 </div>
 <div class="contents">
-<div class="textblock"><code>#include &lt;iostream&gt;</code><br/>
-<code>#include &quot;castconverthelpers2.h&quot;</code><br/>
-<code>#include &quot;CommandLineArgumentHelper.h&quot;</code><br/>
-<code>#include &quot;itkImageFileReader.h&quot;</code><br/>
-<code>#include &quot;itkGDCMImageIO.h&quot;</code><br/>
-<code>#include &quot;itkGE4ImageIOFactory.h&quot;</code><br/>
-<code>#include &quot;itkGE5ImageIOFactory.h&quot;</code><br/>
-<code>#include &quot;itkGEAdwImageIOFactory.h&quot;</code><br/>
-<code>#include &quot;itkPhilipsRECImageIOFactory.h&quot;</code><br/>
-</div><table class="memberdecls">
+
+<p>This program converts and possibly casts images.  
+<a href="#details">More...</a></p>
+<table class="memberdecls">
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="castconvert_8cxx.html#ac43caf0f1dcddaaea130061b5259e9c4">FileConverterScalar</a> (const std::string &amp;inputPixelComponentType, const std::string &amp;outputPixelComponentType, const std::string &amp;inputFileName, const std::string &amp;outputFileName, const unsigned int inputDimension, bool useCompression)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="castconvert_8cxx.html#a8ececad47e20c5b1eceb57bb164aedad">DicomFileConverterScalarA</a> (const std::string &amp;inputPixelComponentType, const std::string &amp;outputPixelComponentType, const std::string &amp;inputDirectoryName, const std::string &amp;seriesUID, const std::vector&lt; std::string &gt; &amp;restrictions, const std::string &amp;outputFileName, const unsigned int inputDimension, bool useCompression)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="castconvert_8cxx.html#aa70434a2b6a0270b8854e10b92ff9019">DicomFileConverterScalarB</a> (const std::string &amp;inputPixelComponentType, const std::string &amp;outputPixelComponentType, const std::string &amp;inputDirectoryName, const std::string &amp;seriesUID, const std::vector&lt; std::string &gt; &amp;restrictions, const std::string &amp;outputFileName, const unsigned int inputDimension, bool useCompression)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="castconvert_8cxx.html#afabcf309b13c79f2370c774dc87c20f8">FileConverterMultiComponent</a> (const std::string &amp;inputPixelComponentType, const std::string &amp;outputPixelComponentType, const unsigned int numberOfComponents, const std::string &amp;inputFileName, const std::string &amp;outputFileName, const unsigned int inputDimension, bool useCompression)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="castconvert_8cxx.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a> (int argc, char **argv)</td></tr>
 </table>
-<hr/><h2>Function Documentation</h2>
+<hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
+<div class="textblock"><p>This program converts and possibly casts images. </p>
+<div class="fragment"><pre class="fragment">Description:   This is done by reading in an image, possibly casting of the image,   and subsequently writing the image to some format.   With converting we mean changing the extension of the image,   such as bmp, mhd, etc. With casting we mean changing the component   type of a voxel, such as short, unsigned long, float.   Casting is currently done for scalar images using the ShiftScaleImageFilter,   where values are mapped to itself, leaving the intensity range   the same. NOTE that when casting to a component type with a   smaller dynamic range, information might get lost. In this case   we might use the RescaleIntensityImageFilter to linearly   rescale the image values. For multi-component images, such as vector   or RGB images, casting is done using the itk::VectorCastImageFilter.   Currently supported are the SCALAR pixel types and also multi-   component pixel types, such as vector and RGB pixels. For multi-   component pixel types, everything is read in as an itk::Vector with   the correct pixel component type and number of components. This is   also the case for the writer.   Input images can be in all file formats ITK supports and for which   the ImageFileReader works, and additionally 3D dicom series   using the ImageSeriesReader. It is also possible to extract a specific   DICOM series from a directory by supplying the seriesUID. The pixel   component type should of course be a component type supported by the   file format. Output images can be in all file formats ITK supports and   for which the ImageFileReader works, so no dicom output is   currently supported.   Usage:     pxcastconvert -in inputFileName -out outputFileName [-opct outputPixelComponentType]   OR:     pxcastconvert -in dicomDirectoryName -out outputFileName                  [-opct outputPixelComponentType] [-s seriesUID]   Where outputPixelComponentType is one of: unsigned_char, char,   unsigned_short, short, unsigned_int, int, unsigned_long, long,   float or double.   By default the outputPixelComponentType is set to the inputPixelComponentType.   By default the seriesUID is the first UID found.  Usage:
+   pxcastconvert
+     -in      inputfilename
+     -out     outputfilename
+     [-opct]  outputPixelComponentType
+     [-z]     compression flag; if provided, the output image   is compressed
+   OR pxcastconvert
+     -in      dicomDirectory
+     -out     outputfilename
+     [-opct]  outputPixelComponentType
+     [-s]     seriesUID
+     [-r]     add restrictions to generate a unique seriesUID
+              e.g. "0020|0012" to add a check for acquisition number.
+     [-z]     compression flag; if provided, the output image   is compressed
+   where outputPixelComponentType is one of:
+     [unsigned_]char, [unsigned_]short, [unsigned_]int,
+     [unsigned_]long, float, double,
+   provided that the outputPixelComponentType is supported by   the output file format.
+   By default the outputPixelComponentType is set to the   inputPixelComponentType.
+   By default the seriesUID is the first UID found.
+   The compression flag "-z" may be ignored by some output   image formats.
+</pre></div> </div><hr/><h2>Function Documentation</h2>
 <a class="anchor" id="a8ececad47e20c5b1eceb57bb164aedad"></a><!-- doxytag: member="castconvert.cxx::DicomFileConverterScalarA" ref="a8ececad47e20c5b1eceb57bb164aedad" args="(const std::string &amp;inputPixelComponentType, const std::string &amp;outputPixelComponentType, const std::string &amp;inputDirectoryName, const std::string &amp;seriesUID, const std::vector&lt; std::string &gt; &amp;restrictions, const std::string &amp;outputFileName, const unsigned int inputDimension, bool useCompression)" -->
 <div class="memitem">
 <div class="memproto">
@@ -131,16 +146,6 @@ Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<p>Authors: Marius Staring and Stefan Klein </p>
-
-<p><p>Support for 3D images.</p>
-<p>From unsigned char to something else.</p>
-<p>From char to something else.</p>
-<p>From unsigned short to something else.</p>
-<p>From short to something else.</p>
-<p>From unsigned int to something else.</p>
-<p>Return a value. </p>
-</p>
 
 </div>
 </div>
@@ -204,14 +209,6 @@ Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<p>Authors: Marius Staring and Stefan Klein </p>
-
-<p><p>Support for 3D images.</p>
-<p>From int to something else.</p>
-<p>From float to something else.</p>
-<p>From double to something else.</p>
-<p>Return a value. </p>
-</p>
 
 </div>
 </div>
@@ -270,10 +267,6 @@ Functions</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p><p>Support for 2D images.</p>
-<p>Return a succes value. </p>
-</p>
-
 </div>
 </div>
 <a class="anchor" id="ac43caf0f1dcddaaea130061b5259e9c4"></a><!-- doxytag: member="castconvert.cxx::FileConverterScalar" ref="ac43caf0f1dcddaaea130061b5259e9c4" args="(const std::string &amp;inputPixelComponentType, const std::string &amp;outputPixelComponentType, const std::string &amp;inputFileName, const std::string &amp;outputFileName, const unsigned int inputDimension, bool useCompression)" -->
@@ -324,78 +317,7 @@ Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<p>castconvert</p>
-<p>This program converts and possibly casts images.</p>
-<p>This is done by reading in an image, possibly casting of the image, and subsequently writing the image to some format. With converting we mean changing the extension of the image, such as bmp, mhd, etc. With casting we mean changing the component type of a voxel, such as short, unsigned long, float.</p>
-<p>Casting is currently done for scalar images using the ShiftScaleImageFilter, where values are mapped to itself, leaving the intensity range the same. NOTE that when casting to a component type with a smaller dynamic range, information might get lost. In this case we might use the RescaleIntensityImageFilter to linearly rescale the image values. For multi-component images, such as vector or RGB images, casting is done using the itk::VectorCastImageFilter.</p>
-<p>Currently supported are the SCALAR pixel types and also multi- component pixel types, such as vector and RGB pixels. For multi- component pixel types, everything is read in as an itk::Vector with the correct pixel component type and number of components. This is also the case for the writer.</p>
-<p>Input images can be in all file formats ITK supports and for which the ImageFileReader works, and additionally 3D dicom series using the ImageSeriesReader. It is also possible to extract a specific DICOM series from a directory by supplying the seriesUID. The pixel component type should of course be a component type supported by the file format. Output images can be in all file formats ITK supports and for which the ImageFileReader works, so no dicom output is currently supported.</p>
-<p>Usage: pxcastconvert -in inputFileName -out outputFileName [-opct outputPixelComponentType] OR: pxcastconvert -in dicomDirectoryName -out outputFileName [-opct outputPixelComponentType] [-s seriesUID]</p>
-<p>Where outputPixelComponentType is one of: unsigned_char, char, unsigned_short, short, unsigned_int, int, unsigned_long, long, float or double. By default the outputPixelComponentType is set to the inputPixelComponentType. By default the seriesUID is the first UID found.</p>
-<p>authors: Marius Staring and Stefan Klein</p>
-<p>Thanks to Hans J. Johnson for a modification to this program. This modification breaks down the program into smaller compilation units, so that the compiler does not overflow.</p>
-<p>ENH: on 23-05-2006 we added multi-component support. ENH: on 09-06-2006 we added support for extracting a specific DICOM serie. Functions to do the actual conversion. </p>
-
-<p><p>Support for 2D images.</p>
-<p>Return a succes value. </p>
-</p>
-
-</div>
-</div>
-<a class="anchor" id="a3c04138a5bfe5d72780bb7e82a18e627"></a><!-- doxytag: member="castconvert.cxx::main" ref="a3c04138a5bfe5d72780bb7e82a18e627" args="(int argc, char **argv)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int main </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>argc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">char **&#160;</td>
-          <td class="paramname"><em>argv</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p><p>TASK 1: Check arguments. *******************************************************************</p>
-<p>Register some non-standard IO Factories to make the tool more useful. Copied from the Insight Applications.</p>
-<p>Get the command line arguments.</p>
-<p>Are we dealing with an image or a dicom series?</p>
-<p>Get inputFileName or inputDirectoryName.</p>
-<p>TASK 2: Typedefs and test reading to determine correct image types. *******************************************************************</p>
-<p>Initial image type.</p>
-<p>Some typedef's.</p>
-<p>Create a testReader.</p>
-<p>Setup the testReader.</p>
-<p>Set the inputFileName in the testReader.</p>
-<p>Create a dicom ImageIO and set it in the testReader.</p>
-<p>Set the name of the 2D dicom image in the testReader.</p>
-<p>Generate all information.</p>
-<p>Extract the ImageIO from the testReader.</p>
-<p>Get the component type, number of components, dimension and pixel type.</p>
-<p>TASK 3: Do some preparations. *******************************************************************</p>
-<p>Check inputPixelType.</p>
-<p>In this case an illegal inputPixelComponentType is found.</p>
-<p>Check outputPixelType.</p>
-<p>In this case this option is not given, and by default we set it to the inputPixelComponentType.</p>
-<p>Get rid of the "_" in inputPixelComponentType and outputPixelComponentType.</p>
-<p>TASK 4: Now we are ready to check on image type and subsequently call the correct ReadCastWrite-function. *******************************************************************</p>
-<p>****************** Support for SCALAR pixel types. **********************************</p>
-<p>****************** Support for multi-component pixel types. **********************************</p>
-<p>In this case input is a DICOM series, from which we only support SCALAR pixel types, with component type: DICOMImageIO2: (unsigned) char, (unsigned) short, float GDCMImageIO: (unsigned) char, (unsigned) short, (unsigned) int, double It is also assumed that the dicom series consist of multiple 2D images forming a 3D image.</p>
-<p>If any errors have occurred, catch and print the exception and return false.</p>
-<p>End program. Return success. </p>
-</p>
+<p>Functions to do the actual conversion. </p>
 
 </div>
 </div>
@@ -405,7 +327,7 @@ Functions</h2></td></tr>
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Defines</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -414,7 +336,7 @@ Functions</h2></td></tr>
 </iframe>
 </div>
 
-<hr class="footer"/><address class="footer"><small>Generated on Sat Apr 30 2011 by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Wed May 4 2011 by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>

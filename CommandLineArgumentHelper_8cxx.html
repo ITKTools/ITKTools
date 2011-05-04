@@ -17,7 +17,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
@@ -47,42 +47,29 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <div class="header">
   <div class="summary">
-<a href="#define-members">Defines</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">src/common/CommandLineArgumentHelper.cxx File Reference</div>  </div>
 </div>
 <div class="contents">
-<div class="textblock"><code>#include &quot;CommandLineArgumentHelper.h&quot;</code><br/>
-<code>#include &quot;itkImageFileReader.h&quot;</code><br/>
-</div><table class="memberdecls">
-<tr><td colspan="2"><h2><a name="define-members"></a>
-Defines</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CommandLineArgumentHelper_8cxx.html#ac2d3a9de4026db9731e450d99c99118e">__CommandLineArgumentHelper_cxx</a></td></tr>
+<table class="memberdecls">
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CommandLineArgumentHelper_8cxx.html#ac913a5a25e3c329aa945fa7389eef417">ReplaceUnderscoreWithSpace</a> (std::string &amp;arg)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CommandLineArgumentHelper_8cxx.html#aafeae018a7849cdefb5546c054ea81dc">ReplaceSpaceWithUnderscore</a> (std::string &amp;arg)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CommandLineArgumentHelper_8cxx.html#ac7f22032e74c091e6a7e6c9fdebe93b7">RemoveUnsignedFromString</a> (std::string &amp;arg)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CommandLineArgumentHelper_8cxx.html#a47f3c207e59dba2f0ec495a9e3dacafe">CheckForValidComponentType</a> (const std::string &amp;arg)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CommandLineArgumentHelper_8cxx.html#a328c0ed2e5fc673c88d73722bc520e7e">GetImageProperties</a> (const std::string &amp;filename, std::string &amp;pixeltype, std::string &amp;componenttype, unsigned int &amp;dimension, unsigned int &amp;numberofcomponents, std::vector&lt; unsigned int &gt; &amp;imagesize)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CommandLineArgumentHelper_8cxx.html#a43fd6dedceb6dc2f7a2139d19a133208">GetImageProperties</a> (const std::string &amp;filename, std::string &amp;pixeltype, std::string &amp;componenttype, unsigned int &amp;dimension, unsigned int &amp;numberofcomponents, std::vector&lt; unsigned int &gt; &amp;imagesize, std::vector&lt; double &gt; &amp;imagespacing, std::vector&lt; double &gt; &amp;imageoffset)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CommandLineArgumentHelper_8cxx.html#ae178c877d909c25036925f8f1dc92c4f">GetImageProperties</a> (const std::string &amp;filename, std::string &amp;pixelTypeAsString, std::string &amp;componentTypeAsString, unsigned int &amp;dimension, unsigned int &amp;numberOfComponents, std::vector&lt; unsigned int &gt; &amp;size)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CommandLineArgumentHelper_8cxx.html#ac2352c91b3b587f92b8eb9446a4cd7de">GetImageProperties</a> (const std::string &amp;filename, std::string &amp;pixelTypeAsString, std::string &amp;componentTypeAsString, unsigned int &amp;dimension, unsigned int &amp;numberOfComponents, std::vector&lt; unsigned int &gt; &amp;size, std::vector&lt; double &gt; &amp;spacing, std::vector&lt; double &gt; &amp;origin, std::vector&lt; double &gt; &amp;direction)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CommandLineArgumentHelper_8cxx.html#a32ff5aad2eab2994d07ad748525cb956">GetImageProperties</a> (const std::string &amp;filename, itk::ImageIOBase::Pointer &amp;testImageIOBase)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CommandLineArgumentHelper_8cxx.html#ac714f3d0f389391cc142b91394fba62d">FillImageIOBase</a> (itk::ImageIOBase::Pointer &amp;imageIOBase, const std::string &amp;pixelTypeAsString, const std::string &amp;componentTypeAsString, const unsigned int &amp;imageDimension, const unsigned int &amp;numberOfComponents, const std::vector&lt; unsigned int &gt; &amp;size, const std::vector&lt; double &gt; &amp;spacing, const std::vector&lt; double &gt; &amp;origin, const std::vector&lt; double &gt; &amp;direction)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CommandLineArgumentHelper_8cxx.html#a4ac1d8d31ac2a036bca4d2cb15ebcc2a">GetImageInformationFromImageIOBase</a> (const itk::ImageIOBase::Pointer &amp;imageIOBase, std::string &amp;pixelTypeAsString, std::string &amp;componentTypeAsString, unsigned int &amp;imageDimension, unsigned int &amp;numberOfComponents, std::vector&lt; unsigned int &gt; &amp;size, std::vector&lt; double &gt; &amp;spacing, std::vector&lt; double &gt; &amp;origin, std::vector&lt; double &gt; &amp;direction)</td></tr>
+<tr><td class="memTemplParams" colspan="2">template&lt;unsigned int Dimension&gt; </td></tr>
+<tr><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="CommandLineArgumentHelper_8cxx.html#af556689e0a6b79d83a433241f3bed27a">ConvertImageInformationToITKTypes</a> (const std::vector&lt; unsigned int &gt; &amp;size, const std::vector&lt; double &gt; &amp;spacing, const std::vector&lt; double &gt; &amp;origin, const std::vector&lt; double &gt; &amp;direction, typename itk::ImageBase&lt; Dimension &gt;::SizeType sizeITK, typename itk::ImageBase&lt; Dimension &gt;::SpacingType spacingITK, typename itk::ImageBase&lt; Dimension &gt;::PointType originITK, typename itk::ImageBase&lt; Dimension &gt;::DirectionType directionITK)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CommandLineArgumentHelper_8cxx.html#ab844aaa78e595a264419b867b83cb1a7">ConvertImageInformationToITKTypes&lt; 2 &gt;</a> (const std::vector&lt; unsigned int &gt; &amp;size, const std::vector&lt; double &gt; &amp;spacing, const std::vector&lt; double &gt; &amp;origin, const std::vector&lt; double &gt; &amp;direction, itk::ImageBase&lt; 2 &gt;::SizeType sizeITK, itk::ImageBase&lt; 2 &gt;::SpacingType spacingITK, itk::ImageBase&lt; 2 &gt;::PointType originITK, itk::ImageBase&lt; 2 &gt;::DirectionType directionITK)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CommandLineArgumentHelper_8cxx.html#aa8d658dea16053d98f763bc99e2454ef">ConvertImageInformationToITKTypes&lt; 3 &gt;</a> (const std::vector&lt; unsigned int &gt; &amp;size, const std::vector&lt; double &gt; &amp;spacing, const std::vector&lt; double &gt; &amp;origin, const std::vector&lt; double &gt; &amp;direction, itk::ImageBase&lt; 3 &gt;::SizeType sizeITK, itk::ImageBase&lt; 3 &gt;::SpacingType spacingITK, itk::ImageBase&lt; 3 &gt;::PointType originITK, itk::ImageBase&lt; 3 &gt;::DirectionType directionITK)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="CommandLineArgumentHelper_8cxx.html#a4001e2439d4cf4239d3bfb5b360352fa">GetLargestComponentType</a> (const std::string &amp;type1, const std::string &amp;type2)</td></tr>
 </table>
-<hr/><h2>Define Documentation</h2>
-<a class="anchor" id="ac2d3a9de4026db9731e450d99c99118e"></a><!-- doxytag: member="CommandLineArgumentHelper.cxx::__CommandLineArgumentHelper_cxx" ref="ac2d3a9de4026db9731e450d99c99118e" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define __CommandLineArgumentHelper_cxx</td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-</div>
-</div>
 <hr/><h2>Function Documentation</h2>
 <a class="anchor" id="a47f3c207e59dba2f0ec495a9e3dacafe"></a><!-- doxytag: member="CommandLineArgumentHelper.cxx::CheckForValidComponentType" ref="a47f3c207e59dba2f0ec495a9e3dacafe" args="(const std::string &amp;arg)" -->
 <div class="memitem">
@@ -105,45 +92,59 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a328c0ed2e5fc673c88d73722bc520e7e"></a><!-- doxytag: member="CommandLineArgumentHelper.cxx::GetImageProperties" ref="a328c0ed2e5fc673c88d73722bc520e7e" args="(const std::string &amp;filename, std::string &amp;pixeltype, std::string &amp;componenttype, unsigned int &amp;dimension, unsigned int &amp;numberofcomponents, std::vector&lt; unsigned int &gt; &amp;imagesize)" -->
+<a class="anchor" id="af556689e0a6b79d83a433241f3bed27a"></a><!-- doxytag: member="CommandLineArgumentHelper.cxx::ConvertImageInformationToITKTypes" ref="af556689e0a6b79d83a433241f3bed27a" args="(const std::vector&lt; unsigned int &gt; &amp;size, const std::vector&lt; double &gt; &amp;spacing, const std::vector&lt; double &gt; &amp;origin, const std::vector&lt; double &gt; &amp;direction, typename itk::ImageBase&lt; Dimension &gt;::SizeType sizeITK, typename itk::ImageBase&lt; Dimension &gt;::SpacingType spacingITK, typename itk::ImageBase&lt; Dimension &gt;::PointType originITK, typename itk::ImageBase&lt; Dimension &gt;::DirectionType directionITK)" -->
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;unsigned int Dimension&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">int GetImageProperties </td>
+          <td class="memname">void ConvertImageInformationToITKTypes </td>
           <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>filename</em>, </td>
+          <td class="paramtype">const std::vector&lt; unsigned int &gt; &amp;&#160;</td>
+          <td class="paramname"><em>size</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::string &amp;&#160;</td>
-          <td class="paramname"><em>pixeltype</em>, </td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>spacing</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::string &amp;&#160;</td>
-          <td class="paramname"><em>componenttype</em>, </td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>origin</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">unsigned int &amp;&#160;</td>
-          <td class="paramname"><em>dimension</em>, </td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>direction</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">unsigned int &amp;&#160;</td>
-          <td class="paramname"><em>numberofcomponents</em>, </td>
+          <td class="paramtype">typename itk::ImageBase&lt; Dimension &gt;::SizeType&#160;</td>
+          <td class="paramname"><em>sizeITK</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::vector&lt; unsigned int &gt; &amp;&#160;</td>
-          <td class="paramname"><em>imagesize</em>&#160;</td>
+          <td class="paramtype">typename itk::ImageBase&lt; Dimension &gt;::SpacingType&#160;</td>
+          <td class="paramname"><em>spacingITK</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename itk::ImageBase&lt; Dimension &gt;::PointType&#160;</td>
+          <td class="paramname"><em>originITK</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename itk::ImageBase&lt; Dimension &gt;::DirectionType&#160;</td>
+          <td class="paramname"><em>directionITK</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -153,23 +154,291 @@ Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<p>***************** GetImageProperties ************************ </p>
+<p>*************** ConvertImageInformationToITKTypes *********************** </p>
 
-<p><p>Dummy image type.</p>
-<p>Test reader</p>
-<p>Image header information class</p>
-<p>Create a testReader.</p>
-<p>Generate all information.</p>
-<p>Extract the ImageIO from the testReader.</p>
-<p>Get the component type, number of components, dimension and pixel type.</p>
-<p>Get the image size.</p>
+</div>
+</div>
+<a class="anchor" id="ab844aaa78e595a264419b867b83cb1a7"></a><!-- doxytag: member="CommandLineArgumentHelper.cxx::ConvertImageInformationToITKTypes&lt; 2 &gt;" ref="ab844aaa78e595a264419b867b83cb1a7" args="(const std::vector&lt; unsigned int &gt; &amp;size, const std::vector&lt; double &gt; &amp;spacing, const std::vector&lt; double &gt; &amp;origin, const std::vector&lt; double &gt; &amp;direction, itk::ImageBase&lt; 2 &gt;::SizeType sizeITK, itk::ImageBase&lt; 2 &gt;::SpacingType spacingITK, itk::ImageBase&lt; 2 &gt;::PointType originITK, itk::ImageBase&lt; 2 &gt;::DirectionType directionITK)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void ConvertImageInformationToITKTypes&lt; 2 &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; unsigned int &gt; &amp;&#160;</td>
+          <td class="paramname"><em>size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>spacing</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>origin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>direction</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">itk::ImageBase&lt; 2 &gt;::SizeType&#160;</td>
+          <td class="paramname"><em>sizeITK</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">itk::ImageBase&lt; 2 &gt;::SpacingType&#160;</td>
+          <td class="paramname"><em>spacingITK</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">itk::ImageBase&lt; 2 &gt;::PointType&#160;</td>
+          <td class="paramname"><em>originITK</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">itk::ImageBase&lt; 2 &gt;::DirectionType&#160;</td>
+          <td class="paramname"><em>directionITK</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Instantiate for dimension 2 and 3. </p>
+
+</div>
+</div>
+<a class="anchor" id="aa8d658dea16053d98f763bc99e2454ef"></a><!-- doxytag: member="CommandLineArgumentHelper.cxx::ConvertImageInformationToITKTypes&lt; 3 &gt;" ref="aa8d658dea16053d98f763bc99e2454ef" args="(const std::vector&lt; unsigned int &gt; &amp;size, const std::vector&lt; double &gt; &amp;spacing, const std::vector&lt; double &gt; &amp;origin, const std::vector&lt; double &gt; &amp;direction, itk::ImageBase&lt; 3 &gt;::SizeType sizeITK, itk::ImageBase&lt; 3 &gt;::SpacingType spacingITK, itk::ImageBase&lt; 3 &gt;::PointType originITK, itk::ImageBase&lt; 3 &gt;::DirectionType directionITK)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void ConvertImageInformationToITKTypes&lt; 3 &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; unsigned int &gt; &amp;&#160;</td>
+          <td class="paramname"><em>size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>spacing</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>origin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>direction</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">itk::ImageBase&lt; 3 &gt;::SizeType&#160;</td>
+          <td class="paramname"><em>sizeITK</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">itk::ImageBase&lt; 3 &gt;::SpacingType&#160;</td>
+          <td class="paramname"><em>spacingITK</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">itk::ImageBase&lt; 3 &gt;::PointType&#160;</td>
+          <td class="paramname"><em>originITK</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">itk::ImageBase&lt; 3 &gt;::DirectionType&#160;</td>
+          <td class="paramname"><em>directionITK</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ac714f3d0f389391cc142b91394fba62d"></a><!-- doxytag: member="CommandLineArgumentHelper.cxx::FillImageIOBase" ref="ac714f3d0f389391cc142b91394fba62d" args="(itk::ImageIOBase::Pointer &amp;imageIOBase, const std::string &amp;pixelTypeAsString, const std::string &amp;componentTypeAsString, const unsigned int &amp;imageDimension, const unsigned int &amp;numberOfComponents, const std::vector&lt; unsigned int &gt; &amp;size, const std::vector&lt; double &gt; &amp;spacing, const std::vector&lt; double &gt; &amp;origin, const std::vector&lt; double &gt; &amp;direction)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void FillImageIOBase </td>
+          <td>(</td>
+          <td class="paramtype">itk::ImageIOBase::Pointer &amp;&#160;</td>
+          <td class="paramname"><em>imageIOBase</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>pixelTypeAsString</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>componentTypeAsString</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int &amp;&#160;</td>
+          <td class="paramname"><em>imageDimension</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int &amp;&#160;</td>
+          <td class="paramname"><em>numberOfComponents</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; unsigned int &gt; &amp;&#160;</td>
+          <td class="paramname"><em>size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>spacing</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>origin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>direction</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>***************** FillImageIOBase ************************ </p>
+
+<p><p>Set image dimensionality.</p>
+<p>Set pixel type.</p>
+<p>Set component type.</p>
+<p>Set size, spacing, origin.</p>
+<p>Set image direction / orientation. </p>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="a4ac1d8d31ac2a036bca4d2cb15ebcc2a"></a><!-- doxytag: member="CommandLineArgumentHelper.cxx::GetImageInformationFromImageIOBase" ref="a4ac1d8d31ac2a036bca4d2cb15ebcc2a" args="(const itk::ImageIOBase::Pointer &amp;imageIOBase, std::string &amp;pixelTypeAsString, std::string &amp;componentTypeAsString, unsigned int &amp;imageDimension, unsigned int &amp;numberOfComponents, std::vector&lt; unsigned int &gt; &amp;size, std::vector&lt; double &gt; &amp;spacing, std::vector&lt; double &gt; &amp;origin, std::vector&lt; double &gt; &amp;direction)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool GetImageInformationFromImageIOBase </td>
+          <td>(</td>
+          <td class="paramtype">const itk::ImageIOBase::Pointer &amp;&#160;</td>
+          <td class="paramname"><em>imageIOBase</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string &amp;&#160;</td>
+          <td class="paramname"><em>pixelTypeAsString</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string &amp;&#160;</td>
+          <td class="paramname"><em>componentTypeAsString</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int &amp;&#160;</td>
+          <td class="paramname"><em>imageDimension</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int &amp;&#160;</td>
+          <td class="paramname"><em>numberOfComponents</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; unsigned int &gt; &amp;&#160;</td>
+          <td class="paramname"><em>size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>spacing</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>origin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>direction</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>***************** GetImageInformationFromImageIOBase ************************ </p>
+
+<p><p>Get the component type, number of components, dimension and pixel type.</p>
+<p>Get the image size, spacing, origin.</p>
 <p>Check inputPixelType.</p>
 <p>In this case an illegal pixeltype is found. </p>
 </p>
 
 </div>
 </div>
-<a class="anchor" id="a43fd6dedceb6dc2f7a2139d19a133208"></a><!-- doxytag: member="CommandLineArgumentHelper.cxx::GetImageProperties" ref="a43fd6dedceb6dc2f7a2139d19a133208" args="(const std::string &amp;filename, std::string &amp;pixeltype, std::string &amp;componenttype, unsigned int &amp;dimension, unsigned int &amp;numberofcomponents, std::vector&lt; unsigned int &gt; &amp;imagesize, std::vector&lt; double &gt; &amp;imagespacing, std::vector&lt; double &gt; &amp;imageoffset)" -->
+<a class="anchor" id="ae178c877d909c25036925f8f1dc92c4f"></a><!-- doxytag: member="CommandLineArgumentHelper.cxx::GetImageProperties" ref="ae178c877d909c25036925f8f1dc92c4f" args="(const std::string &amp;filename, std::string &amp;pixelTypeAsString, std::string &amp;componentTypeAsString, unsigned int &amp;dimension, unsigned int &amp;numberOfComponents, std::vector&lt; unsigned int &gt; &amp;size)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -183,13 +452,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">std::string &amp;&#160;</td>
-          <td class="paramname"><em>pixeltype</em>, </td>
+          <td class="paramname"><em>pixelTypeAsString</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">std::string &amp;&#160;</td>
-          <td class="paramname"><em>componenttype</em>, </td>
+          <td class="paramname"><em>componentTypeAsString</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -201,25 +470,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">unsigned int &amp;&#160;</td>
-          <td class="paramname"><em>numberofcomponents</em>, </td>
+          <td class="paramname"><em>numberOfComponents</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">std::vector&lt; unsigned int &gt; &amp;&#160;</td>
-          <td class="paramname"><em>imagesize</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
-          <td class="paramname"><em>imagespacing</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
-          <td class="paramname"><em>imageoffset</em>&#160;</td>
+          <td class="paramname"><em>size</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -237,10 +494,120 @@ Functions</h2></td></tr>
 <p>Create a testReader.</p>
 <p>Generate all information.</p>
 <p>Extract the ImageIO from the testReader.</p>
-<p>Get the component type, number of components, dimension and pixel type.</p>
-<p>Get the image size.</p>
-<p>Check inputPixelType.</p>
-<p>In this case an illegal pixeltype is found. </p>
+<p>Extract information from the ImageIOBase. </p>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="a32ff5aad2eab2994d07ad748525cb956"></a><!-- doxytag: member="CommandLineArgumentHelper.cxx::GetImageProperties" ref="a32ff5aad2eab2994d07ad748525cb956" args="(const std::string &amp;filename, itk::ImageIOBase::Pointer &amp;testImageIOBase)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool GetImageProperties </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>filename</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">itk::ImageIOBase::Pointer &amp;&#160;</td>
+          <td class="paramname"><em>testImageIOBase</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>***************** GetImageProperties ************************ </p>
+
+<p><p>Dummy image type.</p>
+<p>Create a testReader.</p>
+<p>Generate all information.</p>
+<p>Extract the ImageIO from the testReader. </p>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="ac2352c91b3b587f92b8eb9446a4cd7de"></a><!-- doxytag: member="CommandLineArgumentHelper.cxx::GetImageProperties" ref="ac2352c91b3b587f92b8eb9446a4cd7de" args="(const std::string &amp;filename, std::string &amp;pixelTypeAsString, std::string &amp;componentTypeAsString, unsigned int &amp;dimension, unsigned int &amp;numberOfComponents, std::vector&lt; unsigned int &gt; &amp;size, std::vector&lt; double &gt; &amp;spacing, std::vector&lt; double &gt; &amp;origin, std::vector&lt; double &gt; &amp;direction)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int GetImageProperties </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>filename</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string &amp;&#160;</td>
+          <td class="paramname"><em>pixelTypeAsString</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string &amp;&#160;</td>
+          <td class="paramname"><em>componentTypeAsString</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int &amp;&#160;</td>
+          <td class="paramname"><em>dimension</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int &amp;&#160;</td>
+          <td class="paramname"><em>numberOfComponents</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; unsigned int &gt; &amp;&#160;</td>
+          <td class="paramname"><em>size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>spacing</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>origin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>direction</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>***************** GetImageProperties ************************ </p>
+
+<p><p>Dummy image type.</p>
+<p>Test reader</p>
+<p>Image header information class</p>
+<p>Create a testReader.</p>
+<p>Generate all information.</p>
+<p>Extract the ImageIO from the testReader.</p>
+<p>Extract information from the ImageIOBase. </p>
 </p>
 
 </div>
@@ -346,7 +713,7 @@ Functions</h2></td></tr>
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Defines</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -355,7 +722,7 @@ Functions</h2></td></tr>
 </iframe>
 </div>
 
-<hr class="footer"/><address class="footer"><small>Generated on Sat Apr 30 2011 by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Wed May 4 2011 by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>

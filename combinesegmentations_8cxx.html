@@ -17,8 +17,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="annotated.html"><span>Classes</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -52,35 +51,53 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">src/combinesegmentations/combinesegmentations.cxx File Reference</div>  </div>
 </div>
 <div class="contents">
-<div class="textblock"><code>#include &quot;itkCommandLineArgumentParser.h&quot;</code><br/>
-<code>#include &quot;CommandLineArgumentHelper.h&quot;</code><br/>
-<code>#include &lt;string&gt;</code><br/>
-<code>#include &lt;vector&gt;</code><br/>
-<code>#include &quot;itkImage.h&quot;</code><br/>
-<code>#include &quot;itkExceptionObject.h&quot;</code><br/>
-<code>#include &quot;itkImageFileReader.h&quot;</code><br/>
-<code>#include &quot;itkImageFileWriter.h&quot;</code><br/>
-<code>#include &quot;itkSTAPLEImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkLabelVoting2ImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkMultiLabelSTAPLEImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkMultiLabelSTAPLE2ImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkInvertIntensityImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkBinaryThresholdImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkImageRegionIteratorWithIndex.h&quot;</code><br/>
-<code>#include &quot;itkNaryUnequalityTestImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkBinaryDilateImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkBinaryBallStructuringElement.h&quot;</code><br/>
-<code>#include &quot;itkChangeLabelImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkMultiThreader.h&quot;</code><br/>
-</div><table class="memberdecls">
+
+<p>This program combines multiple segmentations into one.  
+<a href="#details">More...</a></p>
+<table class="memberdecls">
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr><td class="memTemplParams" colspan="2">template&lt;unsigned int NDimensions&gt; </td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="combinesegmentations_8cxx.html#a35df7483d03fbada6f0b0e081937b946">CombineSegmentations</a> (const std::vector&lt; std::string &gt; &amp;inputSegmentationFileNames, const std::vector&lt; std::string &gt; &amp;priorProbImageFileNames, const std::vector&lt; std::string &gt; &amp;softOutputFileNames, const std::string &amp;hardOutputFileName, const std::string &amp;confusionOutputFileName, unsigned char numberOfClasses, const std::vector&lt; float &gt; &amp;priorProbs, const std::vector&lt; float &gt; &amp;trust, float terminationThreshold, const std::string &amp;combinationMethod, bool useMask, unsigned int maskDilationRadius, const std::vector&lt; unsigned int &gt; &amp;prefOrder, const std::vector&lt; unsigned int &gt; &amp;inValues, const std::vector&lt; unsigned int &gt; &amp;outValues)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="combinesegmentations_8cxx.html#a21377f0653d476392ed1160cd6b61665">PrintHelp</a> (void)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="combinesegmentations_8cxx.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a> (int argc, char **argv)</td></tr>
 </table>
-<hr/><h2>Function Documentation</h2>
+<hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
+<div class="textblock"><p>This program combines multiple segmentations into one. </p>
+<div class="fragment"><pre class="fragment">This program combines multiple segmentations into one.
+   Usage:
+   pxcombinesegmentations     [-m]     {STAPLE, VOTE, MULTISTAPLE, MULTISTAPLE2, VOTE_MULTISTAPLE2}:
+              the method used to combine the segmentations. default: MULTISTAPLE2.
+              VOTE_MULTISTAPLE2 is in fact just VOTE followed by MULTISTAPLE2.     -in      inputFilename0 [inputFileName1 ... ]: the input segmentations,
+              as unsigned char images. More than 2 labels are allowed, but
+              with some restrictions: {0,1,2}=ok, {0,3,4}=bad, {1,2,3}=bad.     [-n]     numberOfClasses: the number of classes to segment;
+              default: 2 (so, 0 and 1).     [-P]     priorProbImageFilename0 priorProbImageFilename1 [...]:
+              the names of the prior probabilities for each class, stored as float images.
+              This has only effect when using [VOTE_]MULTISTAPLE2.     [-p]     priorProb0 priorProb1 [...]:
+              the prior probabilities for each class, independent of x, so a floating point
+              number for each class. This parameter is ignored when "-P" is provided as well.
+              For VOTE this parameter is ignored. For STAPLE, this number is considered
+              as a factor which is multiplied with the estimated prior probability.
+              For MULTISTAPLE[2], the number is really the prior probability.
+              If -p and -P are not provided, the prior probs are estimated from the data.     [-t]     trust0 [trust1 ...]: a factor between 0 and 1 indicating the 'trust' in each observer;
+              default: 0.99999 for each observer for [VOTE_]MULTISTAPLE2. 1.0 for VOTE.
+              Ignored by STAPLE and MULTISTAPLE; they estimate it by majority voting.     [-e]     termination threshold: a small float. the smaller the more accurate the solution;
+              default: 1e-5. Ignored by STAPLE and VOTE.     [-outs]  outputFilename0 outputFileName1 [...]: the output (soft) probabilistic
+              segmentations for each label. These will be float images.     [-outh]  outputFilename: the output hard segmentation, stored as a single
+              unsigned char image, containing the label numbers.
+              The value 'numberOfClasses' corresponds to 'undecided' (if two labels
+              are exactly equally likely).     [-outc]  confusionImageFileName: 3d float image, in which each slice resembles
+              the confusion matrix for each observer. The x-axis corresponds to the
+              real label, the y-axis corresponds to the label given by the observer.     [-mask]  [maskDilationRadius]: Use a mask if this flag is provided.
+              Only taken into account by [VOTE_]MULTISTAPLE2 and VOTE.
+              The mask is 0 at those pixels were the decision is unanimous, and 1 elsewhere.
+              A dilation is performed with a kernel with radius maskDilationRadius (default:1)
+              Pixels that are outside the mask, will have class of the first observer.
+              Other pixels are passed through the combination algorithm.
+              The confusion matrix will be only based on the pixels within the mask.     [-ord]   The order of preferred classes, in cases of undecided pixels. Default: 0 1 2...
+              Ignored by STAPLE and MULTISTAPLE. In the default case, class 0 will be
+              preferred over class 1, for example.     [-iv]    inputlabels for relabeling     [-ov]    outputlabels for relabeling. Each input label is replaced by the corresponding
+              output label, before the combinationMethod is invoked. NumberOfClasses should be
+              valid for the situation after relabeling!   Supported: 2D/3D.
+</pre></div> </div><hr/><h2>Function Documentation</h2>
 <a class="anchor" id="a35df7483d03fbada6f0b0e081937b946"></a><!-- doxytag: member="combinesegmentations.cxx::CombineSegmentations" ref="a35df7483d03fbada6f0b0e081937b946" args="(const std::vector&lt; std::string &gt; &amp;inputSegmentationFileNames, const std::vector&lt; std::string &gt; &amp;priorProbImageFileNames, const std::vector&lt; std::string &gt; &amp;softOutputFileNames, const std::string &amp;hardOutputFileName, const std::string &amp;confusionOutputFileName, unsigned char numberOfClasses, const std::vector&lt; float &gt; &amp;priorProbs, const std::vector&lt; float &gt; &amp;trust, float terminationThreshold, const std::string &amp;combinationMethod, bool useMask, unsigned int maskDilationRadius, const std::vector&lt; unsigned int &gt; &amp;prefOrder, const std::vector&lt; unsigned int &gt; &amp;inValues, const std::vector&lt; unsigned int &gt; &amp;outValues)" -->
 <div class="memitem">
 <div class="memproto">
@@ -240,80 +257,13 @@ template&lt;unsigned int NDimensions&gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a3c04138a5bfe5d72780bb7e82a18e627"></a><!-- doxytag: member="combinesegmentations.cxx::main" ref="a3c04138a5bfe5d72780bb7e82a18e627" args="(int argc, char **argv)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int main </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>argc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">char **&#160;</td>
-          <td class="paramname"><em>argv</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p><p>Check arguments for help.</p>
-<p>Create a command line argument parser.</p>
-<p>Get the combination method (mandatory)</p>
-<p>Get the input segmentation file names (mandatory).</p>
-<p>Get the settings for the change label image filter (not mandatory)</p>
-<p>Get the number of classes to segment (not mandatory)</p>
-<p>Get the prior probability images (not mandatory)</p>
-<p>Get the prior probabilities (not mandatory)</p>
-<p>Get the trust factor for each observer (not mandatory)</p>
-<p>Get the number of classes to segment (not mandatory)</p>
-<p>Get the outputFileNames</p>
-<p>Use mask or not? If yes, read the maskDilationRadius.</p>
-<p>Read the preferred order of classes in case of undecided pixels</p>
-<p>Threads.</p>
-<p>Determine image properties.</p>
-<p>Do not bother the user with the difference between pixeltype and componenttype:</p>
-<p>This is the easiest way to make sure that the input labels are in the valid range 0 - 127. Leads to crashes in case of short input with high values otherwise.</p>
-<p>Run the program.</p>
-<p>End program. </p>
-</p>
-
-</div>
-</div>
-<a class="anchor" id="a21377f0653d476392ed1160cd6b61665"></a><!-- doxytag: member="combinesegmentations.cxx::PrintHelp" ref="a21377f0653d476392ed1160cd6b61665" args="(void)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void PrintHelp </td>
-          <td>(</td>
-          <td class="paramtype">void&#160;</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Declare PrintHelp.</p>
-<p>******************* PrintHelp ******************* </p>
-
-</div>
-</div>
 </div>
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Defines</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -322,7 +272,7 @@ template&lt;unsigned int NDimensions&gt; </div>
 </iframe>
 </div>
 
-<hr class="footer"/><address class="footer"><small>Generated on Sat Apr 30 2011 by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Wed May 4 2011 by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>

@@ -17,8 +17,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="annotated.html"><span>Classes</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -52,60 +51,19 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">src/morphology/morphology.cxx File Reference</div>  </div>
 </div>
 <div class="contents">
-<div class="textblock"><code>#include &quot;itkCommandLineArgumentParser.h&quot;</code><br/>
-<code>#include &quot;CommandLineArgumentHelper.h&quot;</code><br/>
-<code>#include &quot;mainhelper1.h&quot;</code><br/>
-<code>#include &lt;itksys/SystemTools.hxx&gt;</code><br/>
-</div><table class="memberdecls">
+
+<p>Perform a morphological operation on an image.  
+<a href="#details">More...</a></p>
+<table class="memberdecls">
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="morphology_8cxx.html#ab9e01c42f11815e402ec4232bc04fda4">Morphology2D</a> (const std::string &amp;componentType, const unsigned int &amp;Dimension, const std::string &amp;inputFileName, const std::string &amp;outputFileName, const std::string &amp;operation, const std::string &amp;type, const std::string &amp;boundaryCondition, const std::vector&lt; unsigned int &gt; &amp;radius, const std::vector&lt; std::string &gt; &amp;bin, const int &amp;algorithm, const bool useCompression)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="morphology_8cxx.html#ab3c05aab03c47dd154e95645255c57bd">Morphology3D</a> (const std::string &amp;componentType, const unsigned int &amp;Dimension, const std::string &amp;inputFileName, const std::string &amp;outputFileName, const std::string &amp;operation, const std::string &amp;type, const std::string &amp;boundaryCondition, const std::vector&lt; unsigned int &gt; &amp;radius, const std::vector&lt; std::string &gt; &amp;bin, const int &amp;algorithm, const bool useCompression)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="morphology_8cxx.html#a0ddf1224851353fc92bfbff6f499fa97">main</a> (int argc, char *argv[])</td></tr>
 </table>
-<hr/><h2>Function Documentation</h2>
-<a class="anchor" id="a0ddf1224851353fc92bfbff6f499fa97"></a><!-- doxytag: member="morphology.cxx::main" ref="a0ddf1224851353fc92bfbff6f499fa97" args="(int argc, char *argv[])" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int main </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>argc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">char *&#160;</td>
-          <td class="paramname"><em>argv</em>[]&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p><p>Check arguments for help.</p>
-<p>Create a command line argument parser.</p>
-<p>Get arguments.</p>
-<p>Check if the required arguments are given.</p>
-<p>Check for valid input options.</p>
-<p>Determine image properties.</p>
-<p>Let the user overrule this</p>
-<p>Get rid of the possible "_" in ComponentType.</p>
-<p>Check radius.</p>
-<p>Get the radius.</p>
-<p>Run the program.</p>
-<p>Check if this image type was supported.</p>
-<p>End program. </p>
-</p>
-
-</div>
-</div>
+<hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
+<div class="textblock"><p>Perform a morphological operation on an image. </p>
+<div class="fragment"><pre class="fragment">No help text provided.
+</pre></div> </div><hr/><h2>Function Documentation</h2>
 <a class="anchor" id="ab9e01c42f11815e402ec4232bc04fda4"></a><!-- doxytag: member="morphology.cxx::Morphology2D" ref="ab9e01c42f11815e402ec4232bc04fda4" args="(const std::string &amp;componentType, const unsigned int &amp;Dimension, const std::string &amp;inputFileName, const std::string &amp;outputFileName, const std::string &amp;operation, const std::string &amp;type, const std::string &amp;boundaryCondition, const std::vector&lt; unsigned int &gt; &amp;radius, const std::vector&lt; std::string &gt; &amp;bin, const int &amp;algorithm, const bool useCompression)" -->
 <div class="memitem">
 <div class="memproto">
@@ -184,14 +142,6 @@ Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-
-<p><p>Erosion.</p>
-<p>Dilation.</p>
-<p>Opening.</p>
-<p>Closing.</p>
-<p>Gradient.</p>
-<p>Return a value. </p>
-</p>
 
 </div>
 </div>
@@ -274,14 +224,6 @@ Functions</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p><p>Erosion.</p>
-<p>Dilation.</p>
-<p>Opening.</p>
-<p>Closing.</p>
-<p>Gradient.</p>
-<p>Return a value. </p>
-</p>
-
 </div>
 </div>
 </div>
@@ -290,7 +232,7 @@ Functions</h2></td></tr>
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Defines</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -299,7 +241,7 @@ Functions</h2></td></tr>
 </iframe>
 </div>
 
-<hr class="footer"/><address class="footer"><small>Generated on Sat Apr 30 2011 by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Wed May 4 2011 by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>

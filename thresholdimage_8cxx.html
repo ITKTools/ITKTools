@@ -17,8 +17,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="annotated.html"><span>Classes</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -47,28 +46,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <div class="header">
   <div class="summary">
-<a href="#define-members">Defines</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">src/thresholdimage/thresholdimage.cxx File Reference</div>  </div>
 </div>
 <div class="contents">
-<div class="textblock"><code>#include &quot;itkCommandLineArgumentParser.h&quot;</code><br/>
-<code>#include &quot;CommandLineArgumentHelper.h&quot;</code><br/>
-<code>#include &quot;itkImageFileReader.h&quot;</code><br/>
-<code>#include &quot;itkImageFileWriter.h&quot;</code><br/>
-<code>#include &quot;itkGradientMagnitudeRecursiveGaussianImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkBinaryThresholdImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkOtsuThresholdWithMaskImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkOtsuMultipleThresholdsImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkAdaptiveOtsuThresholdImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkRobustAutomaticThresholdImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkKappaSigmaThresholdImageFilter.h&quot;</code><br/>
-<code>#include &quot;itkMinErrorThresholdImageFilter.h&quot;</code><br/>
-</div><table class="memberdecls">
-<tr><td colspan="2"><h2><a name="define-members"></a>
-Defines</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="thresholdimage_8cxx.html#ad7a0ffcf077a5978e48ad004f5767d01">run</a>(function, type, dim)</td></tr>
+
+<p>Threshold an image.  
+<a href="#details">More...</a></p>
+<table class="memberdecls">
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr><td class="memTemplParams" colspan="2">template&lt;class InputImageType &gt; </td></tr>
@@ -83,47 +69,37 @@ Functions</h2></td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="thresholdimage_8cxx.html#adaa4c77dac6288d152fd9f671af4795d">KappaSigmaThresholdImage</a> (const std::string &amp;inputFileName, const std::string &amp;outputFileName, const std::string &amp;maskFileName, const double &amp;inside, const double &amp;outside, const unsigned int &amp;maskValue, const double &amp;sigma, const unsigned int &amp;iterations)</td></tr>
 <tr><td class="memTemplParams" colspan="2">template&lt;class InputImageType &gt; </td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="thresholdimage_8cxx.html#ac0013ac04c1f7fbe52725ebed84a7fcf">MinErrorThresholdImage</a> (const std::string &amp;inputFileName, const std::string &amp;outputFileName, const double &amp;inside, const double &amp;outside, const unsigned int &amp;bins, const unsigned int &amp;mixtureType)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="thresholdimage_8cxx.html#a21377f0653d476392ed1160cd6b61665">PrintHelp</a> (void)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="thresholdimage_8cxx.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a> (int argc, char **argv)</td></tr>
 <tr><td class="memTemplParams" colspan="2">template&lt;class InputImageType &gt; </td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="thresholdimage_8cxx.html#ad4bbfec4eb851b69b9ee9b17af8bd648">OtsuMultipleThresholdImage</a> (const std::string &amp;inputFileName, const std::string &amp;outputFileName, const std::string &amp;itkNotUsed(maskFileName), const double &amp;inside, const double &amp;outside, const unsigned int &amp;bins, const unsigned int &amp;numThresholds)</td></tr>
 </table>
-<hr/><h2>Define Documentation</h2>
-<a class="anchor" id="ad7a0ffcf077a5978e48ad004f5767d01"></a><!-- doxytag: member="thresholdimage.cxx::run" ref="ad7a0ffcf077a5978e48ad004f5767d01" args="(function, type, dim)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define run</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">function, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">type, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">dim&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>run: A macro to call a function. </p>
-
-</div>
-</div>
-<hr/><h2>Function Documentation</h2>
+<hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
+<div class="textblock"><p>Threshold an image. </p>
+<div class="fragment"><pre class="fragment">This program thresholds an image.
+   Usage:
+pxthresholdimage
+     -in        inputFilename
+     [-out]     outputFilename; default in + THRESHOLDED.mhd
+     [-mask]    maskFilename, optional for "OtsuThreshold",   required for "KappaSigmaThreshold"
+     [-m]       method, choose one of { Threshold, OtsuThreshold,   OtsuMultipleThreshold, AdaptiveOtsuThreshold, RobustAutomaticThreshold,   KappaSigmaThreshold, MinErrorThreshold }
+                default "Threshold"
+     [-t1]      lower threshold, for "Threshold", default -infinity
+     [-t2]      upper threshold, for "Threshold", default 1.0
+     [-inside]  inside value, default 1
+     [-outside] outside value, default 0
+     [-t]       number of thresholds, for "OtsuMultipleThreshold", default 1
+     [-b]       number of histogram bins, for "OtsuThreshold", "MinErrorThreshold"   and "AdaptiveOtsuThreshold", default 128
+     [-r]       radius, for "AdaptiveOtsuThreshold", default 8
+     [-cp]      number of control points, for "AdaptiveOtsuThreshold", default 50
+     [-l]       number of levels, for "AdaptiveOtsuThreshold", default 3
+     [-s]       number of samples, for "AdaptiveOtsuThreshold", default 5000
+     [-o]       spline order, for "AdaptiveOtsuThreshold", default 3
+     [-p]       power, for "RobustAutomaticThreshold", default 1
+     [-sigma]   sigma factor, for "KappaSigmaThreshold", default 2
+     [-iter]    number of iterations, for "KappaSigmaThreshold", default 2
+     [-mv]      mask value, for "KappaSigmaThreshold", default 1
+     [-mt]      mixture type (1 - Gaussians, 2 - Poissons), for "MinErrorThreshold", default 1
+   Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.
+</pre></div> </div><hr/><h2>Function Documentation</h2>
 <a class="anchor" id="adaa4c77dac6288d152fd9f671af4795d"></a><!-- doxytag: member="thresholdimage.cxx::KappaSigmaThresholdImage" ref="adaa4c77dac6288d152fd9f671af4795d" args="(const std::string &amp;inputFileName, const std::string &amp;outputFileName, const std::string &amp;maskFileName, const double &amp;inside, const double &amp;outside, const unsigned int &amp;maskValue, const double &amp;sigma, const unsigned int &amp;iterations)" -->
 <div class="memitem">
 <div class="memproto">
@@ -197,46 +173,6 @@ template&lt;class InputImageType &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a3c04138a5bfe5d72780bb7e82a18e627"></a><!-- doxytag: member="thresholdimage.cxx::main" ref="a3c04138a5bfe5d72780bb7e82a18e627" args="(int argc, char **argv)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int main </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>argc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">char **&#160;</td>
-          <td class="paramname"><em>argv</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p><p>Check arguments for help.</p>
-<p>Create a command line argument parser.</p>
-<p>Get arguments.</p>
-<p>Checks.</p>
-<p>Determine image properties.</p>
-<p>Check for vector images.</p>
-<p>Get rid of the possible "_" in ComponentType.</p>
-<p>Run the program.</p>
-<p>2D.</p>
-<p>3D.</p>
-<p>End program. </p>
-</p>
-
-</div>
-</div>
 <a class="anchor" id="ac0013ac04c1f7fbe52725ebed84a7fcf"></a><!-- doxytag: member="thresholdimage.cxx::MinErrorThresholdImage" ref="ac0013ac04c1f7fbe52725ebed84a7fcf" args="(const std::string &amp;inputFileName, const std::string &amp;outputFileName, const double &amp;inside, const double &amp;outside, const unsigned int &amp;bins, const unsigned int &amp;mixtureType)" -->
 <div class="memitem">
 <div class="memproto">
@@ -295,6 +231,65 @@ template&lt;class InputImageType &gt; </div>
 <p>Apply the threshold.</p>
 <p>Write the output image. </p>
 </p>
+
+</div>
+</div>
+<a class="anchor" id="ad2e2619bff9a4ccbc0704196c70c91a9"></a><!-- doxytag: member="thresholdimage.cxx::OtsuMultipleThresholdImage" ref="ad2e2619bff9a4ccbc0704196c70c91a9" args="(const std::string &amp;inputFileName, const std::string &amp;outputFileName, const std::string &amp;maskFileName, const double &amp;inside, const double &amp;outside, const unsigned int &amp;bins, const unsigned int &amp;numThresholds)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class InputImageType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void OtsuMultipleThresholdImage </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>inputFileName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>outputFileName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>maskFileName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double &amp;&#160;</td>
+          <td class="paramname"><em>inside</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double &amp;&#160;</td>
+          <td class="paramname"><em>outside</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int &amp;&#160;</td>
+          <td class="paramname"><em>bins</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const unsigned int &amp;&#160;</td>
+          <td class="paramname"><em>numThresholds</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
 
 </div>
 </div>
@@ -365,65 +360,6 @@ template&lt;class InputImageType &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="ad2e2619bff9a4ccbc0704196c70c91a9"></a><!-- doxytag: member="thresholdimage.cxx::OtsuMultipleThresholdImage" ref="ad2e2619bff9a4ccbc0704196c70c91a9" args="(const std::string &amp;inputFileName, const std::string &amp;outputFileName, const std::string &amp;maskFileName, const double &amp;inside, const double &amp;outside, const unsigned int &amp;bins, const unsigned int &amp;numThresholds)" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class InputImageType &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void OtsuMultipleThresholdImage </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>inputFileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>outputFileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>maskFileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const double &amp;&#160;</td>
-          <td class="paramname"><em>inside</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const double &amp;&#160;</td>
-          <td class="paramname"><em>outside</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const unsigned int &amp;&#160;</td>
-          <td class="paramname"><em>bins</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const unsigned int &amp;&#160;</td>
-          <td class="paramname"><em>numThresholds</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-</div>
-</div>
 <a class="anchor" id="af908ec504ecacc74e6216994005fd885"></a><!-- doxytag: member="thresholdimage.cxx::OtsuThresholdImage" ref="af908ec504ecacc74e6216994005fd885" args="(const std::string &amp;inputFileName, const std::string &amp;outputFileName, const std::string &amp;maskFileName, const double &amp;inside, const double &amp;outside, const unsigned int &amp;bins)" -->
 <div class="memitem">
 <div class="memproto">
@@ -482,25 +418,6 @@ template&lt;class InputImageType &gt; </div>
 <p>Apply the threshold.</p>
 <p>Write the output image. </p>
 </p>
-
-</div>
-</div>
-<a class="anchor" id="a21377f0653d476392ed1160cd6b61665"></a><!-- doxytag: member="thresholdimage.cxx::PrintHelp" ref="a21377f0653d476392ed1160cd6b61665" args="(void)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void PrintHelp </td>
-          <td>(</td>
-          <td class="paramtype">void&#160;</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Declare PrintHelp.</p>
-<p>******************* PrintHelp ******************* </p>
 
 </div>
 </div>
@@ -628,7 +545,7 @@ template&lt;class InputImageType &gt; </div>
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Defines</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -637,7 +554,7 @@ template&lt;class InputImageType &gt; </div>
 </iframe>
 </div>
 
-<hr class="footer"/><address class="footer"><small>Generated on Sat Apr 30 2011 by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Wed May 4 2011 by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>
