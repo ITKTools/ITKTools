@@ -17,7 +17,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -45,8 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <div class="header">
-  <div class="summary">
-<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">src/closestversor3Dtransform/closestversor3Dtransform.cxx File Reference</div>  </div>
 </div>
@@ -55,141 +52,22 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p>Calculates the closest rigid transform (VersorRigid3D) between two sets of landmarks. The two sets should be of equal size.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
-<tr><td colspan="2"><h2><a name="func-members"></a>
-Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="closestversor3Dtransform_8cxx.html#a6f6cb37e555508d481aad60f5342fc54">ComputeClosestVersor</a> (std::string fixedLandmarkFileName, std::string movingLandmarkFileName, std::vector&lt; double &gt; &amp;parameters, std::vector&lt; double &gt; &amp;centerOfRotation)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="closestversor3Dtransform_8cxx.html#a71d593b6b188db2e07c6decb3e6f23b7">ReadLandmarks</a> (std::string landmarkFileName, std::vector&lt; itk::Point&lt; double, 3 &gt; &gt; &amp;landmarkContainer)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="closestversor3Dtransform_8cxx.html#a7b16890be4d7a6a5afb8b1f648aeb1b3">ConvertVersorToEuler</a> (const std::vector&lt; double &gt; &amp;parVersor, std::vector&lt; double &gt; &amp;parEuler)</td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Calculates the closest rigid transform (VersorRigid3D) between two sets of landmarks. The two sets should be of equal size. </p>
-<div class="fragment"><pre class="fragment">Calculates the closest rigid transform (VersorRigid3D) between   two sets of landmarks. The two sets should be of equal size.   Usage:
-   pxclosestversor3Dtransform     -f       the file containing the fixed landmarks     -m       the file containing the moving landmarks
-</pre></div> </div><hr/><h2>Function Documentation</h2>
-<a class="anchor" id="a6f6cb37e555508d481aad60f5342fc54"></a><!-- doxytag: member="closestversor3Dtransform.cxx::ComputeClosestVersor" ref="a6f6cb37e555508d481aad60f5342fc54" args="(std::string fixedLandmarkFileName, std::string movingLandmarkFileName, std::vector&lt; double &gt; &amp;parameters, std::vector&lt; double &gt; &amp;centerOfRotation)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void ComputeClosestVersor </td>
-          <td>(</td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>fixedLandmarkFileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>movingLandmarkFileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
-          <td class="paramname"><em>parameters</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
-          <td class="paramname"><em>centerOfRotation</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>******************* ComputeClosestVersor ******************* </p>
-
-<p><p>Some consts.</p>
-<p>Typedefs.</p>
-<p>Read the fixed landmark points.</p>
-<p>Read the moving landmark points.</p>
-<p>Check the sizes.</p>
-<p>Create transform.</p>
-<p>Create estimator.</p>
-<p>Run.</p>
-<p>Get the parameters of the estimated closest rigid transformation.</p>
-<p>Get the estimated center of rotation. </p>
-</p>
-
-</div>
-</div>
-<a class="anchor" id="a7b16890be4d7a6a5afb8b1f648aeb1b3"></a><!-- doxytag: member="closestversor3Dtransform.cxx::ConvertVersorToEuler" ref="a7b16890be4d7a6a5afb8b1f648aeb1b3" args="(const std::vector&lt; double &gt; &amp;parVersor, std::vector&lt; double &gt; &amp;parEuler)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void ConvertVersorToEuler </td>
-          <td>(</td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;&#160;</td>
-          <td class="paramname"><em>parVersor</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
-          <td class="paramname"><em>parEuler</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>******************* ConvertVersorToEuler ******************* </p>
-
-<p><p>Create an Euler parameter vector.</p>
-<p>Easy notation.</p>
-<p>Computer Euler angles. </p>
-</p>
-
-</div>
-</div>
-<a class="anchor" id="a71d593b6b188db2e07c6decb3e6f23b7"></a><!-- doxytag: member="closestversor3Dtransform.cxx::ReadLandmarks" ref="a71d593b6b188db2e07c6decb3e6f23b7" args="(std::string landmarkFileName, std::vector&lt; itk::Point&lt; double, 3 &gt; &gt; &amp;landmarkContainer)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void ReadLandmarks </td>
-          <td>(</td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>landmarkFileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::vector&lt; itk::Point&lt; double, 3 &gt; &gt; &amp;&#160;</td>
-          <td class="paramname"><em>landmarkContainer</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>******************* ReadLandmarks ******************* </p>
-
-<p><p>Typedef's.</p>
-<p>Open file for reading and read landmarks. </p>
-</p>
-
-</div>
-</div>
-</div>
+<div class="fragment"><pre class="fragment">Calculates the closest rigid transform (VersorRigid3D) between
+two sets of landmarks. The two sets should be of equal size.
+Usage:
+pxclosestversor3Dtransform
+-f       the file containing the fixed landmarks
+-m       the file containing the moving landmarks
+</pre></div> </div></div>
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

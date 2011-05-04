@@ -17,7 +17,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -56,24 +55,37 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Compute a kappa statistic. </p>
-<div class="fragment"><pre class="fragment">Usage:   pxkappastatistic     -in      inputFilename     -type    the type of the kappa test:
-                fleiss: unweighted, for many observers
-                cohen: weighted, for two observers only     -c       the data columns on which the kappa test is performed     [-w]     the weights used in the Cohen kappa test, default linear:
-                linear:    1 - | i - j | / ( k - 1 )
-                quadratic: 1 - [ (i - j ) / ( k - 1 ) ]^2
-                identity:  I_k, the identity matrix     [-std]   use this option to calculate the standard deviation     [-cmp]   use this option to specify a kappa to which you want to compare
-              the found kappa. The returned standard deviation is different if
-              this option is not specified.     [-out]   output, choose one of {kappa,all,ALL}, default all
-                kappa: only print the kappa-value
-                all: print all
-                ALL: print more     [-p]     the output precision, default = 8:   The input file should be in a certain format. No text is allowed.   No headers are allowed. The data samples should be displayed in columns.   Columns should be separated by a single space or tab.   For more information about the kappa statistic and this implementation, read the tex-file found in the repository.
+<div class="fragment"><pre class="fragment">Usage:
+pxkappastatistic
+  -in      inputFilename
+  -type    the type of the kappa test:
+             fleiss: unweighted, for many observers
+             cohen: weighted, for two observers only
+  -c       the data columns on which the kappa test is performed
+  [-w]     the weights used in the Cohen kappa test, default linear:
+             linear:    1 - | i - j | / ( k - 1 )
+             quadratic: 1 - [ (i - j ) / ( k - 1 ) ]^2
+             identity:  I_k, the identity matrix
+  [-std]   use this option to calculate the standard deviation
+  [-cmp]   use this option to specify a kappa to which you want to compare
+           the found kappa. The returned standard deviation is different if
+           this option is not specified.
+  [-out]   output, choose one of {kappa,all,ALL}, default all
+             kappa: only print the kappa-value
+             all: print all
+             ALL: print more
+ [-p]     the output precision, default = 8:
+The input file should be in a certain format. No text is allowed.
+No headers are allowed. The data samples should be displayed in columns.
+Columns should be separated by a single space or tab.
+For more information about the kappa statistic and this implementation, read the tex-file found in the repository.
 </pre></div> </div></div>
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

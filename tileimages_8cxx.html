@@ -17,7 +17,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -45,8 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <div class="header">
-  <div class="summary">
-<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">src/tileimages/tileimages.cxx File Reference</div>  </div>
 </div>
@@ -55,127 +52,39 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p>Either tiles a stack of 2D images into a 3D image, or tiles nD images to form another nD image.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
-<tr><td colspan="2"><h2><a name="func-members"></a>
-Functions</h2></td></tr>
-<tr><td class="memTemplParams" colspan="2">template&lt;class PixelType &gt; </td></tr>
-<tr><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="tileimages_8cxx.html#a5aa2bace5eaee03fca5017e2dc5aef70">TileImages2D3D</a> (const std::vector&lt; std::string &gt; &amp;inputFileNames, const std::string &amp;outputFileName, const double &amp;zspacing)</td></tr>
-<tr><td class="memTemplParams" colspan="2">template&lt;class PixelType , unsigned int Dimension&gt; </td></tr>
-<tr><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="tileimages_8cxx.html#a9a18106e6bc27f9ff466efe4cbc84906">TileImages</a> (const std::vector&lt; std::string &gt; &amp;inputFileNames, const std::string &amp;outputFileName, const std::vector&lt; unsigned int &gt; &amp;layout, const double &amp;defaultvalue)</td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Either tiles a stack of 2D images into a 3D image, or tiles nD images to form another nD image. </p>
-<div class="fragment"><pre class="fragment">pxtileimages EITHER tiles a stack of 2D images into a 3D image,   OR tiles nD images to form another nD image.   In the last case the way to tile is specified by a layout.   To stack a pile of 2D images an itk::SeriesFileReader is employed.   If no layout is specified with "-ly" 2D-3D tiling is done,   otherwise 2D-2D or 3D-3D tiling is performed.
-
-   Usage:  
-pxtileimages     -in      input image filenames, at least 2     -out     output image filename     [-pt]    pixel type of input and output images              default: automatically determined from the first input image     [-sp]    spacing in z-direction for 2D-3D tiling [double];              if omitted, the origins of the 2d images are used to find the spacing;              if these are identical, a spacing of 1.0 is assumed     [-ly]    layout of the nD-nD tiling              example: in 2D for 4 images "-ly 2 2" results in                im1 im2                im3 im4              example: in 2D for 4 images "-ly 4 1" (or "-ly 0 1") results in                im1 im2 im3 im4     [-d]     default value, by default 0.   Supported pixel types: (unsigned) char, (unsigned) short, float.
-
-</pre></div> </div><hr/><h2>Function Documentation</h2>
-<a class="anchor" id="a9a18106e6bc27f9ff466efe4cbc84906"></a><!-- doxytag: member="tileimages.cxx::TileImages" ref="a9a18106e6bc27f9ff466efe4cbc84906" args="(const std::vector&lt; std::string &gt; &amp;inputFileNames, const std::string &amp;outputFileName, const std::vector&lt; unsigned int &gt; &amp;layout, const double &amp;defaultvalue)" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class PixelType , unsigned int Dimension&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void TileImages </td>
-          <td>(</td>
-          <td class="paramtype">const std::vector&lt; std::string &gt; &amp;&#160;</td>
-          <td class="paramname"><em>inputFileNames</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>outputFileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; unsigned int &gt; &amp;&#160;</td>
-          <td class="paramname"><em>layout</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const double &amp;&#160;</td>
-          <td class="paramname"><em>defaultvalue</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Declare TileImages.</p>
-<p>Define TileImages. </p>
-
-<p><p>Some typedef's.</p>
-<p>Copy layout into a fixed array.</p>
-<p>Cast the defaultvalue.</p>
-<p>Create tiler.</p>
-<p>Read input images and set it into the tiler.</p>
-<p>Do the tiling.</p>
-<p>Write to disk. </p>
-</p>
-
-</div>
-</div>
-<a class="anchor" id="a5aa2bace5eaee03fca5017e2dc5aef70"></a><!-- doxytag: member="tileimages.cxx::TileImages2D3D" ref="a5aa2bace5eaee03fca5017e2dc5aef70" args="(const std::vector&lt; std::string &gt; &amp;inputFileNames, const std::string &amp;outputFileName, const double &amp;zspacing)" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class PixelType &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void TileImages2D3D </td>
-          <td>(</td>
-          <td class="paramtype">const std::vector&lt; std::string &gt; &amp;&#160;</td>
-          <td class="paramname"><em>inputFileNames</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>outputFileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const double &amp;&#160;</td>
-          <td class="paramname"><em>zspacing</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Declare TileImages2D3D.</p>
-<p>Define TileImages2D3D. </p>
-
-<p><p>Define image type.</p>
-<p>Some typedef's.</p>
-<p>Create reader.</p>
-<p>Update the reader.</p>
-<p>Get and set the spacing, if it was set by the user.</p>
-<p>Make sure that changes are not undone</p>
-<p>Set the zspacing</p>
-<p>Write to disk. </p>
-</p>
-
-</div>
-</div>
-</div>
+<div class="fragment"><pre class="fragment">pxtileimages EITHER tiles a stack of 2D images into a 3D image,
+OR tiles nD images to form another nD image.
+In the last case the way to tile is specified by a layout.
+To stack a pile of 2D images an itk::SeriesFileReader is employed.
+If no layout is specified with "-ly" 2D-3D tiling is done,
+otherwise 2D-2D or 3D-3D tiling is performed.
+Usage:  
+pxtileimages
+  -in      input image filenames, at least 2
+  -out     output image filename
+  [-pt]    pixel type of input and output images
+           default: automatically determined from the first input image
+  [-sp]    spacing in z-direction for 2D-3D tiling [double];
+           if omitted, the origins of the 2d images are used to find the spacing;
+           if these are identical, a spacing of 1.0 is assumed
+  [-ly]    layout of the nD-nD tiling
+           example: in 2D for 4 images "-ly 2 2" results in
+             im1 im2
+             im3 im4
+           example: in 2D for 4 images "-ly 4 1" (or "-ly 0 1") results in
+             im1 im2 im3 im4
+  [-d]     default value, by default 0.
+Supported pixel types: (unsigned) char, (unsigned) short, float.
+</pre></div> </div></div>
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

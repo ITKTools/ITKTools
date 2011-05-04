@@ -17,7 +17,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -45,8 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <div class="header">
-  <div class="summary">
-<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">src/unaryimageoperator/unaryimageoperator.cxx File Reference</div>  </div>
 </div>
@@ -55,90 +52,35 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p>Unary operations on an image.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
-<tr><td colspan="2"><h2><a name="func-members"></a>
-Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="unaryimageoperator_8cxx.html#ac5e4011f0c0e8f35205c7921f0a62230">UnaryImageOperatorScalar</a> (const std::string &amp;inputFileName, const std::string &amp;outputFileName, const std::string &amp;ops, const std::string &amp;argument, const unsigned int inputDimension, const std::string &amp;ComponentTypeIn, const std::string &amp;ComponentTypeOut)</td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Unary operations on an image. </p>
-<div class="fragment"><pre class="fragment">Unary operations on one image.   Usage:   pxunaryimageoperator     -in      inputFilename     -ops     UnaryOperator of the following form:
-              {+,-,*,/,^,%}
-              notation:
-                {PLUS,{R,L}MINUS,TIMES,{R,L}DIVIDE,{R,L}POWER,{R,L}MOD,
-                NEG,SIGN,ABS,FLOOR,CEIL,ROUND,
-                LN,LOG10,NLOG,EXP,[ARC]SIN,[ARC]COS,[ARC]TAN}
-              notation examples:
-                RMINUS = A - arg
-                LMINUS = arg - A
-                SIN = sin(A)
-                RPOWER = A ^ arg
-     [-arg]   argument, necessary for some ops     [-out]   outputFilename, default in + &lt;ops&gt; + &lt;arg&gt; + .mhd     [-pto]   outputPixelType, default: same as inputimage   Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, float.
-</pre></div> </div><hr/><h2>Function Documentation</h2>
-<a class="anchor" id="ac5e4011f0c0e8f35205c7921f0a62230"></a><!-- doxytag: member="unaryimageoperator.cxx::UnaryImageOperatorScalar" ref="ac5e4011f0c0e8f35205c7921f0a62230" args="(const std::string &amp;inputFileName, const std::string &amp;outputFileName, const std::string &amp;ops, const std::string &amp;argument, const unsigned int inputDimension, const std::string &amp;ComponentTypeIn, const std::string &amp;ComponentTypeOut)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int UnaryImageOperatorScalar </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>inputFileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>outputFileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>ops</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>argument</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const unsigned int&#160;</td>
-          <td class="paramname"><em>inputDimension</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>ComponentTypeIn</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>ComponentTypeOut</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Functions to do the work: this splits things up in different compilation units. </p>
-
-</div>
-</div>
-</div>
+<div class="fragment"><pre class="fragment">Unary operations on one image.
+Usage:
+pxunaryimageoperator
+  -in      inputFilename
+  -ops     UnaryOperator of the following form:
+           {+,-,*,/,^,%}
+           notation:
+             {PLUS,{R,L}MINUS,TIMES,{R,L}DIVIDE,{R,L}POWER,{R,L}MOD,
+             NEG,SIGN,ABS,FLOOR,CEIL,ROUND,
+             LN,LOG10,NLOG,EXP,[ARC]SIN,[ARC]COS,[ARC]TAN}
+           notation examples:
+             RMINUS = A - arg
+             LMINUS = arg - A
+             SIN = sin(A)
+             RPOWER = A ^ arg
+  [-arg]   argument, necessary for some ops
+  [-out]   outputFilename, default in + &lt;ops&gt; + &lt;arg&gt; + .mhd
+  [-pto]   outputPixelType, default: same as inputimage
+Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, float.
+</pre></div> </div></div>
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

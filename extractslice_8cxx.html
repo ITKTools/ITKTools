@@ -17,7 +17,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -45,8 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <div class="header">
-  <div class="summary">
-<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">src/extractslice/extractslice.cxx File Reference</div>  </div>
 </div>
@@ -55,76 +52,26 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p>Extracts a 2D slice from a 3D image.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
-<tr><td colspan="2"><h2><a name="func-members"></a>
-Functions</h2></td></tr>
-<tr><td class="memTemplParams" colspan="2">template&lt;class PixelType &gt; </td></tr>
-<tr><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="extractslice_8cxx.html#af8e51f7598143aebc09f0190f15843e7">ExtractSlice</a> (const std::string &amp;inputFileName, const std::string &amp;outputFileName, const unsigned int &amp;slicenumber, const unsigned int &amp;which_dimension)</td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Extracts a 2D slice from a 3D image. </p>
-<div class="fragment"><pre class="fragment">pxextractslice extracts a 2D slice from a 3D image.   Usage:
-   pxextractslice     -in      input image filename     [-out]   output image filename     [-pt]    pixel type of input and output images;              default: automatically determined from the first input image.     -sn      slice number     [-d]     the dimension from which a slice is extracted, default the z dimension   Supported pixel types: (unsigned) char, (unsigned) short, float.
-
-</pre></div> </div><hr/><h2>Function Documentation</h2>
-<a class="anchor" id="af8e51f7598143aebc09f0190f15843e7"></a><!-- doxytag: member="extractslice.cxx::ExtractSlice" ref="af8e51f7598143aebc09f0190f15843e7" args="(const std::string &amp;inputFileName, const std::string &amp;outputFileName, const unsigned int &amp;slicenumber, const unsigned int &amp;which_dimension)" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class PixelType &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void ExtractSlice </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>inputFileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>outputFileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const unsigned int &amp;&#160;</td>
-          <td class="paramname"><em>slicenumber</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const unsigned int &amp;&#160;</td>
-          <td class="paramname"><em>which_dimension</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Declare ExtractSlice.</p>
-<p>Define ExtractSlice. </p>
-
-<p><p>Some typedef's.</p>
-<p>Create reader.</p>
-<p>Create extractor.</p>
-<p>Get the size and set which_dimension to zero.</p>
-<p>Get the index and set which_dimension to the correct slice.</p>
-<p>Create a desired extraction region and set it into the extractor.</p>
-<p>Write the 2D output image. </p>
-</p>
-
-</div>
-</div>
-</div>
+<div class="fragment"><pre class="fragment">pxextractslice extracts a 2D slice from a 3D image.
+Usage:
+pxextractslice
+  -in      input image filename
+  [-out]   output image filename
+  [-pt]    pixel type of input and output images;
+           default: automatically determined from the first input image.
+  -sn      slice number
+  [-d]     the dimension from which a slice is extracted, default the z dimension
+Supported pixel types: (unsigned) char, (unsigned) short, float.
+</pre></div> </div></div>
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

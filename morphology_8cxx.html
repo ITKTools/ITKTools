@@ -17,7 +17,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -45,8 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <div class="header">
-  <div class="summary">
-<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">src/morphology/morphology.cxx File Reference</div>  </div>
 </div>
@@ -55,184 +52,44 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p>Perform a morphological operation on an image.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
-<tr><td colspan="2"><h2><a name="func-members"></a>
-Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="morphology_8cxx.html#ab9e01c42f11815e402ec4232bc04fda4">Morphology2D</a> (const std::string &amp;componentType, const unsigned int &amp;Dimension, const std::string &amp;inputFileName, const std::string &amp;outputFileName, const std::string &amp;operation, const std::string &amp;type, const std::string &amp;boundaryCondition, const std::vector&lt; unsigned int &gt; &amp;radius, const std::vector&lt; std::string &gt; &amp;bin, const int &amp;algorithm, const bool useCompression)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="morphology_8cxx.html#ab3c05aab03c47dd154e95645255c57bd">Morphology3D</a> (const std::string &amp;componentType, const unsigned int &amp;Dimension, const std::string &amp;inputFileName, const std::string &amp;outputFileName, const std::string &amp;operation, const std::string &amp;type, const std::string &amp;boundaryCondition, const std::vector&lt; unsigned int &gt; &amp;radius, const std::vector&lt; std::string &gt; &amp;bin, const int &amp;algorithm, const bool useCompression)</td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Perform a morphological operation on an image. </p>
-<div class="fragment"><pre class="fragment">No help text provided.
-</pre></div> </div><hr/><h2>Function Documentation</h2>
-<a class="anchor" id="ab9e01c42f11815e402ec4232bc04fda4"></a><!-- doxytag: member="morphology.cxx::Morphology2D" ref="ab9e01c42f11815e402ec4232bc04fda4" args="(const std::string &amp;componentType, const unsigned int &amp;Dimension, const std::string &amp;inputFileName, const std::string &amp;outputFileName, const std::string &amp;operation, const std::string &amp;type, const std::string &amp;boundaryCondition, const std::vector&lt; unsigned int &gt; &amp;radius, const std::vector&lt; std::string &gt; &amp;bin, const int &amp;algorithm, const bool useCompression)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Morphology2D </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>componentType</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const unsigned int &amp;&#160;</td>
-          <td class="paramname"><em>Dimension</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>inputFileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>outputFileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>operation</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>type</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>boundaryCondition</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; unsigned int &gt; &amp;&#160;</td>
-          <td class="paramname"><em>radius</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; std::string &gt; &amp;&#160;</td>
-          <td class="paramname"><em>bin</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const int &amp;&#160;</td>
-          <td class="paramname"><em>algorithm</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const bool&#160;</td>
-          <td class="paramname"><em>useCompression</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
+<div class="fragment"><pre class="fragment">Usage:
+pxmorphology
+  -in      inputFilename
+  -op      operation, choose one of {erosion, dilation, opening, closing, gradient}
+  [-type]  type, choose one of {grayscale, binary, parabolic}, default grayscale
+  [-out]   outputFilename, default in_operation_type.extension
+  [-z]     compression flag; if provided, the output image is compressed
+  -r       radius
+  [-bc]    boundaryCondition (grayscale): the gray value outside the image
+  [-bin]   foreground and background values
+  [-a]     algorithm type for op=gradient
+           BASIC = 0, HISTO = 1, ANCHOR = 2, VHGW = 3, default 0
+           BASIC and HISTO have radius dependent performance, ANCHOR and VHGW not
+  [-opct]  pixelType, default: automatically determined from input image
+For grayscale filters, supply the boundary condition.
+  This value defaults to the maximum pixel value.
+For binary filters, supply the foreground and background value.
+  The foreground value refers to the value of the object of interest (default 1),
+  the background value is by default 0,
+  It is not only intended for binary images, but also for grayscale images.
+  In this case the foreground value selects which value to do the operation on.
+Examples:
+  1) Dilate a binary image (1 = foreground, 0 = background)
+    pxmorphology -in input.mhd -op dilation -type binary -out output.mhd -r 1
+  2) Dilate a binary image (255 = foreground, 0 = background)
+    pxmorphology -in input.mhd -op dilation -type binary -out output.mhd -r 1 -bin 255 0
+Supported: 2D, 3D, (unsigned) char, (unsigned) short.
 
-</div>
-</div>
-<a class="anchor" id="ab3c05aab03c47dd154e95645255c57bd"></a><!-- doxytag: member="morphology.cxx::Morphology3D" ref="ab3c05aab03c47dd154e95645255c57bd" args="(const std::string &amp;componentType, const unsigned int &amp;Dimension, const std::string &amp;inputFileName, const std::string &amp;outputFileName, const std::string &amp;operation, const std::string &amp;type, const std::string &amp;boundaryCondition, const std::vector&lt; unsigned int &gt; &amp;radius, const std::vector&lt; std::string &gt; &amp;bin, const int &amp;algorithm, const bool useCompression)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Morphology3D </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>componentType</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const unsigned int &amp;&#160;</td>
-          <td class="paramname"><em>Dimension</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>inputFileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>outputFileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>operation</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>type</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>boundaryCondition</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; unsigned int &gt; &amp;&#160;</td>
-          <td class="paramname"><em>radius</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; std::string &gt; &amp;&#160;</td>
-          <td class="paramname"><em>bin</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const int &amp;&#160;</td>
-          <td class="paramname"><em>algorithm</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const bool&#160;</td>
-          <td class="paramname"><em>useCompression</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-</div>
-</div>
-</div>
+</pre></div> </div></div>
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

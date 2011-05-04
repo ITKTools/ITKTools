@@ -17,7 +17,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -56,22 +55,30 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Compute statistics on an image. For vector images, the magnitude is used. </p>
-<div class="fragment"><pre class="fragment">Compute statistics on an image. For vector images, the magnitude is used.   Usage:   pxstatisticsonimage     -in      inputFilename     [-out]   outputFileName for histogram;
-              if omitted, no histogram is written; default: &lt;empty&gt;     [-mask]  MaskFileName, mask should have the same size as the input image
-              and be of pixeltype (convertable to) unsigned char,
-              1 = within mask, 0 = outside mask;     [-b]     NumberOfBins to use for histogram, default: 100;
-              for an accurate estimate of median and quartiles
-              for integer images, choose the number of bins
-              much larger (~100x) than the number of gray values.              if equal 0, then the intensity range (max - min) is chosen.     [-s]     select which to compute {arithmetic, geometric, histogram}, default all;
-   Supported: 2D, 3D, 4D, float, (unsigned) short, (unsigned) char, 1, 2 or 3 components per pixel.
- 	For 4D, only 1 or 4 components per pixel are supported.
+<div class="fragment"><pre class="fragment">Compute statistics on an image. For vector images, the magnitude is used.
+Usage:
+pxstatisticsonimage
+  -in      inputFilename
+  [-out]   outputFileName for histogram;
+           if omitted, no histogram is written; default: &lt;empty&gt;
+  [-mask]  MaskFileName, mask should have the same size as the input image
+           and be of pixeltype (convertable to) unsigned char,
+           1 = within mask, 0 = outside mask;
+  [-b]     NumberOfBins to use for histogram, default: 100;
+           for an accurate estimate of median and quartiles
+           for integer images, choose the number of bins
+           much larger (~100x) than the number of gray values.
+           if equal 0, then the intensity range (max - min) is chosen.
+  [-s]     select which to compute {arithmetic, geometric, histogram}, default all;
+Supported: 2D, 3D, 4D, float, (unsigned) short, (unsigned) char, 1, 2 or 3 components per pixel.
+For 4D, only 1 or 4 components per pixel are supported.
 </pre></div> </div></div>
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

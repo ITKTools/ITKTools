@@ -17,7 +17,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -45,9 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <div class="header">
-  <div class="summary">
-<a href="#namespaces">Namespaces</a> &#124;
-<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">src/braindistance/braindistance.cxx File Reference</div>  </div>
 </div>
@@ -56,122 +52,27 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p>This program computes the distance between brains, based on a label mask image of one of the brains and a deformation field.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
-<tr><td colspan="2"><h2><a name="namespaces"></a>
-Namespaces</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceitk.html">itk</a></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceitk_1_1Function.html">itk::Function</a></td></tr>
-<tr><td colspan="2"><h2><a name="func-members"></a>
-Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="braindistance_8cxx.html#ab9585f5b877090f3f2f4a9bc17601748">ComputeBrainDistance</a> (const std::string &amp;inputFileName, const std::string &amp;maskFileName, const std::vector&lt; std::string &gt; &amp;outputFileNames, unsigned int method)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="braindistance_8cxx.html#ae423783291bc130b0eba84f49fe62a85">operator&lt;&lt;</a> (std::ostream &amp;os, std::vector&lt; double &gt; &amp;vec)</td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>This program computes the distance between brains, based on a label mask image of one of the brains and a deformation field. </p>
-<div class="fragment"><pre class="fragment">This program computes the distance between brains, based on   a label mask image of one of the brains and a deformation field.
-   Usage:
-   pxbraindistance
-     -in      inputFilename: 3D deformation field 
-     -out     outputFilenames: two output filenames. The first   one contains mu_tot and sigma_tot. the second one contains mu_i, sigma_i, and sigma_itot.
-     -mask    maskFileName: the name of the label image (deformed HAMMER atlas)
-     [-m]     method: 0 (jacobian), 1 (bending energy), or 2 (log(jacobian)); default: 0.
-   Supported: -in: 3D vector of floats, 3 elements per vector   -mask: 3D unsigned char or anything that is valid after casting to unsigned char
-
-</pre></div> </div><hr/><h2>Function Documentation</h2>
-<a class="anchor" id="ab9585f5b877090f3f2f4a9bc17601748"></a><!-- doxytag: member="braindistance.cxx::ComputeBrainDistance" ref="ab9585f5b877090f3f2f4a9bc17601748" args="(const std::string &amp;inputFileName, const std::string &amp;maskFileName, const std::vector&lt; std::string &gt; &amp;outputFileNames, unsigned int method)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void ComputeBrainDistance </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>inputFileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>maskFileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; std::string &gt; &amp;&#160;</td>
-          <td class="paramname"><em>outputFileNames</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>method</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Declare ComputeBrainDistance function.</p>
-<p>Implement ComputeBrainDistance function. </p>
-
-<p><p>Typedefs.</p>
-<p>Instantiate main variables</p>
-<p>method 0 or 1</p>
-<p>Read image.</p>
-<p>Compute the 'jacobian' (or bending energy) and crop</p>
-<p>Clamp and take log</p>
-<p>Do nothing</p>
-<p>Read the label mask and crop</p>
-<p>Generate brain mask by thresholding at 0 (assumes Hammer atlas)</p>
-<p>Compute mu_tot and sigma_tot over brain mask</p>
-<p>Compute maximum label nr</p>
-<p>Compute mean_i and sigma_i for each segment_i</p>
-<p>Some bogus value which will never occur</p>
-<p>Compute (Jac - mu_tot)^2 image</p>
-<p>Compute sigma_i,tot for each segment_i</p>
-<p>Some bogus value which will never occur</p>
-<p>Write results to files </p>
-</p>
-
-</div>
-</div>
-<a class="anchor" id="ae423783291bc130b0eba84f49fe62a85"></a><!-- doxytag: member="braindistance.cxx::operator&lt;&lt;" ref="ae423783291bc130b0eba84f49fe62a85" args="(std::ostream &amp;os, std::vector&lt; double &gt; &amp;vec)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::ostream&amp; operator&lt;&lt; </td>
-          <td>(</td>
-          <td class="paramtype">std::ostream &amp;&#160;</td>
-          <td class="paramname"><em>os</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
-          <td class="paramname"><em>vec</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>write a vector of doubles to an ostream </p>
-
-</div>
-</div>
-</div>
+<div class="fragment"><pre class="fragment">This program computes the distance between brains, based on
+a label mask image of one of the brains and a deformation field.
+Usage:
+pxbraindistance
+-in      inputFilename: 3D deformation field
+-out     outputFilenames: two output filenames. The first
+one contains mu_tot and sigma_tot. the second one contains mu_i, sigma_i, and sigma_itot.
+-mask    maskFileName: the name of the label image (deformed HAMMER atlas)
+[-m]     method: 0 (jacobian), 1 (bending energy), or 2 (log(jacobian)); default: 0.
+Supported: -in: 3D vector of floats, 3 elements per vector
+-mask: 3D unsigned char or anything that is valid after casting to unsigned char
+</pre></div> </div></div>
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

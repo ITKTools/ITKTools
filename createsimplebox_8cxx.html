@@ -17,7 +17,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -56,36 +55,33 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Create a simple box image. </p>
-<div class="fragment"><pre class="fragment">
-This program creates an image containing a white box, defined by point A and B.
-
-     Usage:
-     pxcreatesimplebox
-     	[-in]  	InputImageFileName	
-     		Size, origin, and spacing for the output image will be taken
-     		from this image. NB: not the dimension and the pixeltype;
-     		you must set them anyway!
-     	-out   	OutputImageFileName
-     	-pt    	PixelType &lt;FLOAT, SHORT, USHORT, INT, UINT, CHAR, UCHAR&gt;
-     		Currently only char, uchar and short are supported.
-     	-id    	ImageDimension &lt;2,3&gt;
-     	[-d0]  	Size of dimension 0
-     	[-d1]  	Size of dimension 1
-     	[-d2]  	Size of dimension 2
-     	-pA0  	Index 0 of pointA
-     	-pA1  	Index 1 of pointA
-     	[-pA2]	Index 2 of pointA
-     	-pB0  	Index 0 of pointB
-     	-pB1  	Index 1 of pointB
-     	[-pB2]	Index 2 of pointB
-
+<div class="fragment"><pre class="fragment">This program creates an image containing a white box, defined by point A and B.
+Usage:
+pxcreatesimplebox
+[-in]  InputImageFileName
+Size, origin, and spacing for the output image will be taken
+from this image. NB: not the dimension and the pixeltype;
+you must set them anyway!
+-out   OutputImageFileName
+-pt    PixelType &lt;FLOAT, SHORT, USHORT, INT, UINT, CHAR, UCHAR&gt;
+Currently only char, uchar and short are supported.
+-id    ImageDimension &lt;2,3&gt;
+[-d0]  Size of dimension 0
+[-d1]  Size of dimension 1
+[-d2]  Size of dimension 2
+-pA0  Index 0 of pointA
+-pA1  Index 1 of pointA
+[-pA2]Index 2 of pointA
+-pB0  Index 0 of pointB
+-pB1  Index 1 of pointB
+[-pB2]Index 2 of pointB
 </pre></div> </div></div>
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

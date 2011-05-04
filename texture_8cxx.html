@@ -17,7 +17,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -45,8 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <div class="header">
-  <div class="summary">
-<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">src/texture/texture.cxx File Reference</div>  </div>
 </div>
@@ -55,93 +52,27 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p>This program computes texture features based on the gray-level co-occurrence matrix (GLCM).  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
-<tr><td colspan="2"><h2><a name="func-members"></a>
-Functions</h2></td></tr>
-<tr><td class="memTemplParams" colspan="2">template&lt;class InputImageType , class OutputImageType &gt; </td></tr>
-<tr><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="texture_8cxx.html#a9f9c13cb825c27accd254536f9930ded">PerformTextureAnalysis</a> (const std::string &amp;inputFileName, const std::string &amp;outputDirectory, unsigned int neighborhoodRadius, const std::vector&lt; unsigned int &gt; &amp;offsetScales, unsigned int numberOfBins, unsigned int numberOfOutputs)</td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>This program computes texture features based on the gray-level co-occurrence matrix (GLCM). </p>
-<div class="fragment"><pre class="fragment">Usage:   pxtexture   This program computes texture features based on the gray-level co-occurrence matrix (GLCM).
-     -in      inputFilename
-     [-out]   outputDirectory, default equal to the inputFilename directory
-     [-r]     the radius of the neighborhood on which to construct the GLCM, default 3
-     [-os]    the desired offset scales to compute the GLCM, default 1, but can be e.g. 1 2 4
-     [-b]     the number of bins of the GLCM, default 128
-     [-noo]   the number of texture feature outputs, default all 8
-     [-opct]  output pixel component type, default float
-   Supported: 2D, 3D, any input image type, float or double output type.
-</pre></div> </div><hr/><h2>Function Documentation</h2>
-<a class="anchor" id="a9f9c13cb825c27accd254536f9930ded"></a><!-- doxytag: member="texture.cxx::PerformTextureAnalysis" ref="a9f9c13cb825c27accd254536f9930ded" args="(const std::string &amp;inputFileName, const std::string &amp;outputDirectory, unsigned int neighborhoodRadius, const std::vector&lt; unsigned int &gt; &amp;offsetScales, unsigned int numberOfBins, unsigned int numberOfOutputs)" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class InputImageType , class OutputImageType &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void PerformTextureAnalysis </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>inputFileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>outputDirectory</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>neighborhoodRadius</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; unsigned int &gt; &amp;&#160;</td>
-          <td class="paramname"><em>offsetScales</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>numberOfBins</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>numberOfOutputs</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Declare PerformTextureAnalysis.</p>
-<p>******************* PerformTextureAnalysis ******************* </p>
-
-<p><p>Typedefs.</p>
-<p>Read the input.</p>
-<p>Setup the texture filter.</p>
-<p>Create and attach a progress observer.</p>
-<p>Create the output file names.</p>
-<p>Setup and process the pipeline. </p>
-</p>
-
-</div>
-</div>
-</div>
+<div class="fragment"><pre class="fragment">Usage:
+pxtexture
+This program computes texture features based on the gray-level co-occurrence matrix (GLCM).
+  -in      inputFilename
+  [-out]   outputDirectory, default equal to the inputFilename directory
+  [-r]     the radius of the neighborhood on which to construct the GLCM, default 3
+  [-os]    the desired offset scales to compute the GLCM, default 1, but can be e.g. 1 2 4
+  [-b]     the number of bins of the GLCM, default 128
+  [-noo]   the number of texture feature outputs, default all 8
+  [-opct]  output pixel component type, default float
+Supported: 2D, 3D, any input image type, float or double output type.
+</pre></div> </div></div>
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

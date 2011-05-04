@@ -17,7 +17,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -45,8 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <div class="header">
-  <div class="summary">
-<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">src/creategridimage/creategridimage.cxx File Reference</div>  </div>
 </div>
@@ -55,83 +52,25 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p>Create a grid image.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
-<tr><td colspan="2"><h2><a name="func-members"></a>
-Functions</h2></td></tr>
-<tr><td class="memTemplParams" colspan="2">template&lt;unsigned int Dimension&gt; </td></tr>
-<tr><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="creategridimage_8cxx.html#af082c3561fda2941d0827ef5733bfb4e">CreateGridImage</a> (const std::string &amp;inputFileName, const std::string &amp;outputFileName, const std::vector&lt; unsigned int &gt; &amp;imageSize, const std::vector&lt; float &gt; &amp;imageSpacing, const std::vector&lt; unsigned int &gt; &amp;distance, const bool &amp;is2DStack)</td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Create a grid image. </p>
-<div class="fragment"><pre class="fragment">Usage:   pxcreategridimage     [-in]    inputFilename, information about size, etc, is taken from it     -out     outputFilename     -sz      image size for each dimension     [-sp]    image spacing, default 1.0     -d       distance in pixels between two gridlines     [-stack] for 3D images, create a stack of 2D images, default false   Supported: 2D, 3D, short.
-</pre></div> </div><hr/><h2>Function Documentation</h2>
-<a class="anchor" id="af082c3561fda2941d0827ef5733bfb4e"></a><!-- doxytag: member="creategridimage.cxx::CreateGridImage" ref="af082c3561fda2941d0827ef5733bfb4e" args="(const std::string &amp;inputFileName, const std::string &amp;outputFileName, const std::vector&lt; unsigned int &gt; &amp;imageSize, const std::vector&lt; float &gt; &amp;imageSpacing, const std::vector&lt; unsigned int &gt; &amp;distance, const bool &amp;is2DStack)" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;unsigned int Dimension&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void CreateGridImage </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>inputFileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>outputFileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; unsigned int &gt; &amp;&#160;</td>
-          <td class="paramname"><em>imageSize</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; float &gt; &amp;&#160;</td>
-          <td class="paramname"><em>imageSpacing</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; unsigned int &gt; &amp;&#160;</td>
-          <td class="paramname"><em>distance</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const bool &amp;&#160;</td>
-          <td class="paramname"><em>is2DStack</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>******************* CreateGridImage ******************* </p>
-
-<p><p>Typedef's.</p>
-<p>Get and set grid image information.</p>
-<p>Allocate image.</p>
-<p>Check if on grid.</p>
-<p>Set the value and continue. </p>
-</p>
-
-</div>
-</div>
-</div>
+<div class="fragment"><pre class="fragment">Usage:
+pxcreategridimage
+[-in]    inputFilename, information about size, etc, is taken from it
+-out     outputFilename
+-sz      image size for each dimension
+[-sp]    image spacing, default 1.0
+-d       distance in pixels between two gridlines
+[-stack] for 3D images, create a stack of 2D images, default false
+Supported: 2D, 3D, short.
+</pre></div> </div></div>
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

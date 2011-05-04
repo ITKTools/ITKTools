@@ -17,7 +17,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -49,7 +48,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">File List</div>  </div>
 </div>
 <div class="contents">
-<div class="textblock">Here is a list of all files with brief descriptions:</div><table>
+<div class="textblock">Here is a list of all documented files with brief descriptions:</div><table>
   <tr><td class="indexkey">src/averagevectormagnitude/<a class="el" href="averagevectormagnitude_8cxx.html">averagevectormagnitude.cxx</a></td><td class="indexvalue">Calculate the average magnitude of the vectors in a vector image </td></tr>
   <tr><td class="indexkey">src/binaryimageoperator/<a class="el" href="binaryimageoperator_8cxx.html">binaryimageoperator.cxx</a></td><td class="indexvalue">Apply a binary operator to a pair of images </td></tr>
   <tr><td class="indexkey">src/binarythinning/<a class="el" href="binarythinning_8cxx.html">binarythinning.cxx</a></td><td class="indexvalue">Compute binary thinning of an image </td></tr>
@@ -78,7 +77,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <tr><td class="indexkey">src/extracteveryotherslice/<a class="el" href="extracteveryotherslice_8cxx.html">extracteveryotherslice.cxx</a></td><td class="indexvalue">Extract every other slice of an image </td></tr>
   <tr><td class="indexkey">src/extractindexfromvectorimage/<a class="el" href="extractindexfromvectorimage_8cxx.html">extractindexfromvectorimage.cxx</a></td><td class="indexvalue">This program extracts a user specified component from a vector image </td></tr>
   <tr><td class="indexkey">src/extractslice/<a class="el" href="extractslice_8cxx.html">extractslice.cxx</a></td><td class="indexvalue">Extracts a 2D slice from a 3D image </td></tr>
-  <tr><td class="indexkey">src/fftimage/<a class="el" href="fftimage_8cxx.html">fftimage.cxx</a></td><td class="indexvalue">Compute the FFT of an image </td></tr>
+  <tr><td class="indexkey">src/fftimage/<a class="el" href="fftimage_8cxx.html">fftimage.cxx</a></td><td class="indexvalue">Compute the FFT of an image. Note this documentation may be empty if ITKTools was compiled without USE_FFTIMAGE </td></tr>
   <tr><td class="indexkey">src/gaussianimagefilter/<a class="el" href="gaussianimagefilter_8cxx.html">gaussianimagefilter.cxx</a></td><td class="indexvalue">Perform a Gaussian filtering on an image </td></tr>
   <tr><td class="indexkey">src/getdicominformation/<a class="el" href="getdicominformation_8cxx.html">getdicominformation.cxx</a></td><td class="indexvalue">Takes a directory and searches for dicom files, from which patient and study information is extracted </td></tr>
   <tr><td class="indexkey">src/getDICOMseriesUIDs/<a class="el" href="getDICOMseriesUIDs_8cxx.html">getDICOMseriesUIDs.cxx</a></td><td class="indexvalue">Takes a directory and searches for dicom files, from which the seriesUID's are extracted </td></tr>
@@ -88,7 +87,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <tr><td class="indexkey">src/imagestovectorimage/<a class="el" href="imagestovectorimage_8cxx.html">imagestovectorimage.cxx</a></td><td class="indexvalue">Stack images into one big vector image </td></tr>
   <tr><td class="indexkey">src/intensityreplace/<a class="el" href="intensityreplace_8cxx.html">intensityreplace.cxx</a></td><td class="indexvalue">This program replaces some user specified intensity values in an image </td></tr>
   <tr><td class="indexkey">src/intensitywindowing/<a class="el" href="intensitywindowing_8cxx.html">intensitywindowing.cxx</a></td><td class="indexvalue">Intensity windowing </td></tr>
-  <tr><td class="indexkey">src/invertintensityimagefilter/<a class="el" href="invertintensityimagefilter_8cxx.html">invertintensityimagefilter.cxx</a></td><td class="indexvalue">This program inverts the intensities of an image </td></tr>
+  <tr><td class="indexkey">src/invertintensityimagefilter/<a class="el" href="invertintensityimagefilter_8cxx.html">invertintensityimagefilter.cxx</a></td><td class="indexvalue">This program inverts the intensities of an image. new = max - old (where max is the maximum of the image) </td></tr>
   <tr><td class="indexkey">src/kappastatistic/<a class="el" href="kappastatistic_8cxx.html">kappastatistic.cxx</a></td><td class="indexvalue">Compute a kappa statistic </td></tr>
   <tr><td class="indexkey">src/logicalimageoperator/<a class="el" href="logicalimageoperator_8cxx.html">logicalimageoperator.cxx</a></td><td class="indexvalue">Perform a logical operation on an image </td></tr>
   <tr><td class="indexkey">src/morphology/<a class="el" href="morphology_8cxx.html">morphology.cxx</a></td><td class="indexvalue">Perform a morphological operation on an image </td></tr>
@@ -114,7 +113,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

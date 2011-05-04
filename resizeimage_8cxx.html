@@ -17,7 +17,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -45,8 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <div class="header">
-  <div class="summary">
-<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">src/resizeimage/resizeimage.cxx File Reference</div>  </div>
 </div>
@@ -55,80 +52,27 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p>Resize an image.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
-<tr><td colspan="2"><h2><a name="func-members"></a>
-Functions</h2></td></tr>
-<tr><td class="memTemplParams" colspan="2">template&lt;class InputImageType &gt; </td></tr>
-<tr><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="resizeimage_8cxx.html#a0b19bf5674d53a14904216c8c49ee2c1">ResizeImage</a> (const std::string &amp;inputFileName, const std::string &amp;outputFileName, const std::vector&lt; double &gt; &amp;factorOrSpacing, const bool &amp;isFactor, const unsigned int &amp;interpolationOrder)</td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Resize an image. </p>
-<div class="fragment"><pre class="fragment">Usage:   pxresizeimage     -in      inputFilename     [-out]   outputFilename, default in + RESIZED.mhd     [-f]     factor     [-sp]    spacing     [-io]    interpolation order, default 1     [-dim]   dimension, default 3     [-pt]    pixelType, default short   One of -f and -sp should be given.   Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.
-</pre></div> </div><hr/><h2>Function Documentation</h2>
-<a class="anchor" id="a0b19bf5674d53a14904216c8c49ee2c1"></a><!-- doxytag: member="resizeimage.cxx::ResizeImage" ref="a0b19bf5674d53a14904216c8c49ee2c1" args="(const std::string &amp;inputFileName, const std::string &amp;outputFileName, const std::vector&lt; double &gt; &amp;factorOrSpacing, const bool &amp;isFactor, const unsigned int &amp;interpolationOrder)" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class InputImageType &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void ResizeImage </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>inputFileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>outputFileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;&#160;</td>
-          <td class="paramname"><em>factorOrSpacing</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const bool &amp;&#160;</td>
-          <td class="paramname"><em>isFactor</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const unsigned int &amp;&#160;</td>
-          <td class="paramname"><em>interpolationOrder</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Declare ResizeImage.</p>
-<p>******************* ResizeImage *******************</p>
-<p>The resize function templated over the input pixel type. </p>
-
-<p><p>Typedefs.</p>
-<p>Declarations.</p>
-<p>Read in the inputImage.</p>
-<p>Prepare stuff.</p>
-<p>Setup the pipeline.</p>
-<p>Write the output image. </p>
-</p>
-
-</div>
-</div>
-</div>
+<div class="fragment"><pre class="fragment">Usage:
+pxresizeimage
+  -in      inputFilename
+  [-out]   outputFilename, default in + RESIZED.mhd
+  [-f]     factor
+  [-sp]    spacing
+  [-io]    interpolation order, default 1
+  [-dim]   dimension, default 3
+  [-pt]    pixelType, default short
+One of -f and -sp should be given.
+Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.
+</pre></div> </div></div>
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

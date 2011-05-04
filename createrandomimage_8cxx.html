@@ -17,7 +17,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -45,9 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <div class="header">
-  <div class="summary">
-<a href="#typedef-members">Typedefs</a> &#124;
-<a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">src/createrandomimage/createrandomimage.cxx File Reference</div>  </div>
 </div>
@@ -56,71 +52,33 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p>Create a random image.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
-<tr><td colspan="2"><h2><a name="typedef-members"></a>
-Typedefs</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">typedef std::map&lt; std::string, <br class="typebreak"/>
-std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="createrandomimage_8cxx.html#a1edaf4701fa39387a87724e42c89196c">ArgMapType</a></td></tr>
-<tr><td colspan="2"><h2><a name="var-members"></a>
-Variables</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="createrandomimage_8cxx.html#a1edaf4701fa39387a87724e42c89196c">ArgMapType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="createrandomimage_8cxx.html#ae50b73bff416b38be3e9bc75721ecc11">argmap</a></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Create a random image. </p>
-<div class="fragment"><pre class="fragment">
-This program creates a random image.
-
-     Usage:
-     pxcreaterandomimage
-     	-out   	OutputImageFileName
-     	-pt    	PixelType &lt;SHORT, USHORT, INT, UINT, CHAR, UCHAR, FLOAT&gt;
-     	-id    	ImageDimension &lt;2,3&gt;
-     	[-sd]  	SpaceDimension (the number of channels) &lt;1,2,3&gt;
-     	-d0    	Size of dimension 0
-     	-d1    	Size of dimension 1
-     	[-d2]  	Size of dimension 2
-     	[-r]   	The resolution of the random image &lt;unsigned long&gt;.
-     			This determines the number of voxels set to a random value before blurring.
-     			If set to 0, all voxels are set to a random value
-     	[-sigma]	The standard deviation of the blurring filter
-     	[-min] 	Minimum pixel value
-     	[-max] 	Maximum pixel value
-     	[-seed]	The random seed &lt;int&gt;
-
-</pre></div> </div><hr/><h2>Typedef Documentation</h2>
-<a class="anchor" id="a1edaf4701fa39387a87724e42c89196c"></a><!-- doxytag: member="createrandomimage.cxx::ArgMapType" ref="a1edaf4701fa39387a87724e42c89196c" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef std::map&lt;std::string, std::string&gt; <a class="el" href="createrandomimage_8cxx.html#a1edaf4701fa39387a87724e42c89196c">ArgMapType</a></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-</div>
-</div>
-<hr/><h2>Variable Documentation</h2>
-<a class="anchor" id="ae50b73bff416b38be3e9bc75721ecc11"></a><!-- doxytag: member="createrandomimage.cxx::argmap" ref="ae50b73bff416b38be3e9bc75721ecc11" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="createrandomimage_8cxx.html#a1edaf4701fa39387a87724e42c89196c">ArgMapType</a> <a class="el" href="createrandomimage_8cxx.html#ae50b73bff416b38be3e9bc75721ecc11">argmap</a></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-</div>
-</div>
-</div>
+<div class="fragment"><pre class="fragment">This program creates a random image.
+Usage:
+pxcreaterandomimage
+-out   	OutputImageFileName
+-pt    	PixelType &lt;SHORT, USHORT, INT, UINT, CHAR, UCHAR, FLOAT&gt;
+-id    	ImageDimension &lt;2,3&gt;
+[-sd]  	SpaceDimension (the number of channels) &lt;1,2,3&gt;
+-d0    	Size of dimension 0
+-d1    	Size of dimension 1
+[-d2]  	Size of dimension 2
+[-r]   	The resolution of the random image &lt;unsigned long&gt;.
+This determines the number of voxels set to a random value before blurring.
+If set to 0, all voxels are set to a random value
+[-sigma]	The standard deviation of the blurring filter
+[-min] 	Minimum pixel value
+[-max] 	Maximum pixel value
+[-seed]	The random seed &lt;int&gt;
+</pre></div> </div></div>
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

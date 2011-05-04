@@ -17,7 +17,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -45,114 +44,24 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <div class="header">
-  <div class="summary">
-<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">src/fftimage/fftimage.cxx File Reference</div>  </div>
 </div>
 <div class="contents">
 
-<p>Compute the FFT of an image.  
+<p>Compute the FFT of an image. Note this documentation may be empty if ITKTools was compiled without USE_FFTIMAGE.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
-<tr><td colspan="2"><h2><a name="func-members"></a>
-Functions</h2></td></tr>
-<tr><td class="memTemplParams" colspan="2">template&lt;class PixelType , unsigned int Dimension&gt; </td></tr>
-<tr><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="fftimage_8cxx.html#afa2c5294b36b70f3ec12fbc9bde353c9">FFTImage</a> (const std::string &amp;inputFileName, const std::vector&lt; std::string &gt; &amp;outputFileNames)</td></tr>
-<tr><td class="memTemplParams" colspan="2">template&lt;class PixelType , unsigned int Dimension&gt; </td></tr>
-<tr><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="fftimage_8cxx.html#acc7c199fe7b28839e931e815713e1042">IFFTImage</a> (const std::vector&lt; std::string &gt; &amp;inputFileNames, const std::string &amp;outputFileName, const std::string &amp;xdim)</td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
-<div class="textblock"><p>Compute the FFT of an image. </p>
-<div class="fragment"><pre class="fragment"></pre></div> </div><hr/><h2>Function Documentation</h2>
-<a class="anchor" id="afa2c5294b36b70f3ec12fbc9bde353c9"></a><!-- doxytag: member="fftimage.cxx::FFTImage" ref="afa2c5294b36b70f3ec12fbc9bde353c9" args="(const std::string &amp;inputFileName, const std::vector&lt; std::string &gt; &amp;outputFileNames)" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class PixelType , unsigned int Dimension&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void FFTImage </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>inputFileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; std::string &gt; &amp;&#160;</td>
-          <td class="paramname"><em>outputFileNames</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Declare FFTImage.</p>
-<p>******************* FFTImage ******************* </p>
-
-<p><p>Typedefs.</p>
-<p>Read the image as float or double.</p>
-<p>Compute the FFT of the image.</p>
-<p>Write the output image(s). If 1 output image is given: write the complex image. If 2 output images are given: write the real and imaginary images. If 3 output images are given: write the complex, real and imaginary images.</p>
-</p>
-
-</div>
-</div>
-<a class="anchor" id="acc7c199fe7b28839e931e815713e1042"></a><!-- doxytag: member="fftimage.cxx::IFFTImage" ref="acc7c199fe7b28839e931e815713e1042" args="(const std::vector&lt; std::string &gt; &amp;inputFileNames, const std::string &amp;outputFileName, const std::string &amp;xdim)" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class PixelType , unsigned int Dimension&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void IFFTImage </td>
-          <td>(</td>
-          <td class="paramtype">const std::vector&lt; std::string &gt; &amp;&#160;</td>
-          <td class="paramname"><em>inputFileNames</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>outputFileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>xdim</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Declare IFFTImage.</p>
-<p>******************* IFFTImage ******************* </p>
-
-<p><p>Typedefs.</p>
-<p>The IFFT of the image.</p>
-<p>Read one complex image, or two scalar images, which need to be combined into one complex image.</p>
-<p>Setup IFFT filter.</p>
-<p>Write the output image. </p>
-</p>
-
-</div>
-</div>
-</div>
+<div class="textblock"><p>Compute the FFT of an image. Note this documentation may be empty if ITKTools was compiled without USE_FFTIMAGE. </p>
+<div class="fragment"><pre class="fragment"></pre></div> </div></div>
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

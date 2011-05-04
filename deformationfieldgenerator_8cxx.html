@@ -17,7 +17,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -45,8 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <div class="header">
-  <div class="summary">
-<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">src/deformationfieldgenerator/deformationfieldgenerator.cxx File Reference</div>  </div>
 </div>
@@ -55,91 +52,46 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p>This program generates a deformation field (from fixed to moving image) based on some corresponding points.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
-<tr><td colspan="2"><h2><a name="func-members"></a>
-Functions</h2></td></tr>
-<tr><td class="memTemplParams" colspan="2">template&lt;unsigned int Dimension&gt; </td></tr>
-<tr><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="deformationfieldgenerator_8cxx.html#ac3af21a71db51271006b4b3969289a34">DeformationFieldGenerator</a> (const std::string &amp;inputImage1FileName, const std::string &amp;inputImage2FileName, const std::string &amp;inputPoints1FileName, const std::string &amp;inputPoints2FileName, const std::string &amp;outputImageFileName, const std::string &amp;kernelName, double stiffness)</td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>This program generates a deformation field (from fixed to moving image) based on some corresponding points. </p>
-<div class="fragment"><pre class="fragment">This program generates a deformation field (from fixed   to moving image) based on some corresponding points.   Usage:   pxdeformationfieldgenerator     -in1     inputFilename1: the fixed image on which the               deformaton field must be defined.     [-in2]   inputFilename2: only needed to convert from               indices to point if the second input point               contains indices.     -ipp1    inputPointFile1: a transformix style input point file               with points in the fixed image.     -ipp2    inputPointFile2: a transformix style input point file               with the corresponding points in the moving image.     [-s]     stiffness: a number that allows to vary between               interpolating and approximating spline.               0.0 = interpolating = default.               Stiffness values are usually rather small,               typically in the range of 0.001 to 0.1.     [-k]     kernelType: the type of kernel transform that's used to               generate the deformation field.               TPS: thin plate spline (default)               TPSR2LOGR: thin plate spline R2logR               VS: volume spline               EBS: elastic body spline               EBSR: elastic body reciprocal spline               See ITK documentation and the there cited paper               for more information on these methods.     -out     outputFilename: the name of the resulting deformation field,               which is written as a vector&lt;float,dim&gt; image.   Supported: 2D, 3D, any scalar pixeltype.
-</pre></div> </div><hr/><h2>Function Documentation</h2>
-<a class="anchor" id="ac3af21a71db51271006b4b3969289a34"></a><!-- doxytag: member="deformationfieldgenerator.cxx::DeformationFieldGenerator" ref="ac3af21a71db51271006b4b3969289a34" args="(const std::string &amp;inputImage1FileName, const std::string &amp;inputImage2FileName, const std::string &amp;inputPoints1FileName, const std::string &amp;inputPoints2FileName, const std::string &amp;outputImageFileName, const std::string &amp;kernelName, double stiffness)" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;unsigned int Dimension&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void DeformationFieldGenerator </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>inputImage1FileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>inputImage2FileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>inputPoints1FileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>inputPoints2FileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>outputImageFileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>kernelName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>stiffness</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Declare DeformationFieldGenerator.</p>
-<p>***************** DeformationFieldGenerator **************** </p>
-
-<p><p>Typedefs.</p>
-<p>Declarations</p>
-<p>Read input images</p>
-<p>Convert from index to point, if necessary</p>
-<p>Convert from index to point, if necessary</p>
-<p>Define the deformation field and an iterator on it </p>
-</p>
-
-</div>
-</div>
-</div>
+<div class="fragment"><pre class="fragment">This program generates a deformation field (from fixed
+to moving image) based on some corresponding points.
+Usage:
+pxdeformationfieldgenerator
+-in1     inputFilename1: the fixed image on which the
+          deformaton field must be defined.
+[-in2]   inputFilename2: only needed to convert from
+          indices to point if the second input point
+          contains indices.
+-ipp1    inputPointFile1: a transformix style input point file
+          with points in the fixed image.
+-ipp2    inputPointFile2: a transformix style input point file
+          with the corresponding points in the moving image.
+[-s]     stiffness: a number that allows to vary between
+          interpolating and approximating spline.
+          0.0 = interpolating = default.
+          Stiffness values are usually rather small,
+          typically in the range of 0.001 to 0.1.
+[-k]     kernelType: the type of kernel transform that's used to
+          generate the deformation field.
+          TPS: thin plate spline (default)
+          TPSR2LOGR: thin plate spline R2logR
+          VS: volume spline
+          EBS: elastic body spline
+          EBSR: elastic body reciprocal spline
+          See ITK documentation and the there cited paper
+          for more information on these methods.
+-out     outputFilename: the name of the resulting deformation field,
+          which is written as a vector&lt;float,dim&gt; image.
+Supported: 2D, 3D, any scalar pixeltype.
+</pre></div> </div></div>
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

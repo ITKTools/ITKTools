@@ -17,7 +17,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -45,8 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <div class="header">
-  <div class="summary">
-<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">src/combinesegmentations/combinesegmentations.cxx File Reference</div>  </div>
 </div>
@@ -55,215 +52,66 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p>This program combines multiple segmentations into one.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
-<tr><td colspan="2"><h2><a name="func-members"></a>
-Functions</h2></td></tr>
-<tr><td class="memTemplParams" colspan="2">template&lt;unsigned int NDimensions&gt; </td></tr>
-<tr><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="combinesegmentations_8cxx.html#a35df7483d03fbada6f0b0e081937b946">CombineSegmentations</a> (const std::vector&lt; std::string &gt; &amp;inputSegmentationFileNames, const std::vector&lt; std::string &gt; &amp;priorProbImageFileNames, const std::vector&lt; std::string &gt; &amp;softOutputFileNames, const std::string &amp;hardOutputFileName, const std::string &amp;confusionOutputFileName, unsigned char numberOfClasses, const std::vector&lt; float &gt; &amp;priorProbs, const std::vector&lt; float &gt; &amp;trust, float terminationThreshold, const std::string &amp;combinationMethod, bool useMask, unsigned int maskDilationRadius, const std::vector&lt; unsigned int &gt; &amp;prefOrder, const std::vector&lt; unsigned int &gt; &amp;inValues, const std::vector&lt; unsigned int &gt; &amp;outValues)</td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>This program combines multiple segmentations into one. </p>
 <div class="fragment"><pre class="fragment">This program combines multiple segmentations into one.
-   Usage:
-   pxcombinesegmentations     [-m]     {STAPLE, VOTE, MULTISTAPLE, MULTISTAPLE2, VOTE_MULTISTAPLE2}:
-              the method used to combine the segmentations. default: MULTISTAPLE2.
-              VOTE_MULTISTAPLE2 is in fact just VOTE followed by MULTISTAPLE2.     -in      inputFilename0 [inputFileName1 ... ]: the input segmentations,
-              as unsigned char images. More than 2 labels are allowed, but
-              with some restrictions: {0,1,2}=ok, {0,3,4}=bad, {1,2,3}=bad.     [-n]     numberOfClasses: the number of classes to segment;
-              default: 2 (so, 0 and 1).     [-P]     priorProbImageFilename0 priorProbImageFilename1 [...]:
-              the names of the prior probabilities for each class, stored as float images.
-              This has only effect when using [VOTE_]MULTISTAPLE2.     [-p]     priorProb0 priorProb1 [...]:
-              the prior probabilities for each class, independent of x, so a floating point
-              number for each class. This parameter is ignored when "-P" is provided as well.
-              For VOTE this parameter is ignored. For STAPLE, this number is considered
-              as a factor which is multiplied with the estimated prior probability.
-              For MULTISTAPLE[2], the number is really the prior probability.
-              If -p and -P are not provided, the prior probs are estimated from the data.     [-t]     trust0 [trust1 ...]: a factor between 0 and 1 indicating the 'trust' in each observer;
-              default: 0.99999 for each observer for [VOTE_]MULTISTAPLE2. 1.0 for VOTE.
-              Ignored by STAPLE and MULTISTAPLE; they estimate it by majority voting.     [-e]     termination threshold: a small float. the smaller the more accurate the solution;
-              default: 1e-5. Ignored by STAPLE and VOTE.     [-outs]  outputFilename0 outputFileName1 [...]: the output (soft) probabilistic
-              segmentations for each label. These will be float images.     [-outh]  outputFilename: the output hard segmentation, stored as a single
-              unsigned char image, containing the label numbers.
-              The value 'numberOfClasses' corresponds to 'undecided' (if two labels
-              are exactly equally likely).     [-outc]  confusionImageFileName: 3d float image, in which each slice resembles
-              the confusion matrix for each observer. The x-axis corresponds to the
-              real label, the y-axis corresponds to the label given by the observer.     [-mask]  [maskDilationRadius]: Use a mask if this flag is provided.
-              Only taken into account by [VOTE_]MULTISTAPLE2 and VOTE.
-              The mask is 0 at those pixels were the decision is unanimous, and 1 elsewhere.
-              A dilation is performed with a kernel with radius maskDilationRadius (default:1)
-              Pixels that are outside the mask, will have class of the first observer.
-              Other pixels are passed through the combination algorithm.
-              The confusion matrix will be only based on the pixels within the mask.     [-ord]   The order of preferred classes, in cases of undecided pixels. Default: 0 1 2...
-              Ignored by STAPLE and MULTISTAPLE. In the default case, class 0 will be
-              preferred over class 1, for example.     [-iv]    inputlabels for relabeling     [-ov]    outputlabels for relabeling. Each input label is replaced by the corresponding
-              output label, before the combinationMethod is invoked. NumberOfClasses should be
-              valid for the situation after relabeling!   Supported: 2D/3D.
-</pre></div> </div><hr/><h2>Function Documentation</h2>
-<a class="anchor" id="a35df7483d03fbada6f0b0e081937b946"></a><!-- doxytag: member="combinesegmentations.cxx::CombineSegmentations" ref="a35df7483d03fbada6f0b0e081937b946" args="(const std::vector&lt; std::string &gt; &amp;inputSegmentationFileNames, const std::vector&lt; std::string &gt; &amp;priorProbImageFileNames, const std::vector&lt; std::string &gt; &amp;softOutputFileNames, const std::string &amp;hardOutputFileName, const std::string &amp;confusionOutputFileName, unsigned char numberOfClasses, const std::vector&lt; float &gt; &amp;priorProbs, const std::vector&lt; float &gt; &amp;trust, float terminationThreshold, const std::string &amp;combinationMethod, bool useMask, unsigned int maskDilationRadius, const std::vector&lt; unsigned int &gt; &amp;prefOrder, const std::vector&lt; unsigned int &gt; &amp;inValues, const std::vector&lt; unsigned int &gt; &amp;outValues)" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;unsigned int NDimensions&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void CombineSegmentations </td>
-          <td>(</td>
-          <td class="paramtype">const std::vector&lt; std::string &gt; &amp;&#160;</td>
-          <td class="paramname"><em>inputSegmentationFileNames</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; std::string &gt; &amp;&#160;</td>
-          <td class="paramname"><em>priorProbImageFileNames</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; std::string &gt; &amp;&#160;</td>
-          <td class="paramname"><em>softOutputFileNames</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>hardOutputFileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>confusionOutputFileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned char&#160;</td>
-          <td class="paramname"><em>numberOfClasses</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; float &gt; &amp;&#160;</td>
-          <td class="paramname"><em>priorProbs</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; float &gt; &amp;&#160;</td>
-          <td class="paramname"><em>trust</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>terminationThreshold</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>combinationMethod</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>useMask</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>maskDilationRadius</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; unsigned int &gt; &amp;&#160;</td>
-          <td class="paramname"><em>prefOrder</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; unsigned int &gt; &amp;&#160;</td>
-          <td class="paramname"><em>inValues</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; unsigned int &gt; &amp;&#160;</td>
-          <td class="paramname"><em>outValues</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Declare CombineSegmentations.</p>
-<p>******************* CombineSegmentations ****************</p>
-<p>The function that does the work, templated over the image dimension. </p>
-
-<p><p>Declare some variables</p>
-<p>Initialize some variables</p>
-<p>Read the input label images</p>
-<p>Check size.</p>
-<p>Relabel?</p>
-<p>Read the prior probability images, if supplied</p>
-<p>Prepare the confusion matrix</p>
-<p>Combine the label images</p>
-<p>run STAPLE</p>
-<p>Save the result in the softSegmentationArray[1]</p>
-<p>From this result also generate softSegmentationArray[0]</p>
-<p>Generate the hard segmentation from the softSegmentation[0]</p>
-<p>use the soft segmentation of class 0, since the threshold filter applies a &gt; operator, and we would like to apply &gt;= on the soft segmentation of class 1</p>
-<p>Generate the confusion matrix</p>
-<p>Run the MultiLabelSTAPLE algorithm</p>
-<p>Generate the confusion matrix</p>
-<p>In multiSTAPLE the first index corresponds to applied class, and the second index to the real class, so just different than in our definition.</p>
-<p>Run the MultiLabelSTAPLE algorithm</p>
-<p>Set the number of classes</p>
-<p>Set the inputs</p>
-<p>Set the mask</p>
-<p>Set the prior preferences. They are given as a list of labels in prefOrder. The staple class expects a 'preference'-number for each class; the lower the more preference. The code below does the conversion.</p>
-<p>Set the prior probabilities</p>
-<p>Set the trust in the observers</p>
-<p>Set whether soft segmentations are required</p>
-<p>Set the termination threshold</p>
-<p>Run!!</p>
-<p>Get the hard segmentation</p>
-<p>Get the soft segmentations</p>
-<p>Generate the confusion matrix</p>
-<p>In multiSTAPLE2 the first index corresponds to applied class, and the second index to the real class, so just different than in our definition.</p>
-<p>Run the LabelVoting2 algorithm</p>
-<p>Set the number of classes</p>
-<p>Set the inputs</p>
-<p>Set the mask</p>
-<p>Set the prior preferences. They are given as a list of labels in prefOrder. The staple class expects a 'preference'-number for each class; the lower the more preference. The code below does the conversion.</p>
-<p>Set the trust in the observers</p>
-<p>Set whether soft segmentations are required</p>
-<p>Run!!</p>
-<p>Get the hard segmentation</p>
-<p>Get the soft segmentations</p>
-<p>Generate the confusion matrix</p>
-<p>In multiSTAPLE2 the first index corresponds to applied class, and the second index to the real class, so just different than in our definition.</p>
-<p>Write soft segmentations</p>
-<p>Check if the soft segmentation is available. MULTISTAPLE does not generate soft segmentations</p>
-<p>Write hard segmentations</p>
-<p>Write confusion image </p>
-</p>
-
-</div>
-</div>
-</div>
+Usage:
+pxcombinesegmentations
+[-m]     {STAPLE, VOTE, MULTISTAPLE, MULTISTAPLE2, VOTE_MULTISTAPLE2}:
+        the method used to combine the segmentations. default: MULTISTAPLE2.
+        VOTE_MULTISTAPLE2 is in fact just VOTE followed by MULTISTAPLE2.
+-in      inputFilename0 [inputFileName1 ... ]: the input segmentations,
+        as unsigned char images. More than 2 labels are allowed, but
+        with some restrictions: {0,1,2}=ok, {0,3,4}=bad, {1,2,3}=bad.
+[-n]     numberOfClasses: the number of classes to segment;
+        default: 2 (so, 0 and 1).
+[-P]     priorProbImageFilename0 priorProbImageFilename1 [...]:
+        the names of the prior probabilities for each class, stored as float images.
+        This has only effect when using [VOTE_]MULTISTAPLE2.
+[-p]     priorProb0 priorProb1 [...]:
+        the prior probabilities for each class, independent of x, so a floating point
+        number for each class. This parameter is ignored when "-P" is provided as well.
+        For VOTE this parameter is ignored. For STAPLE, this number is considered
+        as a factor which is multiplied with the estimated prior probability.
+       For MULTISTAPLE[2], the number is really the prior probability.
+        If -p and -P are not provided, the prior probs are estimated from the data.
+[-t]     trust0 [trust1 ...]: a factor between 0 and 1 indicating the 'trust' in each observer;
+        default: 0.99999 for each observer for [VOTE_]MULTISTAPLE2. 1.0 for VOTE.
+        Ignored by STAPLE and MULTISTAPLE; they estimate it by majority voting.
+[-e]     termination threshold: a small float. the smaller the more accurate the solution;
+        default: 1e-5. Ignored by STAPLE and VOTE.
+[-outs]  outputFilename0 outputFileName1 [...]: the output (soft) probabilistic
+        segmentations for each label. These will be float images.
+[-outh]  outputFilename: the output hard segmentation, stored as a single
+        unsigned char image, containing the label numbers.
+       The value 'numberOfClasses' corresponds to 'undecided' (if two labels
+        are exactly equally likely).
+[-outc]  confusionImageFileName: 3d float image, in which each slice resembles
+        the confusion matrix for each observer. The x-axis corresponds to the
+        real label, the y-axis corresponds to the label given by the observer.
+[-mask]  [maskDilationRadius]: Use a mask if this flag is provided.
+        Only taken into account by [VOTE_]MULTISTAPLE2 and VOTE.
+        The mask is 0 at those pixels were the decision is unanimous, and 1 elsewhere.
+        A dilation is performed with a kernel with radius maskDilationRadius (default:1)
+        Pixels that are outside the mask, will have class of the first observer.
+        Other pixels are passed through the combination algorithm.
+        The confusion matrix will be only based on the pixels within the mask.
+[-ord]   The order of preferred classes, in cases of undecided pixels. Default: 0 1 2...
+        Ignored by STAPLE and MULTISTAPLE. In the default case, class 0 will be
+        preferred over class 1, for example.
+[-iv]    inputlabels for relabeling
+[-ov]    outputlabels for relabeling. Each input label is replaced by the corresponding
+        output label, before the combinationMethod is invoked. NumberOfClasses should be
+        valid for the situation after relabeling!
+Supported: 2D/3D.
+</pre></div> </div></div>
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">

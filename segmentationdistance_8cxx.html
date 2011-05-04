@@ -17,7 +17,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li id="searchli">
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -45,8 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <div class="header">
-  <div class="summary">
-<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">src/segmentationdistance/segmentationdistance.cxx File Reference</div>  </div>
 </div>
@@ -55,220 +52,29 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p>This program computes a spatial segmentation error map.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
-<tr><td colspan="2"><h2><a name="func-members"></a>
-Functions</h2></td></tr>
-<tr><td class="memTemplParams" colspan="2">template&lt;class InputImageType &gt; </td></tr>
-<tr><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="segmentationdistance_8cxx.html#ae0a7a10564c3c6d1573104c770a64407">SegmentationDistance</a> (const std::string &amp;inputFileName1, const std::string &amp;inputFileName2, const std::string &amp;outputFileName, const std::vector&lt; double &gt; &amp;mancor, unsigned int samples, unsigned int thetasize, unsigned int phisize, bool cartesianonly)</td></tr>
-<tr><td class="memTemplParams" colspan="2">template&lt;class InputImageType1 , class InputImageType2 , class ImageType &gt; </td></tr>
-<tr><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="segmentationdistance_8cxx.html#a422480551a5584b50a398d1ebb441168">SegmentationDistanceHelper</a> (const InputImageType1 *inputImage1, const InputImageType2 *inputImage2, typename ImageType::Pointer &amp;accum1, typename ImageType::Pointer &amp;accum2, typename ImageType::Pointer &amp;distanceTransformOnEdge, typename ImageType::Pointer &amp;edgeImage, std::vector&lt; double &gt; &amp;mancor, unsigned int samples, unsigned int thetasize, unsigned int phisize, bool cartesianonly, bool invertedImage)</td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>This program computes a spatial segmentation error map. </p>
 <div class="fragment"><pre class="fragment">This program computes a spatial segmentation error map.
-   Usage:   pxsegmentationdistance     -in      inputFilename1 inputFileName2     [-out]   outputFilename, default &lt;in1&gt;DISTANCE&lt;in2&gt;.mhd     [-c]     Center of rotation, used to compute the spherical transform. In world coordinates.     [-s]     samples [unsigned int]; maximum number of samples per pixel, used to do the spherical transform; default 20.     [-t]     theta size; the size of the theta dimension. default: 180, which yields a spacing of 2 degrees.     [-p]     phi size; the size of the phi dimension. default: 90, which yields a spacing of 2 degrees.     [-car]   skip the polar transform and return two output images (outputFileNameDIST and outputFileNameEDGE): true or false; default = false              The EDGE output image is an edge mask for inputfile2. The DIST output image contains the distance at each edge pixel to the first inputFile.   Supported: 3D short for inputImage1, and everything convertable to short.              3D short for inputImage2, and everything convertable to short.
-</pre></div> </div><hr/><h2>Function Documentation</h2>
-<a class="anchor" id="ae0a7a10564c3c6d1573104c770a64407"></a><!-- doxytag: member="segmentationdistance.cxx::SegmentationDistance" ref="ae0a7a10564c3c6d1573104c770a64407" args="(const std::string &amp;inputFileName1, const std::string &amp;inputFileName2, const std::string &amp;outputFileName, const std::vector&lt; double &gt; &amp;mancor, unsigned int samples, unsigned int thetasize, unsigned int phisize, bool cartesianonly)" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class InputImageType &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void SegmentationDistance </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>inputFileName1</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>inputFileName2</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>outputFileName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; double &gt; &amp;&#160;</td>
-          <td class="paramname"><em>mancor</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>samples</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>thetasize</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>phisize</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>cartesianonly</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Declare DetectGoldMarkers.</p>
-<p>******************* SegmentationDistance ****************</p>
-<p>The function that does the work, templated over the image type. </p>
-
-<p><p>constants</p>
-<p>TYPEDEF's.</p>
-<p>Instantiate filters</p>
-<p>Read in the inputImages.</p>
-<p>Pad them with zeros, to make sure the edges of objects facing the boundary of the image are counted as edges</p>
-<p>Compute the distance</p>
-<p>Compute 1 minus the input images</p>
-<p>Compute again the distance</p>
-<p>Compute dist-distinv and edge+edgeinv</p>
-<p>outputfilename extensie afknippen en DIST en EDGE toevoegen.</p>
-<p>get file name extension</p>
-<p>compose outputfilename</p>
-<p>Write to disk</p>
-<p>Add the results (subtract for distance transform, because its negated)</p>
-<p>If a (theta,phi) combination didn't pass through the edge at least smallnumber times, do not count it.</p>
-<p>Divide the integrated spherical transforms</p>
-<p>Collapse to 2d image</p>
-<p>Write the output image. </p>
-</p>
-
-</div>
-</div>
-<a class="anchor" id="a422480551a5584b50a398d1ebb441168"></a><!-- doxytag: member="segmentationdistance.cxx::SegmentationDistanceHelper" ref="a422480551a5584b50a398d1ebb441168" args="(const InputImageType1 *inputImage1, const InputImageType2 *inputImage2, typename ImageType::Pointer &amp;accum1, typename ImageType::Pointer &amp;accum2, typename ImageType::Pointer &amp;distanceTransformOnEdge, typename ImageType::Pointer &amp;edgeImage, std::vector&lt; double &gt; &amp;mancor, unsigned int samples, unsigned int thetasize, unsigned int phisize, bool cartesianonly, bool invertedImage)" -->
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class InputImageType1 , class InputImageType2 , class ImageType &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void SegmentationDistanceHelper </td>
-          <td>(</td>
-          <td class="paramtype">const InputImageType1 *&#160;</td>
-          <td class="paramname"><em>inputImage1</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const InputImageType2 *&#160;</td>
-          <td class="paramname"><em>inputImage2</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">typename ImageType::Pointer &amp;&#160;</td>
-          <td class="paramname"><em>accum1</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">typename ImageType::Pointer &amp;&#160;</td>
-          <td class="paramname"><em>accum2</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">typename ImageType::Pointer &amp;&#160;</td>
-          <td class="paramname"><em>distanceTransformOnEdge</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">typename ImageType::Pointer &amp;&#160;</td>
-          <td class="paramname"><em>edgeImage</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
-          <td class="paramname"><em>mancor</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>samples</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>thetasize</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>phisize</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>cartesianonly</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>invertedImage</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>******************* SegmentationDistanceHelper ****************</p>
-<p>The function that does the work, templated over the image type. </p>
-
-<p><p>constants</p>
-<p>Instantiate filters</p>
-<p>Compute the distance map of image 1</p>
-<p>Compute the distance map of image 2</p>
-<p>Compute minimum spacing</p>
-<p>Find distanceMap2==0 pixels</p>
-<p>Save for the caller of this function</p>
-<p>Compute the center of gravity of image 1</p>
-<p>return to user</p>
-<p>Compute maximum r</p>
-<p>Convert edgeImage to MaskImageType</p>
-<p>Computing spherical transforms</p>
-<p>Computing DE = S(DistanceMap)*S(EdgeImage)</p>
-<p>Integrate along r dimension </p>
-</p>
-
-</div>
-</div>
-</div>
+Usage:
+pxsegmentationdistance
+  -in      inputFilename1 inputFileName2
+  [-out]   outputFilename, default &lt;in1&gt;DISTANCE&lt;in2&gt;.mhd
+  [-c]     Center of rotation, used to compute the spherical transform. In world coordinates.
+  [-s]     samples [unsigned int]; maximum number of samples per pixel, used to do the spherical transform; default 20.
+  [-t]     theta size; the size of the theta dimension. default: 180, which yields a spacing of 2 degrees.
+  [-p]     phi size; the size of the phi dimension. default: 90, which yields a spacing of 2 degrees.
+  [-car]   skip the polar transform and return two output images (outputFileNameDIST and outputFileNameEDGE): true or false; default = false
+           The EDGE output image is an edge mask for inputfile2. The DIST output image contains the distance at each edge pixel to the first inputFile.
+Supported: 3D short for inputImage1, and everything convertable to short.
+           3D short for inputImage2, and everything convertable to short.
+</pre></div> </div></div>
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
