@@ -68,6 +68,8 @@ public:
   typedef SmartPointer<Self>            Pointer;
   typedef SmartPointer<const Self>      ConstPointer;
 
+  enum ReturnValue { PASSED, FAILED, HELPREQUESTED};
+
   /** Method for creation through the object factory. */
   itkNewMacro( Self );
 
@@ -78,7 +80,7 @@ public:
   void SetCommandLineArguments( int argc, char **argv );
   
   /** Ensure that all required arguments have been passed. */
-  bool CheckForRequiredArguments() const;
+  ReturnValue CheckForRequiredArguments() const;
   
   /** Map to store the arguments and their indices. */
   typedef std::size_t                           IndexType;

@@ -39,6 +39,17 @@ int main( int argc, char **argv )
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
   parser->MarkArgumentAsRequired( "-out", "The output filename." );
 
+  itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
+
+  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  {
+    return EXIT_FAILURE;
+  }
+  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  {
+    return EXIT_SUCCESS;
+  }
+  
   /** Get the input segmentation file name (mandatory). */
   std::string inputFileName;
   parser->GetCommandLineArgument( "-in", inputFileName );

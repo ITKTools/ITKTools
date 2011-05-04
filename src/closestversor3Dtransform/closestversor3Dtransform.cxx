@@ -48,11 +48,15 @@ int main( int argc, char *argv[] )
   std::string movingLandmarkFileName = "";
   parser->GetCommandLineArgument( "-m", movingLandmarkFileName );
 
-  bool validateArguments = parser->CheckForRequiredArguments();
+  itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(!validateArguments)
+  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
   {
     return EXIT_FAILURE;
+  }
+  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  {
+    return EXIT_SUCCESS;
   }
 
   /** Compute the closest rigid transformation. */

@@ -26,6 +26,17 @@ int main( int argc, char** argv )
   /** Required argument checking. */
   parser->MarkArgumentAsRequired( "-out", "" );
 
+  itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
+
+  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  {
+    return EXIT_FAILURE;
+  }
+  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  {
+    return EXIT_SUCCESS;
+  }
+
   /** Output image information is specified using either a reference
    * input image, or by -sz.
    */
@@ -50,15 +61,9 @@ int main( int argc, char** argv )
   parser->MarkExactlyOneOfArgumentsAsRequired( exactlyOneArguments3,
     "ERROR: You should specify either \"-r\" or \"-cp2\" or \"-ci2\"." );
 
-  bool validArguments = parser->CheckForRequiredArguments();
-  if ( !validArguments )
-  {
-    return EXIT_FAILURE;
-  }
-
   /** Get arguments: output image file name. */
   std::string outputFileName = "";
-  bool retout = parser->GetCommandLineArgument( "-out", outputFileName );
+  parser->GetCommandLineArgument( "-out", outputFileName );
 
   /** Get arguments: output image information. */
   std::string inputFileName = "";
@@ -68,7 +73,8 @@ int main( int argc, char** argv )
   parser->GetCommandLineArgument( "-dim", Dimension );
 
   std::vector<unsigned int> size( Dimension );
-  bool retsz = parser->GetCommandLineArgument( "-sz", size );
+
+  parser->GetCommandLineArgument( "-sz", size );
 
   std::vector<double> spacing( Dimension, 1.0 );
   parser->GetCommandLineArgument( "-sp", spacing );

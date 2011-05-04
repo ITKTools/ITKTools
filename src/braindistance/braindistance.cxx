@@ -60,6 +60,17 @@ int main( int argc, char ** argv )
   parser->MarkArgumentAsRequired( "-mask", "The mask filename." );
   parser->MarkArgumentAsRequired( "-out", "The output filenames." );
 
+  itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
+
+  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  {
+    return EXIT_FAILURE;
+  }
+  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  {
+    return EXIT_SUCCESS;
+  }
+  
   /** Get arguments (mandatory): input deformation field */
   std::string inputFileName = "";
   parser->GetCommandLineArgument( "-in", inputFileName );
@@ -78,13 +89,6 @@ int main( int argc, char ** argv )
   if ( outputFileNames.size() != 2 )
   {
     std::cerr << "ERROR: You should specify \"-out\", followed by 2 filenames." << std::endl;
-  }
-
-  bool validateArguments = parser->CheckForRequiredArguments();
-
-  if(!validateArguments)
-  {
-    return EXIT_FAILURE;
   }
 
   /** Determine image properties. */

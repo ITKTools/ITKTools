@@ -112,7 +112,7 @@ class runwrap
     {
       std::ostringstream key("");
       key << "-r" << i;
-      unsigned int r;
+      unsigned int r = 0;
       parser->GetCommandLineArgument( key.str(), r);
 
       radius[i] = r;

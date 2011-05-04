@@ -43,6 +43,17 @@ int main( int argc, char *argv[] )
   parser->MarkArgumentAsRequired( "-c", "Center." );
   parser->MarkArgumentAsRequired( "-r", "Radius." );
 
+  itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
+
+  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  {
+    return EXIT_FAILURE;
+  }
+  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  {
+    return EXIT_SUCCESS;
+  }
+  
   /** Get arguments. */
   std::string outputFileName = "";
   parser->GetCommandLineArgument( "-out", outputFileName );

@@ -63,6 +63,17 @@ int main( int argc, char **argv )
   parser->MarkArgumentAsRequired( "-ipp2", "The inputPoints2 filename." );
   parser->MarkArgumentAsRequired( "-out", "The output filename." );
   
+  itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
+
+  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  {
+    return EXIT_FAILURE;
+  }
+  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  {
+    return EXIT_SUCCESS;
+  }
+  
   std::string inputImage1FileName = "";
   std::string inputImage2FileName = "";
   std::string inputPoints1FileName = "";

@@ -16,11 +16,15 @@ int main(int argc, char** argv)
   parser->MarkArgumentAsRequired( "-pt", "Pixel type." );
   parser->MarkArgumentAsRequired( "-in", "Input filename." );
 
-  bool validateArguments = parser->CheckForRequiredArguments();
+  itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(!validateArguments)
+  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
   {
     return EXIT_FAILURE;
+  }
+  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  {
+    return EXIT_SUCCESS;
   }
   
   unsigned int imageDimension = 0;

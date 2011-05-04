@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*=========================================================================
 *
 * Copyright Marius Staring, Stefan Klein, David Doria. 2011.
@@ -15,8 +16,14 @@
 * limitations under the License.
 *
 *=========================================================================*/
-#ifndef __avm_cxx
-#define __avm_cxx
+
+/** \file
+ \brief Calculate the average magnitude of the vectors in a vector image.
+ \verbinclude averagevectormagnitude.help
+ */
+
+#ifndef __averagevectormagnitude_cxx
+#define __averagevectormagnitude_cxx
 
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
@@ -140,11 +147,15 @@ int main( int argc, char** argv )
   parser->GetCommandLineArgument( "-sd", spaceDimension );
   parser->GetCommandLineArgument( "-id", imageDimension );
 
-  bool validateArguments = parser->CheckForRequiredArguments();
+  itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(!validateArguments)
+  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
   {
     return EXIT_FAILURE;
+  }
+  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  {
+    return EXIT_SUCCESS;
   }
 
   float averageVectorMagnitude = 0.0f;
