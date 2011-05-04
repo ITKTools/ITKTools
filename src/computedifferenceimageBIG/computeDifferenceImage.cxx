@@ -24,7 +24,7 @@
 #include <iostream>
 #include "itkImageFileReader.h"
 
-/** In order to determine if argv[1] is a directory or a file,
+/* In order to determine if argv[1] is a directory or a file,
  * so that we can distinguish between dicom and other files.
  */
 #include <itksys/SystemTools.hxx>

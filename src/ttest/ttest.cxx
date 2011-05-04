@@ -30,17 +30,17 @@
 
 //-------------------------------------------------------------------------------------
 
-/** Declare ReadInputData. */
+/* Declare ReadInputData. */
 bool ReadInputData( const std::string & filename, std::vector<std::vector<double> > & matrix );
 
-/** Declare ComputeTValue. */
+/* Declare ComputeTValue. */
 bool ComputeTValue( const std::vector<double> & samples1,
     const std::vector<double> & samples2, const unsigned int type,
     double & tValue,
     double & mean1, double & mean2, double & meandiff,
     double & std1, double & std2, double & stddiff );
 
-/** Declare ComputeMeanAndStandardDeviation. */
+/* Declare ComputeMeanAndStandardDeviation. */
 void ComputeMeanAndStandardDeviation(
   const std::vector<double> & samples1,
   const std::vector<double> & samples2,
@@ -186,7 +186,7 @@ int main( int argc, char **argv )
 } // end main
 
 
-  /**
+  /*
    * ******************* ReadInputData *******************
    *
    * This function reads the specified input text file.
@@ -254,7 +254,7 @@ bool ReadInputData( const std::string & filename, std::vector<std::vector<double
 } // end ReadInputData()
 
 
-  /**
+  /*
    * ******************* ComputeTValue *******************
    */
 
@@ -299,7 +299,7 @@ bool ComputeTValue( const std::vector<double> & samples1,
 } // end ComputeTValue()
 
 
-  /**
+  /*
    * ******************* ComputeMeanAndStandardDeviation *******************
    */
 
@@ -349,7 +349,7 @@ void ComputeMeanAndStandardDeviation(
 } // end ComputeMeanAndStandardDeviation()
 
 
-  /**
+  /*
    * ******************* GetHelpString *******************
    */
 

@@ -41,7 +41,7 @@ if ( ComponentType == #type && Dimension == dim ) \
 
 //-------------------------------------------------------------------------------------
 
-/** Declare IntensityWindowing. */
+/* Declare IntensityWindowing. */
 template< class InputImageType >
 void IntensityWindowing(
   const std::string & inputFileName,
@@ -182,7 +182,7 @@ int main( int argc, char **argv )
 } // end main
 
 
-  /**
+  /*
    * ******************* IntensityWindowing *******************
    */
 

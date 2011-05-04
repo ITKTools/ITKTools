@@ -40,7 +40,7 @@ if ( PixelType == #type && Dimension == dim ) \
 
 //-------------------------------------------------------------------------------------
 
-/** Declare CreateElipsoid. */
+/* Declare CreateElipsoid. */
 template< class ImageType >
 void CreateEllipsoid(
   const std::string & outputFileName,
@@ -153,7 +153,7 @@ int main( int argc, char *argv[] )
 } // end main
 
 
-  /**
+  /*
    * ******************* CreateEllipsoid *******************
    */
 

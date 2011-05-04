@@ -132,7 +132,7 @@ int main( int argc, char *argv[] )
 } // end main
 
 
-/**
+/*
  * ******************* ComputeClosestVersor *******************
  */
 
@@ -204,7 +204,7 @@ void ComputeClosestVersor(
 } // end ComputeClosestVersor()
 
 
-/**
+/*
  * ******************* ReadLandmarks *******************
  */
 
@@ -242,7 +242,7 @@ void ReadLandmarks(
 } // end ReadLandMarks()
 
 
-/**
+/*
  * ******************* ConvertVersorToEuler *******************
  */
 
@@ -273,7 +273,7 @@ void ConvertVersorToEuler(
 } // end ConvertVersorToEuler()
 
 
-/**
+/*
  * ******************* GetHelpString *******************
  */
 

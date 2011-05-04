@@ -43,7 +43,7 @@ if ( ComponentTypeIn == #type && Dimension == dim ) \
 
 //-------------------------------------------------------------------------------------
 
-/** Declare ExtractIndex. */
+/* Declare ExtractIndex. */
 template< class TPixel, unsigned int NDimension >
 void ExtractIndex(
   const std::string & inputFileName,
@@ -173,7 +173,7 @@ int main( int argc, char ** argv )
 } // end main
 
 
-/**
+/*
  * ******************* ExtractIndex *******************
  */
 

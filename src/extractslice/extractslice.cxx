@@ -44,7 +44,7 @@ if ( ComponentType == #type ) \
 
 //-------------------------------------------------------------------------------------
 
-/** Declare ExtractSlice. */
+/* Declare ExtractSlice. */
 template< class PixelType >
 void ExtractSlice(
   const std::string & inputFileName,
@@ -192,7 +192,7 @@ int main( int argc, char ** argv )
 
 //-------------------------------------------------------------------------------------
 
-/** Define ExtractSlice. */
+/* Define ExtractSlice. */
 template< class PixelType >
 void ExtractSlice(
   const std::string & inputFileName,

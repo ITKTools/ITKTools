@@ -39,7 +39,7 @@ if ( ComponentType == #type && Dimension == dim ) \
 
 //-------------------------------------------------------------------------------------
 
-/** Declare ReflectImageFilter. */
+/* Declare ReflectImageFilter. */
 template< class TOutputPixel, unsigned int NDimension >
 void ReflectImageFilter(
   const std::string & inputFileName,
@@ -175,7 +175,7 @@ int main( int argc, char ** argv )
 } // end main
 
 
-/**
+/*
  * ******************* ReflectImageFilter *******************
  */
 

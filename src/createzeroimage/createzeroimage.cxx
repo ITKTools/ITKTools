@@ -39,7 +39,7 @@ if ( PixelType == #type && Dimension == dim ) \
 
 //-------------------------------------------------------------------------------------
 
-/** Declare CreateZeroImage. */
+/* Declare CreateZeroImage. */
 template< class InputImageType >
 void CreateZeroImage(
   const std::string & fileName,
@@ -205,11 +205,11 @@ int main( int argc, char **argv )
 } // end main
 
 
-  /**
-   * ******************* CreateZeroImage *******************
-   *
-   * The CreateZeroImage function templated over the input pixel type.
-   */
+/*
+  * ******************* CreateZeroImage *******************
+  *
+  * The CreateZeroImage function templated over the input pixel type.
+  */
 
 template< class ImageType >
 void CreateZeroImage(

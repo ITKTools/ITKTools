@@ -44,7 +44,7 @@
 #include "itkMultiThreader.h"
 
 
-/** Declare CombineSegmentations. */
+/* Declare CombineSegmentations. */
 template <unsigned int NDimensions>
 void CombineSegmentations(
   const std::vector<std::string> & inputSegmentationFileNames,
@@ -331,7 +331,7 @@ int main( int argc, char **argv )
 
 
 
-/**
+/*
  * ******************* CombineSegmentations ****************
  *
  * The function that does the work, templated over the image dimension.

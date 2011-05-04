@@ -56,7 +56,7 @@ if ( Dimension == dim ) \
 
 //-------------------------------------------------------------------------------------
 
-/** Declare DeformationFieldGenerator. */
+/* Declare DeformationFieldGenerator. */
 template< unsigned int Dimension >
 void DeformationFieldGenerator(
   const std::string & inputImage1FileName,
@@ -173,7 +173,7 @@ int main( int argc, char **argv )
 } // end main
 
 
-  /**
+  /*
    * ***************** DeformationFieldGenerator ****************
    */
 

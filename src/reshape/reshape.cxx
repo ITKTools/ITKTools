@@ -40,7 +40,7 @@ if ( ComponentTypeIn == #type && Dimension == dim ) \
 
 //-------------------------------------------------------------------------------------
 
-/** Declare PerformPCA. */
+/* Declare PerformPCA. */
 template< class ImageType >
 void Reshape(
   const std::string & inputFileName,
@@ -172,7 +172,7 @@ int main( int argc, char **argv )
 } // end main()
 
 
-/**
+/*
  * ******************* Reshape *******************
  */
 

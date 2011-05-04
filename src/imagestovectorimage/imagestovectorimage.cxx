@@ -42,7 +42,7 @@ if ( ComponentTypeIn == #type && Dimension == dim ) \
 
 //-------------------------------------------------------------------------------------
 
-/** Declare ComposeVectorImage. */
+/* Declare ComposeVectorImage. */
 template< class InputImageType, class OutputImageType >
 void ComposeVectorImage(
   const std::vector<std::string> & inputFileNames,
@@ -160,7 +160,7 @@ int main( int argc, char ** argv )
 } // end main
 
 
-  /**
+  /*
    * ******************* ComposeVectorImage *******************
    */
 

@@ -228,9 +228,9 @@ int main( int argc, char *argv[] )
 } // end main
 
 
-  /**
-   * ******************* GetHelpString *******************
-   */
+/*
+* ******************* GetHelpString *******************
+*/
 std::string GetHelpString()
 {
   std::stringstream ss;

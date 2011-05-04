@@ -42,7 +42,7 @@ if ( ComponentTypeIn == #type && Dimension == dim ) \
 
 //-------------------------------------------------------------------------------------
 
-/** Declare ExtractEveryOtherSlice. */
+/* Declare ExtractEveryOtherSlice. */
 template< class InputImageType >
 void ExtractEveryOtherSlice(
   const std::string & inputFileName,
@@ -177,7 +177,7 @@ int main( int argc, char **argv )
 } // end main
 
 
-  /**
+  /*
    * ******************* ExtractEveryOtherSlice *******************
    *
    * The ExtractEveryOtherSlice function templated over the input pixel type.

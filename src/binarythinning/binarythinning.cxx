@@ -29,7 +29,7 @@
 
 //-------------------------------------------------------------------------------------
 
-/** run: A macro to call a function. */
+/* run: A macro to call a function. */
 #define run( function, type, dim ) \
 if ( ComponentTypeIn == #type && Dimension == dim ) \
 { \
@@ -40,7 +40,7 @@ if ( ComponentTypeIn == #type && Dimension == dim ) \
 
 //-------------------------------------------------------------------------------------
 
-/** Declare BinaryThinning. */
+/* Declare BinaryThinning. */
 template< class InputImageType >
 void BinaryThinning(
   const std::string & inputFileName,
@@ -155,7 +155,7 @@ int main( int argc, char ** argv )
 } // end main
 
 
-  /**
+  /*
    * ******************* BinaryThinning *******************
    */
 

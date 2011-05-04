@@ -36,7 +36,7 @@
 #include "itkMorphologicalDistanceTransformImageFilter.h"
 //#include "itkOrderKDistanceTransformImageFilter.h"
 
-/** Declare DistanceTransform. */
+/* Declare DistanceTransform. */
 template <unsigned int NDimensions>
 void DistanceTransform(
   const std::string & inputFileName,
@@ -187,7 +187,7 @@ int main( int argc, char **argv )
 
 
 
-/**
+/*
  * ******************* DistanceTransform ****************
  *
  */

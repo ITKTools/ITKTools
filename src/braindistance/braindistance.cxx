@@ -40,7 +40,7 @@
 
 //-------------------------------------------------------------------------------------
 
-/** Declare ComputeBrainDistance function. */
+/* Declare ComputeBrainDistance function. */
 void ComputeBrainDistance(
   const std::string & inputFileName,
   const std::string & maskFileName,
@@ -150,7 +150,7 @@ int main( int argc, char ** argv )
 
 //------------------------------------------------------------------
 
-/** Function that does (x-b)^2 */
+/* Function that does (x-b)^2 */
 namespace itk
 {
   namespace Function {
@@ -201,7 +201,7 @@ namespace itk
 
 //---------------------------------------------------------------------
 
-/** write a vector of doubles to an ostream */
+/* write a vector of doubles to an ostream */
 std::ostream& operator<<(std::ostream& os, std::vector<double>& vec)
 {
   for ( unsigned int i =0; i< (vec.size()-1); ++i)
@@ -214,7 +214,7 @@ std::ostream& operator<<(std::ostream& os, std::vector<double>& vec)
 
 //------------------------------------------------------------------
 
-/** Implement ComputeBrainDistance function. */
+/* Implement ComputeBrainDistance function. */
 void ComputeBrainDistance(
   const std::string & inputFileName,
   const std::string & maskFileName,

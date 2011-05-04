@@ -18,7 +18,7 @@
 /** \file
  \brief Takes a directory and searches for dicom files, from which the seriesUID's are extracted.
  
- \verbinclude getdicomseriesuids.help
+ \verbinclude getDICOMseriesUIDs.help
  */
 
 #include "itkCommandLineArgumentParser.h"

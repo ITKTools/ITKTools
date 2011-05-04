@@ -88,7 +88,7 @@ if ( ComponentTypeIn == #type && Dimension == dim ) \
 
 //-------------------------------------------------------------------------------------
 
-/** Declare threshold functions. */
+/* Declare threshold functions. */
 template< class InputImageType >
 void ThresholdImage(
   const std::string & inputFileName,
@@ -334,7 +334,7 @@ int main( int argc, char **argv )
 } // end main
 
 
-/**
+/*
  * ******************* ThresholdImage *******************
  */
 
@@ -383,7 +383,7 @@ void ThresholdImage(
 } // end ThresholdImage()
 
 
-/**
+/*
  * ******************* OtsuThresholdImage *******************
  */
 
@@ -438,7 +438,7 @@ void OtsuThresholdImage(
 } // end OtsuThresholdImage()
 
 
-/**
+/*
  * ******************* OtsuMultipleThresholdImage *******************
  */
 
@@ -495,7 +495,7 @@ void OtsuMultipleThresholdImage(
 } // end OtsuMultipleThresholdImage()
 
 
-// /**
+// /*
 //  * ******************* AdaptiveOtsuThresholdImage *******************
 //  */
 //
@@ -549,7 +549,7 @@ void OtsuMultipleThresholdImage(
 // } // end AdaptiveOtsuThresholdImage()
 
 
-/**
+/*
  * ******************* RobustAutomaticThresholdImage *******************
  */
 
@@ -605,7 +605,7 @@ void RobustAutomaticThresholdImage(
 } // end RobustAutomaticThresholdImage()
 
 
-/**
+/*
  * ******************* KappaSigmaThresholdImage *******************
  */
 
@@ -661,7 +661,7 @@ void KappaSigmaThresholdImage(
 } // end KappaSigmaThresholdImage()
 
 
-/**
+/*
  * ******************* MinErrorThresholdImage *******************
  */
 
@@ -709,7 +709,7 @@ void MinErrorThresholdImage(
 } // end MinErrorThresholdImage()
 
 
-/**
+/*
  * ******************* GetHelpString *******************
  */
 

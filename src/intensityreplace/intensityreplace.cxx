@@ -39,7 +39,7 @@ if ( ComponentType == #type && Dimension == dim ) \
 
 //-------------------------------------------------------------------------------------
 
-/** Declare IntensityReplaceImageFilter. */
+/* Declare IntensityReplaceImageFilter. */
 template< class TOutputPixel, unsigned int NDimension >
 void IntensityReplaceImageFilter(
   const std::string & inputFileName,
@@ -182,7 +182,7 @@ int main( int argc, char ** argv )
 } // end main
 
 
-/**
+/*
  * ******************* IntensityReplaceImageFilter *******************
  */
 

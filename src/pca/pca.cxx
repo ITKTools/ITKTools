@@ -43,7 +43,7 @@ if ( componentType == #type && Dimension == dim ) \
 
 //-------------------------------------------------------------------------------------
 
-/** Declare PerformPCA. */
+/* Declare PerformPCA. */
 template< class OutputImageType >
 void PerformPCA(
   const std::vector< std::string > & inputFileNames,
@@ -180,7 +180,7 @@ int main( int argc, char **argv )
 } // end main()
 
 
-  /**
+  /*
    * ******************* PerformPCA *******************
    */
 

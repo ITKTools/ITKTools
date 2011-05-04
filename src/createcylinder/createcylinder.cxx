@@ -40,7 +40,7 @@ if ( Dimension == dim ) \
 
 //-------------------------------------------------------------------------------------
 
-/** Declare CreateCylinder. */
+/* Declare CreateCylinder. */
 template< unsigned int Dimension >
 void CreateCylinder(
   const std::string & inputFileName,
@@ -131,7 +131,7 @@ int main( int argc, char *argv[] )
 
 } // end main
 
-/**
+/*
  * ******************* CreateCylinder *******************
  */
 

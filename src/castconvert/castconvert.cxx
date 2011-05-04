@@ -47,7 +47,7 @@
 //#include "itkBrains2MaskImageIOFactory.h"
 #include "itkPhilipsRECImageIOFactory.h"
 
-/** Functions to do the actual conversion. */
+/* Functions to do the actual conversion. */
 extern int FileConverterScalar(
   const std::string & inputPixelComponentType,
   const std::string & outputPixelComponentType,

@@ -29,7 +29,7 @@
 
 //-------------------------------------------------------------------------------------
 
-/** run: A macro to call a function. */
+/* run: A macro to call a function. */
 #define run(function,type,dim) \
 if ( ComponentType == #type && Dimension == dim ) \
 { \
@@ -40,7 +40,7 @@ if ( ComponentType == #type && Dimension == dim ) \
 
 //-------------------------------------------------------------------------------------
 
-/** Declare ComputeBoundingBox. */
+/* Declare ComputeBoundingBox. */
 template< class InputImageType >
 void ComputeBoundingBox( std::string inputFileName );
 
@@ -154,7 +154,7 @@ int main( int argc, char **argv )
 } // end main
 
 
-  /**
+  /*
    * ******************* ComputeBoundingBox *******************
    */
 

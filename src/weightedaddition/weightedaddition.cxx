@@ -25,7 +25,7 @@ if ( ComponentType == #type && Dimension == dim ) \
 
 //-------------------------------------------------------------------------------------
 
-/** Declare WeightedAddition. */
+/* Declare WeightedAddition. */
 template< class InputImageType >
 void WeightedAddition(
   const std::vector<std::string> & inputFileNames,
@@ -142,7 +142,7 @@ int main( int argc, char **argv )
 } // end main()
 
 
-/**
+/*
  * ******************* WeightedAddition *******************
  */
 

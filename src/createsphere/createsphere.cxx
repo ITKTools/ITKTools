@@ -40,7 +40,7 @@ if ( PixelType == #type && Dimension == dim ) \
 
 //-------------------------------------------------------------------------------------
 
-/** Declare CreateSphere. */
+/* Declare CreateSphere. */
 template< class ImageType >
 void CreateSphere(
   const std::string & outputFileName,
@@ -140,9 +140,9 @@ int main( int argc, char *argv[] )
 
 } // end main
 
-/**
-   * ******************* CreateSphere *******************
-   */
+/*
+ * ******************* CreateSphere *******************
+ */
 
 template< class ImageType >
 void CreateSphere(

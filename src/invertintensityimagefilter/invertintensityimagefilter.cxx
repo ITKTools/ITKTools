@@ -16,7 +16,7 @@
 *
 *=========================================================================*/
 /** \file
- \brief This program inverts the intensities of an image
+ \brief This program inverts the intensities of an image.  new = max - old (where max is the maximum of the image).
  
  \verbinclude invertintensityimagefilter.help
  */
@@ -28,11 +28,6 @@
 
 #include "itkStatisticsImageFilter.h"
 #include "itkInvertIntensityImageFilter.h"
-
-/** This program inverts the intensity of an image:
- * new = max - old,
- * where max is the maximum of an image.
- */
 
 //-------------------------------------------------------------------------------------
 
@@ -47,7 +42,7 @@ if ( ComponentTypeIn == #type && Dimension == dim ) \
 
 //-------------------------------------------------------------------------------------
 
-/** Declare InvertIntensity. */
+/* Declare InvertIntensity. */
 template< class InputImageType >
 void InvertIntensity(
   const std::string & inputFileName,
@@ -156,7 +151,7 @@ int main( int argc, char ** argv )
 } // end main
 
 
-  /**
+  /*
    * ******************* InvertIntensity *******************
    *
    * The resize function templated over the input pixel type.

@@ -25,7 +25,7 @@
 
 #include "UnaryImageOperatorMainHelper.h"
 
-/** Functions to do the work: this splits things up
+/* Functions to do the work: this splits things up
  * in different compilation units.
  */
 extern int UnaryImageOperatorScalar( const std::string & inputFileName,

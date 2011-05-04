@@ -74,7 +74,7 @@ void PrintInfo( ReaderType reader, WriterType writer )
 }  // end PrintInfo
 
 
-/** The function that reads the input images, calculates the difference
+/* The function that reads the input images, calculates the difference
  * and writes the output image.
  * This function is templated over the image types. In the main function
  * we have to make sure to call the right instantiation.
@@ -176,7 +176,7 @@ void PrintInfo( ReaderType reader, WriterType writer )
 // }  // end CreateScalarDifferenceImage
 
 
-/** The function that reads the input images, calculates the difference
+/* The function that reads the input images, calculates the difference
  * and writes the output image.
  * This function is templated over the image types. In the main function
  * we have to make sure to call the right instantiation.

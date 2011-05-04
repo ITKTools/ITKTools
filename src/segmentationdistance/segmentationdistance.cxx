@@ -58,7 +58,7 @@ if ( PixelType == #type && Dimension == dim ) \
 
 //-------------------------------------------------------------------------------------
 
-/** Declare DetectGoldMarkers. */
+/* Declare DetectGoldMarkers. */
 template< class InputImageType >
 void SegmentationDistance(
   const std::string & inputFileName1,
@@ -182,7 +182,7 @@ int main( int argc, char **argv )
 
 
 
-  /**
+  /*
    * ******************* SegmentationDistanceHelper ****************
    *
    * The function that does the work, templated over the image type.
@@ -409,7 +409,7 @@ void SegmentationDistanceHelper(
 
 
 
-  /**
+  /*
    * ******************* SegmentationDistance ****************
    *
    * The function that does the work, templated over the image type.

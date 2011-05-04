@@ -47,7 +47,7 @@ if ( ComponentType == #type && Dimension == dim ) \
 
 //-------------------------------------------------------------------------------------
 
-/** Declare RescaleIntensity. */
+/* Declare RescaleIntensity. */
 template< class InputImageType >
 void RescaleIntensity(
   const std::string & inputFileName,
@@ -210,7 +210,7 @@ int main( int argc, char **argv )
 } // end main()
 
 
-/**
+/*
  * ******************* RescaleIntensity *******************
  */
 

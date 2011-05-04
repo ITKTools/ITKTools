@@ -16,7 +16,7 @@
 *
 *=========================================================================*/
 /** \file
- \brief Compute the FFT of an image.
+ \brief Compute the FFT of an image. Note this documentation may be empty if ITKTools was compiled without USE_FFTIMAGE.
  
  \verbinclude fftimage.help
  */
@@ -51,12 +51,12 @@ if ( componentType == #type && Dimension == dim ) \
 
 //-------------------------------------------------------------------------------------
 
-/** Declare FFTImage. */
+/* Declare FFTImage. */
 template< class PixelType, unsigned int Dimension >
 void FFTImage( const std::string & inputFileName,
   const std::vector<std::string> & outputFileNames );
 
-/** Declare IFFTImage. */
+/* Declare IFFTImage. */
 template< class PixelType, unsigned int Dimension >
 void IFFTImage( const std::vector<std::string> & inputFileNames,
   const std::string & outputFileName,
@@ -213,7 +213,7 @@ int main( int argc, char **argv )
 } // end main()
 
 
-  /**
+  /*
    * ******************* FFTImage *******************
    */
 
@@ -286,7 +286,7 @@ void FFTImage( const std::string & inputFileName,
 } // end FFTImage()
 
 
-  /**
+  /*
    * ******************* IFFTImage *******************
    */
 

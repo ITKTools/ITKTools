@@ -44,7 +44,7 @@ if ( PixelType == #type && Dimension == dim ) \
 
 //-------------------------------------------------------------------------------------
 
-/** Declare ResizeImage. */
+/* Declare ResizeImage. */
 template< class InputImageType >
 void ResizeImage(
   const std::string & inputFileName,
@@ -204,7 +204,7 @@ int main( int argc, char **argv )
 } // end main
 
 
-  /**
+  /*
    * ******************* ResizeImage *******************
    *
    * The resize function templated over the input pixel type.

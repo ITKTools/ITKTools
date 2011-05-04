@@ -28,12 +28,14 @@
 
 //-------------------------------------------------------------------------------------
 
+std::string GetHelpString( void );
+
 int main( int argc, char *argv[] )
 {
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText("No help provided.");
+  parser->SetProgramHelpText(GetHelpString());
 
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
 
@@ -111,3 +113,15 @@ int main( int argc, char *argv[] )
 
 } // end main
 
+/**
+ * ******************* PrintHelp *******************
+ */
+
+std::string GetHelpString( void )
+{
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxcountnonzerovoxels" << std::endl
+  << "-in      inputFilename" << std::endl;
+  return ss.str();
+} // end GetHelpString()

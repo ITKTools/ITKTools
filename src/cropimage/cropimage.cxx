@@ -43,7 +43,7 @@ if ( ComponentTypeIn == #type && Dimension == dim ) \
 
 //-------------------------------------------------------------------------------------
 
-/** Declare CropImage. */
+/* Declare CropImage. */
 template< class InputImageType >
 void CropImage(
   const std::string & inputFileName,
@@ -275,7 +275,7 @@ int main( int argc, char **argv )
 } // end main()
 
 
-  /**
+  /*
    * ******************* CropImage *******************
    */
 
@@ -390,7 +390,7 @@ std::string GetHelpString( void )
 } // end GetHelpString()
 
 
-  /**
+  /*
    * ******************* CheckWhichInputOption *******************
    *
    * 1: supply two points with -pA and -pB
@@ -425,7 +425,7 @@ bool CheckWhichInputOption( const bool pAGiven, const bool pBGiven, const bool s
 } // end CheckWhichInputOption()
 
 
-  /**
+  /*
    * ******************* ProcessArgument *******************
    */
 
@@ -468,7 +468,7 @@ bool ProcessArgument( std::vector<int> & arg, const unsigned int dimension, cons
 } // end ProcessArgument()
 
 
-  /**
+  /*
    * ******************* GetBox *******************
    */
 
@@ -489,7 +489,7 @@ void GetBox( std::vector<int> & pA, std::vector<int> & pB, unsigned int dimensio
 } // end GetBox()
 
 
-  /**
+  /*
    * ******************* GetLowerBoundary *******************
    */
 
@@ -517,7 +517,7 @@ std::vector<int> GetLowerBoundary( const std::vector<int> & input1,
 } // end GetLowerBoundary()
 
 
-  /**
+  /*
    * ******************* GetUpperBoundary *******************
    */
 

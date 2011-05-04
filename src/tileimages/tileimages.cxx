@@ -52,14 +52,14 @@ if ( ComponentType == #type && Dimension == dim ) \
 
 //-------------------------------------------------------------------------------------
 
-/** Declare TileImages2D3D. */
+/* Declare TileImages2D3D. */
 template< class PixelType >
 void TileImages2D3D(
   const std::vector<std::string> & inputFileNames,
   const std::string & outputFileName,
   const double & zspacing );
 
-/** Declare TileImages. */
+/* Declare TileImages. */
 template< class PixelType, unsigned int Dimension >
 void TileImages(
   const std::vector<std::string> & inputFileNames,
@@ -215,7 +215,7 @@ int main( int argc, char ** argv )
 
 //-------------------------------------------------------------------------------------
 
-/** Define TileImages2D3D. */
+/* Define TileImages2D3D. */
 template< class PixelType >
 void TileImages2D3D(
   const std::vector<std::string> & inputFileNames,
@@ -264,7 +264,7 @@ void TileImages2D3D(
 
 //-------------------------------------------------------------------------------------
 
-/** Define TileImages. */
+/* Define TileImages. */
 template< class PixelType, unsigned int Dimension >
 void TileImages(
   const std::vector<std::string> & inputFileNames,

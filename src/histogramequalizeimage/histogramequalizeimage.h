@@ -26,6 +26,8 @@ std::string GetHelpString(void)
     << "-pt    \tPixelType <FLOAT, SHORT, USHORT, INT, UINT, CHAR, UCHAR>" << std::endl
     << "Currently only char, uchar, short, and ushort are supported." << std::endl
     << "-id    \tImageDimension <2,3>" << std::endl;
+    
+  return ss.str();
 } // end GetHelpString
 
 

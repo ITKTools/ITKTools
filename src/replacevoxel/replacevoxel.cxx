@@ -39,7 +39,7 @@ if ( ComponentTypeIn == #type && Dimension == dim ) \
 
 //-------------------------------------------------------------------------------------
 
-/** Declare ReplacePixel. */
+/* Declare ReplaceVoxel. */
 template< class TInputPixel, unsigned int NDimension >
 void ReplaceVoxel(
   const std::string & inputFileName,
@@ -175,7 +175,7 @@ int main( int argc, char ** argv )
 } // end main
 
 
-/**
+/*
  * ******************* ReplaceVoxel *******************
  */
 

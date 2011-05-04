@@ -62,7 +62,7 @@ if ( componentTypeIn == #typeIn && componentTypeOut == #typeOut && Dimension == 
 
 //-------------------------------------------------------------------------------------
 
-/** Declare PerformTextureAnalysis. */
+/* Declare PerformTextureAnalysis. */
 template< class InputImageType, class OutputImageType >
 void PerformTextureAnalysis(
   const std::string & inputFileName,
@@ -199,7 +199,7 @@ int main( int argc, char **argv )
 } // end main()
 
 
-/**
+/*
  * ******************* PerformTextureAnalysis *******************
  */
 
