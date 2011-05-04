@@ -221,14 +221,15 @@ void ExtractIndex(
 
 std::string GetHelpString()
 {
-  std::string helpText = "This program extracts a user specified component from a vector image.\n \
-  Usage:\n \
-  pxextractindexfromvectorimage\n \
-    -in      inputFilename\n \
-    [-out]   outputFilename, default in + INDEXEXTRACTED.mhd\n \
-    -ind     a valid index\n \
-  Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int,\n \
-  long, float, double.";
-  return helpText;
+  std::stringstream ss;
+  ss << "This program extracts a user specified component from a vector image." << std::endl
+  << "Usage:" << std::endl
+  << "pxextractindexfromvectorimage" << std::endl
+  << "  -in      inputFilename" << std::endl
+  << "  [-out]   outputFilename, default in + INDEXEXTRACTED.mhd" << std::endl
+  << "  -ind     a valid index" << std::endl
+  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int," << std::endl
+  << "long, float, double.";
+  return ss.str();
 } // end GetHelpString()
 

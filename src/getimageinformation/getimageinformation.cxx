@@ -325,24 +325,25 @@ int main( int argc, char **argv )
    */
 std::string GetHelpString()
 {
-  std::string helpText = "Usage:\n \
-  pxgetimageinformation\n \
-    -in      inputFileName\n \
-    [-dim]   dimension\n \
-    [-pt]    pixelType\n \
-    [-ct]    componentType\n \
-    [-noc]   #components\n \
-    [-sz]    size\n \
-    [-sp]    spacing\n \
-    [-vol]   voxel volume\n \
-    [-o]     origin\n \
-    [-dc]    direction cosines\n \
-    [-all]   all of the above\n \
-  Image information about the inputFileName is printed to screen.\n \
-  Only one option should be given, e.g. -sp, then the spacing is printed.\n \
-    [-i]     index, if this option is given only e.g. \
-  spacing[index] is printed.";
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxgetimageinformation" << std::endl
+  << "  -in      inputFileName" << std::endl
+  << "  [-dim]   dimension" << std::endl
+  << "  [-pt]    pixelType" << std::endl
+  << "  [-ct]    componentType" << std::endl
+  << "  [-noc]   #components" << std::endl
+  << "  [-sz]    size" << std::endl
+  << "  [-sp]    spacing" << std::endl
+  << "  [-vol]   voxel volume" << std::endl
+  << "  [-o]     origin" << std::endl
+  << "  [-dc]    direction cosines" << std::endl
+  << "  [-all]   all of the above" << std::endl
+  << "Image information about the inputFileName is printed to screen." << std::endl
+  << "Only one option should be given, e.g. -sp, then the spacing is printed." << std::endl
+  << "  [-i]     index, if this option is given only e.g." << std::endl
+  << "spacing[index] is printed.";
 
-  return helpText;
+  return ss.str();
 
 } // end GetHelpString()

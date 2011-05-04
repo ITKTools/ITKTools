@@ -471,17 +471,18 @@ void ComputeBrainDistance(
  */
 std::string GetHelpString()
 {
-  std::string helpText = "This program computes the distance between brains, based on \
-  a label mask image of one of the brains and a deformation field.\n \
-  Usage:\n \
-  pxbraindistance\n \
-    -in      inputFilename: 3D deformation field \n \
-    -out     outputFilenames: two output filenames. The first \
-  one contains mu_tot and sigma_tot. the second one contains mu_i, sigma_i, and sigma_itot.\n \
-    -mask    maskFileName: the name of the label image (deformed HAMMER atlas)\n \
-    [-m]     method: 0 (jacobian), 1 (bending energy), or 2 (log(jacobian)); default: 0.\n \
-  Supported: -in: 3D vector of floats, 3 elements per vector \
-  -mask: 3D unsigned char or anything that is valid after casting to unsigned char\n";
-  return helpText;
+  std::stringstream ss;
+  ss << "This program computes the distance between brains, based on" << std::endl
+     << "a label mask image of one of the brains and a deformation field." << std::endl
+     << "Usage:" << std::endl
+     << "pxbraindistance" << std::endl
+     << "-in      inputFilename: 3D deformation field" << std::endl
+     << "-out     outputFilenames: two output filenames. The first" << std::endl
+     << "one contains mu_tot and sigma_tot. the second one contains mu_i, sigma_i, and sigma_itot." << std::endl
+     << "-mask    maskFileName: the name of the label image (deformed HAMMER atlas)" << std::endl
+     << "[-m]     method: 0 (jacobian), 1 (bending energy), or 2 (log(jacobian)); default: 0." << std::endl
+     << "Supported: -in: 3D vector of floats, 3 elements per vector" << std::endl
+     << "-mask: 3D unsigned char or anything that is valid after casting to unsigned char";
+  return ss.str();
 
-} // end PrintHelp()
+} // end GetHelpString()

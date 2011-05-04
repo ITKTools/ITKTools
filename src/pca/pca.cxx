@@ -270,14 +270,15 @@ void PerformPCA(
 
 std::string GetHelpString( void )
 {
-  std::string helpText = "Usage: \
-  pxpca \
-    -in      inputFilenames \
-    [-out]   outputDirectory, default equal to the inputFilename directory \
-    [-opc]   the number of principal components that you want to output, default all \
-    [-opct]  output pixel component type, default derived from the input image \
-  Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxpca" << std::endl
+  << "  -in      inputFilenames" << std::endl
+  << "  [-out]   outputDirectory, default equal to the inputFilename directory" << std::endl
+  << "  [-opc]   the number of principal components that you want to output, default all" << std::endl
+  << "  [-opct]  output pixel component type, default derived from the input image" << std::endl
+  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
 
-  return helpText;
+  return ss.str();
 } // end GetHelpString()
 

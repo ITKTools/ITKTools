@@ -324,20 +324,21 @@ int  main(  int  argc,  char *argv[] )
 
 std::string GetHelpString()
 {
-  std::string helpText = "Usage: \n \
-  \tpxcomputedifferenceimage inputimage1filename inputimage2filename [outputimagefilename] [outputPixelComponentType] \
-  \twhere outputPixelComponentType is one of: \
-  \t\t- unsigned_char \
-  \t\t- char \
-  \t\t- unsigned_short \
-  \t\t- short \
-  \t\t- unsigned_int \
-  \t\t- int \
-  \t\t- unsigned_long \
-  \t\t- long \
-  \t\t- float \
-  \t\t- double \
-  \tprovided that the outputPixelComponentType is supported by the output file format. \
-  \tBy default the outputPixelComponentType is set to the inputPixelComponentType of image1.";
-  return helpText;
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+     << "pxcomputedifferenceimage inputimage1filename inputimage2filename [outputimagefilename] [outputPixelComponentType]" << std::endl
+     << "where outputPixelComponentType is one of:" << std::endl
+     << "- unsigned_char" << std::endl
+     << "- char" << std::endl
+     << "- unsigned_short" << std::endl
+     << "- short" << std::endl
+     << "- unsigned_int" << std::endl
+     << "- int" << std::endl
+     << "- unsigned_long" << std::endl
+     << "- long" << std::endl
+     << "- float" << std::endl
+     << "- double" << std::endl
+     << "provided that the outputPixelComponentType is supported by the output file format." << std::endl
+     << "By default the outputPixelComponentType is set to the inputPixelComponentType of image1.";
+  return ss.str();
 }

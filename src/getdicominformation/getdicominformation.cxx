@@ -294,14 +294,15 @@ int main( int argc, char **argv )
  */
 std::string GetHelpString()
 {
-  std::string helpText = "Usage: \
-  pxgetdicominformation \
-    -in      inputDirectoryName\n \
-    [-s]     seriesUID\n \
-    [-r]     add restrictions to generate a unique seriesUID\n \
-             e.g. \"0020|0012\" to add a check for acquisition number.\n \
-  By default the first series encountered is used.";
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxgetdicominformation" << std::endl
+  << "  -in      inputDirectoryName" << std::endl
+  << "  [-s]     seriesUID" << std::endl
+  << "  [-r]     add restrictions to generate a unique seriesUID" << std::endl
+  << "           e.g. \"0020|0012\" to add a check for acquisition number." << std::endl
+  << "By default the first series encountered is used.";
 
-  return helpText;
+  return ss.str();
 
 } // end GetHelpString()

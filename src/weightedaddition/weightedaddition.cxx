@@ -204,13 +204,14 @@ void WeightedAddition(
  */
 std::string GetHelpString()
 {
-  std::string helpText = "Usage: \
-  pxweightedaddition \
-    -in      inputFilenames \
-    -w       weightFilenames \
-    -out     outputFilename; always written as float \
-  Supported: 2D, 3D, (unsigned) short, (unsigned) char, float.";
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxweightedaddition" << std::endl
+  << "  -in      inputFilenames" << std::endl
+  << "  -w       weightFilenames" << std::endl
+  << "  -out     outputFilename; always written as float" << std::endl
+  << "Supported: 2D, 3D, (unsigned) short, (unsigned) char, float.";
   
-  return helpText;
+  return ss.str();
 
 } // end GetHelpString()

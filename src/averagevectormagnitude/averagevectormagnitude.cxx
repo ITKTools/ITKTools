@@ -195,16 +195,16 @@ int main( int argc, char** argv )
 
 std::string GetHelpString()
 {
-  std::string helpString =
-    "Calculate the average magnitude of the vectors in a vector image.\n\n \
-    Usage:\n \
-    AverageVectorMagnitude\n \
-    \t-in InputVectorImageFileName\n \
-    \t[-out OutputImageFileName]\n \
-    \t-id ImageDimension\n \
-    \t-sd SpaceDimension (the dimension of the vectors)\n";
+  std::stringstream ss;
+  ss << "Calculate the average magnitude of the vectors in a vector image." << std::endl
+     << "Usage:" << std::endl
+     << "AverageVectorMagnitude" << std::endl
+     << "-in InputVectorImageFileName" << std::endl
+     << "[-out OutputImageFileName]" << std::endl
+     << "-id ImageDimension" << std::endl
+     << "-sd SpaceDimension (the dimension of the vectors)" << std::endl;
 
-  return helpString;
+  return ss.str();
 }
 
 #endif // #ifndef __avm_cxx

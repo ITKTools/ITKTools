@@ -158,24 +158,25 @@ int main( int argc, char ** argv )
 
 std::string GetHelpString( void )
 {
-  std::string helpText = "Compute statistics on an image. For vector images, the magnitude is used. \
-  Usage: \
-  pxstatisticsonimage \
-    -in      inputFilename \
-    [-out]   outputFileName for histogram;\n \
-             if omitted, no histogram is written; default: <empty> \
-    [-mask]  MaskFileName, mask should have the same size as the input image\n \
-             and be of pixeltype (convertable to) unsigned char,\n \
-             1 = within mask, 0 = outside mask; \
-    [-b]     NumberOfBins to use for histogram, default: 100;\n \
-             for an accurate estimate of median and quartiles\n \
-             for integer images, choose the number of bins\n \
-             much larger (~100x) than the number of gray values. \
-             if equal 0, then the intensity range (max - min) is chosen. \
-    [-s]     select which to compute {arithmetic, geometric, histogram}, default all;\n \
-  Supported: 2D, 3D, 4D, float, (unsigned) short, (unsigned) char, 1, 2 or 3 components per pixel.\n \
-	For 4D, only 1 or 4 components per pixel are supported.";
+  std::stringstream ss;
+  ss << "Compute statistics on an image. For vector images, the magnitude is used." << std::endl
+  << "Usage:" << std::endl
+  << "pxstatisticsonimage" << std::endl
+  << "  -in      inputFilename" << std::endl
+  << "  [-out]   outputFileName for histogram;" << std::endl
+  << "           if omitted, no histogram is written; default: <empty>" << std::endl
+  << "  [-mask]  MaskFileName, mask should have the same size as the input image" << std::endl
+  << "           and be of pixeltype (convertable to) unsigned char," << std::endl
+  << "           1 = within mask, 0 = outside mask;" << std::endl
+  << "  [-b]     NumberOfBins to use for histogram, default: 100;" << std::endl
+  << "           for an accurate estimate of median and quartiles" << std::endl
+  << "           for integer images, choose the number of bins" << std::endl
+  << "           much larger (~100x) than the number of gray values." << std::endl
+  << "           if equal 0, then the intensity range (max - min) is chosen." << std::endl
+  << "  [-s]     select which to compute {arithmetic, geometric, histogram}, default all;" << std::endl
+  << "Supported: 2D, 3D, 4D, float, (unsigned) short, (unsigned) char, 1, 2 or 3 components per pixel." << std::endl
+  << "For 4D, only 1 or 4 components per pixel are supported.";
 
-  return helpText;
+  return ss.str();
 
 } // end GetHelpString()

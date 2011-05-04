@@ -17,28 +17,29 @@ typedef std::map<std::string, std::string> ArgMapType;
 
 std::string GetHelpString(void)
 {
-  std::string helpText = "\nThis program creates an image containing a white box, defined by point A and B.\n\n \
-    Usage:\n \
-    pxcreatesimplebox\n \
-    \t[-in]  \tInputImageFileName\t\n \
-    \t\tSize, origin, and spacing for the output image will be taken\n \
-    \t\tfrom this image. NB: not the dimension and the pixeltype;\n \
-    \t\tyou must set them anyway!\n \
-    \t-out   \tOutputImageFileName\n \
-    \t-pt    \tPixelType <FLOAT, SHORT, USHORT, INT, UINT, CHAR, UCHAR>\n \
-    \t\tCurrently only char, uchar and short are supported.\n \
-    \t-id    \tImageDimension <2,3>\n \
-    \t[-d0]  \tSize of dimension 0\n \
-    \t[-d1]  \tSize of dimension 1\n \
-    \t[-d2]  \tSize of dimension 2\n \
-    \t-pA0  \tIndex 0 of pointA\n \
-    \t-pA1  \tIndex 1 of pointA\n \
-    \t[-pA2]\tIndex 2 of pointA\n \
-    \t-pB0  \tIndex 0 of pointB\n \
-    \t-pB1  \tIndex 1 of pointB\n \
-    \t[-pB2]\tIndex 2 of pointB\n";
-  return helpText;
-} // end PrintUsageString
+  std::stringstream ss;
+  ss << "This program creates an image containing a white box, defined by point A and B." << std::endl
+    << "Usage:" << std::endl
+    << "pxcreatesimplebox" << std::endl
+    << "[-in]  InputImageFileName" << std::endl
+    << "Size, origin, and spacing for the output image will be taken" << std::endl
+    << "from this image. NB: not the dimension and the pixeltype;" << std::endl
+    << "you must set them anyway!" << std::endl
+    << "-out   OutputImageFileName" << std::endl
+    << "-pt    PixelType <FLOAT, SHORT, USHORT, INT, UINT, CHAR, UCHAR>" << std::endl
+    << "Currently only char, uchar and short are supported." << std::endl
+    << "-id    ImageDimension <2,3>" << std::endl
+    << "[-d0]  Size of dimension 0" << std::endl
+    << "[-d1]  Size of dimension 1" << std::endl
+    << "[-d2]  Size of dimension 2" << std::endl
+    << "-pA0  Index 0 of pointA" << std::endl
+    << "-pA1  Index 1 of pointA" << std::endl
+    << "[-pA2]Index 2 of pointA" << std::endl
+    << "-pB0  Index 0 of pointB" << std::endl
+    << "-pB1  Index 1 of pointB" << std::endl
+    << "[-pB2]Index 2 of pointB";
+  return ss.str();
+} // end GetHelpString
 
 
 int ReadArgument(const ArgMapType & argmap, const std::string & key, std::string & value, bool optional)
@@ -55,7 +56,7 @@ int ReadArgument(const ArgMapType & argmap, const std::string & key, std::string
     {
       std::cerr << "Not enough arguments\n";
       std::cerr << "Missing argument: " << key << std::endl;
-      PrintUsageString();
+
       return 1;
     }
     else

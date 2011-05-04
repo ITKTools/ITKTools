@@ -224,25 +224,16 @@ void ComputeBoundingBox( std::string inputFileName )
    */
 std::string GetHelpString()
 {
-  /*
-  std::cout << "This program computes the bounding box of an image." << std::endl;
-  std::cout << "Every pixel > 0 is considered to be within the bounding box." << std::endl;
-  std::cout << "Returns the minimum and maximum indices/points that lie within the bounding box." << std::endl;
-  std::cout << "Usage:" << std::endl << "pxcomputeboundingbox" << std::endl;
-  std::cout << "  -in      inputFilename" << std::endl;
-  std::cout << "  [-dim]   dimension, default 3" << std::endl;
-  std::cout << "  [-pt]    pixelType, default short" << std::endl;
-  std::cout << "Supported: 2D, 3D, short. Images with PixelType other than short are automatically converted. " << std::endl;
-  */
-  std::string helpString = "This program computes the bounding box of an image.\n  \
-  Every pixel > 0 is considered to be within the bounding box.\n \
-  Returns the minimum and maximum indices/points that lie within the bounding box. \
-  Usage:\n \
-  pxcomputeboundingbox\
-    -in      inputFilename\n \
-    [-dim]   dimension, default 3\n \
-    [-pt]    pixelType, default short\n \
-  Supported: 2D, 3D, short. Images with PixelType other than short are automatically converted.";
+  std::stringstream ss;
+  ss << "This program computes the bounding box of an image." << std::endl
+     << "Every pixel > 0 is considered to be within the bounding box." << std::endl
+     << "Returns the minimum and maximum indices/points that lie within the bounding box." << std::endl
+     << "Usage:" << std::endl
+     << "pxcomputeboundingbox" << std::endl
+     << "-in      inputFilename" << std::endl
+     << "[-dim]   dimension, default 3" << std::endl
+     << "[-pt]    pixelType, default short" << std::endl
+     << "Supported: 2D, 3D, short. Images with PixelType other than short are automatically converted.";
   
-  return helpString;
+  return ss.str();
 } // end GetHelpString

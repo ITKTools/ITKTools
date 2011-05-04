@@ -221,14 +221,15 @@ void Reshape(
 
 std::string GetHelpString( void )
 {
-  std::string helpText = "Usage: \
-  pxpca \
-    -in      inputFilename \
-    [-out]   outputFileName, default inputFileName_reshaped \
-    -s       size of the output image \
-  Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxpca" << std::endl
+  << "  -in      inputFilename" << std::endl
+  << "  [-out]   outputFileName, default inputFileName_reshaped" << std::endl
+  << "  -s       size of the output image" << std::endl
+  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
 
-  return helpText;
+  return ss.str();
 
 } // end GetHelpString()
 

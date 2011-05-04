@@ -252,19 +252,20 @@ void IntensityReplaceImageFilter( const std::string & inputFileName,
  */
 std::string GetHelpString()
 {
-  std::string helpText = "This program replaces some user specified intensity values in an image.\n \
-  Usage:\n \
-  pxintensityreplace\n \
-    -in      inputFilename\n \
-    [-out]   outputFilename, default in + LUTAPPLIED.mhd\n \
-    -i       input pixel values that should be replaced\n \
-    -o       output pixel values that replace the corresponding input values\n \
-    [-pt]    output pixel type, default equal to input\n \
-  Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int,\n \
-  (unsigned) long, float, double.\n \
-  If \"-pt\" is used, the input is immediately converted to that particular\n \
-  type, after which the intensity replacement is performed.\n";
+  std::stringstream ss;
+  ss << "This program replaces some user specified intensity values in an image." << std::endl
+  << "Usage:" << std::endl
+  << "pxintensityreplace" << std::endl
+  << "  -in      inputFilename" << std::endl
+  << "  [-out]   outputFilename, default in + LUTAPPLIED.mhd" << std::endl
+  << "  -i       input pixel values that should be replaced" << std::endl
+  << "  -o       output pixel values that replace the corresponding input values" << std::endl
+  << "  [-pt]    output pixel type, default equal to input" << std::endl
+  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int," << std::endl
+  << "(unsigned) long, float, double." << std::endl
+  << "If \"-pt\" is used, the input is immediately converted to that particular" << std::endl
+  << "type, after which the intensity replacement is performed.";
 
-  return helpText;
+  return ss.str();
 } // end GetHelpString()
 

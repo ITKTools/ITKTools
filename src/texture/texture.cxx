@@ -268,19 +268,20 @@ void PerformTextureAnalysis(
 
 std::string GetHelpString( void )
 {
-  std::string helpText = "Usage: \
-  pxtexture \
-  This program computes texture features based on the gray-level co-occurrence matrix (GLCM).\n \
-    -in      inputFilename\n \
-    [-out]   outputDirectory, default equal to the inputFilename directory\n \
-    [-r]     the radius of the neighborhood on which to construct the GLCM, default 3\n \
-    [-os]    the desired offset scales to compute the GLCM, default 1, but can be e.g. 1 2 4\n \
-    [-b]     the number of bins of the GLCM, default 128\n \
-    [-noo]   the number of texture feature outputs, default all 8\n \
-    [-opct]  output pixel component type, default float\n \
-  Supported: 2D, 3D, any input image type, float or double output type.";
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxtexture" << std::endl
+  << "This program computes texture features based on the gray-level co-occurrence matrix (GLCM)." << std::endl
+  << "  -in      inputFilename" << std::endl
+  << "  [-out]   outputDirectory, default equal to the inputFilename directory" << std::endl
+  << "  [-r]     the radius of the neighborhood on which to construct the GLCM, default 3" << std::endl
+  << "  [-os]    the desired offset scales to compute the GLCM, default 1, but can be e.g. 1 2 4" << std::endl
+  << "  [-b]     the number of bins of the GLCM, default 128" << std::endl
+  << "  [-noo]   the number of texture feature outputs, default all 8" << std::endl
+  << "  [-opct]  output pixel component type, default float" << std::endl
+  << "Supported: 2D, 3D, any input image type, float or double output type.";
 
-  return helpText;
+  return ss.str();
 
 } // end GetHelpString()
 

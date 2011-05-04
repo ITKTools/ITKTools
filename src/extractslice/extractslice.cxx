@@ -249,17 +249,18 @@ void ExtractSlice(
 /** Define GetHelpString. */
 std::string GetHelpString( void )
 {
-  std::string helpText = "pxextractslice extracts a 2D slice from a 3D image. \
-  Usage:\n \
-  pxextractslice \
-    -in      input image filename \
-    [-out]   output image filename \
-    [-pt]    pixel type of input and output images; \
-             default: automatically determined from the first input image. \
-    -sn      slice number \
-    [-d]     the dimension from which a slice is extracted, default the z dimension \
-  Supported pixel types: (unsigned) char, (unsigned) short, float.\n";
+  std::stringstream ss;
+  ss << "pxextractslice extracts a 2D slice from a 3D image." << std::endl
+  << "Usage:" << std::endl
+  << "pxextractslice" << std::endl
+  << "  -in      input image filename" << std::endl
+  << "  [-out]   output image filename" << std::endl
+  << "  [-pt]    pixel type of input and output images;" << std::endl
+  << "           default: automatically determined from the first input image." << std::endl
+  << "  -sn      slice number" << std::endl
+  << "  [-d]     the dimension from which a slice is extracted, default the z dimension" << std::endl
+  << "Supported pixel types: (unsigned) char, (unsigned) short, float.";
 
-  return helpText;
+  return ss.str();
 
 } // end GetHelpString

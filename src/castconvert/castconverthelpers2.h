@@ -28,72 +28,73 @@
 
 std::string GetHelpString( void )
 {
-  std::string helpText = "Description:\
-   This is done by reading in an image, possibly casting of the image,\
-   and subsequently writing the image to some format.\
-   With converting we mean changing the extension of the image,\
-   such as bmp, mhd, etc. With casting we mean changing the component\
-   type of a voxel, such as short, unsigned long, float.\
-   Casting is currently done for scalar images using the ShiftScaleImageFilter,\
-   where values are mapped to itself, leaving the intensity range\
-   the same. NOTE that when casting to a component type with a\
-   smaller dynamic range, information might get lost. In this case\
-   we might use the RescaleIntensityImageFilter to linearly\
-   rescale the image values. For multi-component images, such as vector\
-   or RGB images, casting is done using the itk::VectorCastImageFilter.\
-   Currently supported are the SCALAR pixel types and also multi-\
-   component pixel types, such as vector and RGB pixels. For multi-\
-   component pixel types, everything is read in as an itk::Vector with\
-   the correct pixel component type and number of components. This is\
-   also the case for the writer.\
-   Input images can be in all file formats ITK supports and for which\
-   the ImageFileReader works, and additionally 3D dicom series\
-   using the ImageSeriesReader. It is also possible to extract a specific\
-   DICOM series from a directory by supplying the seriesUID. The pixel\
-   component type should of course be a component type supported by the\
-   file format. Output images can be in all file formats ITK supports and\
-   for which the ImageFileReader works, so no dicom output is\
-   currently supported.\
-   Usage:\
-     pxcastconvert -in inputFileName -out outputFileName [-opct outputPixelComponentType]\
-   OR:\
-     pxcastconvert -in dicomDirectoryName -out outputFileName\
-                  [-opct outputPixelComponentType] [-s seriesUID]\
-   Where outputPixelComponentType is one of: unsigned_char, char,\
-   unsigned_short, short, unsigned_int, int, unsigned_long, long,\
-   float or double.\
-   By default the outputPixelComponentType is set to the inputPixelComponentType.\
-   By default the seriesUID is the first UID found.\
-  Usage:\n \
-  pxcastconvert\n \
-    -in      inputfilename\n \
-    -out     outputfilename\n \
-    [-opct]  outputPixelComponentType\n \
-    [-z]     compression flag; if provided, the output image \
-  is compressed\n \
-  OR pxcastconvert\n \
-    -in      dicomDirectory\n \
-    -out     outputfilename\n \
-    [-opct]  outputPixelComponentType\n \
-    [-s]     seriesUID\n \
-    [-r]     add restrictions to generate a unique seriesUID\n \
-             e.g. \"0020|0012\" to add a check for acquisition number.\n \
-    [-z]     compression flag; if provided, the output image \
-  is compressed\n \
-  where outputPixelComponentType is one of:\n \
-    [unsigned_]char, [unsigned_]short, [unsigned_]int,\n \
-    [unsigned_]long, float, double,\n \
-  provided that the outputPixelComponentType is supported by \
-  the output file format.\n \
-  By default the outputPixelComponentType is set to the \
-  inputPixelComponentType.\n \
-  By default the seriesUID is the first UID found.\n \
-  The compression flag \"-z\" may be ignored by some output \
-  image formats.";
+  std::stringstream ss;
+  ss << "Description:" << std::endl
+     << "This is done by reading in an image, possibly casting of the image," << std::endl
+     << "and subsequently writing the image to some format." << std::endl
+     << "With converting we mean changing the extension of the image," << std::endl
+     << "such as bmp, mhd, etc. With casting we mean changing the component" << std::endl
+     << "type of a voxel, such as short, unsigned long, float." << std::endl
+     << "Casting is currently done for scalar images using the ShiftScaleImageFilter," << std::endl
+     << "where values are mapped to itself, leaving the intensity range" << std::endl
+     << "the same. NOTE that when casting to a component type with a" << std::endl
+     << "smaller dynamic range, information might get lost. In this case" << std::endl
+     << "we might use the RescaleIntensityImageFilter to linearly" << std::endl
+     << "rescale the image values. For multi-component images, such as vector" << std::endl
+     << "or RGB images, casting is done using the itk::VectorCastImageFilter." << std::endl
+     << "Currently supported are the SCALAR pixel types and also multi-" << std::endl
+     << "component pixel types, such as vector and RGB pixels. For multi-" << std::endl
+     << "component pixel types, everything is read in as an itk::Vector with" << std::endl
+     << "the correct pixel component type and number of components. This is" << std::endl
+     << "also the case for the writer." << std::endl
+     << "Input images can be in all file formats ITK supports and for which" << std::endl
+     << "the ImageFileReader works, and additionally 3D dicom series" << std::endl
+     << "using the ImageSeriesReader. It is also possible to extract a specific" << std::endl
+     << "DICOM series from a directory by supplying the seriesUID. The pixel" << std::endl
+     << "component type should of course be a component type supported by the" << std::endl
+     << "file format. Output images can be in all file formats ITK supports and" << std::endl
+     << "for which the ImageFileReader works, so no dicom output is" << std::endl
+     << "currently supported." << std::endl
+     << "Usage:" << std::endl
+     << "pxcastconvert -in inputFileName -out outputFileName [-opct outputPixelComponentType]" << std::endl
+     << "OR:" << std::endl
+     << "pxcastconvert -in dicomDirectoryName -out outputFileName" << std::endl
+     << "             [-opct outputPixelComponentType] [-s seriesUID]" << std::endl
+     << "Where outputPixelComponentType is one of: unsigned_char, char," << std::endl
+     << "unsigned_short, short, unsigned_int, int, unsigned_long, long," << std::endl
+     << "float or double." << std::endl
+     << "By default the outputPixelComponentType is set to the inputPixelComponentType." << std::endl
+     << "By default the seriesUID is the first UID found." << std::endl
+     << "Usage:" << std::endl
+     << "pxcastconvert" << std::endl
+     << "-in      inputfilename" << std::endl
+     << "-out     outputfilename" << std::endl
+     << "[-opct]  outputPixelComponentType" << std::endl
+     << "[-z]     compression flag; if provided, the output image" << std::endl
+     << "is compressed" << std::endl
+     << "OR pxcastconvert" << std::endl
+     << "-in      dicomDirectory" << std::endl
+     << "-out     outputfilename" << std::endl
+     << "[-opct]  outputPixelComponentType" << std::endl
+     << "[-s]     seriesUID" << std::endl
+     << "[-r]     add restrictions to generate a unique seriesUID" << std::endl
+     << "        e.g. \"0020|0012\" to add a check for acquisition number." << std::endl
+     << "[-z]     compression flag; if provided, the output image" << std::endl
+     << "is compressed" << std::endl
+     << "where outputPixelComponentType is one of:" << std::endl
+     << "[unsigned_]char, [unsigned_]short, [unsigned_]int," << std::endl
+     << "[unsigned_]long, float, double," << std::endl
+     << "provided that the outputPixelComponentType is supported by" << std::endl
+     << "the output file format." << std::endl
+     << "By default the outputPixelComponentType is set to the" << std::endl
+     << "inputPixelComponentType." << std::endl
+     << "By default the seriesUID is the first UID found." << std::endl
+     << "The compression flag \"-z\" may be ignored by some output" << std::endl
+     << "image formats.";
 
-  return helpText;
+  return ss.str();
 
-} // end PrintHelp()
+} // end GetHelpString()
 
 
 /**

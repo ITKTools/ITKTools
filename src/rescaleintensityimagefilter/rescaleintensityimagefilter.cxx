@@ -331,18 +331,19 @@ void RescaleIntensity(
  */
 std::string GetHelpString()
 {
-  std::string helpString = "Usage: \
-  pxrescaleintensityimagefilter \
-    -in      inputFilename \
-    [-out]   outputFilename, default in + INTENSITYRESCALED.mhd \
-    [-mm]    minimum maximum, default: range of pixeltype \
-    [-mv]    mean variance, default: 0.0 1.0 \
-    [-pt]    pixel type of input and output images; \
-             default: automatically determined from the first input image. \
-  Either \"-mm\" or \"-mv\" need to be specified. \
-  Supported: 2D, 3D, (unsigned) short, (unsigned) char, float. \
-  When applied to vector images, this program performs the operation on each channel separately.";
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxrescaleintensityimagefilter" << std::endl
+  << "  -in      inputFilename" << std::endl
+  << "  [-out]   outputFilename, default in + INTENSITYRESCALED.mhd" << std::endl
+  << "  [-mm]    minimum maximum, default: range of pixeltype" << std::endl
+  << "  [-mv]    mean variance, default: 0.0 1.0" << std::endl
+  << "  [-pt]    pixel type of input and output images;" << std::endl
+  << "           default: automatically determined from the first input image." << std::endl
+  << "Either \"-mm\" or \"-mv\" need to be specified." << std::endl
+  << "Supported: 2D, 3D, (unsigned) short, (unsigned) char, float." << std::endl
+  << "When applied to vector images, this program performs the operation on each channel separately.";
 
-  return helpString;
+  return ss.str();
 
 } // end GetHelpString()

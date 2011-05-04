@@ -239,23 +239,24 @@ void CreateEllipsoid(
 
 
   /**
-   * ******************* PrintHelp *******************
+   * ******************* GetHelpString *******************
    */
 std::string GetHelpString( void )
 {
-  std::string helpText = "Usage: \
-  pxcreateellipsoid \
-    -out     outputFilename \
-    -sz      image size (voxels) \
-    [-sp]    image spacing (mm) \
-    -c       center (mm) \
-    -r       radii (mm) \
-    [-o]     orientation, default xyz \
-    [-dim]   dimension, default 3 \
-    [-pt]    pixelType, default short \
-  The orientation is a dim*dim matrix, specified in row order. \
-  The user should take care of supplying an orthogonal matrix. \
-  Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
-  return helpText;
-} // end PrintHelp
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxcreateellipsoid" << std::endl
+    << "-out     outputFilename" << std::endl
+    << "-sz      image size (voxels)" << std::endl
+    << "[-sp]    image spacing (mm)" << std::endl
+    << "-c       center (mm)" << std::endl
+    << "-r       radii (mm)" << std::endl
+    << "[-o]     orientation, default xyz" << std::endl
+    << "[-dim]   dimension, default 3" << std::endl
+    << "[-pt]    pixelType, default short" << std::endl
+  << "The orientation is a dim*dim matrix, specified in row order." << std::endl
+  << "The user should take care of supplying an orthogonal matrix." << std::endl
+  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
+  return ss.str();
+} // end GetHelpString
 

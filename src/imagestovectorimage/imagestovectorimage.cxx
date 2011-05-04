@@ -229,16 +229,16 @@ void ComposeVectorImage(
 
 std::string GetHelpString( void )
 {
-  std::string helpText = "Usage: \
-  pximagetovectorimage\n \
-    -in      inputFilenames, at least 2\n \
-    [-out]   outputFilename, default VECTOR.mhd\n \
-    [-s]     number of streams, default 1.\n \
-  Supported: 2D, 3D, (unsigned) char, (unsigned) short, \
-  (unsigned) int, (unsigned) long, float, double.\n \
-  Note: make sure that the input images are of the same type, size, etc.";
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pximagetovectorimage" << std::endl
+  << "  -in      inputFilenames, at least 2" << std::endl
+  << "  [-out]   outputFilename, default VECTOR.mhd" << std::endl
+  << "  [-s]     number of streams, default 1." << std::endl
+  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short," << std::endl
+  << "(unsigned) int, (unsigned) long, float, double." << std::endl
+  << "Note: make sure that the input images are of the same type, size, etc.";
 
-  return helpText;
+  return ss.str();
 
 } // end GetHelpString()
-

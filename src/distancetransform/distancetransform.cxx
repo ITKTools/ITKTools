@@ -347,17 +347,19 @@ void DistanceTransform(
 
 std::string GetHelpString( void )
 {
-  std::string helpText = "This program creates a signed distance transform.\n\n \
-  Usage:\npxdistancetransform\n \
-    -in      inputFilename: the input image (a binary mask; \
-  threshold at 0 is performed if the image is not binary).\n \
-    -out     outputFilename: the output of distance transform\n \
-    [-s]     flag: if set, output squared distances instead of distances\n \
-    [-m]     method, one of {Maurer, Danielsson, Morphological, MorphologicalSigned}, default Maurer\n \
-  Note: voxel spacing is taken into account. Voxels inside the \
-  object (=1) receive a negative distance.\n \
-  Supported: 2D/3D. input: unsigned char, output: float";
-//std::cout << "  [-m]     method, one of {Maurer, Danielsson, OrderK}, default Maurer\n";
+  std::stringstream ss;
+  ss << "This program creates a signed distance transform." << std::endl
+  << "Usage:" << std::endl
+  << "pxdistancetransform" << std::endl
+  << "  -in      inputFilename: the input image (a binary mask;" << std::endl
+  << "threshold at 0 is performed if the image is not binary)." << std::endl
+  << "  -out     outputFilename: the output of distance transform" << std::endl
+  << "  [-s]     flag: if set, output squared distances instead of distances" << std::endl
+  << "  [-m]     method, one of {Maurer, Danielsson, Morphological, MorphologicalSigned}, default Maurer" << std::endl
+  << "Note: voxel spacing is taken into account. Voxels inside the" << std::endl
+  << "object (=1) receive a negative distance." << std::endl
+  << "Supported: 2D/3D. input: unsigned char, output: float";
+  //std::cout << "  [-m]     method, one of {Maurer, Danielsson, OrderK}, default Maurer\n";
   //std::cout << "  [-K]     for method \"OrderK\", specify K, default 5\n";
-  return helpText;
+  return ss.str();
 } // end GetHelpString()

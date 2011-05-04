@@ -11,8 +11,8 @@
 
 //-------------------------------------------------------------------------------------
 
-/** Declare PrintHelp. */
-std::string PrintHelp( void );
+/** Declare GetHelpString. */
+std::string GetHelpString( void );
 
 /** Declare GetInputData. */
 bool GetInputData( const std::string & filename,

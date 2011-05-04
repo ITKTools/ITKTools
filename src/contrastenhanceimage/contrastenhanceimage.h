@@ -16,24 +16,25 @@ typedef std::map<std::string, std::string> ArgMapType;
 
 std::string GetHelpString(void)
 {
-  std::string helpString = "This program enhances an image. \
-    alpha and beta control the exact behaviour of the filter. See the\n \
-    ITK documentation of the AdaptiveHistogramEqualizationImageFilter\n \
-    Usage:\n \
-    pxcontrastenhanceimage\n \
-    \t-in    \tInputImageFileName\t\n \
-    \t-out   \tOutputImageFileName\n \
-    \t-pt    \tPixelType <FLOAT, SHORT, USHORT, INT, UINT, CHAR, UCHAR>\n \
-    \t\tCurrently only char, uchar and short are supported.\n \
-    \t-id    \tImageDimension <2,3>\n \
-    \t-alpha \t0.0 < alpha < 1.0\n \
-    \t-beta  \t0.0 < beta < 1.0\n \
-    \t-r0    \tInteger radius of window, dimension 0\n \
-    \t-r1    \tInteger radius of window, dimension 1\n \
-    \t[-r2]  \tInteger radius of window, dimension 2\n \
-    \t[-LUT] \tUse Lookup-table <true, false>;\n \
-    \t\tdefault = true; Faster, but requires more memory.";
-  return helpString;
+  std::stringstream ss;
+  ss << "This program enhances an image." << std::endl
+    << "alpha and beta control the exact behaviour of the filter. See the" << std::endl
+    << "ITK documentation of the AdaptiveHistogramEqualizationImageFilter" << std::endl
+    << "Usage:" << std::endl
+    << "pxcontrastenhanceimage" << std::endl
+    << "-in    \tInputImageFileName" << std::endl
+    << "-out   \tOutputImageFileName" << std::endl
+    << "-pt    \tPixelType <FLOAT, SHORT, USHORT, INT, UINT, CHAR, UCHAR>" << std::endl
+    << "Currently only char, uchar and short are supported." << std::endl
+    << "-id    \tImageDimension <2,3>" << std::endl
+    << "-alpha \t0.0 < alpha < 1.0" << std::endl
+    << "-beta  \t0.0 < beta < 1.0" << std::endl
+    << "-r0    \tInteger radius of window, dimension 0" << std::endl
+    << "-r1    \tInteger radius of window, dimension 1" << std::endl
+    << "[-r2]  \tInteger radius of window, dimension 2" << std::endl
+    << "[-LUT] \tUse Lookup-table <true, false>;" << std::endl
+    << "default = true; Faster, but requires more memory.";
+  return ss.str();
 } // end PrintUsageString
 
 

@@ -27,6 +27,10 @@ bin]$ cmake ../src
 - Run 'make' from the 'build' directory
 bin]$ make
 
+Conventions
+------------
+Use --help with any of the programs to display their specific usage information. Optional arguments are listed as [-key].
+
 Contributing
 ------------
 Please contact one of the authors or produce a pull request on github.

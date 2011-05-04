@@ -223,16 +223,17 @@ void ReflectImageFilter( const std::string & inputFileName,
  */
 std::string GetHelpString()
 {
-  std::string helpText = "This program reflects an image.\n \
-  Usage:\n \
-  pxreflect\n \
-    -in      inputFilename\n \
-    -out     outputFilename\n \
-    -d       the image direction that should be reflected\n \
-    [-opct]  output pixel type, default equal to input\n \
-  Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int,\n \
-  (unsigned) long, float, double.\n";
+  std::stringstream ss;
+  ss << "This program reflects an image." << std::endl
+  << "Usage:" << std::endl
+  << "pxreflect" << std::endl
+  << "  -in      inputFilename" << std::endl
+  << "  -out     outputFilename" << std::endl
+  << "  -d       the image direction that should be reflected" << std::endl
+  << "  [-opct]  output pixel type, default equal to input" << std::endl
+  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int," << std::endl
+  << "(unsigned) long, float, double.";
 
-  return helpText;
+  return ss.str();
 
 } // end GetHelpString()

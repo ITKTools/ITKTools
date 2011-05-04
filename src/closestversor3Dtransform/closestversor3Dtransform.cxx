@@ -279,11 +279,12 @@ void ConvertVersorToEuler(
 
 std::string GetHelpString( void )
 {
-  std::string helpString = "Calculates the closest rigid transform (VersorRigid3D) between \
-  two sets of landmarks. The two sets should be of equal size. \
-  Usage:\n \
-  pxclosestversor3Dtransform \
-    -f       the file containing the fixed landmarks \
-    -m       the file containing the moving landmarks";
-  return helpString;
-} // end PrintHelp()
+  std::stringstream ss;
+  ss << "Calculates the closest rigid transform (VersorRigid3D) between" << std::endl
+     << "two sets of landmarks. The two sets should be of equal size." << std::endl
+     << "Usage:" << std::endl
+     << "pxclosestversor3Dtransform" << std::endl
+     << "-f       the file containing the fixed landmarks" << std::endl
+     << "-m       the file containing the moving landmarks";
+  return ss.str();
+} // end GetHelpString()

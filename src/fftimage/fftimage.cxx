@@ -353,26 +353,27 @@ void IFFTImage( const std::vector<std::string> & inputFileNames,
    */
 std::string GetHelpString( void )
 {
-  std::string helpText = "Usage:\
-  pxfftimage \
-    -in      inputFilenames\n \
-               forward: only one input\n \
-               backward, # given:\n \
-                 1: a complex image\n \
-                 2: a real and imaginary part \
-    -op      operator, {forward, backward} FFT \
-    [-out]   outputFilenames\n \
-               forward, # given:\n \
-                 1: write the complex image, default in + Complex.mhd\n \
-                 2: write the real and imaginary images, default in + Real.mhd and in + Imaginary.mhd\n \
-                 3: write the complex, real and imaginary images\n \
-               backward: only one output, default in + IFFT \
-    [-opct]  the output type\n \
-               choose from {float, double}, default float \
-    [-xdim]  the backward transform needs to know if the actual x-dimension was odd or even.\n \
-               choose from {odd, even}, default even \
-  Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxfftimage" << std::endl
+  << "  -in      inputFilenames" << std::endl
+  << "             forward: only one input" << std::endl
+  << "             backward, # given:" << std::endl
+  << "               1: a complex image" << std::endl
+  << "               2: a real and imaginary part" << std::endl
+  << "  -op      operator, {forward, backward} FFT" << std::endl
+  << "  [-out]   outputFilenames" << std::endl
+  << "             forward, # given:" << std::endl
+  << "               1: write the complex image, default in + Complex.mhd" << std::endl
+  << "               2: write the real and imaginary images, default in + Real.mhd and in + Imaginary.mhd" << std::endl
+  << "               3: write the complex, real and imaginary images" << std::endl
+  << "             backward: only one output, default in + IFFT" << std::endl
+  << "  [-opct]  the output type" << std::endl
+  << "             choose from {float, double}, default float" << std::endl
+  << "  [-xdim]  the backward transform needs to know if the actual x-dimension was odd or even." << std::endl
+  << "             choose from {odd, even}, default even" << std::endl
+  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
 
-  return helpText;
+  return ss.str();
 
 } // end GetHelpString()

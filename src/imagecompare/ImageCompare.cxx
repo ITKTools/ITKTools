@@ -179,10 +179,11 @@ int main( int argc, char **argv )
 
 std::string GetHelpString( void )
 {
-  std::string helpString = "Usage:\n\
-  pximagecompare\n\
-    -test      image filename to test against baseline\
-    -base      baseline image filename";
-  return helpString;
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pximagecompare" << std::endl
+  << "  -test      image filename to test against baseline" << std::endl
+  << "  -base      baseline image filename";
+  return ss.str();
 } // end GetHelpString
 

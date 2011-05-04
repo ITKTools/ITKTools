@@ -259,16 +259,17 @@ void CreateZeroImage(
    */
 std::string GetHelpString( void )
 {
-  std::string helpText = "Usage: \
-  pxcreatezeroimage \
-    [-in]    inputFilename \
-    -out     outputFilename \
-    -sz      size \
-    [-sp]    spacing \
-    [-o]     origin \
-    [-dim]   dimension, default 3 \
-    [-pt]    pixelType, default short \
-  Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
-  return helpText;
-} // end PrintHelp
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxcreatezeroimage" << std::endl
+    << "[-in]    inputFilename" << std::endl
+    << "-out     outputFilename" << std::endl
+    << "-sz      size" << std::endl
+    << "[-sp]    spacing" << std::endl
+    << "[-o]     origin" << std::endl
+    << "[-dim]   dimension, default 3" << std::endl
+    << "[-pt]    pixelType, default short" << std::endl
+  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
+  return ss.str();
+} // end GetHelpString
 

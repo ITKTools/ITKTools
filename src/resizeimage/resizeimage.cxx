@@ -301,18 +301,19 @@ void ResizeImage(
    */
 std::string GetHelpString( void )
 {
-  std::string helpText = "Usage: \
-  pxresizeimage \
-    -in      inputFilename \
-    [-out]   outputFilename, default in + RESIZED.mhd \
-    [-f]     factor \
-    [-sp]    spacing \
-    [-io]    interpolation order, default 1 \
-    [-dim]   dimension, default 3 \
-    [-pt]    pixelType, default short \
-  One of -f and -sp should be given. \
-  Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxresizeimage" << std::endl
+  << "  -in      inputFilename" << std::endl
+  << "  [-out]   outputFilename, default in + RESIZED.mhd" << std::endl
+  << "  [-f]     factor" << std::endl
+  << "  [-sp]    spacing" << std::endl
+  << "  [-io]    interpolation order, default 1" << std::endl
+  << "  [-dim]   dimension, default 3" << std::endl
+  << "  [-pt]    pixelType, default short" << std::endl
+  << "One of -f and -sp should be given." << std::endl
+  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
 
-  return helpText;
+  return ss.str();
 } // end GetHelpString()
 

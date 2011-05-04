@@ -30,26 +30,27 @@
 
 std::string GetHelpString( void )
 {
-  std::string helpText = "Unary operations on one image. \
-  Usage: \
-  pxunaryimageoperator \
-    -in      inputFilename \
-    -ops     UnaryOperator of the following form:\n \
-             {+,-,*,/,^,%}\n \
-             notation:\n \
-               {PLUS,{R,L}MINUS,TIMES,{R,L}DIVIDE,{R,L}POWER,{R,L}MOD,\n \
-               NEG,SIGN,ABS,FLOOR,CEIL,ROUND,\n \
-               LN,LOG10,NLOG,EXP,[ARC]SIN,[ARC]COS,[ARC]TAN}\n \
-             notation examples:\n \
-               RMINUS = A - arg\n \
-               LMINUS = arg - A\n \
-               SIN = sin(A)\n \
-               RPOWER = A ^ arg\n \
-    [-arg]   argument, necessary for some ops \
-    [-out]   outputFilename, default in + <ops> + <arg> + .mhd \
-    [-pto]   outputPixelType, default: same as inputimage \
-  Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, float.";
-  return helpText;
+  std::stringstream ss;
+  ss << "Unary operations on one image." << std::endl
+  << "Usage:" << std::endl
+  << "pxunaryimageoperator" << std::endl
+  << "  -in      inputFilename" << std::endl
+  << "  -ops     UnaryOperator of the following form:" << std::endl
+  << "           {+,-,*,/,^,%}" << std::endl
+  << "           notation:" << std::endl
+  << "             {PLUS,{R,L}MINUS,TIMES,{R,L}DIVIDE,{R,L}POWER,{R,L}MOD," << std::endl
+  << "             NEG,SIGN,ABS,FLOOR,CEIL,ROUND," << std::endl
+  << "             LN,LOG10,NLOG,EXP,[ARC]SIN,[ARC]COS,[ARC]TAN}" << std::endl
+  << "           notation examples:" << std::endl
+  << "             RMINUS = A - arg" << std::endl
+  << "             LMINUS = arg - A" << std::endl
+  << "             SIN = sin(A)" << std::endl
+  << "             RPOWER = A ^ arg" << std::endl
+  << "  [-arg]   argument, necessary for some ops" << std::endl
+  << "  [-out]   outputFilename, default in + <ops> + <arg> + .mhd" << std::endl
+  << "  [-pto]   outputPixelType, default: same as inputimage" << std::endl
+  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, float.";
+  return ss.str();
 } // end GetHelpString()
 
 

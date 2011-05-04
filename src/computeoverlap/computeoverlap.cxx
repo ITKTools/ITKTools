@@ -211,28 +211,29 @@ int main( int argc, char ** argv )
 
 std::string GetHelpString( void )
 {
-  std::string helpText = "Usage: \
-  pxcomputeoverlap\n \
-  This program computes the overlap of two images.\n \
-  By default the overlap of nonzero regions is computed.\n \
-  Masks of a valid region are also taken into account.\n \
-  If the images are not binary, you can specify threshold values.\n \
-  \nThe results is computed as:\n \
-     2 * L1( (im1 AND mask2) AND (im2 AND mask1) )\n \
-    ----------------------------------------------\n \
-         L1(im1 AND mask2) + L1(im2 AND mask1)    \n \
-    -in      inputFilename1 inputFilename2\n \
-    [-mask1] maskFilename1\n \
-    [-mask2] maskFilename2\n \
-    [-t1]    threshold1\n \
-    [-t2]    threshold2\n \
-    [-l]     alternative implementation using label values\n \
-             the overlap of exactly corresponding labels is computed\n \
-             if \"-l\" is specified with no arguments, all labels in im1 are used,\n \
-             otherwise (e.g. \"-l 1 6 19\") the specified labels are used.\n \
-  Supported: 2D, 3D, (unsigned) char, (unsigned) short";
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxcomputeoverlap" << std::endl
+  << "This program computes the overlap of two images." << std::endl
+  << "By default the overlap of nonzero regions is computed." << std::endl
+  << "Masks of a valid region are also taken into account." << std::endl
+  << "If the images are not binary, you can specify threshold values." << std::endl
+  << "The results is computed as:" << std::endl
+  << "   2 * L1( (im1 AND mask2) AND (im2 AND mask1) )" << std::endl
+  << "  ----------------------------------------------" << std::endl
+  << "       L1(im1 AND mask2) + L1(im2 AND mask1)" << std::endl
+  << "  -in      inputFilename1 inputFilename2" << std::endl
+  << "  [-mask1] maskFilename1" << std::endl
+  << "  [-mask2] maskFilename2" << std::endl
+  << "  [-t1]    threshold1" << std::endl
+  << "  [-t2]    threshold2" << std::endl
+  << "  [-l]     alternative implementation using label values" << std::endl
+  << "          the overlap of exactly corresponding labels is computed" << std::endl
+  << "           if \"-l\" is specified with no arguments, all labels in im1 are used," << std::endl
+  << "           otherwise (e.g. \"-l 1 6 19\") the specified labels are used." << std::endl
+  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short";
 
-  return helpText;
+  return ss.str();
 } // end GetHelpString()
 
 

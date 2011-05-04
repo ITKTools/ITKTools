@@ -111,13 +111,14 @@ int main( int argc, char **argv )
 
 std::string GetHelpString( void )
 {
-  std::string helpText = "Usage: \
-  pxgetDICOMseriesUIDs \
-    -in      inputDirectoryName\n \
-    [-r]     add restrictions to generate a unique seriesUID\n \
-             e.g. \"0020|0012\" to add a check for acquisition \
-  number.";
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxgetDICOMseriesUIDs" << std::endl
+  << "  -in      inputDirectoryName" << std::endl
+  << "  [-r]     add restrictions to generate a unique seriesUID" << std::endl
+  << "           e.g. \"0020|0012\" to add a check for acquisition" << std::endl
+  << "number.";
 
-  return helpText;
+  return ss.str();
 
 } // end GetHelpString()

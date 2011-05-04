@@ -319,29 +319,30 @@ void TileImages(
 /** Define GetHelpString. */
 std::string GetHelpString( void )
 {
-  std::string helpText = "pxtileimages EITHER tiles a stack of 2D images into a 3D image, \
-  OR tiles nD images to form another nD image. \
-  In the last case the way to tile is specified by a layout. \
-  To stack a pile of 2D images an itk::SeriesFileReader is employed. \
-  If no layout is specified with \"-ly\" 2D-3D tiling is done, \
-  otherwise 2D-2D or 3D-3D tiling is performed.\n\n \
-  Usage:  \npxtileimages \
-    -in      input image filenames, at least 2 \
-    -out     output image filename \
-    [-pt]    pixel type of input and output images \
-             default: automatically determined from the first input image \
-    [-sp]    spacing in z-direction for 2D-3D tiling [double]; \
-             if omitted, the origins of the 2d images are used to find the spacing; \
-             if these are identical, a spacing of 1.0 is assumed \
-    [-ly]    layout of the nD-nD tiling \
-             example: in 2D for 4 images \"-ly 2 2\" results in \
-               im1 im2 \
-               im3 im4 \
-             example: in 2D for 4 images \"-ly 4 1\" (or \"-ly 0 1\") results in \
-               im1 im2 im3 im4 \
-    [-d]     default value, by default 0. \
-  Supported pixel types: (unsigned) char, (unsigned) short, float.\n";
+  std::stringstream ss;
+  ss << "pxtileimages EITHER tiles a stack of 2D images into a 3D image," << std::endl
+  << "OR tiles nD images to form another nD image." << std::endl
+  << "In the last case the way to tile is specified by a layout." << std::endl
+  << "To stack a pile of 2D images an itk::SeriesFileReader is employed." << std::endl
+  << "If no layout is specified with \"-ly\" 2D-3D tiling is done," << std::endl
+  << "otherwise 2D-2D or 3D-3D tiling is performed." << std::endl
+  << "Usage:  \npxtileimages" << std::endl
+  << "  -in      input image filenames, at least 2" << std::endl
+  << "  -out     output image filename" << std::endl
+  << "  [-pt]    pixel type of input and output images" << std::endl
+  << "           default: automatically determined from the first input image" << std::endl
+  << "  [-sp]    spacing in z-direction for 2D-3D tiling [double];" << std::endl
+  << "           if omitted, the origins of the 2d images are used to find the spacing;" << std::endl
+  << "           if these are identical, a spacing of 1.0 is assumed" << std::endl
+  << "  [-ly]    layout of the nD-nD tiling" << std::endl
+  << "           example: in 2D for 4 images \"-ly 2 2\" results in" << std::endl
+  << "             im1 im2" << std::endl
+  << "             im3 im4" << std::endl
+  << "           example: in 2D for 4 images \"-ly 4 1\" (or \"-ly 0 1\") results in" << std::endl
+  << "             im1 im2 im3 im4" << std::endl
+  << "  [-d]     default value, by default 0." << std::endl
+  << "Supported pixel types: (unsigned) char, (unsigned) short, float.";
 
-  return helpText;
+  return ss.str();
 
 } // end GetHelpString

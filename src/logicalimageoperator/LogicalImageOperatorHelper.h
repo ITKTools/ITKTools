@@ -276,41 +276,40 @@ void LogicalImageOperator(
  * ******************* PrintHelp *******************
  */
 
-void PrintHelp( void )
+std::string GetHelpString( void )
 {
-  std::cout << "Logical operations on one or two images." << std::endl;
+  std::stringstream ss;
+  ss << "Logical operations on one or two images." << std::endl
+     << "NOTE: The output of this filter is an image with pixels of values 0 and 1." << std::endl
+  << "An appropriate scaling must be performed either manually (with pxrescaleintensityimagefilter)" << std::endl
+  << "or with the application used to view the image." << std::endl << std::endl
+  << "In the case of a vector image, this is a componentwise logical operator." << std::endl
+  << "Usage:" << std::endl << "pxlogicalimageoperator" << std::endl
+  << "  -in      inputFilename1 [inputFilename2]" << std::endl
+  << "  [-out]   outputFilename, default in1 + <ops> + in2 + .mhd" << std::endl
+  << "  -ops     LogicalOperator of the following form:" << std::endl
+  << "             [!]( ([!] A) [{&,|,^} ([!] B])] )" << std::endl
+  << "           notation:" << std::endl
+  << "             [NOT_][NOT][{AND,OR,XOR}[NOT]]" << std::endl
+  << "           notation examples:" << std::endl
+  << "             ANDNOT = A & (!B)" << std::endl
+  << "             NOTAND = (!A) & B" << std::endl
+  << "             NOTANDNOT = (!A) & (!B)" << std::endl
+  << "             NOT_NOTANDNOT = !( (!A) & (!B) )" << std::endl
+  << "             NOT_AND = !(A & B)" << std::endl
+  << "             OR = A | B" << std::endl
+  << "             XOR = A ^ B" << std::endl
+  << "             NOT = !A " << std::endl
+  << "             NOT_NOT = A" << std::endl
+  << "           Internally this expression is simplified." << std::endl
+  << "  [-z]     compression flag; if provided, the output image is compressed" << std::endl
+  << "  [-arg]   argument, necessary for some ops" << std::endl
+  << "  [-dim]   dimension, default: automatically determined from inputimage1" << std::endl
+  << "  [-pt]    pixelType, default: automatically determined from inputimage1" << std::endl
+  << "Supported: 2D, 3D, (unsigned) short, (unsigned) char." << std::endl;
 
-  std::cout << "NOTE: The output of this filter is an image with pixels of values 0 and 1." << std::endl;
-  std::cout << "An appropriate scaling must be performed either manually (with pxrescaleintensityimagefilter)" << std::endl;
-  std::cout << "or with the application used to view the image." << std::endl << std::endl;
-
-  std::cout << "In the case of a vector image, this is a componentwise logical operator." << std::endl;
-
-  std::cout << "Usage:" << std::endl << "pxlogicalimageoperator" << std::endl;
-  std::cout << "  -in      inputFilename1 [inputFilename2]" << std::endl;
-  std::cout << "  [-out]   outputFilename, default in1 + <ops> + in2 + .mhd" << std::endl;
-  std::cout << "  -ops     LogicalOperator of the following form:\n"
-            << "             [!]( ([!] A) [{&,|,^} ([!] B])] )\n"
-            << "           notation:\n"
-            << "             [NOT_][NOT][{AND,OR,XOR}[NOT]]\n"
-            << "           notation examples:\n"
-            << "             ANDNOT = A & (!B)\n"
-            << "             NOTAND = (!A) & B\n"
-            << "             NOTANDNOT = (!A) & (!B)\n"
-            << "             NOT_NOTANDNOT = !( (!A) & (!B) )\n"
-            << "             NOT_AND = !(A & B)\n"
-            << "             OR = A | B\n"
-            << "             XOR = A ^ B\n"
-            << "             NOT = !A \n"
-            << "             NOT_NOT = A \n"
-            << "           Internally this expression is simplified.\n";
-  std::cout << "  [-z]     compression flag; if provided, the output image is compressed" << std::endl;;
-  std::cout << "  [-arg]   argument, necessary for some ops" << std::endl;
-  std::cout << "  [-dim]   dimension, default: automatically determined from inputimage1" << std::endl;
-  std::cout << "  [-pt]    pixelType, default: automatically determined from inputimage1" << std::endl;
-  std::cout << "Supported: 2D, 3D, (unsigned) short, (unsigned) char." << std::endl;
-
-} // end PrintHelp()
+  return ss.str();
+} // end GetHelpString()
 
 
 #endif // end __LogicalImageOperatorHelper_h

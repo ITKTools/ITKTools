@@ -214,13 +214,14 @@ void CreateCylinder(
 
 std::string GetHelpString( void )
 {
-  std::string helpText = "Usage: \
-  pxcreatecylinder \
-    -in      inputFilename \
-    -out     outputFilename \
-    -c       center (mm) \
-    -r       radii (mm) \
-  Supported: 2D, 3D.";
-  return helpText;
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxcreatecylinder" << std::endl
+  << "-in      inputFilename" << std::endl
+  << "-out     outputFilename" << std::endl
+  << "-c       center (mm)" << std::endl
+  << "-r       radii (mm)" << std::endl
+  << "Supported: 2D, 3D.";
+  return ss.str();
 } // end GetHelpString()
 

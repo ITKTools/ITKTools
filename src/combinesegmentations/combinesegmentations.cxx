@@ -978,56 +978,57 @@ void CombineSegmentations(
 
 std::string GetHelpString()
 {
-  std::string helpText = "This program combines multiple segmentations into one.\n \
-  Usage:\n \
-  pxcombinesegmentations \
-    [-m]     {STAPLE, VOTE, MULTISTAPLE, MULTISTAPLE2, VOTE_MULTISTAPLE2}:\n \
-             the method used to combine the segmentations. default: MULTISTAPLE2.\n \
-             VOTE_MULTISTAPLE2 is in fact just VOTE followed by MULTISTAPLE2. \
-    -in      inputFilename0 [inputFileName1 ... ]: the input segmentations,\n \
-             as unsigned char images. More than 2 labels are allowed, but\n \
-             with some restrictions: {0,1,2}=ok, {0,3,4}=bad, {1,2,3}=bad. \
-    [-n]     numberOfClasses: the number of classes to segment;\n \
-             default: 2 (so, 0 and 1). \
-    [-P]     priorProbImageFilename0 priorProbImageFilename1 [...]:\n \
-             the names of the prior probabilities for each class, stored as float images.\n \
-             This has only effect when using [VOTE_]MULTISTAPLE2. \
-    [-p]     priorProb0 priorProb1 [...]:\n \
-             the prior probabilities for each class, independent of x, so a floating point\n \
-             number for each class. This parameter is ignored when \"-P\" is provided as well.\n \
-             For VOTE this parameter is ignored. For STAPLE, this number is considered\n \
-             as a factor which is multiplied with the estimated prior probability.\n \
-             For MULTISTAPLE[2], the number is really the prior probability.\n \
-             If -p and -P are not provided, the prior probs are estimated from the data. \
-    [-t]     trust0 [trust1 ...]: a factor between 0 and 1 indicating the 'trust' in each observer;\n \
-             default: 0.99999 for each observer for [VOTE_]MULTISTAPLE2. 1.0 for VOTE.\n \
-             Ignored by STAPLE and MULTISTAPLE; they estimate it by majority voting. \
-    [-e]     termination threshold: a small float. the smaller the more accurate the solution;\n \
-             default: 1e-5. Ignored by STAPLE and VOTE. \
-    [-outs]  outputFilename0 outputFileName1 [...]: the output (soft) probabilistic\n \
-             segmentations for each label. These will be float images. \
-    [-outh]  outputFilename: the output hard segmentation, stored as a single\n \
-             unsigned char image, containing the label numbers.\n \
-             The value 'numberOfClasses' corresponds to 'undecided' (if two labels\n \
-             are exactly equally likely). \
-    [-outc]  confusionImageFileName: 3d float image, in which each slice resembles\n \
-             the confusion matrix for each observer. The x-axis corresponds to the\n \
-             real label, the y-axis corresponds to the label given by the observer. \
-    [-mask]  [maskDilationRadius]: Use a mask if this flag is provided.\n \
-             Only taken into account by [VOTE_]MULTISTAPLE2 and VOTE.\n \
-             The mask is 0 at those pixels were the decision is unanimous, and 1 elsewhere.\n \
-             A dilation is performed with a kernel with radius maskDilationRadius (default:1)\n \
-             Pixels that are outside the mask, will have class of the first observer.\n \
-             Other pixels are passed through the combination algorithm.\n \
-             The confusion matrix will be only based on the pixels within the mask. \
-    [-ord]   The order of preferred classes, in cases of undecided pixels. Default: 0 1 2...\n \
-             Ignored by STAPLE and MULTISTAPLE. In the default case, class 0 will be\n \
-             preferred over class 1, for example. \
-    [-iv]    inputlabels for relabeling \
-    [-ov]    outputlabels for relabeling. Each input label is replaced by the corresponding\n \
-             output label, before the combinationMethod is invoked. NumberOfClasses should be\n \
-             valid for the situation after relabeling! \
-  Supported: 2D/3D.";
+  std::stringstream ss;
+  ss << "This program combines multiple segmentations into one." << std::endl
+     << "Usage:" << std::endl
+     << "pxcombinesegmentations" << std::endl
+     << "[-m]     {STAPLE, VOTE, MULTISTAPLE, MULTISTAPLE2, VOTE_MULTISTAPLE2}:" << std::endl
+     << "        the method used to combine the segmentations. default: MULTISTAPLE2." << std::endl
+     << "        VOTE_MULTISTAPLE2 is in fact just VOTE followed by MULTISTAPLE2." << std::endl
+     << "-in      inputFilename0 [inputFileName1 ... ]: the input segmentations," << std::endl
+     << "        as unsigned char images. More than 2 labels are allowed, but" << std::endl
+     << "        with some restrictions: {0,1,2}=ok, {0,3,4}=bad, {1,2,3}=bad." << std::endl
+     << "[-n]     numberOfClasses: the number of classes to segment;" << std::endl
+     << "        default: 2 (so, 0 and 1)." << std::endl
+     << "[-P]     priorProbImageFilename0 priorProbImageFilename1 [...]:" << std::endl
+     << "        the names of the prior probabilities for each class, stored as float images." << std::endl
+     << "        This has only effect when using [VOTE_]MULTISTAPLE2." << std::endl
+     << "[-p]     priorProb0 priorProb1 [...]:" << std::endl
+     << "        the prior probabilities for each class, independent of x, so a floating point" << std::endl
+     << "        number for each class. This parameter is ignored when \"-P\" is provided as well." << std::endl
+     << "        For VOTE this parameter is ignored. For STAPLE, this number is considered" << std::endl
+     << "        as a factor which is multiplied with the estimated prior probability." << std::endl
+     << "       For MULTISTAPLE[2], the number is really the prior probability." << std::endl
+     << "        If -p and -P are not provided, the prior probs are estimated from the data." << std::endl
+     << "[-t]     trust0 [trust1 ...]: a factor between 0 and 1 indicating the 'trust' in each observer;" << std::endl
+     << "        default: 0.99999 for each observer for [VOTE_]MULTISTAPLE2. 1.0 for VOTE." << std::endl
+     << "        Ignored by STAPLE and MULTISTAPLE; they estimate it by majority voting." << std::endl
+     << "[-e]     termination threshold: a small float. the smaller the more accurate the solution;" << std::endl
+     << "        default: 1e-5. Ignored by STAPLE and VOTE." << std::endl
+     << "[-outs]  outputFilename0 outputFileName1 [...]: the output (soft) probabilistic" << std::endl
+     << "        segmentations for each label. These will be float images." << std::endl
+     << "[-outh]  outputFilename: the output hard segmentation, stored as a single" << std::endl
+     << "        unsigned char image, containing the label numbers." << std::endl
+     << "       The value 'numberOfClasses' corresponds to 'undecided' (if two labels" << std::endl
+     << "        are exactly equally likely)." << std::endl
+     << "[-outc]  confusionImageFileName: 3d float image, in which each slice resembles" << std::endl
+     << "        the confusion matrix for each observer. The x-axis corresponds to the" << std::endl
+     << "        real label, the y-axis corresponds to the label given by the observer." << std::endl
+     << "[-mask]  [maskDilationRadius]: Use a mask if this flag is provided." << std::endl
+     << "        Only taken into account by [VOTE_]MULTISTAPLE2 and VOTE." << std::endl
+     << "        The mask is 0 at those pixels were the decision is unanimous, and 1 elsewhere." << std::endl
+     << "        A dilation is performed with a kernel with radius maskDilationRadius (default:1)" << std::endl
+     << "        Pixels that are outside the mask, will have class of the first observer." << std::endl
+     << "        Other pixels are passed through the combination algorithm." << std::endl
+     << "        The confusion matrix will be only based on the pixels within the mask." << std::endl
+     << "[-ord]   The order of preferred classes, in cases of undecided pixels. Default: 0 1 2..." << std::endl
+     << "        Ignored by STAPLE and MULTISTAPLE. In the default case, class 0 will be" << std::endl
+     << "        preferred over class 1, for example." << std::endl
+     << "[-iv]    inputlabels for relabeling" << std::endl
+     << "[-ov]    outputlabels for relabeling. Each input label is replaced by the corresponding" << std::endl
+     << "        output label, before the combinationMethod is invoked. NumberOfClasses should be" << std::endl
+     << "        valid for the situation after relabeling!" << std::endl
+     << "Supported: 2D/3D.";
 
-  return helpText;
+  return ss.str();
 } // end GetHelpString

@@ -290,23 +290,24 @@ void GaussianImageFilterInvariants(
 
 std::string GetHelpString( void )
 {
-  std::string helpText = "Usage: \
-  pxgaussianimagefilter \
-    -in      inputFilename \
-    [-out]   outputFilename, default in + BLURRED.mhd \
-    [-std]   sigma, for each dimension, default 1.0 \
-    [-ord]   order, for each dimension, default zero\n \
-               0: zero order = blurring\n \
-               1: first order = gradient\n \
-               2: second order derivative \
-    [-mag]   compute the magnitude of the separate blurrings, default false \
-    [-lap]   compute the laplacian, default false \
-    [-inv]   compute invariants, choose one of \n \
-             {LiLi, LiLijLj, LiLijLjkLk, Lii, LijLji, LijLjkLki} \
-    [-opct]  output pixel type, default equal to input \
-  Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxgaussianimagefilter" << std::endl
+  << "  -in      inputFilename" << std::endl
+  << "  [-out]   outputFilename, default in + BLURRED.mhd" << std::endl
+  << "  [-std]   sigma, for each dimension, default 1.0" << std::endl
+  << "  [-ord]   order, for each dimension, default zero" << std::endl
+  << "             0: zero order = blurring" << std::endl
+  << "             1: first order = gradient" << std::endl
+  << "             2: second order derivative" << std::endl
+  << "  [-mag]   compute the magnitude of the separate blurrings, default false" << std::endl
+  << "  [-lap]   compute the laplacian, default false" << std::endl
+  << "  [-inv]   compute invariants, choose one of" << std::endl
+  << "           {LiLi, LiLijLj, LiLijLjkLk, Lii, LijLji, LijLjkLki}" << std::endl
+  << "  [-opct]  output pixel type, default equal to input" << std::endl
+  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
 
-  return helpText;
+  return ss.str();
 
 } // end GetHelpString()
 

@@ -206,13 +206,14 @@ void InvertIntensity( const std::string & inputFileName,
 
 std::string GetHelpString( void )
 {
-  std::string helpText = "This program inverts the intensities of an image. \
-  Usage:\
-  pxinvertintensityimagefilter \
-    -in      inputFilename \
-    [-out]   outputFilename; default: in + INVERTED.mhd \
-  Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
+  std::stringstream ss;
+  ss << "This program inverts the intensities of an image." << std::endl
+  << "Usage:" << std::endl
+  << "pxinvertintensityimagefilter" << std::endl
+  << "  -in      inputFilename" << std::endl
+  << "  [-out]   outputFilename; default: in + INVERTED.mhd" << std::endl
+  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
 
-  return helpText;
+  return ss.str();
 
 } // end GetHelpString()

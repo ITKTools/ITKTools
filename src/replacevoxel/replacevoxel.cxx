@@ -235,16 +235,17 @@ void ReplaceVoxel( const std::string & inputFileName,
  */
 std::string GetHelpString()
 {
-  std::string helpString = "This program replaces the value of a user specified voxel.\n \
-  Usage:\n \
-  pxreplacevoxel\n \
-    -in      inputFilename\n \
-    [-out]   outputFilename, default in + VOXELREPLACED.mhd\n \
-    -vox     input voxel index\n \
-    -val     value that replaces the voxel\n \
-  Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int,\n \
-  (unsigned) long, float, double.\n";
+  std::stringstream ss;
+  ss << "This program replaces the value of a user specified voxel." << std::endl
+  << "Usage:" << std::endl
+  << "pxreplacevoxel" << std::endl
+  << "  -in      inputFilename" << std::endl
+  << "  [-out]   outputFilename, default in + VOXELREPLACED.mhd" << std::endl
+  << "  -vox     input voxel index" << std::endl
+  << "  -val     value that replaces the voxel" << std::endl
+  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int," << std::endl
+  << "(unsigned) long, float, double.";
 
-  return helpString;
+  return ss.str();
 
 } // end GetHelpString()

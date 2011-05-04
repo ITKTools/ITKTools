@@ -425,35 +425,36 @@ void DeformationFieldGenerator(
    */
 std::string GetHelpString()
 {
-  std::string helpText = "This program generates a deformation field (from fixed \
-  to moving image) based on some corresponding points. \
-  Usage: \
-  pxdeformationfieldgenerator \
-    -in1     inputFilename1: the fixed image on which the \
-              deformaton field must be defined. \
-    [-in2]   inputFilename2: only needed to convert from \
-              indices to point if the second input point \
-              contains indices. \
-    -ipp1    inputPointFile1: a transformix style input point file \
-              with points in the fixed image. \
-    -ipp2    inputPointFile2: a transformix style input point file \
-              with the corresponding points in the moving image. \
-    [-s]     stiffness: a number that allows to vary between \
-              interpolating and approximating spline. \
-              0.0 = interpolating = default. \
-              Stiffness values are usually rather small, \
-              typically in the range of 0.001 to 0.1. \
-    [-k]     kernelType: the type of kernel transform that's used to \
-              generate the deformation field. \
-              TPS: thin plate spline (default) \
-              TPSR2LOGR: thin plate spline R2logR \
-              VS: volume spline \
-              EBS: elastic body spline \
-              EBSR: elastic body reciprocal spline \
-              See ITK documentation and the there cited paper \
-              for more information on these methods. \
-    -out     outputFilename: the name of the resulting deformation field, \
-              which is written as a vector<float,dim> image. \
-  Supported: 2D, 3D, any scalar pixeltype.";
-  return GetHelpString;
-} // end PrintHelp
+  std::stringstream ss;
+  ss << "This program generates a deformation field (from fixed" << std::endl
+  << "to moving image) based on some corresponding points." << std::endl
+  << "Usage:" << std::endl
+  << "pxdeformationfieldgenerator" << std::endl
+    << "-in1     inputFilename1: the fixed image on which the" << std::endl
+    << "          deformaton field must be defined." << std::endl
+    << "[-in2]   inputFilename2: only needed to convert from" << std::endl
+    << "          indices to point if the second input point" << std::endl
+    << "          contains indices." << std::endl
+    << "-ipp1    inputPointFile1: a transformix style input point file" << std::endl
+    << "          with points in the fixed image." << std::endl
+    << "-ipp2    inputPointFile2: a transformix style input point file" << std::endl
+    << "          with the corresponding points in the moving image." << std::endl
+    << "[-s]     stiffness: a number that allows to vary between" << std::endl
+    << "          interpolating and approximating spline." << std::endl
+    << "          0.0 = interpolating = default." << std::endl
+    << "          Stiffness values are usually rather small," << std::endl
+    << "          typically in the range of 0.001 to 0.1." << std::endl
+    << "[-k]     kernelType: the type of kernel transform that's used to" << std::endl
+    << "          generate the deformation field." << std::endl
+    << "          TPS: thin plate spline (default)" << std::endl
+    << "          TPSR2LOGR: thin plate spline R2logR" << std::endl
+    << "          VS: volume spline" << std::endl
+    << "          EBS: elastic body spline" << std::endl
+    << "          EBSR: elastic body reciprocal spline" << std::endl
+    << "          See ITK documentation and the there cited paper" << std::endl
+    << "          for more information on these methods." << std::endl
+    << "-out     outputFilename: the name of the resulting deformation field," << std::endl
+    << "          which is written as a vector<float,dim> image." << std::endl
+  << "Supported: 2D, 3D, any scalar pixeltype.";
+  return ss.str();
+} // end GetHelpString

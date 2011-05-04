@@ -14,20 +14,19 @@
 
 typedef std::map<std::string, std::string> ArgMapType;
 
-void PrintUsageString(void)
+std::string GetHelpString(void)
 {
-  std::cerr
-    << "\nThis program applies histogram equalization to an image.\n"
-    << "Works as described by Maintz, Introduction to Image Processing.\n"
-    << "Usage:\n"
-    << "pxhistogramequalizeimage\n"
-    << "\t-in    \tInputImageFileName\t\n"
-    << "\t-out   \tOutputImageFileName\n"
-    << "\t-pt    \tPixelType <FLOAT, SHORT, USHORT, INT, UINT, CHAR, UCHAR>\n"
-    << "\t\tCurrently only char, uchar, short, and ushort are supported.\n"
-    << "\t-id    \tImageDimension <2,3>\n"
-    << std::endl;
-} // end PrintUsageString
+  std::stringstream ss;
+  ss<< "This program applies histogram equalization to an image." << std::endl
+    << "Works as described by Maintz, Introduction to Image Processing." << std::endl
+    << "Usage:" << std::endl
+    << "pxhistogramequalizeimage" << std::endl
+    << "-in    \tInputImageFileName" << std::endl
+    << "-out   \tOutputImageFileName" << std::endl
+    << "-pt    \tPixelType <FLOAT, SHORT, USHORT, INT, UINT, CHAR, UCHAR>" << std::endl
+    << "Currently only char, uchar, short, and ushort are supported." << std::endl
+    << "-id    \tImageDimension <2,3>" << std::endl;
+} // end GetHelpString
 
 
 int ReadArgument(const ArgMapType & argmap, const std::string & key, std::string & value, bool optional)
@@ -44,7 +43,6 @@ int ReadArgument(const ArgMapType & argmap, const std::string & key, std::string
     {
       std::cerr << "Not enough arguments\n";
       std::cerr << "Missing argument: " << key << std::endl;
-      PrintUsageString();
       return 1;
     }
     else

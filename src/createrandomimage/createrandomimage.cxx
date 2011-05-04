@@ -205,26 +205,27 @@ int main(int argc, char** argv)
 
 std::string GetHelpString(void)
 {
-  std::string helpString = "\nThis program creates a random image.\n\n \
-    Usage:\n \
-    pxcreaterandomimage\n \
-    \t-out   \tOutputImageFileName\n \
-    \t-pt    \tPixelType <SHORT, USHORT, INT, UINT, CHAR, UCHAR, FLOAT>\n \
-    \t-id    \tImageDimension <2,3>\n \
-    \t[-sd]  \tSpaceDimension (the number of channels) <1,2,3>\n \
-    \t-d0    \tSize of dimension 0\n \
-    \t-d1    \tSize of dimension 1\n \
-    \t[-d2]  \tSize of dimension 2\n \
-    \t[-r]   \tThe resolution of the random image <unsigned long>.\n \
-    \t\t\tThis determines the number of voxels set to a random value before blurring.\n \
-    \t\t\tIf set to 0, all voxels are set to a random value\n \
-    \t[-sigma]\tThe standard deviation of the blurring filter\n \
-    \t[-min] \tMinimum pixel value\n \
-    \t[-max] \tMaximum pixel value\n \
-    \t[-seed]\tThe random seed <int>\n";
+  std::stringstream ss;
+  ss << "This program creates a random image." << std::endl
+    << "Usage:" << std::endl
+    << "pxcreaterandomimage" << std::endl
+    << "-out   \tOutputImageFileName" << std::endl
+    << "-pt    \tPixelType <SHORT, USHORT, INT, UINT, CHAR, UCHAR, FLOAT>" << std::endl
+    << "-id    \tImageDimension <2,3>" << std::endl
+    << "[-sd]  \tSpaceDimension (the number of channels) <1,2,3>" << std::endl
+    << "-d0    \tSize of dimension 0" << std::endl
+    << "-d1    \tSize of dimension 1" << std::endl
+    << "[-d2]  \tSize of dimension 2" << std::endl
+    << "[-r]   \tThe resolution of the random image <unsigned long>." << std::endl
+    << "This determines the number of voxels set to a random value before blurring." << std::endl
+    << "If set to 0, all voxels are set to a random value" << std::endl
+    << "[-sigma]\tThe standard deviation of the blurring filter" << std::endl
+    << "[-min] \tMinimum pixel value" << std::endl
+    << "[-max] \tMaximum pixel value" << std::endl
+    << "[-seed]\tThe random seed <int>";
   //<< "\t[-d3]  \tSize of dimension 3\n"
   //<< "\t[-d4]  \tSize of dimension 4\n"
-  return helpString;
+  return ss.str();
 } // end GetHelpString
 
 #endif // #ifndef __createrandomimage_cxx

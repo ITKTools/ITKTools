@@ -369,23 +369,24 @@ void CropImage( const std::string & inputFileName, const std::string & outputFil
 
 std::string GetHelpString( void )
 {
-  std::string helpString = "Usage: \
-  pxcropimage \
-    -in      inputFilename \
-    [-out]   outputFilename, default in + CROPPED.mhd \
-    [-pA]    a point A \
-    [-pB]    a point B \
-    [-sz]    size \
-    [-lb]    lower bound \
-    [-ub]    upper bound \
-    [-force] force to extract a region of size sz, pad if necessary \
-  pxcropimage can be called in different ways: \
-    1: supply two points with \"-pA\" and \"-pB\". \
-    2: supply a points and a size with \"-pA\" and \"-sz\". \
-    3: supply a lower and an upper bound with \"-lb\" and \"-ub\". \
-  The points are supplied in index coordinates. \
-  Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
-  return helpString;
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxcropimage" << std::endl
+    << "-in      inputFilename" << std::endl
+    << "[-out]   outputFilename, default in + CROPPED.mhd" << std::endl
+    << "[-pA]    a point A" << std::endl
+    << "[-pB]    a point B" << std::endl
+    << "[-sz]    size" << std::endl
+    << "[-lb]    lower bound" << std::endl
+    << "[-ub]    upper bound" << std::endl
+    << "[-force] force to extract a region of size sz, pad if necessary" << std::endl
+  << "pxcropimage can be called in different ways:" << std::endl
+    << "1: supply two points with \"-pA\" and \"-pB\"." << std::endl
+    << "2: supply a points and a size with \"-pA\" and \"-sz\"." << std::endl
+    << "3: supply a lower and an upper bound with \"-lb\" and \"-ub\"." << std::endl
+  << "The points are supplied in index coordinates." << std::endl
+  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
+  return ss.str();
 } // end GetHelpString()
 
 
