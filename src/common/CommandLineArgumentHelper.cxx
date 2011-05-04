@@ -83,17 +83,18 @@ bool CheckForValidComponentType( const std::string & arg )
 
 } // end CheckForValidComponentType()
 
+
 /**
  * ***************** GetImageProperties ************************
  */
 
 int GetImageProperties(
   const std::string & filename,
-  std::string & pixeltype,
-  std::string & componenttype,
+  std::string & pixelTypeAsString,
+  std::string & componentTypeAsString,
   unsigned int & dimension,
-  unsigned int & numberofcomponents,
-  std::vector<unsigned int> & imagesize )
+  unsigned int & numberOfComponents,
+  std::vector<unsigned int> & size )
 {
   /** Dummy image type. */
   const unsigned int DummyDimension = 3;
@@ -124,41 +125,12 @@ int GetImageProperties(
   /** Extract the ImageIO from the testReader. */
   ImageIOBaseType::Pointer testImageIOBase = testReader->GetImageIO();
 
-  /** Get the component type, number of components, dimension and pixel type. */
-  dimension = testImageIOBase->GetNumberOfDimensions();
-  numberofcomponents = testImageIOBase->GetNumberOfComponents();
-  componenttype = testImageIOBase->GetComponentTypeAsString(
-    testImageIOBase->GetComponentType() );
-  ReplaceUnderscoreWithSpace( componenttype );
-  pixeltype = testImageIOBase->GetPixelTypeAsString(
-    testImageIOBase->GetPixelType() );
-
-  /** Get the image size. */
-  imagesize.resize( dimension );
-  for ( unsigned int i = 0; i < dimension; i++ )
+  /** Extract information from the ImageIOBase. */
+  std::vector<double> dummySpacing, dummyOrigin, dummyDirection;
+  if ( !GetImageInformationFromImageIOBase( testImageIOBase,
+    pixelTypeAsString, componentTypeAsString, dimension, numberOfComponents,
+    size, dummySpacing, dummyOrigin, dummyDirection ) )
   {
-    imagesize[ i ] = testImageIOBase->GetDimensions( i );
-  }
-
-  /** Check inputPixelType. */
-  if ( componenttype != "unsigned char"
-    && componenttype != "char"
-    && componenttype != "unsigned short"
-    && componenttype != "short"
-    && componenttype != "unsigned int"
-    && componenttype != "int"
-    && componenttype != "unsigned long"
-    && componenttype != "long"
-    && componenttype != "float"
-    && componenttype != "double" )
-  {
-    /** In this case an illegal pixeltype is found. */
-    std::cerr
-      << "ERROR while determining image properties!"
-      << "The found componenttype is \""
-      << componenttype
-      << "\", which is not supported."
-      << std::endl;
     return 1;
   }
 
@@ -173,13 +145,14 @@ int GetImageProperties(
 
 int GetImageProperties(
   const std::string & filename,
-  std::string & pixeltype,
-  std::string & componenttype,
+  std::string & pixelTypeAsString,
+  std::string & componentTypeAsString,
   unsigned int & dimension,
-  unsigned int & numberofcomponents,
-  std::vector<unsigned int> & imagesize,
-  std::vector<double> & imagespacing,
-  std::vector<double> & imageoffset )
+  unsigned int & numberOfComponents,
+  std::vector<unsigned int> & size,
+  std::vector<double> & spacing,
+  std::vector<double> & origin,
+  std::vector<double> & direction )
 {
   /** Dummy image type. */
   const unsigned int DummyDimension = 3;
@@ -210,51 +183,309 @@ int GetImageProperties(
   /** Extract the ImageIO from the testReader. */
   ImageIOBaseType::Pointer testImageIOBase = testReader->GetImageIO();
 
-  /** Get the component type, number of components, dimension and pixel type. */
-  dimension = testImageIOBase->GetNumberOfDimensions();
-  numberofcomponents = testImageIOBase->GetNumberOfComponents();
-  componenttype = testImageIOBase->GetComponentTypeAsString(
-    testImageIOBase->GetComponentType() );
-  ReplaceUnderscoreWithSpace( componenttype );
-  pixeltype = testImageIOBase->GetPixelTypeAsString(
-    testImageIOBase->GetPixelType() );
-
-  /** Get the image size. */
-  imagesize.resize( dimension );
-  imagespacing.resize( dimension );
-  imageoffset.resize( dimension );
-  for ( unsigned int i = 0; i < dimension; i++ )
+  /** Extract information from the ImageIOBase. */
+  if ( !GetImageInformationFromImageIOBase( testImageIOBase,
+    pixelTypeAsString, componentTypeAsString, dimension, numberOfComponents,
+    size, spacing, origin, direction ) )
   {
-    imagesize[ i ] = testImageIOBase->GetDimensions( i );
-    imagespacing[ i ] = testImageIOBase->GetSpacing( i );
-    imageoffset[ i ] = testImageIOBase->GetOrigin( i );
-  }
-
-  /** Check inputPixelType. */
-  if ( componenttype != "unsigned char"
-    && componenttype != "char"
-    && componenttype != "unsigned short"
-    && componenttype != "short"
-    && componenttype != "unsigned int"
-    && componenttype != "int"
-    && componenttype != "unsigned long"
-    && componenttype != "long"
-    && componenttype != "float"
-    && componenttype != "double" )
-  {
-    /** In this case an illegal pixeltype is found. */
-    std::cerr
-      << "ERROR while determining image properties!"
-      << "The found componenttype is \""
-      << componenttype
-      << "\", which is not supported."
-      << std::endl;
     return 1;
   }
 
   return 0;
 
-}
+} // end GetImageProperties()
+
+
+/**
+ * ***************** GetImageProperties ************************
+ */
+
+bool GetImageProperties(
+  const std::string & filename,
+  itk::ImageIOBase::Pointer & testImageIOBase )
+{
+  /** Dummy image type. */
+  const unsigned int DummyDimension = 3;
+  typedef short      DummyPixelType;
+  typedef itk::Image< DummyPixelType, DummyDimension >   DummyImageType;
+
+  /** Create a testReader. */
+  typedef itk::ImageFileReader< DummyImageType >     ReaderType;
+  ReaderType::Pointer testReader = ReaderType::New();
+  testReader->SetFileName( filename.c_str() );
+
+  /** Generate all information. */
+  try
+  {
+    testReader->GenerateOutputInformation();
+  }
+  catch ( itk::ExceptionObject & e )
+  {
+    std::cerr << "Caught ITK exception: " << e << std::endl;
+    return false;
+  }
+
+  /** Extract the ImageIO from the testReader. */
+  testImageIOBase = testReader->GetImageIO();
+
+  return true;
+
+} // end GetImageProperties()
+
+
+/**
+ * ***************** FillImageIOBase ************************
+ */
+
+void FillImageIOBase( itk::ImageIOBase::Pointer & imageIOBase,
+  const std::string & pixelTypeAsString,
+  const std::string & componentTypeAsString,
+  const unsigned int & imageDimension,
+  const unsigned int & numberOfComponents,
+  const std::vector<unsigned int> & size,
+  const std::vector<double> & spacing,
+  const std::vector<double> & origin,
+  const std::vector<double> & direction )
+{
+  /** Set image dimensionality. */
+  imageIOBase->SetNumberOfDimensions( imageDimension );
+  imageIOBase->SetNumberOfComponents( numberOfComponents );
+
+  /** Set pixel type. */
+  itk::ImageIOBase::IOPixelType pixelType;
+  if ( pixelTypeAsString == "scalar" )
+  {
+    pixelType = itk::ImageIOBase::SCALAR;
+  }
+  else if ( pixelTypeAsString == "vector" )
+  {
+    pixelType = itk::ImageIOBase::VECTOR;
+  }
+  else if ( pixelTypeAsString == "covariant_vector" )
+  {
+    pixelType = itk::ImageIOBase::COVARIANTVECTOR;
+  }
+  else if ( pixelTypeAsString == "point" )
+  {
+    pixelType = itk::ImageIOBase::POINT;
+  }
+  else if ( pixelTypeAsString == "offset" )
+  {
+    pixelType = itk::ImageIOBase::OFFSET;
+  }
+  else if ( pixelTypeAsString == "rgb" )
+  {
+    pixelType = itk::ImageIOBase::RGB;
+  }
+  else if ( pixelTypeAsString == "rgba" )
+  {
+    pixelType = itk::ImageIOBase::RGBA;
+  }
+  else if ( pixelTypeAsString == "symmetric_second_rank_tensor" )
+  {
+    pixelType = itk::ImageIOBase::SYMMETRICSECONDRANKTENSOR;
+  }
+  else if ( pixelTypeAsString == "diffusion_tensor_3D" )
+  {
+    pixelType = itk::ImageIOBase::DIFFUSIONTENSOR3D;
+  }
+  else if ( pixelTypeAsString == "complex" )
+  {
+    pixelType = itk::ImageIOBase::COMPLEX;
+  }
+  else
+  {
+    pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
+  }
+  imageIOBase->SetPixelType( pixelType );
+
+  /** Set component type. */
+  itk::ImageIOBase::IOComponentType componentType;
+  if ( componentTypeAsString == "unsigned_char" )
+  {
+    componentType = itk::ImageIOBase::UCHAR;
+  }
+  else if ( componentTypeAsString == "char" )
+  {
+    componentType = itk::ImageIOBase::CHAR;
+  }
+  else if ( componentTypeAsString == "unsigned_short" )
+  {
+    componentType = itk::ImageIOBase::USHORT;
+  }
+  else if ( componentTypeAsString == "short" )
+  {
+    componentType = itk::ImageIOBase::SHORT;
+  }
+  else if ( componentTypeAsString == "unsigned_int" )
+  {
+    componentType = itk::ImageIOBase::UINT;
+  }
+  else if ( componentTypeAsString == "int" )
+  {
+    componentType = itk::ImageIOBase::INT;
+  }
+  else if ( componentTypeAsString == "unsigned_long" )
+  {
+    componentType = itk::ImageIOBase::ULONG;
+  }
+  else if ( componentTypeAsString == "long" )
+  {
+    componentType = itk::ImageIOBase::LONG;
+  }
+  else if ( componentTypeAsString == "float" )
+  {
+    componentType = itk::ImageIOBase::FLOAT;
+  }
+  else if ( componentTypeAsString == "double" )
+  {
+    componentType = itk::ImageIOBase::DOUBLE;
+  }
+  else
+  {
+    componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  }
+  imageIOBase->SetComponentType( componentType );
+
+  /** Set size, spacing, origin. */
+  for ( unsigned int i = 0; i < imageDimension; i++ )
+  {
+    imageIOBase->SetDimensions( i, size[ i ] );
+    imageIOBase->SetSpacing( i, spacing[ i ] );
+    imageIOBase->SetOrigin( i, origin[ i ] );
+  }
+
+  /** Set image direction / orientation. */
+  for ( unsigned int i = 0; i < imageDimension; i++ )
+  {
+    std::vector< double > subDirection( imageDimension );
+    for ( unsigned int j = 0; j < imageDimension; j++ )
+    {
+      subDirection[ j ] = direction[ j + i * imageDimension ];
+    }
+    imageIOBase->SetDirection( i, subDirection );
+  }
+
+} // end FillImageIOBase()
+
+
+/**
+ * ***************** GetImageInformationFromImageIOBase ************************
+ */
+
+bool GetImageInformationFromImageIOBase(
+  const itk::ImageIOBase::Pointer & imageIOBase,
+  std::string & pixelTypeAsString,
+  std::string & componentTypeAsString,
+  unsigned int & imageDimension,
+  unsigned int & numberOfComponents,
+  std::vector<unsigned int> & size,
+  std::vector<double> & spacing,
+  std::vector<double> & origin,
+  std::vector<double> & direction )
+{
+  /** Get the component type, number of components, dimension and pixel type. */
+  imageDimension = imageIOBase->GetNumberOfDimensions();
+  numberOfComponents = imageIOBase->GetNumberOfComponents();
+  componentTypeAsString = imageIOBase->GetComponentTypeAsString(
+    imageIOBase->GetComponentType() );
+  ReplaceUnderscoreWithSpace( componentTypeAsString );
+  pixelTypeAsString = imageIOBase->GetPixelTypeAsString(
+    imageIOBase->GetPixelType() );
+
+  /** Get the image size, spacing, origin. */
+  size.resize( imageDimension );
+  spacing.resize( imageDimension );
+  origin.resize( imageDimension );
+  for ( unsigned int i = 0; i < imageDimension; i++ )
+  {
+    size[ i ] = imageIOBase->GetDimensions( i );
+    spacing[ i ] = imageIOBase->GetSpacing( i );
+    origin[ i ] = imageIOBase->GetOrigin( i );
+  }
+
+  /** Check inputPixelType. */
+  if ( componentTypeAsString != "unsigned char"
+    && componentTypeAsString != "char"
+    && componentTypeAsString != "unsigned short"
+    && componentTypeAsString != "short"
+    && componentTypeAsString != "unsigned int"
+    && componentTypeAsString != "int"
+    && componentTypeAsString != "unsigned long"
+    && componentTypeAsString != "long"
+    && componentTypeAsString != "float"
+    && componentTypeAsString != "double" )
+  {
+    /** In this case an illegal pixeltype is found. */
+    std::cerr
+      << "ERROR while determining image properties!"
+      << "The found componenttype is \""
+      << componentTypeAsString
+      << "\", which is not supported."
+      << std::endl;
+    return false;
+  }
+
+  return true;
+
+} // GetImageInformationFromImageIOBase()
+
+
+/**
+ * *************** ConvertImageInformationToITKTypes ***********************
+ */
+
+template<unsigned int Dimension>
+void ConvertImageInformationToITKTypes(
+  const std::vector<unsigned int> & size,
+  const std::vector<double> & spacing,
+  const std::vector<double> & origin,
+  const std::vector<double> & direction,
+  typename itk::ImageBase<Dimension>::SizeType      sizeITK,
+  typename itk::ImageBase<Dimension>::SpacingType   spacingITK,
+  typename itk::ImageBase<Dimension>::PointType     originITK,
+  typename itk::ImageBase<Dimension>::DirectionType directionITK )
+{
+  typedef itk::ImageBase<Dimension> ImageBaseType;
+  typedef typename ImageBaseType::SizeValueType      SizeValueType;
+
+  for ( unsigned int i = 0; i < Dimension; i++ )
+  {
+    sizeITK[ i ] = static_cast<SizeValueType>( size[ i ] );
+    spacingITK[ i ] = spacing[ i ];
+    originITK[ i ] = origin[ i ];
+  }
+
+  for ( unsigned int i = 0; i < Dimension; i++ )
+  {
+    for ( unsigned int j = 0; j < Dimension; j++ )
+    {
+      directionITK[ i ][ j ] = direction[ j + i * Dimension ];
+    }
+  }
+
+} // end ConvertImageInformationToITKTypes()
+
+/** Instantiate for dimension 2 and 3. */
+template void ConvertImageInformationToITKTypes<2>(
+  const std::vector<unsigned int> & size,
+  const std::vector<double> & spacing,
+  const std::vector<double> & origin,
+  const std::vector<double> & direction,
+  itk::ImageBase<2>::SizeType      sizeITK,
+  itk::ImageBase<2>::SpacingType   spacingITK,
+  itk::ImageBase<2>::PointType     originITK,
+  itk::ImageBase<2>::DirectionType directionITK );
+
+template void ConvertImageInformationToITKTypes<3>(
+  const std::vector<unsigned int> & size,
+  const std::vector<double> & spacing,
+  const std::vector<double> & origin,
+  const std::vector<double> & direction,
+  itk::ImageBase<3>::SizeType      sizeITK,
+  itk::ImageBase<3>::SpacingType   spacingITK,
+  itk::ImageBase<3>::PointType     originITK,
+  itk::ImageBase<3>::DirectionType directionITK );
 
 
 /**
@@ -291,8 +522,7 @@ std::string GetLargestComponentType(
   }
   else
   {
-    output = ranking[ Type1 ] > ranking[ Type2 ]
-    ? type1 : type2;
+    output = ranking[ Type1 ] > ranking[ Type2 ] ? type1 : type2;
   }
 
   /** Return a value. */

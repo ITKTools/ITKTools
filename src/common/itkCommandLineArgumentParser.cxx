@@ -18,6 +18,7 @@ CommandLineArgumentParser
   this->m_Argv.clear();
   this->m_ArgumentMap.clear();
   this->m_ProgramHelpText = "No help text provided.";
+
 } // end Constructor
 
 
@@ -77,17 +78,6 @@ CommandLineArgumentParser
 
 
 /**
- * ******************* MarkExactlyOneOfArgumentsAsRequired *******************
- */
-
-void
-CommandLineArgumentParser
-::MarkExactlyOneOfArgumentsAsRequired( const std::vector<std::string> & arguments )
-{
-  m_RequiredExactlyOneArguments.push_back(arguments);
-} // end MarkExactlyOneOfArgumentsAsRequired()
-
-/**
  * ******************* ExactlyOneExists *******************
  */
 
@@ -96,15 +86,15 @@ CommandLineArgumentParser
 ::ExactlyOneExists( const std::vector<std::string> & keys ) const
 {
   unsigned int counter = 0;
-  for(unsigned int i = 0; i < keys.size(); i++)
+  for ( unsigned int i = 0; i < keys.size(); i++ )
   {
-    if ( ArgumentExists(keys[i]) )
+    if ( this->ArgumentExists( keys[ i ] ) )
     {
       counter++;
     }
   }
 
-  if(counter == 1)
+  if ( counter == 1 )
   {
     return true;
   }
@@ -114,6 +104,7 @@ CommandLineArgumentParser
   }
 
 } // end ExactlyOneExists()
+
 
 /**
  * ******************* FindKey *******************
@@ -194,19 +185,40 @@ CommandLineArgumentParser
 
 } // end StringCast()
 
+
 /**
  * **************** MarkArgumentAsRequired ***************
  */
 
 void
 CommandLineArgumentParser
-::MarkArgumentAsRequired(const std::string & argument, const std::string & helpText)
+::MarkArgumentAsRequired(
+  const std::string & argument, const std::string & helpText )
 {
   std::pair<std::string, std::string> requiredArgument;
   requiredArgument.first = argument;
   requiredArgument.second = helpText;
-  m_RequiredArguments.push_back(requiredArgument);
+  this->m_RequiredArguments.push_back( requiredArgument );
+
 } // end MarkArgumentAsRequired()
+
+
+/**
+ * ******************* MarkExactlyOneOfArgumentsAsRequired *******************
+ */
+
+void
+CommandLineArgumentParser
+::MarkExactlyOneOfArgumentsAsRequired(
+  const std::vector<std::string> & arguments, const std::string & helpText )
+{
+  std::pair< std::vector<std::string>, std::string> requiredArguments;
+  requiredArguments.first = arguments;
+  requiredArguments.second = helpText;
+  this->m_RequiredExactlyOneArguments.push_back( requiredArguments );
+
+} // end MarkExactlyOneOfArgumentsAsRequired()
+
 
 /**
  * **************** CheckForRequiredArguments ***************
@@ -217,44 +229,59 @@ CommandLineArgumentParser
 ::CheckForRequiredArguments() const
 {
   // If no arguments were specified at all, display the help text.
-  if(m_Argv.size() == 1)
-    {
-    std::cerr << m_ProgramHelpText << std::endl;
+  if ( this->m_Argv.size() == 1 )
+  {
+    std::cerr << this->m_ProgramHelpText << std::endl;
     return false;
-    }
+  }
     
   // Display the help text if the user asked for it.
-  if(ArgumentExists("--help") || ArgumentExists("-help") || ArgumentExists("--h"))
-    {
-    std::cerr << m_ProgramHelpText << std::endl;
+  if ( this->ArgumentExists( "--help" )
+    || this->ArgumentExists( "-help" )
+    || this->ArgumentExists( "--h" ) )
+  {
+    std::cerr << this->m_ProgramHelpText << std::endl;
     return false;
-    }
+  }
 
   // Loop through all required arguments. Check them all even if one fails.
-
   bool allRequiredArgumentsSpecified = true;
-
-  for(unsigned int i = 0; i < m_RequiredArguments.size(); ++i)
+  for ( std::size_t i = 0; i < this->m_RequiredArguments.size(); ++i )
+  {
+    if ( !this->ArgumentExists( this->m_RequiredArguments[ i ].first ) )
     {
-    if(!ArgumentExists(m_RequiredArguments[i].first))
-      {
-      std::cout << "Argument " << m_RequiredArguments[i].first << " is required but not specified." << std::endl
-                << "This argument is: " << m_RequiredArguments[i].second << std::endl;
+      std::cerr << "ERROR: Argument "
+        << this->m_RequiredArguments[ i ].first
+        << " is required but not specified.\n  "
+        << this->m_RequiredArguments[ i ].second << std::endl;
       allRequiredArgumentsSpecified = false;
-      }
     }
+  }
 
   // Loop through ExactlyOneOf argument sets
-  for(unsigned int i = 0; i < m_RequiredExactlyOneArguments.size(); ++i)
+  for ( std::size_t i = 0; i < this->m_RequiredExactlyOneArguments.size(); ++i )
   {
-    if(!ExactlyOneExists(m_RequiredExactlyOneArguments[i]))
+    std::vector<std::string> exactlyOneOf
+      = this->m_RequiredExactlyOneArguments[ i ].first;
+    if ( !this->ExactlyOneExists( exactlyOneOf ) )
     {
+      std::cerr << "ERROR: Exactly one (1) of the arguments in {";
+      for ( std::size_t j = 0; j < exactlyOneOf.size() - 1; j++ )
+      {
+        std::cerr << exactlyOneOf[ j ] << ", ";
+      }
+      std::cerr << exactlyOneOf[ exactlyOneOf.size() - 1 ]
+        << "} is required, but none or multiple are specified.\n  "
+        << this->m_RequiredExactlyOneArguments[ i ].second << std::endl;
+
       allRequiredArgumentsSpecified = false;
     }
   }
   
   return allRequiredArgumentsSpecified;
+
 } // end CheckForRequiredArguments()
+
 
 } // end namespace itk
 
