@@ -1,3 +1,8 @@
+/** \file
+ \brief Create a blank image.
+ 
+ \verbinclude createzeroimage.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 

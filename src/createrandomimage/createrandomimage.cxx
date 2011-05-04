@@ -1,3 +1,8 @@
+/** \file
+ \brief Create a random image.
+ 
+ \verbinclude createrandomimage.help
+ */
 #ifndef __createrandomimage_cxx
 #define __createrandomimage_cxx
 

@@ -1,3 +1,8 @@
+/** \file
+ \brief Perform T-test.
+ 
+ \verbinclude ttest.help
+ */
 #include "itkCommandLineArgumentParser.h"
 
 #include <vector>

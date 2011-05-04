@@ -1,3 +1,8 @@
+/** \file
+ \brief Add images with weights.
+ 
+ \verbinclude weightedaddition.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 #include "itkImage.h"

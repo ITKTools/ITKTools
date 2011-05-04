@@ -1,3 +1,8 @@
+/** \file
+ \brief This program inverts the intensities of an image
+ 
+ \verbinclude invertintensityimagefilter.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 

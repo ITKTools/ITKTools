@@ -1,3 +1,8 @@
+/** \file
+ \brief Perform a Gaussian filtering on an image.
+ 
+ \verbinclude gaussianimagefilter.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 

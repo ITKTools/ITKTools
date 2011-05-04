@@ -1,3 +1,8 @@
+/** \file
+ \brief Create a simple box image.
+ 
+ \verbinclude createsimplebox.help
+ */
 #ifndef __createbox_cxx
 #define __createbox_cxx
 

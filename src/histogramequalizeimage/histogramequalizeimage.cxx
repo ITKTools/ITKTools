@@ -1,3 +1,8 @@
+/** \file
+ \brief Equalize the histogram of an image.
+ 
+ \verbinclude histogramequalizeimage.help
+ */
 #ifndef __histogramequalizeimage_cxx
 #define __histogramequalizeimage_cxx
 

@@ -1,3 +1,8 @@
+/** \file
+ \brief Print information about the input image to screen.
+ 
+ \verbinclude getimageinformation.help
+ */
 #include "itkCommandLineArgumentParser.h"
 
 #include "itkImage.h"

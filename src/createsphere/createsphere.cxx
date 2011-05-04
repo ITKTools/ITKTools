@@ -1,3 +1,8 @@
+/** \file
+ \brief Create a sphere image.
+ 
+ \verbinclude createsphere.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 

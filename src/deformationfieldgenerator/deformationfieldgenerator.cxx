@@ -1,3 +1,8 @@
+/** \file
+ \brief This program generates a deformation field (from fixed to moving image) based on some corresponding points.
+ 
+ \verbinclude deformationfieldgenerator.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 
@@ -435,6 +440,3 @@ std::string PrintHelp()
   Supported: 2D, 3D, any scalar pixeltype.";
   return helpText;
 } // end PrintHelp
-
-
-

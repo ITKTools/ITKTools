@@ -1,3 +1,8 @@
+/** \file
+ \brief Extracts a 2D slice from a 3D image.
+ 
+ \verbinclude extractslice.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 #include "itkImageFileReader.h"

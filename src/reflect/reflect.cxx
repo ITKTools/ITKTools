@@ -1,3 +1,8 @@
+/** \file
+ \brief This program reflects an image.
+ 
+ \verbinclude reflect.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 

@@ -1,3 +1,8 @@
+/** \file
+ \brief Create a grid image.
+ 
+ \verbinclude creategridimage.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 

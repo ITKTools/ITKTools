@@ -1,3 +1,8 @@
+/** \file
+ \brief Compute statistics on an image. For vector images, the magnitude is used.
+ 
+ \verbinclude statisticsonimage.help
+ */
 
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"

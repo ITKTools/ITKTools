@@ -1,3 +1,8 @@
+/** \file
+ \brief This program computes a spatial segmentation error map.
+ 
+ \verbinclude segmentationdistance.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 

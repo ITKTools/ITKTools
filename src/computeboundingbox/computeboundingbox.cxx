@@ -1,3 +1,8 @@
+/** \file
+ \brief Compute the bounding box of an image.
+ 
+ \verbinclude computeboundingbox.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 

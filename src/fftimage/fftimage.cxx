@@ -1,3 +1,8 @@
+/** \file
+ \brief Compute the FFT of an image.
+ 
+ \verbinclude fftimage.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 #include <itksys/SystemTools.hxx>

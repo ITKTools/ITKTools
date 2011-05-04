@@ -15,6 +15,11 @@
 * limitations under the License.
 *
 *=========================================================================*/
+/** \file
+ \brief Compute binary thinning of an image.
+ 
+ \verbinclude binarythinning.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 

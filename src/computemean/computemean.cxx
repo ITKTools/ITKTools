@@ -1,3 +1,8 @@
+/** \file
+ \brief Compute the mean of an image.
+ 
+ \verbinclude computemean.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 

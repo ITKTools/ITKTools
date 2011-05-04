@@ -1,3 +1,8 @@
+/** \file
+ \brief Stack images into one big vector image.
+ 
+ \verbinclude imagestovectorimage.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 

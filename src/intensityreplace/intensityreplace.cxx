@@ -1,3 +1,8 @@
+/** \file
+ \brief This program replaces some user specified intensity values in an image.
+ 
+ \verbinclude intensityreplace.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 

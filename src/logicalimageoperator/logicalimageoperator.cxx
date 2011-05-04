@@ -1,3 +1,8 @@
+/** \file
+ \brief Perform a logical operation on an image.
+ 
+ \verbinclude logicalimageoperator.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 

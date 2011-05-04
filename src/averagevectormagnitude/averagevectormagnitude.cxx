@@ -18,6 +18,7 @@
 
 /** \file
  \brief Calculate the average magnitude of the vectors in a vector image.
+ 
  \verbinclude averagevectormagnitude.help
  */
 

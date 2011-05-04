@@ -1,3 +1,8 @@
+/** \file
+ \brief Perform PCA.
+ 
+ \verbinclude pca.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 

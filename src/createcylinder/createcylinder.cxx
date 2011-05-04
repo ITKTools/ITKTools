@@ -1,3 +1,8 @@
+/** \file
+ \brief Create a cylinder image.
+ 
+ \verbinclude createcylinder.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 

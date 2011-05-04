@@ -1,3 +1,8 @@
+/** \file
+ \brief Calculates the closest rigid transform (VersorRigid3D) between two sets of landmarks. The two sets should be of equal size.
+ 
+ \verbinclude closestversor3Dtransform.help
+ */
 #include "itkCommandLineArgumentParser.h"
 
 #include "itkImage.h"

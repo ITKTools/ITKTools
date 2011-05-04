@@ -1,5 +1,7 @@
-/** This little program takes a directory and searches for dicom files,
- * from which patient and study information is extracted.
+/** \file
+ \brief Takes a directory and searches for dicom files, from which patient and study information is extracted.
+ 
+ \verbinclude getdicominformation.help
  */
 
 #include "itkCommandLineArgumentParser.h"

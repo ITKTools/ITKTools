@@ -1,3 +1,8 @@
+/** \file
+ \brief Compare two images.
+ 
+ \verbinclude imagecompare.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 

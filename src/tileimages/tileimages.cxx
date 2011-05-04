@@ -1,3 +1,8 @@
+/** \file
+ \brief Either tiles a stack of 2D images into a 3D image, or tiles nD images to form another nD image.
+ 
+ \verbinclude tileimages.help
+ */
 
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"

@@ -1,3 +1,8 @@
+/** \file
+ \brief Create an ellipsoid image.
+ 
+ \verbinclude createellipsoid.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 

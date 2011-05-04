@@ -1,3 +1,8 @@
+/** \file
+ \brief Create a box image.
+ 
+ \verbinclude createbox.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 

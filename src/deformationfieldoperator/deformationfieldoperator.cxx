@@ -1,3 +1,8 @@
+/** \file
+ \brief This program converts between deformations (displacement fields) and transformations, and computes the magnitude or Jacobian of a deformation field.
+ 
+ \verbinclude deformationfieldoperator.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 

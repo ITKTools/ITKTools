@@ -1,3 +1,8 @@
+/** \file
+ \brief Rescale the intensities of an image.
+ 
+ \verbinclude rescaleintensityimagefilter.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 

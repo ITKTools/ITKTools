@@ -1,3 +1,8 @@
+/** \file
+ \brief Unary operations on an image.
+ 
+ \verbinclude unaryimageoperator.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 

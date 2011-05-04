@@ -1,3 +1,8 @@
+/** \file
+ \brief This program computes texture features based on the gray-level co-occurrence matrix (GLCM).
+ 
+ \verbinclude texture.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 

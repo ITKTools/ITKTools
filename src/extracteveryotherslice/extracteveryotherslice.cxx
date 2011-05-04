@@ -1,3 +1,8 @@
+/** \file
+ \brief Extract every other slice of an image.
+ 
+ \verbinclude extracteveryotherslice.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 

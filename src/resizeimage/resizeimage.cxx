@@ -1,3 +1,8 @@
+/** \file
+ \brief Resize an image.
+ 
+ \verbinclude resizeimage.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 

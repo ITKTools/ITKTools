@@ -1,3 +1,9 @@
+/** \file
+ \brief Compute the difference image between two images.
+ 
+ \verbinclude computedifferenceimage.help
+ */
+
 /**
  * computeDifferenceImage
  *

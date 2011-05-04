@@ -1,3 +1,8 @@
+/** \file
+ \brief Intensity windowing.
+ 
+ \verbinclude intensitywindowing.help
+ */
 
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"

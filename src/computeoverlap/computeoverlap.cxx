@@ -1,3 +1,8 @@
+/** \file
+ \brief Compute the overlap of two images.
+ 
+ \verbinclude computeoverlap.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 

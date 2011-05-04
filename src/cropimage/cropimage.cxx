@@ -1,3 +1,8 @@
+/** \file
+ \brief Crop an image.
+ 
+ \verbinclude cropimage.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 
@@ -578,4 +583,3 @@ std::vector<int> GetLowerBoundary( const std::vector<int> & input1,
   return upperBoundary;
 
 } // end GetUpperBoundary()
-

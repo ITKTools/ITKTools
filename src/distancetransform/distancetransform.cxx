@@ -1,4 +1,8 @@
-
+/** \file
+ \brief This program creates a signed distance transform.
+ 
+ \verbinclude distancetransform.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 

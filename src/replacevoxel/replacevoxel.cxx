@@ -1,3 +1,8 @@
+/** \file
+ \brief This program replaces the value of a user specified voxel.
+ 
+ \verbinclude replacevoxel.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 

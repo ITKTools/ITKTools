@@ -1,3 +1,8 @@
+/** \file
+ \brief Enhance the contrast of an image.
+ 
+ \verbinclude contrastenhanceimage.help
+ */
 #ifndef __contrastenhanceimage_cxx
 #define __contrastenhanceimage_cxx
 

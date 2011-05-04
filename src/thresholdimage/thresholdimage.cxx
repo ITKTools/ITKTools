@@ -1,3 +1,8 @@
+/** \file
+ \brief Threshold an image.
+ 
+ \verbinclude thresholdimage.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 

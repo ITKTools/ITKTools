@@ -14,6 +14,11 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
+/** \file
+ \brief Cast or convert an image.
+ 
+ \verbinclude castconvert.help
+ */
 /**
  * castconvert
  *

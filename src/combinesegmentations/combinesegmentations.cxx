@@ -1,3 +1,8 @@
+/** \file
+ \brief This program combines multiple segmentations into one.
+ 
+ \verbinclude combinesegmentations.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 

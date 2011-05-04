@@ -15,6 +15,12 @@
 * limitations under the License.
 *
 *=========================================================================*/
+/** \file
+ \brief Apply a binary operator to a pair of images.
+ 
+ \verbinclude binaryimageoperator.help
+ */
+
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 
@@ -152,4 +158,3 @@ int main( int argc, char **argv )
   return 0;
 
 } // end main
-

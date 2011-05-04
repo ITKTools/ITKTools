@@ -1,3 +1,8 @@
+/** \file
+ \brief Reshape an image.
+ 
+ \verbinclude reshape.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 

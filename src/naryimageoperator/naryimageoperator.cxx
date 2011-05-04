@@ -1,3 +1,8 @@
+/** \file
+ \brief N-ary image operator.
+ 
+ \verbinclude naryimageoperator.help
+ */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 
