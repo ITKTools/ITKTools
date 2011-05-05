@@ -46,6 +46,7 @@ std::string GetHelpString( void )
   << "             LMINUS = arg - A" << std::endl
   << "             SIN = sin(A)" << std::endl
   << "             RPOWER = A ^ arg" << std::endl
+  << "             TIMES = A * arg" << std::endl
   << "  [-arg]   argument, necessary for some ops" << std::endl
   << "  [-out]   outputFilename, default in + <ops> + <arg> + .mhd" << std::endl
   << "  [-pto]   outputPixelType, default: same as inputimage" << std::endl

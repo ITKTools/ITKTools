@@ -146,7 +146,7 @@ int main( int argc, char **argv )
     else
     {
       std::cerr << "The pixel type is " << inputPixelType
-        << "and the number of components is "
+        << " and the number of components is "
         << numberOfComponents << std::endl;
       std::cerr << "ERROR: Vector images are not supported!" << std::endl;
       return 1;
