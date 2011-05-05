@@ -45,7 +45,7 @@ int main( int argc, char **argv )
 {
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(GetHelpString());
+  parser->SetProgramHelpText( GetHelpString() );
 
   parser->MarkArgumentAsRequired( "-test", "The input filename." );
   parser->MarkArgumentAsRequired( "-base", "The baseline image filename." );

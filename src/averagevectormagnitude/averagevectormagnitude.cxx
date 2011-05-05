@@ -131,7 +131,7 @@ int main( int argc, char** argv )
 {
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(GetHelpString());
+  parser->SetProgramHelpText( GetHelpString() );
 
   std::string inputFileName("");
   std::string outputFileName(inputFileName + "AverageVectorMagnitude.mhd");

@@ -58,7 +58,7 @@ int main( int argc, char *argv[] )
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(GetHelpString());
+  parser->SetProgramHelpText( GetHelpString() );
 
   parser->MarkArgumentAsRequired( "-f", "The fixed landmark filename." );
   parser->MarkArgumentAsRequired( "-m", "The moving landmark filename." );

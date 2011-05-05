@@ -78,7 +78,7 @@ int main( int argc, char **argv )
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(GetHelpString());
+  parser->SetProgramHelpText( GetHelpString() );
   
   parser->MarkArgumentAsRequired( "-in1", "The inputImage1 filename." );
   parser->MarkArgumentAsRequired( "-ipp1", "The inputPoints1 filename." );

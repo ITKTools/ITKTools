@@ -7,6 +7,8 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE( pxcastconvert
  castconvert.cxx
+ castconverthelpers.h
+ castconverthelpers2.h
  castconvertScalar.cxx
  castconvertDicomScalarA.cxx
  castconvertDicomScalarB.cxx

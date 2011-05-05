@@ -82,8 +82,6 @@ extern int FileConverterMultiComponent(
 
 int main( int argc, char **argv )
 {
-
-
   /** Register some non-standard IO Factories to make the tool more useful.
    * Copied from the Insight Applications.
    */
@@ -95,7 +93,7 @@ int main( int argc, char **argv )
 
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
-  parser->SetProgramHelpText(GetHelpString());
+  parser->SetProgramHelpText( GetHelpString() );
 
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
   parser->MarkArgumentAsRequired( "-out", "The output filename." );
