@@ -29,6 +29,10 @@
 #include "itkStatisticsImageFilter.h"
 #include "itkInvertIntensityImageFilter.h"
 
+// Vector image support
+#include "itkVectorIndexSelectionCastImageFilter.h" // decompose
+#include "itkImageToVectorImageFilter.h" // reassemble
+#include "itkChannelByChannelVectorImageFilter2.h"
 //-------------------------------------------------------------------------------------
 
 /** run: A macro to call a function. */
@@ -157,39 +161,65 @@ int main( int argc, char ** argv )
    * The resize function templated over the input pixel type.
    */
 
-template< class InputImageType >
+template< class ScalarImageType >
 void InvertIntensity( const std::string & inputFileName,
   const std::string & outputFileName )
 {
   /** Some typedef's. */
-  typedef typename InputImageType::PixelType                InputPixelType;
-  typedef itk::ImageFileReader< InputImageType >            ReaderType;
-  typedef itk::ImageFileWriter< InputImageType >            WriterType;
-  typedef itk::StatisticsImageFilter< InputImageType >      StatisticsFilterType;
+  typedef typename ScalarImageType::PixelType                InputPixelType;
+  typedef itk::VectorImage<InputPixelType, ScalarImageType::ImageDimension> VectorImageType;
+  typedef itk::ImageFileReader< VectorImageType >            ReaderType;
+  typedef itk::ImageFileWriter< VectorImageType >            WriterType;
+  typedef itk::StatisticsImageFilter< ScalarImageType >      StatisticsFilterType;
   typedef typename StatisticsFilterType::RealType           RealType;
-  typedef itk::InvertIntensityImageFilter< InputImageType > InvertIntensityFilterType;
+  typedef itk::InvertIntensityImageFilter< ScalarImageType > InvertIntensityFilterType;
 
   /** Create reader. */
   typename ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName( inputFileName.c_str() );
 
-  /** Create statistics filter. */
-  typename StatisticsFilterType::Pointer statistics = StatisticsFilterType::New();
-  statistics->SetInput( reader->GetOutput() );
-  statistics->Update();
+  // In this case, we must manually disassemble the image rather than use a ChannelByChannel filter because the image is not the output,
+  // but rather the GetMaximum() function is what we want.
+  
+  // Create the disassembler
+  typedef itk::VectorIndexSelectionCastImageFilter<VectorImageType, ScalarImageType> IndexSelectionType;
+  typename IndexSelectionType::Pointer indexSelectionFilter = IndexSelectionType::New();
+  indexSelectionFilter->SetInput(reader->GetOutput());
 
-  /** Get all the output stuff. */
-  InputPixelType max = statistics->GetMaximum();
+  double max = std::numeric_limits<double>::min(); // Initialize so that any number will be bigger than this one
+
+  // Get the max of each channel, keeping the largest
+  for(unsigned int channel = 0; channel < reader->GetOutput()->GetNumberOfComponentsPerPixel(); channel++)
+    {
+    // Extract the current channel
+    indexSelectionFilter->SetIndex(channel);
+    indexSelectionFilter->Update();
+
+    /** Create statistics filter. */
+    typename StatisticsFilterType::Pointer statistics = StatisticsFilterType::New();
+    statistics->SetInput( indexSelectionFilter->GetOutput() );
+    statistics->Update();
+    if(statistics->GetMaximum() > max)
+      {
+      max = statistics->GetMaximum();
+      }
+    }
 
   /** Create invert filter. */
   typename InvertIntensityFilterType::Pointer invertFilter = InvertIntensityFilterType::New();
-  invertFilter->SetInput( reader->GetOutput() );
   invertFilter->SetMaximum( max );
+
+  // Setup the filter to apply the invert filter to every channel
+  typedef itk::ChannelByChannelVectorImageFilter2<VectorImageType, InvertIntensityFilterType> ChannelByChannelInvertType;
+  typename ChannelByChannelInvertType::Pointer channelByChannelInvertFilter = ChannelByChannelInvertType::New();
+  channelByChannelInvertFilter->SetInput(reader->GetOutput());
+  channelByChannelInvertFilter->SetFilter(invertFilter);
+  channelByChannelInvertFilter->Update();
 
   /** Create writer. */
   typename WriterType::Pointer writer = WriterType::New();
   writer->SetFileName( outputFileName.c_str() );
-  writer->SetInput( invertFilter->GetOutput() );
+  writer->SetInput( channelByChannelInvertFilter->GetOutput() );
   writer->Update();
 
 } // end InvertIntensity()
