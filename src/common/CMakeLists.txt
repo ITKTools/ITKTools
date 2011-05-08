@@ -10,6 +10,8 @@ ADD_LIBRARY( ITKTools-Common
  itkCommandLineArgumentParser.h
  CommandLineArgumentHelper.cxx
  CommandLineArgumentHelper.h
+ ITKToolsBase.cxx
+ ITKToolsBase.h
  )
 
 TARGET_LINK_LIBRARIES( ITKTools-Common ${ITK_LIBRARIES} )

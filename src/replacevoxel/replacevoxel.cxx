@@ -22,6 +22,7 @@
  */
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
+#include "ITKToolsBase.h"
 
 #include "itkImageFileReader.h"
 //#include "itkChangeLabelImageFilter.h"
@@ -29,26 +30,89 @@
 
 //-------------------------------------------------------------------------------------
 
-/** run: A macro to call a function. */
-#define run( function, type, dim ) \
-if ( ComponentTypeIn == #type && Dimension == dim ) \
-{ \
-  function< type, dim >( inputFileName, outputFileName, voxel, value ); \
-  supported = true; \
-}
+/** Declare GetHelpString. */
+std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 
-/* Declare ReplaceVoxel. */
-template< class TInputPixel, unsigned int NDimension >
-void ReplaceVoxel(
-  const std::string & inputFileName,
-  const std::string & outputFileName,
-  const std::vector<unsigned int> & voxel,
-  const double & value );
+/** ReplaceVoxel */
 
-/** Declare GetHelpString. */
-std::string GetHelpString( void );
+class ReplaceVoxelBase : public itktools::ITKToolsBase
+{ 
+public:
+  ReplaceVoxelBase(){};
+  ~ReplaceVoxelBase(){};
+
+  /** Input parameters */
+  std::string m_InputFileName;
+  std::string m_OutputFileName;
+  std::vector<unsigned int> m_Voxel;
+  double m_Value;
+    
+}; // end ReplaceVoxelBase
+
+
+template< class ComponentType, unsigned int Dimension >
+class ReplaceVoxel : public ReplaceVoxelBase
+{
+public:
+  typedef ReplaceVoxel Self;
+
+  ReplaceVoxel(){};
+  ~ReplaceVoxel(){};
+
+  static Self * New( itktools::EnumComponentType ct, unsigned int dim )
+  {
+    if ( itktools::IsType<ComponentType>( ct ) && Dimension == dim )
+    {
+      return new Self;
+    }
+    return 0;
+  }
+
+  void Run(void)
+  {
+    typedef ComponentType                         PixelType;
+    typedef itk::Image< PixelType, Dimension >    ImageType;
+    typedef typename ImageType::SizeType          SizeType;
+    typedef typename ImageType::IndexType         IndexType;
+    typedef itk::ImageFileReader< ImageType >     ReaderType;
+    typedef itk::ImageFileWriter< ImageType >     WriterType;
+
+    /** Read in the input image. */
+    typename ReaderType::Pointer reader = ReaderType::New();
+    typename WriterType::Pointer writer = WriterType::New();
+
+    /** Read input image. */
+    reader->SetFileName( m_InputFileName );
+    reader->Update();
+    typename ImageType::Pointer image = reader->GetOutput();
+
+    /** Check size. */
+    SizeType size = image->GetLargestPossibleRegion().GetSize();
+    for ( unsigned int i = 0; i < Dimension; ++i )
+    {
+      if ( m_Voxel[ i ] < 0 || m_Voxel[ i ] > size[ i ] - 1 )
+      {
+        itkGenericExceptionMacro( << "ERROR: invalid voxel index." );
+      }
+    }
+
+    /** Set the value to the voxel. */
+    IndexType index;
+    for ( unsigned int i = 0; i < Dimension; ++i )
+    {
+      index[ i ] = m_Voxel[ i ];
+    }
+    image->SetPixel( index, static_cast<PixelType>( m_Value ) );
+
+    /** Write output image. */
+    writer->SetFileName( m_OutputFileName );
+    writer->SetInput( image );
+    writer->Update();
+  }
+
+}; // end ReplaceVoxel
 
 //-------------------------------------------------------------------------------------
 
@@ -127,45 +191,57 @@ int main( int argc, char ** argv )
     return 1;
   }
 
-  /** Run the program. */
-  bool supported = false;
-  try
+  /** Class that does the work */
+  ReplaceVoxelBase * rv = 0; 
+
+  /** Short alias */
+  unsigned int dim = Dimension;
+ 
+  /** \todo integrate this in GetImageProperties; this is just for testing
+   * \todo some progs allow user to override the pixel type, 
+   * so we need a method to convert string to EnumComponentType */
+  itk::ImageIOBase::Pointer imageIO = itk::ImageIOFactory::CreateImageIO(
+    inputFileName.c_str(), itk::ImageIOFactory::ReadMode);
+  if ( imageIO.IsNull() )
   {
-    run( ReplaceVoxel, char, 2 );
-    run( ReplaceVoxel, unsigned char, 2 );
-    run( ReplaceVoxel, short, 2 );
-    run( ReplaceVoxel, unsigned short, 2 );
-    run( ReplaceVoxel, int, 2 );
-    run( ReplaceVoxel, unsigned int, 2 );
-    run( ReplaceVoxel, long, 2 );
-    run( ReplaceVoxel, unsigned long, 2 );
-    run( ReplaceVoxel, float, 2 );
-    run( ReplaceVoxel, double, 2 );
+    return 1; // complain
+  }
+  imageIO->SetFileName( inputFileName.c_str() );
+  imageIO->ReadImageInformation();
+  itktools::EnumComponentType ct = imageIO->GetComponentType();
+  std::cout << "Detected component type: " << 
+    imageIO->GetComponentTypeAsString(ct) << std::endl;
 
-    run( ReplaceVoxel, char, 3 );
-    run( ReplaceVoxel, unsigned char, 3 );
-    run( ReplaceVoxel, short, 3 );
-    run( ReplaceVoxel, unsigned short, 3 );
-    run( ReplaceVoxel, int, 3 );
-    run( ReplaceVoxel, unsigned int, 3 );
-    run( ReplaceVoxel, long, 3 );
-    run( ReplaceVoxel, unsigned long, 3 );
-    run( ReplaceVoxel, float, 3 );
-    run( ReplaceVoxel, double, 3 );
+  try
+  {    
+    // now call all possible template combinations.
+    if (!rv) rv = ReplaceVoxel< short, 2 >::New( ct, dim );
+    if (!rv) rv = ReplaceVoxel< short, 3 >::New( ct, dim );
+    if (!rv) rv = ReplaceVoxel< float, 2 >::New( ct, dim );
+    if (!rv) rv = ReplaceVoxel< float, 3 >::New( ct, dim );
+    if (!rv) 
+    {
+      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+      std::cerr
+        << "pixel (component) type = " << ComponentTypeIn // so here we also need a string
+        << " ; dimension = " << Dimension
+        << std::endl;
+      return 1;
+    }
 
+    rv->m_InputFileName = inputFileName;
+    rv->m_OutputFileName = outputFileName;
+    rv->m_Voxel = voxel;
+    rv->m_Value = value;
+
+    rv->Run();
+    
+    delete rv;  
   }
   catch( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
-    return 1;
-  }
-  if ( !supported )
-  {
-    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-    std::cerr
-      << "pixel (component) type = " << ComponentTypeIn
-      << " ; dimension = " << Dimension
-      << std::endl;
+    delete rv;
     return 1;
   }
 
@@ -173,61 +249,6 @@ int main( int argc, char ** argv )
   return 0;
 
 } // end main
-
-
-/*
- * ******************* ReplaceVoxel *******************
- */
-
-template< class TInputPixel, unsigned int NDimension >
-void ReplaceVoxel( const std::string & inputFileName,
-  const std::string & outputFileName,
-  const std::vector<unsigned int> & voxel,
-  const double & value )
-{
-  /** Typedefs. */
-  typedef TInputPixel                           PixelType;
-  const unsigned int Dimension = NDimension;
-
-  typedef itk::Image< PixelType, Dimension >    ImageType;
-  typedef typename ImageType::SizeType          SizeType;
-  typedef typename ImageType::IndexType         IndexType;
-  typedef itk::ImageFileReader< ImageType >     ReaderType;
-  typedef itk::ImageFileWriter< ImageType >     WriterType;
-
-  /** Read in the input image. */
-  typename ReaderType::Pointer reader = ReaderType::New();
-  typename WriterType::Pointer writer = WriterType::New();
-
-  /** Read input image. */
-  reader->SetFileName( inputFileName );
-  reader->Update();
-  typename ImageType::Pointer image = reader->GetOutput();
-
-  /** Check size. */
-  SizeType size = image->GetLargestPossibleRegion().GetSize();
-  for ( unsigned int i = 0; i < Dimension; ++i )
-  {
-    if ( voxel[ i ] < 0 || voxel[ i ] > size[ i ] - 1 )
-    {
-      itkGenericExceptionMacro( << "ERROR: invalid voxel index." );
-    }
-  }
-
-  /** Set the value to the voxel. */
-  IndexType index;
-  for ( unsigned int i = 0; i < Dimension; ++i )
-  {
-    index[ i ] = voxel[ i ];
-  }
-  image->SetPixel( index, static_cast<PixelType>( value ) );
-
-  /** Write output image. */
-  writer->SetFileName( outputFileName );
-  writer->SetInput( image );
-  writer->Update();
-
-} // end ReplaceVoxel()
 
 
 /**
