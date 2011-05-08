@@ -223,7 +223,7 @@ int main( int argc, char ** argv )
     {
       std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
       std::cerr
-        << "pixel (component) type = " << ComponentTypeIn // so here we also need a string
+        << "pixel (component) type = " << ComponentTypeIn // so here we also need a string - we don't need to convert to a string here right? just output the string that was input.
         << " ; dimension = " << Dimension
         << std::endl;
       return 1;

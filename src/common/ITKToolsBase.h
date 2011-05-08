@@ -7,6 +7,8 @@ namespace itktools {
 
 typedef itk::ImageIOBase::IOComponentType EnumComponentType;
 
+EnumComponentType EnumComponentTypeFromString(std::string);
+
 /** IsType
  * Test if an EnumComponentType corresponds to the template parameter
  */
