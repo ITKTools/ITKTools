@@ -61,9 +61,9 @@ public:
   ReplaceVoxel(){};
   ~ReplaceVoxel(){};
 
-  static Self * New( itktools::EnumComponentType ct, unsigned int dim )
+  static Self * New( itktools::EnumComponentType componentType, unsigned int dim )
   {
-    if ( itktools::IsType<ComponentType>( ct ) && Dimension == dim )
+    if ( itktools::IsType<ComponentType>( componentType ) && Dimension == dim )
     {
       return new Self;
     }
@@ -149,7 +149,7 @@ int main( int argc, char ** argv )
   std::vector< unsigned int > voxel;
   parser->GetCommandLineArgument( "-vox", voxel );
 
-  double value;
+  double value = 0; // This is a required argument, but we must initialize it to prevent compiler warnings.
   parser->GetCommandLineArgument( "-val", value );
 
   /** Determine image properties. */
@@ -197,28 +197,20 @@ int main( int argc, char ** argv )
   /** Short alias */
   unsigned int dim = Dimension;
  
-  /** \todo integrate this in GetImageProperties; this is just for testing
-   * \todo some progs allow user to override the pixel type, 
+  /** \todo some progs allow user to override the pixel type, 
    * so we need a method to convert string to EnumComponentType */
-  itk::ImageIOBase::Pointer imageIO = itk::ImageIOFactory::CreateImageIO(
-    inputFileName.c_str(), itk::ImageIOFactory::ReadMode);
-  if ( imageIO.IsNull() )
-  {
-    return 1; // complain
-  }
-  imageIO->SetFileName( inputFileName.c_str() );
-  imageIO->ReadImageInformation();
-  itktools::EnumComponentType ct = imageIO->GetComponentType();
+  itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileName);
+  
   std::cout << "Detected component type: " << 
-    imageIO->GetComponentTypeAsString(ct) << std::endl;
+    componentType << std::endl;
 
   try
   {    
     // now call all possible template combinations.
-    if (!rv) rv = ReplaceVoxel< short, 2 >::New( ct, dim );
-    if (!rv) rv = ReplaceVoxel< short, 3 >::New( ct, dim );
-    if (!rv) rv = ReplaceVoxel< float, 2 >::New( ct, dim );
-    if (!rv) rv = ReplaceVoxel< float, 3 >::New( ct, dim );
+    if (!rv) rv = ReplaceVoxel< short, 2 >::New( componentType, dim );
+    if (!rv) rv = ReplaceVoxel< short, 3 >::New( componentType, dim );
+    if (!rv) rv = ReplaceVoxel< float, 2 >::New( componentType, dim );
+    if (!rv) rv = ReplaceVoxel< float, 3 >::New( componentType, dim );
     if (!rv) 
     {
       std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;

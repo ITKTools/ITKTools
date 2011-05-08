@@ -1,10 +1,16 @@
 #ifndef __CommandLineArgumentHelper_h
 #define __CommandLineArgumentHelper_h
 
+// STL
 #include <string>
 #include <vector>
 #include <map>
+
+// ITK
 #include "itkImageIOBase.h"
+
+// ITKTools
+#include "ITKToolsBase.h"
 
 /** Replace a underscore in the input string with a space. */
 void ReplaceUnderscoreWithSpace( std::string & arg );

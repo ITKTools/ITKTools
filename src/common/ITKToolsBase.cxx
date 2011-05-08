@@ -2,6 +2,10 @@
 #include <functional>   // ptr_fun
 #include <cctype>       // toupper, tolower
 
+#include "ITKToolsBase.h"
+
+#include "itkImageIOFactory.h"
+
 namespace itktools {
 EnumComponentType EnumComponentTypeFromString(std::string typeString)
 {
@@ -29,7 +33,7 @@ EnumComponentType EnumComponentTypeFromString(std::string typeString)
     {
     return itk::ImageIOBase::UINT;
     }
-  else if(typeString.compare("int")==0 ||  || typeString.compare("integer")==0)
+  else if(typeString.compare("int")==0 || typeString.compare("integer")==0)
     {
     return itk::ImageIOBase::INT;
     }
@@ -55,4 +59,22 @@ EnumComponentType EnumComponentTypeFromString(std::string typeString)
     }
 }
 
+/**
+ * ***************** FillImageIOBase ************************
+ */
+itktools::EnumComponentType GetImageComponentType(const std::string & filename)
+{
+  itk::ImageIOBase::Pointer imageIO = itk::ImageIOFactory::CreateImageIO(
+    filename.c_str(), itk::ImageIOFactory::ReadMode);
+  if ( imageIO.IsNull() )
+  {
+    return itk::ImageIOBase::UNKNOWNCOMPONENTTYPE; // complain
+  }
+  imageIO->SetFileName( filename.c_str() );
+  imageIO->ReadImageInformation();
+  itktools::EnumComponentType componentType = imageIO->GetComponentType();
+  
+  return componentType;
 }
+
+} // end itktools namespace

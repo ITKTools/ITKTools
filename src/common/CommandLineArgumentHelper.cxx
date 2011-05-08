@@ -96,7 +96,7 @@ int GetImageProperties(
   unsigned int & numberOfComponents,
   std::vector<unsigned int> & size )
 {
-  ImageIOBaseType::Pointer testImageIOBase;
+  itk::ImageIOBase::Pointer testImageIOBase;
   GetImageProperties(filename, testImageIOBase);
 
   /** Extract information from the ImageIOBase. */
@@ -128,7 +128,7 @@ int GetImageProperties(
   std::vector<double> & origin,
   std::vector<double> & direction )
 {
-  ImageIOBaseType::Pointer testImageIOBase;
+  itk::ImageIOBase::Pointer testImageIOBase;
   GetImageProperties(filename, testImageIOBase);
 
   /** Extract information from the ImageIOBase. */
@@ -179,7 +179,6 @@ bool GetImageProperties(
   return true;
 
 } // end GetImageProperties()
-
 
 /**
  * ***************** FillImageIOBase ************************

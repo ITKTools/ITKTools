@@ -9,6 +9,10 @@ typedef itk::ImageIOBase::IOComponentType EnumComponentType;
 
 EnumComponentType EnumComponentTypeFromString(std::string);
 
+/** Determine the component type of an image. */
+EnumComponentType GetImageComponentType(
+  const std::string & filename);
+
 /** IsType
  * Test if an EnumComponentType corresponds to the template parameter
  */
@@ -33,4 +37,4 @@ public:
 
 } // end namespace
 
-#endif __ITKToolsBase_h
+#endif //__ITKToolsBase_h
