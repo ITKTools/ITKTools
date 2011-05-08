@@ -96,34 +96,8 @@ int GetImageProperties(
   unsigned int & numberOfComponents,
   std::vector<unsigned int> & size )
 {
-  /** Dummy image type. */
-  const unsigned int DummyDimension = 3;
-  typedef short      DummyPixelType;
-  typedef itk::Image< DummyPixelType, DummyDimension >   DummyImageType;
-
-  /** Test reader */
-  typedef itk::ImageFileReader< DummyImageType >     ReaderType;
-
-  /** Image header information class */
-  typedef itk::ImageIOBase                           ImageIOBaseType;
-
-   /** Create a testReader. */
-  ReaderType::Pointer testReader = ReaderType::New();
-  testReader->SetFileName( filename.c_str() );
-
-  /** Generate all information. */
-  try
-  {
-    testReader->GenerateOutputInformation();
-  }
-  catch( itk::ExceptionObject &e )
-  {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    return 1;
-  }
-
-  /** Extract the ImageIO from the testReader. */
-  ImageIOBaseType::Pointer testImageIOBase = testReader->GetImageIO();
+  ImageIOBaseType::Pointer testImageIOBase;
+  GetImageProperties(filename, testImageIOBase);
 
   /** Extract information from the ImageIOBase. */
   std::vector<double> dummySpacing, dummyOrigin, dummyDirection;
@@ -154,34 +128,8 @@ int GetImageProperties(
   std::vector<double> & origin,
   std::vector<double> & direction )
 {
-  /** Dummy image type. */
-  const unsigned int DummyDimension = 3;
-  typedef short      DummyPixelType;
-  typedef itk::Image< DummyPixelType, DummyDimension >   DummyImageType;
-
-  /** Test reader */
-  typedef itk::ImageFileReader< DummyImageType >     ReaderType;
-
-  /** Image header information class */
-  typedef itk::ImageIOBase                           ImageIOBaseType;
-
-  /** Create a testReader. */
-  ReaderType::Pointer testReader = ReaderType::New();
-  testReader->SetFileName( filename.c_str() );
-
-  /** Generate all information. */
-  try
-  {
-    testReader->GenerateOutputInformation();
-  }
-  catch( itk::ExceptionObject &e )
-  {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    return 1;
-  }
-
-  /** Extract the ImageIO from the testReader. */
-  ImageIOBaseType::Pointer testImageIOBase = testReader->GetImageIO();
+  ImageIOBaseType::Pointer testImageIOBase;
+  GetImageProperties(filename, testImageIOBase);
 
   /** Extract information from the ImageIOBase. */
   if ( !GetImageInformationFromImageIOBase( testImageIOBase,
