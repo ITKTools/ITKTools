@@ -155,9 +155,11 @@ add_test(NAME LogicalImageOperatorTest_AND COMMAND ${ExeDir}/pximagecompare -bas
 add_test(NAME LogicalImageOperatorOutput_OR COMMAND ${ExeDir}/pxlogicalimageoperator -in ${DataDir}/BlackSquare.png ${DataDir}/WhiteSquare.png -ops OR -out ${OutDir}/logicalimageoperator_or.png)
 add_test(NAME LogicalImageOperatorTest_OR COMMAND ${ExeDir}/pximagecompare -base ${BaselineDir}/LogicalImageOperator_Or.png -test ${OutDir}/logicalimageoperator_or.png DEPENDS LogicalImageOperatorOutput_OR)
 
-#########
-# add_test(NAME MorphologyOutput COMMAND morphology )
-# add_test(NAME MorphologyTest COMMAND imagecompare DEPENDS MorphologyOutput)
+add_test(NAME LogicalImageOperatorOutput_NOT COMMAND ${ExeDir}/pxlogicalimageoperator -in ${DataDir}/BlackSquare.png -ops NOT -out ${OutDir}/logicalimageoperator_not.png)
+add_test(NAME LogicalImageOperatorTest_NOT COMMAND ${ExeDir}/pximagecompare -base ${BaselineDir}/LogicalImageOperator_Not.png -test ${OutDir}/logicalimageoperator_not.png DEPENDS LogicalImageOperatorOutput_NOT)
+
+add_test(NAME MorphologyOutput_Dilation COMMAND ${ExeDir}/pxmorphology -in ${DataDir}/WhiteSquare.png -op dilation -type binary -out MorphologyOutput_Dilation.png -r 3 -bin 1 0)
+add_test(NAME MorphologyTest_Dilation COMMAND ${ExeDir}/pximagecompare DEPENDS MorphologyOutput_Dilation -base ${BaselineDir}/MorphologyOutput_Dilation.png -test ${OutDir}/MorphologyOutput_Dilation.png)
 #  
 # add_test(NAME NaryImageOperatorOutput COMMAND naryimageoperator )
 # add_test(NAME NaryImageOperatorTest COMMAND imagecompare DEPENDS NaryImageOperatorOutput)

@@ -41,31 +41,42 @@ void
 ChannelByChannelVectorImageFilter<TInputImage, TFilter, TOutputImage>
 ::GenerateData()
 {
-  // Create the disassembler
-  typedef itk::VectorIndexSelectionCastImageFilter<TInputImage, InputScalarImageType> IndexSelectionType;
-  typename IndexSelectionType::Pointer indexSelectionFilter = IndexSelectionType::New();
-  indexSelectionFilter->SetInput(this->GetInput());
+  // Typedefs
+  typedef itk::VectorIndexSelectionCastImageFilter<TInputImage, InputScalarImageType> DisassemblerType;
+  typedef itk::ImageToVectorImageFilter<InputScalarImageType> ReassemblerType;
+
+  // Create the disassembler(s)
+  std::vector<typename DisassemblerType::Pointer> disassemblers;
+  
+  for(unsigned int inputId = 0; inputId < this->GetNumberOfInputs(); inputId++)
+  {
+    typename DisassemblerType::Pointer disassembler = DisassemblerType::New();
+    disassembler->SetInput(this->GetInput(inputId));
+    disassemblers.push_back(disassembler);
+  }
 
   // Create the re-assembler
-  typedef itk::ImageToVectorImageFilter<InputScalarImageType> ImageToVectorImageFilterType;
-  typename ImageToVectorImageFilterType::Pointer imageToVectorImageFilter = ImageToVectorImageFilterType::New();
+  typename ReassemblerType::Pointer reasassembler = ReassemblerType::New();
 
   // Apply the filter to each channel
   for(unsigned int channel = 0; channel < this->GetInput()->GetNumberOfComponentsPerPixel(); channel++)
     {
-    indexSelectionFilter->SetIndex(channel);
-    indexSelectionFilter->Update();
 
     FilterPointerType filter = FilterType::New();
-    filter->SetInput(indexSelectionFilter->GetOutput());
+    for(unsigned int inputId = 0; inputId < this->GetNumberOfInputs(); inputId++)
+      {
+      disassemblers[inputId]->SetIndex(channel);
+      disassemblers[inputId]->Update();
+      filter->SetInput(inputId, disassemblers[inputId]->GetOutput());
+      }
     filter->Update();
 
-    imageToVectorImageFilter->SetNthInput(channel, filter->GetOutput());
+    reasassembler->SetNthInput(channel, filter->GetOutput());
     }
 
-  imageToVectorImageFilter->Update();
+  reasassembler->Update();
 
-  this->GraftOutput(imageToVectorImageFilter->GetOutput());
+  this->GraftOutput(reasassembler->GetOutput());
 }
 /**
  * PrintSelf Method
