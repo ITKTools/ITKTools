@@ -29,20 +29,35 @@ template <class TInputImage, class TFilter, class TOutputImage>
 ChannelByChannelVectorImageFilter2<TInputImage, TFilter, TOutputImage>
 ::ChannelByChannelVectorImageFilter2()
 {
-
+  //m_Filters.resize(); // number of channels can't be known at this point
 }
 
 /**
- * Main computation method
+ * Set all the filters to the exact same filter.
  */
 template <class TInputImage, class TFilter, class TOutputImage>
 void
 ChannelByChannelVectorImageFilter2<TInputImage, TFilter, TOutputImage>
-::SetFilter(typename TFilter::Pointer filter)
+::SetAllFilters(typename TFilter::Pointer filter)
 {
-  m_Filter = filter;
+  // Create a filter for each channel - duplicating all of the settings of the input filter
+  for(unsigned int channel = 0; channel < numberOfChannels; ++channel) // how to know the number of channels at this point?
+  {
+    m_Filters[channel] = dynamic_cast<FilterType*>(filter->CreateAnother().GetPointer());
+  }
 }
 
+/**
+ * Set the filter to operate on a particular channel.
+ */
+template <class TInputImage, class TFilter, class TOutputImage>
+void
+ChannelByChannelVectorImageFilter2<TInputImage, TFilter, TOutputImage>
+::SetFilter(unsigned int channel, typename TFilter::Pointer filter)
+{
+  // Duplicate the filter for the specified channel
+  m_Filters[channel] = dynamic_cast<FilterType*>(filter->CreateAnother().GetPointer());
+}
 
 /**
  * Main computation method
@@ -52,6 +67,15 @@ void
 ChannelByChannelVectorImageFilter2<TInputImage, TFilter, TOutputImage>
 ::GenerateData()
 {
+  // If no filters were specified, create a new, default one for each channel
+  if(m_Filters.size() == 0)
+  {
+    for(unsigned int channel = 0; channel < numberOfChannels; ++channel) // how to know the number of channels at this point?
+    {
+      m_Filters[channel] = FilterType::New();
+    }
+  }
+  
   // Typedefs
   typedef itk::VectorIndexSelectionCastImageFilter<TInputImage, InputScalarImageType> DisassemblerType;
   typedef itk::ImageToVectorImageFilter<InputScalarImageType> ReassemblerType;
@@ -68,16 +92,6 @@ ChannelByChannelVectorImageFilter2<TInputImage, TFilter, TOutputImage>
 
   // Create the re-assembler
   typename ReassemblerType::Pointer reasassembler = ReassemblerType::New();
-
-
-  // Create a filter for each channel - duplicating all of the settings of the input filter
-  std::vector<typename TFilter::Pointer> filters;
-  filters[0] = m_Filter;
-
-  for(unsigned int i = 1; i < this->GetInput()->GetNumberOfComponentsPerPixel(); i++)
-    {
-    filters[i] = dynamic_cast<FilterType*>(m_Filter->CreateAnother().GetPointer());
-    }
 
   // Apply the filter to each channel
   for(unsigned int channel = 0; channel < this->GetInput()->GetNumberOfComponentsPerPixel(); channel++)

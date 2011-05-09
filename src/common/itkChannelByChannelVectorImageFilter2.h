@@ -60,7 +60,8 @@ public:
   typedef TFilter                      FilterType;
   typedef typename FilterType::Pointer FilterPointerType;
 
-  void SetFilter(FilterPointerType);
+  void SetAllFilters(FilterPointerType filter);
+  void SetFilter(unsigned int channel, FilterPointerType filter);
 
 protected:
   /** Main computation method */
@@ -72,7 +73,7 @@ protected:
   /**PrintSelf method */
   virtual void PrintSelf(std::ostream& os, itk::Indent indent) const;
 
-  FilterPointerType m_Filter;
+  std::vector<FilterPointerType> m_Filters;
 private:
   ChannelByChannelVectorImageFilter2(const Self &); //purposely not implemented
   void operator =(const Self&); //purposely not implemented
