@@ -61,7 +61,7 @@ public:
   typedef typename FilterType::Pointer FilterPointerType;
 
   void SetAllFilters(FilterPointerType filter);
-  void SetFilter(unsigned int channel, FilterPointerType filter);
+  void SetSingleForChannel(unsigned int channel, FilterPointerType filter);
 
 protected:
   /** Main computation method */
@@ -73,7 +73,12 @@ protected:
   /**PrintSelf method */
   virtual void PrintSelf(std::ostream& os, itk::Indent indent) const;
 
+  /**If the user chooses to specify a filter for each channel separately, they are stored here.*/
   std::vector<FilterPointerType> m_Filters;
+  
+  /**If the user chooses to only specify a single filter to be used for all channels, it is stored here.*/
+  FilterPointerType m_SingleFilter;
+
 private:
   ChannelByChannelVectorImageFilter2(const Self &); //purposely not implemented
   void operator =(const Self&); //purposely not implemented

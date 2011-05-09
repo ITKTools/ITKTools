@@ -29,7 +29,7 @@ template <class TInputImage, class TFilter, class TOutputImage>
 ChannelByChannelVectorImageFilter2<TInputImage, TFilter, TOutputImage>
 ::ChannelByChannelVectorImageFilter2()
 {
-  //m_Filters.resize(); // number of channels can't be known at this point
+  m_SingleFilter = NULL;
 }
 
 /**
@@ -40,11 +40,8 @@ void
 ChannelByChannelVectorImageFilter2<TInputImage, TFilter, TOutputImage>
 ::SetAllFilters(typename TFilter::Pointer filter)
 {
-  // Create a filter for each channel - duplicating all of the settings of the input filter
-  for(unsigned int channel = 0; channel < numberOfChannels; ++channel) // how to know the number of channels at this point?
-  {
-    m_Filters[channel] = dynamic_cast<FilterType*>(filter->CreateAnother().GetPointer());
-  }
+  // For now, just store this filter. It will be applied to each channel later.
+  m_SingleFilter = dynamic_cast<FilterType*>(filter->CreateAnother().GetPointer());
 }
 
 /**
@@ -55,6 +52,12 @@ void
 ChannelByChannelVectorImageFilter2<TInputImage, TFilter, TOutputImage>
 ::SetFilter(unsigned int channel, typename TFilter::Pointer filter)
 {
+  // If necessary, expand the m_Filters vector and set the new elements to NULL
+  if(m_Filters.size() - 1 < channel)
+    {
+    m_Filters.resize(channel, NULL);
+    }
+
   // Duplicate the filter for the specified channel
   m_Filters[channel] = dynamic_cast<FilterType*>(filter->CreateAnother().GetPointer());
 }
@@ -67,15 +70,49 @@ void
 ChannelByChannelVectorImageFilter2<TInputImage, TFilter, TOutputImage>
 ::GenerateData()
 {
-  // If no filters were specified, create a new, default one for each channel
-  if(m_Filters.size() == 0)
+  // One of two conditions must be true:
+  // 1) The number of channels in the input matches the size of the m_Filters vector
+  // 2) m_SingleFilter is set
+  
+  // Case 1 - the number of channels in the input matches the size of m_Filters
+  bool valid = false;
+  if(m_Filters.size() == this->GetInput()->GetNumberOfComponentsPerPixel())
   {
-    for(unsigned int channel = 0; channel < numberOfChannels; ++channel) // how to know the number of channels at this point?
-    {
-      m_Filters[channel] = FilterType::New();
-    }
+    // If all filters have been set, we can proceed with case 1
+    valid = true;
+
+    // Ensure every filter has been set
+    for(unsigned int channel = 0; channel < numberOfChannels; ++channel)
+      {
+      if(!m_Filters[channel])
+	{
+	valid = false;
+	}
+      }
   }
   
+  // Case 2 - m_SingleFilter is set
+  if(m_SingleFilter)
+    {
+    if(valid) // if case 1 was true, the filter does not know which method to use!
+      {
+      std::cerr << "You must set EITHER m_SingleFilter OR all of the filters (one per channel)" << std::endl;
+      return;
+      }
+    // Create a filter for each channel - duplicating all of the settings of the input filter
+    for(unsigned int channel = 0; channel < numberOfChannels; ++channel) // how to know the number of channels at this point?
+      {
+      m_Filters[channel] = dynamic_cast<FilterType*>(filter->CreateAnother().GetPointer());
+      }
+    valid = true;
+    }
+  
+  if(!valid)
+    {
+    std::cerr << "Neither method was specified!" << std::endl;
+    return;
+    }
+
   // Typedefs
   typedef itk::VectorIndexSelectionCastImageFilter<TInputImage, InputScalarImageType> DisassemblerType;
   typedef itk::ImageToVectorImageFilter<InputScalarImageType> ReassemblerType;
