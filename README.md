@@ -28,7 +28,7 @@ bin]$ cmake ../src
 bin]$ make
 
 Conventions
-------------
+-----------
 Use --help with any of the programs to display their specific usage information.
 Optional and required arguments are listed as [-key] and -key, respectively.
 
@@ -36,3 +36,9 @@ Contributing
 ------------
 Please contact one of the authors or produce a pull request on github.
 
+Coding style
+------------
+
+Good and consistent coding style makes software maintenance easier! Therefore, we have adopted the following style rules:
+- Don't use tabs, but two (2) spaces
+- 
