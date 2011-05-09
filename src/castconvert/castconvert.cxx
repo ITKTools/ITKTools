@@ -328,6 +328,8 @@ int main( int argc, char **argv )
     return 1;
   }
 
+  std::cout << "Successful conversion!" << std::endl;
+
   /** End  program. Return success. */
   return 0;
 
