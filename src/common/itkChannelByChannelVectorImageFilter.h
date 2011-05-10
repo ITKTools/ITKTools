@@ -15,8 +15,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkChannelByChannelVectorImageFilter_h
-#define __itkChannelByChannelVectorImageFilter_h
+#ifndef __itkChannelByChannelVectorImageFilter2_h
+#define __itkChannelByChannelVectorImageFilter2_h
 
 #include "itkVectorIndexSelectionCastImageFilter.h" // decompose
 #include "itkImageToVectorImageFilter.h" // reassemble
@@ -26,16 +26,20 @@
 
 namespace itk
 {
-/** \class ChannelByChannelVectorImageFilter
- *  \brief This filter is a helper class to apply per channel a standard itk::ImageToImageFilter to a VectorImage.
+/** \class ChannelByChannelVectorImageFilter2
+ *  \brief This filter applies, independently per channel, a itk::ImageToImageFilter to an itkVectorImage.
+ *  
+ *  The user can specify the inputs to this filter in two ways. First, they can specify a single filter to be used
+ *  on every channel of the image. Second, they can specify a different filter (of the same class, but with different
+ *  parameters) for each channel of the image. Filters with multiple inputs are allowed.
  */
 template <class TInputImage, class TFilter, class TOutputImage = TInputImage>
-class ITK_EXPORT ChannelByChannelVectorImageFilter
+class ITK_EXPORT ChannelByChannelVectorImageFilter2
   : public itk::ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
   /** Standard typedefs */
-  typedef ChannelByChannelVectorImageFilter                  Self;
+  typedef ChannelByChannelVectorImageFilter2                  Self;
   typedef itk::ImageToImageFilter<TInputImage, TOutputImage> Superclass;
   typedef itk::SmartPointer<Self>                            Pointer;
   typedef itk::SmartPointer<const Self>                      ConstPointer;
@@ -44,7 +48,7 @@ public:
   itkNewMacro(Self);
 
   /** Creation through object factory macro */
-  itkTypeMacro(ChannelByChannelVectorImageFilter, ImageToImageFilter);
+  itkTypeMacro(ChannelByChannelVectorImageFilter2, ImageToImageFilter);
 
   /** Template parameters typedefs */
   typedef TInputImage                                                 InputVectorImageType;
@@ -60,24 +64,33 @@ public:
   typedef TFilter                      FilterType;
   typedef typename FilterType::Pointer FilterPointerType;
 
+  void SetAllFilters(FilterPointerType filter);
+  void SetSingleForChannel(unsigned int channel, FilterPointerType filter);
+
 protected:
   /** Main computation method */
   virtual void GenerateData(void);
   /** Constructor */
-  ChannelByChannelVectorImageFilter();
+  ChannelByChannelVectorImageFilter2();
   /** Destructor */
-  virtual ~ChannelByChannelVectorImageFilter() {}
+  virtual ~ChannelByChannelVectorImageFilter2() {}
   /**PrintSelf method */
   virtual void PrintSelf(std::ostream& os, itk::Indent indent) const;
 
+  /**If the user chooses to specify a filter for each channel separately, they are stored here.*/
+  std::vector<FilterPointerType> m_Filters;
+  
+  /**If the user chooses to only specify a single filter to be used for all channels, it is stored here.*/
+  FilterPointerType m_SingleFilter;
+
 private:
-  ChannelByChannelVectorImageFilter(const Self &); //purposely not implemented
+  ChannelByChannelVectorImageFilter2(const Self &); //purposely not implemented
   void operator =(const Self&); //purposely not implemented
 
 };
-} // End namespace otb
+} // End namespace itk
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkChannelByChannelVectorImageFilter.txx"
+#include "itkChannelByChannelVectorImageFilter2.txx"
 #endif
 
 #endif
