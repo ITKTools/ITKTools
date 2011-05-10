@@ -1,20 +1,20 @@
 /*=========================================================================
-
-  Program:   ORFEO Toolbox
-  Language:  C++
-  Date:      $Date$
-  Version:   $Revision$
-
-
-  Copyright (c) Centre National d'Etudes Spatiales. All rights reserved.
-  See OTBCopyright.txt for details.
-
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
-
-=========================================================================*/
+ *
+ *  Copyright Insight Software Consortium
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *=========================================================================*/
 #ifndef __itkChannelByChannelVectorImageFilter2_h
 #define __itkChannelByChannelVectorImageFilter2_h
 
@@ -27,7 +27,11 @@
 namespace itk
 {
 /** \class ChannelByChannelVectorImageFilter2
- *  \brief This filter is a helper class to apply per channel a standard itk::ImageToImageFilter to a VectorImage.
+ *  \brief This filter applies, independently per channel, a itk::ImageToImageFilter to an itkVectorImage.
+ *  
+ *  The user can specify the inputs to this filter in two ways. First, they can specify a single filter to be used
+ *  on every channel of the image. Second, they can specify a different filter (of the same class, but with different
+ *  parameters) for each channel of the image. Filters with multiple inputs are allowed.
  */
 template <class TInputImage, class TFilter, class TOutputImage = TInputImage>
 class ITK_EXPORT ChannelByChannelVectorImageFilter2
@@ -84,7 +88,7 @@ private:
   void operator =(const Self&); //purposely not implemented
 
 };
-} // End namespace otb
+} // End namespace itk
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "itkChannelByChannelVectorImageFilter2.txx"
 #endif
