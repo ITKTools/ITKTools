@@ -15,18 +15,18 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __itkChannelByChannelVectorImageFilter2_txx
-#define __itkChannelByChannelVectorImageFilter2_txx
+#ifndef __itkChannelByChannelVectorImageFilter_txx
+#define __itkChannelByChannelVectorImageFilter_txx
 
-#include "itkChannelByChannelVectorImageFilter2.h"
+#include "itkChannelByChannelVectorImageFilter.h"
 
 namespace itk
 {
 /**
  * Constructor
  */
-template <class TInputImage, class TFilter, class TOutputImage>
-ChannelByChannelVectorImageFilter2<TInputImage, TFilter, TOutputImage>
+template <class TInputImage, class TOutputImage>
+ChannelByChannelVectorImageFilter<TInputImage, TOutputImage>
 ::ChannelByChannelVectorImageFilter2()
 {
   m_SingleFilter = NULL;
@@ -35,9 +35,9 @@ ChannelByChannelVectorImageFilter2<TInputImage, TFilter, TOutputImage>
 /**
  * Set all the filters to the exact same filter.
  */
-template <class TInputImage, class TFilter, class TOutputImage>
+template <class TInputImage, class TOutputImage>
 void
-ChannelByChannelVectorImageFilter2<TInputImage, TFilter, TOutputImage>
+ChannelByChannelVectorImageFilter<TInputImage, TOutputImage>
 ::SetAllFilters(typename TFilter::Pointer filter)
 {
   // For now, just store this filter. It will be applied to each channel later.
@@ -47,10 +47,10 @@ ChannelByChannelVectorImageFilter2<TInputImage, TFilter, TOutputImage>
 /**
  * Set the filter to operate on a particular channel.
  */
-template <class TInputImage, class TFilter, class TOutputImage>
+template <class TInputImage, class TOutputImage>
 void
-ChannelByChannelVectorImageFilter2<TInputImage, TFilter, TOutputImage>
-::SetFilter(unsigned int channel, typename TFilter::Pointer filter)
+ChannelByChannelVectorImageFilter<TInputImage, TOutputImage>
+::SetFilterForSingleChannel(unsigned int channel, typename TFilter::Pointer filter)
 {
   // If necessary, expand the m_Filters vector and set the new elements to NULL
   if(m_Filters.size() - 1 < channel)
@@ -58,16 +58,16 @@ ChannelByChannelVectorImageFilter2<TInputImage, TFilter, TOutputImage>
     m_Filters.resize(channel, NULL);
     }
 
-  // Duplicate the filter for the specified channel
-  m_Filters[channel] = dynamic_cast<FilterType*>(filter->CreateAnother().GetPointer());
+  // Store the filter for the specified channel
+  m_Filters[channel] = filter;
 }
 
 /**
  * Main computation method
  */
-template <class TInputImage, class TFilter, class TOutputImage>
+template <class TInputImage, class TOutputImage>
 void
-ChannelByChannelVectorImageFilter2<TInputImage, TFilter, TOutputImage>
+ChannelByChannelVectorImageFilter<TInputImage, TOutputImage>
 ::GenerateData()
 {
   // One of two conditions must be true:
@@ -102,7 +102,7 @@ ChannelByChannelVectorImageFilter2<TInputImage, TFilter, TOutputImage>
     // Create a filter for each channel - duplicating all of the settings of the input filter
     for(unsigned int channel = 0; channel < numberOfChannels; ++channel) // how to know the number of channels at this point?
       {
-      m_Filters[channel] = dynamic_cast<FilterType*>(filter->CreateAnother().GetPointer());
+      m_Filters[channel] = m_SingleFilter;
       }
     valid = true;
     }
@@ -119,6 +119,9 @@ ChannelByChannelVectorImageFilter2<TInputImage, TFilter, TOutputImage>
 
   // Create a vector to store the disassemblers. We will need one for each input to the filter.
   std::vector<typename DisassemblerType::Pointer> disassemblers;
+
+  // Create a vector to store the outputs.
+  std::vector<InputScalarImageType::Pointer> outputs;
 
   // Add each input image to its own disassembler
   for(unsigned int inputId = 0; inputId < this->GetNumberOfInputs(); inputId++)
@@ -142,10 +145,12 @@ ChannelByChannelVectorImageFilter2<TInputImage, TFilter, TOutputImage>
 
       filters[channel]->SetInput(inputId, disassemblers[inputId]->GetOutput());
       filters[channel]->Update();
+      outputs.push_back(filters[channel]->GetOutput());
+      filters[channel]->DisconnectPipeline();
       }
     
     // Add the 'channel'th output to the output vector image
-    reasassembler->SetNthInput(channel, filters[channel]->GetOutput());
+    reasassembler->SetNthInput(channel, outputs[channel]);
     }
 
   reasassembler->Update();
@@ -156,9 +161,9 @@ ChannelByChannelVectorImageFilter2<TInputImage, TFilter, TOutputImage>
 /**
  * PrintSelf Method
  */
-template <class TInputImage, class TFilter, class TOutputImage>
+template <class TInputImage, class TOutputImage>
 void
-ChannelByChannelVectorImageFilter2<TInputImage, TFilter, TOutputImage>
+ChannelByChannelVectorImageFilter<TInputImage, TOutputImage>
 ::PrintSelf(std::ostream& os, itk::Indent indent) const
 {
   Superclass::PrintSelf(os, indent);

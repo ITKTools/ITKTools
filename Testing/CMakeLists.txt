@@ -205,3 +205,17 @@ add_test(NAME MorphologyTest_Dilation COMMAND ${ExeDir}/pximagecompare DEPENDS M
 #  
 # add_test(NAME WeightedAdditionOutput COMMAND weightedaddition )
 # add_test(NAME WeightedAdditionTest COMMAND imagecompare DEPENDS WeightedAdditionOutput)
+
+##########################
+
+#These tests are not px applications, but internal tests
+ADD_EXECUTABLE( ChannelByChannelVectorImageFilterTest
+  ChannelByChannelVectorImageFilterTest.cxx )
+
+TARGET_LINK_LIBRARIES( ChannelByChannelVectorImageFilterTest ITKTools-Common ${ITK_LIBRARIES} )
+
+INSTALL( TARGETS ChannelByChannelVectorImageFilterTest
+  RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )
+
+add_test(NAME ChannelByChannelVectorImageFilterOutput COMMAND ChannelByChannelVectorImageFilterTest )
+add_test(NAME ChannelByChannelVectorImageFilterValidate COMMAND ${ExeDir}/pximagecompare DEPENDS ChannelByChannelVectorImageFilterOutput)
