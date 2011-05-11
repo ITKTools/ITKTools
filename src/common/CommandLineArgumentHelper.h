@@ -81,10 +81,10 @@ void ConvertImageInformationToITKTypes(
   const std::vector<double> & spacing,
   const std::vector<double> & origin,
   const std::vector<double> & direction,
-  typename itk::ImageBase<Dimension>::SizeType      sizeITK,
-  typename itk::ImageBase<Dimension>::SpacingType   spacingITK,
-  typename itk::ImageBase<Dimension>::PointType     originITK,
-  typename itk::ImageBase<Dimension>::DirectionType directionITK );
+  typename itk::ImageBase<Dimension>::SizeType      & sizeITK,
+  typename itk::ImageBase<Dimension>::SpacingType   & spacingITK,
+  typename itk::ImageBase<Dimension>::PointType     & originITK,
+  typename itk::ImageBase<Dimension>::DirectionType & directionITK );
 
 /** Selects the largest type of the two. The order is:
  * char < short < int < long < float < double.
