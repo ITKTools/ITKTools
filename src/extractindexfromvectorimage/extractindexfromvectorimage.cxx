@@ -31,24 +31,68 @@
 #include "itkVectorImage.h"
 #include "itkVector.h"
 
+class ExtractIndexBase : public itktools::ITKToolsBase
+{
+public:
+  ExtractIndexBase(){};
+  ~ExtractIndexBase(){};
+
+  /** Input parameters */
+  std::string m_InputFileName;
+  std::string m_OutputFileName;
+  //std::vector<unsigned int> m_Indices;
+  unsigned int m_Index;
+
+}; // end ExtractIndexBase
+
+
+template< class ComponentType, unsigned int Dimension >
+class ExtractIndex : public ExtractIndexBase
+{
+public:
+  typedef ExtractIndex Self;
+
+  ExtractIndex(){};
+  ~ExtractIndex(){};
+
+  static Self * New( itktools::EnumComponentType componentType, unsigned int dim )
+  {
+    if ( itktools::IsType<ComponentType>( componentType ) && Dimension == dim )
+    {
+      return new Self;
+    }
+    return 0;
+  }
+
+  void Run(void)
+  {
+    /** Use vector image type that dynamically determines vector length: */
+    typedef itk::VectorImage< ComponentType, Dimension >    VectorImageType;
+    typedef itk::Image< ComponentType, Dimension >          ImageType;
+    typedef itk::ImageFileReader< VectorImageType >     ImageReaderType;
+    typedef itk::VectorIndexSelectionCastImageFilter<
+      VectorImageType, ImageType >                      IndexExtractorType;
+    typedef itk::ImageFileWriter< ImageType >           ImageWriterType;
+
+    /** Read input image. */
+    typename ImageReaderType::Pointer reader = ImageReaderType::New();
+    reader->SetFileName( m_InputFileName );
+
+    /** Extract index. */
+    typename IndexExtractorType::Pointer extractor = IndexExtractorType::New();
+    extractor->SetInput( reader->GetOutput() );
+    extractor->SetIndex( m_Index );
+
+    /** Write output image. */
+    typename ImageWriterType::Pointer writer = ImageWriterType::New();
+    writer->SetFileName( m_OutputFileName );
+    writer->SetInput( extractor->GetOutput() );
+    writer->Update();
+  }
+
+}; // end ReplaceVoxel
 //-------------------------------------------------------------------------------------
 
-/** run: A macro to call a function. */
-#define run( function, type, dim ) \
-if ( ComponentTypeIn == #type && Dimension == dim ) \
-{ \
-  function< type, dim >( inputFileName, outputFileName, index ); \
-  supported = true; \
-}
-
-//-------------------------------------------------------------------------------------
-
-/* Declare ExtractIndex. */
-template< class TPixel, unsigned int NDimension >
-void ExtractIndex(
-  const std::string & inputFileName,
-  const std::string & outputFileName,
-  const unsigned int & index );
 
 /** Declare GetHelpString. */
 std::string GetHelpString( void );
@@ -127,43 +171,58 @@ int main( int argc, char ** argv )
   }
 
   /** Run the program. */
-  bool supported = false;
+  
+  ExtractIndexBase * extractIndex = 0;
+  unsigned int dim = Dimension;
+  itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileName);
   try
   {
-    run( ExtractIndex, char, 2 );
-    run( ExtractIndex, unsigned char, 2 );
-    run( ExtractIndex, short, 2 );
-    run( ExtractIndex, unsigned short, 2 );
-    run( ExtractIndex, int, 2 );
-    run( ExtractIndex, unsigned int, 2 );
-    run( ExtractIndex, long, 2 );
-    //run( ExtractIndex, unsigned long, 2 );
-    run( ExtractIndex, float, 2 );
-    run( ExtractIndex, double, 2 );
+    // 2D
+    if (!extractIndex) extractIndex = ExtractIndex< char, 2 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ExtractIndex< unsigned char, 2 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ExtractIndex< short, 2 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ExtractIndex< unsigned short, 2 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ExtractIndex< int, 2 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ExtractIndex< unsigned int, 2 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ExtractIndex< long, 2 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ExtractIndex< unsigned long, 2 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ExtractIndex< float, 2 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ExtractIndex< double, 2 >::New( componentType, dim );
+    
+    // 3D
+    if (!extractIndex) extractIndex = ExtractIndex< char, 3 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ExtractIndex< unsigned char, 3 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ExtractIndex< short, 3 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ExtractIndex< unsigned short, 3 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ExtractIndex< int, 3 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ExtractIndex< unsigned int, 3 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ExtractIndex< long, 3 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ExtractIndex< unsigned long, 3 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ExtractIndex< float, 3 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ExtractIndex< double, 3 >::New( componentType, dim );
 
-    run( ExtractIndex, char, 3 );
-    run( ExtractIndex, unsigned char, 3 );
-    run( ExtractIndex, short, 3 );
-    run( ExtractIndex, unsigned short, 3 );
-    run( ExtractIndex, int, 3 );
-    run( ExtractIndex, unsigned int, 3 );
-    run( ExtractIndex, long, 3 );
-    //run( ExtractIndex, unsigned long, 3 );
-    run( ExtractIndex, float, 3 );
-    run( ExtractIndex, double, 3 );
+    if (!extractIndex)
+    {
+      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+      std::cerr
+        << "pixel (component) type = " << ComponentTypeIn // so here we also need a string - we don't need to convert to a string here right? just output the string that was input.
+        << " ; dimension = " << Dimension
+        << std::endl;
+      return 1;
+    }
+
+    extractIndex->m_InputFileName = inputFileName;
+    extractIndex->m_OutputFileName = outputFileName;
+    extractIndex->m_Index = index;
+
+    extractIndex->Run();
+
+    delete extractIndex;
   }
   catch( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
-    return 1;
-  }
-  if ( !supported )
-  {
-    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-    std::cerr
-      << "pixel (component) type = " << ComponentTypeIn
-      << " ; dimension = " << Dimension
-      << std::endl;
+    delete extractIndex;
     return 1;
   }
 
@@ -171,48 +230,6 @@ int main( int argc, char ** argv )
   return 0;
 
 } // end main
-
-
-/*
- * ******************* ExtractIndex *******************
- */
-
-template< class TPixel, unsigned int NDimension >
-void ExtractIndex(
-  const std::string & inputFileName,
-  const std::string & outputFileName,
-  const unsigned int & index )
-{
-  /** Typedef's. */
-  typedef TPixel                 PixelType;
-  const unsigned int Dimension = NDimension;
-
-  //typedef itk::Vector< PixelType, Dimension >         VectorPixelType;
-  //typedef itk::Image< VectorPixelType, Dimension >    VectorImageType;
-  /** Use vector image type that dynamically determines vector length: */
-  typedef itk::VectorImage< PixelType, Dimension >    VectorImageType;
-  typedef itk::Image< PixelType, Dimension >          ImageType;
-  typedef itk::ImageFileReader< VectorImageType >     ImageReaderType;
-  typedef itk::VectorIndexSelectionCastImageFilter<
-    VectorImageType, ImageType >                      IndexExtractorType;
-  typedef itk::ImageFileWriter< ImageType >           ImageWriterType;
-
-  /** Read input image. */
-  typename ImageReaderType::Pointer reader = ImageReaderType::New();
-  reader->SetFileName( inputFileName );
-
-  /** Extract index. */
-  typename IndexExtractorType::Pointer extractor = IndexExtractorType::New();
-  extractor->SetInput( reader->GetOutput() );
-  extractor->SetIndex( index );
-
-  /** Write output image. */
-  typename ImageWriterType::Pointer writer = ImageWriterType::New();
-  writer->SetFileName( outputFileName );
-  writer->SetInput( extractor->GetOutput() );
-  writer->Update();
-
-} // end ExtractIndex()
 
 
 /**
