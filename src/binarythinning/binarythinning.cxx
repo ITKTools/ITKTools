@@ -45,7 +45,7 @@ public:
 }; // end BinaryThinningBase
 
 
-template< itktools::EnumComponentType VComponentType, unsigned int VImageDimension >
+template< class TComponentType, unsigned int VImageDimension >
 class BinaryThinning : public BinaryThinningBase
 {
 public:
@@ -56,7 +56,7 @@ public:
 
   static Self * New( itktools::EnumComponentType componentType, unsigned int imageDimension )
   {
-    if ( VComponentType == componentType && VImageDimension == imageDimension )
+    if ( itktools::IsType<TComponentType>(componentType) && VImageDimension == imageDimension )
     {
       return new Self;
     }
@@ -66,6 +66,7 @@ public:
   void Run(void)
   {
     /** Typedef's. */
+    typedef itk::Image<TComponentType, VImageDimension>     InputImageType;
     typedef itk::ImageFileReader< InputImageType >          ReaderType;
     typedef itk::BinaryThinningImageFilter<
       InputImageType, InputImageType >                      FilterType;
@@ -73,7 +74,7 @@ public:
 
     /** Read in the input images. */
     typename ReaderType::Pointer reader = ReaderType::New();
-    reader->SetFileName( inputFileName );
+    reader->SetFileName( m_InputFileName );
 
     /** Thin the image. */
     typename FilterType::Pointer filter = FilterType::New();
@@ -81,7 +82,7 @@ public:
 
     /** Write image. */
     typename WriterType::Pointer writer = WriterType::New();
-    writer->SetFileName( outputFileName );
+    writer->SetFileName( m_OutputFileName );
     writer->SetInput( filter->GetOutput() );
     writer->Update();
   }
@@ -155,7 +156,7 @@ int main( int argc, char ** argv )
 
   /** Determine image properties. */
 
-  EnumComponentType componentType = itktools::GetImageComponentType(inputFileName);
+  itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileName);
   
   unsigned int dimension = 0;
   GetImageDimension(inputFileName, dimension);
