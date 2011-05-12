@@ -43,6 +43,11 @@ SET( ITKTools_EXECUTABLE_PATH "${EXECUTABLE_OUTPUT_PATH}" )
 INCLUDE_DIRECTORIES( ${ITKTools_SOURCE_DIR}/common )
 
 #---------------------------------------------------------------------
+# Compilation options
+SET( ITKTOOLS_3D_SUPPORT OFF CACHE BOOL
+  "Support operations on 3D Images." )
+
+#---------------------------------------------------------------------
 # Testing
 
 SET( ITKTOOLS_BUILD_TESTING OFF CACHE BOOL

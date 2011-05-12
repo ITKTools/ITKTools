@@ -99,9 +99,9 @@ add_test(NAME CastConvertTest COMMAND ${ExeDir}/pximagecompare -base ${BaselineD
 #  
 # add_test(NAME ExtractEveryOtherSliceOutput COMMAND extracteveryotherslice )
 # add_test(NAME ExtractEveryOtherSliceTest COMMAND imagecompare DEPENDS ExtractEveryOtherSliceOutput)
-#  
-# add_test(NAME ExtractIndexFromVectorImageOutput COMMAND extractindexfromvectorimage )
-# add_test(NAME ExtractIndexFromVectorImageTest COMMAND imagecompare DEPENDS ExtractIndexFromVectorImageOutput)
+ 
+add_test(NAME ExtractIndexFromVectorImageOutput COMMAND ${ExeDir}/pxextractindexfromvectorimage -in ${DataDir}/BlackSquare.png -out ${OutDir}/ExtractIndex0.mhd -ind 0)
+add_test(NAME ExtractIndexFromVectorImageTest COMMAND ${ExeDir}/pximagecompare -base ${BaselineDir}/ExtractIndex0.mhd -test ${OutDir}/ExtractIndex0.mhd DEPENDS ExtractIndexFromVectorImageOutput)
 #  
 # add_test(NAME ExtractSliceOutput COMMAND extractslice )
 # add_test(NAME ExtractSliceTest COMMAND imagecompare DEPENDS ExtractSliceOutput)

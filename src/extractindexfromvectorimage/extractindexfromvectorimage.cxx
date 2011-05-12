@@ -189,6 +189,7 @@ int main( int argc, char ** argv )
     if (!extractIndex) extractIndex = ExtractIndex< float, 2 >::New( componentType, dim );
     if (!extractIndex) extractIndex = ExtractIndex< double, 2 >::New( componentType, dim );
     
+#ifdef ITKTOOLS_3D_SUPPORT
     // 3D
     if (!extractIndex) extractIndex = ExtractIndex< char, 3 >::New( componentType, dim );
     if (!extractIndex) extractIndex = ExtractIndex< unsigned char, 3 >::New( componentType, dim );
@@ -200,7 +201,7 @@ int main( int argc, char ** argv )
     if (!extractIndex) extractIndex = ExtractIndex< unsigned long, 3 >::New( componentType, dim );
     if (!extractIndex) extractIndex = ExtractIndex< float, 3 >::New( componentType, dim );
     if (!extractIndex) extractIndex = ExtractIndex< double, 3 >::New( componentType, dim );
-
+#endif
     if (!extractIndex)
     {
       std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
