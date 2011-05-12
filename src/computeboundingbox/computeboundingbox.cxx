@@ -29,20 +29,102 @@
 
 //-------------------------------------------------------------------------------------
 
-/* run: A macro to call a function. */
-#define run(function,type,dim) \
-if ( ComponentType == #type && Dimension == dim ) \
-{ \
-  typedef itk::Image< type, dim > InputImageType; \
-  function< InputImageType >( inputFileName ); \
-  supported = true; \
-}
+
+/** ComputeBoundingBox */
+
+class ComputeBoundingBoxBase : public itktools::ITKToolsBase
+{ 
+public:
+  ComputeBoundingBoxBase(){};
+  ~ComputeBoundingBoxBase(){};
+
+  /** Input parameters */
+  std::string m_InputFileName;
+  std::string m_OutputFileName;
+    
+}; // end ComputeBoundingBoxBase
+
+
+template< class TComponentType, unsigned int VImageDimension >
+class ComputeBoundingBox : public ComputeBoundingBoxBase
+{
+public:
+  typedef ComputeBoundingBox Self;
+
+  ComputeBoundingBox(){};
+  ~ComputeBoundingBox(){};
+
+  static Self * New( itktools::EnumComponentType componentType, unsigned int dim )
+  {
+    if ( itktools::IsType<TComponentType>( componentType ) && VImageDimension == dim )
+    {
+      return new Self;
+    }
+    return 0;
+  }
+
+  void Run(void)
+  {
+    /** Typedefs. */
+    typedef itk::Image<TComponentType, VImageDimension> InputImageType;
+    typedef itk::ImageFileReader< InputImageType >      ReaderType;
+    typedef itk::ImageRegionConstIteratorWithIndex<
+      InputImageType>                                   IteratorType;
+    typedef typename InputImageType::PixelType          PixelType;
+    typedef typename InputImageType::IndexType          IndexType;
+    typedef typename InputImageType::PointType          PointType;
+    const unsigned int dimension = InputImageType::GetImageDimension();
+
+    /** Declarations */
+    typename ReaderType::Pointer reader = ReaderType::New();
+    typename InputImageType::Pointer image;
+    IndexType minIndex;
+    IndexType maxIndex;
+
+    /** Read input image */
+    reader->SetFileName( m_InputFileName.c_str() );
+    reader->Update();
+    image = reader->GetOutput();
+
+    /** Define iterator on input image */
+    IteratorType iterator( image, image->GetLargestPossibleRegion() );
+
+    /** Initialize the two corner points */
+    iterator.GoToReverseBegin();
+    minIndex = iterator.GetIndex();
+    iterator.GoToBegin();
+    maxIndex = iterator.GetIndex();
+    PixelType zero = itk::NumericTraits< PixelType>::Zero;
+
+    while ( ! iterator.IsAtEnd() )
+    {
+      if ( iterator.Get() > zero )
+      {
+	const IndexType & index = iterator.GetIndex();
+	for ( unsigned int i = 0; i < dimension; ++i)
+	{
+	  minIndex[i] = vnl_math_min( index[i], minIndex[i] );
+	  maxIndex[i] = vnl_math_max( index[i], maxIndex[i] );
+	}
+      }
+      ++iterator;
+    }
+
+    PointType minPoint;
+    PointType maxPoint;
+    image->TransformIndexToPhysicalPoint(minIndex, minPoint);
+    image->TransformIndexToPhysicalPoint(maxIndex, maxPoint);
+
+    std::cout << "MinimumIndex = " << minIndex << "\n"
+	      << "MaximumIndex = " << maxIndex << std::endl;
+    std::cout << std::showpoint;
+    std::cout << "MinimumPoint = " << minPoint << "\n"
+	      << "MaximumPoint = " << maxPoint << std::endl;
+  }
+
+}; // end ComputeBoundingBox
 
 //-------------------------------------------------------------------------------------
-
-/* Declare ComputeBoundingBox. */
-template< class InputImageType >
-void ComputeBoundingBox( std::string inputFileName );
 
 /** Declare other functions. */
 std::string GetHelpString( void );
@@ -126,25 +208,49 @@ int main( int argc, char **argv )
     ComponentType = "short";
     std::cout << "WARNING: the image will be converted to short!" << std::endl;
   }
-  /** Run the program. */
-  bool supported = false;
+  
+  
+  /** Class that does the work */
+  ComputeBoundingBoxBase * computeBoundingBox = 0; 
+
+  /** Short alias */
+  unsigned int dim = Dimension;
+ 
+  /** \todo some progs allow user to override the pixel type, 
+   * so we need a method to convert string to EnumComponentType */
+  itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileName);
+  
+  std::cout << "Detected component type: " << 
+    componentType << std::endl;
+
   try
-  {
-    run(ComputeBoundingBox, short, 3);
-    run(ComputeBoundingBox, short, 2);
+  {    
+    // now call all possible template combinations.
+    if (!computeBoundingBox) computeBoundingBox = ComputeBoundingBox< short, 2 >::New( componentType, dim );
+    
+#ifdef ITKTOOLS_3D_SUPPORT
+    if (!computeBoundingBox) computeBoundingBox = ComputeBoundingBox< short, 3 >::New( componentType, dim );    
+#endif
+    if (!computeBoundingBox) 
+    {
+      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+      std::cerr
+        << "pixel (component) type = " << componentType
+        << " ; dimension = " << Dimension
+        << std::endl;
+      return 1;
+    }
+
+    computeBoundingBox->m_InputFileName = inputFileName;
+
+    computeBoundingBox->Run();
+    
+    delete computeBoundingBox;  
   }
   catch( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
-    return 1;
-  }
-  if ( !supported )
-  {
-    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-    std::cerr
-      << "pixel (component) type = " << ComponentType
-      << " ; dimension = " << Dimension
-      << std::endl;
+    delete computeBoundingBox;
     return 1;
   }
 
@@ -154,74 +260,10 @@ int main( int argc, char **argv )
 } // end main
 
 
-  /*
-   * ******************* ComputeBoundingBox *******************
-   */
 
-template< class InputImageType >
-void ComputeBoundingBox( std::string inputFileName )
-{
-  /** Typedefs. */
-  typedef itk::ImageFileReader< InputImageType >      ReaderType;
-  typedef itk::ImageRegionConstIteratorWithIndex<
-    InputImageType>                                   IteratorType;
-  typedef typename InputImageType::PixelType          PixelType;
-  typedef typename InputImageType::IndexType          IndexType;
-  typedef typename InputImageType::PointType          PointType;
-  const unsigned int dimension = InputImageType::GetImageDimension();
-
-  /** Declarations */
-  typename ReaderType::Pointer reader = ReaderType::New();
-  typename InputImageType::Pointer image;
-  IndexType minIndex;
-  IndexType maxIndex;
-
-  /** Read input image */
-  reader->SetFileName( inputFileName.c_str() );
-  reader->Update();
-  image = reader->GetOutput();
-
-  /** Define iterator on input image */
-  IteratorType iterator( image, image->GetLargestPossibleRegion() );
-
-  /** Initialize the two corner points */
-  iterator.GoToReverseBegin();
-  minIndex = iterator.GetIndex();
-  iterator.GoToBegin();
-  maxIndex = iterator.GetIndex();
-  PixelType zero = itk::NumericTraits< PixelType>::Zero;
-
-  while ( ! iterator.IsAtEnd() )
-  {
-    if ( iterator.Get() > zero )
-    {
-      const IndexType & index = iterator.GetIndex();
-      for ( unsigned int i = 0; i < dimension; ++i)
-      {
-        minIndex[i] = vnl_math_min( index[i], minIndex[i] );
-        maxIndex[i] = vnl_math_max( index[i], maxIndex[i] );
-      }
-    }
-    ++iterator;
-  }
-
-  PointType minPoint;
-  PointType maxPoint;
-  image->TransformIndexToPhysicalPoint(minIndex, minPoint);
-  image->TransformIndexToPhysicalPoint(maxIndex, maxPoint);
-
-  std::cout << "MinimumIndex = " << minIndex << "\n"
-            << "MaximumIndex = " << maxIndex << std::endl;
-  std::cout << std::showpoint;
-  std::cout << "MinimumPoint = " << minPoint << "\n"
-            << "MaximumPoint = " << maxPoint << std::endl;
-
-} // end ComputeBoundingBox
-
-
-  /**
-   * ******************* GetHelpString *******************
-   */
+/**
+  * ******************* GetHelpString *******************
+  */
 std::string GetHelpString()
 {
   std::stringstream ss;
