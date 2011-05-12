@@ -192,7 +192,7 @@ int main( int argc, char ** argv )
   }
 
   /** Class that does the work */
-  ReplaceVoxelBase * rv = 0; 
+  ReplaceVoxelBase * replaceVoxel = 0; 
 
   /** Short alias */
   unsigned int dim = Dimension;
@@ -207,14 +207,14 @@ int main( int argc, char ** argv )
   try
   {    
     // now call all possible template combinations.
-    if (!rv) rv = ReplaceVoxel< short, 2 >::New( componentType, dim );
-    if (!rv) rv = ReplaceVoxel< float, 2 >::New( componentType, dim );
+    if (!replaceVoxel) replaceVoxel = ReplaceVoxel< short, 2 >::New( componentType, dim );
+    if (!replaceVoxel) replaceVoxel = ReplaceVoxel< float, 2 >::New( componentType, dim );
     
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!rv) rv = ReplaceVoxel< short, 3 >::New( componentType, dim );    
-    if (!rv) rv = ReplaceVoxel< float, 3 >::New( componentType, dim );
+    if (!rv) replaceVoxel = ReplaceVoxel< short, 3 >::New( componentType, dim );    
+    if (!rv) replaceVoxel = ReplaceVoxel< float, 3 >::New( componentType, dim );
 #endif
-    if (!rv) 
+    if (!replaceVoxel) 
     {
       std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
       std::cerr
@@ -224,19 +224,19 @@ int main( int argc, char ** argv )
       return 1;
     }
 
-    rv->m_InputFileName = inputFileName;
-    rv->m_OutputFileName = outputFileName;
-    rv->m_Voxel = voxel;
-    rv->m_Value = value;
+    replaceVoxel->m_InputFileName = inputFileName;
+    replaceVoxel->m_OutputFileName = outputFileName;
+    replaceVoxel->m_Voxel = voxel;
+    replaceVoxel->m_Value = value;
 
-    rv->Run();
+    replaceVoxel->Run();
     
-    delete rv;  
+    delete replaceVoxel;  
   }
   catch( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
-    delete rv;
+    delete replaceVoxel;
     return 1;
   }
 
