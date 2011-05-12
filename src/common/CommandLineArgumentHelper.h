@@ -32,7 +32,7 @@ bool GetImagePixelType(
 /** Determine componenttype (short, float etc) of an image */
 bool GetImageComponentType(
   const std::string & filename,
-  std::string & componenttype);
+  itktools::EnumComponentType & componenttype);
 
 /** Determine dimension of an image */
 bool GetImageDimension(

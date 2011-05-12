@@ -201,9 +201,10 @@ bool GetImagePixelType(
  * ***************** GetImageComponentType ************************
  */
 /** Determine componenttype (short, float etc) of an image */
+#if 0
 bool GetImageComponentType(
   const std::string & filename,
-  std::string & componentType)
+  itktools::EnumComponentType & componentType)
 {
   itk::ImageIOBase::Pointer imageIOBase;
   GetImageIOBase(filename, imageIOBase);
@@ -214,6 +215,7 @@ bool GetImageComponentType(
 
   return true;
 }
+#endif
 
 /**
  * ***************** GetImageDimension ************************
