@@ -31,6 +31,9 @@
 #include "itkNumericTraits.h"
 
 #include "itkDiceOverlapImageFilter.h"
+#include "ComputeOverlapOld.h"
+//#include "ComputeOverlap2.h"
+#include "ComputeOverlap3.h"
 
 #include <iostream>
 #include <string>
@@ -41,45 +44,9 @@
 
 //-------------------------------------------------------------------------------------
 
-/* run: A macro to call a function. */
-#define run( function, type, dim ) \
-if ( ComponentType == #type && Dimension == dim ) \
-{ \
-  typedef itk::Image< type, dim >   ImageType; \
-  function< ImageType >( inputFileNames, maskFileName1, maskFileName2, t1, t2 ); \
-  supported = true; \
-}
-
-#define run2( function, type, dim ) \
-if ( ComponentType == #type && Dimension == dim ) \
-{ \
-  typedef itk::Image< type, dim >   ImageType; \
-  function< ImageType >( inputFileNames, labels ); \
-  supported = true; \
-}
-
-//-------------------------------------------------------------------------------------
-
 /* Declare GetHelpString. */
 std::string GetHelpString( void );
 
-template< class TImage>
-void ComputeOverlapOld(
-  const std::vector<std::string> & inputFileNames,
-  const std::string & maskFileName1,
-  const std::string & maskFileName2,
-  const unsigned int & t1,
-  const unsigned int & t2 );
-
-template< class TImage>
-void ComputeOverlap2(
-  const std::vector<std::string> & inputFileNames,
-  const std::vector<unsigned int> & labels );
-
-template< class TImage>
-void ComputeOverlap3(
-  const std::vector<std::string> & inputFileNames,
-  const std::vector<unsigned int> & labels );
 
 //-------------------------------------------------------------------------------------
 
@@ -157,46 +124,89 @@ int main( int argc, char ** argv )
   ReplaceUnderscoreWithSpace( ComponentType );
 
   /** Run the program. */
-  bool supported = false;
-  try
-  {
-    if ( retlabel )
-    {
-      run2( ComputeOverlap3, char, 2 );
-      run2( ComputeOverlap3, short, 2 );
 
-      run2( ComputeOverlap3, char, 3 );
-      run2( ComputeOverlap3, unsigned char, 3 );
-      run2( ComputeOverlap3, short, 3 );
-      run2( ComputeOverlap3, unsigned short, 3 );
-    }
-    else
-    {
-      run( ComputeOverlapOld, char, 2 );
-      run( ComputeOverlapOld, short, 2 );
+  unsigned int dim = Dimension;
+  itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileNames[0]);
 
-      run( ComputeOverlapOld, char, 3 );
-      run( ComputeOverlapOld, unsigned char, 3 );
-      run( ComputeOverlapOld, short, 3 );
-      run( ComputeOverlapOld, unsigned short, 3 );
+  if ( retlabel )
+  {
+    ComputeOverlap3Base * computeOverlap3 = 0; 
+    try
+    {
+      // now call all possible template combinations.
+      if (!computeOverlap3) computeOverlap3 = ComputeOverlap3< char, 2 >::New( componentType, dim );
+      if (!computeOverlap3) computeOverlap3 = ComputeOverlap3< short, 2 >::New( componentType, dim );
+#ifdef ITKTOOLS_3D_SUPPORT
+    if (!computeOverlap3) computeOverlap3 = ComputeOverlap3< char, 3 >::New( componentType, dim );
+    if (!computeOverlap3) computeOverlap3 = ComputeOverlap3< unsigned char, 3 >::New( componentType, dim );
+    if (!computeOverlap3) computeOverlap3 = ComputeOverlap3< short, 3 >::New( componentType, dim );
+    if (!computeOverlap3) computeOverlap3 = ComputeOverlap3< unsigned short, 3 >::New( componentType, dim );
+#endif
+      if (!computeOverlap3) 
+      {
+	std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+	std::cerr
+	  << "pixel (component) type = " << componentType
+	  << " ; dimension = " << Dimension
+	  << std::endl;
+	return 1;
+      }
+
+      computeOverlap3->m_InputFileNames = inputFileNames;
+      computeOverlap3->m_Labels = labels;
+
+      computeOverlap3->Run();
+      
+      delete computeOverlap3;  
     }
+    catch( itk::ExceptionObject &e )
+    {
+      std::cerr << "Caught ITK exception: " << e << std::endl;
+      delete computeOverlap3;
+      return 1;
+    }
+
   }
-  catch ( itk::ExceptionObject &e )
+  else
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    return 1;
-  }
-  if ( !supported )
-  {
-    std::cerr << "ERROR: this combination of pixeltype and dimension is not "
-      << "supported!" << std::endl;
-    std::cerr
-      << "pixel (component) type = " << ComponentType
-      << " ; dimension = " << Dimension
-      << std::endl;
-    std::cerr << "Call \"pxcomputeoverlap --help\" to get a list "
-      << "of supported images." << std::endl;
-    return 1;
+    ComputeOverlapOldBase * computeOverlapOld = 0; 
+    try
+    {
+      // now call all possible template combinations.
+      if (!computeOverlapOld) computeOverlapOld = ComputeOverlapOld< char, 2 >::New( componentType, dim );
+      if (!computeOverlapOld) computeOverlapOld = ComputeOverlapOld< short, 2 >::New( componentType, dim );
+#ifdef ITKTOOLS_3D_SUPPORT
+    if (!computeOverlapOld) computeOverlapOld = ComputeOverlapOld< char, 3 >::New( componentType, dim );
+    if (!computeOverlapOld) computeOverlapOld = ComputeOverlapOld< unsigned char, 3 >::New( componentType, dim );
+    if (!computeOverlapOld) computeOverlapOld = ComputeOverlapOld< short, 3 >::New( componentType, dim );
+    if (!computeOverlapOld) computeOverlapOld = ComputeOverlapOld< unsigned short, 3 >::New( componentType, dim );
+#endif
+      if (!computeOverlapOld) 
+      {
+	std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+	std::cerr
+	  << "pixel (component) type = " << componentType
+	  << " ; dimension = " << Dimension
+	  << std::endl;
+	return 1;
+      }
+
+      computeOverlapOld->m_InputFileNames = inputFileNames;
+      computeOverlapOld->m_MaskFileName1 = maskFileName1;
+      computeOverlapOld->m_MaskFileName2 = maskFileName2;
+      computeOverlapOld->m_T1 = t1;
+      computeOverlapOld->m_T2 = t2;
+
+      computeOverlapOld->Run();
+      
+      delete computeOverlapOld;  
+    }
+    catch( itk::ExceptionObject &e )
+    {
+      std::cerr << "Caught ITK exception: " << e << std::endl;
+      delete computeOverlapOld;
+      return 1;
+    }
   }
 
   /** End program. */
@@ -235,352 +245,3 @@ std::string GetHelpString( void )
 
   return ss.str();
 } // end GetHelpString()
-
-
-/*
- * ******************* ComputeOverlapOld *******************
- */
-
-template< class TImage>
-void ComputeOverlapOld(
-  const std::vector<std::string> & inputFileNames,
-  const std::string & maskFileName1,
-  const std::string & maskFileName2,
-  const unsigned int & t1,
-  const unsigned int & t2 )
-{
-  /** Some typedef's. */
-  typedef TImage                                      ImageType;
-  typedef typename ImageType::Pointer                 ImagePointer;
-  typedef typename ImageType::PixelType               PixelType;
-  typedef itk::ImageFileReader<ImageType>             ImageReaderType;
-  typedef typename ImageReaderType::Pointer           ImageReaderPointer;
-  typedef itk::AndImageFilter<
-    ImageType, ImageType, ImageType>                  AndFilterType;
-  typedef typename AndFilterType::Pointer             AndFilterPointer;
-  typedef itk::ImageRegionConstIterator<ImageType>    IteratorType;
-  typedef itk::ThresholdLabelerImageFilter<
-    ImageType, ImageType>                             ThresholdFilterType;
-  typedef typename ThresholdFilterType::Pointer       ThresholdFilterPointer;
-  typedef typename ThresholdFilterType::ThresholdVector ThresholdVectorType;
-
-  /**
-   * Setup pipeline
-   */
-
-  /** Create readers and an AND filter. */
-  ImageReaderPointer reader1 = ImageReaderType::New();
-  reader1->SetFileName( inputFileNames[ 0 ].c_str() );
-  ImageReaderPointer reader2 = ImageReaderType::New();
-  reader2->SetFileName( inputFileNames[ 1 ].c_str() );
-  AndFilterPointer finalANDFilter = AndFilterType::New();
-
-  /** Create images, threshold filters, and threshold vectors. */
-  ImagePointer im1 = 0;
-  ImagePointer im2 = 0;
-  ThresholdFilterPointer thresholder1 = 0;
-  ThresholdFilterPointer thresholder2 = 0;
-  ThresholdVectorType thresholdVector1( 2 );
-  ThresholdVectorType thresholdVector2( 2 );
-
-  /** If there is a threshold given for image1, use it. */
-  if ( t1 != 0 )
-  {
-    thresholder1 = ThresholdFilterType::New();
-    thresholdVector1[ 0 ] = t1;
-    thresholdVector1[ 1 ] = itk::NumericTraits<PixelType>::max();
-    thresholder1->SetThresholds( thresholdVector1 );
-    thresholder1->SetInput( reader1->GetOutput() );
-    im1 = thresholder1->GetOutput();
-  }
-  /** Otherwise, just take the input image1. */
-  else
-  {
-    im1 = reader1->GetOutput();
-  }
-
-  /** If there is a threshold given for image2, use it. */
-  if ( t2 != 0 )
-  {
-    thresholder2 = ThresholdFilterType::New();
-    thresholdVector2[ 0 ] = t2;
-    thresholdVector2[ 1 ] = itk::NumericTraits<PixelType>::max();
-    thresholder2->SetThresholds( thresholdVector2 );
-    thresholder2->SetInput( reader2->GetOutput() );
-    im2 = thresholder2->GetOutput();
-  }
-  else
-  {
-    im2 = reader2->GetOutput();
-  }
-
-  /** Create readers for the masks and AND filters. */
-  ImageReaderPointer maskReader1 = 0;
-  ImageReaderPointer maskReader2 = 0;
-  AndFilterPointer im2ANDmask1Filter = 0;
-  AndFilterPointer im1ANDmask2Filter = 0;
-
-  /** If there is a mask given for image1, use it on image2. */
-  if ( maskFileName1 != "" )
-  {
-    maskReader1 = ImageReaderType::New();
-    maskReader1->SetFileName( maskFileName1.c_str() );
-    im2ANDmask1Filter = AndFilterType::New();
-    im2ANDmask1Filter->SetInput1( im2 );
-    im2ANDmask1Filter->SetInput2( maskReader1->GetOutput() );
-    finalANDFilter->SetInput1( im2ANDmask1Filter->GetOutput() );
-  }
-  /** Otherwise, just use image2. */
-  else
-  {
-    finalANDFilter->SetInput1( im2 );
-  }
-
-  /** If there is a mask given for image2, use it on image1. */
-  if ( maskFileName2 != "" )
-  {
-    maskReader2 = ImageReaderType::New();
-    maskReader2->SetFileName( maskFileName2.c_str() );
-    im1ANDmask2Filter = AndFilterType::New();
-    im1ANDmask2Filter->SetInput1( im1 );
-    im1ANDmask2Filter->SetInput2( maskReader2->GetOutput() );
-    finalANDFilter->SetInput2( im1ANDmask2Filter->GetOutput() );
-  }
-  /** Otherwise, just use image1. */
-  else
-  {
-    finalANDFilter->SetInput2( im1 );
-  }
-
-  /** UPDATE!
-   *
-   * Call the update of the final filter, in order to execute the whole pipeline.
-   */
-
-  try
-  {
-    finalANDFilter->Update();
-  }
-  catch ( itk::ExceptionObject & excp )
-  {
-    std::cerr << excp << std::endl;
-    throw excp;
-  }
-
-  /**
-   * Now calculate the L1-norm.
-   */
-
-  /** Create iterators. */
-  IteratorType iteratorA( finalANDFilter->GetInput(1),
-    finalANDFilter->GetInput(1)->GetLargestPossibleRegion() );
-  IteratorType iteratorB( finalANDFilter->GetInput(0),
-    finalANDFilter->GetInput(0)->GetLargestPossibleRegion() );
-  IteratorType iteratorC( finalANDFilter->GetOutput(),
-    finalANDFilter->GetOutput()->GetLargestPossibleRegion() );
-
-  /** Determine size of first object. */
-  long long sumA = 0;
-  for ( iteratorA.GoToBegin(); !iteratorA.IsAtEnd(); ++iteratorA )
-  {
-    if ( iteratorA.Value() )
-    {
-      ++sumA;
-    }
-  }
-  std::cout << "Size of first object: " << sumA << std::endl;
-
-  /** Determine size of second object. */
-  long long sumB = 0;
-  for ( iteratorB.GoToBegin(); !iteratorB.IsAtEnd(); ++iteratorB )
-  {
-    if ( iteratorB.Value() )
-    {
-      ++sumB;
-    }
-  }
-  std::cout << "Size of second object: " << sumB << std::endl;
-
-  /** Determine size of cross-section. */
-  long long sumC = 0;
-  for ( iteratorC.GoToBegin(); !iteratorC.IsAtEnd(); ++iteratorC )
-  {
-    if ( iteratorC.Value() )
-    {
-      ++sumC;
-    }
-  }
-  std::cout << "Size of cross-section of both objects: " << sumC << std::endl;
-
-  /** Calculate the overlap. */
-  double overlap;
-  if ( ( sumA + sumB ) == 0 )
-  {
-    overlap = 0;
-  }
-  else
-  {
-    overlap = static_cast<double>( 2 * sumC ) / static_cast<double>( sumA + sumB );
-  }
-
-  /** Format the output and show overlap. */
-  std::cout << std::fixed << std::showpoint;
-  std::cout << "Overlap: " << overlap << std::endl;
-
-} // end ComputeOverlapOld
-
-
-/*
- * ******************* ComputeOverlap2 *******************
- */
-
-
-template< class TImage>
-void ComputeOverlap2(
-  const std::vector<std::string> & inputFileNames,
-  const std::vector<unsigned int> & labelsArg )
-{
-  /** Some typedef's. */
-  typedef TImage                                      ImageType;
-  typedef typename ImageType::Pointer                 ImagePointer;
-  typedef typename ImageType::PixelType               PixelType;
-  typedef itk::ImageFileReader<ImageType>             ImageReaderType;
-  typedef typename ImageReaderType::Pointer           ImageReaderPointer;
-  typedef itk::ImageRegionConstIterator<ImageType>    IteratorType;
-  typedef std::map<PixelType, std::size_t>            OverlapMapType;
-  typedef std::set<PixelType>                         LabelsType;
-
-  /** Translate vector of labels to set. */
-  LabelsType labels;
-  for ( std::size_t i = 0; i < labelsArg.size(); i++ )
-  {
-    labels.insert( labelsArg[ i ] );
-  }
-
-  /**
-   * Setup pipeline
-   */
-
-  /** Create readers. */
-  ImageReaderPointer reader1 = ImageReaderType::New();
-  reader1->SetFileName( inputFileNames[ 0 ].c_str() );
-  reader1->Update();
-  ImageReaderPointer reader2 = ImageReaderType::New();
-  reader2->SetFileName( inputFileNames[ 1 ].c_str() );
-  reader2->Update();
-
-  ImagePointer imA = reader1->GetOutput();
-  ImagePointer imB = reader2->GetOutput();
-
-  /** Create iterators. */
-  IteratorType itA( imA, imA->GetLargestPossibleRegion() );
-  IteratorType itB( imB, imB->GetLargestPossibleRegion() );
-  itA.GoToBegin();
-  itB.GoToBegin();
-
-  /** Determine size of objects, and size in the overlap. */
-  OverlapMapType sumA, sumB, sumC;
-  while ( !itA.IsAtEnd() )
-  {
-    PixelType A = itA.Value();
-    PixelType B = itB.Value();
-
-    sumA[ A ]++;
-    sumB[ B ]++;
-    if ( A == B  ) ++sumC[ A ];
-
-    ++itA; ++itB;
-  }
-
-  /** Check if all requested labels exist. */
-  for ( typename LabelsType::const_iterator itL = labels.begin(); itL != labels.end(); itL++ )
-  {
-    if ( sumA.count( *itL ) == 0 && sumB.count( *itL ) == 0 )
-    {
-      itkGenericExceptionMacro( << "The selected label "
-        << static_cast<std::size_t>( *itL ) << " does not exist in both input images." );
-    }
-  }
-
-  /** Calculate and print the overlap. */
-  std::cout << "label => sum input1 \t, sum input2 \t, sum overlap \t, overlap" << std::endl;
-  std::map<PixelType, double>     overlap;
-  typename OverlapMapType::const_iterator  it;
-  for ( it = sumA.begin() ; it != sumA.end(); it++ )
-  {
-    PixelType currentLabel = (*it).first;
-
-    /** Skip the current label if not selected by user.
-     * Print all labels if nothing is selected.
-     */
-    if ( labels.size() != 0 && labels.count( currentLabel ) == 0 )
-    {
-      continue;
-    }
-
-    /** Compute overlap. */
-    const std::size_t sumAB = sumA[ currentLabel ] + sumB[ currentLabel ];
-    if ( sumAB == 0 )
-    {
-      overlap[ currentLabel ] = 0.0;
-    }
-    else
-    {
-      overlap[ currentLabel ]
-        = static_cast<double>( 2 * sumC[ currentLabel ] )
-        / static_cast<double>( sumAB );
-    }
-
-    /** Print information. */
-    std::cout << static_cast<std::size_t>( currentLabel ) << " => "
-      << sumA[ currentLabel ]
-      << "\t, " << sumB[ currentLabel ]
-      << "\t, " << sumC[ currentLabel ]
-      << "\t, " << overlap[ currentLabel ] << std::endl;
-  }
-
-} // end ComputeOverlap2()
-
-
-/*
- * ******************* ComputeOverlap3 *******************
- */
-
-
-template< class TImage>
-void ComputeOverlap3(
-  const std::vector<std::string> & inputFileNames,
-  const std::vector<unsigned int> & labelsArg )
-{
-  /** Some typedef's. */
-  typedef TImage                                      ImageType;
-  typedef itk::ImageFileReader<ImageType>             ImageReaderType;
-  typedef typename ImageReaderType::Pointer           ImageReaderPointer;
-  typedef itk::DiceOverlapImageFilter<ImageType>      DiceComputeFilter;
-  //typedef typename DiceComputeFilter::OverlapMapType  OverlapMapType;
-  typedef typename DiceComputeFilter::LabelsType      LabelsType;
-
-  /** Translate vector of labels to set. */
-  LabelsType requestedLabels;
-  for ( std::size_t i = 0; i < labelsArg.size(); i++ )
-  {
-    requestedLabels.insert( labelsArg[ i ] );
-  }
-
-  /** Create and setup readers. */
-  ImageReaderPointer reader1 = ImageReaderType::New();
-  reader1->SetFileName( inputFileNames[ 0 ].c_str() );
-  ImageReaderPointer reader2 = ImageReaderType::New();
-  reader2->SetFileName( inputFileNames[ 1 ].c_str() );
-
-  /** Create Dice overlap filter. */
-  typename DiceComputeFilter::Pointer diceFilter = DiceComputeFilter::New();
-  diceFilter->SetInput( 0, reader1->GetOutput() );
-  diceFilter->SetInput( 1, reader2->GetOutput() );
-  diceFilter->SetRequestedLabels( requestedLabels );
-  diceFilter->Update();
-
-  /** Print the results. */
-  diceFilter->PrintRequestedDiceOverlaps();
-
-} // end ComputeOverlap3()
