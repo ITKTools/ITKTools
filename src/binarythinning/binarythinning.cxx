@@ -178,6 +178,7 @@ int main( int argc, char ** argv )
     if (!binaryThinning) binaryThinning = BinaryThinning< double, 2 >::New( componentType, dimension );
 
     // 3D
+#ifdef ITKTOOLS_3D_SUPPORT
     if (!binaryThinning) binaryThinning = BinaryThinning< char, 3 >::New( componentType, dimension );
     if (!binaryThinning) binaryThinning = BinaryThinning< unsigned char, 3 >::New( componentType, dimension );
     if (!binaryThinning) binaryThinning = BinaryThinning< short, 3 >::New( componentType, dimension );
@@ -188,7 +189,8 @@ int main( int argc, char ** argv )
     if (!binaryThinning) binaryThinning = BinaryThinning< unsigned long, 3u >::New( componentType, dimension );
     if (!binaryThinning) binaryThinning = BinaryThinning< float, 3 >::New( componentType, dimension );
     if (!binaryThinning) binaryThinning = BinaryThinning< double, 3 >::New( componentType, dimension );
-
+#endif
+    
     if ( !binaryThinning )
     {
       std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
