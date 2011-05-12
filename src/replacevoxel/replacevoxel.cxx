@@ -52,7 +52,7 @@ public:
 }; // end ReplaceVoxelBase
 
 
-template< class ComponentType, unsigned int Dimension >
+template< class TComponentType, unsigned int VDimension >
 class ReplaceVoxel : public ReplaceVoxelBase
 {
 public:
@@ -63,7 +63,7 @@ public:
 
   static Self * New( itktools::EnumComponentType componentType, unsigned int dim )
   {
-    if ( itktools::IsType<ComponentType>( componentType ) && Dimension == dim )
+    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
     {
       return new Self;
     }
@@ -72,8 +72,8 @@ public:
 
   void Run(void)
   {
-    typedef ComponentType                         PixelType;
-    typedef itk::Image< PixelType, Dimension >    ImageType;
+    typedef TComponentType                         PixelType;
+    typedef itk::Image< PixelType, VDimension >    ImageType;
     typedef typename ImageType::SizeType          SizeType;
     typedef typename ImageType::IndexType         IndexType;
     typedef itk::ImageFileReader< ImageType >     ReaderType;
@@ -90,7 +90,7 @@ public:
 
     /** Check size. */
     SizeType size = image->GetLargestPossibleRegion().GetSize();
-    for ( unsigned int i = 0; i < Dimension; ++i )
+    for ( unsigned int i = 0; i < VDimension; ++i )
     {
       if ( m_Voxel[ i ] < 0 || m_Voxel[ i ] > size[ i ] - 1 )
       {
@@ -100,7 +100,7 @@ public:
 
     /** Set the value to the voxel. */
     IndexType index;
-    for ( unsigned int i = 0; i < Dimension; ++i )
+    for ( unsigned int i = 0; i < VDimension; ++i )
     {
       index[ i ] = m_Voxel[ i ];
     }
