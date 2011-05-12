@@ -208,9 +208,12 @@ int main( int argc, char ** argv )
   {    
     // now call all possible template combinations.
     if (!rv) rv = ReplaceVoxel< short, 2 >::New( componentType, dim );
-    if (!rv) rv = ReplaceVoxel< short, 3 >::New( componentType, dim );
     if (!rv) rv = ReplaceVoxel< float, 2 >::New( componentType, dim );
+    
+#ifdef ITKTOOLS_3D_SUPPORT
+    if (!rv) rv = ReplaceVoxel< short, 3 >::New( componentType, dim );    
     if (!rv) rv = ReplaceVoxel< float, 3 >::New( componentType, dim );
+#endif
     if (!rv) 
     {
       std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
