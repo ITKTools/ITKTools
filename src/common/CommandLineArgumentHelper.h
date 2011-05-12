@@ -24,6 +24,31 @@ void RemoveUnsignedFromString( std::string & arg );
 /** Check for a valid component type. */
 bool CheckForValidComponentType( const std::string & arg );
 
+/** Determine pixeltype (scalar/vector) of an image */
+bool GetImagePixelType(
+  const std::string & filename,
+  std::string & pixeltype);
+
+/** Determine componenttype (short, float etc) of an image */
+bool GetImageComponentType(
+  const std::string & filename,
+  std::string & componenttype);
+
+/** Determine dimension of an image */
+bool GetImageDimension(
+  const std::string & filename,
+  unsigned int & dimension);
+
+/** Determine the number of components of each pixel in an image. */
+bool GetImageNumberOfComponents(
+  const std::string & filename,
+  unsigned int & numberofcomponents);
+
+/** Determine the size of an image.*/
+bool GetImageSize(
+  const std::string & filename,
+  std::vector<unsigned int> & imagesize );
+
 /** Determine pixeltype (scalar/vector), componenttype (short, float etc),
  * dimension and numberofcomponents from an image
  * returns 0 when successful. 0 otherwise.
@@ -52,7 +77,7 @@ int GetImageProperties(
   std::vector<double> & direction );
 
 /** Determine image properties, returning an ImageIOBase. */
-bool GetImageProperties(
+bool GetImageIOBase(
   const std::string & filename,
   itk::ImageIOBase::Pointer & imageIOBase );
 

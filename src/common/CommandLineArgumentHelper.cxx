@@ -97,7 +97,7 @@ int GetImageProperties(
   std::vector<unsigned int> & size )
 {
   itk::ImageIOBase::Pointer testImageIOBase;
-  GetImageProperties(filename, testImageIOBase);
+  GetImageIOBase(filename, testImageIOBase);
 
   /** Extract information from the ImageIOBase. */
   std::vector<double> dummySpacing, dummyOrigin, dummyDirection;
@@ -129,7 +129,7 @@ int GetImageProperties(
   std::vector<double> & direction )
 {
   itk::ImageIOBase::Pointer testImageIOBase;
-  GetImageProperties(filename, testImageIOBase);
+  GetImageIOBase(filename, testImageIOBase);
 
   /** Extract information from the ImageIOBase. */
   if ( !GetImageInformationFromImageIOBase( testImageIOBase,
@@ -148,7 +148,7 @@ int GetImageProperties(
  * ***************** GetImageProperties ************************
  */
 
-bool GetImageProperties(
+bool GetImageIOBase(
   const std::string & filename,
   itk::ImageIOBase::Pointer & testImageIOBase )
 {
@@ -179,6 +179,97 @@ bool GetImageProperties(
   return true;
 
 } // end GetImageProperties()
+
+/**
+ * ***************** GetImagePixelType ************************
+ */
+/** Determine pixeltype (scalar/vector) of an image */
+bool GetImagePixelType(
+  const std::string & filename,
+  std::string & pixelType)
+{
+  itk::ImageIOBase::Pointer imageIOBase;
+  GetImageIOBase(filename, imageIOBase);
+
+  pixelType = imageIOBase->GetPixelTypeAsString(
+    imageIOBase->GetPixelType() );
+
+  return true;
+}
+
+/**
+ * ***************** GetImageComponentType ************************
+ */
+/** Determine componenttype (short, float etc) of an image */
+bool GetImageComponentType(
+  const std::string & filename,
+  std::string & componentType)
+{
+  itk::ImageIOBase::Pointer imageIOBase;
+  GetImageIOBase(filename, imageIOBase);
+
+  componentType = imageIOBase->GetComponentTypeAsString(
+  imageIOBase->GetComponentType() );
+  ReplaceUnderscoreWithSpace( componentType );
+
+  return true;
+}
+
+/**
+ * ***************** GetImageDimension ************************
+ */
+/** Determine dimension of an image */
+bool GetImageDimension(
+  const std::string & filename,
+  unsigned int & dimension)
+{
+  itk::ImageIOBase::Pointer imageIOBase;
+  GetImageIOBase(filename, imageIOBase);
+
+  dimension = imageIOBase->GetNumberOfDimensions();
+
+  return true;
+}
+
+/**
+ * ***************** GetImageNumberOfComponents ************************
+ */
+/** Determine the number of components of each pixel in an image. */
+bool GetImageNumberOfComponents(
+  const std::string & filename,
+  unsigned int & numberOfComponents)
+{
+  itk::ImageIOBase::Pointer imageIOBase;
+  GetImageIOBase(filename, imageIOBase);
+
+  numberOfComponents = imageIOBase->GetNumberOfComponents();
+
+  return true;
+}
+
+/**
+ * ***************** GetImageSize ************************
+ */
+/** Determine the size of an image.
+ */
+bool GetImageSize(
+  const std::string & filename,
+  std::vector<unsigned int> & imageSize )
+{
+  itk::ImageIOBase::Pointer imageIOBase;
+  GetImageIOBase(filename, imageIOBase);
+
+  unsigned int dimension;
+  GetImageDimension(filename,dimension);
+  imageSize .resize( dimension );
+
+  for ( unsigned int i = 0; i < dimension; i++ )
+  {
+    imageSize [ i ] = imageIOBase->GetDimensions( i );
+  }
+
+  return true;
+}
 
 /**
  * ***************** FillImageIOBase ************************

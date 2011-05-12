@@ -42,88 +42,116 @@
 
 std::string GetHelpString();
 
-template <
-  unsigned int NImageDimension,
-  unsigned int NSpaceDimension,
-  class ValueType >
-ValueType run_avm(const char * inputFileName, const char * outputFileName = 0)
+
+class AverageVectorMagnitudeBase : public itktools::ITKToolsBase
 {
-  /** Typedefs */
-  const unsigned int ImageDimension = NImageDimension;
-  const unsigned int SpaceDimension = NSpaceDimension;
-
-  typedef ValueType     InputValueType;
-  typedef itk::Vector<InputValueType, SpaceDimension> InputPixelType;
-  typedef InputValueType    OutputPixelType;
-
-  typedef itk::Image<InputPixelType, ImageDimension>  InputImageType;
-  typedef itk::Image<OutputPixelType, ImageDimension>   OutputImageType;
-  typedef typename OutputImageType::Pointer OutputImagePointer;
-  typedef itk::ImageRegionConstIterator<OutputImageType>  IteratorType;
-
-  typedef itk::ImageFileReader<InputImageType>  ReaderType;
-  typedef itk::ImageFileWriter<OutputImageType>   WriterType;
-  typedef typename ReaderType::Pointer ReaderPointer;
-  typedef typename WriterType::Pointer WriterPointer;
-
-  typedef itk::GradientToMagnitudeImageFilter<
-    InputImageType, OutputImageType>  FilterType;
-  typedef typename FilterType::Pointer    FilterPointer;
-
-  /** Create variables */
-  ReaderPointer reader = ReaderType::New();
-  WriterPointer writer = 0;
-  FilterPointer filter = FilterType::New();
-  OutputImagePointer magnitudeImage = 0;
-
-  /** Setup the pipeline */
-  reader->SetFileName(inputFileName);
-  filter->SetInput( reader->GetOutput() );
-  magnitudeImage = filter->GetOutput();
-
-  /** Only write to disk if an outputFileName is given */
-  if (outputFileName)
+public:
+  AverageVectorMagnitudeBase()
   {
-    if (std::string(outputFileName) != "")
+    m_AverageMagnitude = 0.0f;
+  }
+  
+  ~AverageVectorMagnitudeBase(){};
+
+  /** Input parameters */
+  std::string m_InputFileName;
+  std::string m_OutputFileName;
+
+  float m_AverageMagnitude;
+
+}; // end AverageVectorMagnitudeBase
+
+
+template< unsigned int VVectorDimension, unsigned int VImageDimension >
+class AverageVectorMagnitude : public AverageVectorMagnitudeBase
+{
+public:
+  typedef AverageVectorMagnitude Self;
+
+  AverageVectorMagnitude(){};
+  ~AverageVectorMagnitude(){};
+
+  static Self * New( unsigned int vectorDimension, unsigned int imageDimension )
+  {
+    if ( VVectorDimension == vectorDimension && VImageDimension == imageDimension )
+    {
+      return new Self;
+    }
+    return 0;
+  }
+
+  void Run(void)
+  {
+    /** Typedefs */
+    typedef float     ValueType;
+    typedef itk::Vector<ValueType, VVectorDimension> InputPixelType;
+    typedef ValueType    OutputPixelType;
+
+    typedef itk::Image<InputPixelType, VImageDimension>  InputImageType;
+    typedef itk::Image<OutputPixelType, VImageDimension>   OutputImageType;
+    typedef typename OutputImageType::Pointer OutputImagePointer;
+    typedef itk::ImageRegionConstIterator<OutputImageType>  IteratorType;
+
+    typedef itk::ImageFileReader<InputImageType>  ReaderType;
+    typedef itk::ImageFileWriter<OutputImageType>   WriterType;
+    typedef typename ReaderType::Pointer ReaderPointer;
+    typedef typename WriterType::Pointer WriterPointer;
+
+    typedef itk::GradientToMagnitudeImageFilter<
+      InputImageType, OutputImageType>  FilterType;
+    typedef typename FilterType::Pointer    FilterPointer;
+
+    /** Create variables */
+    ReaderPointer reader = ReaderType::New();
+    WriterPointer writer = 0;
+    FilterPointer filter = FilterType::New();
+    OutputImagePointer magnitudeImage = 0;
+
+    /** Setup the pipeline */
+    reader->SetFileName(m_InputFileName);
+    filter->SetInput( reader->GetOutput() );
+    magnitudeImage = filter->GetOutput();
+
+    /** Only write to disk if an outputFileName is given */
+    if (m_OutputFileName.size() > 0 && m_OutputFileName.compare("") != 0)
     {
       writer = WriterType::New();
-      writer->SetFileName(outputFileName);
+      writer->SetFileName(m_OutputFileName);
       writer->SetInput( magnitudeImage );
     }
-  }
 
-  try
-  {
-    if (writer)
+    try
     {
-      writer->Update();
+      if (writer)
+      {
+        writer->Update();
+      }
+      else
+      {
+        magnitudeImage->Update();
+      }
     }
-    else
+    catch (itk::ExceptionObject & err)
     {
-      magnitudeImage->Update();
+      std::cerr << err << std::endl;
+      throw err;
     }
+
+    /** Sum over the resulting image and divide by the number of pixels */
+    IteratorType iterator(magnitudeImage, magnitudeImage->GetLargestPossibleRegion() );
+    double sum = 0.0;
+    unsigned long nrOfPixels = 0;
+
+    for (iterator = iterator.Begin(); !iterator.IsAtEnd(); ++iterator)
+    {
+      sum += iterator.Value();
+      ++nrOfPixels;
+    }
+    this->m_AverageMagnitude = static_cast<ValueType>( sum / nrOfPixels );
   }
-  catch (itk::ExceptionObject & err)
-  {
-    std::cerr << err << std::endl;
-    throw err;
-  }
 
-  /** Sum over the resulting image and divide by the number of pixels */
-  IteratorType iterator(magnitudeImage, magnitudeImage->GetLargestPossibleRegion() );
-  double sum = 0.0;
-  unsigned long nrOfPixels = 0;
-
-  for (iterator = iterator.Begin(); !iterator.IsAtEnd(); ++iterator)
-  {
-    sum += iterator.Value();
-    ++nrOfPixels;
-  }
-  ValueType averageVectorMagnitude = static_cast<ValueType>( sum / nrOfPixels );
-
-  return averageVectorMagnitude;
-
-} // end function run_avm
+}; // end AverageVectorMagnitude
+//-------------------------------------------------------------------------------------
 
 
 
@@ -135,8 +163,8 @@ int main( int argc, char** argv )
 
   std::string inputFileName("");
   std::string outputFileName(inputFileName + "AverageVectorMagnitude.mhd");
-  std::string imageDimension("");
-  std::string spaceDimension("");
+  unsigned int imageDimension = 2;
+  unsigned int spaceDimension = 1;
 
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
   parser->MarkArgumentAsRequired( "-id", "Image dimension." );
@@ -158,37 +186,53 @@ int main( int argc, char** argv )
     return EXIT_SUCCESS;
   }
 
-  float averageVectorMagnitude = 0.0f;
-  if (imageDimension.compare("2") == 0)
+  /** Determine image properties. */
+
+  unsigned int numberOfComponents = 0;
+  GetImageNumberOfComponents(inputFileName, numberOfComponents);
+
+  unsigned int dimension = 0;
+  GetImageDimension(inputFileName, dimension);
+
+  AverageVectorMagnitudeBase * averageVectorMagnitude = 0;
+
+  float averageMagnitude = 0.0f; // Initialize output to zero
+  try
   {
-    if (spaceDimension.compare("2") == 0)
+    // 2D
+    if (!averageVectorMagnitude) averageVectorMagnitude = AverageVectorMagnitude< 2, 2 >::New( numberOfComponents, dimension );
+    if (!averageVectorMagnitude) averageVectorMagnitude = AverageVectorMagnitude< 2, 3 >::New( numberOfComponents, dimension );
+    if (!averageVectorMagnitude) averageVectorMagnitude = AverageVectorMagnitude< 3, 2 >::New( numberOfComponents, dimension );
+    if (!averageVectorMagnitude) averageVectorMagnitude = AverageVectorMagnitude< 3, 3 >::New( numberOfComponents, dimension );
+
+    if (!averageVectorMagnitude)
     {
-       averageVectorMagnitude = run_avm<2,2,float>(inputFileName.c_str(), outputFileName.c_str() );
+      std::cerr << "ERROR: this combination of numberOfComponents and dimension is not supported!" << std::endl;
+      std::cerr
+        << "numberOfComponents = " << numberOfComponents
+        << " ; dimension = " << dimension
+        << std::endl;
+      return 1;
     }
-    else if (spaceDimension.compare("3") == 0)
-    {
-       averageVectorMagnitude = run_avm<2,3,float>(inputFileName.c_str(), outputFileName.c_str());
-    }
+
+    averageVectorMagnitude->m_InputFileName = inputFileName;
+    averageVectorMagnitude->m_OutputFileName = outputFileName;
+
+    averageVectorMagnitude->Run();
+
+    averageMagnitude = averageVectorMagnitude->m_AverageMagnitude;
+    delete averageVectorMagnitude;
   }
-  else if (imageDimension.compare("3") == 0)
+  catch( itk::ExceptionObject &e )
   {
-    if (spaceDimension.compare("2") == 0)
-    {
-       averageVectorMagnitude = run_avm<3,2,float>(inputFileName.c_str(), outputFileName.c_str());
-    }
-    else if (spaceDimension.compare("3") == 0)
-    {
-       averageVectorMagnitude = run_avm<3,3,float>(inputFileName.c_str(), outputFileName.c_str());
-    }
+    std::cerr << "Caught ITK exception: " << e << std::endl;
+    delete averageVectorMagnitude;
+    return 1;
   }
 
   std::cout << "The average magnitude of the vectors in image \"" <<
     inputFileName << "\" is: " << averageVectorMagnitude << std::endl;
 
-  if ( !outputFileName.empty() )
-  {
-    std::cout << "The magnitude image is written as \"" << outputFileName << "\"" << std::endl;
-  }
   return 0;
 
 } // end function main
