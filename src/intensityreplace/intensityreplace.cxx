@@ -29,23 +29,101 @@
 
 //-------------------------------------------------------------------------------------
 
-/** run: A macro to call a function. */
-#define run( function, type, dim ) \
-if ( ComponentType == #type && Dimension == dim ) \
-{ \
-  function< type, dim >( inputFileName, outputFileName, inValues, outValues ); \
-  supported = true; \
-}
+
+/** IntensityReplace */
+
+class IntensityReplaceBase : public itktools::ITKToolsBase
+{ 
+public:
+  IntensityReplaceBase(){};
+  ~IntensityReplaceBase(){};
+
+  /** Input parameters */
+  std::string m_InputFileName;
+  std::string m_OutputFileName;
+  std::vector<std::string> m_InValues;
+  std::vector<std::string> m_OutValues;
+
+    
+}; // end IntensityReplaceBase
+
+
+template< unsigned int VImageDimension, class TValue >
+class IntensityReplace : public IntensityReplaceBase
+{
+public:
+  typedef IntensityReplace Self;
+
+  IntensityReplace(){};
+  ~IntensityReplace(){};
+
+  static Self * New( unsigned int imageDimension, itktools::EnumComponentType componentType )
+  {
+    if ( VImageDimension == imageDimension && itktools::IsType<TValue>( componentType ) )
+    {
+      return new Self;
+    }
+    return 0;
+  }
+
+  void Run(void)
+  {
+    /** Typedefs. */
+    typedef TValue                                          OutputPixelType;
+    const unsigned int Dimension = VImageDimension;
+
+    typedef OutputPixelType                                 InputPixelType;
+
+    typedef itk::Image< InputPixelType, Dimension >         InputImageType;
+    typedef itk::Image< OutputPixelType, Dimension >        OutputImageType;
+
+    typedef itk::ImageFileReader< InputImageType >          ReaderType;
+    typedef itk::ChangeLabelImageFilter<
+      InputImageType, OutputImageType >                     ReplaceFilterType;
+    typedef itk::ImageFileWriter< OutputImageType >         WriterType;
+
+    /** Read in the input image. */
+    typename ReaderType::Pointer reader = ReaderType::New();
+    typename ReplaceFilterType::Pointer replaceFilter = ReplaceFilterType::New();
+    typename WriterType::Pointer writer = WriterType::New();
+
+    /** Set up reader */
+    reader->SetFileName( m_InputFileName );
+
+    /** Setup the the input and the 'change map' of the replace filter. */
+    replaceFilter->SetInput( reader->GetOutput() );
+    if ( itk::NumericTraits<OutputPixelType>::is_integer )
+    {
+      for (unsigned int i = 0; i < m_InValues.size(); ++i)
+      {
+	const InputPixelType inval = static_cast< InputPixelType >(
+	  atoi( m_InValues[i].c_str() )   );
+	const OutputPixelType outval = static_cast< OutputPixelType >(
+	  atoi( m_OutValues[i].c_str() )   );
+	replaceFilter->SetChange( inval, outval );
+      }
+    }
+    else
+    {
+      for (unsigned int i = 0; i < m_InValues.size(); ++i)
+      {
+	const InputPixelType inval = static_cast< InputPixelType >(
+	  atof( m_InValues[i].c_str() )   );
+	const OutputPixelType outval = static_cast< OutputPixelType >(
+	  atof( m_OutValues[i].c_str() )   );
+	replaceFilter->SetChange( inval, outval );
+      }
+    }
+
+    /** Set up writer. */
+    writer->SetFileName( m_OutputFileName );
+    writer->SetInput( replaceFilter->GetOutput() );
+    writer->Update();
+  }
+
+}; // end IntensityReplace
 
 //-------------------------------------------------------------------------------------
-
-/* Declare IntensityReplaceImageFilter. */
-template< class TOutputPixel, unsigned int NDimension >
-void IntensityReplaceImageFilter(
-  const std::string & inputFileName,
-  const std::string & outputFileName,
-  const std::vector<std::string> & inValues,
-  const std::vector<std::string> & outValues );
 
 /** Declare GetHelpString. */
 std::string GetHelpString( void );
@@ -89,8 +167,8 @@ int main( int argc, char ** argv )
   outputFileName += "LUTAPPLIED.mhd";
   parser->GetCommandLineArgument( "-out", outputFileName );
 
-  std::string ComponentType = "";
-  bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
+  std::string ComponentTypeString = "";
+  bool retpt = parser->GetCommandLineArgument( "-pt", ComponentTypeString );
 
   /** Check if the required arguments are given. */
   if ( inValues.size() != outValues.size() )
@@ -99,80 +177,81 @@ int main( int argc, char ** argv )
     return 1;
   }
 
-  /** Determine image properties. */
-  std::string ComponentTypeIn = "short";
-  std::string PixelType; //we don't use this
-  unsigned int Dimension = 3;
-  unsigned int NumberOfComponents = 1;
-  std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = GetImageProperties(
-    inputFileName,
-    PixelType,
-    ComponentTypeIn,
-    Dimension,
-    NumberOfComponents,
-    imagesize );
-  if ( retgip != 0 )
-  {
-    std::cerr << "ERROR: error while getting image properties of the input image!" << std::endl;
-    return 1;
-  }
 
+  itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileName);
   /** The default output is equal to the input, but can be overridden by
    * specifying -pt in the command line.   */
-  if ( !retpt ) ComponentType = ComponentTypeIn;
+  if ( !retpt ) 
+  {
+    componentType = itktools::EnumComponentTypeFromString(ComponentTypeString);
+  }
 
   /** Check for vector images. */
-  if ( NumberOfComponents > 1 )
+  unsigned int numberOfComponents = 0;
+  GetImageNumberOfComponents(inputFileName, numberOfComponents);
+  
+  if ( numberOfComponents > 1 )
   {
     std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
     std::cerr << "Cannot make vector of vector images." << std::endl;
     return 1;
   }
+  
+  /** Class that does the work */
+  IntensityReplaceBase * intensityReplace = NULL; 
 
-  /** Get rid of the possible "_" in ComponentType. */
-  ReplaceUnderscoreWithSpace( ComponentType );
-
-
-  /** Run the program. */
-  bool supported = false;
+  unsigned int imageDimension = 0;
+  GetImageDimension(inputFileName, imageDimension);
+  
   try
-  {
-    run( IntensityReplaceImageFilter, char, 2 );
-    run( IntensityReplaceImageFilter, unsigned char, 2 );
-    run( IntensityReplaceImageFilter, short, 2 );
-    run( IntensityReplaceImageFilter, unsigned short, 2 );
-    run( IntensityReplaceImageFilter, int, 2 );
-    run( IntensityReplaceImageFilter, unsigned int, 2 );
-    run( IntensityReplaceImageFilter, long, 2 );
-    run( IntensityReplaceImageFilter, unsigned long, 2 );
-    run( IntensityReplaceImageFilter, float, 2 );
-    run( IntensityReplaceImageFilter, double, 2 );
+  {    
+    // now call all possible template combinations.
+    if (!intensityReplace) intensityReplace = IntensityReplace< 2, char >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = IntensityReplace< 2, unsigned char >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = IntensityReplace< 2, short >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = IntensityReplace< 2, unsigned short >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = IntensityReplace< 2, int >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = IntensityReplace< 2, unsigned int >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = IntensityReplace< 2, long >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = IntensityReplace< 2, unsigned long >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = IntensityReplace< 2, float >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = IntensityReplace< 2, double >::New( imageDimension, componentType );
+    
+#ifdef ITKTOOLS_3D_SUPPORT
+    if (!intensityReplace) intensityReplace = IntensityReplace< 2, char >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = IntensityReplace< 2, unsigned char >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = IntensityReplace< 2, short >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = IntensityReplace< 2, unsigned short >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = IntensityReplace< 2, int >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = IntensityReplace< 2, unsigned int >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = IntensityReplace< 2, long >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = IntensityReplace< 2, unsigned long >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = IntensityReplace< 2, float >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = IntensityReplace< 2, double >::New( imageDimension, componentType );
+#endif
+    if (!intensityReplace) 
+    {
+      std::cerr << "ERROR: this combination of pixeltype, image dimension, and space dimension is not supported!" << std::endl;
+      std::cerr
+        << " image dimension = " << intensityReplace << std::endl
+        << " pixel type = " << componentType << std::endl
+        << std::endl;
+      return 1;
+    }
 
-    run( IntensityReplaceImageFilter, char, 3 );
-    run( IntensityReplaceImageFilter, unsigned char, 3 );
-    run( IntensityReplaceImageFilter, short, 3 );
-    run( IntensityReplaceImageFilter, unsigned short, 3 );
-    run( IntensityReplaceImageFilter, int, 3 );
-    run( IntensityReplaceImageFilter, unsigned int, 3 );
-    run( IntensityReplaceImageFilter, long, 3 );
-    run( IntensityReplaceImageFilter, unsigned long, 3 );
-    run( IntensityReplaceImageFilter, float, 3 );
-    run( IntensityReplaceImageFilter, double, 3 );
-
+    intensityReplace->m_OutputFileName = outputFileName;
+    intensityReplace->m_InputFileName = inputFileName;
+    intensityReplace->m_InValues = inValues;
+    intensityReplace->m_OutValues = outValues;
+    
+    intensityReplace->Run();
+    
+    delete intensityReplace;  
   }
   catch( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
-    return 1;
-  }
-  if ( !supported )
-  {
-    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-    std::cerr
-      << "pixel (component) type = " << ComponentType
-      << " ; dimension = " << Dimension
-      << std::endl;
+    delete intensityReplace;
     return 1;
   }
 
@@ -180,71 +259,6 @@ int main( int argc, char ** argv )
   return 0;
 
 } // end main
-
-
-/*
- * ******************* IntensityReplaceImageFilter *******************
- */
-
-template< class TOutputPixel, unsigned int NDimension >
-void IntensityReplaceImageFilter( const std::string & inputFileName,
-  const std::string & outputFileName,
-  const std::vector<std::string> & inValues,
-  const std::vector<std::string> & outValues )
-{
-  /** Typedefs. */
-  typedef TOutputPixel                                    OutputPixelType;
-  const unsigned int Dimension = NDimension;
-
-  typedef OutputPixelType                                 InputPixelType;
-
-  typedef itk::Image< InputPixelType, Dimension >         InputImageType;
-  typedef itk::Image< OutputPixelType, Dimension >        OutputImageType;
-
-  typedef itk::ImageFileReader< InputImageType >          ReaderType;
-  typedef itk::ChangeLabelImageFilter<
-    InputImageType, OutputImageType >                     ReplaceFilterType;
-  typedef itk::ImageFileWriter< OutputImageType >         WriterType;
-
-  /** Read in the input image. */
-  typename ReaderType::Pointer reader = ReaderType::New();
-  typename ReplaceFilterType::Pointer replaceFilter = ReplaceFilterType::New();
-  typename WriterType::Pointer writer = WriterType::New();
-
-  /** Set up reader */
-  reader->SetFileName( inputFileName );
-
-  /** Setup the the input and the 'change map' of the replace filter. */
-  replaceFilter->SetInput( reader->GetOutput() );
-  if ( itk::NumericTraits<OutputPixelType>::is_integer )
-  {
-    for (unsigned int i = 0; i < inValues.size(); ++i)
-    {
-      const InputPixelType inval = static_cast< InputPixelType >(
-        atoi( inValues[i].c_str() )   );
-      const OutputPixelType outval = static_cast< OutputPixelType >(
-        atoi( outValues[i].c_str() )   );
-      replaceFilter->SetChange( inval, outval );
-    }
-  }
-  else
-  {
-    for (unsigned int i = 0; i < inValues.size(); ++i)
-    {
-      const InputPixelType inval = static_cast< InputPixelType >(
-        atof( inValues[i].c_str() )   );
-      const OutputPixelType outval = static_cast< OutputPixelType >(
-        atof( outValues[i].c_str() )   );
-      replaceFilter->SetChange( inval, outval );
-    }
-  }
-
-  /** Set up writer. */
-  writer->SetFileName( outputFileName );
-  writer->SetInput( replaceFilter->GetOutput() );
-  writer->Update();
-
-} // end IntensityReplaceImageFilter()
 
 
 /**
