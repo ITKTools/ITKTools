@@ -39,14 +39,14 @@ struct UnaryLogicalFunctorFactory
       typedef itk::UnaryFunctorImageFilter<TImage, TImage, 
 					  itk::Functor::EQUAL<typename TImage::PixelType> >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
-      return filter;
+      return filter.GetPointer();
     }
     else if(filterType == NOT)
     {
       typedef itk::UnaryFunctorImageFilter<TImage, TImage, 
 					  itk::Functor::NOT<typename TImage::PixelType> >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
-      return filter;
+      return filter.GetPointer();
     }
     else
     {
