@@ -28,6 +28,8 @@
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 
+#include "itkImageToVectorImageFilter.h"
+
 typedef std::map<std::string, std::string> ArgMapType;
 ArgMapType argmap;
 
@@ -50,11 +52,12 @@ public:
   unsigned long m_Resolution;
   double m_Sigma;
   int m_Rand_seed;
+  int m_SpaceDimension;
     
 }; // end CreateGridImageBase
 
 
-template< unsigned int VImageDimension, unsigned int VSpaceDimension, class TValue >
+template< unsigned int VImageDimension, class TValue >
 class CreateRandomImage : public CreateRandomImageBase
 {
 public:
@@ -63,9 +66,9 @@ public:
   CreateRandomImage(){};
   ~CreateRandomImage(){};
 
-  static Self * New( unsigned int imageDimension, unsigned int spaceDimension, itktools::EnumComponentType componentType )
+  static Self * New( unsigned int imageDimension, itktools::EnumComponentType componentType )
   {
-    if ( VImageDimension == imageDimension && VSpaceDimension == spaceDimension && itktools::IsType<TValue>( componentType ) )
+    if ( VImageDimension == imageDimension && itktools::IsType<TValue>( componentType ) )
     {
       return new Self;
     }
@@ -78,19 +81,18 @@ public:
 
     /** Dimensions */
     const unsigned int ImageDimension = VImageDimension;
-    const unsigned int SpaceDimension = VSpaceDimension;
 
     /** PixelTypes */
     typedef TValue    ValueType;
     typedef ValueType ScalarPixelType;
     typedef float InternalValueType;
-    typedef itk::Vector<ValueType, SpaceDimension> VectorPixelType;
+    typedef itk::VariableLengthVector<ValueType> VectorPixelType;
 
     /** ImageTypes */
     typedef itk::Image<ValueType, ImageDimension> ImageType;
     typedef itk::Image<InternalValueType, ImageDimension> InternalImageType;
     typedef itk::Image<ScalarPixelType, ImageDimension> ScalarOutputImageType;
-    typedef itk::Image<VectorPixelType, ImageDimension> VectorOutputImageType;
+    typedef itk::VectorImage<VectorPixelType, ImageDimension> VectorOutputImageType;
     typedef typename ImageType::Pointer ImagePointer;
     typedef typename InternalImageType::Pointer InternalImagePointer;
 
@@ -104,7 +106,8 @@ public:
     typedef typename InternalImageType::PointType InternalOriginType;
     typedef typename InternalImageType::RegionType InternalRegionType;
 
-    typedef itk::FixedArray<InternalImagePointer, SpaceDimension> SetOfChannelsType;
+    //typedef itk::FixedArray<InternalImagePointer, SpaceDimension> SetOfChannelsType;
+    typedef itk::VariableLengthVector<InternalImagePointer> SetOfChannelsType;
 
     /** Iterator */
     typedef itk::ImageRandomIteratorWithIndex<InternalImageType>  RandomIteratorType;
@@ -116,7 +119,8 @@ public:
     typedef itk::SmoothingRecursiveGaussianImageFilter<
       InternalImageType, InternalImageType>               BlurFilterType;
     typedef typename BlurFilterType::Pointer            BlurFilterPointer;
-    typedef itk::FixedArray<BlurFilterPointer, SpaceDimension> SetOfBlurrersType;
+    //typedef itk::FixedArray<BlurFilterPointer, SpaceDimension> SetOfBlurrersType;
+    typedef itk::VariableLengthVector<BlurFilterPointer, SpaceDimension> SetOfBlurrersType;
 
     typedef itk::CastImageFilter<InternalImageType, ImageType> CastFilterType;
     typedef typename CastFilterType::Pointer CastFilterPointer;
@@ -126,18 +130,8 @@ public:
     typedef typename ExtractFilterType::Pointer ExtractFilterPointer;
     typedef itk::FixedArray<ExtractFilterPointer, SpaceDimension> SetOfExtractersType;
 
-
-    /** For different space dimensions different types: */
-    /** Combine channels into one vector image */
-    typedef itk::Compose2DVectorImageFilter<ImageType>  Composer2DType;
-    typedef itk::Compose3DVectorImageFilter<ImageType>  Composer3DType;
-    typedef typename Composer2DType::Pointer Composer2DPointer;
-    typedef typename Composer3DType::Pointer Composer3DPointer;
-
     /** ImageWriters */
-    typedef itk::ImageFileWriter<ScalarOutputImageType> ScalarWriterType;
     typedef itk::ImageFileWriter<VectorOutputImageType> VectorWriterType;
-    typedef typename ScalarWriterType::Pointer ScalarWriterPointer;
     typedef typename VectorWriterType::Pointer VectorWriterPointer;
 
     /** RandomGenerator */
@@ -146,23 +140,21 @@ public:
 
 
     /** Create variables */
-
-    ScalarWriterPointer scalarWriter = 0;
     VectorWriterPointer vectorWriter = 0;
     Composer2DPointer composer2D = 0;
     Composer3DPointer composer3D = 0;
+    
     SetOfChannelsType setOfChannels;
+    setOfChannels.SetSize(m_SpaceDimension);
+    
     SetOfBlurrersType setOfBlurrers;
     SetOfCastersType setOfCasters;
     SetOfExtractersType setOfExtracters;
     RandomGeneratorPointer randomGenerator = RandomGeneratorType::New();
     bool randomiterating = true;
 
-
     /** Set the random seed */
     randomGenerator->SetSeed(m_Rand_seed);
-
-
 
     /** Convert the itkArray to an itkSizeType and calculate nrOfPixels */
     InternalSizeType internalimagesize;
@@ -217,7 +209,7 @@ public:
     }
 
     /** Create the images */
-    for (unsigned int i = 0; i< SpaceDimension; i++)
+    for (unsigned int i = 0; i< m_SpaceDimension; i++)
     {
 
       setOfChannels[i] = InternalImageType::New();
@@ -316,57 +308,24 @@ public:
   //  itk::Object::GlobalWarningDisplayOn();
     }
 
-    /** Combine the channels into the final vector image (if sDim > 1)
-    * and setup the Writer */
-    if ( SpaceDimension == 1 )
+    typedef itk::ImageToVectorImageFilter<ScalarImageType> ImageToVectorImageFilterType;
+    ImageToVectorImageFilterType::Pointer imageToVectorImageFilter = ImageToVectorImageFilterType::New();
+    for(unsigned int spaceDimension = 0; spaceDimension < m_SpaceDimension; ++spaceDimension);
     {
-      scalarWriter = ScalarWriterType::New();
-      scalarWriter->SetFileName(m_OutputFileName);
-      scalarWriter->SetInput( setOfExtracters[0]->GetOutput() );
+      imageToVectorImageFilter->SetNthInput(spaceDimension, setOfExtracters[spaceDimension]->GetOutput());
     }
-    else
-    {
-      vectorWriter = VectorWriterType::New();
-      vectorWriter->SetFileName(m_OutputFileName);
-      if ( SpaceDimension == 2 )
-      {
-	composer2D = Composer2DType::New();
-	composer2D->SetInput1( setOfExtracters[0]->GetOutput() );
-	composer2D->SetInput2( setOfExtracters[1]->GetOutput() );
-	vectorWriter->SetInput( dynamic_cast<VectorOutputImageType *>( composer2D->GetOutput() )   );
-      }
-      else if ( SpaceDimension == 3 )
-      {
-	composer3D = Composer3DType::New();
-	composer3D->SetInput1( setOfExtracters[0]->GetOutput() );
-	composer3D->SetInput2( setOfExtracters[1]->GetOutput() );
-	composer3D->SetInput3( setOfExtracters[2]->GetOutput() );
-	vectorWriter->SetInput( dynamic_cast<VectorOutputImageType *>( composer3D->GetOutput() )   );
-      }
-    }
-
-    /** do it. */
+    imageToVectorImageFilter->Update();
+    
     std::cout
       << "Saving image to disk as \""
       << m_OutputFileName
       << "\""
       << std::endl;
-    try
-    {
-      if (scalarWriter)
-      {
-	scalarWriter->Update();
-      }
-      else if (vectorWriter)
-      {
-	vectorWriter->Update();
-      }
-    }
-    catch (itk::ExceptionObject & err)
-    {
-      std::cerr << err << std::endl;
-
-    }
+    
+    vectorWriter = VectorWriterType::New();
+    vectorWriter->SetInput(imageToVectorImageFilter->GetOutput();
+    vectorWriter->Update();
+    
   }
 
 }; // end CreateRandomImage
@@ -450,54 +409,23 @@ int main(int argc, char** argv)
   try
   {    
     // now call all possible template combinations.
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, 1, float >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, 1, short >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, 1, unsigned short >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, 1, int >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, 1, unsigned int >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, 1, char >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, 1, unsigned char >::New( imageDimension, spaceDimension, componentType );
-    
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, 2, float >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, 2, short >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, 2, unsigned short >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, 2, int >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, 2, unsigned int >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, 2, char >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, 2, unsigned char >::New( imageDimension, spaceDimension, componentType );
-    
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, 3, float >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, 3, short >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, 3, unsigned short >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, 3, int >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, 3, unsigned int >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, 3, char >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, 3, unsigned char >::New( imageDimension, spaceDimension, componentType );
+    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, float >::New( imageDimension, componentType );
+    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, short >::New( imageDimension, componentType );
+    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, unsigned short >::New( imageDimension, componentType );
+    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, int >::New( imageDimension, componentType );
+    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, unsigned int >::New( imageDimension, componentType );
+    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, char >::New( imageDimension, componentType );
+    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, unsigned char >::New( imageDimension, componentType );
     
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, 1, float >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, 1, short >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, 1, unsigned short >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, 1, int >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, 1, unsigned int >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, 1, char >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, 1, unsigned char >::New( imageDimension, spaceDimension, componentType );
-    
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, 2, float >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, 2, short >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, 2, unsigned short >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, 2, int >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, 2, unsigned int >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, 2, char >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, 2, unsigned char >::New( imageDimension, spaceDimension, componentType );
-    
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, 3, float >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, 3, short >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, 3, unsigned short >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, 3, int >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, 3, unsigned int >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, 3, char >::New( imageDimension, spaceDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, 3, unsigned char >::New( imageDimension, spaceDimension, componentType );
+    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, float >::New( imageDimension, componentType );
+    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, short >::New( imageDimension, componentType );
+    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, unsigned short >::New( imageDimension, componentType );
+    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, int >::New( imageDimension, componentType );
+    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, unsigned int >::New( imageDimension, componentType );
+    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, char >::New( imageDimension, componentType );
+    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, unsigned char >::New( imageDimension, componentType );
+
 #endif
     if (!createRandomImage) 
     {
@@ -517,6 +445,7 @@ int main(int argc, char** argv)
     createRandomImage->m_Resolution = resolution;
     createRandomImage->m_Sigma = sigma;
     createRandomImage->m_Rand_seed = rand_seed;
+    createRandomImage->m_SpaceDimension = spaceDimension;
     
     createRandomImage->Run();
     
