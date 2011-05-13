@@ -52,7 +52,7 @@ public:
   unsigned long m_Resolution;
   double m_Sigma;
   int m_Rand_seed;
-  int m_SpaceDimension;
+  unsigned int m_SpaceDimension;
     
 }; // end CreateGridImageBase
 
@@ -86,13 +86,13 @@ public:
     typedef TValue    ValueType;
     typedef ValueType ScalarPixelType;
     typedef float InternalValueType;
-    typedef itk::VariableLengthVector<ValueType> VectorPixelType;
+    //typedef itk::VariableLengthVector<ValueType> VectorPixelType;
 
     /** ImageTypes */
     typedef itk::Image<ValueType, ImageDimension> ImageType;
     typedef itk::Image<InternalValueType, ImageDimension> InternalImageType;
     typedef itk::Image<ScalarPixelType, ImageDimension> ScalarOutputImageType;
-    typedef itk::VectorImage<VectorPixelType, ImageDimension> VectorOutputImageType;
+    typedef itk::VectorImage<ScalarPixelType, ImageDimension> VectorOutputImageType;
     typedef typename ImageType::Pointer ImagePointer;
     typedef typename InternalImageType::Pointer InternalImagePointer;
 
@@ -106,7 +106,7 @@ public:
     typedef typename InternalImageType::PointType InternalOriginType;
     typedef typename InternalImageType::RegionType InternalRegionType;
 
-    typedef itk::VariableLengthVector<InternalImagePointer> SetOfChannelsType;
+    typedef std::vector<InternalImagePointer> SetOfChannelsType;
 
     /** Iterator */
     typedef itk::ImageRandomIteratorWithIndex<InternalImageType>  RandomIteratorType;
@@ -119,15 +119,15 @@ public:
       InternalImageType, InternalImageType>               BlurFilterType;
     typedef typename BlurFilterType::Pointer            BlurFilterPointer;
     
-    typedef itk::VariableLengthVector<BlurFilterPointer> SetOfBlurrersType;
+    typedef std::vector<BlurFilterPointer> SetOfBlurrersType;
 
     typedef itk::CastImageFilter<InternalImageType, ImageType> CastFilterType;
     typedef typename CastFilterType::Pointer CastFilterPointer;
-    typedef itk::VariableLengthVector<CastFilterPointer> SetOfCastersType;
+    typedef std::vector<CastFilterPointer> SetOfCastersType;
 
     typedef itk::ExtractImageFilter<ImageType, ImageType> ExtractFilterType;
     typedef typename ExtractFilterType::Pointer ExtractFilterPointer;
-    typedef itk::VariableLengthVector<ExtractFilterPointer> SetOfExtractersType;
+    typedef std::vector<ExtractFilterPointer> SetOfExtractersType;
 
     /** ImageWriters */
     typedef itk::ImageFileWriter<VectorOutputImageType> VectorWriterType;
@@ -141,17 +141,13 @@ public:
     /** Create variables */
     VectorWriterPointer vectorWriter = 0;
     
-    SetOfChannelsType setOfChannels;
-    setOfChannels.SetSize(m_SpaceDimension);
+    SetOfChannelsType setOfChannels(m_SpaceDimension);
     
-    SetOfBlurrersType setOfBlurrers;
-    setOfBlurrers.SetSize(m_SpaceDimension);
+    SetOfBlurrersType setOfBlurrers(m_SpaceDimension);
     
-    SetOfCastersType setOfCasters;
-    setOfCasters.SetSize(m_SpaceDimension);
+    SetOfCastersType setOfCasters(m_SpaceDimension);
     
-    SetOfExtractersType setOfExtracters;
-    setOfExtracters.SetSize(m_SpaceDimension);
+    SetOfExtractersType setOfExtracters(m_SpaceDimension);
     
     RandomGeneratorPointer randomGenerator = RandomGeneratorType::New();
     bool randomiterating = true;
@@ -311,7 +307,7 @@ public:
   //  itk::Object::GlobalWarningDisplayOn();
     }
 
-    typedef itk::ImageToVectorImageFilter<ImageType> ImageToVectorImageFilterType;
+    typedef itk::ImageToVectorImageFilter<ScalarOutputImageType> ImageToVectorImageFilterType;
     typename ImageToVectorImageFilterType::Pointer imageToVectorImageFilter = ImageToVectorImageFilterType::New();
     for(unsigned int spaceDimensionIndex = 0; spaceDimensionIndex < m_SpaceDimension; ++spaceDimensionIndex)
     {
