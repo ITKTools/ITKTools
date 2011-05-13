@@ -30,14 +30,114 @@
 
 //-------------------------------------------------------------------------------------
 
-/** run: A macro to call a function. */
-#define run(function,type,dim) \
-if ( ComponentType == #type && Dimension == dim ) \
-{ \
-  function< type, dim >( inputFileName, outputFileName, ops, \
-    numberOfStreams, numberOfIterations, stopValue ); \
-  supported = true; \
-}
+/** DeformationFieldOperator */
+
+class DeformationFieldOperatorBase : public itktools::ITKToolsBase
+{ 
+public:
+  DeformationFieldOperatorBase(){};
+  ~DeformationFieldOperatorBase(){};
+
+  /** Input parameters */
+  std::string m_InputFileName;
+  std::string m_OutputFileName;
+  std::string m_Ops;
+  unsigned int m_NumberOfStreams;
+  unsigned int m_NumberOfIterations;
+  double m_StopValue;
+    
+}; // end DeformationFieldOperatorBase
+
+/**
+ * **************** DeformationFieldOperator *******************
+ *
+ * converts between deformation fields and transformation 'fields',
+ * and compute magnitudes/Jacobians.
+ */
+template< class TComponentType, unsigned int VDimension >
+class DeformationFieldOperator : public DeformationFieldOperatorBase
+{
+public:
+  typedef DeformationFieldOperator Self;
+
+  DeformationFieldOperator(){};
+  ~DeformationFieldOperator(){};
+
+  static Self * New( itktools::EnumComponentType componentType, unsigned int dim )
+  {
+    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
+    {
+      return new Self;
+    }
+    return 0;
+  }
+
+  void Run(void)
+  {
+    /** TYPEDEF's. */
+    typedef TComponentType                               ComponentType;
+    typedef ComponentType                                ScalarPixelType;
+    typedef itk::Vector< ComponentType, VDimension >     VectorPixelType;
+
+    typedef itk::Image< ScalarPixelType, VDimension >    ScalarImageType;
+    typedef itk::Image< VectorPixelType, VDimension >    VectorImageType;
+    typedef itk::ImageFileReader< VectorImageType >     ReaderType;
+
+    /** DECLARATION'S. */
+    typename VectorImageType::Pointer workingImage;
+    typename ReaderType::Pointer reader = ReaderType::New();
+
+    /** Read in the inputImage. */
+    reader->SetFileName( m_InputFileName.c_str() );
+    // temporarily: only streaming support for Jacobian case needed for EMPIRE10 challenge.
+    if ( m_Ops != "DEF2JAC" && m_Ops != "TRANS2JAC" && m_Ops != "JACOBIAN" )
+    {
+      std::cout << "Reading input image: " << m_InputFileName << std::endl;
+      reader->Update();
+      std::cout << "Input image read." << std::endl;
+    }
+
+    /** Change to Transformation or Deformation by adding/subtracting pixel coordinates */
+    workingImage = reader->GetOutput();
+
+    /** Do something with this image and save the result */
+    if ( m_Ops == "DEF2TRANS" )
+    {
+      Deformation2Transformation<VectorImageType>(
+	workingImage, m_OutputFileName, true );
+    }
+    else if ( m_Ops == "TRANS2DEF" )
+    {
+      Deformation2Transformation<VectorImageType>(
+	workingImage, m_OutputFileName, false );
+    }
+    else if ( m_Ops == "MAGNITUDE" )
+    {
+      ComputeMagnitude<VectorImageType, ScalarImageType>(
+	workingImage, m_OutputFileName );
+    }
+    else if ( m_Ops == "JACOBIAN" || m_Ops == "TRANS2JAC" )
+    {
+      ComputeJacobian<VectorImageType, ScalarImageType>(
+	m_InputFileName, m_OutputFileName, m_NumberOfStreams, true );
+    }
+    else if ( m_Ops == "DEF2JAC" )
+    {
+      ComputeJacobian<VectorImageType, ScalarImageType>(
+	m_InputFileName, m_OutputFileName, m_NumberOfStreams, false );
+    }
+    else if ( m_Ops == "INVERSE" )
+    {
+      ComputeInverse<VectorImageType>(
+	m_InputFileName, m_OutputFileName, m_NumberOfStreams, m_NumberOfIterations, m_StopValue );
+    }
+    else
+    {
+      itkGenericExceptionMacro( << "<< invalid operator: " << m_Ops );
+    }
+  }
+
+}; // end DeformationFieldOperator
 
 //-------------------------------------------------------------------------------------
 
@@ -129,30 +229,49 @@ int main( int argc, char **argv )
   ReplaceUnderscoreWithSpace( ComponentType );
 
   /** Run the program. */
-  bool supported = false;
-  try
-  {
-    run( DeformationFieldOperator, float, 2 );
-    run( DeformationFieldOperator, float, 3 );
+  
+  /** Class that does the work */
+  DeformationFieldOperatorBase * deformationFieldOperator = 0; 
 
-    run( DeformationFieldOperator, double, 2 );
-    run( DeformationFieldOperator, double, 3 );
+  /** Short alias */
+  unsigned int dim = Dimension;
+
+  itktools::EnumComponentType componentType = itktools::EnumComponentTypeFromString(PixelType);
+   
+  try
+  {    
+    // now call all possible template combinations.
+    if (!deformationFieldOperator) deformationFieldOperator = DeformationFieldOperator< float, 2 >::New( componentType, dim );
+    if (!deformationFieldOperator) deformationFieldOperator = DeformationFieldOperator< double, 2 >::New( componentType, dim );
+#ifdef ITKTOOLS_3D_SUPPORT
+    if (!deformationFieldOperator) deformationFieldOperator = DeformationFieldOperator< float, 3 >::New( componentType, dim );
+    if (!deformationFieldOperator) deformationFieldOperator = DeformationFieldOperator< double, 3 >::New( componentType, dim );
+#endif
+    if (!deformationFieldOperator) 
+    {
+      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+      std::cerr
+        << "pixel (component) type = " << componentType
+        << " ; dimension = " << Dimension
+        << std::endl;
+      return 1;
+    }
+
+    deformationFieldOperator->m_InputFileName = inputFileName;
+    deformationFieldOperator->m_OutputFileName = outputFileName;
+    deformationFieldOperator->m_Ops = ops;
+    deformationFieldOperator->m_NumberOfStreams = numberOfStreams;
+    deformationFieldOperator->m_NumberOfIterations = numberOfIterations;
+    deformationFieldOperator->m_StopValue = stopValue;
+  
+    deformationFieldOperator->Run();
+    
+    delete deformationFieldOperator;
   }
-  catch ( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
-    return 1;
-  }
-  if ( !supported )
-  {
-    std::cerr << "ERROR: this combination of pixeltype and dimension is not "
-      << "supported!" << std::endl;
-    std::cerr
-      << "pixel (component) type = " << ComponentType
-      << " ; dimension = " << Dimension
-      << std::endl;
-    std::cerr << "Call \"pxdeformationfieldoperator --help\" to get a list "
-      << "of supported images." << std::endl;
+    delete deformationFieldOperator;
     return 1;
   }
 
