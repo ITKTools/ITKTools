@@ -7,43 +7,12 @@
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
+#include "NaryFilterFactory.h"
+
 #include <vector>
 #include <itksys/SystemTools.hxx>
 
 //-------------------------------------------------------------------------------------
-
-/** Macros for easily instantiating the correct binary functor
- * if, for example name is PLUS, the result is:
- * typedef itk::NaryFunctorImageFilter<
- *   InputImageType,
- *   OutputImageType,
- *   itk::Functor::PLUS<InputPixelType,OutputPixelType> > PLUSFilterType;
- * naryFilter = (PLUSFilterType::New()).GetPointer();
- *
- */
-#define InstantiateNaryFilterNoArg( name ) \
-  typedef itk::NaryFunctorImageFilter< \
-    InputImageType, OutputImageType, \
-    itk::Functor::Nary##name<InputPixelType, OutputPixelType> > name##FilterType; \
-  if ( naryOperatorName == #name ) \
-  {\
-    typename name##FilterType::Pointer tempNaryFilter = name##FilterType::New(); \
-    tempNaryFilter->InPlaceOn(); \
-    naryFilter = tempNaryFilter.GetPointer(); \
-  }
-
-#define InstantiateNaryFilterWithArg( name ) \
-  typedef itk::NaryFunctorImageFilter< \
-    InputImageType, OutputImageType, \
-    itk::Functor::Nary##name<InputPixelType, OutputPixelType> > name##FilterType; \
-  if ( naryOperatorName == #name ) \
-  {\
-    typename name##FilterType::Pointer tempNaryFilter = name##FilterType::New(); \
-    tempNaryFilter->InPlaceOn(); \
-    tempNaryFilter->GetFunctor().SetArgument( argument ); \
-    naryFilter = tempNaryFilter.GetPointer(); \
-  }
-
 
 /**
  * ******************* NaryImageOperator *******************
@@ -53,7 +22,7 @@ template< class InputImageType, class OutputImageType >
 void NaryImageOperator(
   const std::vector<std::string> & inputFileNames,
   const std::string & outputFileName,
-  const std::string & ops,
+  const std::string & naryOperatorName,
   const bool & useCompression,
   const unsigned int & numberOfStreams,
   const std::string & arg )
@@ -61,7 +30,6 @@ void NaryImageOperator(
   /** Typedefs. */
   typedef typename InputImageType::PixelType          InputPixelType;
   typedef typename OutputImageType::PixelType         OutputPixelType;
-  typedef itk::ImageToImageFilter<InputImageType, OutputImageType> BaseFilterType;
   typedef itk::ImageFileReader< InputImageType >      ReaderType;
   typedef itk::ImageFileWriter< OutputImageType >     WriterType;
 
@@ -73,22 +41,25 @@ void NaryImageOperator(
     readers[ i ]->SetFileName( inputFileNames[ i ] );
   }
 
-  /** Get the naryOperatorName. */
-  std::string naryOperatorName = ops;
-
+  std::map <std::string, NaryFilterEnum> naryOperatorMap;
+ 
+  naryOperatorMap["ADDITION"] = ADDITION;
+  naryOperatorMap["MEAN"] = MEAN;
+  naryOperatorMap["MINUS"] = MINUS;
+  naryOperatorMap["TIMES"] = TIMES;
+  naryOperatorMap["DIVIDE"] = DIVIDE;
+  naryOperatorMap["MAXIMUM"] = MAXIMUM;
+  naryOperatorMap["MINIMUM"] = MINIMUM;
+  naryOperatorMap["ABSOLUTEDIFFERENCE"] = ABSOLUTEDIFFERENCE;
+  naryOperatorMap["NARYMAGNITUDE"] = NARYMAGNITUDE;
+  
   /** Set up the binaryFilter. */
-  typename BaseFilterType::Pointer naryFilter = 0;
-  InstantiateNaryFilterNoArg( ADDITION );
-  InstantiateNaryFilterNoArg( MEAN );
-  InstantiateNaryFilterNoArg( MINUS );
-  InstantiateNaryFilterNoArg( TIMES );
-  InstantiateNaryFilterNoArg( DIVIDE );
+  NaryFilterFactory<InputImageType, OutputImageType> naryFilterFactory;
+  typedef itk::InPlaceImageFilter<InputImageType, OutputImageType> BaseFilterType;
+  typename BaseFilterType::Pointer naryFilter = naryFilterFactory.GetFilter(naryOperatorMap[naryOperatorName]);
+  
   //InstantiateNaryFilterNoArg( POWER );
-  InstantiateNaryFilterNoArg( MAXIMUM );
-  InstantiateNaryFilterNoArg( MINIMUM );
-  InstantiateNaryFilterNoArg( ABSOLUTEDIFFERENCE );
   //InstantiateNaryFilterNoArg( SQUAREDDIFFERENCE );
-  InstantiateNaryFilterNoArg( NARYMAGNITUDE );
   //InstantiateNaryFilterNoArg( MODULO );
   //InstantiateNaryFilterNoArg( LOG );
 
