@@ -30,23 +30,112 @@
 
 //-------------------------------------------------------------------------------------
 
-/** run: A macro to call a function. */
-#define run( function, dim ) \
-if ( Dimension == dim ) \
-{ \
-  function< dim >( inputFileName, outputFileName, center, radius ); \
-  supported = true; \
-}
+
+/** CreateCylinder */
+
+class CreateCylinderBase : public itktools::ITKToolsBase
+{ 
+public:
+  CreateCylinderBase(){};
+  ~CreateCylinderBase(){};
+
+  /** Input parameters */
+  std::string m_InputFileName;
+  std::string m_OutputFileName;
+  std::vector<unsigned int> m_Center;
+  double m_Radius;
+    
+}; // end CreateCylinderBase
+
+
+template< unsigned int VDimension >
+class CreateCylinder : public CreateCylinderBase
+{
+public:
+  typedef CreateCylinder Self;
+
+  CreateCylinder(){};
+  ~CreateCylinder(){};
+
+  static Self * New( unsigned int dim )
+  {
+    if ( VDimension == dim )
+    {
+      return new Self;
+    }
+    return 0;
+  }
+
+  void Run(void)
+  {
+    /** Typedefs. */
+    typedef float               InputPixelType;
+    typedef unsigned char       OutputPixelType;
+    typedef itk::Image< InputPixelType, VDimension >   InputImageType;
+    typedef itk::Image< OutputPixelType, VDimension >  OutputImageType;
+    typedef itk::ImageFileReader< InputImageType >    ReaderType;
+    typedef itk::ImageFileWriter< OutputImageType >     WriterType;
+    typedef itk::ImageRegionIteratorWithIndex< OutputImageType >  IteratorType;
+    typedef itk::CylinderSpatialFunction< VDimension > CylinderSpatialFunctionType;
+    typedef typename CylinderSpatialFunctionType::InputType    InputType;
+    typedef typename OutputImageType::IndexType   IndexType;
+    typedef typename OutputImageType::PointType   PointType;
+
+    /** Create a testReader. */
+    typename ReaderType::Pointer testReader = ReaderType::New();
+    testReader->SetFileName( m_InputFileName.c_str() );
+    testReader->Update();
+
+    typename OutputImageType::Pointer outputImage = OutputImageType::New();
+    outputImage->CopyInformation( testReader->GetOutput() );
+    outputImage->SetRegions( outputImage->GetLargestPossibleRegion() );
+    outputImage->Allocate();
+    outputImage->FillBuffer( 0 );
+
+    /** Parse the arguments. */
+    InputType   Center;
+    PointType point;
+    IndexType index;
+    for ( unsigned int i = 0; i < VDimension; i++ )
+    {
+      index[ i ] = m_Center[ i ];
+    }
+    outputImage->TransformIndexToPhysicalPoint( index, point );
+    for ( unsigned int i = 0; i < VDimension; i++ )
+    {
+      Center[ i ] = point[ i ];
+    }
+
+    /** Create and initialize ellipsoid. */
+    typename CylinderSpatialFunctionType::Pointer cylinder
+      = CylinderSpatialFunctionType::New();
+    cylinder->SetCenter( Center );
+    cylinder->SetRadius( m_Radius );
+
+    /** Create iterator, index and point. */
+    IteratorType it( outputImage, outputImage->GetLargestPossibleRegion() );
+    it.GoToBegin();
+
+    /** Walk over the image. */
+    while ( !it.IsAtEnd() )
+    {
+      index = it.GetIndex();
+      outputImage->TransformIndexToPhysicalPoint( index, point );
+      it.Set( cylinder->Evaluate( point ) );
+      ++it;
+    }
+
+    /** Write image. */
+    typename WriterType::Pointer writer = WriterType::New();
+    writer->SetFileName( m_OutputFileName.c_str() );
+    writer->SetInput( outputImage );
+    writer->Update();
+  }
+
+}; // end CreateCylinder
 
 //-------------------------------------------------------------------------------------
 
-/* Declare CreateCylinder. */
-template< unsigned int Dimension >
-void CreateCylinder(
-  const std::string & inputFileName,
-  const std::string & outputFileName,
-  const std::vector<unsigned int> & center,
-  const double & radius );
 
 /** Declare GetHelpString. */
 std::string GetHelpString( void );
@@ -86,7 +175,7 @@ int main( int argc, char *argv[] )
   std::vector<unsigned int> center;
   parser->GetCommandLineArgument( "-c", center );
 
-  double radius;
+  double radius = 0.0f;
   parser->GetCommandLineArgument( "-r", radius );
 
   /** Determine image properties. */
@@ -104,108 +193,49 @@ int main( int argc, char *argv[] )
     imagesize );
   if ( retgip != 0 ) return 1;
 
-  /** Run the program. */
-  bool supported = false;
+  
+  /** Class that does the work */
+  CreateCylinderBase * createCylinder = NULL; 
+
+  /** Short alias */
+  unsigned int dim = Dimension;
+ 
   try
-  {
-    run( CreateCylinder, 2 );
-    run( CreateCylinder, 3 );
+  {    
+    // now call all possible template combinations.
+    if (!createCylinder) createCylinder = CreateCylinder< 2 >::New( dim );
+#ifdef ITKTOOLS_3D_SUPPORT
+    if (!createCylinder) createCylinder = CreateCylinder< 3 >::New( dim );    
+#endif
+    if (!createCylinder) 
+    {
+      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+      std::cerr
+        << " dimension = " << Dimension
+        << std::endl;
+      return 1;
+    }
+
+    createCylinder->m_InputFileName = inputFileName;
+    createCylinder->m_OutputFileName = outputFileName;
+    createCylinder->m_Center = center;
+    createCylinder->m_Radius = radius;
+
+    createCylinder->Run();
+    
+    delete createCylinder;  
   }
   catch( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
+    delete createCylinder;
     return 1;
   }
-  if ( !supported )
-  {
-    std::cerr << "ERROR: this dimension is not supported!" << std::endl;
-    std::cerr
-      << "pixel (component) type = " << PixelType
-      << " ; dimension = " << Dimension
-      << std::endl;
-    return 1;
-  }
-
+  
   /** End program. Return a value. */
   return 0;
 
 } // end main
-
-/*
- * ******************* CreateCylinder *******************
- */
-
-template< unsigned int Dimension >
-void CreateCylinder(
-  const std::string & inputFileName,
-  const std::string & outputFileName,
-  const std::vector<unsigned int> & center,
-  const double & radius )
-{
-  /** Typedefs. */
-  typedef float               InputPixelType;
-  typedef unsigned char       OutputPixelType;
-  typedef itk::Image< InputPixelType, Dimension >   InputImageType;
-  typedef itk::Image< OutputPixelType, Dimension >  OutputImageType;
-  typedef itk::ImageFileReader< InputImageType >    ReaderType;
-  typedef itk::ImageFileWriter< OutputImageType >     WriterType;
-  typedef itk::ImageRegionIteratorWithIndex< OutputImageType >  IteratorType;
-  typedef itk::CylinderSpatialFunction< Dimension > CylinderSpatialFunctionType;
-  typedef typename CylinderSpatialFunctionType::InputType    InputType;
-  typedef typename OutputImageType::IndexType   IndexType;
-  typedef typename OutputImageType::PointType   PointType;
-
-  /** Create a testReader. */
-  typename ReaderType::Pointer testReader = ReaderType::New();
-  testReader->SetFileName( inputFileName.c_str() );
-  testReader->Update();
-
-  typename OutputImageType::Pointer outputImage = OutputImageType::New();
-  outputImage->CopyInformation( testReader->GetOutput() );
-  outputImage->SetRegions( outputImage->GetLargestPossibleRegion() );
-  outputImage->Allocate();
-  outputImage->FillBuffer( 0 );
-
-  /** Parse the arguments. */
-  InputType   Center;
-  PointType point;
-  IndexType index;
-  for ( unsigned int i = 0; i < Dimension; i++ )
-  {
-    index[ i ] = center[ i ];
-  }
-  outputImage->TransformIndexToPhysicalPoint( index, point );
-  for ( unsigned int i = 0; i < Dimension; i++ )
-  {
-    Center[ i ] = point[ i ];
-  }
-
-  /** Create and initialize ellipsoid. */
-  typename CylinderSpatialFunctionType::Pointer cylinder
-    = CylinderSpatialFunctionType::New();
-  cylinder->SetCenter( Center );
-  cylinder->SetRadius( radius );
-
-  /** Create iterator, index and point. */
-  IteratorType it( outputImage, outputImage->GetLargestPossibleRegion() );
-  it.GoToBegin();
-
-  /** Walk over the image. */
-  while ( !it.IsAtEnd() )
-  {
-    index = it.GetIndex();
-    outputImage->TransformIndexToPhysicalPoint( index, point );
-    it.Set( cylinder->Evaluate( point ) );
-    ++it;
-  }
-
-  /** Write image. */
-  typename WriterType::Pointer writer = WriterType::New();
-  writer->SetFileName( outputFileName.c_str() );
-  writer->SetInput( outputImage );
-  writer->Update();
-
-} // end CreateCylinder()
 
 
 /**
