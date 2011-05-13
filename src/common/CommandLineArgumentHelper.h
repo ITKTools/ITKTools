@@ -105,24 +105,12 @@ bool GetImageInformationFromImageIOBase(
   std::vector<double> & origin,
   std::vector<double> & direction );
 
-/** Convert vectors to an ITK type. */
-template< unsigned int Dimension>
-void ConvertImageInformationToITKTypes(
-  const std::vector<unsigned int> & size,
-  const std::vector<double> & spacing,
-  const std::vector<double> & origin,
-  const std::vector<double> & direction,
-  typename itk::ImageBase<Dimension>::SizeType      sizeITK,
-  typename itk::ImageBase<Dimension>::SpacingType   spacingITK,
-  typename itk::ImageBase<Dimension>::PointType     originITK,
-  typename itk::ImageBase<Dimension>::DirectionType directionITK );
-
 /** Selects the largest type of the two. The order is:
  * char < short < int < long < float < double.
  */
 std::string GetLargestComponentType(
   const std::string & type1, const std::string & type2 );
 
+#include "CommandLineArgumentHelper.txx"
 
 #endif // end #ifndef __CommandLineArgumentHelper_h
-

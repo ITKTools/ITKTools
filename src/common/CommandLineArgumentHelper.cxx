@@ -469,63 +469,6 @@ bool GetImageInformationFromImageIOBase(
 
 
 /**
- * *************** ConvertImageInformationToITKTypes ***********************
- */
-
-template<unsigned int Dimension>
-void ConvertImageInformationToITKTypes(
-  const std::vector<unsigned int> & size,
-  const std::vector<double> & spacing,
-  const std::vector<double> & origin,
-  const std::vector<double> & direction,
-  typename itk::ImageBase<Dimension>::SizeType      sizeITK,
-  typename itk::ImageBase<Dimension>::SpacingType   spacingITK,
-  typename itk::ImageBase<Dimension>::PointType     originITK,
-  typename itk::ImageBase<Dimension>::DirectionType directionITK )
-{
-  typedef itk::ImageBase<Dimension> ImageBaseType;
-  typedef typename ImageBaseType::SizeValueType      SizeValueType;
-
-  for ( unsigned int i = 0; i < Dimension; i++ )
-  {
-    sizeITK[ i ] = static_cast<SizeValueType>( size[ i ] );
-    spacingITK[ i ] = spacing[ i ];
-    originITK[ i ] = origin[ i ];
-  }
-
-  for ( unsigned int i = 0; i < Dimension; i++ )
-  {
-    for ( unsigned int j = 0; j < Dimension; j++ )
-    {
-      directionITK[ i ][ j ] = direction[ j + i * Dimension ];
-    }
-  }
-
-} // end ConvertImageInformationToITKTypes()
-
-/** Instantiate for dimension 2 and 3. */
-template void ConvertImageInformationToITKTypes<2>(
-  const std::vector<unsigned int> & size,
-  const std::vector<double> & spacing,
-  const std::vector<double> & origin,
-  const std::vector<double> & direction,
-  itk::ImageBase<2>::SizeType      sizeITK,
-  itk::ImageBase<2>::SpacingType   spacingITK,
-  itk::ImageBase<2>::PointType     originITK,
-  itk::ImageBase<2>::DirectionType directionITK );
-
-template void ConvertImageInformationToITKTypes<3>(
-  const std::vector<unsigned int> & size,
-  const std::vector<double> & spacing,
-  const std::vector<double> & origin,
-  const std::vector<double> & direction,
-  itk::ImageBase<3>::SizeType      sizeITK,
-  itk::ImageBase<3>::SpacingType   spacingITK,
-  itk::ImageBase<3>::PointType     originITK,
-  itk::ImageBase<3>::DirectionType directionITK );
-
-
-/**
  * *************** GetLargestComponentType ***********************
  */
 
