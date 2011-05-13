@@ -30,23 +30,77 @@
 
 //-------------------------------------------------------------------------------------
 
-/** run: A macro to call a function. */
-#define run(function,type,dim) \
-if ( ComponentType == #type && Dimension == dim ) \
-{ \
-  typedef itk::Image< type, dim > InputImageType; \
-  function< InputImageType >( inputFileName, outputFileName, window ); \
-  supported = true; \
-}
+
+/** IntensityWindowing */
+
+class IntensityWindowingBase : public itktools::ITKToolsBase
+{ 
+public:
+  IntensityWindowingBase(){};
+  ~IntensityWindowingBase(){};
+
+  /** Input parameters */
+  std::string m_InputFileName;
+  std::string m_OutputFileName;
+  std::vector<double> m_Window;
+
+    
+}; // end IntensityWindowingBase
+
+
+template< unsigned int VImageDimension, class TComponentType >
+class IntensityWindowing : public IntensityWindowingBase
+{
+public:
+  typedef IntensityWindowing Self;
+
+  IntensityWindowing(){};
+  ~IntensityWindowing(){};
+
+  static Self * New( unsigned int imageDimension, itktools::EnumComponentType componentType )
+  {
+    if ( VImageDimension == imageDimension && itktools::IsType<TComponentType>( componentType ) )
+    {
+      return new Self;
+    }
+    return 0;
+  }
+
+  void Run(void)
+  {
+    /** Typedefs. */
+    typedef itk::Image<TComponentType, VImageDimension>     InputImageType;
+    typedef itk::IntensityWindowingImageFilter<
+      InputImageType, InputImageType >                  WindowingType;
+    typedef itk::ImageFileReader< InputImageType >      ReaderType;
+    typedef itk::ImageFileWriter< InputImageType >      WriterType;
+    typedef typename InputImageType::PixelType          InputPixelType;
+
+    /** Declarations. */
+    typename WindowingType::Pointer windowfilter = WindowingType::New();
+    typename ReaderType::Pointer reader = ReaderType::New();
+    typename WriterType::Pointer writer = WriterType::New();
+
+    /** Setup the pipeline. */
+    reader->SetFileName( m_InputFileName.c_str() );
+    writer->SetFileName( m_OutputFileName.c_str() );
+    InputPixelType min = static_cast<InputPixelType>( m_Window[ 0 ] );
+    InputPixelType max = static_cast<InputPixelType>( m_Window[ 1 ] );
+    windowfilter->SetWindowMinimum( min );
+    windowfilter->SetWindowMaximum( max );
+    windowfilter->SetOutputMinimum( min );
+    windowfilter->SetOutputMaximum( max );
+
+    /** Connect and execute the pipeline. */
+    windowfilter->SetInput( reader->GetOutput() );
+    writer->SetInput( windowfilter->GetOutput() );
+    writer->Update();
+  }
+
+}; // end IntensityWindowing
 
 //-------------------------------------------------------------------------------------
 
-/* Declare IntensityWindowing. */
-template< class InputImageType >
-void IntensityWindowing(
-  const std::string & inputFileName,
-  const std::string & outputFileName,
-  const std::vector<double> & window );
 
 /** Declare GetHelpString. */
 std::string GetHelpString( void );
@@ -143,36 +197,53 @@ int main( int argc, char **argv )
     return 1;
   }
 
-  /** Get rid of the possible "_" in ComponentType. */
-  ReplaceUnderscoreWithSpace( ComponentType );
 
-  /** Run the program. */
-  bool supported = false;
+  /** Class that does the work */
+  IntensityWindowingBase * intensityWindowing = NULL; 
+
+  unsigned int imageDimension = 0;
+  GetImageDimension(inputFileName, imageDimension);
+
+  itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileName);
+  
   try
-  {
-    run( IntensityWindowing, unsigned char, 2 );
-    run( IntensityWindowing, unsigned char, 3 );
-    run( IntensityWindowing, char, 2 );
-    run( IntensityWindowing, char, 3 );
-    run( IntensityWindowing, unsigned short, 2 );
-    run( IntensityWindowing, unsigned short, 3 );
-    run( IntensityWindowing, short, 2 );
-    run( IntensityWindowing, short, 3 );
-    run( IntensityWindowing, float, 2 );
-    run( IntensityWindowing, float, 3 );
+  {    
+    // now call all possible template combinations.
+    if (!intensityWindowing) intensityWindowing = IntensityWindowing< 2, unsigned char >::New( imageDimension, componentType );
+    if (!intensityWindowing) intensityWindowing = IntensityWindowing< 2, char >::New( imageDimension, componentType );
+    if (!intensityWindowing) intensityWindowing = IntensityWindowing< 2, unsigned short >::New( imageDimension, componentType );
+    if (!intensityWindowing) intensityWindowing = IntensityWindowing< 2, short >::New( imageDimension, componentType );
+    if (!intensityWindowing) intensityWindowing = IntensityWindowing< 2, float >::New( imageDimension, componentType );
+    
+#ifdef ITKTOOLS_3D_SUPPORT
+    if (!intensityWindowing) intensityWindowing = IntensityWindowing< 3, unsigned char >::New( imageDimension, componentType );
+    if (!intensityWindowing) intensityWindowing = IntensityWindowing< 3, char >::New( imageDimension, componentType );
+    if (!intensityWindowing) intensityWindowing = IntensityWindowing< 3, unsigned short >::New( imageDimension, componentType );
+    if (!intensityWindowing) intensityWindowing = IntensityWindowing< 3, short >::New( imageDimension, componentType );
+    if (!intensityWindowing) intensityWindowing = IntensityWindowing< 3, float >::New( imageDimension, componentType );
+#endif
+    if (!intensityWindowing) 
+    {
+      std::cerr << "ERROR: this combination of pixeltype, image dimension, and space dimension is not supported!" << std::endl;
+      std::cerr
+        << " image dimension = " << imageDimension << std::endl
+        << " pixel type = " << componentType << std::endl
+        << std::endl;
+      return 1;
+    }
+
+    intensityWindowing->m_OutputFileName = outputFileName;
+    intensityWindowing->m_InputFileName = inputFileName;
+    intensityWindowing->m_Window = window;
+    
+    intensityWindowing->Run();
+    
+    delete intensityWindowing;
   }
   catch( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
-    return 1;
-  }
-  if ( !supported )
-  {
-    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-    std::cerr
-      << "pixel (component) type = " << ComponentType
-      << " ; dimension = " << Dimension
-      << std::endl;
+    delete intensityWindowing;
     return 1;
   }
 
@@ -180,47 +251,6 @@ int main( int argc, char **argv )
   return 0;
 
 } // end main
-
-
-  /*
-   * ******************* IntensityWindowing *******************
-   */
-
-template< class InputImageType >
-void IntensityWindowing(
-  const std::string & inputFileName,
-  const std::string & outputFileName,
-  const std::vector<double> & window )
-{
-  /** Typedefs. */
-  typedef itk::IntensityWindowingImageFilter<
-    InputImageType, InputImageType >                  WindowingType;
-  typedef itk::ImageFileReader< InputImageType >      ReaderType;
-  typedef itk::ImageFileWriter< InputImageType >      WriterType;
-  typedef typename InputImageType::PixelType          InputPixelType;
-
-  /** Declarations. */
-  typename WindowingType::Pointer windowfilter = WindowingType::New();
-  typename ReaderType::Pointer reader = ReaderType::New();
-  typename WriterType::Pointer writer = WriterType::New();
-
-  /** Setup the pipeline. */
-  reader->SetFileName( inputFileName.c_str() );
-  writer->SetFileName( outputFileName.c_str() );
-  InputPixelType min = static_cast<InputPixelType>( window[ 0 ] );
-  InputPixelType max = static_cast<InputPixelType>( window[ 1 ] );
-  windowfilter->SetWindowMinimum( min );
-  windowfilter->SetWindowMaximum( max );
-  windowfilter->SetOutputMinimum( min );
-  windowfilter->SetOutputMaximum( max );
-
-  /** Connect and execute the pipeline. */
-  windowfilter->SetInput( reader->GetOutput() );
-  writer->SetInput( windowfilter->GetOutput() );
-  writer->Update();
-
-} // end IntensityWindowing
-
 
 /**
  * ******************* GetHelpString *******************
