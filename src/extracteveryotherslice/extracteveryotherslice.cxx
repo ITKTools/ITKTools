@@ -31,25 +31,151 @@
 
 //-------------------------------------------------------------------------------------
 
-/** run: A macro to call a function. */
-#define run(function,type,dim) \
-if ( ComponentTypeIn == #type && Dimension == dim ) \
-{ \
-  typedef itk::Image< type, dim > InputImageType; \
-  function< InputImageType >( inputFileName, outputFileName, everyOther, offset, direction ); \
-  supported = true; \
-}
+/** ExtractEveryOtherSlice */
+
+class ExtractEveryOtherSliceBase : public itktools::ITKToolsBase
+{ 
+public:
+  ExtractEveryOtherSliceBase(){};
+  ~ExtractEveryOtherSliceBase(){};
+
+  /** Input parameters */
+  std::string m_InputFileName;
+  std::string m_OutputFileName;
+  unsigned int m_EveryOther;
+  unsigned int m_Offset;
+  unsigned int m_Direction;
+    
+}; // end ExtractEveryOtherSliceBase
+
+
+template< class TComponentType, unsigned int VDimension >
+class ExtractEveryOtherSlice : public ExtractEveryOtherSliceBase
+{
+public:
+  typedef ExtractEveryOtherSlice Self;
+
+  ExtractEveryOtherSlice(){};
+  ~ExtractEveryOtherSlice(){};
+
+  static Self * New( itktools::EnumComponentType componentType, unsigned int dim )
+  {
+    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
+    {
+      return new Self;
+    }
+    return 0;
+  }
+
+  void Run(void)
+  {
+    /** Typedefs. */
+    typedef itk::Image<TComponentType, VDimension>      InputImageType;
+    typedef itk::ImageSliceConstIteratorWithIndex<
+      InputImageType >                                  SliceConstIteratorType;
+    typedef itk::ImageSliceIteratorWithIndex<
+      InputImageType >                                  SliceIteratorType;
+    typedef itk::ImageFileReader< InputImageType >      ReaderType;
+    typedef itk::ImageFileWriter< InputImageType >      WriterType;
+    typedef typename InputImageType::RegionType         RegionType;
+    typedef typename RegionType::IndexType              IndexType;
+    typedef typename InputImageType::SizeType           SizeType;
+
+    /** Read in the inputImage. */
+    typename ReaderType::Pointer reader = ReaderType::New();
+    reader->SetFileName( m_InputFileName.c_str() );
+    reader->Update();
+
+    /** Define size of output image. */
+    SizeType sizeIn = reader->GetOutput()->GetLargestPossibleRegion().GetSize();
+    SizeType sizeOut = sizeIn;
+    float newSize = vcl_ceil(
+      ( static_cast<float>( sizeOut[ m_Direction ] - m_Offset ) )
+      / static_cast<float>( m_EveryOther ) );
+    sizeOut[ m_Direction ] = static_cast<unsigned int>( newSize );
+
+    /** Define region of output image. */
+    RegionType region;
+    region.SetIndex( reader->GetOutput()->GetLargestPossibleRegion().GetIndex() );
+    region.SetSize( sizeOut );
+
+    /** Create output image. */
+    typename InputImageType::Pointer outputImage = InputImageType::New();
+    outputImage->SetSpacing( reader->GetOutput()->GetSpacing() );
+    outputImage->SetOrigin( reader->GetOutput()->GetOrigin() );
+    outputImage->SetRegions( region );
+    outputImage->Allocate();
+
+    /** Create iterators. */
+    SliceConstIteratorType itIn( reader->GetOutput(), reader->GetOutput()->GetLargestPossibleRegion() );
+    SliceIteratorType itOut( outputImage, outputImage->GetLargestPossibleRegion() );
+
+    /** Set direction, default slice = z. */
+    if ( m_Direction == 0 )
+    {
+      itIn.SetFirstDirection(1);
+      itIn.SetSecondDirection(2);
+      itOut.SetFirstDirection(1);
+      itOut.SetSecondDirection(2);
+    }
+    else if ( m_Direction == 1 )
+    {
+      itIn.SetFirstDirection(0);
+      itIn.SetSecondDirection(2);
+      itOut.SetFirstDirection(0);
+      itOut.SetSecondDirection(2);
+    }
+    else if ( m_Direction == 2 )
+    {
+      itIn.SetFirstDirection(0);
+      itIn.SetSecondDirection(1);
+      itOut.SetFirstDirection(0);
+      itOut.SetSecondDirection(1);
+    }
+
+    /** Initialize iterators. */
+    itIn.GoToBegin();
+    itOut.GoToBegin();
+    IndexType index= itIn.GetIndex();
+    index[ m_Direction ] += m_Offset;
+    itIn.SetIndex( index );
+
+    /** Loop over images. */
+    while( !itOut.IsAtEnd() )
+    {
+      while( !itOut.IsAtEndOfSlice() )
+      {
+	while( !itOut.IsAtEndOfLine() )
+	{
+	  itOut.Set( itIn.Get() );
+	  ++itIn;
+	  ++itOut;
+	}
+	itIn.NextLine();
+	itOut.NextLine();
+      }
+      itIn.NextSlice();
+      itOut.NextSlice();
+
+      /** Skip some slices in inputImage. */
+      index = itIn.GetIndex();
+      for ( unsigned int i = 1; i < m_EveryOther; i++ )
+      {
+	index[ m_Direction ]++;
+      }
+      itIn.SetIndex( index );
+    }
+
+    /** Write the output image. */
+    typename WriterType::Pointer writer = WriterType::New();
+    writer->SetFileName( m_OutputFileName.c_str() );
+    writer->SetInput( outputImage );
+    writer->Update();
+  }
+
+}; // end ExtractEveryOtherSlice
 
 //-------------------------------------------------------------------------------------
-
-/* Declare ExtractEveryOtherSlice. */
-template< class InputImageType >
-void ExtractEveryOtherSlice(
-  const std::string & inputFileName,
-  const std::string & outputFileName,
-  unsigned int everyOther,
-  unsigned int offset,
-  unsigned int direction );
 
 /** Declare GetHelpString. */
 std::string GetHelpString( void );
@@ -145,31 +271,51 @@ int main( int argc, char **argv )
     return 1;
   }
 
-  /** Run the program. */
-  bool supported = false;
+  /** Class that does the work */
+  ExtractEveryOtherSliceBase * extractEveryOtherSlice = NULL;
+
+  /** Short alias */
+  unsigned int dim = Dimension;
+
+  itktools::EnumComponentType componentType = itktools::EnumComponentTypeFromString(PixelType);
+   
   try
-  {
-    run( ExtractEveryOtherSlice, unsigned char, 3 );
-    run( ExtractEveryOtherSlice, char, 3 );
-    run( ExtractEveryOtherSlice, unsigned short, 3 );
-    run( ExtractEveryOtherSlice, short, 3 );
-    run( ExtractEveryOtherSlice, float, 3 );
-    run( ExtractEveryOtherSlice, double, 3 );
+  {    
+    // now call all possible template combinations.
+    if (!extractEveryOtherSlice) extractEveryOtherSlice = ExtractEveryOtherSlice< unsigned char, 2 >::New( componentType, dim );
+    if (!extractEveryOtherSlice) extractEveryOtherSlice = ExtractEveryOtherSlice< char, 2 >::New( componentType, dim );
+    if (!extractEveryOtherSlice) extractEveryOtherSlice = ExtractEveryOtherSlice< unsigned short, 2 >::New( componentType, dim );
+    if (!extractEveryOtherSlice) extractEveryOtherSlice = ExtractEveryOtherSlice< short, 2 >::New( componentType, dim );
+    if (!extractEveryOtherSlice) extractEveryOtherSlice = ExtractEveryOtherSlice< float, 2 >::New( componentType, dim );
+    if (!extractEveryOtherSlice) extractEveryOtherSlice = ExtractEveryOtherSlice< double, 2 >::New( componentType, dim );
+
+    if (!extractEveryOtherSlice) 
+    {
+      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+      std::cerr
+        << "pixel (component) type = " << componentType
+        << " ; dimension = " << Dimension
+        << std::endl;
+      return 1;
+    }
+
+    extractEveryOtherSlice->m_InputFileName = inputFileName;
+    extractEveryOtherSlice->m_OutputFileName = outputFileName;
+    extractEveryOtherSlice->m_EveryOther = everyOther;
+    extractEveryOtherSlice->m_Offset = offset;
+    extractEveryOtherSlice->m_Direction = direction;
+  
+    extractEveryOtherSlice->Run();
+    
+    delete extractEveryOtherSlice;
   }
   catch( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
+    delete extractEveryOtherSlice;
     return 1;
   }
-  if ( !supported )
-  {
-    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-    std::cerr
-      << "pixel (component) type = " << PixelType
-      << " ; dimension = " << Dimension
-      << std::endl;
-    return 1;
-  }
+  
 
   /** End program. */
   return 0;
@@ -177,128 +323,9 @@ int main( int argc, char **argv )
 } // end main
 
 
-  /*
-   * ******************* ExtractEveryOtherSlice *******************
-   *
-   * The ExtractEveryOtherSlice function templated over the input pixel type.
-   */
-
-template< class InputImageType >
-void ExtractEveryOtherSlice(
-  const std::string & inputFileName,
-  const std::string & outputFileName,
-  unsigned int everyOther,
-  unsigned int offset,
-  unsigned int direction )
-{
-  /** Typedefs. */
-  typedef itk::ImageSliceConstIteratorWithIndex<
-    InputImageType >                                  SliceConstIteratorType;
-  typedef itk::ImageSliceIteratorWithIndex<
-    InputImageType >                                  SliceIteratorType;
-  typedef itk::ImageFileReader< InputImageType >      ReaderType;
-  typedef itk::ImageFileWriter< InputImageType >      WriterType;
-  typedef typename InputImageType::RegionType         RegionType;
-  typedef typename RegionType::IndexType              IndexType;
-  typedef typename InputImageType::SizeType           SizeType;
-
-  /** Read in the inputImage. */
-  typename ReaderType::Pointer reader = ReaderType::New();
-  reader->SetFileName( inputFileName.c_str() );
-  reader->Update();
-
-  /** Define size of output image. */
-  SizeType sizeIn = reader->GetOutput()->GetLargestPossibleRegion().GetSize();
-  SizeType sizeOut = sizeIn;
-  float newSize = vcl_ceil(
-    ( static_cast<float>( sizeOut[ direction ] - offset ) )
-    / static_cast<float>( everyOther ) );
-  sizeOut[ direction ] = static_cast<unsigned int>( newSize );
-
-  /** Define region of output image. */
-  RegionType region;
-  region.SetIndex( reader->GetOutput()->GetLargestPossibleRegion().GetIndex() );
-  region.SetSize( sizeOut );
-
-  /** Create output image. */
-  typename InputImageType::Pointer outputImage = InputImageType::New();
-  outputImage->SetSpacing( reader->GetOutput()->GetSpacing() );
-  outputImage->SetOrigin( reader->GetOutput()->GetOrigin() );
-  outputImage->SetRegions( region );
-  outputImage->Allocate();
-
-  /** Create iterators. */
-  SliceConstIteratorType itIn( reader->GetOutput(), reader->GetOutput()->GetLargestPossibleRegion() );
-  SliceIteratorType itOut( outputImage, outputImage->GetLargestPossibleRegion() );
-
-  /** Set direction, default slice = z. */
-  if ( direction == 0 )
-  {
-    itIn.SetFirstDirection(1);
-    itIn.SetSecondDirection(2);
-    itOut.SetFirstDirection(1);
-    itOut.SetSecondDirection(2);
-  }
-  else if ( direction == 1 )
-  {
-    itIn.SetFirstDirection(0);
-    itIn.SetSecondDirection(2);
-    itOut.SetFirstDirection(0);
-    itOut.SetSecondDirection(2);
-  }
-  else if ( direction == 2 )
-  {
-    itIn.SetFirstDirection(0);
-    itIn.SetSecondDirection(1);
-    itOut.SetFirstDirection(0);
-    itOut.SetSecondDirection(1);
-  }
-
-  /** Initialize iterators. */
-  itIn.GoToBegin();
-  itOut.GoToBegin();
-  IndexType index= itIn.GetIndex();
-  index[ direction ] += offset;
-  itIn.SetIndex( index );
-
-  /** Loop over images. */
-  while( !itOut.IsAtEnd() )
-  {
-    while( !itOut.IsAtEndOfSlice() )
-    {
-      while( !itOut.IsAtEndOfLine() )
-      {
-        itOut.Set( itIn.Get() );
-        ++itIn;
-        ++itOut;
-      }
-      itIn.NextLine();
-      itOut.NextLine();
-    }
-    itIn.NextSlice();
-    itOut.NextSlice();
-
-    /** Skip some slices in inputImage. */
-    index = itIn.GetIndex();
-    for ( unsigned int i = 1; i < everyOther; i++ )
-    {
-      index[ direction ]++;
-    }
-    itIn.SetIndex( index );
-  }
-
-  /** Write the output image. */
-  typename WriterType::Pointer writer = WriterType::New();
-  writer->SetFileName( outputFileName.c_str() );
-  writer->SetInput( outputImage );
-  writer->Update();
-
-} // end ExtractEveryOtherSlice()
-
-
-  /**
-   * ******************* GetHelpString *******************
-   */
+/**
+  * ******************* GetHelpString *******************
+  */
 
 std::string GetHelpString( void )
 {
