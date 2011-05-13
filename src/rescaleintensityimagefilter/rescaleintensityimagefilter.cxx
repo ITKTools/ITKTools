@@ -36,14 +36,151 @@
 
 //-------------------------------------------------------------------------------------
 
-/** run: A macro to call a function. */
-#define run(function,type,dim) \
-if ( ComponentType == #type && Dimension == dim ) \
-{ \
-  typedef  itk::VectorImage< type, dim >   InputImageType; \
-  function< InputImageType >( inputFileName, outputFileName, values, valuesAreExtrema ); \
-  supported = true; \
-}
+
+/** RescaleIntensityImageFilter */
+
+class RescaleIntensityImageFilterBase : public itktools::ITKToolsBase
+{ 
+public:
+  RescaleIntensityImageFilterBase(){};
+  ~RescaleIntensityImageFilterBase(){};
+
+  /** Input parameters */
+  std::string m_InputFileName;
+  std::string m_OutputFileName;
+  std::vector<double> m_Values;
+  bool m_ValuesAreExtrema;
+
+    
+}; // end RescaleIntensityImageFilterBase
+
+
+template< class TComponentType, unsigned int VDimension >
+class RescaleIntensityImageFilter : public RescaleIntensityImageFilterBase
+{
+public:
+  typedef RescaleIntensityImageFilter Self;
+
+  RescaleIntensityImageFilter(){};
+  ~RescaleIntensityImageFilter(){};
+
+  static Self * New( itktools::EnumComponentType componentType, unsigned int dim )
+  {
+    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
+    {
+      return new Self;
+    }
+    return 0;
+  }
+
+  void Run(void)
+  {
+    /** TYPEDEF's. */
+    typedef itk::Image<TComponentType, VDimension>        ScalarImageType;
+    typedef itk::VectorImage<TComponentType, VDimension>  VectorImageType;
+
+    typedef itk::ImageFileReader< VectorImageType >        ReaderType;
+    typedef itk::RescaleIntensityImageFilter<
+      ScalarImageType, ScalarImageType >                  RescalerType;
+    typedef itk::StatisticsImageFilter< ScalarImageType > StatisticsType;
+    typedef itk::ShiftScaleImageFilter<
+      ScalarImageType, ScalarImageType >                  ShiftScalerType;
+    typedef itk::ImageFileWriter< VectorImageType >        WriterType;
+    typedef typename ScalarImageType::PixelType           PixelType;
+    typedef typename StatisticsType::RealType             RealType;
+
+    /** DECLARATION'S. */
+    typename ReaderType::Pointer reader = ReaderType::New();
+    typename WriterType::Pointer writer = WriterType::New();
+    typename RescalerType::Pointer    rescaler;
+    typename StatisticsType::Pointer  statistics;
+    typename ShiftScalerType::Pointer shiftscaler;
+
+    /** Read in the inputImage. */
+    reader->SetFileName( m_InputFileName.c_str() );
+    reader->Update();
+
+    // Setup type to disassemble the components
+    typedef itk::VectorIndexSelectionCastImageFilter<VectorImageType, ScalarImageType> IndexSelectionType;
+    
+    // Setup the filter to reassemble the components
+    typedef itk::ImageToVectorImageFilter<ScalarImageType> ImageToVectorImageFilterType;
+    typename ImageToVectorImageFilterType::Pointer imageToVectorImageFilter = ImageToVectorImageFilterType::New();
+      
+    for(unsigned int component = 0; component < reader->GetOutput()->GetNumberOfComponentsPerPixel(); ++component)
+    {
+      typename IndexSelectionType::Pointer indexSelectionFilter = IndexSelectionType::New();
+      indexSelectionFilter->SetIndex(component);
+      indexSelectionFilter->SetInput(reader->GetOutput());
+      indexSelectionFilter->Update();
+      
+      /** If the input values are extrema (minimum and maximum),
+      * then an IntensityRescaler is used. Otherwise, the values represent
+      * the desired mean and variance and a ShiftScaler is used.
+      */
+      if ( m_ValuesAreExtrema )
+      {
+	/** Create instance. */
+	rescaler = RescalerType::New();
+
+	/** Define the extrema. */
+	PixelType min, max;
+	if ( m_Values[ 0 ] == 0.0 && m_Values[ 1 ] == 0.0 )
+	{
+	  min = itk::NumericTraits<PixelType>::NonpositiveMin();
+	  max = itk::NumericTraits<PixelType>::max();
+	}
+	else
+	{
+	  min = static_cast<PixelType>( m_Values[ 0 ] );
+	  max = static_cast<PixelType>( m_Values[ 1 ] );
+	}
+
+	/** Setup the rescaler. */
+	rescaler->SetInput( indexSelectionFilter->GetOutput() );
+	rescaler->SetOutputMinimum( min );
+	rescaler->SetOutputMaximum( max );
+	rescaler->Update();
+
+	/** Setup the recombining. */
+	imageToVectorImageFilter->SetNthInput(component, rescaler->GetOutput());
+
+      } // end if values are extrema
+      else
+      {
+	/** Create instances. */
+	statistics = StatisticsType::New();
+	shiftscaler = ShiftScalerType::New();
+
+	/** Calculate image statistics. */
+	statistics->SetInput( indexSelectionFilter->GetOutput() );
+	statistics->Update();
+
+	/** Get mean and variance of input image. */
+	RealType mean = statistics->GetMean();
+	RealType sigma = statistics->GetSigma();
+
+	/** Setup the shiftscaler. */
+	shiftscaler->SetInput( indexSelectionFilter->GetOutput() );
+	shiftscaler->SetShift( m_Values[ 0 ] * sigma / vcl_sqrt( m_Values[ 1 ] ) - mean );
+	shiftscaler->SetScale( vcl_sqrt( m_Values[ 1 ] ) / sigma );
+	shiftscaler->Update();
+
+	/** Setup the recombining. */
+	imageToVectorImageFilter->SetNthInput(component, shiftscaler->GetOutput());
+
+      } // end if values are mean and variance
+    }// end component loop
+
+    imageToVectorImageFilter->Update();
+    writer->SetInput(imageToVectorImageFilter->GetOutput());
+    
+    /** Write the output image. */
+    writer->SetFileName( m_OutputFileName.c_str() );
+    writer->Update();
+  }
+
+}; // end RescaleIntensityImageFilter
 
 //-------------------------------------------------------------------------------------
 
@@ -174,156 +311,65 @@ int main( int argc, char **argv )
     values = meanvariance;
   }
 
-  /** Run the program. */
-  bool supported = false;
+
+  /** Class that does the work */
+  RescaleIntensityImageFilterBase * rescaleIntensityImageFilter = 0; 
+
+  /** Short alias */
+  unsigned int imageDimension = Dimension;
+ 
+  /** \todo some progs allow user to override the pixel type, 
+   * so we need a method to convert string to EnumComponentType */
+  itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileName);
+  
+  std::cout << "Detected component type: " << 
+    componentType << std::endl;
+
   try
-  {
-    run( RescaleIntensity, unsigned char, 2 );
-    run( RescaleIntensity, unsigned char, 3 );
-    run( RescaleIntensity, char, 2 );
-    run( RescaleIntensity, char, 3 );
-    run( RescaleIntensity, unsigned short, 2 );
-    run( RescaleIntensity, unsigned short, 3 );
-    run( RescaleIntensity, short, 2 );
-    run( RescaleIntensity, short, 3 );
-    run( RescaleIntensity, float, 2 );
-    run( RescaleIntensity, float, 3 );
+  {    
+    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = RescaleIntensityImageFilter< unsigned char, 2 >::New( componentType, imageDimension );
+    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = RescaleIntensityImageFilter< char, 2 >::New( componentType, imageDimension );
+    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = RescaleIntensityImageFilter< unsigned short, 2 >::New( componentType, imageDimension );
+    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = RescaleIntensityImageFilter< short, 2 >::New( componentType, imageDimension );
+    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = RescaleIntensityImageFilter< float, 2 >::New( componentType, imageDimension );
+#ifdef ITKTOOLS_3D_SUPPORT
+    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = RescaleIntensityImageFilter< unsigned char, 3 >::New( componentType, imageDimension );
+    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = RescaleIntensityImageFilter< char, 3 >::New( componentType, imageDimension );
+    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = RescaleIntensityImageFilter< unsigned short, 3 >::New( componentType, imageDimension );
+    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = RescaleIntensityImageFilter< short, 3 >::New( componentType, imageDimension );
+    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = RescaleIntensityImageFilter< float, 3 >::New( componentType, imageDimension );
+#endif
+    if (!rescaleIntensityImageFilter) 
+    {
+      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+      std::cerr
+        << "pixel (component) type = " << componentType
+        << " ; dimension = " << Dimension
+        << std::endl;
+      return 1;
+    }
+
+    rescaleIntensityImageFilter->m_InputFileName = inputFileName;
+    rescaleIntensityImageFilter->m_OutputFileName = outputFileName;
+    rescaleIntensityImageFilter->m_Values = values;
+    rescaleIntensityImageFilter->m_ValuesAreExtrema = valuesAreExtrema;
+
+    rescaleIntensityImageFilter->Run();
+    
+    delete rescaleIntensityImageFilter;  
   }
   catch( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
+    delete rescaleIntensityImageFilter;
     return 1;
   }
-  if ( !supported )
-  {
-    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-    std::cerr
-      << "pixel (component) type = " << ComponentType
-      << " ; dimension = " << Dimension
-      << std::endl;
-    return 1;
-  }
+  
 
   /** End program. */
   return 0;
 
 } // end main()
-
-
-/*
- * ******************* RescaleIntensity *******************
- */
-
-template< class InputImageType >
-void RescaleIntensity(
-  const std::string & inputFileName,
-  const std::string & outputFileName,
-  const std::vector<double> & values,
-  const bool & valuesAreExtrema )
-{
-  /** TYPEDEF's. */
-  typedef itk::Image< typename InputImageType::InternalPixelType, InputImageType::ImageDimension > ScalarImageType;
-  typedef itk::ImageFileReader< InputImageType >        ReaderType;
-  typedef itk::RescaleIntensityImageFilter<
-    ScalarImageType, ScalarImageType >                    RescalerType;
-  typedef itk::StatisticsImageFilter< ScalarImageType >  StatisticsType;
-  typedef itk::ShiftScaleImageFilter<
-    ScalarImageType, ScalarImageType >                    ShiftScalerType;
-  typedef itk::ImageFileWriter< InputImageType >        WriterType;
-  typedef typename ScalarImageType::PixelType            PixelType;
-  typedef typename StatisticsType::RealType             RealType;
-
-  /** DECLARATION'S. */
-  typename ReaderType::Pointer reader = ReaderType::New();
-  typename WriterType::Pointer writer = WriterType::New();
-  typename RescalerType::Pointer    rescaler;
-  typename StatisticsType::Pointer  statistics;
-  typename ShiftScalerType::Pointer shiftscaler;
-
-  /** Read in the inputImage. */
-  reader->SetFileName( inputFileName.c_str() );
-  reader->Update();
-
-  // Setup type to disassemble the components
-  typedef itk::VectorIndexSelectionCastImageFilter<InputImageType, ScalarImageType> IndexSelectionType;
-  
-  // Setup the filter to reassemble the components
-  typedef itk::ImageToVectorImageFilter<ScalarImageType> ImageToVectorImageFilterType;
-  typename ImageToVectorImageFilterType::Pointer imageToVectorImageFilter = ImageToVectorImageFilterType::New();
-    
-  for(unsigned int component = 0; component < reader->GetOutput()->GetNumberOfComponentsPerPixel(); ++component)
-  {
-    typename IndexSelectionType::Pointer indexSelectionFilter = IndexSelectionType::New();
-    indexSelectionFilter->SetIndex(component);
-    indexSelectionFilter->SetInput(reader->GetOutput());
-    indexSelectionFilter->Update();
-    
-    /** If the input values are extrema (minimum and maximum),
-    * then an IntensityRescaler is used. Otherwise, the values represent
-    * the desired mean and variance and a ShiftScaler is used.
-    */
-    if ( valuesAreExtrema )
-    {
-      /** Create instance. */
-      rescaler = RescalerType::New();
-
-      /** Define the extrema. */
-      PixelType min, max;
-      if ( values[ 0 ] == 0.0 && values[ 1 ] == 0.0 )
-      {
-        min = itk::NumericTraits<PixelType>::NonpositiveMin();
-        max = itk::NumericTraits<PixelType>::max();
-      }
-      else
-      {
-        min = static_cast<PixelType>( values[ 0 ] );
-        max = static_cast<PixelType>( values[ 1 ] );
-      }
-
-      /** Setup the rescaler. */
-      rescaler->SetInput( indexSelectionFilter->GetOutput() );
-      rescaler->SetOutputMinimum( min );
-      rescaler->SetOutputMaximum( max );
-      rescaler->Update();
-
-      /** Setup the recombining. */
-      imageToVectorImageFilter->SetNthInput(component, rescaler->GetOutput());
-
-    } // end if values are extrema
-    else
-    {
-      /** Create instances. */
-      statistics = StatisticsType::New();
-      shiftscaler = ShiftScalerType::New();
-
-      /** Calculate image statistics. */
-      statistics->SetInput( indexSelectionFilter->GetOutput() );
-      statistics->Update();
-
-      /** Get mean and variance of input image. */
-      RealType mean = statistics->GetMean();
-      RealType sigma = statistics->GetSigma();
-
-      /** Setup the shiftscaler. */
-      shiftscaler->SetInput( indexSelectionFilter->GetOutput() );
-      shiftscaler->SetShift( values[ 0 ] * sigma / vcl_sqrt( values[ 1 ] ) - mean );
-      shiftscaler->SetScale( vcl_sqrt( values[ 1 ] ) / sigma );
-      shiftscaler->Update();
-
-      /** Setup the recombining. */
-      imageToVectorImageFilter->SetNthInput(component, shiftscaler->GetOutput());
-
-    } // end if values are mean and variance
-  }// end component loop
-
-  imageToVectorImageFilter->Update();
-  writer->SetInput(imageToVectorImageFilter->GetOutput());
-  
-  /** Write the output image. */
-  writer->SetFileName( outputFileName.c_str() );
-  writer->Update();
-
-} // end RescaleIntensity()
 
 
 /**
