@@ -25,6 +25,7 @@
 
 #include <itksys/SystemTools.hxx>
 #include <sstream>
+
 #include "itkPCAImageToImageFilter.h"
 
 #include "itkImageFileReader.h"
@@ -32,14 +33,116 @@
 
 //-------------------------------------------------------------------------------------
 
-/** run: A macro to call a function. */
-#define run(function,type,dim) \
-if ( componentType == #type && Dimension == dim ) \
-{ \
-  typedef itk::Image< type, dim > OutputImageType; \
-  function< OutputImageType >( inputFileNames, outputDirectory, numberOfPCs ); \
-  supported = true; \
-}
+
+/** PCA */
+
+class PCABase : public itktools::ITKToolsBase
+{ 
+public:
+  PCABase(){};
+  ~PCABase(){};
+
+  /** Input parameters */
+  std::vector< std::string > m_InputFileNames;
+  std::string m_OutputDirectory;
+  unsigned int m_NumberOfPCs;
+
+    
+}; // end ReplaceVoxelBase
+
+
+template< class TComponentType, unsigned int VDimension >
+class PCA : public PCABase
+{
+public:
+  typedef PCA Self;
+
+  PCA(){};
+  ~PCA(){};
+
+  static Self * New( itktools::EnumComponentType componentType, unsigned int dim )
+  {
+    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
+    {
+      return new Self;
+    }
+    return 0;
+  }
+
+  void Run(void)
+  {
+    /** Typedefs. */
+    typedef itk::Image< TComponentType, VDimension >      OutputImageType;
+    typedef itk::Image< double, VDimension >              DoubleImageType;
+    typedef itk::PCAImageToImageFilter<
+      DoubleImageType, OutputImageType >                  PCAEstimatorType;
+    typedef typename PCAEstimatorType::VectorOfDoubleType VectorOfDoubleType;
+    typedef typename PCAEstimatorType::MatrixOfDoubleType MatrixOfDoubleType;
+    typedef itk::ImageFileReader< DoubleImageType >       ReaderType;
+    typedef typename ReaderType::Pointer                  ReaderPointer;
+    typedef itk::ImageFileWriter< OutputImageType >       WriterType;
+    typedef typename WriterType::Pointer                  WriterPointer;
+
+    /** Get some sizes. */
+    unsigned int noInputs = m_InputFileNames.size();
+
+    /** Create the PCA estimator. */
+    typename PCAEstimatorType::Pointer pcaEstimator = PCAEstimatorType::New();
+    pcaEstimator->SetNumberOfFeatureImages( noInputs );
+    pcaEstimator->SetNumberOfPrincipalComponentsRequired( m_NumberOfPCs );
+
+    /** For all inputs... */
+    std::vector<ReaderPointer> readers( noInputs );
+    for ( unsigned int i = 0; i < noInputs; ++i )
+    {
+      /** Read in the input images. */
+      readers[ i ] = ReaderType::New();
+      readers[ i ]->SetFileName( m_InputFileNames[ i ] );
+      readers[ i ]->Update();
+
+      /** Setup PCA estimator. */
+      pcaEstimator->SetInput( i, readers[ i ]->GetOutput() );
+    }
+
+    /** Do the PCA analysis. */
+    pcaEstimator->Update();
+
+    /** Get eigenvalues and vectors, and print it to screen. */
+    //pcaEstimator->Print( std::cout );
+    VectorOfDoubleType vec = pcaEstimator->GetEigenValues();
+    MatrixOfDoubleType mat = pcaEstimator->GetEigenVectors();
+
+    std::cout << "Eigenvalues: " << std::endl;
+    for ( unsigned int i = 0; i < vec.size(); ++i )
+    {
+      std::cout << vec[ i ] << " ";
+    }
+    std::cout << std::endl;
+
+    std::cout << "Eigenvectors: " << std::endl;
+    for ( unsigned int i = 0; i < vec.size(); ++i )
+    {
+      std::cout << mat.get_row( i ) << std::endl;
+    }
+
+    /** Setup and process the pipeline. */
+    unsigned int noo = pcaEstimator->GetNumberOfOutputs();
+    std::vector<WriterPointer> writers( noo );
+    for ( unsigned int i = 0; i < noo; ++i )
+    {
+      /** Create output filename. */
+      std::ostringstream makeFileName( "" );
+      makeFileName << m_OutputDirectory << "pc" << i << ".mhd";
+
+      /** Write principal components. */
+      writers[ i ] = WriterType::New();
+      writers[ i ]->SetFileName( makeFileName.str().c_str() );
+      writers[ i ]->SetInput( pcaEstimator->GetOutput( i ) );
+      writers[ i ]->Update();
+    }
+  }
+
+}; // end PCA
 
 //-------------------------------------------------------------------------------------
 
@@ -89,8 +192,8 @@ int main( int argc, char **argv )
   unsigned int numberOfPCs = inputFileNames.size();
   parser->GetCommandLineArgument( "-npc", numberOfPCs );
 
-  std::string componentType = "";
-  bool retpt = parser->GetCommandLineArgument( "-opct", componentType );
+  std::string componentTypeString = "";
+  bool retpt = parser->GetCommandLineArgument( "-opct", componentTypeString );
 
   /** Check that numberOfOutputs <= numberOfInputs. */
   if ( numberOfPCs > inputFileNames.size() )
@@ -99,26 +202,10 @@ int main( int argc, char **argv )
     return 1;
   }
 
-  /** Determine image properties. */
-  std::string ComponentTypeIn = "short";
-  std::string PixelType; //we don't use this
-  unsigned int Dimension = 3;
-  unsigned int NumberOfComponents = 1;
-  std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = GetImageProperties(
-    inputFileNames[ 0 ],
-    PixelType,
-    ComponentTypeIn,
-    Dimension,
-    NumberOfComponents,
-    imagesize );
-  if ( retgip != 0 )
-  {
-    return 1;
-  }
-
+  unsigned int numberOfComponents = 0;
+  GetImageNumberOfComponents(inputFileNames[0], numberOfComponents);
   /** Check for vector images. */
-  if ( NumberOfComponents > 1 )
+  if ( numberOfComponents > 1 )
   {
     std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
     std::cerr << "Vector images are not supported." << std::endl;
@@ -128,49 +215,70 @@ int main( int argc, char **argv )
   /** The default output is equal to the input, but can be overridden by
    * specifying -pt in the command line.
    */
-  if ( !retpt ) componentType = ComponentTypeIn;
-
-  /** Get rid of the possible "_" in ComponentType. */
-  ReplaceUnderscoreWithSpace( componentType );
-
-  /** Run the program. */
-  bool supported = false;
-  try
+  
+  itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileNames[0]);
+ 
+  if ( !retpt ) 
   {
-    run( PerformPCA, unsigned char, 2 );
-    run( PerformPCA, char, 2 );
-    run( PerformPCA, unsigned short, 2 );
-    run( PerformPCA, short, 2 );
-    run( PerformPCA, unsigned int, 2 );
-    run( PerformPCA, int, 2 );
-    run( PerformPCA, unsigned long, 2 );
-    run( PerformPCA, long, 2 );
-    run( PerformPCA, float, 2 );
-    run( PerformPCA, double, 2 );
+    componentType = itktools::EnumComponentTypeFromString(componentTypeString);
+  }
+  
+  /** Class that does the work */
+  PCABase * pca = 0; 
 
-    run( PerformPCA, unsigned char, 3 );
-    run( PerformPCA, char, 3 );
-    run( PerformPCA, unsigned short, 3 );
-    run( PerformPCA, short, 3 );
-    run( PerformPCA, unsigned int, 3 );
-    run( PerformPCA, int, 3 );
-    run( PerformPCA, unsigned long, 3 );
-    run( PerformPCA, long, 3 );
-    run( PerformPCA, float, 3 );
-    run( PerformPCA, double, 3 );
+  unsigned int imageDimension = 0;
+  GetImageDimension(inputFileNames[0], imageDimension);
+  
+  std::cout << "Detected component type: " << 
+    componentType << std::endl;
+
+  try
+  {    
+    // now call all possible template combinations.
+    if (!pca) pca = PCA< unsigned char, 2 >::New( componentType, imageDimension );
+    if (!pca) pca = PCA< char, 2 >::New( componentType, imageDimension );
+    if (!pca) pca = PCA< unsigned short, 2 >::New( componentType, imageDimension );
+    if (!pca) pca = PCA< short, 2 >::New( componentType, imageDimension );
+    if (!pca) pca = PCA< unsigned int, 2 >::New( componentType, imageDimension );
+    if (!pca) pca = PCA< int, 2 >::New( componentType, imageDimension );
+    if (!pca) pca = PCA< unsigned long, 2 >::New( componentType, imageDimension );
+    if (!pca) pca = PCA< long, 2 >::New( componentType, imageDimension );
+    if (!pca) pca = PCA< float, 2 >::New( componentType, imageDimension );
+    if (!pca) pca = PCA< double, 2 >::New( componentType, imageDimension );
+#ifdef ITKTOOLS_3D_SUPPORT
+    if (!pca) pca = PCA< unsigned char, 3 >::New( componentType, imageDimension );
+    if (!pca) pca = PCA< char, 3 >::New( componentType, imageDimension );
+    if (!pca) pca = PCA< unsigned short, 3 >::New( componentType, imageDimension );
+    if (!pca) pca = PCA< short, 3 >::New( componentType, imageDimension );
+    if (!pca) pca = PCA< unsigned int, 3 >::New( componentType, imageDimension );
+    if (!pca) pca = PCA< int, 3 >::New( componentType, imageDimension );
+    if (!pca) pca = PCA< unsigned long, 3 >::New( componentType, imageDimension );
+    if (!pca) pca = PCA< long, 3 >::New( componentType, imageDimension );
+    if (!pca) pca = PCA< float, 3 >::New( componentType, imageDimension );
+    if (!pca) pca = PCA< double, 3 >::New( componentType, imageDimension );
+#endif
+    if (!pca) 
+    {
+      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+      std::cerr
+        << "pixel (component) type = " << componentType
+        << " ; dimension = " << imageDimension
+        << std::endl;
+      return 1;
+    }
+
+    pca->m_InputFileNames = inputFileNames;
+    pca->m_OutputDirectory = outputDirectory;
+    pca->m_NumberOfPCs = numberOfPCs;
+    
+    pca->Run();
+    
+    delete pca;  
   }
   catch( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
-    return 1;
-  }
-  if ( !supported )
-  {
-    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-    std::cerr
-      << "pixel (component) type = " << ComponentTypeIn
-      << " ; dimension = " << Dimension
-      << std::endl;
+    delete pca;
     return 1;
   }
 
@@ -180,93 +288,9 @@ int main( int argc, char **argv )
 } // end main()
 
 
-  /*
-   * ******************* PerformPCA *******************
-   */
-
-template< class OutputImageType >
-void PerformPCA(
-  const std::vector< std::string > & inputFileNames,
-  const std::string & outputDirectory,
-  unsigned int numberOfPCs )
-{
-  const unsigned int Dimension = OutputImageType::ImageDimension;
-
-  /** Typedefs. */
-  typedef itk::Image< double, Dimension >               DoubleImageType;
-  typedef itk::PCAImageToImageFilter<
-    DoubleImageType, OutputImageType >                  PCAEstimatorType;
-  typedef typename PCAEstimatorType::VectorOfDoubleType VectorOfDoubleType;
-  typedef typename PCAEstimatorType::MatrixOfDoubleType MatrixOfDoubleType;
-  typedef itk::ImageFileReader< DoubleImageType >       ReaderType;
-  typedef typename ReaderType::Pointer                  ReaderPointer;
-  typedef itk::ImageFileWriter< OutputImageType >       WriterType;
-  typedef typename WriterType::Pointer                  WriterPointer;
-
-  /** Get some sizes. */
-  unsigned int noInputs = inputFileNames.size();
-
-  /** Create the PCA estimator. */
-  typename PCAEstimatorType::Pointer pcaEstimator = PCAEstimatorType::New();
-  pcaEstimator->SetNumberOfFeatureImages( noInputs );
-  pcaEstimator->SetNumberOfPrincipalComponentsRequired( numberOfPCs );
-
-  /** For all inputs... */
-  std::vector<ReaderPointer> readers( noInputs );
-  for ( unsigned int i = 0; i < noInputs; ++i )
-  {
-    /** Read in the input images. */
-    readers[ i ] = ReaderType::New();
-    readers[ i ]->SetFileName( inputFileNames[ i ] );
-    readers[ i ]->Update();
-
-    /** Setup PCA estimator. */
-    pcaEstimator->SetInput( i, readers[ i ]->GetOutput() );
-  }
-
-  /** Do the PCA analysis. */
-  pcaEstimator->Update();
-
-  /** Get eigenvalues and vectors, and print it to screen. */
-  //pcaEstimator->Print( std::cout );
-  VectorOfDoubleType vec = pcaEstimator->GetEigenValues();
-  MatrixOfDoubleType mat = pcaEstimator->GetEigenVectors();
-
-  std::cout << "Eigenvalues: " << std::endl;
-  for ( unsigned int i = 0; i < vec.size(); ++i )
-  {
-    std::cout << vec[ i ] << " ";
-  }
-  std::cout << std::endl;
-
-  std::cout << "Eigenvectors: " << std::endl;
-  for ( unsigned int i = 0; i < vec.size(); ++i )
-  {
-    std::cout << mat.get_row( i ) << std::endl;
-  }
-
-  /** Setup and process the pipeline. */
-  unsigned int noo = pcaEstimator->GetNumberOfOutputs();
-  std::vector<WriterPointer> writers( noo );
-  for ( unsigned int i = 0; i < noo; ++i )
-  {
-    /** Create output filename. */
-    std::ostringstream makeFileName( "" );
-    makeFileName << outputDirectory << "pc" << i << ".mhd";
-
-    /** Write principal components. */
-    writers[ i ] = WriterType::New();
-    writers[ i ]->SetFileName( makeFileName.str().c_str() );
-    writers[ i ]->SetInput( pcaEstimator->GetOutput( i ) );
-    writers[ i ]->Update();
-  }
-
-} // end PerformPCA()
-
-
-  /**
-   * ******************* GetHelpString *******************
-   */
+/**
+  * ******************* GetHelpString *******************
+  */
 
 std::string GetHelpString( void )
 {
