@@ -29,13 +29,76 @@
 
 //-------------------------------------------------------------------------------------
 
-/** run: A macro to call a function. */
-#define run( function, type, dim ) \
-if ( ComponentType == #type && Dimension == dim ) \
-{ \
-  function< type, dim >( inputFileName, outputFileName, direction ); \
-  supported = true; \
-}
+
+/** Reflect */
+
+class ReflectBase : public itktools::ITKToolsBase
+{ 
+public:
+  ReflectBase(){};
+  ~ReflectBase(){};
+
+  /** Input parameters */
+  std::string m_InputFileName;
+  std::string m_OutputFileName;
+  unsigned int m_Direction;
+    
+}; // end ReflectBase
+
+
+template< class TComponentType, unsigned int VDimension >
+class Reflect : public ReflectBase
+{
+public:
+  typedef Reflect Self;
+
+  Reflect(){};
+  ~Reflect(){};
+
+  static Self * New( itktools::EnumComponentType componentType, unsigned int dim )
+  {
+    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
+    {
+      return new Self;
+    }
+    return 0;
+  }
+
+  void Run(void)
+  {
+    /** Typedefs. */
+    typedef TComponentType                                    OutputPixelType;
+    const unsigned int Dimension = VDimension;
+
+    typedef OutputPixelType                                 InputPixelType;
+
+    typedef itk::Image< InputPixelType, Dimension >         InputImageType;
+    typedef itk::Image< OutputPixelType, Dimension >        OutputImageType;
+
+    typedef itk::ImageFileReader< InputImageType >          ReaderType;
+    typedef itk::FlipImageFilter< InputImageType >          ReflectFilterType;
+    typedef itk::ImageFileWriter< OutputImageType >         WriterType;
+
+    /** Read in the input image. */
+    typename ReaderType::Pointer reader = ReaderType::New();
+    typename ReflectFilterType::Pointer reflectFilter = ReflectFilterType::New();
+    typename WriterType::Pointer writer = WriterType::New();
+
+    /** Set up pipeline. */
+    reader->SetFileName( m_InputFileName );
+    
+    itk::FixedArray<bool, Dimension> flipAxes(false);
+    flipAxes[m_Direction] = true;
+    
+    reflectFilter->SetFlipAxes( flipAxes );
+    writer->SetFileName( m_OutputFileName );
+
+    reflectFilter->SetInput( reader->GetOutput() );
+    writer->SetInput( reflectFilter->GetOutput() );
+    writer->Update();
+  }
+
+}; // end Reflect
 
 //-------------------------------------------------------------------------------------
 
@@ -83,139 +146,97 @@ int main( int argc, char ** argv )
   unsigned int direction = 0;
   parser->GetCommandLineArgument( "-d", direction );
 
-  std::string ComponentType = "";
-  bool retpt = parser->GetCommandLineArgument( "-opct", ComponentType );
-
-  /** Determine image properties. */
-  std::string ComponentTypeIn = "short";
-  std::string PixelType; //we don't use this
-  unsigned int Dimension = 3;
-  unsigned int NumberOfComponents = 1;
-  std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = GetImageProperties(
-    inputFileName,
-    PixelType,
-    ComponentTypeIn,
-    Dimension,
-    NumberOfComponents,
-    imagesize );
-  if ( retgip != 0 )
-  {
-    std::cerr << "ERROR: error while getting image properties of the input image!" << std::endl;
-    return 1;
-  }
+  std::string componentTypeString = "";
+  bool retpt = parser->GetCommandLineArgument( "-opct", componentTypeString );
 
   /** The default output is equal to the input, but can be overridden by
    * specifying -pt in the command line.   */
-  if ( !retpt ) ComponentType = ComponentTypeIn;
-
+  itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileName);
+  if ( !retpt ) 
+  {
+    componentType = itktools::EnumComponentTypeFromString(componentTypeString);
+  }
+  
   /** Check for vector images. */
-  if ( NumberOfComponents > 1 )
+  unsigned int numberOfComponents = 0;
+  GetImageDimension(inputFileName, numberOfComponents);
+  
+  if ( numberOfComponents > 1 )
   {
     std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
     std::cerr << "Cannot make vector of vector images." << std::endl;
     return 1;
   }
 
-  /** Get rid of the possible "_" in ComponentType. */
-  ReplaceUnderscoreWithSpace( ComponentType );
-
+  unsigned int imageDimension = 0;
+  GetImageDimension(inputFileName, imageDimension);
+  
   /** Check direction. */
-  if ( direction > Dimension - 1 )
+  if ( direction > imageDimension - 1 )
   {
     std::cerr << "ERROR: invalid direction." << std::endl;
     return 1;
   }
 
-  /** Run the program. */
-  bool supported = false;
+ 
+  /** Class that does the work */
+  ReflectBase * reflect = NULL; 
+
   try
-  {
-    run( ReflectImageFilter, char, 2 );
-    run( ReflectImageFilter, unsigned char, 2 );
-    run( ReflectImageFilter, short, 2 );
-    run( ReflectImageFilter, unsigned short, 2 );
-    run( ReflectImageFilter, int, 2 );
-    run( ReflectImageFilter, unsigned int, 2 );
-    run( ReflectImageFilter, long, 2 );
-    run( ReflectImageFilter, unsigned long, 2 );
-    run( ReflectImageFilter, float, 2 );
-    run( ReflectImageFilter, double, 2 );
+  {    
+    // now call all possible template combinations.
+    if (!reflect) reflect = Reflect< unsigned char, 2 >::New( componentType, imageDimension );
+    if (!reflect) reflect = Reflect< char, 2 >::New( componentType, imageDimension );
+    if (!reflect) reflect = Reflect< unsigned short, 2 >::New( componentType, imageDimension );
+    if (!reflect) reflect = Reflect< short, 2 >::New( componentType, imageDimension );
+    if (!reflect) reflect = Reflect< unsigned int, 2 >::New( componentType, imageDimension );
+    if (!reflect) reflect = Reflect< int, 2 >::New( componentType, imageDimension );
+    if (!reflect) reflect = Reflect< unsigned long, 2 >::New( componentType, imageDimension );
+    if (!reflect) reflect = Reflect< long, 2 >::New( componentType, imageDimension );
+    if (!reflect) reflect = Reflect< float, 2 >::New( componentType, imageDimension );
+    if (!reflect) reflect = Reflect< double, 2 >::New( componentType, imageDimension );
+#ifdef ITKTOOLS_3D_SUPPORT
+    if (!reflect) reflect = Reflect< unsigned char, 3 >::New( componentType, imageDimension );
+    if (!reflect) reflect = Reflect< char, 3 >::New( componentType, imageDimension );
+    if (!reflect) reflect = Reflect< unsigned short, 3 >::New( componentType, imageDimension );
+    if (!reflect) reflect = Reflect< short, 3 >::New( componentType, imageDimension );
+    if (!reflect) reflect = Reflect< unsigned int, 3 >::New( componentType, imageDimension );
+    if (!reflect) reflect = Reflect< int, 3 >::New( componentType, imageDimension );
+    if (!reflect) reflect = Reflect< unsigned long, 3 >::New( componentType, imageDimension );
+    if (!reflect) reflect = Reflect< long, 3 >::New( componentType, imageDimension );
+    if (!reflect) reflect = Reflect< float, 3 >::New( componentType, imageDimension );
+    if (!reflect) reflect = Reflect< double, 3 >::New( componentType, imageDimension );
+#endif
+    if (!reflect) 
+    {
+      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+      std::cerr
+        << "pixel (component) type = " << componentType
+        << " ; dimension = " << imageDimension
+        << std::endl;
+      return 1;
+    }
 
-    run( ReflectImageFilter, char, 3 );
-    run( ReflectImageFilter, unsigned char, 3 );
-    run( ReflectImageFilter, short, 3 );
-    run( ReflectImageFilter, unsigned short, 3 );
-    run( ReflectImageFilter, int, 3 );
-    run( ReflectImageFilter, unsigned int, 3 );
-    run( ReflectImageFilter, long, 3 );
-    run( ReflectImageFilter, unsigned long, 3 );
-    run( ReflectImageFilter, float, 3 );
-    run( ReflectImageFilter, double, 3 );
-
+    reflect->m_InputFileName = inputFileName;
+    reflect->m_OutputFileName = outputFileName;
+    reflect->m_Direction = direction;
+    
+    reflect->Run();
+    
+    delete reflect;  
   }
   catch( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
+    delete reflect;
     return 1;
   }
-  if ( !supported )
-  {
-    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-    std::cerr
-      << "pixel (component) type = " << ComponentType
-      << " ; dimension = " << Dimension
-      << std::endl;
-    return 1;
-  }
-
+  
   /** End program. */
   return 0;
 
 } // end main
 
-
-/*
- * ******************* ReflectImageFilter *******************
- */
-
-template< class TOutputPixel, unsigned int NDimension >
-void ReflectImageFilter( const std::string & inputFileName,
-  const std::string & outputFileName,
-  const unsigned int direction )
-{
-  /** Typedefs. */
-  typedef TOutputPixel                                    OutputPixelType;
-  const unsigned int Dimension = NDimension;
-
-  typedef OutputPixelType                                 InputPixelType;
-
-  typedef itk::Image< InputPixelType, Dimension >         InputImageType;
-  typedef itk::Image< OutputPixelType, Dimension >        OutputImageType;
-
-  typedef itk::ImageFileReader< InputImageType >          ReaderType;
-  typedef itk::FlipImageFilter< InputImageType >          ReflectFilterType;
-  typedef itk::ImageFileWriter< OutputImageType >         WriterType;
-
-  /** Read in the input image. */
-  typename ReaderType::Pointer reader = ReaderType::New();
-  typename ReflectFilterType::Pointer reflectFilter = ReflectFilterType::New();
-  typename WriterType::Pointer writer = WriterType::New();
-
-  /** Set up pipeline. */
-  reader->SetFileName( inputFileName );
-  
-  itk::FixedArray<bool, Dimension> flipAxes(false);
-  flipAxes[direction] = true;
-  
-  reflectFilter->SetFlipAxes( flipAxes );
-  writer->SetFileName( outputFileName );
-
-  reflectFilter->SetInput( reader->GetOutput() );
-  writer->SetInput( reflectFilter->GetOutput() );
-  writer->Update();
-
-} // end ReflectImageFilter()
 
 
 /**
