@@ -29,25 +29,109 @@
 
 //-------------------------------------------------------------------------------------
 
-/** run: A macro to call a function. */
-#define run(function,type,dim) \
-if ( PixelType == #type && Dimension == dim ) \
-{ \
-  typedef itk::Image< type, dim > ImageType; \
-  function< ImageType >( outputFileName, size, spacing, center, radius ); \
-  supported = true; \
-}
+
+/** CreateSphere */
+
+class CreateSphereBase : public itktools::ITKToolsBase
+{ 
+public:
+  CreateSphereBase(){};
+  ~CreateSphereBase(){};
+
+  /** Input parameters */
+  std::string m_OutputFileName;
+  std::vector<unsigned int> m_Size;
+  std::vector<double> m_Spacing;
+  std::vector<double> m_Center;
+  double m_Radius;
+    
+}; // end CreateSphereBase
+
+
+template< class TComponentType, unsigned int VDimension >
+class CreateSphere : public CreateSphereBase
+{
+public:
+  typedef CreateSphere Self;
+
+  CreateSphere(){};
+  ~CreateSphere(){};
+
+  static Self * New( itktools::EnumComponentType componentType, unsigned int dim )
+  {
+    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
+    {
+      return new Self;
+    }
+    return 0;
+  }
+
+  void Run(void)
+  {
+    /** Typedefs. */
+    typedef itk::Image<TComponentType, VDimension>  ImageType;
+    typedef itk::ImageRegionIterator< ImageType >   IteratorType;
+    typedef itk::SphereSpatialFunction< VDimension > SphereSpatialFunctionType;
+    typedef typename SphereSpatialFunctionType::InputType    InputType;
+    typedef itk::ImageFileWriter< ImageType >       ImageWriterType;
+
+    typedef typename ImageType::RegionType      RegionType;
+    typedef typename RegionType::SizeType     SizeType;
+    typedef typename RegionType::SizeValueType  SizeValueType;
+    typedef typename ImageType::PointType     PointType;
+    typedef typename ImageType::IndexType     IndexType;
+    typedef typename ImageType::SpacingType   SpacingType;
+
+    /** Parse the arguments. */
+    SizeType    Size;
+    SpacingType Spacing;
+    InputType   Center;
+    for ( unsigned int i = 0; i < VDimension; i++ )
+    {
+      Size[ i ] = static_cast<SizeValueType>( m_Size[ i ] );
+      Spacing[ i ] = m_Spacing[ i ];
+      Center[ i ] = static_cast<double>( m_Center[ i ] );
+    }
+
+    /** Create image. */
+    RegionType region;
+    region.SetSize( Size );
+    typename ImageType::Pointer image = ImageType::New();
+    image->SetRegions( region );
+    image->SetSpacing( Spacing );
+    image->Allocate();
+
+    /** Create and initialize ellipsoid. */
+    typename SphereSpatialFunctionType::Pointer sphere = SphereSpatialFunctionType::New();
+    sphere->SetCenter( Center );
+    sphere->SetRadius( m_Radius );
+
+    /** Create iterator, index and point. */
+    IteratorType it( image, region );
+    it.GoToBegin();
+    PointType point;
+    IndexType index;
+
+    /** Walk over the image. */
+    while ( !it.IsAtEnd() )
+    {
+      index = it.GetIndex();
+      image->TransformIndexToPhysicalPoint( index, point );
+      it.Set( sphere->Evaluate( point ) );
+      ++it;
+    }
+
+    /** Write image. */
+    typename ImageWriterType::Pointer writer = ImageWriterType::New();
+    writer->SetFileName( m_OutputFileName.c_str() );
+    writer->SetInput( image );
+    writer->Update();
+  }
+
+}; // end CreateSphere
 
 //-------------------------------------------------------------------------------------
 
-/* Declare CreateSphere. */
-template< class ImageType >
-void CreateSphere(
-  const std::string & outputFileName,
-  const std::vector<unsigned int> & size,
-  const std::vector<double> & spacing,
-  const std::vector<double> & center,
-  const double & radius );
 
 /** Declare GetHelpString. */
 std::string GetHelpString( void );
@@ -87,7 +171,7 @@ int main( int argc, char *argv[] )
   std::vector<double> center;
   parser->GetCommandLineArgument( "-c", center );
 
-  double radius;
+  double radius = 0.0f;;
   parser->GetCommandLineArgument( "-r", radius );
 
   unsigned int Dimension = 3;
@@ -103,115 +187,65 @@ int main( int argc, char *argv[] )
   ReplaceUnderscoreWithSpace( PixelType );
 
   /** Run the program. */
-  bool supported = false;
-  try
-  {
-    run( CreateSphere, unsigned char, 2 );
-    run( CreateSphere, char, 2 );
-    run( CreateSphere, unsigned short, 2 );
-    run( CreateSphere, short, 2 );
-    run( CreateSphere, float, 2 );
-    run( CreateSphere, double, 2 );
+  
+  /** Class that does the work */
+  CreateSphereBase * createSphere = 0; 
 
-    run( CreateSphere, unsigned char, 3 );
-    run( CreateSphere, char, 3 );
-    run( CreateSphere, unsigned short, 3 );
-    run( CreateSphere, short, 3 );
-    run( CreateSphere, float, 3 );
-    run( CreateSphere, double, 3 );
+  /** Short alias */
+  unsigned int dim = Dimension;
+
+  itktools::EnumComponentType componentType = itktools::EnumComponentTypeFromString(PixelType);
+
+  try
+  {    
+    // now call all possible template combinations.
+    if (!createSphere) createSphere = CreateSphere< unsigned char, 2 >::New( componentType, dim );
+    if (!createSphere) createSphere = CreateSphere< char, 2 >::New( componentType, dim );
+    if (!createSphere) createSphere = CreateSphere< unsigned short, 2 >::New( componentType, dim );
+    if (!createSphere) createSphere = CreateSphere< short, 2 >::New( componentType, dim );
+    if (!createSphere) createSphere = CreateSphere< float, 2 >::New( componentType, dim );
+    if (!createSphere) createSphere = CreateSphere< double, 2 >::New( componentType, dim );
+    
+#ifdef ITKTOOLS_3D_SUPPORT
+    if (!createSphere) createSphere = CreateSphere< unsigned char, 3 >::New( componentType, dim );
+    if (!createSphere) createSphere = CreateSphere< char, 3 >::New( componentType, dim );
+    if (!createSphere) createSphere = CreateSphere< unsigned short, 3 >::New( componentType, dim );
+    if (!createSphere) createSphere = CreateSphere< short, 3 >::New( componentType, dim );
+    if (!createSphere) createSphere = CreateSphere< float, 3 >::New( componentType, dim );
+    if (!createSphere) createSphere = CreateSphere< double, 3 >::New( componentType, dim );
+#endif
+    if (!createSphere) 
+    {
+      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+      std::cerr
+        << "pixel (component) type = " << componentType
+        << " ; dimension = " << Dimension
+        << std::endl;
+      return 1;
+    }
+
+    createSphere->m_OutputFileName = outputFileName;
+    createSphere->m_Size = size;
+    createSphere->m_Spacing = spacing;
+    createSphere->m_Center = center;
+    createSphere->m_Radius = radius;
+    
+
+    createSphere->Run();
+    
+    delete createSphere;
   }
   catch( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
+    delete createSphere;
     return 1;
   }
-  if ( !supported )
-  {
-    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-    std::cerr
-      << "pixel (component) type = " << PixelType
-      << " ; dimension = " << Dimension
-      << std::endl;
-    return 1;
-  }
-
+ 
   /** End program. Return a value. */
   return 0;
 
 } // end main
-
-/*
- * ******************* CreateSphere *******************
- */
-
-template< class ImageType >
-void CreateSphere(
-  const std::string & filename,
-  const std::vector<unsigned int> & size,
-  const std::vector<double> & spacing,
-  const std::vector<double> & center,
-  const double & radius )
-{
-  /** Typedefs. */
-  const unsigned int Dimension = ImageType::ImageDimension;
-  typedef itk::ImageRegionIterator< ImageType >   IteratorType;
-  typedef itk::SphereSpatialFunction< Dimension > SphereSpatialFunctionType;
-  typedef typename SphereSpatialFunctionType::InputType    InputType;
-  typedef itk::ImageFileWriter< ImageType >       ImageWriterType;
-
-  typedef typename ImageType::RegionType      RegionType;
-  typedef typename RegionType::SizeType     SizeType;
-  typedef typename RegionType::SizeValueType  SizeValueType;
-  typedef typename ImageType::PointType     PointType;
-  typedef typename ImageType::IndexType     IndexType;
-  typedef typename ImageType::SpacingType   SpacingType;
-
-  /** Parse the arguments. */
-  SizeType    Size;
-  SpacingType Spacing;
-  InputType   Center;
-  for ( unsigned int i = 0; i < Dimension; i++ )
-  {
-    Size[ i ] = static_cast<SizeValueType>( size[ i ] );
-    Spacing[ i ] = spacing[ i ];
-    Center[ i ] = static_cast<double>( center[ i ] );
-  }
-
-  /** Create image. */
-  RegionType region;
-  region.SetSize( Size );
-  typename ImageType::Pointer image = ImageType::New();
-  image->SetRegions( region );
-  image->SetSpacing( Spacing );
-  image->Allocate();
-
-  /** Create and initialize ellipsoid. */
-  typename SphereSpatialFunctionType::Pointer sphere = SphereSpatialFunctionType::New();
-  sphere->SetCenter( Center );
-  sphere->SetRadius( radius );
-
-  /** Create iterator, index and point. */
-  IteratorType it( image, region );
-  it.GoToBegin();
-  PointType point;
-  IndexType index;
-
-  /** Walk over the image. */
-  while ( !it.IsAtEnd() )
-  {
-    index = it.GetIndex();
-    image->TransformIndexToPhysicalPoint( index, point );
-    it.Set( sphere->Evaluate( point ) );
-    ++it;
-  }
-
-  /** Write image. */
-  typename ImageWriterType::Pointer writer = ImageWriterType::New();
-  writer->SetFileName( filename.c_str() );
-  writer->SetInput( image );
-  writer->Update();
-
-} // end CreateEllipsoid
 
 
   /**

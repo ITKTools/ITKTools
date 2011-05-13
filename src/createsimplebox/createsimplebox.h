@@ -42,30 +42,6 @@ std::string GetHelpString(void)
 } // end GetHelpString
 
 
-int ReadArgument(const ArgMapType & argmap, const std::string & key, std::string & value, bool optional)
-{
-
-  if ( argmap.count(key) )
-  {
-    value = argmap.find(key)->second;
-    return 0;
-  }
-  else
-  {
-    if (!optional)
-    {
-      std::cerr << "Not enough arguments\n";
-      std::cerr << "Missing argument: " << key << std::endl;
-
-      return 1;
-    }
-    else
-    {
-      return 0;
-    }
-  }
-
-} // end ReadArgument
 
 
 //strange hack:
@@ -286,4 +262,3 @@ class ptswrap
 
 
 #endif // #ifndef __createbox_h
-
