@@ -32,27 +32,6 @@
 
 //-------------------------------------------------------------------------------------
 
-/** run: A macro to call a function. */
-#define run(function,type,dim) \
-if ( ComponentTypeIn == #type && Dimension == dim ) \
-{ \
-  typedef itk::Image< type, dim > InputImageType; \
-  function< InputImageType >( inputFileName, outputFileName, input1, input2, option, force ); \
-  supported = true; \
-}
-
-//-------------------------------------------------------------------------------------
-
-/* Declare CropImage. */
-template< class InputImageType >
-void CropImage(
-  const std::string & inputFileName,
-  const std::string & outputFileName,
-  const std::vector<int> & input1,
-  const std::vector<int> & input2,
-  const unsigned int option,
-  const bool force );
-
 /** Declare other functions. */
 std::string GetHelpString( void );
 
@@ -70,6 +49,127 @@ std::vector<int> GetUpperBoundary( const std::vector<int> & input1,
    const std::vector<int> & input2, const std::vector<int> & imageSize,
    const unsigned int dimension, const unsigned int option,
    const bool force, std::vector<unsigned long> & padUpperBound );
+
+
+/** CreateZeroImage */
+
+class CropImageBase : public itktools::ITKToolsBase
+{ 
+public:
+  CropImageBase(){};
+  ~CropImageBase(){};
+
+  /** Input parameters */
+  std::string m_InputFileName;
+  std::string m_OutputFileName;
+  std::vector<int> m_Input1;
+  std::vector<int> m_Input2;
+  unsigned int m_Option;
+  bool m_Force;
+    
+}; // end CropImageBase
+
+
+template< class TComponentType, unsigned int VDimension >
+class CropImage : public CropImageBase
+{
+public:
+  typedef CropImage Self;
+
+  CropImage(){};
+  ~CropImage(){};
+
+  static Self * New( itktools::EnumComponentType componentType, unsigned int dim )
+  {
+    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
+    {
+      return new Self;
+    }
+    return 0;
+  }
+
+  void Run(void)
+  {
+    /** Typedefs. */
+    typedef itk::Image<TComponentType, VDimension>      InputImageType;
+    typedef itk::CropImageFilter< InputImageType, InputImageType >        CropImageFilterType;
+    typedef itk::ConstantPadImageFilter< InputImageType, InputImageType > PadFilterType;
+    typedef itk::ImageFileReader< InputImageType >      ReaderType;
+    typedef itk::ImageFileWriter< InputImageType >      WriterType;
+    typedef typename InputImageType::SizeType           SizeType;
+
+    const unsigned int Dimension = InputImageType::ImageDimension;
+
+    /** Declarations. */
+    typename CropImageFilterType::Pointer cropFilter = CropImageFilterType::New();
+    typename PadFilterType::Pointer padFilter = PadFilterType::New();
+    typename ReaderType::Pointer reader = ReaderType::New();
+    typename WriterType::Pointer writer = WriterType::New();
+
+    /** Prepare stuff. */
+    SizeType input1Size, input2Size;
+    for ( unsigned int i = 0; i < Dimension; i++ )
+    {
+      input1Size[ i ] = m_Input1[ i ];
+      input2Size[ i ] = m_Input2[ i ];
+    }
+
+    /** Read the image. */
+    reader->SetFileName( m_InputFileName.c_str() );
+    reader->Update();
+
+    /** Get the size of input image. */
+    SizeType imageSize = reader->GetOutput()->GetLargestPossibleRegion().GetSize();
+    std::vector<int> imSize( Dimension );
+    for ( unsigned int i = 0; i < Dimension; i++ ) imSize[ i ] = static_cast<int>( imageSize[ i ] );
+
+    /** Get the lower and upper boundary. */
+    std::vector<unsigned long> padLowerBound, padUpperBound;
+    std::vector<int> down = GetLowerBoundary(
+      m_Input1, Dimension, m_Force, padLowerBound );
+    std::vector<int> up = GetUpperBoundary(
+      m_Input1, m_Input2, imSize, Dimension, m_Option, m_Force, padUpperBound );
+    SizeType downSize, upSize;
+    for ( unsigned int i = 0; i < Dimension; i++ )
+    {
+      downSize[ i ] = down[ i ];
+      upSize[ i ] = up[ i ];
+    }
+
+    /** Set the boundaries for the cropping filter. */
+    cropFilter->SetInput( reader->GetOutput() );
+    cropFilter->SetLowerBoundaryCropSize( downSize );
+    cropFilter->SetUpperBoundaryCropSize( upSize );
+
+    /** In case the force option is set to true, we force the output image to be of the
+    * desired size.
+    */
+    if ( m_Force )
+    {
+      unsigned long uBound[ Dimension ];
+      unsigned long lBound[ Dimension ];
+      for ( unsigned int i = 0; i < Dimension; i++ )
+      {
+	lBound[ i ] = padLowerBound[ i ];
+	uBound[ i ] = padUpperBound[ i ];
+      }
+      padFilter->SetPadLowerBound( lBound );
+      padFilter->SetPadUpperBound( uBound );
+      padFilter->SetInput( cropFilter->GetOutput() );
+      writer->SetInput( padFilter->GetOutput() );
+    }
+    else
+    {
+      writer->SetInput( cropFilter->GetOutput() );
+    }
+
+    /** Setup and process the pipeline. */
+    writer->SetFileName( m_OutputFileName.c_str() );
+    writer->Update();
+  }
+
+}; // end CropImage
+
 
 //-------------------------------------------------------------------------------------
 
@@ -229,138 +329,74 @@ int main( int argc, char **argv )
   }
 
   /** Run the program. */
-  bool supported = false;
-  try
-  {
-    run( CropImage, unsigned char, 2 );
-    run( CropImage, char, 2 );
-    run( CropImage, unsigned short, 2 );
-    run( CropImage, short, 2 );
-    run( CropImage, unsigned int, 2 );
-    run( CropImage, int, 2 );
-    run( CropImage, unsigned long, 2 );
-    run( CropImage, long, 2 );
-    run( CropImage, float, 2 );
-    run( CropImage, double, 2 );
+  
+  /** Class that does the work */
+  CropImageBase * cropImage = 0; 
 
-    run( CropImage, unsigned char, 3 );
-    run( CropImage, char, 3 );
-    run( CropImage, unsigned short, 3 );
-    run( CropImage, short, 3 );
-    run( CropImage, unsigned int, 3 );
-    run( CropImage, int, 3 );
-    run( CropImage, unsigned long, 3 );
-    run( CropImage, long, 3 );
-    run( CropImage, float, 3 );
-    run( CropImage, double, 3 );
+  /** Short alias */
+  unsigned int dim = Dimension;
+
+  itktools::EnumComponentType componentType = itktools::EnumComponentTypeFromString(PixelType);
+   
+  try
+  {    
+    // now call all possible template combinations.
+    if (!cropImage) cropImage = CropImage< unsigned char, 2 >::New( componentType, dim );
+    if (!cropImage) cropImage = CropImage< char, 2 >::New( componentType, dim );
+    if (!cropImage) cropImage = CropImage< unsigned short, 2 >::New( componentType, dim );
+    if (!cropImage) cropImage = CropImage< short, 2 >::New( componentType, dim );
+    if (!cropImage) cropImage = CropImage< unsigned int, 2 >::New( componentType, dim );
+    if (!cropImage) cropImage = CropImage< int, 2 >::New( componentType, dim );
+    if (!cropImage) cropImage = CropImage< unsigned long, 2 >::New( componentType, dim );
+    if (!cropImage) cropImage = CropImage< long, 2 >::New( componentType, dim );
+    if (!cropImage) cropImage = CropImage< float, 2 >::New( componentType, dim );
+    if (!cropImage) cropImage = CropImage< double, 2 >::New( componentType, dim );
+    
+#ifdef ITKTOOLS_3D_SUPPORT
+    if (!cropImage) cropImage = CropImage< unsigned char, 3 >::New( componentType, dim );
+    if (!cropImage) cropImage = CropImage< char, 3 >::New( componentType, dim );
+    if (!cropImage) cropImage = CropImage< unsigned short, 3 >::New( componentType, dim );
+    if (!cropImage) cropImage = CropImage< short, 3 >::New( componentType, dim );
+    if (!cropImage) cropImage = CropImage< unsigned int, 3 >::New( componentType, dim );
+    if (!cropImage) cropImage = CropImage< int, 3 >::New( componentType, dim );
+    if (!cropImage) cropImage = CropImage< unsigned long, 3 >::New( componentType, dim );
+    if (!cropImage) cropImage = CropImage< long, 3 >::New( componentType, dim );
+    if (!cropImage) cropImage = CropImage< float, 3 >::New( componentType, dim );
+    if (!cropImage) cropImage = CropImage< double, 3 >::New( componentType, dim );
+#endif
+    if (!cropImage) 
+    {
+      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+      std::cerr
+        << "pixel (component) type = " << componentType
+        << " ; dimension = " << Dimension
+        << std::endl;
+      return 1;
+    }
+
+    cropImage->m_InputFileName = inputFileName;
+    cropImage->m_OutputFileName = outputFileName;
+    cropImage->m_Input1 = input1;
+    cropImage->m_Input2 = input2;
+    cropImage->m_Option = option;
+    cropImage->m_Force = force;
+  
+    cropImage->Run();
+    
+    delete cropImage;
   }
   catch( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
+    delete cropImage;
     return 1;
   }
-  if ( !supported )
-  {
-    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-    std::cerr
-      << "pixel (component) type = " << ComponentTypeIn
-      << " ; dimension = " << Dimension
-      << std::endl;
-    return 1;
-  }
+  
 
   /** End program. */
   return 0;
 
 } // end main()
-
-
-  /*
-   * ******************* CropImage *******************
-   */
-
-template< class InputImageType >
-void CropImage( const std::string & inputFileName, const std::string & outputFileName,
-  const std::vector<int> & input1, const std::vector<int> & input2,
-  const unsigned int option, const bool force )
-{
-  /** Typedefs. */
-  typedef itk::CropImageFilter< InputImageType, InputImageType >        CropImageFilterType;
-  typedef itk::ConstantPadImageFilter< InputImageType, InputImageType > PadFilterType;
-  typedef itk::ImageFileReader< InputImageType >      ReaderType;
-  typedef itk::ImageFileWriter< InputImageType >      WriterType;
-  typedef typename InputImageType::SizeType           SizeType;
-
-  const unsigned int Dimension = InputImageType::ImageDimension;
-
-  /** Declarations. */
-  typename CropImageFilterType::Pointer cropFilter = CropImageFilterType::New();
-  typename PadFilterType::Pointer padFilter = PadFilterType::New();
-  typename ReaderType::Pointer reader = ReaderType::New();
-  typename WriterType::Pointer writer = WriterType::New();
-
-  /** Prepare stuff. */
-  SizeType input1Size, input2Size;
-  for ( unsigned int i = 0; i < Dimension; i++ )
-  {
-    input1Size[ i ] = input1[ i ];
-    input2Size[ i ] = input2[ i ];
-  }
-
-  /** Read the image. */
-  reader->SetFileName( inputFileName.c_str() );
-  reader->Update();
-
-  /** Get the size of input image. */
-  SizeType imageSize = reader->GetOutput()->GetLargestPossibleRegion().GetSize();
-  std::vector<int> imSize( Dimension );
-  for ( unsigned int i = 0; i < Dimension; i++ ) imSize[ i ] = static_cast<int>( imageSize[ i ] );
-
-  /** Get the lower and upper boundary. */
-  std::vector<unsigned long> padLowerBound, padUpperBound;
-  std::vector<int> down = GetLowerBoundary(
-    input1, Dimension, force, padLowerBound );
-  std::vector<int> up = GetUpperBoundary(
-    input1, input2, imSize, Dimension, option, force, padUpperBound );
-  SizeType downSize, upSize;
-  for ( unsigned int i = 0; i < Dimension; i++ )
-  {
-    downSize[ i ] = down[ i ];
-    upSize[ i ] = up[ i ];
-  }
-
-  /** Set the boundaries for the cropping filter. */
-  cropFilter->SetInput( reader->GetOutput() );
-  cropFilter->SetLowerBoundaryCropSize( downSize );
-  cropFilter->SetUpperBoundaryCropSize( upSize );
-
-  /** In case the force option is set to true, we force the output image to be of the
-   * desired size.
-   */
-  if ( force )
-  {
-    unsigned long uBound[ Dimension ];
-    unsigned long lBound[ Dimension ];
-    for ( unsigned int i = 0; i < Dimension; i++ )
-    {
-      lBound[ i ] = padLowerBound[ i ];
-      uBound[ i ] = padUpperBound[ i ];
-    }
-    padFilter->SetPadLowerBound( lBound );
-    padFilter->SetPadUpperBound( uBound );
-    padFilter->SetInput( cropFilter->GetOutput() );
-    writer->SetInput( padFilter->GetOutput() );
-  }
-  else
-  {
-    writer->SetInput( cropFilter->GetOutput() );
-  }
-
-  /** Setup and process the pipeline. */
-  writer->SetFileName( outputFileName.c_str() );
-  writer->Update();
-
-} // end CropImage()
 
 
   /**
