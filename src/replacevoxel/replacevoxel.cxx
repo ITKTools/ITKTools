@@ -211,8 +211,8 @@ int main( int argc, char ** argv )
     if (!replaceVoxel) replaceVoxel = ReplaceVoxel< float, 2 >::New( componentType, dim );
     
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!rv) replaceVoxel = ReplaceVoxel< short, 3 >::New( componentType, dim );    
-    if (!rv) replaceVoxel = ReplaceVoxel< float, 3 >::New( componentType, dim );
+    if (!replaceVoxel) replaceVoxel = ReplaceVoxel< short, 3 >::New( componentType, dim );    
+    if (!replaceVoxel) replaceVoxel = ReplaceVoxel< float, 3 >::New( componentType, dim );
 #endif
     if (!replaceVoxel) 
     {
