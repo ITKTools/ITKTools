@@ -30,27 +30,125 @@
 
 //-------------------------------------------------------------------------------------
 
-/** run: A macro to call a function. */
-#define run( function, dim ) \
-if ( imageDimension == dim ) \
-{ \
-  function< dim >( inputFileName, outputFileName, imageSize, imageSpacing, distance, is2DStack ); \
-  supported = true; \
-}
-
-//-------------------------------------------------------------------------------------
-
-/** Declare functions. */
 std::string GetHelpString( void );
 
-template<unsigned int Dimension>
-void CreateGridImage(
-  const std::string & inputFileName,
-  const std::string & outputFileName,
-  const std::vector<unsigned int> & imageSize,
-  const std::vector<float> & imageSpacing,
-  const std::vector<unsigned int> & distance,
-  const bool & is2DStack );
+/** CreateGridImage */
+
+class CreateGridImageBase : public itktools::ITKToolsBase
+{ 
+public:
+  CreateGridImageBase(){};
+  ~CreateGridImageBase(){};
+
+  /** Input parameters */
+  std::string m_InputFileName;
+  std::string m_OutputFileName;
+
+  std::vector<unsigned int> m_ImageSize;
+  std::vector<float> m_ImageSpacing;
+  std::vector<unsigned int> m_Distance;
+  bool m_Is2DStack;
+
+    
+}; // end CreateGridImageBase
+
+
+template< unsigned int VDimension >
+class CreateGridImage : public CreateGridImageBase
+{
+public:
+  typedef CreateGridImage Self;
+
+  CreateGridImage(){};
+  ~CreateGridImage(){};
+
+  static Self * New( unsigned int dim )
+  {
+    if ( VDimension == dim )
+    {
+      return new Self;
+    }
+    return 0;
+  }
+
+  void Run(void)
+  {
+    /** Typedef's. */
+    typedef unsigned char                                   PixelType;
+    typedef itk::Image< PixelType, VDimension >              ImageType;
+    typedef itk::ImageRegionIteratorWithIndex< ImageType >  IteratorType;
+    typedef itk::ImageFileReader< ImageType >               ReaderType;
+    typedef itk::ImageFileWriter< ImageType >               WriterType;
+
+    typedef typename ImageType::SizeType    SizeType;
+    typedef typename ImageType::IndexType   IndexType;
+    typedef typename ImageType::SpacingType SpacingType;
+
+    /* Create image and writer. */
+    typename ImageType::Pointer  image  = ImageType::New();
+    typename ReaderType::Pointer reader = ReaderType::New();
+    typename WriterType::Pointer writer = WriterType::New();
+
+    /** Get and set grid image information. */
+    if ( m_InputFileName != "" )
+    {
+      reader->SetFileName( m_InputFileName.c_str() );
+      reader->GenerateOutputInformation();
+
+      SizeType size = reader->GetOutput()->GetLargestPossibleRegion().GetSize();
+      image->SetRegions( size );
+      image->SetSpacing( reader->GetOutput()->GetSpacing() );
+      image->SetOrigin( reader->GetOutput()->GetOrigin() );
+      image->SetDirection( reader->GetOutput()->GetDirection() );
+    }
+    else
+    {
+      SizeType    size;
+      SpacingType spacing;
+      for ( unsigned int i = 0; i < VDimension; ++i )
+      {
+	size[ i ] = m_ImageSize[ i ];
+	spacing[ i ] = m_ImageSpacing[ i ];
+      }
+      image->SetRegions( size );
+      image->SetSpacing( spacing );
+    }
+
+    /** Allocate image. */
+    image->Allocate();
+
+    /* Fill the image. */
+    IteratorType  it( image, image->GetLargestPossibleRegion() );
+    it.GoToBegin();
+    IndexType ind;
+    while ( !it.IsAtEnd() )
+    {
+      /** Check if on grid. */
+      ind = it.GetIndex();
+      bool onGrid = false;
+      onGrid |= ind[ 0 ] % m_Distance[ 0 ] == 0;
+      onGrid |= ind[ 1 ] % m_Distance[ 1 ] == 0;
+      if ( VDimension == 3 && !m_Is2DStack )
+      {
+	if ( ind[ 2 ] % m_Distance[ 2 ] != 0 )
+	{
+	  onGrid = ind[ 0 ] % m_Distance[ 0 ] == 0;
+	  onGrid &= ind[ 1 ] % m_Distance[ 1 ] == 0;
+	}
+      }
+      /** Set the value and continue. */
+      if ( onGrid ) it.Set( 1 );
+      else it.Set( 0 );
+      ++it;
+    } // end while
+
+    /* Write result to file. */
+    writer->SetFileName( m_OutputFileName.c_str() );
+    writer->SetInput( image );
+    writer->Update();
+  }
+
+}; // end CreateGridImage
 
 //-------------------------------------------------------------------------------------
 
@@ -154,121 +252,51 @@ int main( int argc, char *argv[] )
     if ( distance[ i ] == 0 ) distance[ i ] = 1;
   }
 
-  /** Run the program. */
-  bool supported = false;
+
+  /** Class that does the work */
+  CreateGridImageBase * createGridImage = NULL; 
+
+  /** Short alias */
+  unsigned int dim = imageDimension;
+ 
   try
-  {
-    run( CreateGridImage, 2 );
-    run( CreateGridImage, 3 );
+  {    
+    // now call all possible template combinations.
+    if (!createGridImage) createGridImage = CreateGridImage< 2 >::New( dim );
+#ifdef ITKTOOLS_3D_SUPPORT
+    if (!createGridImage) createGridImage = CreateGridImage< 3 >::New( dim );    
+#endif
+    if (!createGridImage) 
+    {
+      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+      std::cerr
+        << " dimension = " << dim
+        << std::endl;
+      return 1;
+    }
+
+    createGridImage->m_InputFileName = inputFileName;
+    createGridImage->m_OutputFileName = outputFileName;
+    createGridImage->m_ImageSize = imageSize;
+    createGridImage->m_ImageSpacing = imageSpacing;
+    createGridImage->m_Distance = distance;
+    createGridImage->m_Is2DStack = is2DStack;
+
+    createGridImage->Run();
+    
+    delete createGridImage;  
   }
   catch( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
+    delete createGridImage;
     return 1;
   }
-  if ( !supported )
-  {
-    std::cerr << "ERROR: this dimension is not supported!" << std::endl;
-    std::cerr <<
-      " ; dimension = " << imageDimension
-      << std::endl;
-    return 1;
-  }
-
+  
   /** End program. */
   return 0;
 
 } // end main
-
-
-/*
- * ******************* CreateGridImage *******************
- */
-
-template< unsigned int Dimension >
-void CreateGridImage(
-  const std::string & inputFileName,
-  const std::string & outputFileName,
-  const std::vector<unsigned int> & imageSize,
-  const std::vector<float> & imageSpacing,
-  const std::vector<unsigned int> & distance,
-  const bool & is2DStack )
-{
-  /** Typedef's. */
-  typedef unsigned char                                   PixelType;
-  typedef itk::Image< PixelType, Dimension >              ImageType;
-  typedef itk::ImageRegionIteratorWithIndex< ImageType >  IteratorType;
-  typedef itk::ImageFileReader< ImageType >               ReaderType;
-  typedef itk::ImageFileWriter< ImageType >               WriterType;
-
-  typedef typename ImageType::SizeType    SizeType;
-  typedef typename ImageType::IndexType   IndexType;
-  typedef typename ImageType::SpacingType SpacingType;
-
-  /* Create image and writer. */
-  typename ImageType::Pointer  image  = ImageType::New();
-  typename ReaderType::Pointer reader = ReaderType::New();
-  typename WriterType::Pointer writer = WriterType::New();
-
-  /** Get and set grid image information. */
-  if ( inputFileName != "" )
-  {
-    reader->SetFileName( inputFileName.c_str() );
-    reader->GenerateOutputInformation();
-
-    SizeType size = reader->GetOutput()->GetLargestPossibleRegion().GetSize();
-    image->SetRegions( size );
-    image->SetSpacing( reader->GetOutput()->GetSpacing() );
-    image->SetOrigin( reader->GetOutput()->GetOrigin() );
-    image->SetDirection( reader->GetOutput()->GetDirection() );
-  }
-  else
-  {
-    SizeType    size;
-    SpacingType spacing;
-    for ( unsigned int i = 0; i < Dimension; ++i )
-    {
-      size[ i ] = imageSize[ i ];
-      spacing[ i ] = imageSpacing[ i ];
-    }
-    image->SetRegions( size );
-    image->SetSpacing( spacing );
-  }
-
-  /** Allocate image. */
-  image->Allocate();
-
-  /* Fill the image. */
-  IteratorType  it( image, image->GetLargestPossibleRegion() );
-  it.GoToBegin();
-  IndexType ind;
-  while ( !it.IsAtEnd() )
-  {
-    /** Check if on grid. */
-    ind = it.GetIndex();
-    bool onGrid = false;
-    onGrid |= ind[ 0 ] % distance[ 0 ] == 0;
-    onGrid |= ind[ 1 ] % distance[ 1 ] == 0;
-    if ( Dimension == 3 && !is2DStack )
-    {
-      if ( ind[ 2 ] % distance[ 2 ] != 0 )
-      {
-        onGrid = ind[ 0 ] % distance[ 0 ] == 0;
-        onGrid &= ind[ 1 ] % distance[ 1 ] == 0;
-      }
-    }
-    /** Set the value and continue. */
-    if ( onGrid ) it.Set( 1 );
-    else it.Set( 0 );
-    ++it;
-  } // end while
-
-  /* Write result to file. */
-  writer->SetFileName( outputFileName.c_str() );
-  writer->SetInput( image );
-  writer->Update();
-
-} // end CreateGridImage()
 
 
 /**
