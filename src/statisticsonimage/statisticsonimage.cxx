@@ -23,6 +23,7 @@
 
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
+#include "ITKToolsBase.h"
 
 #include "statisticsonimage.h"
 
@@ -116,35 +117,66 @@ int main( int argc, char ** argv )
   std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
 
   /** force images to sneaky be converted to doubles */
-  ComponentType = "float";
+  
+  
+  /** Class that does the work */
+  StatisticsOnImageBase * statisticsOnImage = NULL; 
 
-  /** Run the program. */
-  bool supported = false;
+  /** Short alias */
+  unsigned int dim = Dimension;
+ 
+  //itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileName);
+  itktools::EnumComponentType componentType = itk::ImageIOBase::FLOAT;
+  
+  unsigned int numberOfComponents = 0;
+  GetImageNumberOfComponents(inputFileName, numberOfComponents);
+  
+  std::cout << "Detected component type: " << 
+    componentType << std::endl;
+    
   try
-  {
-    run( StatisticsOnImage, float, 2, 1 );
-    run( StatisticsOnImage, float, 2, 2 );
-    run( StatisticsOnImage, float, 2, 3 );
-    run( StatisticsOnImage, float, 3, 1 );
-    run( StatisticsOnImage, float, 3, 2 );
-    run( StatisticsOnImage, float, 3, 3 );
-    run( StatisticsOnImage, float, 4, 1 );
-    run( StatisticsOnImage, float, 4, 4 );
+  {    
+    // now call all possible template combinations.
+    if (!statisticsOnImage) statisticsOnImage = StatisticsOnImage< float, 2, 1 >::New( componentType, dim, numberOfComponents );
+    if (!statisticsOnImage) statisticsOnImage = StatisticsOnImage< float, 2, 2 >::New( componentType, dim, numberOfComponents );
+    if (!statisticsOnImage) statisticsOnImage = StatisticsOnImage< float, 2, 3 >::New( componentType, dim, numberOfComponents );
+    
+#ifdef ITKTOOLS_3D_SUPPORT
+    if (!statisticsOnImage) statisticsOnImage = StatisticsOnImage< float, 3, 1 >::New( componentType, dim, numberOfComponents );
+    if (!statisticsOnImage) statisticsOnImage = StatisticsOnImage< float, 3, 2 >::New( componentType, dim, numberOfComponents );
+    if (!statisticsOnImage) statisticsOnImage = StatisticsOnImage< float, 3, 3 >::New( componentType, dim, numberOfComponents );
+#endif
+#ifdef ITKTOOLS_4D_SUPPORT
+    if (!statisticsOnImage) statisticsOnImage = StatisticsOnImage< float, 4, 1 >::New( componentType, dim, numberOfComponents );
+    if (!statisticsOnImage) statisticsOnImage = StatisticsOnImage< float, 4, 4 >::New( componentType, dim, numberOfComponents );
+#endif
+    if (!statisticsOnImage) 
+    {
+      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+      std::cerr
+        << "pixel (component) type = " << componentType
+        << " ; dimension = " << Dimension
+        << std::endl;
+      return 1;
+    }
+
+    statisticsOnImage->m_InputFileName = inputFileName;
+    statisticsOnImage->m_MaskFileName = maskFileName;
+    statisticsOnImage->m_HistogramOutputFileName = histogramOutputFileName;
+    statisticsOnImage->m_NumberOfBins = numberOfBins;
+    statisticsOnImage->m_Select = select;
+  
+    statisticsOnImage->Run();
+    
+    delete statisticsOnImage;  
   }
   catch( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
+    delete statisticsOnImage;
     return 1;
   }
-  if ( !supported )
-  {
-    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-    std::cerr
-      << "pixel (component) type = " << ComponentType
-      << " ; dimension = " << Dimension
-      << std::endl;
-    return 1;
-  }
+
 
   /** End program. */
   return 0;

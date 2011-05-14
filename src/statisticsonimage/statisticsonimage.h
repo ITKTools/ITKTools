@@ -10,7 +10,7 @@
 #include "itkLogImageFilter.h"
 
 #include "statisticsprinters.h"
-
+#include "ITKToolsBase.h"
 
 /** This file defines three templated functions. */
 
@@ -203,136 +203,168 @@ void ComputeStatistics(
 /**
  * ******************* StatisticsOnImage *******************
  *
- * The real functionality or pxstatisticsonimage,
+ * The real functionality of pxstatisticsonimage,
  * templated over image properties.
  */
 
-template< class ComponentType, unsigned int Dimension, unsigned int NumberOfComponents >
-void StatisticsOnImage(
-  const std::string & inputFileName,
-  const std::string & maskFileName,
-  const std::string & histogramOutputFileName,
-  unsigned int numberOfBins,
-  const std::string & select )
+
+/** StatisticsOnImage */
+
+class StatisticsOnImageBase : public itktools::ITKToolsBase
+{ 
+public:
+  StatisticsOnImageBase(){};
+  ~StatisticsOnImageBase(){};
+
+  /** Input parameters */
+  std::string m_InputFileName;
+  std::string m_MaskFileName;
+  std::string m_HistogramOutputFileName;
+  unsigned int m_NumberOfBins;
+  std::string m_Select;
+    
+}; // end StatisticsOnImageBase
+
+
+template< class TComponentType, unsigned int VDimension, unsigned int VNumberOfComponents >
+class StatisticsOnImage : public StatisticsOnImageBase
 {
-  /** Typedefs. */
-  typedef ComponentType ScalarPixelType;
-  typedef double InternalPixelType;
-  typedef unsigned char MaskPixelType;
-  typedef itk::Vector<ComponentType, NumberOfComponents>  VectorPixelType;
-  typedef itk::Image<ScalarPixelType, Dimension>          ScalarImageType;
-  typedef itk::Image<VectorPixelType, Dimension>          VectorImageType;
+public:
+  typedef StatisticsOnImage Self;
 
-  typedef itk::Image<InternalPixelType, Dimension>    InternalImageType;
-  typedef itk::Image<MaskPixelType, Dimension>        MaskImageType;
+  StatisticsOnImage(){};
+  ~StatisticsOnImage(){};
 
-  typedef itk::ImageToImageFilter<
-    InternalImageType, InternalImageType>             BaseFilterType;
-  typedef itk::ImageFileReader< ScalarImageType >     ScalarReaderType;
-  typedef itk::ImageFileReader< InternalImageType >   InternalScalarReaderType;
-  typedef itk::ImageFileReader< VectorImageType >     VectorReaderType;
-  typedef itk::ImageFileReader< MaskImageType >       MaskReaderType;
-  typedef itk::CastImageFilter<
-    InternalImageType, InternalImageType>             CopierType;
-  typedef itk::GradientToMagnitudeImageFilter<
-    VectorImageType, InternalImageType >              MagnitudeFilterType;
-  typedef itk::StatisticsImageFilter<
-    InternalImageType >                               StatisticsFilterType;
-  typedef itk::Statistics::ScalarImageToHistogramGenerator2<
-    InternalImageType >                               HistogramGeneratorType;
-  typedef itk::MaskImageFilter< InternalImageType,
-    MaskImageType, InternalImageType >                MaskerType;
-  typedef typename
-    HistogramGeneratorType::HistogramType             HistogramType;
-
-  /** Create StatisticsFilter. */
-  typename StatisticsFilterType::Pointer statistics
-    = StatisticsFilterType::New();
-
-  /** Read mask */
-  typename MaskReaderType::Pointer maskReader;
-  typename BaseFilterType::Pointer maskerOrCopier
-    = (CopierType::New()).GetPointer();
-  if ( maskFileName != "" )
+  static Self * New( itktools::EnumComponentType componentType, unsigned int dim, unsigned int numberOfComponents )
   {
-    /** Read mask */
-    maskReader = MaskReaderType::New();
-    maskReader->SetFileName( maskFileName.c_str() );
-    maskReader->Update();
-
-    /** Set mask. */
-    statistics->SetMask( maskReader->GetOutput() );
-
-    /** Prepare filter that applies masking to an image by
-     * replacing all pixels that fall outside the mask by
-     * -infinity. Needed for histogram.
-     */
-    typename MaskerType::Pointer maskFilter = MaskerType::New();
-    maskFilter->SetInput2( maskReader->GetOutput() );
-    maskFilter->SetOutsideValue(
-      itk::NumericTraits<InternalPixelType>::NonpositiveMin() );
-    maskerOrCopier = maskFilter.GetPointer();
+    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim && VNumberOfComponents == numberOfComponents )
+    {
+      return new Self;
+    }
+    return 0;
   }
-  
-  /** Create histogram generator. */
-  typename HistogramGeneratorType::Pointer histogramGenerator
-    = HistogramGeneratorType::New();
 
-  /** For scalar images. */
-  if ( NumberOfComponents == 1 )
+  void Run(void)
   {
-    std::cout << "Statistics are computed on the gray values." << std::endl;
+    /** Typedefs. */
+    typedef TComponentType ScalarPixelType;
+    typedef double InternalPixelType;
+    typedef unsigned char MaskPixelType;
+    typedef itk::Vector<TComponentType, VNumberOfComponents>  VectorPixelType;
+    typedef itk::Image<ScalarPixelType, VDimension>          ScalarImageType;
+    typedef itk::Image<VectorPixelType, VDimension>          VectorImageType;
 
-    typename InternalScalarReaderType::Pointer reader
-      = InternalScalarReaderType::New();
-    reader->SetFileName( inputFileName.c_str() );
-    reader->Update();
+    typedef itk::Image<InternalPixelType, VDimension>    InternalImageType;
+    typedef itk::Image<MaskPixelType, VDimension>        MaskImageType;
 
-    /** Call the generic ComputeStatistics function. */
-    ComputeStatistics<
-      InternalImageType,
-      BaseFilterType,
-      StatisticsFilterType,
-      HistogramGeneratorType>(
-        reader->GetOutput(),
-        maskerOrCopier,
-        statistics,
-        histogramGenerator,
-        numberOfBins,
-        histogramOutputFileName,
-        select );
+    typedef itk::ImageToImageFilter<
+      InternalImageType, InternalImageType>             BaseFilterType;
+    typedef itk::ImageFileReader< ScalarImageType >     ScalarReaderType;
+    typedef itk::ImageFileReader< InternalImageType >   InternalScalarReaderType;
+    typedef itk::ImageFileReader< VectorImageType >     VectorReaderType;
+    typedef itk::ImageFileReader< MaskImageType >       MaskReaderType;
+    typedef itk::CastImageFilter<
+      InternalImageType, InternalImageType>             CopierType;
+    typedef itk::GradientToMagnitudeImageFilter<
+      VectorImageType, InternalImageType >              MagnitudeFilterType;
+    typedef itk::StatisticsImageFilter<
+      InternalImageType >                               StatisticsFilterType;
+    typedef itk::Statistics::ScalarImageToHistogramGenerator2<
+      InternalImageType >                               HistogramGeneratorType;
+    typedef itk::MaskImageFilter< InternalImageType,
+      MaskImageType, InternalImageType >                MaskerType;
+    typedef typename
+      HistogramGeneratorType::HistogramType             HistogramType;
 
-  } // end scalar images
-  /** For vector images. */
-  else
-  {
-    std::cout << "Statistics are computed on the magnitude of the vectors." << std::endl;
+    /** Create StatisticsFilter. */
+    typename StatisticsFilterType::Pointer statistics
+      = StatisticsFilterType::New();
 
-    typename VectorReaderType::Pointer reader = VectorReaderType::New();
-    reader->SetFileName( inputFileName.c_str() );
+    /** Read mask */
+    typename MaskReaderType::Pointer maskReader;
+    typename BaseFilterType::Pointer maskerOrCopier
+      = (CopierType::New()).GetPointer();
+    if ( m_MaskFileName != "" )
+    {
+      /** Read mask */
+      maskReader = MaskReaderType::New();
+      maskReader->SetFileName( m_MaskFileName.c_str() );
+      maskReader->Update();
 
-    typename MagnitudeFilterType::Pointer magnitudeFilter = MagnitudeFilterType::New();
-    magnitudeFilter->SetInput( reader->GetOutput() );
-    std::cout << "Computing magnitude image ..." << std::endl;
-    magnitudeFilter->Update();
+      /** Set mask. */
+      statistics->SetMask( maskReader->GetOutput() );
 
-    /** Call the generic ComputeStatistics function */
-    ComputeStatistics<
-      InternalImageType,
-      BaseFilterType,
-      StatisticsFilterType,
-      HistogramGeneratorType>(
-        magnitudeFilter->GetOutput(),
-        maskerOrCopier,
-        statistics,
-        histogramGenerator,
-        numberOfBins,
-        histogramOutputFileName,
-        select );
+      /** Prepare filter that applies masking to an image by
+      * replacing all pixels that fall outside the mask by
+      * -infinity. Needed for histogram.
+      */
+      typename MaskerType::Pointer maskFilter = MaskerType::New();
+      maskFilter->SetInput2( maskReader->GetOutput() );
+      maskFilter->SetOutsideValue(
+	itk::NumericTraits<InternalPixelType>::NonpositiveMin() );
+      maskerOrCopier = maskFilter.GetPointer();
+    }
+    
+    /** Create histogram generator. */
+    typename HistogramGeneratorType::Pointer histogramGenerator
+      = HistogramGeneratorType::New();
 
-  } // end vector images
+    /** For scalar images. */
+    if ( VNumberOfComponents == 1 )
+    {
+      std::cout << "Statistics are computed on the gray values." << std::endl;
 
-} // end StatisticsOnImage()
+      typename InternalScalarReaderType::Pointer reader
+	= InternalScalarReaderType::New();
+      reader->SetFileName( m_InputFileName.c_str() );
+      reader->Update();
+
+      /** Call the generic ComputeStatistics function. */
+      ComputeStatistics<
+	InternalImageType,
+	BaseFilterType,
+	StatisticsFilterType,
+	HistogramGeneratorType>(
+	  reader->GetOutput(),
+	  maskerOrCopier,
+	  statistics,
+	  histogramGenerator,
+	  m_NumberOfBins,
+	  m_HistogramOutputFileName,
+	  m_Select );
+
+    } // end scalar images
+    /** For vector images. */
+    else
+    {
+      std::cout << "Statistics are computed on the magnitude of the vectors." << std::endl;
+
+      typename VectorReaderType::Pointer reader = VectorReaderType::New();
+      reader->SetFileName( m_InputFileName.c_str() );
+
+      typename MagnitudeFilterType::Pointer magnitudeFilter = MagnitudeFilterType::New();
+      magnitudeFilter->SetInput( reader->GetOutput() );
+      std::cout << "Computing magnitude image ..." << std::endl;
+      magnitudeFilter->Update();
+
+      /** Call the generic ComputeStatistics function */
+      ComputeStatistics<
+	InternalImageType,
+	BaseFilterType,
+	StatisticsFilterType,
+	HistogramGeneratorType>(
+	  magnitudeFilter->GetOutput(),
+	  maskerOrCopier,
+	  statistics,
+	  histogramGenerator,
+	  m_NumberOfBins,
+	  m_HistogramOutputFileName,
+	  m_Select );
+
+    } // end vector images
+  }
+
+}; // end StatisticsOnImage
 
 
 #endif // #ifndef __statisticsonimage_h
