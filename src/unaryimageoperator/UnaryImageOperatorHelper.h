@@ -29,142 +29,125 @@
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
+#include "ITKToolsBase.h"
 
 //-------------------------------------------------------------------------------------
 
-/** run: A macro to call a function. */
-#define run(function,typeIn,typeOut,dim) \
-if ( ComponentTypeIn == #typeIn && ComponentTypeOut == #typeOut && inputDimension == dim ) \
-{ \
-  typedef itk::Image< typeIn, dim > InputImageType; \
-  typedef itk::Image< typeOut, dim > OutputImageType; \
-  function< InputImageType, OutputImageType >( inputFileName, outputFileName, ops, argument ); \
-}
 
-//-------------------------------------------------------------------------------------
+/** UnaryImageOperator */
 
-/** Macro for easily instantiating the correct unary functor
- * if, for example name is PLUS, the result is:
- * typedef itk::UnaryFunctorImageFilter<
- *   InputImageType,
- *   OutputImageType,
- *   itk::Functor::PLUS<InputPixelType,ArgumentType,OutputPixelType > PLUSFilterType;
- * unaryFilter = (PLUSFilterType::New()).GetPointer();
- *
- */
-#define InstantiateUnaryFilter(name,typeArg) \
-  typedef itk::UnaryFunctorImageFilter< \
-    InputImageType, OutputImageType, \
-    itk::Functor::name<InputPixelType, typeArg, OutputPixelType> >  name##typeArg##FilterType; \
-  if ( unaryOperatorName == #name && argumentType == #typeArg ) \
-  {\
-    typename name##typeArg##FilterType::Pointer tempUnaryFilter = name##typeArg##FilterType::New(); \
-    tempUnaryFilter->GetFunctor().SetArgument( static_cast<typeArg>( argument ) ); \
-    unaryFilter = tempUnaryFilter.GetPointer(); \
-  }
+class UnaryImageOperatorBase : public itktools::ITKToolsBase
+{ 
+public:
+  UnaryImageOperatorBase(){};
+  ~UnaryImageOperatorBase(){};
 
-#define InstantiateUnaryFilter2(name) \
-  typedef itk::UnaryFunctorImageFilter< \
-    InputImageType, OutputImageType, \
-    itk::Functor::name<InputPixelType, double, OutputPixelType> > name##typeArg##FilterType; \
-  if ( unaryOperatorName == #name ) \
-  {\
-    typename name##typeArg##FilterType::Pointer tempUnaryFilter = name##typeArg##FilterType::New(); \
-    tempUnaryFilter->GetFunctor().SetArgument( static_cast<double>( argument ) ); \
-    unaryFilter = tempUnaryFilter.GetPointer(); \
-  }
+  /** Input parameters */
+  std::string m_InputFileName;
+  std::string m_OutputFileName;
+  std::string m_Ops;
+  std::string m_Arg;
+    
+}; // end UnaryImageOperatorBase
 
 
-/**
- * ******************* UnaryImageOperator *******************
- */
-
-template< class InputImageType, class OutputImageType >
-void UnaryImageOperator(
-  const std::string & inputFileName,
-  const std::string & outputFileName,
-  const std::string & ops,
-  const std::string & arg )
+template< class TInputComponentType, class TOutputComponentType, unsigned int VDimension >
+class UnaryImageOperator : public UnaryImageOperatorBase
 {
-  /** Typedefs. */
-  typedef typename InputImageType::PixelType          InputPixelType;
-  typedef typename OutputImageType::PixelType         OutputPixelType;
-  typedef itk::ImageToImageFilter<InputImageType, OutputImageType> BaseFilterType;
-  typedef itk::ImageFileReader< InputImageType >      ReaderType;
-  typedef itk::ImageFileWriter< OutputImageType >     WriterType;
+public:
+  typedef UnaryImageOperator Self;
 
-  /** Read the image. */
-  typename ReaderType::Pointer reader = ReaderType::New();
-  reader->SetFileName( inputFileName.c_str() );
+  UnaryImageOperator(){};
+  ~UnaryImageOperator(){};
 
-  /** Get the ArgumentType and argument. */
-  std::string argumentType = "int";
-  std::basic_string<char>::size_type pos = arg.find( "." );
-  const std::basic_string<char>::size_type npos = std::basic_string<char>::npos;
-  if ( pos != npos )
+  static Self * New( itktools::EnumComponentType inputComponentType,
+		     itktools::EnumComponentType outputComponentType, unsigned int dim )
   {
-    argumentType = "double";
+    if ( itktools::IsType<TInputComponentType>( inputComponentType ) &&
+         itktools::IsType<TOutputComponentType>( outputComponentType ) && VDimension == dim )
+    {
+      return new Self;
+    }
+    return 0;
   }
-  float argument = atof( arg.c_str() );
 
-  /** Get the unaryOperatorName. */
-  std::string unaryOperatorName = ops;
+  void Run(void)
+  {
+    /** Typedefs. */
+    typedef itk::Image<TInputComponentType, VDimension>       InputImageType;
+    typedef itk::Image<TOutputComponentType, VDimension>      OutputImageType;
+    typedef typename InputImageType::PixelType          InputPixelType;
+    typedef typename OutputImageType::PixelType         OutputPixelType;
+    
+    typedef itk::ImageFileReader< InputImageType >      ReaderType;
+    typedef itk::ImageFileWriter< OutputImageType >     WriterType;
 
-  /** Set up the unaryFilter */
-  typename BaseFilterType::Pointer unaryFilter = 0;
-  InstantiateUnaryFilter( PLUS, int );
-  InstantiateUnaryFilter( PLUS, double );
-  InstantiateUnaryFilter( RMINUS, int );
-  InstantiateUnaryFilter( RMINUS, double );
-  InstantiateUnaryFilter( LMINUS, int );
-  InstantiateUnaryFilter( LMINUS, double );
-  InstantiateUnaryFilter( TIMES, int );
-  InstantiateUnaryFilter( TIMES, double );
-  InstantiateUnaryFilter( LDIVIDE, int );
-  InstantiateUnaryFilter( LDIVIDE, double );
-  InstantiateUnaryFilter( RDIVIDE, int );
-  InstantiateUnaryFilter( RDIVIDE, double );
-  InstantiateUnaryFilter( RMODINT, int );
-  InstantiateUnaryFilter( RMODDOUBLE, double );
-  InstantiateUnaryFilter( LMODINT, int );
-  InstantiateUnaryFilter( LMODDOUBLE, double );
-  InstantiateUnaryFilter( NLOG, double );
+    /** Read the image. */
+    typename ReaderType::Pointer reader = ReaderType::New();
+    reader->SetFileName( m_InputFileName.c_str() );
 
-  InstantiateUnaryFilter( EQUAL, int );
+    /** Get the ArgumentType and argument. */
+    std::string argumentType = "int";
+    std::basic_string<char>::size_type pos = m_Arg.find( "." );
+    const std::basic_string<char>::size_type npos = std::basic_string<char>::npos;
+    if ( pos != npos )
+    {
+      argumentType = "double";
+    }
+    float argument = atof( m_Arg.c_str() );
 
-  // arg is always double is ok
-  InstantiateUnaryFilter2( RPOWER );
-  InstantiateUnaryFilter2( LPOWER );
+    /** Get the unaryOperatorName. */
+    std::string unaryOperatorName = m_Ops;
 
-  // arg is dummy
-  InstantiateUnaryFilter2( NEG );
-  InstantiateUnaryFilter2( SIGNINT );
-  InstantiateUnaryFilter2( SIGNDOUBLE );
-  InstantiateUnaryFilter2( ABSINT );
-  InstantiateUnaryFilter2( ABSDOUBLE );
-  InstantiateUnaryFilter2( FLOOR );
-  InstantiateUnaryFilter2( CEIL );
-  InstantiateUnaryFilter2( ROUND );
-  InstantiateUnaryFilter2( LN );
-  InstantiateUnaryFilter2( LOG10 );
-  InstantiateUnaryFilter2( EXP );
-  InstantiateUnaryFilter2( SIN );
-  InstantiateUnaryFilter2( COS );
-  InstantiateUnaryFilter2( TAN );
-  InstantiateUnaryFilter2( ARCSIN );
-  InstantiateUnaryFilter2( ARCCOS );
-  InstantiateUnaryFilter2( ARCTAN );
+    std::map< std::string, UnaryFunctorEnum> stringToEnumMap;
+    stringToEnumMap["PLUS"] = PLUS;
+    stringToEnumMap["RMINUS"] = RMINUS;
+    stringToEnumMap["LMINUS"] = LMINUS;
+    stringToEnumMap["TIMES"] = TIMES;
+    stringToEnumMap["LDIVIDE"] = LDIVIDE;
+    stringToEnumMap["RDIVIDE"] = RDIVIDE;
+    stringToEnumMap["RMODINT"] = RMODINT;
+    stringToEnumMap["RMODDOUBLE"] = RMODDOUBLE;
+    stringToEnumMap["LMODINT"] = LMODINT;
+    stringToEnumMap["LMODDOUBLE"] = LMODDOUBLE;
+    stringToEnumMap["NLOG"] = NLOG;
+    stringToEnumMap["RPOWER"] = RPOWER;
+    stringToEnumMap["LPOWER"] = LPOWER;
+    stringToEnumMap["NEG"] = NEG;
+    stringToEnumMap["SIGNINT"] = SIGNINT;
+    stringToEnumMap["SIGNDOUBLE"] = SIGNDOUBLE;
+    stringToEnumMap["ABSINT"] = ABSINT;
+    stringToEnumMap["ABSDOUBLE"] = ABSDOUBLE;
+    stringToEnumMap["FLOOR"] = FLOOR;
+    stringToEnumMap["CEIL"] = CEIL;
+    stringToEnumMap["ROUND"] = ROUND;
+    stringToEnumMap["LN"] = LN;
+    stringToEnumMap["LOG10"] = LOG10;
+    stringToEnumMap["EXP"] = EXP;
+    stringToEnumMap["SIN"] = SIN;
+    stringToEnumMap["COS"] = COS;
+    stringToEnumMap["TAN"] = TAN;
+    stringToEnumMap["ARCSIN"] = ARCSIN;
+    stringToEnumMap["ARCCOS"] = ARCCOS;
+    stringToEnumMap["ARCTAN"] = ARCTAN;
 
-  /** Connect the pipeline. */
-  unaryFilter->SetInput( reader->GetOutput() );
+    UnaryFunctorFactory<InputImageType, OutputImageType> unaryFunctorFactory;
+    typename itk::InPlaceImageFilter<InputImageType, OutputImageType>::Pointer unaryFilter = unaryFunctorFactory.GetFilter(stringToEnumMap[m_Ops]);
+    
+    /** Connect the pipeline. */
+    unaryFilter->SetInput( reader->GetOutput() );
+    //unaryFilter->SetArgument( argument ); // !!! how to do this since the unaryFilter pointer is the type of the superclass?
+    
+    /** Write the image to disk */
+    typename WriterType::Pointer writer = WriterType::New();
+    writer->SetFileName( m_OutputFileName.c_str() );
+    writer->SetInput( unaryFilter->GetOutput() );
+    writer->Update();
+  }
 
-  /** Write the image to disk */
-  typename WriterType::Pointer writer = WriterType::New();
-  writer->SetFileName( outputFileName.c_str() );
-  writer->SetInput( unaryFilter->GetOutput() );
-  writer->Update();
+}; // end UnaryImageOperator
 
-} // end UnaryImageOperator
+//-------------------------------------------------------------------------------------
 
 
 #endif //#ifndef __UnaryImageOperatorHelper_h

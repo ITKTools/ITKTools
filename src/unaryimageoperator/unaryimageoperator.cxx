@@ -24,6 +24,7 @@
 #include "CommandLineArgumentHelper.h"
 
 #include "UnaryImageOperatorMainHelper.h"
+#include "UnaryImageOperatorHelper.h"
 
 /* Functions to do the work: this splits things up
  * in different compilation units.
@@ -72,32 +73,24 @@ int main( int argc, char **argv )
     CreateOutputFileName( inputFileName, outputFileName, ops, argument );
   }
 
-  /** Determine image properties. */
-  std::string inputComponentType = "short";
-  std::string inputPixelType = "";
-  unsigned int inputDimension = 2;
-  unsigned int numberOfComponents = 1;
-  std::vector<unsigned int> imagesize( inputDimension, 0 );
-  int retgip = GetImageProperties(
-    inputFileName,
-    inputPixelType,
-    inputComponentType,
-    inputDimension,
-    numberOfComponents,
-    imagesize );
-  if ( retgip ) return retgip;
+  /** The input is only templated over int and double. */
+  itktools::EnumComponentType inputComponentType = itk::ImageIOBase::DOUBLE;
+
+  bool inputIsInteger = InputIsInteger( inputComponentType );
+  if ( inputIsInteger ) 
+  {
+    inputComponentType = itk::ImageIOBase::INT;
+  }
 
   /** Get the output component type. */
-  std::string ComponentTypeOut = inputComponentType;
-  parser->GetCommandLineArgument( "-pto", ComponentTypeOut );
-  ReplaceUnderscoreWithSpace( ComponentTypeOut );
-
-  /** The input is only templated over int and double. */
-  bool inputIsInteger;
-  InputIsInteger( inputComponentType, inputIsInteger );
-  std::string ComponentTypeIn = "double";
-  if ( inputIsInteger ) ComponentTypeIn = "int";
-
+  itktools::EnumComponentType outputComponentType = inputComponentType;
+  std::string componentTypeOutString = "";
+  bool retpto = parser->GetCommandLineArgument( "-pto", componentTypeOutString );
+  if(retpto)
+  {
+    outputComponentType = itktools::EnumComponentTypeFromString(componentTypeOutString);
+  }
+  
   /** Get the correct form of ops. For some operators
    * there are integer and double versions, in which case
    * ops is concatenated with INT or DOUBLE. For example
@@ -129,32 +122,73 @@ int main( int argc, char **argv )
     std::cerr << "The argument (" << argument << ") is ignored." << std::endl;
   }
 
-  /** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
-   * Now that we have all arguments available, run!
-   */
+
+  /** Class that does the work */
+  UnaryImageOperatorBase * unaryImageOperator = NULL;
+
+  unsigned int dim = 0;
+  GetImageDimension(inputFileName, dim);
+
   try
-  {
-    /** Scalar support. */
-    if ( inputPixelType == "scalar" && numberOfComponents == 1 )
+  {    
+    // now call all possible template combinations.
+    if (!unaryImageOperator) unaryImageOperator = UnaryImageOperator< int, unsigned char, 2 >::New( inputComponentType, outputComponentType, dim );
+    if (!unaryImageOperator) unaryImageOperator = UnaryImageOperator< int, char, 2 >::New( inputComponentType, outputComponentType, dim );
+    if (!unaryImageOperator) unaryImageOperator = UnaryImageOperator< int, unsigned short, 2 >::New( inputComponentType, outputComponentType, dim );
+    if (!unaryImageOperator) unaryImageOperator = UnaryImageOperator< int, short, 2 >::New( inputComponentType, outputComponentType, dim );
+    if (!unaryImageOperator) unaryImageOperator = UnaryImageOperator< int, unsigned int, 2 >::New( inputComponentType, outputComponentType, dim );
+    if (!unaryImageOperator) unaryImageOperator = UnaryImageOperator< int, int, 2 >::New( inputComponentType, outputComponentType, dim );
+    if (!unaryImageOperator) unaryImageOperator = UnaryImageOperator< int, float, 2 >::New( inputComponentType, outputComponentType, dim );
+    
+    if (!unaryImageOperator) unaryImageOperator = UnaryImageOperator< double, unsigned char, 2 >::New( inputComponentType, outputComponentType, dim );
+    if (!unaryImageOperator) unaryImageOperator = UnaryImageOperator< double, char, 2 >::New( inputComponentType, outputComponentType, dim );
+    if (!unaryImageOperator) unaryImageOperator = UnaryImageOperator< double, unsigned short, 2 >::New( inputComponentType, outputComponentType, dim );
+    if (!unaryImageOperator) unaryImageOperator = UnaryImageOperator< double, short, 2 >::New( inputComponentType, outputComponentType, dim );
+    if (!unaryImageOperator) unaryImageOperator = UnaryImageOperator< double, unsigned int, 2 >::New( inputComponentType, outputComponentType, dim );
+    if (!unaryImageOperator) unaryImageOperator = UnaryImageOperator< double, int, 2 >::New( inputComponentType, outputComponentType, dim );
+    if (!unaryImageOperator) unaryImageOperator = UnaryImageOperator< double, float, 2 >::New( inputComponentType, outputComponentType, dim );
+    
+#ifdef ITKTOOLS_3D_SUPPORT
+    if (!unaryImageOperator) unaryImageOperator = UnaryImageOperator< int, unsigned char, 3 >::New( inputComponentType, outputComponentType, dim );
+    if (!unaryImageOperator) unaryImageOperator = UnaryImageOperator< int, char, 3 >::New( inputComponentType, outputComponentType, dim );
+    if (!unaryImageOperator) unaryImageOperator = UnaryImageOperator< int, unsigned short, 3 >::New( inputComponentType, outputComponentType, dim );
+    if (!unaryImageOperator) unaryImageOperator = UnaryImageOperator< int, short, 3 >::New( inputComponentType, outputComponentType, dim );
+    if (!unaryImageOperator) unaryImageOperator = UnaryImageOperator< int, unsigned int, 3 >::New( inputComponentType, outputComponentType, dim );
+    if (!unaryImageOperator) unaryImageOperator = UnaryImageOperator< int, int, 3 >::New( inputComponentType, outputComponentType, dim );
+    if (!unaryImageOperator) unaryImageOperator = UnaryImageOperator< int, float, 3 >::New( inputComponentType, outputComponentType, dim );
+    
+    if (!unaryImageOperator) unaryImageOperator = UnaryImageOperator< double, unsigned char, 3 >::New( inputComponentType, outputComponentType, dim );
+    if (!unaryImageOperator) unaryImageOperator = UnaryImageOperator< double, char, 3 >::New( inputComponentType, outputComponentType, dim );
+    if (!unaryImageOperator) unaryImageOperator = UnaryImageOperator< double, unsigned short, 3 >::New( inputComponentType, outputComponentType, dim );
+    if (!unaryImageOperator) unaryImageOperator = UnaryImageOperator< double, short, 3 >::New( inputComponentType, outputComponentType, dim );
+    if (!unaryImageOperator) unaryImageOperator = UnaryImageOperator< double, unsigned int, 3 >::New( inputComponentType, outputComponentType, dim );
+    if (!unaryImageOperator) unaryImageOperator = UnaryImageOperator< double, int, 3 >::New( inputComponentType, outputComponentType, dim );
+    if (!unaryImageOperator) unaryImageOperator = UnaryImageOperator< double, float, 3 >::New( inputComponentType, outputComponentType, dim );
+#endif
+    if (!unaryImageOperator) 
     {
-      const int ret_value = UnaryImageOperatorScalar( inputFileName,
-        outputFileName, ops, argument, inputDimension,
-        ComponentTypeIn, ComponentTypeOut );
-      if ( ret_value != 0 ) return ret_value;
-    }
-    /** Other image types are not supported. */
-    else
-    {
-      std::cerr << "The pixel type is " << inputPixelType
-        << " and the number of components is "
-        << numberOfComponents << std::endl;
-      std::cerr << "ERROR: Vector images are not supported!" << std::endl;
+      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+      std::cerr
+        << "input pixel (component) type = " << inputComponentType
+        << "output pixel (component) type = " << outputComponentType
+        << " ; dimension = " << dim
+        << std::endl;
       return 1;
     }
-  } // end try
+
+    unaryImageOperator->m_InputFileName = inputFileName;
+    unaryImageOperator->m_OutputFileName = outputFileName;
+    unaryImageOperator->m_Ops = ops;
+    unaryImageOperator->m_Arg = argument;
+
+    unaryImageOperator->Run();
+    
+    delete unaryImageOperator;  
+  }
   catch( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
+    delete unaryImageOperator;
     return 1;
   }
 

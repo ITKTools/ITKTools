@@ -23,6 +23,8 @@
 #include <string>
 #include <itksys/SystemTools.hxx>
 
+#include "ITKToolsBase.h"
+
 
 /**
  * ******************* GetHelpString *******************
@@ -59,15 +61,14 @@ std::string GetHelpString( void )
  * ******************* InputIsInteger *******************
  */
 
-void InputIsInteger( const std::string & inputComponentType,
-  bool & inputIsInteger )
+bool InputIsInteger( const itktools::EnumComponentType inputComponentType)
 {
   /** Check if the input image is of integer type. */
-  inputIsInteger = false;
-  if ( inputComponentType == "unsigned_char" || inputComponentType == "char"
-    || inputComponentType == "unsigned_short" || inputComponentType == "short"
-    || inputComponentType == "unsigned_int" || inputComponentType == "int"
-    || inputComponentType == "unsigned_long" || inputComponentType == "long" )
+  bool inputIsInteger = false;
+  if ( inputComponentType == itk::ImageIOBase::UCHAR || inputComponentType == itk::ImageIOBase::CHAR
+    || inputComponentType == itk::ImageIOBase::USHORT || inputComponentType == itk::ImageIOBase::SHORT
+    || inputComponentType == itk::ImageIOBase::UINT || inputComponentType == itk::ImageIOBase::INT
+    || inputComponentType == itk::ImageIOBase::ULONG || inputComponentType == itk::ImageIOBase::LONG )
   {
     inputIsInteger = true;
   }
