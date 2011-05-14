@@ -35,126 +35,108 @@
 #include "itkKappaSigmaThresholdImageFilter.h"
 #include "itkMinErrorThresholdImageFilter.h"
 
-//-------------------------------------------------------------------------------------
-
-/** run: A macro to call a function. */
-#define run( function, type, dim ) \
-if ( ComponentTypeIn == #type && Dimension == dim ) \
-{ \
-  typedef itk::Image< type, dim > InputImageType; \
-  if ( method == "Threshold" ) \
-  { \
-    ThresholdImage< InputImageType >( inputFileName, outputFileName, \
-    inside, outside, \
-    threshold1, threshold2 ); \
-    supported = true; \
-  } \
-  else if ( method == "OtsuThreshold" ) \
-  { \
-    OtsuThresholdImage< InputImageType >( inputFileName, outputFileName, maskFileName, \
-    inside, outside, \
-    bins ); \
-    supported = true; \
-  } \
-  else if ( method == "OtsuMultipleThreshold" ) \
-  { \
-    OtsuMultipleThresholdImage< InputImageType >( inputFileName, outputFileName, maskFileName, \
-    inside, outside, \
-    bins, numThresholds ); \
-    supported = true; \
-  } \
-  else if ( method == "RobustAutomaticThreshold" ) \
-  { \
-    RobustAutomaticThresholdImage< InputImageType >( inputFileName, outputFileName, \
-    inside, outside, \
-    pow ); \
-    supported = true; \
-  } \
-  else if ( method == "KappaSigmaThreshold" ) \
-  { \
-    KappaSigmaThresholdImage< InputImageType >( inputFileName, outputFileName, maskFileName, \
-    inside, outside, \
-    maskValue, sigma, iterations ); \
-    supported = true; \
-  } \
-  else if ( method == "MinErrorThreshold" ) \
-  { \
-    MinErrorThresholdImage< InputImageType >( inputFileName, outputFileName, \
-    inside, outside, \
-    bins, mixtureType ); \
-    supported = true; \
-  } \
-}
+#include "ThresholdWrappers.h"
 
 //-------------------------------------------------------------------------------------
 
-/* Declare threshold functions. */
-template< class InputImageType >
-void ThresholdImage(
-  const std::string & inputFileName,
-  const std::string & outputFileName,
-  const double & inside,
-  const double & outside,
-  const double & threshold1,
-  const double & threshold2 );
 
-template< class InputImageType >
-void OtsuThresholdImage(
-  const std::string & inputFileName,
-  const std::string & outputFileName,
-  const std::string & maskFileName,
-  const double & inside,
-  const double & outside,
-  const unsigned int & bins );
+/** ThresholdImage */
 
-template< class InputImageType >
-void OtsuMultipleThresholdImage(
-  const std::string & inputFileName,
-  const std::string & outputFileName,
-  const std::string & maskFileName,
-  const double & inside,
-  const double & outside,
-  const unsigned int & bins,
-  const unsigned int & numThresholds );
+class ThresholdImageBase : public itktools::ITKToolsBase
+{ 
+public:
+  ThresholdImageBase(){};
+  ~ThresholdImageBase(){};
 
-// template< class InputImageType >
-// void AdaptiveOtsuThresholdImage(
-//   const std::string & inputFileName,
-//   const std::string & outputFileName,
-//   const unsigned int & radius,
-//   const unsigned int & bins,
-//   const unsigned int & controlPoints,
-//   const unsigned int & levels,
-//   const unsigned int & samples,
-//   const unsigned int & splineOrder );
+  /** Input parameters */
+  unsigned int m_Bins;
+  std::string m_InputFileName;
+  double m_Inside;
+  unsigned int m_Iterations;
+  std::string m_MaskFileName;
+  unsigned int m_MaskValue;
+  std::string m_Method;
+  unsigned int m_MixtureType;
+  unsigned int m_NumThresholds;
+  std::string m_OutputFileName;
+  double m_Outside;
+  double m_Pow;
+  double m_Sigma;
+  bool m_Supported;
+  double m_Threshold1;
+  double m_Threshold2;
+    
+}; // end ThresholdImageBase
 
-template< class InputImageType >
-void RobustAutomaticThresholdImage(
-  const std::string & inputFileName,
-  const std::string & outputFileName,
-  const double & inside,
-  const double & outside,
-  const double & pow );
 
-template< class InputImageType >
-void KappaSigmaThresholdImage(
-  const std::string & inputFileName,
-  const std::string & outputFileName,
-  const std::string & maskFileName,
-  const double & inside,
-  const double & outside,
-  const unsigned int & maskValue,
-  const double & sigma,
-  const unsigned int & iterations );
+template< class TComponentType, unsigned int VDimension >
+class ThresholdImageSelector : public ThresholdImageBase
+{
+public:
+  typedef ThresholdImageSelector Self;
 
-template< class InputImageType >
-void MinErrorThresholdImage(
-  const std::string & inputFileName,
-  const std::string & outputFileName,
-  const double & inside,
-  const double & outside,
-  const unsigned int & bins,
-  const unsigned int & mixtureType );
+  ThresholdImageSelector(){};
+  ~ThresholdImageSelector(){};
+
+  static Self * New( itktools::EnumComponentType componentType, unsigned int dim )
+  {
+    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
+    {
+      return new Self;
+    }
+    return 0;
+  }
+
+  void Run(void)
+  {
+    typedef itk::Image< TComponentType, VDimension > InputImageType;
+    if ( m_Method == "Threshold" )
+    {
+      ThresholdImage< InputImageType >( m_InputFileName, m_OutputFileName,
+      m_Inside, m_Outside,
+      m_Threshold1, m_Threshold2 );
+    }
+    else if ( m_Method == "OtsuThreshold" )
+    {
+      OtsuThresholdImage< InputImageType >( m_InputFileName, m_OutputFileName, m_MaskFileName,
+      m_Inside, m_Outside,
+      m_Bins );
+    }
+    else if ( m_Method == "OtsuMultipleThreshold" )
+    {
+      OtsuMultipleThresholdImage< InputImageType >( m_InputFileName, m_OutputFileName, m_MaskFileName,
+      m_Inside, m_Outside,
+      m_Bins, m_NumThresholds );
+    }
+    else if ( m_Method == "RobustAutomaticThreshold" )
+    {
+      RobustAutomaticThresholdImage< InputImageType >( m_InputFileName, m_OutputFileName,
+      m_Inside, m_Outside,
+      m_Pow );
+    }
+    else if ( m_Method == "KappaSigmaThreshold" )
+    {
+      KappaSigmaThresholdImage< InputImageType >( m_InputFileName, m_OutputFileName, m_MaskFileName,
+      m_Inside, m_Outside,
+      m_MaskValue, m_Sigma, m_Iterations );
+    }
+    else if ( m_Method == "MinErrorThreshold" )
+    {
+      MinErrorThresholdImage< InputImageType >( m_InputFileName, m_OutputFileName,
+      m_Inside, m_Outside,
+      m_Bins, m_MixtureType );
+    }
+    else
+    {
+      std::cerr << "Not supported!" << std::endl;
+      return;
+    }
+  }
+
+}; // end ThresholdImage
+
+//-------------------------------------------------------------------------------------
+
 
 /** Declare GetHelpString. */
 std::string GetHelpString( void );
@@ -289,42 +271,72 @@ int main( int argc, char **argv )
     return 1;
   }
 
-  /** Get rid of the possible "_" in ComponentType. */
-  ReplaceUnderscoreWithSpace( ComponentTypeIn );
 
-  /** Run the program. */
-  bool supported = false;
+  /** Class that does the work */
+  ThresholdImageBase * thresholdImage = 0; 
+
+  /** Short alias */
+  unsigned int dim = Dimension;
+ 
+  /** \todo some progs allow user to override the pixel type, 
+   * so we need a method to convert string to EnumComponentType */
+  itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileName);
+  
+  std::cout << "Detected component type: " << 
+    componentType << std::endl;
+
   try
-  {
-    /** 2D. */
-    run( ThresholdImage, char, 2 );
-    run( ThresholdImage, unsigned char, 2 );
-    run( ThresholdImage, short, 2 );
-    run( ThresholdImage, unsigned short, 2 );
-    run( ThresholdImage, float, 2 );
-    run( ThresholdImage, double, 2 );
+  {    
+    // now call all possible template combinations.
+    if (!thresholdImage) thresholdImage = ThresholdImageSelector< char, 2 >::New( componentType, dim );
+    if (!thresholdImage) thresholdImage = ThresholdImageSelector< unsigned char, 2 >::New( componentType, dim );
+    if (!thresholdImage) thresholdImage = ThresholdImageSelector< short, 2 >::New( componentType, dim );
+    if (!thresholdImage) thresholdImage = ThresholdImageSelector< unsigned short, 2 >::New( componentType, dim );
+    if (!thresholdImage) thresholdImage = ThresholdImageSelector< float, 2 >::New( componentType, dim );
+    if (!thresholdImage) thresholdImage = ThresholdImageSelector< double, 2 >::New( componentType, dim );
 
-    /** 3D. */
-    run( ThresholdImage, char, 3 );
-    run( ThresholdImage, unsigned char, 3 );
-    run( ThresholdImage, short, 3 );
-    run( ThresholdImage, unsigned short, 3 );
-    run( ThresholdImage, float, 3 );
-    run( ThresholdImage, double, 3 );
+#ifdef ITKTOOLS_3D_SUPPORT
+    if (!thresholdImage) thresholdImage = ThresholdImageSelector< char, 3 >::New( componentType, dim );
+    if (!thresholdImage) thresholdImage = ThresholdImageSelector< unsigned char, 3 >::New( componentType, dim );
+    if (!thresholdImage) thresholdImage = ThresholdImageSelector< short, 3 >::New( componentType, dim );
+    if (!thresholdImage) thresholdImage = ThresholdImageSelector< unsigned short, 3 >::New( componentType, dim );
+    if (!thresholdImage) thresholdImage = ThresholdImageSelector< float, 3 >::New( componentType, dim );
+    if (!thresholdImage) thresholdImage = ThresholdImageSelector< double, 3 >::New( componentType, dim );
+#endif
+    if (!thresholdImage) 
+    {
+      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+      std::cerr
+        << "pixel (component) type = " << ComponentTypeIn // so here we also need a string - we don't need to convert to a string here right? just output the string that was input.
+        << " ; dimension = " << Dimension
+        << std::endl;
+      return 1;
+    }
 
-  } // end run
-  catch ( itk::ExceptionObject &e )
+    thresholdImage->m_Bins = bins;
+    thresholdImage->m_InputFileName = inputFileName;
+    thresholdImage->m_Inside = inside;
+    thresholdImage->m_Iterations = iterations;
+    thresholdImage->m_MaskFileName = maskFileName;
+    thresholdImage->m_MaskValue = maskValue;
+    thresholdImage->m_Method = method;
+    thresholdImage->m_MixtureType = mixtureType;
+    thresholdImage->m_NumThresholds = numThresholds;
+    thresholdImage->m_OutputFileName = outputFileName;
+    thresholdImage->m_Outside = outside;
+    thresholdImage->m_Pow = pow;
+    thresholdImage->m_Sigma = sigma;
+    thresholdImage->m_Threshold1 = threshold1;
+    thresholdImage->m_Threshold2 = threshold2;
+
+    thresholdImage->Run();
+    
+    delete thresholdImage;  
+  }
+  catch( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
-    return 1;
-  }
-  if ( !supported )
-  {
-    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-    std::cerr
-      << "pixel (component) type = " << ComponentTypeIn
-      << " ; dimension = " << Dimension
-      << std::endl;
+    delete thresholdImage;
     return 1;
   }
 
@@ -333,380 +345,6 @@ int main( int argc, char **argv )
 
 } // end main
 
-
-/*
- * ******************* ThresholdImage *******************
- */
-
-template< class InputImageType >
-void ThresholdImage(
-  const std::string & inputFileName,
-  const std::string & outputFileName,
-  const double & inside,
-  const double & outside,
-  const double & threshold1,
-  const double & threshold2 )
-{
-  /** Typedef's. */
-  typedef typename InputImageType::PixelType          InputPixelType;
-  typedef InputImageType                              OutputImageType;
-  typedef InputPixelType                              OutputPixelType;
-  typedef itk::ImageFileReader< InputImageType >      ReaderType;
-  typedef itk::BinaryThresholdImageFilter<
-    InputImageType, OutputImageType>                  ThresholderType;
-  typedef itk::ImageFileWriter< OutputImageType >     WriterType;
-
-  /** Declarations. */
-  InputPixelType lowerthreshold;
-  typename ReaderType::Pointer reader = ReaderType::New();
-  typename ThresholderType::Pointer thresholder = ThresholderType::New();
-  typename WriterType::Pointer writer = WriterType::New();
-
-  /** Read in the inputImage. */
-  reader->SetFileName( inputFileName.c_str() );
-
-  /** Apply the threshold. */
-  lowerthreshold = static_cast<InputPixelType>( vnl_math_max(
-    static_cast<double>( itk::NumericTraits<InputPixelType>::NonpositiveMin() ),
-    threshold1 ) );
-  thresholder->SetLowerThreshold( lowerthreshold );
-  thresholder->SetUpperThreshold( static_cast<InputPixelType>( threshold2 ) );
-  thresholder->SetInsideValue( static_cast<InputPixelType>( inside ) );
-  thresholder->SetOutsideValue( static_cast<InputPixelType>( outside ) );
-  thresholder->SetInput( reader->GetOutput() );
-
-  /** Write the output image. */
-  writer->SetInput( thresholder->GetOutput() );
-  writer->SetFileName( outputFileName.c_str() );
-  writer->Update();
-
-} // end ThresholdImage()
-
-
-/*
- * ******************* OtsuThresholdImage *******************
- */
-
-template< class InputImageType >
-void OtsuThresholdImage(
-  const std::string & inputFileName,
-  const std::string & outputFileName,
-  const std::string & maskFileName,
-  const double & inside,
-  const double & outside,
-  const unsigned int & bins )
-{
-  /** Typedef's. */
-  const unsigned int ImageDimension = InputImageType::ImageDimension;
-
-  typedef typename InputImageType::PixelType            InputPixelType;
-  typedef unsigned char                                 OutputPixelType;
-  typedef unsigned char                                 MaskPixelType;
-  typedef itk::Image< MaskPixelType, ImageDimension >   MaskImageType;
-  typedef itk::Image< OutputPixelType, ImageDimension > OutputImageType;
-  typedef itk::ImageFileReader< InputImageType >        ReaderType;
-  typedef itk::ImageFileReader< MaskImageType >         MaskReaderType;
-  typedef itk::OtsuThresholdWithMaskImageFilter<
-    InputImageType, OutputImageType>                    ThresholderType;
-  typedef itk::ImageFileWriter< OutputImageType >       WriterType;
-
-  /** Declarations. */
-  typename ReaderType::Pointer reader1 = ReaderType::New();
-  typename MaskReaderType::Pointer reader2 = MaskReaderType::New();
-  typename ThresholderType::Pointer thresholder = ThresholderType::New();
-  typename WriterType::Pointer writer = WriterType::New();
-
-  /** Read in the inputImage. */
-  reader1->SetFileName( inputFileName.c_str() );
-
-  /** Apply the threshold. */
-  thresholder->SetNumberOfHistogramBins( bins );
-  thresholder->SetInsideValue( static_cast<InputPixelType>( inside ) );
-  thresholder->SetOutsideValue( static_cast<InputPixelType>( outside ) );
-  thresholder->SetInput( reader1->GetOutput() );
-  if ( maskFileName != "" )
-  {
-    reader2->SetFileName( maskFileName.c_str() );
-    thresholder->SetMaskImage( reader2->GetOutput() );
-  }
-
-  /** Write the output image. */
-  writer->SetInput( thresholder->GetOutput() );
-  writer->SetFileName( outputFileName.c_str() );
-  writer->Update();
-
-} // end OtsuThresholdImage()
-
-
-/*
- * ******************* OtsuMultipleThresholdImage *******************
- */
-
-template< class InputImageType >
-void OtsuMultipleThresholdImage(
-  const std::string & inputFileName,
-  const std::string & outputFileName,
-  const std::string & itkNotUsed( maskFileName ),
-  const double & inside,
-  const double & outside,
-  const unsigned int & bins,
-  const unsigned int & numThresholds )
-{
-  /** Typedef's. */
-  const unsigned int ImageDimension = InputImageType::ImageDimension;
-
-  typedef typename InputImageType::PixelType            InputPixelType;
-  typedef unsigned char                                 OutputPixelType;
-  typedef unsigned char                                 MaskPixelType;
-  typedef itk::Image< MaskPixelType, ImageDimension >   MaskImageType;
-  typedef itk::Image< OutputPixelType, ImageDimension > OutputImageType;
-  typedef itk::ImageFileReader< InputImageType >        ReaderType;
-  typedef itk::ImageFileReader< MaskImageType >         MaskReaderType;
-  typedef itk::OtsuMultipleThresholdsImageFilter<
-    InputImageType, OutputImageType>                    ThresholderType;
-  typedef itk::ImageFileWriter< OutputImageType >       WriterType;
-
-  /** Declarations. */
-  typename ReaderType::Pointer reader1 = ReaderType::New();
-  //typename MaskReaderType::Pointer reader2 = MaskReaderType::New();
-  typename ThresholderType::Pointer thresholder = ThresholderType::New();
-  typename WriterType::Pointer writer = WriterType::New();
-
-  /** Read in the inputImage. */
-  reader1->SetFileName( inputFileName.c_str() );
-
-  /** Apply the threshold. */
-  thresholder->SetInput( reader1->GetOutput() );
-  thresholder->SetNumberOfHistogramBins( bins );
-  //thresholder->SetInsideValue( static_cast<InputPixelType>( inside ) );
-  //thresholder->SetOutsideValue( static_cast<InputPixelType>( outside ) );
-  thresholder->SetNumberOfThresholds( numThresholds );
-//   if ( maskFileName != "" )
-//   {
-//     reader2->SetFileName( maskFileName.c_str() );
-//     thresholder->SetMaskImage( reader2->GetOutput() );
-//   }
-
-  /** Write the output image. */
-  writer->SetInput( thresholder->GetOutput() );
-  writer->SetFileName( outputFileName.c_str() );
-  writer->Update();
-
-} // end OtsuMultipleThresholdImage()
-
-
-// /*
-//  * ******************* AdaptiveOtsuThresholdImage *******************
-//  */
-//
-// template< class InputImageType >
-// void AdaptiveOtsuThresholdImage(
-//   const std::string & inputFileName,
-//   const std::string & outputFileName,
-//   const unsigned int & radius,
-//   const unsigned int & bins,
-//   const unsigned int & controlPoints,
-//   const unsigned int & levels,
-//   const unsigned int & samples,
-//   const unsigned int & splineOrder )
-// {
-//   /** Typedef's. */
-//   const unsigned int ImageDimension = InputImageType::ImageDimension;
-//
-//   typedef unsigned char                                 OutputPixelType;
-//   typedef itk::Image< OutputPixelType, ImageDimension > OutputImageType;
-//   typedef itk::ImageFileReader< InputImageType >        ReaderType;
-//   typedef itk::AdaptiveOtsuThresholdImageFilter<
-//     InputImageType, OutputImageType>                    ThresholderType;
-//   typedef itk::ImageFileWriter< OutputImageType >       WriterType;
-//   typedef ThresholderType::InputSizeType                RadiusType;
-//
-//   /** Declarations. */
-//   typename ReaderType::Pointer reader = ReaderType::New();
-//   typename ThresholderType::Pointer thresholder = ThresholderType::New();
-//   typename WriterType::Pointer writer = WriterType::New();
-//   RadiusType Radius; Radius.Fill( radius );
-//
-//   /** Read in the inputImage. */
-//   reader->SetFileName( inputFileName.c_str() );
-//
-//   /** Apply the threshold. */
-//   thresholder->SetRadius( Radius );
-//   thresholder->SetNumberOfHistogramBins( bins );
-//   thresholder->SetNumberOfControlPoints( controlPoints );
-//   thresholder->SetNumberOfLevels( levels );
-//   thresholder->SetNumberOfSamples( samples );
-//   thresholder->SetSplineOrder( splineOrder );
-//   thresholder->SetInsideValue( 1 );
-//   thresholder->SetOutsideValue( 0 );
-//   thresholder->SetInput( reader->GetOutput() );
-//
-//   /** Write the output image. */
-//   writer->SetInput( thresholder->GetOutput() );
-//   writer->SetFileName( outputFileName.c_str() );
-//   writer->Update();
-//
-// } // end AdaptiveOtsuThresholdImage()
-
-
-/*
- * ******************* RobustAutomaticThresholdImage *******************
- */
-
-template< class InputImageType >
-void RobustAutomaticThresholdImage(
-  const std::string & inputFileName,
-  const std::string & outputFileName,
-  const double & inside,
-  const double & outside,
-  const double & pow )
-{
-  /** Typedef's. */
-  const unsigned int ImageDimension = InputImageType::ImageDimension;
-
-  typedef typename InputImageType::PixelType            InputPixelType;
-  typedef unsigned char                                 OutputPixelType;
-  typedef float                                         GMPixelType;
-  typedef itk::Image< OutputPixelType, ImageDimension > OutputImageType;
-  typedef itk::Image< GMPixelType, ImageDimension >     GMImageType;
-  typedef itk::ImageFileReader< InputImageType >        ReaderType;
-  typedef itk::GradientMagnitudeRecursiveGaussianImageFilter<
-    InputImageType, GMImageType >                       GMFilterType;
-  typedef itk::RobustAutomaticThresholdImageFilter<
-    InputImageType, GMImageType, OutputImageType >      ThresholderType;
-  typedef itk::ImageFileWriter< OutputImageType >       WriterType;
-
-  /** Declarations. */
-  typename ReaderType::Pointer reader = ReaderType::New();
-  typename GMFilterType::Pointer gradientFilter = GMFilterType::New();
-  typename ThresholderType::Pointer thresholder = ThresholderType::New();
-  typename WriterType::Pointer writer = WriterType::New();
-
-  /** Read in the inputImage. */
-  reader->SetFileName( inputFileName.c_str() );
-
-  /** Get the gradient magnitude of the input. */
-  gradientFilter->SetInput( reader->GetOutput() );
-  gradientFilter->SetSigma( 1.0 );
-  gradientFilter->SetNormalizeAcrossScale( false );
-
-  /** Apply the threshold. */
-  thresholder->SetPow( pow );
-  thresholder->SetInsideValue( static_cast<InputPixelType>( inside ) );
-  thresholder->SetOutsideValue( static_cast<InputPixelType>( outside ) );
-  thresholder->SetInput( reader->GetOutput() );
-  thresholder->SetGradientImage( gradientFilter->GetOutput() );
-
-  /** Write the output image. */
-  writer->SetInput( thresholder->GetOutput() );
-  writer->SetFileName( outputFileName.c_str() );
-  writer->Update();
-
-} // end RobustAutomaticThresholdImage()
-
-
-/*
- * ******************* KappaSigmaThresholdImage *******************
- */
-
-template< class InputImageType >
-void KappaSigmaThresholdImage(
-  const std::string & inputFileName,
-  const std::string & outputFileName,
-  const std::string & maskFileName,
-  const double & inside,
-  const double & outside,
-  const unsigned int & maskValue,
-  const double & sigma,
-  const unsigned int & iterations )
-{
-  /** Typedef's. */
-  const unsigned int ImageDimension = InputImageType::ImageDimension;
-
-  typedef typename InputImageType::PixelType            InputPixelType;
-  typedef unsigned char                                 OutputPixelType;
-  typedef unsigned char                                 MaskPixelType;
-  typedef itk::Image< MaskPixelType, ImageDimension >   MaskImageType;
-  typedef itk::Image< OutputPixelType, ImageDimension > OutputImageType;
-  typedef itk::ImageFileReader< InputImageType >        ReaderType;
-  typedef itk::ImageFileReader< MaskImageType >         MaskReaderType;
-  typedef itk::KappaSigmaThresholdImageFilter<
-    InputImageType, MaskImageType, OutputImageType >    ThresholderType;
-  typedef itk::ImageFileWriter< OutputImageType >       WriterType;
-
-  /** Declarations. */
-  typename ReaderType::Pointer reader1 = ReaderType::New();
-  typename MaskReaderType::Pointer reader2 = MaskReaderType::New();
-  typename ThresholderType::Pointer thresholder = ThresholderType::New();
-  typename WriterType::Pointer writer = WriterType::New();
-
-  /** Read in the inputImage. */
-  reader1->SetFileName( inputFileName.c_str() );
-  reader2->SetFileName( maskFileName.c_str() );
-
-  /** Apply the threshold. */
-  thresholder->SetMaskValue( maskValue );
-  thresholder->SetSigmaFactor( sigma );
-  thresholder->SetNumberOfIterations( iterations );
-  thresholder->SetInsideValue( static_cast<InputPixelType>( inside ) );
-  thresholder->SetOutsideValue( static_cast<InputPixelType>( outside ) );
-  thresholder->SetInput( reader1->GetOutput() );
-  thresholder->SetMaskImage( reader2->GetOutput() );
-
-  /** Write the output image. */
-  writer->SetInput( thresholder->GetOutput() );
-  writer->SetFileName( outputFileName.c_str() );
-  writer->Update();
-
-} // end KappaSigmaThresholdImage()
-
-
-/*
- * ******************* MinErrorThresholdImage *******************
- */
-
-template< class InputImageType >
-void MinErrorThresholdImage(
-  const std::string & inputFileName,
-  const std::string & outputFileName,
-  const double & inside,
-  const double & outside,
-  const unsigned int & bins,
-  const unsigned int & mixtureType )
-{
-  /** Typedef's. */
-  const unsigned int ImageDimension = InputImageType::ImageDimension;
-
-  typedef typename InputImageType::PixelType            InputPixelType;
-  typedef unsigned char                                 OutputPixelType;
-  typedef itk::Image< OutputPixelType, ImageDimension > OutputImageType;
-  typedef itk::ImageFileReader< InputImageType >        ReaderType;
-  typedef itk::MinErrorThresholdImageFilter<
-    InputImageType, OutputImageType >                   ThresholderType;
-  typedef itk::ImageFileWriter< OutputImageType >       WriterType;
-
-  /** Declarations. */
-  typename ReaderType::Pointer reader = ReaderType::New();
-
-  typename ThresholderType::Pointer thresholder = ThresholderType::New();
-  typename WriterType::Pointer writer = WriterType::New();
-
-  /** Read in the inputImage. */
-  reader->SetFileName( inputFileName.c_str() );
-
-  /** Apply the threshold. */
-  thresholder->SetNumberOfHistogramBins( bins );
-  thresholder->SetMixtureType( mixtureType );
-  thresholder->SetInsideValue( static_cast<InputPixelType>( inside ) );
-  thresholder->SetOutsideValue( static_cast<InputPixelType>( outside ) );
-  thresholder->SetInput( reader->GetOutput() );
-
-  /** Write the output image. */
-  writer->SetInput( thresholder->GetOutput() );
-  writer->SetFileName( outputFileName.c_str() );
-  writer->Update();
-
-} // end MinErrorThresholdImage()
 
 
 /*
