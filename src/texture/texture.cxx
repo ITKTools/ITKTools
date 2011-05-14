@@ -49,6 +49,98 @@ public:
 
 //-------------------------------------------------------------------------------------
 
+
+/** Texture */
+
+class TextureBase : public itktools::ITKToolsBase
+{ 
+public:
+  TextureBase(){};
+  ~TextureBase(){};
+
+  /** Input parameters */
+  std::string m_InputFileName;
+  std::string m_OutputDirectory;
+  unsigned int m_NeighborhoodRadius;
+  std::vector< unsigned int > m_OffsetScales;
+  unsigned int m_NumberOfBins;
+  unsigned int m_NumberOfOutputs;
+    
+}; // end TextureBase
+
+
+template< class TInputComponentType, class TOutputComponentType, unsigned int VDimension >
+class Texture : public TextureBase
+{
+public:
+  typedef Texture Self;
+
+  Texture(){};
+  ~Texture(){};
+
+  static Self * New( itktools::EnumComponentType inputComponentType,
+		     itktools::EnumComponentType outputComponentType, unsigned int dim )
+  {
+    if ( itktools::IsType<TInputComponentType>( inputComponentType ) &&
+	 itktools::IsType<TOutputComponentType>( outputComponentType ) && VDimension == dim )
+    {
+      return new Self;
+    }
+    return 0;
+  }
+
+  void Run(void)
+  {
+    /** Typedefs. */
+    typedef itk::Image<TInputComponentType, VDimension>   InputImageType;
+    typedef itk::Image<TOutputComponentType, VDimension>  OutputImageType;
+    typedef itk::TextureImageToImageFilter<
+      InputImageType, OutputImageType >                   TextureFilterType;
+    typedef itk::ImageFileReader< InputImageType >        ReaderType;
+    typedef itk::ImageFileWriter< OutputImageType >       WriterType;
+
+    /** Read the input. */
+    typename ReaderType::Pointer reader = ReaderType::New();
+    reader->SetFileName( m_InputFileName.c_str() );
+
+    /** Setup the texture filter. */
+    typename TextureFilterType::Pointer textureFilter = TextureFilterType::New();
+    textureFilter->SetInput( reader->GetOutput() );
+    textureFilter->SetNeighborhoodRadius( m_NeighborhoodRadius );
+    textureFilter->SetOffsetScales( m_OffsetScales );
+    textureFilter->SetNumberOfHistogramBins( m_NumberOfBins );
+    textureFilter->SetNormalizeHistogram( false );
+    textureFilter->SetNumberOfRequestedOutputs( m_NumberOfOutputs );
+
+    /** Create and attach a progress observer. */
+    ShowProgressObject progressWatch( textureFilter );
+    itk::SimpleMemberCommand<ShowProgressObject>::Pointer command
+      = itk::SimpleMemberCommand<ShowProgressObject>::New();
+    command->SetCallbackFunction( &progressWatch, &ShowProgressObject::ShowProgress );
+    textureFilter->AddObserver( itk::ProgressEvent(), command );
+
+    /** Create the output file names. */
+    std::vector< std::string > outputFileNames( 8, "" );
+    outputFileNames[ 0 ] = m_OutputDirectory + "energy.mhd";
+    outputFileNames[ 1 ] = m_OutputDirectory + "entropy.mhd";
+    outputFileNames[ 2 ] = m_OutputDirectory + "correlation.mhd";
+    outputFileNames[ 3 ] = m_OutputDirectory + "inverseDifferenceMoment.mhd";
+    outputFileNames[ 4 ] = m_OutputDirectory + "inertia.mhd";
+    outputFileNames[ 5 ] = m_OutputDirectory + "clusterShade.mhd";
+    outputFileNames[ 6 ] = m_OutputDirectory + "clusterProminence.mhd";
+    outputFileNames[ 7 ] = m_OutputDirectory + "HaralickCorrelation.mhd";
+
+    /** Setup and process the pipeline. */
+    for ( unsigned int i = 0; i < m_NumberOfOutputs; ++i )
+    {
+      typename WriterType::Pointer writer = WriterType::New();
+      writer->SetFileName( outputFileNames[ i ].c_str() );
+      writer->SetInput( textureFilter->GetOutput( i ) );
+      writer->Update();
+    }
+  }
+
+}; // end Texture
 /** run: A macro to call a function. */
 #define run( function, typeIn, typeOut, dim ) \
 if ( componentTypeIn == #typeIn && componentTypeOut == #typeOut && Dimension == dim ) \
@@ -120,8 +212,8 @@ int main( int argc, char **argv )
   unsigned int numberOfOutputs = 8;
   parser->GetCommandLineArgument( "-noo", numberOfOutputs );
 
-  std::string componentTypeOut = "float";
-  parser->GetCommandLineArgument( "-opct", componentTypeOut );
+  std::string componentTypeOutString = "float";
+  parser->GetCommandLineArgument( "-opct", componentTypeOutString );
 
   /** Check that numberOfOutputs <= 8. */
   if ( numberOfOutputs > 8 )
@@ -163,33 +255,57 @@ int main( int argc, char **argv )
     return 1;
   }
 
+  /** Class that does the work */
+  TextureBase * texture = NULL;
+
+  /** Short alias */
+  unsigned int dim = Dimension;
+ 
   /** Input images are read in as float, always. The default output is float,
    * but can be overridden by specifying -opct in the command line.
    */
-  componentTypeIn = "float";
+  //itktools::EnumComponentType inputComponentType = itktools::GetImageComponentType(inputFileName);
+  itktools::EnumComponentType inputComponentType = itk::ImageIOBase::FLOAT;
+  
+  itktools::EnumComponentType outputComponentType = itktools::GetImageComponentType(componentTypeOutString);
 
-  /** Run the program. */
-  bool supported = false;
+    
   try
-  {
-    run( PerformTextureAnalysis, float, float, 2 );
-    run( PerformTextureAnalysis, float, double, 2 );
+  {    
+    // now call all possible template combinations.
+    if (!texture) texture = Texture< float, float, 2 >::New( inputComponentType, outputComponentType, dim );
+    if (!texture) texture = Texture< float, double, 2 >::New( inputComponentType, outputComponentType, dim );
+    
+#ifdef ITKTOOLS_3D_SUPPORT
+    if (!texture) texture = Texture< float, float, 3 >::New( inputComponentType, outputComponentType, dim );    
+    if (!texture) texture = Texture< float, double, 3 >::New( inputComponentType, outputComponentType, dim );
+#endif
+    if (!texture) 
+    {
+      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+      std::cerr
+        << "input pixel (component) type = " << inputComponentType
+        << "output pixel (component) type = " << outputComponentType
+        << " ; dimension = " << Dimension
+        << std::endl;
+      return 1;
+    }
 
-    run( PerformTextureAnalysis, float, float, 3 );
-    run( PerformTextureAnalysis, float, double, 3 );
+    texture->m_InputFileName = inputFileName;
+    texture->m_OutputDirectory = outputDirectory;
+    texture->m_NeighborhoodRadius = neighborhoodRadius;
+    texture->m_OffsetScales = offsetScales;
+    texture->m_NumberOfBins = numberOfBins;
+    texture->m_NumberOfOutputs = numberOfOutputs;
+  
+    texture->Run();
+    
+    delete texture;  
   }
-  catch ( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
-    return 1;
-  }
-  if ( !supported )
-  {
-    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-    std::cerr
-      << "pixel (component) type = " << componentTypeIn
-      << " ; dimension = " << Dimension
-      << std::endl;
+    delete texture;
     return 1;
   }
 
@@ -197,69 +313,6 @@ int main( int argc, char **argv )
   return 0;
 
 } // end main()
-
-
-/*
- * ******************* PerformTextureAnalysis *******************
- */
-
-template< class InputImageType, class OutputImageType >
-void PerformTextureAnalysis(
-  const std::string & inputFileName,
-  const std::string & outputDirectory,
-  unsigned int neighborhoodRadius,
-  const std::vector< unsigned int > & offsetScales,
-  unsigned int numberOfBins,
-  unsigned int numberOfOutputs )
-{
-
-  /** Typedefs. */
-  typedef itk::TextureImageToImageFilter<
-    InputImageType, OutputImageType >                   TextureFilterType;
-  typedef itk::ImageFileReader< InputImageType >        ReaderType;
-  typedef itk::ImageFileWriter< OutputImageType >       WriterType;
-
-  /** Read the input. */
-  typename ReaderType::Pointer reader = ReaderType::New();
-  reader->SetFileName( inputFileName.c_str() );
-
-  /** Setup the texture filter. */
-  typename TextureFilterType::Pointer textureFilter = TextureFilterType::New();
-  textureFilter->SetInput( reader->GetOutput() );
-  textureFilter->SetNeighborhoodRadius( neighborhoodRadius );
-  textureFilter->SetOffsetScales( offsetScales );
-  textureFilter->SetNumberOfHistogramBins( numberOfBins );
-  textureFilter->SetNormalizeHistogram( false );
-  textureFilter->SetNumberOfRequestedOutputs( numberOfOutputs );
-
-  /** Create and attach a progress observer. */
-  ShowProgressObject progressWatch( textureFilter );
-  itk::SimpleMemberCommand<ShowProgressObject>::Pointer command
-    = itk::SimpleMemberCommand<ShowProgressObject>::New();
-  command->SetCallbackFunction( &progressWatch, &ShowProgressObject::ShowProgress );
-  textureFilter->AddObserver( itk::ProgressEvent(), command );
-
-  /** Create the output file names. */
-  std::vector< std::string > outputFileNames( 8, "" );
-  outputFileNames[ 0 ] = outputDirectory + "energy.mhd";
-  outputFileNames[ 1 ] = outputDirectory + "entropy.mhd";
-  outputFileNames[ 2 ] = outputDirectory + "correlation.mhd";
-  outputFileNames[ 3 ] = outputDirectory + "inverseDifferenceMoment.mhd";
-  outputFileNames[ 4 ] = outputDirectory + "inertia.mhd";
-  outputFileNames[ 5 ] = outputDirectory + "clusterShade.mhd";
-  outputFileNames[ 6 ] = outputDirectory + "clusterProminence.mhd";
-  outputFileNames[ 7 ] = outputDirectory + "HaralickCorrelation.mhd";
-
-  /** Setup and process the pipeline. */
-  for ( unsigned int i = 0; i < numberOfOutputs; ++i )
-  {
-    typename WriterType::Pointer writer = WriterType::New();
-    writer->SetFileName( outputFileNames[ i ].c_str() );
-    writer->SetInput( textureFilter->GetOutput( i ) );
-    writer->Update();
-  }
-
-} // end PerformTextureAnalysis()
 
 
 /**
