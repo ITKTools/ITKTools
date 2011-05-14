@@ -24,8 +24,9 @@
 #include "CommandLineArgumentHelper.h"
 
 #include "itkImageFileReader.h"
-#include "itkVectorIndexSelectionCastImageFilter.h"
+#include "itkImageToVectorImageFilter.h"
 #include "itkImageFileWriter.h"
+#include "itkVectorIndexSelectionCastImageFilter.h"
 
 #include "itkImage.h"
 #include "itkVectorImage.h"
@@ -40,9 +41,8 @@ public:
   /** Input parameters */
   std::string m_InputFileName;
   std::string m_OutputFileName;
-  //std::vector<unsigned int> m_Indices;
-  unsigned int m_Index;
-
+  std::vector<unsigned int> m_Indices;
+  
 }; // end ExtractIndexBase
 
 
@@ -68,25 +68,40 @@ public:
   {
     /** Use vector image type that dynamically determines vector length: */
     typedef itk::VectorImage< ComponentType, Dimension >    VectorImageType;
-    typedef itk::Image< ComponentType, Dimension >          ImageType;
+    typedef itk::Image< ComponentType, Dimension >          ScalarImageType;
     typedef itk::ImageFileReader< VectorImageType >     ImageReaderType;
     typedef itk::VectorIndexSelectionCastImageFilter<
-      VectorImageType, ImageType >                      IndexExtractorType;
-    typedef itk::ImageFileWriter< ImageType >           ImageWriterType;
+      VectorImageType, ScalarImageType >                      IndexExtractorType;
+    typedef itk::ImageFileWriter< VectorImageType >           ImageWriterType;
 
     /** Read input image. */
     typename ImageReaderType::Pointer reader = ImageReaderType::New();
     reader->SetFileName( m_InputFileName );
+    reader->Update();
 
-    /** Extract index. */
-    typename IndexExtractorType::Pointer extractor = IndexExtractorType::New();
-    extractor->SetInput( reader->GetOutput() );
-    extractor->SetIndex( m_Index );
+    /** Extract indices. */
+    
+    // Create the assembler
+    typedef itk::ImageToVectorImageFilter<ScalarImageType> ImageToVectorImageFilterType;
+    typename ImageToVectorImageFilterType::Pointer imageToVectorImageFilter = ImageToVectorImageFilterType::New();
+    
+    for(unsigned int i = 0; i < reader->GetOutput()->GetNumberOfComponentsPerPixel(); ++i)
+    {
+      typename IndexExtractorType::Pointer extractor = IndexExtractorType::New();
+      extractor->SetInput( reader->GetOutput() );
+      extractor->SetIndex( m_Indices[i] );
+      extractor->Update();
+      //extractor->DisconnectPipeline();
+      
+      imageToVectorImageFilter->SetNthInput(i, extractor->GetOutput());
+    }
 
+    imageToVectorImageFilter->Update();
+  
     /** Write output image. */
     typename ImageWriterType::Pointer writer = ImageWriterType::New();
     writer->SetFileName( m_OutputFileName );
-    writer->SetInput( extractor->GetOutput() );
+    writer->SetInput( imageToVectorImageFilter->GetOutput() );
     writer->Update();
   }
 
@@ -107,7 +122,7 @@ int main( int argc, char ** argv )
   parser->SetProgramHelpText( GetHelpString() );
 
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
-  parser->MarkArgumentAsRequired( "-ind", "The index to extract." );
+  parser->MarkArgumentAsRequired( "-ind", "The index or indices to extract." );
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
@@ -128,21 +143,40 @@ int main( int argc, char ** argv )
   outputFileName += "INDEXEXTRACTED.mhd";
   parser->GetCommandLineArgument( "-out", outputFileName );
 
-  unsigned int index = 0;
-  parser->GetCommandLineArgument( "-ind", index );
-
+  // We must get the number of components here so we can construct the indices vector appropriately
+  unsigned int numberOfComponents = 1;
+  GetImageNumberOfComponents(inputFileName, numberOfComponents);
+  
+  // Determine if the argument passed as -ind is a string containing "all" or not
+  std::string indicesString;
+  parser->GetCommandLineArgument( "-ind", indicesString );
+  
+  std::vector<unsigned int> indices;
+  if(indicesString.compare("all") == 0)
+  {
+    // Add all channels to the list of channels to extract
+    for(unsigned int i = 0; i < indices.size(); ++i)
+    {
+      indices.push_back(i);
+    }
+  }
+  else
+  {
+    parser->GetCommandLineArgument( "-ind", indices );
+  }
+  
   /** Determine image properties. */
   std::string ComponentTypeIn = "short";
   std::string PixelType; //we don't use this
   unsigned int Dimension = 3;
-  unsigned int NumberOfComponents = 1;
+  
   std::vector<unsigned int> imagesize( Dimension, 0 );
   int retgip = GetImageProperties(
     inputFileName,
     PixelType,
     ComponentTypeIn,
     Dimension,
-    NumberOfComponents,
+    numberOfComponents,
     imagesize );
   if ( retgip != 0 )
   {
@@ -151,7 +185,7 @@ int main( int argc, char ** argv )
   }
 
   /** Check for vector images. */
-  if ( NumberOfComponents == 1 )
+  if ( numberOfComponents == 1 )
   {
     std::cerr << "ERROR: The NumberOfComponents is 1!" << std::endl;
     std::cerr << "Cannot make extract index from a scalar image." << std::endl;
@@ -162,12 +196,15 @@ int main( int argc, char ** argv )
   ReplaceUnderscoreWithSpace( ComponentTypeIn );
 
   /** Sanity check. */
-  if ( index > NumberOfComponents - 1 )
+  for(unsigned int i = 0; i < indices.size(); ++i)
   {
-    std::cerr << "ERROR: You selected index "
-      << index << ", where the input image only has "
-      << NumberOfComponents << " components." << std::endl;
-    return 1;
+    if ( indices[i] > numberOfComponents - 1 )
+    {
+      std::cerr << "ERROR: You selected index "
+	<< indices[i] << ", where the input image only has "
+	<< numberOfComponents << " components." << std::endl;
+      return 1;
+    }
   }
 
   /** Run the program. */
@@ -214,7 +251,7 @@ int main( int argc, char ** argv )
 
     extractIndex->m_InputFileName = inputFileName;
     extractIndex->m_OutputFileName = outputFileName;
-    extractIndex->m_Index = index;
+    extractIndex->m_Indices = indices;
 
     extractIndex->Run();
 
