@@ -7,11 +7,6 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE( pxunaryimageoperator
  unaryimageoperator.cxx
- unaryimageoperatorScalar.cxx
- unaryimageoperatorScalar2DA.cxx
- unaryimageoperatorScalar2DB.cxx
- unaryimageoperatorScalar3DA.cxx
- unaryimageoperatorScalar3DB.cxx
  itkUnaryFunctors.h
  UnaryImageOperatorHelper.h
  UnaryImageOperatorMainHelper.h )
