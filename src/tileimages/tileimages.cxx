@@ -27,45 +27,18 @@
 #include "itkImageFileReader.h"
 #include "itkTileImageFilter.h"
 #include "itkImageFileWriter.h"
+
+#include "TileImages.h"
+#include "TileImages2D3D.h"
+
 #include <vector>
 #include <string>
 
 /** This program tiles a stacks of 2D images into a 3D image.
  * This is done by employing an itk::SeriesFileReader.
- *
  */
 
-/** run: A macro to call a function. */
-#define runA(function,type) \
-if ( ComponentType == #type ) \
-{ \
-  function< type >( inputFileNames, outputFileName, zspacing ); \
-  supported = true; \
-}
-
-#define runB(function,type,dim) \
-if ( ComponentType == #type && Dimension == dim ) \
-{ \
-  function< type, dim >( inputFileNames, outputFileName, layout, defaultvalue ); \
-  supported = true; \
-}
-
 //-------------------------------------------------------------------------------------
-
-/* Declare TileImages2D3D. */
-template< class PixelType >
-void TileImages2D3D(
-  const std::vector<std::string> & inputFileNames,
-  const std::string & outputFileName,
-  const double & zspacing );
-
-/* Declare TileImages. */
-template< class PixelType, unsigned int Dimension >
-void TileImages(
-  const std::vector<std::string> & inputFileNames,
-  const std::string & outputFileName,
-  const std::vector<unsigned int> & layout,
-  const double & defaultvalue );
 
 /** Declare GetHelpString function. */
 std::string GetHelpString( void );
@@ -162,157 +135,119 @@ int main( int argc, char ** argv )
     return 1;
   }
 
-  /** Get rid of the possible "_" in ComponentType. */
-  ReplaceUnderscoreWithSpace( ComponentType );
-
   /** Run the program. */
-  bool supported = false;
-  try
-  {
-    if ( !retly )
-    {
-      runA( TileImages2D3D, unsigned char );
-      runA( TileImages2D3D, char );
-      runA( TileImages2D3D, unsigned short );
-      runA( TileImages2D3D, short );
-      runA( TileImages2D3D, float );
-    }
-    else
-    {
-      runB( TileImages, unsigned char, 2 );
-      runB( TileImages, char, 2 );
-      runB( TileImages, unsigned short, 2 );
-      runB( TileImages, short, 2 );
-      runB( TileImages, float, 2 );
+  
 
-      runB( TileImages, unsigned char, 3 );
-      runB( TileImages, char, 3 );
-      runB( TileImages, unsigned short, 3 );
-      runB( TileImages, short, 3 );
-      runB( TileImages, short, 3 );
-      runB( TileImages, float, 3 );
-    }
-  }
-  catch( itk::ExceptionObject &e )
+  if ( !retly )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    return 1;
-  }
-  if ( !supported )
-  {
-    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-    std::cerr
-      << "pixel (component) type = " << ComponentType
-      << " ; dimension = " << Dimension
-      << std::endl;
-    return 1;
-  }
+    
+    /** Class that does the work */
+    TileImages2D3DBase * tileImages2D3D = NULL;
 
+    itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileNames[0]);
+    
+    std::cout << "Detected component type: " << 
+      componentType << std::endl;
+
+    try
+    {    
+      // now call all possible template combinations.
+      if (!tileImages2D3D) tileImages2D3D = TileImages2D3D< unsigned char >::New( componentType );
+      if (!tileImages2D3D) tileImages2D3D = TileImages2D3D< char >::New( componentType );
+      if (!tileImages2D3D) tileImages2D3D = TileImages2D3D< unsigned short >::New( componentType );
+      if (!tileImages2D3D) tileImages2D3D = TileImages2D3D< short >::New( componentType );
+      if (!tileImages2D3D) tileImages2D3D = TileImages2D3D< float >::New( componentType );
+
+      if (!tileImages2D3D) 
+      {
+	std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+	std::cerr
+	  << "pixel (component) type = " << componentType
+	  << std::endl;
+	return 1;
+      }
+
+      tileImages2D3D->m_InputFileNames = inputFileNames;
+      tileImages2D3D->m_OutputFileName = outputFileName;
+      tileImages2D3D->m_Zspacing = zspacing;
+      
+      tileImages2D3D->Run();
+      
+      delete tileImages2D3D;  
+    }
+    catch( itk::ExceptionObject &e )
+    {
+      std::cerr << "Caught ITK exception: " << e << std::endl;
+      delete tileImages2D3D;
+      return 1;
+    }
+
+  }
+  else
+  {
+      
+    /** Class that does the work */
+    TileImagesBase * tileImages = NULL; 
+
+    /** Short alias */
+    unsigned int dim = Dimension;
+  
+    /** \todo some progs allow user to override the pixel type, 
+    * so we need a method to convert string to EnumComponentType */
+    itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileNames[0]);
+    
+    std::cout << "Detected component type: " << 
+      componentType << std::endl;
+    
+    try
+    {    
+      // now call all possible template combinations.
+      if (!tileImages) tileImages = TileImages< unsigned char, 2 >::New( componentType, dim );
+      if (!tileImages) tileImages = TileImages< char, 2 >::New( componentType, dim );
+      if (!tileImages) tileImages = TileImages< unsigned short, 2 >::New( componentType, dim );
+      if (!tileImages) tileImages = TileImages< short, 2 >::New( componentType, dim );
+      if (!tileImages) tileImages = TileImages< float, 2 >::New( componentType, dim );
+      
+  #ifdef ITKTOOLS_3D_SUPPORT
+      if (!tileImages) tileImages = TileImages< unsigned char, 3 >::New( componentType, dim );
+      if (!tileImages) tileImages = TileImages< char, 3 >::New( componentType, dim );
+      if (!tileImages) tileImages = TileImages< unsigned short, 3 >::New( componentType, dim );
+      if (!tileImages) tileImages = TileImages< short, 3 >::New( componentType, dim );
+      if (!tileImages) tileImages = TileImages< float, 3 >::New( componentType, dim );
+  #endif
+      if (!tileImages) 
+      {
+	std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+	std::cerr
+	  << "pixel (component) type = " << componentType
+	  << " ; dimension = " << Dimension
+	  << std::endl;
+	return 1;
+      }
+
+      tileImages->m_InputFileNames = inputFileNames;
+      tileImages->m_OutputFileName = outputFileName;
+      tileImages->m_Layout = layout;
+      tileImages->m_Defaultvalue = defaultvalue;
+
+      tileImages->Run();
+      
+      delete tileImages;  
+    }
+    catch( itk::ExceptionObject &e )
+    {
+      std::cerr << "Caught ITK exception: " << e << std::endl;
+      delete tileImages;
+      return 1;
+    }
+
+  }
+  
   /** Return a value. */
   return 0;
 
 } // end main
 
-//-------------------------------------------------------------------------------------
-
-/* Define TileImages2D3D. */
-template< class PixelType >
-void TileImages2D3D(
-  const std::vector<std::string> & inputFileNames,
-  const std::string & outputFileName,
-  const double & zspacing )
-{
-  /** Define image type. */
-  const unsigned int Dimension = 3;
-
-  /** Some typedef's. */
-  typedef itk::Image<PixelType, Dimension>            ImageType;
-  typedef typename ImageType::SpacingType             SpacingType;
-  typedef itk::ImageSeriesReader<ImageType>           ImageSeriesReaderType;
-  typedef itk::ImageFileWriter<ImageType>             ImageWriterType;
-
-  /** Create reader. */
-  typename ImageSeriesReaderType::Pointer reader = ImageSeriesReaderType::New();
-  reader->SetFileNames( inputFileNames );
-
-  /** Update the reader. */
-  std::cout << "Input images are read..." << std::endl;
-  reader->Update();
-  std::cout << "Reading done." << std::endl;
-  typename ImageType::Pointer tiledImage = reader->GetOutput();
-
-  /** Get and set the spacing, if it was set by the user. */
-  if ( zspacing > 0.0 )
-  {
-    /** Make sure that changes are not undone */
-    tiledImage->DisconnectPipeline();
-    /** Set the zspacing */
-    SpacingType spacing = tiledImage->GetSpacing();
-    spacing[ 2 ] = zspacing;
-    tiledImage->SetSpacing( spacing );
-  }
-
-  /** Write to disk. */
-  typename ImageWriterType::Pointer writer = ImageWriterType::New();
-  writer->SetFileName( outputFileName.c_str() );
-  writer->SetInput( tiledImage );
-  std::cout << "Writing tiled image..." << std::endl;
-  writer->Update();
-  std::cout << "Ready." << std::endl;
-
-} // end TileImages2D3D
-
-//-------------------------------------------------------------------------------------
-
-/* Define TileImages. */
-template< class PixelType, unsigned int Dimension >
-void TileImages(
-  const std::vector<std::string> & inputFileNames,
-  const std::string & outputFileName,
-  const std::vector<unsigned int> & layout,
-  const double & defaultvalue )
-{
-  /** Some typedef's. */
-  typedef itk::Image<PixelType, Dimension>            ImageType;
-  typedef itk::ImageFileReader<ImageType>             ImageReaderType;
-  typedef itk::TileImageFilter<ImageType, ImageType>  TilerType;
-  typedef itk::ImageFileWriter<ImageType>             ImageWriterType;
-  //typedef typename ImageType::SpacingType             SpacingType;
-
-  /** Copy layout into a fixed array. */
-  itk::FixedArray< unsigned int, Dimension > Layout;
-  for ( unsigned int i = 0; i < Dimension; i++ )
-  {
-    Layout[ i ] = layout[ i ];
-  }
-
-  /** Cast the defaultvalue. */
-  PixelType defaultValue = static_cast<PixelType>( defaultvalue );
-
-  /** Create tiler. */
-  typename TilerType::Pointer tiler = TilerType::New();
-  tiler->SetLayout( Layout );
-  tiler->SetDefaultPixelValue( defaultValue );
-
-  /** Read input images and set it into the tiler. */
-  for ( unsigned int i = 0; i < inputFileNames.size(); i++ )
-  {
-    typename ImageReaderType::Pointer reader = ImageReaderType::New();
-    reader->SetFileName( inputFileNames[ i ].c_str() );
-    reader->Update();
-    tiler->SetInput( i, reader->GetOutput() );
-  }
-
-  /** Do the tiling. */
-  tiler->Update();
-
-  /** Write to disk. */
-  typename ImageWriterType::Pointer writer = ImageWriterType::New();
-  writer->SetFileName( outputFileName.c_str() );
-  writer->SetInput( tiler->GetOutput() );
-  writer->Update();
-
-} // end TileImages
 
 //-------------------------------------------------------------------------------------
 
