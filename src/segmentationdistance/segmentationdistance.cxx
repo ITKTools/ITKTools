@@ -46,29 +46,302 @@
 
 //-------------------------------------------------------------------------------------
 
-/** run: A macro to call a function. */
-#define run(function,type,dim) \
-if ( PixelType == #type && Dimension == dim ) \
-{ \
-  typedef itk::Image< type, dim > InputImageType; \
-  function< InputImageType >( inputFileName1, inputFileName2, outputFileName,\
-    manualcor, samples, thetasize, phisize, cartesianonly ); \
-  supported = true; \
-}
-
-//-------------------------------------------------------------------------------------
-
-/* Declare DetectGoldMarkers. */
-template< class InputImageType >
-void SegmentationDistance(
-  const std::string & inputFileName1,
-  const std::string & inputFileName2,
-  const std::string & outputFileName,
-  const std::vector<double> & mancor,
+template< class InputImageType1, class InputImageType2, class ImageType >
+void SegmentationDistanceHelper(
+  const InputImageType1 * inputImage1,
+  const InputImageType2 * inputImage2,
+  typename ImageType::Pointer & accum1,
+  typename ImageType::Pointer & accum2,
+  typename ImageType::Pointer & distanceTransformOnEdge,
+  typename ImageType::Pointer & edgeImage,
+  std::vector<double> & mancor,
   unsigned int samples,
   unsigned int thetasize,
   unsigned int phisize,
-  bool cartesianonly );
+  bool cartesianonly,
+  bool invertedImage  );
+
+/** SegmentationDistance */
+
+class SegmentationDistanceBase : public itktools::ITKToolsBase
+{ 
+public:
+  SegmentationDistanceBase(){};
+  ~SegmentationDistanceBase(){};
+
+  /** Input parameters */
+  std::string m_InputFileName1;
+  std::string m_InputFileName2;
+  std::string m_OutputFileName;
+  std::vector<double> m_Mancor; // manual correlation
+  unsigned int m_Samples;
+  unsigned int m_Thetasize;
+  unsigned int m_Phisize;
+  bool m_Cartesianonly;
+    
+}; // end SegmentationDistanceBase
+
+
+template< class TComponentType, unsigned int VDimension >
+class SegmentationDistance : public SegmentationDistanceBase
+{
+public:
+  typedef SegmentationDistance Self;
+
+  SegmentationDistance(){};
+  ~SegmentationDistance(){};
+
+  static Self * New( itktools::EnumComponentType componentType, unsigned int dim )
+  {
+    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
+    {
+      return new Self;
+    }
+    return 0;
+  }
+
+  void Run(void)
+  {
+
+    /** constants */
+    
+    const unsigned int OutputDimension = VDimension-1;
+    typedef itk::Image<TComponentType, VDimension>      ImageType;
+    typedef typename ImageType::PixelType               PixelType;
+    typedef short                                       InputPixelType1;
+    typedef short                                       InputPixelType2;
+
+    /** TYPEDEF's. */
+    typedef itk::Image<InputPixelType1, VDimension>      InputImageType1;
+    typedef itk::Image<InputPixelType2, VDimension>      InputImageType2;
+
+    typedef itk::Image<PixelType, OutputDimension>      OutputImageType;
+
+    typedef itk::ImageFileReader<InputImageType1>       ReaderType1;
+    typedef itk::ImageFileReader<InputImageType2>       ReaderType2;
+    typedef itk::ConstantPadImageFilter<
+      InputImageType1, InputImageType1>                 PadderType1;
+    typedef itk::ConstantPadImageFilter<
+      InputImageType2, InputImageType2>                 PadderType2;
+    typedef itk::AddImageFilter<
+      ImageType, ImageType, ImageType>                  AdderType;
+    typedef itk::SubtractImageFilter<
+      ImageType, ImageType, ImageType>                  SubtracterType;
+    typedef itk::DivideImageFilter<
+      ImageType, ImageType, ImageType>                  DividerType;
+    typedef itk::ExtractImageFilter<
+      ImageType, OutputImageType>                       ExtracterType;
+    typedef itk::ImageFileWriter<OutputImageType>       WriterType;
+    typedef itk::ImageFileWriter<ImageType>             WriterCartesianType;
+
+    typedef typename
+      ExtracterType::InputImageRegionType               RegionType;
+    typedef typename RegionType::IndexType              IndexType;
+    typedef typename RegionType::SizeType               SizeType;
+    typedef itk::ImageRegionConstIterator<
+      InputImageType1>                                  ConstInputIteratorType1;
+    typedef itk::ImageRegionConstIterator<
+      InputImageType2>                                  ConstInputIteratorType2;
+    typedef itk::ImageRegionIterator<
+      InputImageType1>                                  InputIteratorType1;
+    typedef itk::ImageRegionIterator<
+      InputImageType2>                                  InputIteratorType2;
+    typedef itk::ImageRegionIterator<
+      ImageType>                                        OutputIteratorType;
+    typedef itk::ImageRegionConstIterator<
+      ImageType>                                        ConstOutputImageIteratorType;
+
+    /** Instantiate filters */
+    typename ReaderType1::Pointer reader1 = ReaderType1::New();
+    typename ReaderType2::Pointer reader2 = ReaderType2::New();
+    typename PadderType1::Pointer padder1 = PadderType1::New();
+    typename PadderType2::Pointer padder2 = PadderType2::New();
+    typename AdderType::Pointer adder = AdderType::New();
+    typename AdderType::Pointer adderEdgeCartesian = AdderType::New();
+    typename SubtracterType::Pointer subtracter = SubtracterType::New();
+    typename SubtracterType::Pointer subtracterDistCartesian = SubtracterType::New();
+    typename DividerType::Pointer divider = DividerType::New();
+    typename ExtracterType::Pointer extracter = ExtracterType::New();
+    typename WriterType::Pointer writer = WriterType::New();
+    typename WriterCartesianType::Pointer writerDistCartesian = WriterCartesianType::New();
+    typename WriterCartesianType::Pointer writerEdgeCartesian = WriterCartesianType::New();
+
+    /** Read in the inputImages. */
+    reader1->SetFileName( m_InputFileName1.c_str() );
+    reader2->SetFileName( m_InputFileName2.c_str() );
+    std::cout << "Reading input images..." << std::endl;
+    reader1->Update();
+    reader2->Update();
+    std::cout << "Input images read." << std::endl;
+
+    /** Pad them with zeros, to make sure the edges of objects facing the boundary
+    * of the image are counted as edges */
+    padder1->SetInput( reader1->GetOutput() );
+    padder2->SetInput( reader2->GetOutput() );
+    unsigned long padsize[VDimension];
+    for (unsigned int i = 0; i < VDimension; ++i)
+    {
+      padsize[i] = 1;
+    }
+    padder1->SetPadUpperBound(padsize);
+    padder1->SetPadLowerBound(padsize);
+    padder2->SetPadUpperBound(padsize);
+    padder2->SetPadLowerBound(padsize);
+    std::cout << "Padding input images with zeros..." << std::endl;
+    padder1->Update();
+    padder2->Update();
+    std::cout << "Done padding." << std::endl;
+
+    /** Compute the distance */
+    typename ImageType::Pointer accum1 = 0;
+    typename ImageType::Pointer accum2 = 0;
+    typename ImageType::Pointer dist = 0;
+    typename ImageType::Pointer edge = 0;
+
+    std::vector<double> cor = m_Mancor;
+
+    SegmentationDistanceHelper<InputImageType1, InputImageType2, ImageType>(
+      padder1->GetOutput(), padder2->GetOutput(), accum1, accum2, dist, edge,
+      cor, m_Samples, m_Thetasize, m_Phisize, m_Cartesianonly, false);
+
+    /** Compute 1 minus the input images */
+    typename InputImageType1::Pointer invInputImage1 = InputImageType1::New();
+    typename InputImageType2::Pointer invInputImage2 = InputImageType2::New();
+    invInputImage1->SetRegions( padder1->GetOutput()->GetLargestPossibleRegion() );
+    invInputImage2->SetRegions( padder2->GetOutput()->GetLargestPossibleRegion() );
+    invInputImage1->SetSpacing( padder1->GetOutput()->GetSpacing() );
+    invInputImage2->SetSpacing( padder2->GetOutput()->GetSpacing() );
+    invInputImage1->SetOrigin( padder1->GetOutput()->GetOrigin() );
+    invInputImage2->SetOrigin( padder2->GetOutput()->GetOrigin() );
+    invInputImage1->Allocate();
+    invInputImage2->Allocate();
+
+    ConstInputIteratorType1 init1( padder1->GetOutput(), padder1->GetOutput()->GetLargestPossibleRegion() );
+    ConstInputIteratorType2 init2( padder2->GetOutput(), padder2->GetOutput()->GetLargestPossibleRegion() );
+    InputIteratorType1 invinit1( invInputImage1, invInputImage1->GetLargestPossibleRegion() );
+    InputIteratorType2 invinit2( invInputImage2, invInputImage2->GetLargestPossibleRegion() );
+    init1.GoToBegin();
+    init2.GoToBegin();
+    invinit1.GoToBegin();
+    invinit2.GoToBegin();
+    while ( !init1.IsAtEnd() )
+    {
+      invinit1.Value() = itk::NumericTraits<InputPixelType1>::One - init1.Value();
+      invinit2.Value() = itk::NumericTraits<InputPixelType1>::One - init2.Value();
+
+      ++init1;
+      ++init2;
+      ++invinit1;
+      ++invinit2;
+    }
+
+    /** Compute again the distance */
+    typename ImageType::Pointer accum1inv = 0;
+    typename ImageType::Pointer accum2inv = 0;
+    typename ImageType::Pointer distinv = 0;
+    typename ImageType::Pointer edgeinv = 0;
+
+    SegmentationDistanceHelper<InputImageType1, InputImageType2, ImageType>(
+      invInputImage1, invInputImage2, accum1inv, accum2inv, distinv, edgeinv,
+      cor, m_Samples, m_Thetasize, m_Phisize, m_Cartesianonly, true);
+
+    //
+    if ( m_Cartesianonly )
+    {
+
+
+      /** Compute dist-distinv and edge+edgeinv */
+      subtracterDistCartesian->SetInput1( dist );
+      subtracterDistCartesian->SetInput2( distinv );
+      adderEdgeCartesian->SetInput1( edge);
+      adderEdgeCartesian->SetInput2( edgeinv);
+      subtracterDistCartesian->Update();
+      adderEdgeCartesian->Update();
+
+      /** outputfilename extensie afknippen en DIST en EDGE toevoegen.*/
+      std::string part1 =
+	itksys::SystemTools::GetFilenameWithoutLastExtension(m_OutputFileName);
+      /** get file name extension */
+      std::string part2 = "";
+      part2 += itksys::SystemTools::GetFilenameLastExtension(m_OutputFileName);
+      std::string diststr = "DIST";
+      std::string edgestr = "EDGE";
+
+      /** compose outputfilename */
+      std::string outputFileNameDIST = part1 + diststr + part2;
+      std::string outputFileNameEDGE = part1 + edgestr + part2;
+
+      /** Write to disk */
+      writerDistCartesian->SetFileName( outputFileNameDIST );
+      writerEdgeCartesian->SetFileName( outputFileNameEDGE );
+      writerDistCartesian->SetInput( subtracterDistCartesian->GetOutput() );
+      writerEdgeCartesian->SetInput( adderEdgeCartesian->GetOutput() );
+
+      std::cout << "The spherical transforms are skipped and the results are written as:\n\t"
+	<< outputFileNameDIST << "\n\t"  << outputFileNameEDGE << std::endl;
+      writerDistCartesian->Update();
+      writerEdgeCartesian->Update();
+
+      return;
+    }
+
+    /** Add the results (subtract for distance transform, because its negated) */
+    subtracter->SetInput1( accum1);
+    subtracter->SetInput2( accum1inv);
+    adder->SetInput1( accum2);
+    adder->SetInput2( accum2inv);
+    std::cout << "Averaging the results of the normal images and the inverted images." << std::endl;
+    subtracter->Update();
+    adder->Update();
+    std::cout << "Ready averaging..." << std::endl;
+
+    typename ImageType::Pointer sumEdgeAccums = adder->GetOutput();
+    sumEdgeAccums->DisconnectPipeline();
+    OutputIteratorType it( sumEdgeAccums,
+      sumEdgeAccums->GetLargestPossibleRegion() );
+    const double smallnumber= 1e-10;
+    it.GoToBegin();
+    while (!it.IsAtEnd() )
+    {
+      /** If a (theta,phi) combination didn't pass through the edge
+      * at least smallnumber times, do not count it. */
+      if ( it.Value() < smallnumber )
+      {
+	it.Value() = itk::NumericTraits<PixelType>::max();
+      }
+      ++it;
+    }
+
+    /** Divide the integrated spherical transforms */
+    divider->SetInput1( subtracter->GetOutput() );
+    divider->SetInput2( sumEdgeAccums );
+    std::cout << "Dividing the averaged integrated spherical transforms..." << std::endl;
+    divider->Update();
+    std::cout << "Dividing done." << std::endl;
+
+    /** Collapse to 2d image */
+    extracter->SetInput( divider->GetOutput() );
+    RegionType extractionRegion = divider->GetOutput()->GetLargestPossibleRegion();
+    SizeType extractionSize = extractionRegion.GetSize();
+    extractionSize[0] = 0;
+    extractionRegion.SetSize( extractionSize );
+    extracter->SetExtractionRegion( extractionRegion );
+    std::cout << "Collapsing the result to a 2d image..." << std::endl;
+    extracter->Update();
+    std::cout << "Done collapsing." << std::endl;
+
+    /** Write the output image. */
+    writer->SetInput( extracter->GetOutput() );
+    writer->SetFileName( m_OutputFileName.c_str() );
+    std::cout << "Saving the result to disk as: " << m_OutputFileName << std::endl;
+    writer->Update();
+    std::cout << "Done." << std::endl;
+
+    }
+
+}; // end SegmentationDistance
+
+//-------------------------------------------------------------------------------------
 
 /** Declare GetHelpString. */
 std::string GetHelpString( void );
@@ -145,36 +418,59 @@ int main( int argc, char **argv )
     cartesianonly = true;
   }
 
+  /** Class that does the work */
+  SegmentationDistanceBase * segmentationDistance = NULL; 
+
+  /** Short alias */
+  unsigned int imageDimension = 0;
+  GetImageDimension(inputFileName1, imageDimension);
+ 
+  /** \todo some progs allow user to override the pixel type, 
+   * so we need a method to convert string to EnumComponentType */
+  itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileName1);
+  
+  std::cout << "Detected component type: " << 
+    componentType << std::endl;
+
   /** This program supports only the following INTERNAL pixel type.
    * The input images  are assumed to be short. Input images other
    * than short are supported, but automatically converted to short. */
-  unsigned int Dimension = 3;
-  std::string PixelType = "float";
 
-  /** Get rid of the possible "_" in PixelType. */
-  ReplaceUnderscoreWithSpace( PixelType );
-
-  /** Run the program. */
-  bool supported = false;
   try
-  {
-    run( SegmentationDistance, float, 3 );
+  {    
+    // now call all possible template combinations.
+    if (!segmentationDistance) segmentationDistance = SegmentationDistance< float, 3 >::New( componentType, imageDimension );
+    
+    if (!segmentationDistance) 
+    {
+      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+      std::cerr
+        << "pixel (component) type = " << componentType
+        << " ; dimension = " << imageDimension
+        << std::endl;
+      return 1;
+    }
+
+    segmentationDistance->m_InputFileName1 = inputFileName1;
+    segmentationDistance->m_InputFileName2 = inputFileName2;
+    segmentationDistance->m_OutputFileName = outputFileName;
+    segmentationDistance->m_Mancor = manualcor;
+    segmentationDistance->m_Samples = samples;
+    segmentationDistance->m_Thetasize = thetasize;
+    segmentationDistance->m_Phisize = phisize;
+    segmentationDistance->m_Cartesianonly = cartesianonly;
+  
+    segmentationDistance->Run();
+    
+    delete segmentationDistance;  
   }
   catch( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
+    delete segmentationDistance;
     return 1;
   }
-  if ( !supported )
-  {
-    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-    std::cerr
-      << "pixel (component) type = " << PixelType
-      << " ; dimension = " << Dimension
-      << std::endl;
-    return 1;
-  }
-
+  
   /** End program. */
   return 0;
 
@@ -409,263 +705,10 @@ void SegmentationDistanceHelper(
 
 
 
-  /*
-   * ******************* SegmentationDistance ****************
-   *
-   * The function that does the work, templated over the image type.
-   */
 
-template< class ImageType >
-void SegmentationDistance(
-  const std::string & inputFileName1,
-  const std::string & inputFileName2,
-  const std::string & outputFileName,
-  const std::vector<double> & mancor,
-  unsigned int samples,
-  unsigned int thetasize,
-  unsigned int phisize,
-  bool cartesianonly)
-{
-
-  /** constants */
-  const unsigned int Dimension = ImageType::ImageDimension;
-  const unsigned int OutputDimension = Dimension-1;
-  typedef typename ImageType::PixelType               PixelType;
-  typedef short                                       InputPixelType1;
-  typedef short                                       InputPixelType2;
-
-  /** TYPEDEF's. */
-  typedef itk::Image<InputPixelType1, Dimension>      InputImageType1;
-  typedef itk::Image<InputPixelType2, Dimension>      InputImageType2;
-
-  typedef itk::Image<PixelType, OutputDimension>      OutputImageType;
-
-  typedef itk::ImageFileReader<InputImageType1>       ReaderType1;
-  typedef itk::ImageFileReader<InputImageType2>       ReaderType2;
-  typedef itk::ConstantPadImageFilter<
-    InputImageType1, InputImageType1>                 PadderType1;
-  typedef itk::ConstantPadImageFilter<
-    InputImageType2, InputImageType2>                 PadderType2;
-  typedef itk::AddImageFilter<
-    ImageType, ImageType, ImageType>                  AdderType;
-  typedef itk::SubtractImageFilter<
-    ImageType, ImageType, ImageType>                  SubtracterType;
-  typedef itk::DivideImageFilter<
-    ImageType, ImageType, ImageType>                  DividerType;
-  typedef itk::ExtractImageFilter<
-    ImageType, OutputImageType>                       ExtracterType;
-  typedef itk::ImageFileWriter<OutputImageType>       WriterType;
-  typedef itk::ImageFileWriter<ImageType>             WriterCartesianType;
-
-  typedef typename
-    ExtracterType::InputImageRegionType               RegionType;
-  typedef typename RegionType::IndexType              IndexType;
-  typedef typename RegionType::SizeType               SizeType;
-  typedef itk::ImageRegionConstIterator<
-    InputImageType1>                                  ConstInputIteratorType1;
-  typedef itk::ImageRegionConstIterator<
-    InputImageType2>                                  ConstInputIteratorType2;
-  typedef itk::ImageRegionIterator<
-    InputImageType1>                                  InputIteratorType1;
-  typedef itk::ImageRegionIterator<
-    InputImageType2>                                  InputIteratorType2;
-  typedef itk::ImageRegionIterator<
-    ImageType>                                        OutputIteratorType;
-  typedef itk::ImageRegionConstIterator<
-    ImageType>                                        ConstOutputImageIteratorType;
-
-  /** Instantiate filters */
-  typename ReaderType1::Pointer reader1 = ReaderType1::New();
-  typename ReaderType2::Pointer reader2 = ReaderType2::New();
-  typename PadderType1::Pointer padder1 = PadderType1::New();
-  typename PadderType2::Pointer padder2 = PadderType2::New();
-  typename AdderType::Pointer adder = AdderType::New();
-  typename AdderType::Pointer adderEdgeCartesian = AdderType::New();
-  typename SubtracterType::Pointer subtracter = SubtracterType::New();
-  typename SubtracterType::Pointer subtracterDistCartesian = SubtracterType::New();
-  typename DividerType::Pointer divider = DividerType::New();
-  typename ExtracterType::Pointer extracter = ExtracterType::New();
-  typename WriterType::Pointer writer = WriterType::New();
-  typename WriterCartesianType::Pointer writerDistCartesian = WriterCartesianType::New();
-  typename WriterCartesianType::Pointer writerEdgeCartesian = WriterCartesianType::New();
-
-   /** Read in the inputImages. */
-  reader1->SetFileName( inputFileName1.c_str() );
-  reader2->SetFileName( inputFileName2.c_str() );
-  std::cout << "Reading input images..." << std::endl;
-  reader1->Update();
-  reader2->Update();
-  std::cout << "Input images read." << std::endl;
-
-  /** Pad them with zeros, to make sure the edges of objects facing the boundary
-   * of the image are counted as edges */
-  padder1->SetInput( reader1->GetOutput() );
-  padder2->SetInput( reader2->GetOutput() );
-  unsigned long padsize[Dimension];
-  for (unsigned int i = 0; i < Dimension; ++i)
-  {
-    padsize[i] = 1;
-  }
-  padder1->SetPadUpperBound(padsize);
-  padder1->SetPadLowerBound(padsize);
-  padder2->SetPadUpperBound(padsize);
-  padder2->SetPadLowerBound(padsize);
-  std::cout << "Padding input images with zeros..." << std::endl;
-  padder1->Update();
-  padder2->Update();
-  std::cout << "Done padding." << std::endl;
-
-  /** Compute the distance */
-  typename ImageType::Pointer accum1 = 0;
-  typename ImageType::Pointer accum2 = 0;
-  typename ImageType::Pointer dist = 0;
-  typename ImageType::Pointer edge = 0;
-
-  std::vector<double> cor = mancor;
-
-  SegmentationDistanceHelper<InputImageType1, InputImageType2, ImageType>(
-    padder1->GetOutput(), padder2->GetOutput(), accum1, accum2, dist, edge,
-    cor, samples, thetasize, phisize, cartesianonly, false);
-
-  /** Compute 1 minus the input images */
-  typename InputImageType1::Pointer invInputImage1 = InputImageType1::New();
-  typename InputImageType2::Pointer invInputImage2 = InputImageType2::New();
-  invInputImage1->SetRegions( padder1->GetOutput()->GetLargestPossibleRegion() );
-  invInputImage2->SetRegions( padder2->GetOutput()->GetLargestPossibleRegion() );
-  invInputImage1->SetSpacing( padder1->GetOutput()->GetSpacing() );
-  invInputImage2->SetSpacing( padder2->GetOutput()->GetSpacing() );
-  invInputImage1->SetOrigin( padder1->GetOutput()->GetOrigin() );
-  invInputImage2->SetOrigin( padder2->GetOutput()->GetOrigin() );
-  invInputImage1->Allocate();
-  invInputImage2->Allocate();
-
-  ConstInputIteratorType1 init1( padder1->GetOutput(), padder1->GetOutput()->GetLargestPossibleRegion() );
-  ConstInputIteratorType2 init2( padder2->GetOutput(), padder2->GetOutput()->GetLargestPossibleRegion() );
-  InputIteratorType1 invinit1( invInputImage1, invInputImage1->GetLargestPossibleRegion() );
-  InputIteratorType2 invinit2( invInputImage2, invInputImage2->GetLargestPossibleRegion() );
-  init1.GoToBegin();
-  init2.GoToBegin();
-  invinit1.GoToBegin();
-  invinit2.GoToBegin();
-  while ( !init1.IsAtEnd() )
-  {
-    invinit1.Value() = itk::NumericTraits<InputPixelType1>::One - init1.Value();
-    invinit2.Value() = itk::NumericTraits<InputPixelType1>::One - init2.Value();
-
-    ++init1;
-    ++init2;
-    ++invinit1;
-    ++invinit2;
-  }
-
-  /** Compute again the distance */
-  typename ImageType::Pointer accum1inv = 0;
-  typename ImageType::Pointer accum2inv = 0;
-  typename ImageType::Pointer distinv = 0;
-  typename ImageType::Pointer edgeinv = 0;
-
-  SegmentationDistanceHelper<InputImageType1, InputImageType2, ImageType>(
-    invInputImage1, invInputImage2, accum1inv, accum2inv, distinv, edgeinv,
-    cor, samples, thetasize, phisize, cartesianonly, true);
-
-  //
-  if ( cartesianonly )
-  {
-
-
-    /** Compute dist-distinv and edge+edgeinv */
-    subtracterDistCartesian->SetInput1( dist );
-    subtracterDistCartesian->SetInput2( distinv );
-    adderEdgeCartesian->SetInput1( edge);
-    adderEdgeCartesian->SetInput2( edgeinv);
-    subtracterDistCartesian->Update();
-    adderEdgeCartesian->Update();
-
-    /** outputfilename extensie afknippen en DIST en EDGE toevoegen.*/
-    std::string part1 =
-      itksys::SystemTools::GetFilenameWithoutLastExtension(outputFileName);
-    /** get file name extension */
-    std::string part2 = "";
-    part2 += itksys::SystemTools::GetFilenameLastExtension(outputFileName);
-    std::string diststr = "DIST";
-    std::string edgestr = "EDGE";
-
-    /** compose outputfilename */
-    std::string outputFileNameDIST = part1 + diststr + part2;
-    std::string outputFileNameEDGE = part1 + edgestr + part2;
-
-    /** Write to disk */
-    writerDistCartesian->SetFileName( outputFileNameDIST );
-    writerEdgeCartesian->SetFileName( outputFileNameEDGE );
-    writerDistCartesian->SetInput( subtracterDistCartesian->GetOutput() );
-    writerEdgeCartesian->SetInput( adderEdgeCartesian->GetOutput() );
-
-    std::cout << "The spherical transforms are skipped and the results are written as:\n\t"
-      << outputFileNameDIST << "\n\t"  << outputFileNameEDGE << std::endl;
-    writerDistCartesian->Update();
-    writerEdgeCartesian->Update();
-
-    return;
-  }
-
-  /** Add the results (subtract for distance transform, because its negated) */
-  subtracter->SetInput1( accum1);
-  subtracter->SetInput2( accum1inv);
-  adder->SetInput1( accum2);
-  adder->SetInput2( accum2inv);
-  std::cout << "Averaging the results of the normal images and the inverted images." << std::endl;
-  subtracter->Update();
-  adder->Update();
-  std::cout << "Ready averaging..." << std::endl;
-
-  typename ImageType::Pointer sumEdgeAccums = adder->GetOutput();
-  sumEdgeAccums->DisconnectPipeline();
-  OutputIteratorType it( sumEdgeAccums,
-    sumEdgeAccums->GetLargestPossibleRegion() );
-  const double smallnumber= 1e-10;
-  it.GoToBegin();
-  while (!it.IsAtEnd() )
-  {
-    /** If a (theta,phi) combination didn't pass through the edge
-     * at least smallnumber times, do not count it. */
-    if ( it.Value() < smallnumber )
-    {
-      it.Value() = itk::NumericTraits<PixelType>::max();
-    }
-    ++it;
-  }
-
-  /** Divide the integrated spherical transforms */
-  divider->SetInput1( subtracter->GetOutput() );
-  divider->SetInput2( sumEdgeAccums );
-  std::cout << "Dividing the averaged integrated spherical transforms..." << std::endl;
-  divider->Update();
-  std::cout << "Dividing done." << std::endl;
-
-  /** Collapse to 2d image */
-  extracter->SetInput( divider->GetOutput() );
-  RegionType extractionRegion = divider->GetOutput()->GetLargestPossibleRegion();
-  SizeType extractionSize = extractionRegion.GetSize();
-  extractionSize[0] = 0;
-  extractionRegion.SetSize( extractionSize );
-  extracter->SetExtractionRegion( extractionRegion );
-  std::cout << "Collapsing the result to a 2d image..." << std::endl;
-  extracter->Update();
-  std::cout << "Done collapsing." << std::endl;
-
-  /** Write the output image. */
-  writer->SetInput( extracter->GetOutput() );
-  writer->SetFileName( outputFileName.c_str() );
-  std::cout << "Saving the result to disk as: " << outputFileName << std::endl;
-  writer->Update();
-  std::cout << "Done." << std::endl;
-
-} // end SegmentationDistance
-
-
-  /**
-   * ******************* GetHelpString *******************
-   */
+/**
+  * ******************* GetHelpString *******************
+  */
 std::string GetHelpString()
 {
   std::stringstream ss;
