@@ -95,7 +95,6 @@ public:
     reader1->Update();
     std::cout << "Done reading image1." << std::endl;
 
-    UnaryLogicalFunctorFactory<ScalarImageType> unaryFactory;
     UnaryFunctorEnum unaryOperation;
     if(m_Ops.compare("EQUAL"))
     {
@@ -111,8 +110,9 @@ public:
       return;
     }
     
-    typename itk::InPlaceImageFilter<ScalarImageType, ScalarImageType>::Pointer logicalFilter = unaryFactory.GetFilter(unaryOperation);
-    //logicalFilter->GetFunctor().SetArgument( static_cast<ScalarPixelType>( m_Argument ) ); // !!! can't call this on an InPlaceImageFilter!
+    UnaryLogicalFunctorFactory<ScalarImageType> unaryFactory;
+    typename itk::InPlaceImageFilter<ScalarImageType, ScalarImageType>::Pointer logicalFilter =
+	unaryFactory.GetFilter(unaryOperation, static_cast<TComponentType>(m_Argument) );
 
     // Create the filter which will assemble the component into the output image
     typedef itk::ImageToVectorImageFilter<ScalarImageType> ImageToVectorImageFilterType;
@@ -282,7 +282,6 @@ public:
       if ( swapArguments )
       {
 	/** swap the input files */
-	// Is this safe? It seems like this only makes sense if reader2 is specified.
 	logicalFilter->SetInput( 1, componentExtractor1->GetOutput() );
 	logicalFilter->SetInput( 0, componentExtractor2->GetOutput() );
       }
