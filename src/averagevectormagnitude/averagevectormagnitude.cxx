@@ -215,10 +215,12 @@ int main( int argc, char** argv )
   {
     // 2D
     if (!averageVectorMagnitude) averageVectorMagnitude = ITKToolsAverageVectorMagnitude< 2, 2 >::New( numberOfComponents, dimension );
-    if (!averageVectorMagnitude) averageVectorMagnitude = ITKToolsAverageVectorMagnitude< 2, 3 >::New( numberOfComponents, dimension );
     if (!averageVectorMagnitude) averageVectorMagnitude = ITKToolsAverageVectorMagnitude< 3, 2 >::New( numberOfComponents, dimension );
+    
+#ifdef ITKTOOLS_3D_SUPPORT
+    if (!averageVectorMagnitude) averageVectorMagnitude = ITKToolsAverageVectorMagnitude< 2, 3 >::New( numberOfComponents, dimension );
     if (!averageVectorMagnitude) averageVectorMagnitude = ITKToolsAverageVectorMagnitude< 3, 3 >::New( numberOfComponents, dimension );
-
+#endif
     if (!averageVectorMagnitude)
     {
       std::cerr << "ERROR: this combination of numberOfComponents and dimension is not supported!" << std::endl;
