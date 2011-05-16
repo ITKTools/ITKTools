@@ -51,7 +51,8 @@ class BinaryThinningBase : public itktools::ITKToolsBase
 public:
   BinaryThinningBase()
   {
-    
+    m_InputFileName = "";
+    m_OutputFileName = "";
   }
 
   ~BinaryThinningBase(){};

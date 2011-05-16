@@ -69,9 +69,6 @@ void DistanceTransform(
   const std::string & method,
   const unsigned int & K );
 
-/** Declare GetHelpString. */
-std::string GetHelpString( void );
-
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char **argv )

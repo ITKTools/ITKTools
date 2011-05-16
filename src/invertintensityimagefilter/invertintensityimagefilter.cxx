@@ -60,7 +60,11 @@ std::string GetHelpString( void )
 class InvertIntensityBase : public itktools::ITKToolsBase
 { 
 public:
-  InvertIntensityBase(){};
+  InvertIntensityBase()
+  {
+    m_InputFileName = "";
+    m_OutputFileName = "";
+  };
   ~InvertIntensityBase(){};
 
   /** Input parameters */

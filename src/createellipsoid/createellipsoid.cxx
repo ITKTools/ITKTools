@@ -60,7 +60,15 @@ std::string GetHelpString( void )
 class CreateEllipsoidBase : public itktools::ITKToolsBase
 { 
 public:
-  CreateEllipsoidBase(){};
+  CreateEllipsoidBase()
+  {
+    m_OutputFileName = "";
+    //std::vector<unsigned int> m_Size;
+    //std::vector<double> m_Spacing;
+    //std::vector<double> m_Center;
+    //std::vector<double> m_Radius;
+    //std::vector<double> m_Orientation;
+  }
   ~CreateEllipsoidBase(){};
 
   /** Input parameters */

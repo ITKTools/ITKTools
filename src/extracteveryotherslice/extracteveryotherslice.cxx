@@ -58,7 +58,14 @@ std::string GetHelpString( void )
 class ExtractEveryOtherSliceBase : public itktools::ITKToolsBase
 { 
 public:
-  ExtractEveryOtherSliceBase(){};
+  ExtractEveryOtherSliceBase()
+  {
+    m_InputFileName = "";
+    m_OutputFileName = "";
+    m_EveryOther = 0;
+    m_Offset = 0;
+    m_Direction = 0;
+  };
   ~ExtractEveryOtherSliceBase(){};
 
   /** Input parameters */

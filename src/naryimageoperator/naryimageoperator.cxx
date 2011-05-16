@@ -69,7 +69,15 @@ std::string GetHelpString( void )
 class ITKToolsNaryImageOperatorBase : public itktools::ITKToolsBase
 {
 public:
-  ITKToolsNaryImageOperatorBase(){};
+  ITKToolsNaryImageOperatorBase()
+  {
+    //std::vector<std::string> m_InputFileNames;
+    m_OutputFileName = "";
+    m_NaryOperatorName = "";
+    m_UseCompression = false;
+    m_NumberOfStreams = 0;
+    m_Arg = "";
+  };
   ~ITKToolsNaryImageOperatorBase(){};
 
   /** Input parameters */

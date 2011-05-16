@@ -59,7 +59,14 @@ std::string GetHelpString( void )
 class ResizeImageBase : public itktools::ITKToolsBase
 { 
 public:
-  ResizeImageBase(){};
+  ResizeImageBase()
+  {
+    m_InputFileName = "";
+    m_OutputFileName = "";
+    //std::vector<double> m_FactorOrSpacing;
+    m_IsFactor = false;
+    m_InterpolationOrder = 0;
+  };
   ~ResizeImageBase(){};
 
   /** Input parameters */

@@ -65,7 +65,13 @@ std::string GetHelpString()
 class RescaleIntensityImageFilterBase : public itktools::ITKToolsBase
 { 
 public:
-  RescaleIntensityImageFilterBase(){};
+  RescaleIntensityImageFilterBase()
+  {
+    m_InputFileName = "";
+    m_OutputFileName = "";
+    //std::vector<double> m_Values;
+    m_ValuesAreExtrema = false;
+  };
   ~RescaleIntensityImageFilterBase(){};
 
   /** Input parameters */

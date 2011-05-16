@@ -65,7 +65,15 @@ std::string GetHelpString()
 class ITKToolsBinaryImageOperatorBase : public itktools::ITKToolsBase
 {
 public:
-  ITKToolsBinaryImageOperatorBase(){};
+  ITKToolsBinaryImageOperatorBase()
+  {
+    m_InputFileName1 = "";
+    m_InputFileName2 = "";
+    m_OutputFileName = "";
+    m_Ops = "";
+    m_UseCompression = false;
+    m_Arg = "";
+  }
   ~ITKToolsBinaryImageOperatorBase(){};
 
   /** Input parameters */

@@ -69,7 +69,16 @@ std::string GetHelpString( void )
 class CreateBoxBase : public itktools::ITKToolsBase
 { 
 public:
-  CreateBoxBase(){};
+  CreateBoxBase()
+  {
+    m_InputFileName = "";
+    m_OutputFileName = "";
+    //std::vector<double> m_Input1;
+    //std::vector<double> m_Input2;
+    //std::vector<double> m_OrientationOfBox;
+    m_BoxDefinition = "";
+  }
+  
   ~CreateBoxBase(){};
 
   /** Input parameters */

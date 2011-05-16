@@ -56,7 +56,14 @@ std::string GetHelpString( void )
 class CreateSphereBase : public itktools::ITKToolsBase
 { 
 public:
-  CreateSphereBase(){};
+  CreateSphereBase()
+  {
+    m_OutputFileName = "";
+    //std::vector<unsigned int> m_Size;
+    //std::vector<double> m_Spacing;
+    //std::vector<double> m_Center;
+    m_Radius = 0.0f;
+  };
   ~CreateSphereBase(){};
 
   /** Input parameters */

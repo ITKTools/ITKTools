@@ -56,7 +56,11 @@ std::string GetHelpString()
 class ComputeBoundingBoxBase : public itktools::ITKToolsBase
 { 
 public:
-  ComputeBoundingBoxBase(){};
+  ComputeBoundingBoxBase()
+  {
+    m_InputFileName = "";
+    m_OutputFileName = "";
+  }
   ~ComputeBoundingBoxBase(){};
 
   /** Input parameters */

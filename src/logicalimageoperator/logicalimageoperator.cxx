@@ -70,7 +70,16 @@ std::string GetHelpString( void )
 class LogicalImageOperatorBase : public itktools::ITKToolsBase
 { 
 public:
-  LogicalImageOperatorBase(){};
+  LogicalImageOperatorBase()
+  {
+    m_InputFileName1 = "";
+    m_InputFileName2 = "";
+    m_OutputFileName = "";
+    m_Ops = "";
+    m_UseCompression = false;
+    m_Argument = 0.0f;
+    m_Unary = false;
+  };
   ~LogicalImageOperatorBase(){};
 
   /** Input parameters */

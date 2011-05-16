@@ -59,7 +59,13 @@ std::string GetHelpString()
 class IntensityReplaceBase : public itktools::ITKToolsBase
 { 
 public:
-  IntensityReplaceBase(){};
+  IntensityReplaceBase()
+  {
+    m_InputFileName = "";
+    m_OutputFileName = "";
+    //std::vector<std::string> m_InValues;
+    //std::vector<std::string> m_OutValues;
+  };
   ~IntensityReplaceBase(){};
 
   /** Input parameters */

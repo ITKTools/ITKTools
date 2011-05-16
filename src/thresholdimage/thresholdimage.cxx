@@ -87,7 +87,25 @@ std::string GetHelpString( void )
 class ThresholdImageBase : public itktools::ITKToolsBase
 { 
 public:
-  ThresholdImageBase(){};
+  ThresholdImageBase()
+  {
+    m_Bins = 0;
+    m_InputFileName = "";
+    m_Inside = 0.0f;
+    m_Iterations = 0;
+    m_MaskFileName = "";
+    m_MaskValue = 0;
+    m_Method = "";
+    m_MixtureType = 0;
+    m_NumThresholds = 0;
+    m_OutputFileName = "";
+    m_Outside = 0.0f;
+    m_Pow = 0.0f;
+    m_Sigma = 0.0f;
+    m_Supported = false;
+    m_Threshold1 = 0.0f;
+    m_Threshold2 = 0.0f;
+  };
   ~ThresholdImageBase(){};
 
   /** Input parameters */

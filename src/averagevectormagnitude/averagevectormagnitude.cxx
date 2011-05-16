@@ -61,6 +61,8 @@ public:
   AverageVectorMagnitudeBase()
   {
     m_AverageMagnitude = 0.0f;
+    m_InputFileName = "";
+    m_OutputFileName = "";
   }
   
   ~AverageVectorMagnitudeBase(){};
@@ -68,7 +70,6 @@ public:
   /** Input parameters */
   std::string m_InputFileName;
   std::string m_OutputFileName;
-
   float m_AverageMagnitude;
 
   virtual void Run(void) = 0;

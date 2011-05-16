@@ -73,6 +73,10 @@ public:
   {
     m_Alpha = 0.0f;
     m_Beta = 0.0f;
+    m_InputFileName = "";
+    m_OutputFileName = "";
+    m_LookUpTable = false;
+    //m_Radius; // does this need to be initialized?
   };
   
   ~ContrastEnhanceImageBase(){};

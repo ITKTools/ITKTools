@@ -59,7 +59,12 @@ std::string GetHelpString( void )
 class PCABase : public itktools::ITKToolsBase
 { 
 public:
-  PCABase(){};
+  PCABase()
+  {
+    //std::vector< std::string > m_InputFileNames;
+    m_OutputDirectory = "";
+    m_NumberOfPCs = 0;
+  };
   ~PCABase(){};
 
   /** Input parameters */

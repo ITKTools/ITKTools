@@ -38,7 +38,12 @@ std::string GetHelpString()
 class WeightedAdditionBase : public itktools::ITKToolsBase
 { 
 public:
-  WeightedAdditionBase(){};
+  WeightedAdditionBase()
+  {
+    //std::vector<std::string> m_InputFileNames;
+    //std::vector<std::string> m_WeightFileNames;
+    m_OutputFileName = "";
+  };
   ~WeightedAdditionBase(){};
 
   /** Input parameters */

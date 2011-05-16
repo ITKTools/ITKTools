@@ -60,10 +60,6 @@ std::string GetHelpString( void )
   return ss.str();
 } // end GetHelpString()
 
-
-/** Declare other functions. */
-std::string GetHelpString( void );
-
 bool CheckWhichInputOption( const bool pAGiven, const bool pBGiven, const bool szGiven,
   const bool lbGiven, const bool ubGiven, unsigned int & arg );
 

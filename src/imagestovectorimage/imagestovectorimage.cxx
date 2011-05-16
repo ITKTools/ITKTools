@@ -56,7 +56,12 @@ std::string GetHelpString( void )
 class ImagesToVectorImageBase : public itktools::ITKToolsBase
 { 
 public:
-  ImagesToVectorImageBase(){};
+  ImagesToVectorImageBase()
+  {
+    //std::vector<std::string> m_InputFileNames;
+    m_OutputFileName = "";
+    m_NumberOfStreams = 0;
+  };
   ~ImagesToVectorImageBase(){};
 
   /** Input parameters */

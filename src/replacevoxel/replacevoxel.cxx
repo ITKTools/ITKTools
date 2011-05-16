@@ -58,7 +58,13 @@ std::string GetHelpString()
 class ReplaceVoxelBase : public itktools::ITKToolsBase
 { 
 public:
-  ReplaceVoxelBase(){};
+  ReplaceVoxelBase()
+  {
+    m_InputFileName = "";
+    m_OutputFileName = "";
+    //std::vector<unsigned int> m_Voxel;
+    m_Value = 0.0f;
+  };
   ~ReplaceVoxelBase(){};
 
   /** Input parameters */

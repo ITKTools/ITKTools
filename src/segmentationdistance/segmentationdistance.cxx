@@ -92,7 +92,17 @@ void SegmentationDistanceHelper(
 class SegmentationDistanceBase : public itktools::ITKToolsBase
 { 
 public:
-  SegmentationDistanceBase(){};
+  SegmentationDistanceBase()
+  {
+    m_InputFileName1 = "";
+    m_InputFileName2 = "";
+    m_OutputFileName = "";
+    //std::vector<double> m_Mancor; // manual correlation
+    m_Samples = 0;
+    m_Thetasize = 0;
+    m_Phisize = 0;
+    m_Cartesianonly = false;
+  };
   ~SegmentationDistanceBase(){};
 
   /** Input parameters */

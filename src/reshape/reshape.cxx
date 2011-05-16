@@ -53,7 +53,12 @@ std::string GetHelpString( void )
 class ReshapeBase : public itktools::ITKToolsBase
 { 
 public:
-  ReshapeBase(){};
+  ReshapeBase()
+  {
+    m_InputFileName = "";
+    m_OutputFileName = "";
+    //std::vector<unsigned long> m_OutputSize;
+  };
   ~ReshapeBase(){};
 
   /** Input parameters */

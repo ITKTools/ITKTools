@@ -56,7 +56,12 @@ std::string GetHelpString()
 class ExtractIndexBase : public itktools::ITKToolsBase
 {
 public:
-  ExtractIndexBase(){};
+  ExtractIndexBase()
+  {
+    m_InputFileName = "";
+    m_OutputFileName = "";
+    //std::vector<unsigned int> m_Indices;
+  };
   ~ExtractIndexBase(){};
 
   /** Input parameters */

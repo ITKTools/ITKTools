@@ -56,7 +56,13 @@ std::string GetHelpString( void )
 class CreateCylinderBase : public itktools::ITKToolsBase
 { 
 public:
-  CreateCylinderBase(){};
+  CreateCylinderBase()
+  {
+    m_InputFileName = "";
+    m_OutputFileName = "";
+    //std::vector<unsigned int> m_Center;
+    double m_Radius = 0.0f;
+  };
   ~CreateCylinderBase(){};
 
   /** Input parameters */

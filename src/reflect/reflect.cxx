@@ -57,7 +57,12 @@ std::string GetHelpString()
 class ReflectBase : public itktools::ITKToolsBase
 { 
 public:
-  ReflectBase(){};
+  ReflectBase()
+  {
+    m_InputFileName = "";
+    m_OutputFileName = "";
+    m_Direction = 0;
+  };
   ~ReflectBase(){};
 
   /** Input parameters */

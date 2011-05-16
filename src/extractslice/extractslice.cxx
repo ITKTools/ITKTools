@@ -65,7 +65,13 @@ std::string GetHelpString( void )
 class ExtractSliceBase : public itktools::ITKToolsBase
 { 
 public:
-  ExtractSliceBase(){};
+  ExtractSliceBase()
+  {
+    m_InputFileName = "";
+    m_OutputFileName = "";
+    m_Slicenumber = 0;
+    m_Which_dimension = 0;
+  };
   ~ExtractSliceBase(){};
 
   /** Input parameters */

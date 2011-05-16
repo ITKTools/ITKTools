@@ -55,7 +55,13 @@ std::string GetHelpString( void )
 class CreateZeroImageBase : public itktools::ITKToolsBase
 { 
 public:
-  CreateZeroImageBase(){};
+  CreateZeroImageBase()
+  {
+    m_OutputFileName = "";
+    //std::vector<unsigned int> m_Size;
+    //std::vector<double> m_Spacing;
+    //std::vector<double> m_Origin;
+  };
   ~CreateZeroImageBase(){};
 
   /** Input parameters */

@@ -58,7 +58,12 @@ std::string GetHelpString()
 class IntensityWindowingBase : public itktools::ITKToolsBase
 { 
 public:
-  IntensityWindowingBase(){};
+  IntensityWindowingBase()
+  {
+    m_InputFileName = "";
+    m_OutputFileName = "";
+    //std::vector<double> m_Window;
+  };
   ~IntensityWindowingBase(){};
 
   /** Input parameters */

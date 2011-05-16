@@ -85,7 +85,16 @@ std::string GetHelpString()
 class DeformationFieldGeneratorBase : public itktools::ITKToolsBase
 { 
 public:
-  DeformationFieldGeneratorBase(){};
+  DeformationFieldGeneratorBase()
+  {
+    m_InputImage1FileName = "";
+    m_InputImage2FileName = "";
+    m_InputPoints1FileName = "";
+    m_InputPoints2FileName = "";
+    m_OutputImageFileName = "";
+    m_KernelName = "";
+    m_Stiffness = 0.0f;
+  };
   ~DeformationFieldGeneratorBase(){};
 
   /** Input parameters */

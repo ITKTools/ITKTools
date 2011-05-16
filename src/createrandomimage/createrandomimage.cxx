@@ -62,7 +62,17 @@ std::string GetHelpString(void)
 class CreateRandomImageBase : public itktools::ITKToolsBase
 { 
 public:
-  CreateRandomImageBase(){};
+  CreateRandomImageBase()
+  {
+    m_OutputFileName = "";
+    //itk::Array<unsigned int> m_Sizes;
+    m_Min_value = 0.0f;
+    m_Max_value = 0.0f;
+    m_Resolution = 0;
+    m_Sigma = 0.0f;
+    m_Rand_seed = 0;
+    m_SpaceDimension = 0;
+  };
   ~CreateRandomImageBase(){};
 
   /** Input parameters */

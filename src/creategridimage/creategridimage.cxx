@@ -59,7 +59,16 @@ std::string GetHelpString( void )
 class CreateGridImageBase : public itktools::ITKToolsBase
 { 
 public:
-  CreateGridImageBase(){};
+  CreateGridImageBase()
+  {
+    std::string m_InputFileName = "";
+    std::string m_OutputFileName = "";
+
+    //std::vector<unsigned int> m_ImageSize;
+    //std::vector<float> m_ImageSpacing;
+    //std::vector<unsigned int> m_Distance;
+    m_Is2DStack = false;
+  };
   ~CreateGridImageBase(){};
 
   /** Input parameters */

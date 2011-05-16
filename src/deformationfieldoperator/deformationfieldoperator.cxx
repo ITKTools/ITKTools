@@ -61,7 +61,15 @@ std::string GetHelpString( void )
 class DeformationFieldOperatorBase : public itktools::ITKToolsBase
 { 
 public:
-  DeformationFieldOperatorBase(){};
+  DeformationFieldOperatorBase()
+  {
+    m_InputFileName = "";
+    m_OutputFileName = "";
+    m_Ops = "";
+    m_NumberOfStreams = 0;
+    m_NumberOfIterations = 0;
+    m_StopValue = 0.0f;
+  };
   ~DeformationFieldOperatorBase(){};
 
   /** Input parameters */
