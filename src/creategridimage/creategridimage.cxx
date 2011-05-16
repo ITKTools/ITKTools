@@ -21,7 +21,8 @@
  \verbinclude creategridimage.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsBase.h"
 
 #include "itkImage.h"
 #include "itkImageRegionIteratorWithIndex.h"
@@ -238,7 +239,7 @@ int main( int argc, char *argv[] )
     std::string PixelType; //we don't use this
     unsigned int NumberOfComponents = 1;
     std::vector<unsigned int> imagesize( imageDimension, 0 );
-    int retgip = GetImageProperties(
+    int retgip = itktools::GetImageProperties(
       inputFileName,
       PixelType,
       ComponentTypeIn,

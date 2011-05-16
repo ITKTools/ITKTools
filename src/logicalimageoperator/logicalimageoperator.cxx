@@ -21,7 +21,8 @@
  \verbinclude logicalimageoperator.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsBase.h"
 
 #include "LogicalImageOperatorHelper.h"
 
@@ -93,7 +94,7 @@ public:
   LogicalImageOperator(){};
   ~LogicalImageOperator(){};
 
-  static Self * New( unsigned int imageDimension, itktools::EnumComponentType componentType )
+  static Self * New( unsigned int imageDimension, itktools::ComponentType componentType )
   {
     if ( VImageDimension == imageDimension && itktools::IsType<TComponentType>( componentType ) )
     {
@@ -434,9 +435,9 @@ int main( int argc, char **argv )
   LogicalImageOperatorBase * logicalImageOperator = NULL; 
 
   unsigned int imageDimension = 0;
-  GetImageDimension(inputFileName1, imageDimension);
+  itktools::GetImageDimension(inputFileName1, imageDimension);
 
-  itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileName1);
+  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileName1);
     
   /** NB: do not add floating point support, since logical operators are
   * not defined on those types */

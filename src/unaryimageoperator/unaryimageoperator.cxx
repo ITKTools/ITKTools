@@ -104,21 +104,21 @@ int main( int argc, char **argv )
   }
 
   /** The input is only templated over int and double. */
-  itktools::EnumComponentType inputComponentType = itk::ImageIOBase::DOUBLE;
+  itktools::ComponentType inputComponentType = itk::ImageIOBase::DOUBLE;
 
-  bool inputIsInteger = InputIsInteger( inputComponentType );
+  bool inputIsInteger = itktools::ComponentTypeIsInteger( inputComponentType );
   if ( inputIsInteger ) 
   {
     inputComponentType = itk::ImageIOBase::INT;
   }
 
   /** Get the output component type. */
-  itktools::EnumComponentType outputComponentType = inputComponentType;
+  itktools::ComponentType outputComponentType = inputComponentType;
   std::string componentTypeOutString = "";
   bool retpto = parser->GetCommandLineArgument( "-pto", componentTypeOutString );
   if(retpto)
   {
-    outputComponentType = itktools::EnumComponentTypeFromString(componentTypeOutString);
+    outputComponentType = itktools::GetComponentTypeFromString(componentTypeOutString);
   }
   
   /** Get the correct form of ops. For some operators
@@ -129,8 +129,7 @@ int main( int argc, char **argv )
    * and the argument type. If both are of integer type then
    * INT is used, otherwise DOUBLE.
    */
-  bool argumentIsInteger;
-  ArgumentIsInteger( argument, argumentIsInteger );
+  bool argumentIsInteger = itktools::StringIsInteger( argument );
   /** Append ops and at the same time check if ops is a valid
    * functor.
    */
@@ -157,7 +156,7 @@ int main( int argc, char **argv )
   UnaryImageOperatorBase * unaryImageOperator = NULL;
 
   unsigned int dim = 0;
-  GetImageDimension(inputFileName, dim);
+  itktools::GetImageDimension(inputFileName, dim);
 
   try
   {    

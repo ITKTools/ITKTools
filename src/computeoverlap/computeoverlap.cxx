@@ -127,7 +127,7 @@ int main( int argc, char ** argv )
   unsigned int Dimension = 2;
   unsigned int NumberOfComponents = Dimension;
   std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = GetImageProperties(
+  int retgip = itktools::GetImageProperties(
     inputFileNames[ 0 ],
     PixelType,
     ComponentType,
@@ -147,12 +147,12 @@ int main( int argc, char ** argv )
   }
 
   /** Get rid of the possible "_" in ComponentType. */
-  ReplaceUnderscoreWithSpace( ComponentType );
+  itktools::ReplaceUnderscoreWithSpace( ComponentType );
 
   /** Run the program. */
 
   unsigned int dim = Dimension;
-  itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileNames[0]);
+  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileNames[0]);
 
   if ( retlabel )
   {

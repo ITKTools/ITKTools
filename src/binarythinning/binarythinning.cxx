@@ -21,7 +21,9 @@
  \verbinclude binarythinning.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsBase.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsImageProperties.h"
 
 #include "itkImageFileReader.h"
 #include "itkBinaryThinningImageFilter.h"
@@ -58,6 +60,8 @@ public:
   std::string m_InputFileName;
   std::string m_OutputFileName;
 
+  virtual void Run(void) = 0;
+
 }; // end BinaryThinningBase
 
 
@@ -70,7 +74,7 @@ public:
   BinaryThinning(){};
   ~BinaryThinning(){};
 
-  static Self * New( itktools::EnumComponentType componentType, unsigned int imageDimension )
+  static Self * New( itktools::ComponentType componentType, unsigned int imageDimension )
   {
     if ( itktools::IsType<TComponentType>(componentType) && VImageDimension == imageDimension )
     {
@@ -146,7 +150,7 @@ int main( int argc, char ** argv )
   unsigned int Dimension = 3;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = GetImageProperties(
+  int retgip = itktools::GetImageProperties(
     inputFileName,
     PixelType,
     ComponentTypeIn,
@@ -167,15 +171,15 @@ int main( int argc, char ** argv )
   }
 
   /** Get rid of the possible "_" in ComponentType. */
-  ReplaceUnderscoreWithSpace( ComponentTypeIn );
+  itktools::ReplaceUnderscoreWithSpace( ComponentTypeIn );
 
 
   /** Determine image properties. */
 
-  itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileName);
+  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileName);
   
   unsigned int dimension = 0;
-  GetImageDimension(inputFileName, dimension);
+  itktools::GetImageDimension(inputFileName, dimension);
 
   BinaryThinningBase * binaryThinning = 0;
 

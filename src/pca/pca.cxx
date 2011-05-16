@@ -21,7 +21,8 @@
  \verbinclude pca.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsBase.h"
 
 #include <itksys/SystemTools.hxx>
 #include <sstream>
@@ -79,7 +80,7 @@ public:
   PCA(){};
   ~PCA(){};
 
-  static Self * New( itktools::EnumComponentType componentType, unsigned int dim )
+  static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
     if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
     {
@@ -222,7 +223,7 @@ int main( int argc, char **argv )
   }
 
   unsigned int numberOfComponents = 0;
-  GetImageNumberOfComponents(inputFileNames[0], numberOfComponents);
+  itktools::GetImageNumberOfComponents(inputFileNames[0], numberOfComponents);
   /** Check for vector images. */
   if ( numberOfComponents > 1 )
   {
@@ -235,18 +236,18 @@ int main( int argc, char **argv )
    * specifying -pt in the command line.
    */
   
-  itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileNames[0]);
+  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileNames[0]);
  
   if ( !retpt ) 
   {
-    componentType = itktools::EnumComponentTypeFromString(componentTypeString);
+    componentType = itktools::GetComponentTypeFromString(componentTypeString);
   }
   
   /** Class that does the work */
   PCABase * pca = 0; 
 
   unsigned int imageDimension = 0;
-  GetImageDimension(inputFileNames[0], imageDimension);
+  itktools::GetImageDimension(inputFileNames[0], imageDimension);
   
   std::cout << "Detected component type: " << 
     componentType << std::endl;

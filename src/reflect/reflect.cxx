@@ -21,7 +21,8 @@
  \verbinclude reflect.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsBase.h"
 
 #include "itkImageFileReader.h"
 #include "itkFlipImageFilter.h"
@@ -76,7 +77,7 @@ public:
   Reflect(){};
   ~Reflect(){};
 
-  static Self * New( itktools::EnumComponentType componentType, unsigned int dim )
+  static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
     if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
     {
@@ -172,15 +173,15 @@ int main( int argc, char ** argv )
 
   /** The default output is equal to the input, but can be overridden by
    * specifying -pt in the command line.   */
-  itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileName);
+  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileName);
   if ( !retpt ) 
   {
-    componentType = itktools::EnumComponentTypeFromString(componentTypeString);
+    componentType = itktools::GetComponentTypeFromString(componentTypeString);
   }
   
   /** Check for vector images. */
   unsigned int numberOfComponents = 0;
-  GetImageDimension(inputFileName, numberOfComponents);
+  itktools::GetImageDimension(inputFileName, numberOfComponents);
   
   if ( numberOfComponents > 1 )
   {
@@ -190,7 +191,7 @@ int main( int argc, char ** argv )
   }
 
   unsigned int imageDimension = 0;
-  GetImageDimension(inputFileName, imageDimension);
+  itktools::GetImageDimension(inputFileName, imageDimension);
   
   /** Check direction. */
   if ( direction > imageDimension - 1 )

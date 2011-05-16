@@ -137,7 +137,7 @@ int main( int argc, char **argv )
   unsigned int Dimension = 2;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = GetImageProperties(
+  int retgip = itktools::GetImageProperties(
     inputFileName,
     PixelType,
     ComponentType,

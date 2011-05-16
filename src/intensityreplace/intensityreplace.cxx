@@ -21,7 +21,8 @@
  \verbinclude intensityreplace.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsBase.h"
 
 #include "itkImageFileReader.h"
 #include "itkChangeLabelImageFilter.h"
@@ -80,7 +81,7 @@ public:
   IntensityReplace(){};
   ~IntensityReplace(){};
 
-  static Self * New( unsigned int imageDimension, itktools::EnumComponentType componentType )
+  static Self * New( unsigned int imageDimension, itktools::ComponentType componentType )
   {
     if ( VImageDimension == imageDimension && itktools::IsType<TValue>( componentType ) )
     {
@@ -201,17 +202,17 @@ int main( int argc, char ** argv )
   }
 
 
-  itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileName);
+  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileName);
   /** The default output is equal to the input, but can be overridden by
    * specifying -pt in the command line.   */
   if ( !retpt ) 
   {
-    componentType = itktools::EnumComponentTypeFromString(ComponentTypeString);
+    componentType = itktools::GetComponentTypeFromString(ComponentTypeString);
   }
 
   /** Check for vector images. */
   unsigned int numberOfComponents = 0;
-  GetImageNumberOfComponents(inputFileName, numberOfComponents);
+  itktools::GetImageNumberOfComponents(inputFileName, numberOfComponents);
   
   if ( numberOfComponents > 1 )
   {
@@ -224,7 +225,7 @@ int main( int argc, char ** argv )
   IntensityReplaceBase * intensityReplace = NULL; 
 
   unsigned int imageDimension = 0;
-  GetImageDimension(inputFileName, imageDimension);
+  itktools::GetImageDimension(inputFileName, imageDimension);
   
   try
   {    

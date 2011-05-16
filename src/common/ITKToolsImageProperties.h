@@ -27,6 +27,11 @@ bool GetImageSize(
   const std::string & filename,
   std::vector<unsigned int> & imagesize );
 
+/** Determine the size of an image.*/
+bool GetImageSize(
+  itk::ImageIOBase::Pointer imageIOBase,
+  std::vector<unsigned int> & imagesize );
+
 /** Determine pixeltype (scalar/vector), componenttype (short, float etc),
  * dimension and numberofcomponents from an image
  * returns 0 when successful. 0 otherwise.
@@ -35,6 +40,29 @@ int GetImageProperties(
   const std::string & filename,
   std::string & pixeltype,
   std::string & componenttype,
+  unsigned int & dimension,
+  unsigned int & numberofcomponents,
+  std::vector<unsigned int> & imagesize );
+
+/** Determine pixeltype (scalar/vector), componenttype (short, float etc),
+ * dimension and numberofcomponents from an image
+ * returns 0 when successful. 0 otherwise.
+ */
+int GetImageProperties(
+  const std::string & filename,
+  itk::ImageIOBase::IOPixelType & pixeltype,
+  ComponentType & componenttype,
+  unsigned int & dimension,
+  unsigned int & numberofcomponents,
+  std::vector<unsigned int> & imagesize );
+
+/** Determine component type,
+ * dimension and the number of components from an image
+ * returns 0 when successful. 0 otherwise.
+ */
+int GetImageProperties(
+  const std::string & filename,
+  ComponentType & componenttype,
   unsigned int & dimension,
   unsigned int & numberofcomponents,
   std::vector<unsigned int> & imagesize );

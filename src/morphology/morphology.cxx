@@ -180,7 +180,7 @@ int main( int argc, char *argv[] )
   unsigned int Dimension = 3;
   unsigned int numberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = GetImageProperties(
+  int retgip = itktools::GetImageProperties(
     inputFileName,
     pixelType,
     componentType,
@@ -203,7 +203,7 @@ int main( int argc, char *argv[] )
   }
 
   /** Get rid of the possible "_" in ComponentType. */
-  ReplaceUnderscoreWithSpace( componentType );
+  itktools::ReplaceUnderscoreWithSpace( componentType );
 
   /** Check radius. */
   if ( retr )

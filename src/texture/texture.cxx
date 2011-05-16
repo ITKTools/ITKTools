@@ -21,9 +21,11 @@
  \verbinclude texture.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsBase.h"
 
 #include <itksys/SystemTools.hxx>
+
 #include "itkTextureImageToImageFilter.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
@@ -102,8 +104,8 @@ public:
   Texture(){};
   ~Texture(){};
 
-  static Self * New( itktools::EnumComponentType inputComponentType,
-		     itktools::EnumComponentType outputComponentType, unsigned int dim )
+  static Self * New( itktools::ComponentType inputComponentType,
+		     itktools::ComponentType outputComponentType, unsigned int dim )
   {
     if ( itktools::IsType<TInputComponentType>( inputComponentType ) &&
 	 itktools::IsType<TOutputComponentType>( outputComponentType ) && VDimension == dim )
@@ -249,7 +251,7 @@ int main( int argc, char **argv )
   unsigned int Dimension = 3;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = GetImageProperties(
+  int retgip = itktools::GetImageProperties(
     inputFileName,
     PixelType,
     componentTypeIn,
@@ -279,9 +281,9 @@ int main( int argc, char **argv )
    * but can be overridden by specifying -opct in the command line.
    */
   //itktools::EnumComponentType inputComponentType = itktools::GetImageComponentType(inputFileName);
-  itktools::EnumComponentType inputComponentType = itk::ImageIOBase::FLOAT;
+  itktools::ComponentType inputComponentType = itk::ImageIOBase::FLOAT;
   
-  itktools::EnumComponentType outputComponentType = itktools::GetImageComponentType(componentTypeOutString);
+  itktools::ComponentType outputComponentType = itktools::GetImageComponentType(componentTypeOutString);
 
     
   try

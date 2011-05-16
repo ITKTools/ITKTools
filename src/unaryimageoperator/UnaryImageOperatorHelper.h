@@ -20,6 +20,7 @@
 
 #include "itkImage.h"
 #include "itkUnaryFunctorImageFilter.h"
+
 //#include <map>
 #include <vector>
 #include <itksys/SystemTools.hxx>
@@ -29,8 +30,8 @@
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
+#include "ITKToolsHelpers.h"
 #include "ITKToolsBase.h"
-
 //-------------------------------------------------------------------------------------
 
 
@@ -60,8 +61,8 @@ public:
   UnaryImageOperator(){};
   ~UnaryImageOperator(){};
 
-  static Self * New( itktools::EnumComponentType inputComponentType,
-		     itktools::EnumComponentType outputComponentType, unsigned int dim )
+  static Self * New( itktools::ComponentType inputComponentType,
+		     itktools::ComponentType outputComponentType, unsigned int dim )
   {
     if ( itktools::IsType<TInputComponentType>( inputComponentType ) &&
          itktools::IsType<TOutputComponentType>( outputComponentType ) && VDimension == dim )

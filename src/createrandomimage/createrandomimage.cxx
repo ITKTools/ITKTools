@@ -26,11 +26,10 @@
 #include "createrandomimage.h"
 
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsBase.h"
 
 #include "itkImageToVectorImageFilter.h"
-
-
 
 std::string GetHelpString(void)
 {
@@ -88,7 +87,7 @@ public:
   CreateRandomImage(){};
   ~CreateRandomImage(){};
 
-  static Self * New( unsigned int imageDimension, itktools::EnumComponentType componentType )
+  static Self * New( unsigned int imageDimension, itktools::ComponentType componentType )
   {
     if ( VImageDimension == imageDimension && itktools::IsType<TValue>( componentType ) )
     {
@@ -425,10 +424,10 @@ int main(int argc, char** argv)
   
   /** Class that does the work */
   CreateRandomImageBase * createRandomImage = NULL; 
-  itktools::EnumComponentType componentType = itktools::EnumComponentTypeFromString(pixelType);
+  itktools::ComponentType componentType = itktools::GetComponentTypeFromString(pixelType);
 
   try
-  {    
+  {
     // now call all possible template combinations.
     if (!createRandomImage) createRandomImage = CreateRandomImage< 2, float >::New( imageDimension, componentType );
     if (!createRandomImage) createRandomImage = CreateRandomImage< 2, short >::New( imageDimension, componentType );

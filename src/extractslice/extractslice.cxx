@@ -21,12 +21,16 @@
  \verbinclude extractslice.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsBase.h"
+
 #include "itkImageFileReader.h"
 #include "itkExtractImageFilter.h"
 #include "itkImageFileWriter.h"
+
 #include <string>
 #include <vector>
+
 #include <itksys/SystemTools.hxx>
 
 
@@ -82,7 +86,7 @@ public:
   ExtractSlice(){};
   ~ExtractSlice(){};
 
-  static Self * New( itktools::EnumComponentType componentType )
+  static Self * New( itktools::ComponentType componentType )
   {
     if ( itktools::IsType<TComponentType>( componentType ) )
     {
@@ -176,7 +180,7 @@ int main( int argc, char ** argv )
   unsigned int Dimension = 3;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = GetImageProperties(
+  int retgip = itktools::GetImageProperties(
     inputFileName,
     PixelType,
     ComponentType,
@@ -251,7 +255,7 @@ int main( int argc, char ** argv )
   /** Class that does the work */
   ExtractSliceBase * extractSlice = 0; 
 
-  itktools::EnumComponentType componentType = itktools::EnumComponentTypeFromString(PixelType);
+  itktools::ComponentType componentType = itktools::GetComponentTypeFromString(PixelType);
     
   try
   {    

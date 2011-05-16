@@ -21,7 +21,8 @@
  \verbinclude deformationfieldoperator.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsBase.h"
 
 #include "deformationfieldoperator.h"
 #include "itkExceptionObject.h"
@@ -88,7 +89,7 @@ public:
   DeformationFieldOperator(){};
   ~DeformationFieldOperator(){};
 
-  static Self * New( itktools::EnumComponentType componentType, unsigned int dim )
+  static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
     if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
     {
@@ -226,7 +227,7 @@ int main( int argc, char **argv )
   unsigned int Dimension = 2;
   unsigned int NumberOfComponents = Dimension;
   std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = GetImageProperties(
+  int retgip = itktools::GetImageProperties(
     inputFileName,
     PixelType,
     ComponentType,
@@ -251,7 +252,7 @@ int main( int argc, char **argv )
   }
 
   /** Get rid of the possible "_" in ComponentType. */
-  ReplaceUnderscoreWithSpace( ComponentType );
+  itktools::ReplaceUnderscoreWithSpace( ComponentType );
 
   /** Run the program. */
   
@@ -261,7 +262,7 @@ int main( int argc, char **argv )
   /** Short alias */
   unsigned int dim = Dimension;
 
-  itktools::EnumComponentType componentType = itktools::EnumComponentTypeFromString(PixelType);
+  itktools::ComponentType componentType = itktools::GetComponentTypeFromString(PixelType);
    
   try
   {    

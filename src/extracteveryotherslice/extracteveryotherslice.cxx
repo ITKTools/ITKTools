@@ -21,7 +21,8 @@
  \verbinclude extracteveryotherslice.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsBase.h"
 
 #include "itkImageSliceConstIteratorWithIndex.h"
 #include "itkImageSliceIteratorWithIndex.h"
@@ -79,7 +80,7 @@ public:
   ExtractEveryOtherSlice(){};
   ~ExtractEveryOtherSlice(){};
 
-  static Self * New( itktools::EnumComponentType componentType, unsigned int dim )
+  static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
     if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
     {
@@ -254,7 +255,7 @@ int main( int argc, char **argv )
   unsigned int Dimension = 3;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = GetImageProperties(
+  int retgip = itktools::GetImageProperties(
     inputFileName,
     PixelType,
     ComponentTypeIn,
@@ -283,7 +284,7 @@ int main( int argc, char **argv )
   }
 
   /** Get rid of the possible "_" in ComponentType. */
-  ReplaceUnderscoreWithSpace( ComponentTypeIn );
+  itktools::ReplaceUnderscoreWithSpace( ComponentTypeIn );
 
   /** Check direction. */
   if ( direction + 1 > Dimension )
@@ -298,7 +299,7 @@ int main( int argc, char **argv )
   /** Short alias */
   unsigned int dim = Dimension;
 
-  itktools::EnumComponentType componentType = itktools::EnumComponentTypeFromString(PixelType);
+  itktools::ComponentType componentType = itktools::GetComponentTypeFromString(PixelType);
    
   try
   {    

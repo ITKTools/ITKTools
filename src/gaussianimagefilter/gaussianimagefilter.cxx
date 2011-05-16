@@ -149,7 +149,7 @@ int main( int argc, char ** argv )
   unsigned int Dimension = 3;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = GetImageProperties(
+  int retgip = itktools::GetImageProperties(
     inputFileName,
     PixelType,
     ComponentTypeIn,
@@ -172,7 +172,7 @@ int main( int argc, char ** argv )
   }
 
   /** Get rid of the possible "_" in ComponentType. */
-  ReplaceUnderscoreWithSpace( ComponentTypeIn );
+  itktools::ReplaceUnderscoreWithSpace( ComponentTypeIn );
 
   /** Check order. */
   if ( !retlap && !retinv )

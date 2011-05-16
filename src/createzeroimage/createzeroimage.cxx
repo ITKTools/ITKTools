@@ -21,7 +21,8 @@
  \verbinclude createzeroimage.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsBase.h"
 
 #include "itkImage.h"
 #include "itkImageFileWriter.h"
@@ -75,7 +76,7 @@ public:
   CreateZeroImage(){};
   ~CreateZeroImage(){};
 
-  static Self * New( itktools::EnumComponentType componentType, unsigned int dim )
+  static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
     if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
     {
@@ -190,7 +191,7 @@ int main( int argc, char **argv )
     /** Determine image properties. */
     std::string dummyPixelType; //we don't use this
     unsigned int NumberOfComponents = 1;
-    int retgip = GetImageProperties(
+    int retgip = itktools::GetImageProperties(
       fileNameIn,
       dummyPixelType, PixelType, Dimension, NumberOfComponents,
       size, spacing, origin, direction );
@@ -201,7 +202,7 @@ int main( int argc, char **argv )
   }
 
   /** Get rid of the possible "_" in PixelType. */
-  ReplaceUnderscoreWithSpace( PixelType );
+  itktools::ReplaceUnderscoreWithSpace( PixelType );
 
   /** Check size, spacing and origin. */
   if ( retsz )
@@ -251,7 +252,7 @@ int main( int argc, char **argv )
   /** Short alias */
   unsigned int dim = Dimension;
 
-  itktools::EnumComponentType componentType = itktools::EnumComponentTypeFromString(PixelType);
+  itktools::ComponentType componentType = itktools::GetComponentTypeFromString(PixelType);
 
   try
   {    

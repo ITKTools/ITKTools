@@ -28,7 +28,7 @@ public:
   TileImages2D3D(){};
   ~TileImages2D3D(){};
 
-  static Self * New( itktools::EnumComponentType componentType )
+  static Self * New( itktools::ComponentType componentType )
   {
     if ( itktools::IsType<TComponentType>( componentType ) )
     {

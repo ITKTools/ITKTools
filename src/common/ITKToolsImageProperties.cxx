@@ -34,6 +34,50 @@ int GetImageProperties(
 
 } // end GetImageProperties()
 
+/**
+ * ***************** GetImageProperties ************************
+ */
+int GetImageProperties(
+  const std::string & filename,
+  ComponentType & componentType,
+  unsigned int & dimension,
+  unsigned int & numberOfComponents,
+  std::vector<unsigned int> & imageSize )
+{
+  itk::ImageIOBase::Pointer imageIOBase;
+  GetImageIOBase(filename, imageIOBase);
+
+  componentType = imageIOBase->GetComponentType();
+
+  dimension = imageIOBase->GetNumberOfDimensions();
+  numberOfComponents = imageIOBase->GetNumberOfComponents();
+  GetImageSize(imageIOBase, imageSize);
+  return 0;
+}
+
+/**
+ * ***************** GetImageProperties ************************
+ */
+int GetImageProperties(
+  const std::string & fileName,
+  itk::ImageIOBase::IOPixelType & pixelType,
+  ComponentType & componentType,
+  unsigned int & dimension,
+  unsigned int & numberOfComponents,
+  std::vector<unsigned int> & imageSize )
+{
+  itk::ImageIOBase::Pointer imageIOBase;
+  GetImageIOBase(fileName, imageIOBase);
+
+  componentType = imageIOBase->GetComponentType();
+  pixelType = imageIOBase->GetPixelType();
+
+  dimension = imageIOBase->GetNumberOfDimensions();
+  numberOfComponents = imageIOBase->GetNumberOfComponents();
+  GetImageSize(imageIOBase, imageSize);
+  return 0;
+}
+
 
 /**
  * ***************** GetImageProperties ************************
@@ -170,8 +214,7 @@ bool GetImageNumberOfComponents(
 
 /**
  * ***************** GetImageSize ************************
- */
-/** Determine the size of an image.
+ * Determine the size of an image.
  */
 bool GetImageSize(
   const std::string & filename,
@@ -180,8 +223,20 @@ bool GetImageSize(
   itk::ImageIOBase::Pointer imageIOBase;
   GetImageIOBase(filename, imageIOBase);
 
-  unsigned int dimension;
-  GetImageDimension(filename,dimension);
+  GetImageSize(imageIOBase, imageSize);
+
+  return true;
+}
+
+/**
+ * ***************** GetImageSize ************************
+ * Determine the size of an image.
+ */
+bool GetImageSize(
+  itk::ImageIOBase::Pointer imageIOBase,
+  std::vector<unsigned int> & imageSize )
+{
+  unsigned int dimension = imageIOBase->GetNumberOfDimensions();
   imageSize .resize( dimension );
 
   for ( unsigned int i = 0; i < dimension; i++ )
@@ -191,6 +246,7 @@ bool GetImageSize(
 
   return true;
 }
+
 
 /**
  * ***************** FillImageIOBase ************************

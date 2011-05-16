@@ -86,18 +86,19 @@ bool ComponentTypeIsInteger( const itktools::ComponentType inputComponentType)
  * ******************* ArgumentIsInteger *******************
  */
 
-void StringIsInteger( const std::string & argument, bool & argumentIsInteger )
+bool StringIsInteger( const std::string & argument )
 {
   /** Check if the argument is of integer type.
    *  This is done by checking if the string representation contains a '.' character.
    */
-  argumentIsInteger = false;
   std::basic_string<char>::size_type pos = argument.find( "." );
   const std::basic_string<char>::size_type npos = std::basic_string<char>::npos;
   if ( pos == npos )
   {
-    argumentIsInteger = true;
+    return true;
   }
+
+  return false;
 
 } // end ArgumentIsInteger()
 

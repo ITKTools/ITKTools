@@ -11,6 +11,7 @@
 
 #include "statisticsprinters.h"
 #include "ITKToolsBase.h"
+#include "ITKToolsHelpers.h"
 
 /** This file defines three templated functions. */
 
@@ -235,7 +236,7 @@ public:
   StatisticsOnImage(){};
   ~StatisticsOnImage(){};
 
-  static Self * New( itktools::EnumComponentType componentType, unsigned int dim, unsigned int numberOfComponents )
+  static Self * New( itktools::ComponentType componentType, unsigned int dim, unsigned int numberOfComponents )
   {
     if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim && VNumberOfComponents == numberOfComponents )
     {

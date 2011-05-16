@@ -26,7 +26,8 @@
 #include "contrastenhanceimage.h"
 
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsBase.h"
 
 #include <iostream>
 #include <string>
@@ -95,7 +96,7 @@ public:
   ContrastEnhanceImage(){};
   ~ContrastEnhanceImage(){};
 
-  static Self * New( itktools::EnumComponentType componentType, unsigned int dim )
+  static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
     if ( itktools::IsType<TComponentType>( componentType ) && VImageDimension == dim )
     {
@@ -208,10 +209,10 @@ int main(int argc, char** argv)
   parser->GetCommandLineArgument( "-in", inputFileName );
   
   unsigned int imageDimension;
-  GetImageDimension(inputFileName, imageDimension);
+  itktools::GetImageDimension(inputFileName, imageDimension);
  
-  itktools::EnumComponentType componentType;
-  GetImageComponentType(inputFileName, componentType);
+  itktools::ComponentType componentType;
+  itktools::GetImageComponentType(inputFileName, componentType);
   
   // Parse other arguments
   std::string outputFileName;

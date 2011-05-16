@@ -21,7 +21,8 @@
  \verbinclude braindistance.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsBase.h"
 
 #include "itkImageFileReader.h"
 #include "itkBinaryThresholdImageFilter.h"
@@ -125,7 +126,7 @@ int main( int argc, char ** argv )
   unsigned int Dimension = 3;
   unsigned int NumberOfComponents = Dimension;
   std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = GetImageProperties(
+  int retgip = itktools::GetImageProperties(
     inputFileName,
     PixelType,
     ComponentTypeIn,

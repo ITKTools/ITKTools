@@ -25,7 +25,7 @@ bool IsType( ComponentType ct )
   return ct == itk::ImageIOBase::MapPixelType<T>::CType;
 }
 
-void StringIsInteger( const std::string & argument, bool & argumentIsInteger );
+bool StringIsInteger( const std::string & argument );
 
 bool ComponentTypeIsInteger( const itktools::ComponentType inputComponentType);
 
@@ -57,5 +57,7 @@ ComponentType GetLargestComponentType(
   const ComponentType & type1, const ComponentType & type2 );
 
 } // end itktools namespace
+
+#include "ITKToolsImageProperties.h" // functions from this header are not used here, but we always want to also include this when we include Helpers
 
 #endif

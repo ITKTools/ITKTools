@@ -21,7 +21,8 @@
  \verbinclude createbox.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsBase.h"
 
 #include "CreateBoxHelper.h"
 
@@ -92,7 +93,7 @@ public:
   CreateBox(){};
   ~CreateBox(){};
 
-  static Self * New( itktools::EnumComponentType componentType, unsigned int dim )
+  static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
     if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
     {
@@ -335,12 +336,12 @@ int main( int argc, char** argv )
   }
 
   /** Determine output image properties. */
-  itktools::EnumComponentType componentType;
-  GetImageComponentType( inputFileName, componentType);
+  itktools::ComponentType componentType;
+  itktools::GetImageComponentType( inputFileName, componentType);
   /** Let the user overrule this. */
   //parser->GetCommandLineArgument( "-pt", componentType );
   
-  GetImageDimension( inputFileName, Dimension);
+  itktools::GetImageDimension( inputFileName, Dimension);
   
   /** Fix the output to be scalar. */
   //referenceIOBase->SetNumberOfComponents( 1 );

@@ -293,8 +293,8 @@ int main( int argc, char **argv )
   }
 
   /** Get rid of the "_" in inputPixelComponentType and outputPixelComponentType. */
-  ReplaceUnderscoreWithSpace( inputPixelComponentType );
-  ReplaceUnderscoreWithSpace( outputPixelComponentType );
+  itktools::ReplaceUnderscoreWithSpace( inputPixelComponentType );
+  itktools::ReplaceUnderscoreWithSpace( outputPixelComponentType );
 
   /** TASK 4:
    * Now we are ready to check on image type and subsequently call the

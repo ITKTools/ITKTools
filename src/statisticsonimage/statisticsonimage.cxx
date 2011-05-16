@@ -127,7 +127,7 @@ int main( int argc, char ** argv )
   unsigned int Dimension = 2;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = GetImageProperties(
+  int retgip = itktools::GetImageProperties(
     inputFileName,
     PixelType,
     ComponentType,
@@ -154,10 +154,10 @@ int main( int argc, char ** argv )
   unsigned int dim = Dimension;
  
   //itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileName);
-  itktools::EnumComponentType componentType = itk::ImageIOBase::FLOAT;
+  itktools::ComponentType componentType = itk::ImageIOBase::FLOAT;
   
   unsigned int numberOfComponents = 0;
-  GetImageNumberOfComponents(inputFileName, numberOfComponents);
+  itktools::GetImageNumberOfComponents(inputFileName, numberOfComponents);
   
   std::cout << "Detected component type: " << 
     componentType << std::endl;

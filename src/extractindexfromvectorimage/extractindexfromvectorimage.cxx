@@ -21,7 +21,8 @@
  \verbinclude extractindexfromvectorimage.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsBase.h"
 
 #include "itkImageFileReader.h"
 #include "itkImageToVectorImageFilter.h"
@@ -75,7 +76,7 @@ public:
   ExtractIndex(){};
   ~ExtractIndex(){};
 
-  static Self * New( itktools::EnumComponentType componentType, unsigned int dim )
+  static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
     if ( itktools::IsType<ComponentType>( componentType ) && Dimension == dim )
     {
@@ -165,7 +166,7 @@ int main( int argc, char ** argv )
 
   // We must get the number of components here so we can construct the indices vector appropriately
   unsigned int numberOfComponents = 1;
-  GetImageNumberOfComponents(inputFileName, numberOfComponents);
+  itktools::GetImageNumberOfComponents(inputFileName, numberOfComponents);
   
   // Determine if the argument passed as -ind is a string containing "all" or not
   std::string indicesString;
@@ -191,7 +192,7 @@ int main( int argc, char ** argv )
   unsigned int Dimension = 3;
   
   std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = GetImageProperties(
+  int retgip = itktools::GetImageProperties(
     inputFileName,
     PixelType,
     ComponentTypeIn,
@@ -213,7 +214,7 @@ int main( int argc, char ** argv )
   }
 
   /** Get rid of the possible "_" in ComponentType. */
-  ReplaceUnderscoreWithSpace( ComponentTypeIn );
+  itktools::ReplaceUnderscoreWithSpace( ComponentTypeIn );
 
   /** Sanity check. */
   for(unsigned int i = 0; i < indices.size(); ++i)
@@ -231,7 +232,7 @@ int main( int argc, char ** argv )
   
   ExtractIndexBase * extractIndex = 0;
   unsigned int dim = Dimension;
-  itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileName);
+  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileName);
   try
   {
     // 2D

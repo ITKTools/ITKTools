@@ -21,7 +21,8 @@
  \verbinclude naryimageoperator.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsBase.h"
+#include "ITKToolsHelpers.h"
 
 #include "NaryImageOperatorMainHelper.h"
 #include "NaryImageOperatorHelper.h"
@@ -62,6 +63,106 @@ std::string GetHelpString( void )
   return ss.str();
 } // end GetHelpString()
 
+
+/** ITKToolsNaryImageOperator */
+
+class ITKToolsNaryImageOperatorBase : public itktools::ITKToolsBase
+{
+public:
+  ITKToolsNaryImageOperatorBase(){};
+  ~ITKToolsNaryImageOperatorBase(){};
+
+  /** Input parameters */
+  std::vector<std::string> m_InputFileNames;
+  std::string m_OutputFileName;
+  std::string m_NaryOperatorName;
+  bool m_UseCompression;
+  unsigned int m_NumberOfStreams;
+  std::string m_Arg;
+
+}; // end ITKToolsNaryImageOperatorBase
+
+
+template< class TComponentTypeIn, class TComponentTypeOut, unsigned int VDimension >
+class ITKToolsNaryImageOperator : public ITKToolsNaryImageOperatorBase
+{
+public:
+  typedef ITKToolsNaryImageOperator Self;
+
+  ITKToolsNaryImageOperator(){};
+  ~ITKToolsNaryImageOperator(){};
+
+  static Self * New( itktools::ComponentType componentTypeIn, itktools::ComponentType componentTypeOut, unsigned int dim )
+  {
+    if ( itktools::IsType<TComponentTypeIn>( componentTypeIn ) &&
+         itktools::IsType<TComponentTypeOut>( componentTypeOut ) && VDimension == dim )
+    {
+      return new Self;
+    }
+    return 0;
+  }
+
+  void Run(void)
+  {
+    /** Typedefs. */
+    typedef itk::Image<TComponentTypeIn, VDimension>    InputImageType;
+    typedef itk::Image<TComponentTypeOut, VDimension>   OutputImageType;
+    
+    typedef typename InputImageType::PixelType          InputPixelType;
+    typedef typename OutputImageType::PixelType         OutputPixelType;
+    typedef itk::ImageFileReader< InputImageType >      ReaderType;
+    typedef itk::ImageFileWriter< OutputImageType >     WriterType;
+
+    /** Read the input images. */
+    std::vector<typename ReaderType::Pointer> readers( m_InputFileNames.size() );
+    for ( unsigned int i = 0; i < m_InputFileNames.size(); ++i )
+    {
+      readers[ i ] = ReaderType::New();
+      readers[ i ]->SetFileName( m_InputFileNames[ i ] );
+    }
+
+    std::map <std::string, NaryFilterEnum> naryOperatorMap;
+
+    naryOperatorMap["ADDITION"] = ADDITION;
+    naryOperatorMap["MEAN"] = MEAN;
+    naryOperatorMap["MINUS"] = MINUS;
+    naryOperatorMap["TIMES"] = TIMES;
+    naryOperatorMap["DIVIDE"] = DIVIDE;
+    naryOperatorMap["MAXIMUM"] = MAXIMUM;
+    naryOperatorMap["MINIMUM"] = MINIMUM;
+    naryOperatorMap["ABSOLUTEDIFFERENCE"] = ABSOLUTEDIFFERENCE;
+    naryOperatorMap["NARYMAGNITUDE"] = NARYMAGNITUDE;
+
+    /** Set up the binaryFilter. */
+    NaryFilterFactory<InputImageType, OutputImageType> naryFilterFactory;
+    typedef itk::InPlaceImageFilter<InputImageType, OutputImageType> BaseFilterType;
+    typename BaseFilterType::Pointer naryFilter = naryFilterFactory.GetFilter(naryOperatorMap[m_NaryOperatorName]);
+
+    //InstantiateNaryFilterNoArg( POWER );
+    //InstantiateNaryFilterNoArg( SQUAREDDIFFERENCE );
+    //InstantiateNaryFilterNoArg( MODULO );
+    //InstantiateNaryFilterNoArg( LOG );
+
+    //InstantiateNaryFilterWithArg( WEIGHTEDADDITION );
+    //InstantiateNaryFilterWithArg( MASK );
+    //InstantiateNaryFilterWithArg( MASKNEGATED );
+
+    /** Connect the pipeline. */
+    for ( unsigned int i = 0; i < m_InputFileNames.size(); ++i )
+    {
+      naryFilter->SetInput( i, readers[ i ]->GetOutput() );
+    }
+
+    /** Write the image to disk */
+    typename WriterType::Pointer writer = WriterType::New();
+    writer->SetFileName( m_OutputFileName.c_str() );
+    writer->SetInput( naryFilter->GetOutput() );
+    writer->SetUseCompression( m_UseCompression );
+    writer->SetNumberOfStreamDivisions( m_NumberOfStreams );
+    writer->Update();
+  }
+
+}; // end ITKToolsNaryImageOperator
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char **argv )
@@ -116,24 +217,27 @@ int main( int argc, char **argv )
   }
 
   /** Determine image properties. */
-  std::string ComponentTypeIn = "long";
-  std::string ComponentTypeOut = "long";
+  itktools::ComponentType componentTypeIn = itk::ImageIOBase::LONG;
+  itktools::ComponentType componentTypeOut = itk::ImageIOBase::LONG;
   unsigned int inputDimension = 2;
   int retdip = DetermineImageProperties( inputFileNames,
-    ComponentTypeIn, ComponentTypeOut, inputDimension );
+    componentTypeIn, componentTypeOut, inputDimension );
   if ( retdip ) return 1;
 
   /** Let the user override the output component type. */
   if ( retopct )
   {
-    if ( !CheckForValidComponentType( opct ) )
+    componentTypeOut = itktools::GetComponentTypeFromString(opct);
+    if ( !itktools::ComponentTypeIsValid( componentTypeOut ) )
     {
-      std::cerr << "ERROR: the you specified a wrong opct." << std::endl;
+      std::cerr << "ERROR: the you specified an invalid opct." << std::endl;
       return 1;
     }
-    ComponentTypeOut = opct;
-    ReplaceUnderscoreWithSpace( ComponentTypeOut );
-  if ( !TypeIsInteger( opct ) ) ComponentTypeIn = "double";
+    
+    if ( !itktools::ComponentTypeIsInteger( componentTypeOut ) )
+    {
+      componentTypeIn = itk::ImageIOBase::DOUBLE;
+    }
   }
 
   /** Check if a valid operator is given. */
@@ -145,47 +249,74 @@ int main( int argc, char **argv )
   bool retCOA = CheckOperatorAndArgument( ops, argument, retarg );
   if ( !retCOA ) return 1;
 
-  /** Run the program. */
-  bool supported = false;
+
+  /** Class that does the work */
+  ITKToolsNaryImageOperatorBase * naryImageOperator = NULL;
+
+  unsigned int dim = 0;
+  itktools::GetImageDimension(inputFileNames[0], dim);
+
+  /** \todo some progs allow user to override the pixel type,
+   * so we need a method to convert string to EnumComponentType */
+  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileNames[0]);
+
+  std::cout << "Detected component type: " <<
+    componentType << std::endl;
+
   try
   {
-    run( NaryImageOperator, long, char, 2 );
-    run( NaryImageOperator, long, unsigned char, 2 );
-    run( NaryImageOperator, long, short, 2 );
-    run( NaryImageOperator, long, unsigned short, 2 );
-    run( NaryImageOperator, long, int, 2 );
-    run( NaryImageOperator, long, unsigned int, 2 );
-    run( NaryImageOperator, long, long, 2 );
-    run( NaryImageOperator, long, unsigned long, 2 );
-    run( NaryImageOperator, double, float, 2 );
-    run( NaryImageOperator, double, double, 2 );
+    // now call all possible template combinations.
+    if (!naryImageOperator) naryImageOperator = ITKToolsNaryImageOperator< long, char, 2 >::New( componentTypeIn, componentTypeOut, dim );
+    if (!naryImageOperator) naryImageOperator = ITKToolsNaryImageOperator< long, unsigned char, 2 >::New( componentTypeIn, componentTypeOut, dim );
+    if (!naryImageOperator) naryImageOperator = ITKToolsNaryImageOperator< long, short, 2 >::New( componentTypeIn, componentTypeOut, dim );
+    if (!naryImageOperator) naryImageOperator = ITKToolsNaryImageOperator< long, unsigned short, 2 >::New( componentTypeIn, componentTypeOut, dim );
+    if (!naryImageOperator) naryImageOperator = ITKToolsNaryImageOperator< long, int, 2 >::New( componentTypeIn, componentTypeOut, dim );
+    if (!naryImageOperator) naryImageOperator = ITKToolsNaryImageOperator< long, unsigned int, 2 >::New( componentTypeIn, componentTypeOut, dim );
+    if (!naryImageOperator) naryImageOperator = ITKToolsNaryImageOperator< long, long, 2 >::New( componentTypeIn, componentTypeOut, dim );
+    if (!naryImageOperator) naryImageOperator = ITKToolsNaryImageOperator< long, unsigned long, 2 >::New( componentTypeIn, componentTypeOut, dim );
+    if (!naryImageOperator) naryImageOperator = ITKToolsNaryImageOperator< double, float, 2 >::New( componentTypeIn, componentTypeOut, dim );
+    if (!naryImageOperator) naryImageOperator = ITKToolsNaryImageOperator< double, double, 2 >::New( componentTypeIn, componentTypeOut, dim );
 
-    run( NaryImageOperator, long, char, 3 );
-    run( NaryImageOperator, long, unsigned char, 3 );
-    run( NaryImageOperator, long, short, 3 );
-    run( NaryImageOperator, long, unsigned short, 3 );
-    run( NaryImageOperator, long, int, 3 );
-    run( NaryImageOperator, long, unsigned int, 3 );
-    run( NaryImageOperator, long, long, 3 );
-    run( NaryImageOperator, long, unsigned long, 3 );
-    run( NaryImageOperator, double, float, 3 );
-    run( NaryImageOperator, double, double, 3 );
+#ifdef ITKTOOLS_3D_SUPPORT
+    if (!naryImageOperator) naryImageOperator = ITKToolsNaryImageOperator< long, char, 3 >::New( componentTypeIn, componentTypeOut, dim );
+    if (!naryImageOperator) naryImageOperator = ITKToolsNaryImageOperator< long, unsigned char, 3 >::New( componentTypeIn, componentTypeOut, dim );
+    if (!naryImageOperator) naryImageOperator = ITKToolsNaryImageOperator< long, short, 3 >::New( componentTypeIn, componentTypeOut, dim );
+    if (!naryImageOperator) naryImageOperator = ITKToolsNaryImageOperator< long, unsigned short, 3 >::New( componentTypeIn, componentTypeOut, dim );
+    if (!naryImageOperator) naryImageOperator = ITKToolsNaryImageOperator< long, int, 3 >::New( componentTypeIn, componentTypeOut, dim );
+    if (!naryImageOperator) naryImageOperator = ITKToolsNaryImageOperator< long, unsigned int, 3 >::New( componentTypeIn, componentTypeOut, dim );
+    if (!naryImageOperator) naryImageOperator = ITKToolsNaryImageOperator< long, long, 3 >::New( componentTypeIn, componentTypeOut, dim );
+    if (!naryImageOperator) naryImageOperator = ITKToolsNaryImageOperator< long, unsigned long, 3 >::New( componentTypeIn, componentTypeOut, dim );
+    if (!naryImageOperator) naryImageOperator = ITKToolsNaryImageOperator< double, float, 3 >::New( componentTypeIn, componentTypeOut, dim );
+    if (!naryImageOperator) naryImageOperator = ITKToolsNaryImageOperator< double, double, 3 >::New( componentTypeIn, componentTypeOut, dim );
+#endif
+    if (!naryImageOperator)
+    {
+      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+      std::cerr
+        << "pixel (component) type = " << componentTypeIn // so here we also need a string - we don't need to convert to a string here right? just output the string that was input.
+        << " ; dimension = " << dim
+        << std::endl;
+      return 1;
+    }
 
-  } // end try
-  catch ( itk::ExceptionObject &e )
+    naryImageOperator->m_InputFileNames = inputFileNames;
+    naryImageOperator->m_OutputFileName = outputFileName;
+    naryImageOperator->m_NaryOperatorName = ops;
+    naryImageOperator->m_UseCompression = useCompression;
+    naryImageOperator->m_NumberOfStreams = numberOfStreams;
+    naryImageOperator->m_Arg = argument;
+  
+    naryImageOperator->Run();
+
+    delete naryImageOperator;
+  }
+  catch( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
+    delete naryImageOperator;
     return 1;
   }
-  if ( !supported )
-  {
-    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-    std::cerr
-      << "pixel (component) type = " << ComponentTypeOut
-      << " ; dimension = " << inputDimension
-      << std::endl;
-    return 1;
-  }
+  
 
   /** End program. */
   return 0;

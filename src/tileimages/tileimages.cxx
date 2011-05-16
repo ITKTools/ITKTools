@@ -128,7 +128,7 @@ int main( int argc, char ** argv )
   unsigned int Dimension = 3;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = GetImageProperties(
+  int retgip = itktools::GetImageProperties(
     inputFileNames[ 0 ],
     PixelType,
     ComponentType,
@@ -174,7 +174,7 @@ int main( int argc, char ** argv )
     /** Class that does the work */
     TileImages2D3DBase * tileImages2D3D = NULL;
 
-    itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileNames[0]);
+    itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileNames[0]);
     
     std::cout << "Detected component type: " << 
       componentType << std::endl;
@@ -224,7 +224,7 @@ int main( int argc, char ** argv )
   
     /** \todo some progs allow user to override the pixel type, 
     * so we need a method to convert string to EnumComponentType */
-    itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileNames[0]);
+    itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileNames[0]);
     
     std::cout << "Detected component type: " << 
       componentType << std::endl;

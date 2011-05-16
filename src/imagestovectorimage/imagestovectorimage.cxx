@@ -21,7 +21,8 @@
  \verbinclude imagestovectorimage.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsBase.h"
 
 #include "itkImageFileReader.h"
 #include "itkImageToVectorImageFilter.h"
@@ -75,7 +76,7 @@ public:
   ImagesToVectorImage(){};
   ~ImagesToVectorImage(){};
 
-  static Self * New( itktools::EnumComponentType componentType, unsigned int dim )
+  static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
     if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
     {
@@ -199,11 +200,11 @@ int main( int argc, char ** argv )
   ImagesToVectorImageBase * imagesToVectorImage = NULL;
 
   unsigned int dim = 0;
-  GetImageDimension(inputFileNames[0], dim);
+  itktools::GetImageDimension(inputFileNames[0], dim);
  
   /** \todo some progs allow user to override the pixel type, 
    * so we need a method to convert string to EnumComponentType */
-  itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileNames[0]);
+  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileNames[0]);
   
   std::cout << "Detected component type: " << 
     componentType << std::endl;

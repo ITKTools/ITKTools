@@ -21,7 +21,8 @@
  \verbinclude createcylinder.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsBase.h"
 
 #include "itkCylinderSpatialFunction.h"
 #include "itkImageRegionIteratorWithIndex.h"
@@ -203,7 +204,7 @@ int main( int argc, char *argv[] )
   unsigned int Dimension = 3;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = GetImageProperties(
+  int retgip = itktools::GetImageProperties(
     inputFileName,
     PixelType,
     ComponentTypeIn,

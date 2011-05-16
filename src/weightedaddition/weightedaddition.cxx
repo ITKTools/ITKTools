@@ -4,7 +4,9 @@
  \verbinclude weightedaddition.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsBase.h"
+
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
@@ -56,7 +58,7 @@ public:
   WeightedAddition(){};
   ~WeightedAddition(){};
 
-  static Self * New( itktools::EnumComponentType componentType, unsigned int dim )
+  static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
     if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
     {
@@ -160,7 +162,7 @@ int main( int argc, char **argv )
   unsigned int Dimension = 3;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = GetImageProperties(
+  int retgip = itktools::GetImageProperties(
     inputFileNames[0],
     PixelType,
     ComponentType,
@@ -177,7 +179,7 @@ int main( int argc, char **argv )
   // bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
 
   /** Get rid of the possible "_" in ComponentType. */
-  ReplaceUnderscoreWithSpace( ComponentType );
+  itktools::ReplaceUnderscoreWithSpace( ComponentType );
 
   /** Error checking. */
   if ( NumberOfComponents > 1 )
@@ -193,7 +195,7 @@ int main( int argc, char **argv )
   /** Short alias */
   unsigned int dim = Dimension;
  
-  itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileNames[0]);
+  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileNames[0]);
   
   std::cout << "Detected component type: " << 
     componentType << std::endl;

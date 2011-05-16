@@ -21,7 +21,8 @@
  \verbinclude computeboundingbox.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsBase.h"
 
 #include "itkImageRegionConstIteratorWithIndex.h"
 #include "itkImageFileReader.h"
@@ -74,7 +75,7 @@ public:
   ComputeBoundingBox(){};
   ~ComputeBoundingBox(){};
 
-  static Self * New( itktools::EnumComponentType componentType, unsigned int dim )
+  static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
     if ( itktools::IsType<TComponentType>( componentType ) && VImageDimension == dim )
     {
@@ -182,7 +183,7 @@ int main( int argc, char **argv )
   unsigned int Dimension = 2;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = GetImageProperties(
+  int retgip = itktools::GetImageProperties(
     inputFileName,
     PixelType,
     ComponentType,
@@ -219,7 +220,7 @@ int main( int argc, char **argv )
   }
 
   /** Get rid of the possible "_" in ComponentType. */
-  ReplaceUnderscoreWithSpace( ComponentType );
+  itktools::ReplaceUnderscoreWithSpace( ComponentType );
 
   /** Overrule it, since only short will do something */
   if ( ComponentType != "short" )
@@ -238,7 +239,7 @@ int main( int argc, char **argv )
  
   /** \todo some progs allow user to override the pixel type, 
    * so we need a method to convert string to EnumComponentType */
-  itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileName);
+  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileName);
   
   std::cout << "Detected component type: " << 
     componentType << std::endl;

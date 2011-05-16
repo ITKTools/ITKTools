@@ -21,7 +21,8 @@
  \verbinclude resizeimage.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsBase.h"
 
 #include "itkImage.h"
 #include "itkResampleImageFilter.h"
@@ -81,7 +82,7 @@ public:
   ResizeImage(){};
   ~ResizeImage(){};
 
-  static Self * New( itktools::EnumComponentType componentType, unsigned int dim )
+  static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
     if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
     {
@@ -228,7 +229,7 @@ int main( int argc, char **argv )
   parser->GetCommandLineArgument( "-io", interpolationOrder );
 
   /** Get rid of the possible "_" in PixelType. */
-  ReplaceUnderscoreWithSpace( PixelType );
+  itktools::ReplaceUnderscoreWithSpace( PixelType );
 
   /** Check factor and spacing. */
   if ( retf )
@@ -285,7 +286,7 @@ int main( int argc, char **argv )
  
   /** \todo some progs allow user to override the pixel type, 
    * so we need a method to convert string to EnumComponentType */
-  itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileName);
+  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileName);
   
   std::cout << "Detected component type: " << 
     componentType << std::endl;

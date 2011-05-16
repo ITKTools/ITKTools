@@ -21,7 +21,8 @@
  \verbinclude segmentationdistance.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsBase.h"
 
 #include "itkImage.h"
 #include "itkExceptionObject.h"
@@ -116,7 +117,7 @@ public:
   SegmentationDistance(){};
   ~SegmentationDistance(){};
 
-  static Self * New( itktools::EnumComponentType componentType, unsigned int dim )
+  static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
     if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
     {
@@ -448,11 +449,11 @@ int main( int argc, char **argv )
 
   /** Short alias */
   unsigned int imageDimension = 0;
-  GetImageDimension(inputFileName1, imageDimension);
+  itktools::GetImageDimension(inputFileName1, imageDimension);
  
   /** \todo some progs allow user to override the pixel type, 
    * so we need a method to convert string to EnumComponentType */
-  itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileName1);
+  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileName1);
   
   std::cout << "Detected component type: " << 
     componentType << std::endl;

@@ -21,7 +21,8 @@
  \verbinclude rescaleintensityimagefilter.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsBase.h"
 
 #include "itkImage.h"
 #include "itkImageFileReader.h"
@@ -86,7 +87,7 @@ public:
   RescaleIntensityImageFilter(){};
   ~RescaleIntensityImageFilter(){};
 
-  static Self * New( itktools::EnumComponentType componentType, unsigned int dim )
+  static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
     if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
     {
@@ -300,7 +301,7 @@ int main( int argc, char **argv )
   unsigned int Dimension = 3;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = GetImageProperties(
+  int retgip = itktools::GetImageProperties(
     inputFileName,
     PixelType,
     ComponentType,
@@ -320,7 +321,7 @@ int main( int argc, char **argv )
   parser->GetCommandLineArgument( "-pt", ComponentType );
 
   /** Get rid of the possible "_" in ComponentType. */
-  ReplaceUnderscoreWithSpace( ComponentType );
+  itktools::ReplaceUnderscoreWithSpace( ComponentType );
 
   /** Get the values. */
   std::vector<double> values;
@@ -342,7 +343,7 @@ int main( int argc, char **argv )
  
   /** \todo some progs allow user to override the pixel type, 
    * so we need a method to convert string to EnumComponentType */
-  itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileName);
+  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileName);
   
   std::cout << "Detected component type: " << 
     componentType << std::endl;

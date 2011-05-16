@@ -108,10 +108,10 @@ int main(int argc, char** argv)
   CreateSimpleBoxBase * createSimpleBox = NULL;
 
   unsigned int dim = 0;
-  itktools::EnumComponentType componentType = itk::ImageIOBase::UCHAR; // to prevent uninitialized variable warning
+  itktools::ComponentType componentType = itk::ImageIOBase::UCHAR; // to prevent uninitialized variable warning
   if(retin) // if an input file was specified
   {
-    GetImageDimension(inputFileName, dim);
+    itktools::GetImageDimension(inputFileName, dim);
   
     componentType = itktools::GetImageComponentType(inputFileName);
   }
@@ -119,7 +119,7 @@ int main(int argc, char** argv)
   
   if(retpt) // if a pixel type was specified on the command line
   {
-    componentType = itktools::EnumComponentTypeFromString(pixelTypeString);
+    componentType = itktools::GetComponentTypeFromString(pixelTypeString);
   }
     
   try

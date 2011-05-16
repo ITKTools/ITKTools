@@ -21,7 +21,8 @@
  \verbinclude invertintensityimagefilter.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsBase.h"
 
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
@@ -78,7 +79,7 @@ public:
   InvertIntensity(){};
   ~InvertIntensity(){};
 
-  static Self * New( unsigned int imageDimension, itktools::EnumComponentType componentType )
+  static Self * New( unsigned int imageDimension, itktools::ComponentType componentType )
   {
     if ( VImageDimension == imageDimension && itktools::IsType<TComponentType>( componentType ) )
     {
@@ -190,7 +191,7 @@ int main( int argc, char ** argv )
   unsigned int Dimension = 2;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = GetImageProperties(
+  int retgip = itktools::GetImageProperties(
     inputFileName,
     PixelType,
     ComponentTypeIn,
@@ -215,9 +216,9 @@ int main( int argc, char ** argv )
   InvertIntensityBase * invertIntensity = NULL; 
 
   unsigned int imageDimension = 0;
-  GetImageDimension(inputFileName, imageDimension);
+  itktools::GetImageDimension(inputFileName, imageDimension);
 
-  itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileName);
+  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileName);
     
   try
   {    
