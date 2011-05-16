@@ -32,7 +32,17 @@ Conventions
 Use --help with any of the programs to display their specific usage information.
 Optional and required arguments are listed as [-key] and -key, respectively.
 
+PixelType vs ComponentType
+--------------------------
+In ITK, PixelType is either SCALAR or VECTOR. ComponentType is the type of each component of the pixels, e.g. float, char, etc.
+
 Contributing
 ------------
 Please contact one of the authors or produce a pull request on github.
 
+Testing
+-------
+First, set the CMake option ITKTOOLS_BUILD_TESTING=ON while building ITKTools. Then, from your build directory, run 'ctest'. This will execute the entire suite of tests.
+
+CDash
+-----
