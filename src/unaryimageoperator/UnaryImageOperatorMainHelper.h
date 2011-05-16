@@ -42,6 +42,8 @@ bool InputIsInteger( const itktools::EnumComponentType inputComponentType)
   {
     inputIsInteger = true;
   }
+
+  return inputIsInteger;
 } // end InputIsInteger()
 
 
