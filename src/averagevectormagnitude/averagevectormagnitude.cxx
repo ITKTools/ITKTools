@@ -25,8 +25,9 @@
 #ifndef __averagevectormagnitude_cxx
 #define __averagevectormagnitude_cxx
 
+#include "ITKToolsBase.h"
+#include "ITKToolsImageProperties.h"
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
 
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
@@ -70,6 +71,7 @@ public:
 
   float m_AverageMagnitude;
 
+  virtual void Run(void) = 0;
 }; // end AverageVectorMagnitudeBase
 
 
@@ -200,10 +202,10 @@ int main( int argc, char** argv )
   /** Determine image properties. */
 
   unsigned int numberOfComponents = 0;
-  GetImageNumberOfComponents(inputFileName, numberOfComponents);
+  itktools::GetImageNumberOfComponents(inputFileName, numberOfComponents);
 
   unsigned int dimension = 0;
-  GetImageDimension(inputFileName, dimension);
+  itktools::GetImageDimension(inputFileName, dimension);
 
   AverageVectorMagnitudeBase * averageVectorMagnitude = 0;
 

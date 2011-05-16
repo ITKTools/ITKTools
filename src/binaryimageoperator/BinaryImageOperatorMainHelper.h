@@ -41,70 +41,32 @@ if ( ComponentTypeIn1 == #typeIn1 && ComponentTypeIn2 == #typeIn2 \
   supported = true; \
 }
 
-/**
-  * ******************* TypeIsInteger *******************
-  */
-
-bool TypeIsInteger( const std::string & componentType )
-{
-  /** Make sure the input has "_" instead of " ". */
-  std::string compType = componentType;
-  ReplaceSpaceWithUnderscore( compType );
-
-  /** Check if the input image is of integer type. */
-  bool typeIsInteger = false;
-  if ( compType == "unsigned_char" || compType == "char"
-    || compType == "unsigned_short" || compType == "short"
-    || compType == "unsigned_int" || compType == "int"
-    || compType == "unsigned_long" || compType == "long" )
-  {
-    typeIsInteger = true;
-  }
-  return typeIsInteger;
-} // end TypeIsInteger()
-
 
 /**
   * ******************* DetermineImageProperties *******************
   */
 
-int DetermineImageProperties(
+int DetermineComponentTypes(
   const std::vector<std::string> & inputFileNames,
-  std::string & ComponentTypeIn1,
-  std::string & ComponentTypeIn2,
-  std::string & ComponentTypeOut,
-  unsigned int & inputDimension )
+  itktools::ComponentType & componentType1,
+  itktools::ComponentType & componentType2,
+  itktools::ComponentType & componentTypeOut)
 {
   /** Determine image properties of image 1. */
-  std::string inputPixelType1 = "";
-  unsigned int inputDimension1 = 2;
-  unsigned int numberOfComponents1 = 1;
-  std::vector<unsigned int> imagesize1( inputDimension1, 0 );
-  int retgip1 = GetImageProperties(
-    inputFileNames[ 0 ],
-    inputPixelType1,
-    ComponentTypeIn1,
-    inputDimension1,
-    numberOfComponents1,
-    imagesize1 );
-  if ( retgip1 ) return retgip1;
+  unsigned int inputDimension1 = 0;
+  unsigned int numberOfComponents1 = 0;
+  std::vector<unsigned int> imagesize1;
 
   /** Determine image properties of image 2. */
-  std::string inputPixelType2 = "";
-  unsigned int inputDimension2 = 2;
-  unsigned int numberOfComponents2 = 1;
-  std::vector<unsigned int> imagesize2( inputDimension1, 0 );
-  int retgip2 = GetImageProperties(
-    inputFileNames[ 1 ],
-    inputPixelType2,
-    ComponentTypeIn2,
-    inputDimension2,
-    numberOfComponents2,
-    imagesize2 );
-  if ( retgip2 ) return retgip2;
+  unsigned int inputDimension2 = 0;
+  unsigned int numberOfComponents2 = 0;
+  std::vector<unsigned int> imagesize2;
+
+  // Properties of both images
+  unsigned int inputDimension = 0;
 
   /** Check the input. */
-  if ( inputPixelType1 != inputPixelType2 )
+  if ( componentType1 != componentType2 )
   {
     std::cerr << "ERROR: the two input images are of different pixel type (SCALAR, VECTOR, etc)." << std::endl;
     return 1;
@@ -126,19 +88,28 @@ int DetermineImageProperties(
     inputDimension = inputDimension1;
   }
 
-  if ( imagesize1 != imagesize2 )
+  for(unsigned int i = 0; i < inputDimension; ++i)
   {
-    std::cerr << "ERROR: the two input images have different sizes." << std::endl;
-    return 1;
+    if ( imagesize1[i] != imagesize2[i] )
+    {
+      std::cerr << "ERROR: the two input images have different sizes." << std::endl;
+      return 1;
+    }
   }
 
   /** The output type is the largest of the input types. The input types are
    * then set to long or double, depending on the output type.
    */
-  ComponentTypeOut = GetLargestComponentType( ComponentTypeIn1, ComponentTypeIn2 );
-  bool outIsInteger = TypeIsInteger( ComponentTypeOut );
-  if ( outIsInteger ) ComponentTypeIn1 = ComponentTypeIn2 = "long";
-  else ComponentTypeIn1 = ComponentTypeIn2 = "double";
+  componentTypeOut = itktools::GetLargestComponentType( componentType1, componentType2 );
+  bool outIsInteger = itktools::ComponentTypeIsInteger( componentTypeOut );
+  if ( outIsInteger )
+  {
+    componentType1 = componentType2 = itk::ImageIOBase::LONG;
+  }
+  else
+  {
+    componentType1 = componentType2 = itk::ImageIOBase::DOUBLE;
+  }
 
   /** Return a value. */
   return 0;
@@ -146,9 +117,9 @@ int DetermineImageProperties(
 } // end DetermineImageProperties()
 
 
-  /**
-   * ******************* CheckOperator *******************
-   */
+/**
+  * ******************* CheckOperator *******************
+  */
 
 int CheckOperator( std::string & operatoR )
 {

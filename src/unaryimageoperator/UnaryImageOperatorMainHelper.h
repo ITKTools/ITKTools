@@ -27,43 +27,6 @@
 
 
 
-/**
- * ******************* InputIsInteger *******************
- */
-
-bool InputIsInteger( const itktools::EnumComponentType inputComponentType)
-{
-  /** Check if the input image is of integer type. */
-  bool inputIsInteger = false;
-  if ( inputComponentType == itk::ImageIOBase::UCHAR || inputComponentType == itk::ImageIOBase::CHAR
-    || inputComponentType == itk::ImageIOBase::USHORT || inputComponentType == itk::ImageIOBase::SHORT
-    || inputComponentType == itk::ImageIOBase::UINT || inputComponentType == itk::ImageIOBase::INT
-    || inputComponentType == itk::ImageIOBase::ULONG || inputComponentType == itk::ImageIOBase::LONG )
-  {
-    inputIsInteger = true;
-  }
-
-  return inputIsInteger;
-} // end InputIsInteger()
-
-
-/**
- * ******************* ArgumentIsInteger *******************
- */
-
-void ArgumentIsInteger( const std::string & argument, bool & argumentIsInteger )
-{
-  /** Check if the argument is of integer type. */
-  argumentIsInteger = false;
-  std::basic_string<char>::size_type pos = argument.find( "." );
-  const std::basic_string<char>::size_type npos = std::basic_string<char>::npos;
-  if ( pos == npos )
-  {
-    argumentIsInteger = true;
-  }
-
-} // end ArgumentIsInteger()
-
 
 /**
  * ******************* CheckOps *******************
