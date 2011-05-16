@@ -26,7 +26,8 @@
 #include "histogramequalizeimage.h"
 
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsBase.h"
+#include "ITKToolsHelpers.h"
 
 std::string GetHelpString(void)
 {
@@ -44,6 +45,101 @@ std::string GetHelpString(void)
   return ss.str();
 } // end GetHelpString
 
+
+/** HistogramEqualizeImage */
+
+class ITKToolsHistogramEqualizeImageBase : public itktools::ITKToolsBase
+{
+public:
+  ITKToolsHistogramEqualizeImageBase()
+  {
+    m_InputFileName = "";
+    m_OutputFileName = "";
+  };
+  ~ITKToolsHistogramEqualizeImageBase(){};
+
+  /** Input parameters */
+  std::string m_InputFileName;
+  std::string m_OutputFileName;
+
+}; // end ReplaceVoxelBase
+
+
+template< class TComponentType, unsigned int VDimension >
+class ITKToolsHistogramEqualizeImage : public ITKToolsHistogramEqualizeImageBase
+{
+public:
+  typedef ITKToolsHistogramEqualizeImage Self;
+
+  ITKToolsHistogramEqualizeImage(){};
+  ~ITKToolsHistogramEqualizeImage(){};
+
+  static Self * New( itktools::ComponentType componentType, unsigned int dim )
+  {
+    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
+    {
+      return new Self;
+    }
+    return 0;
+  }
+
+  void Run(void)
+  {
+    typedef itk::Image<TComponentType, VDimension> ImageType;
+    typedef typename ImageType::Pointer           ImagePointer;
+    typedef typename ImageType::IndexType         IndexType;
+    typedef typename ImageType::SizeType          SizeType;
+    typedef typename ImageType::RegionType        RegionType;
+    typedef typename ImageType::PointType         PointType;
+    typedef itk::ImageFileReader<ImageType>       ReaderType;
+    typedef itk::ImageFileWriter<ImageType>       WriterType;
+    typedef typename ReaderType::Pointer          ReaderPointer;
+    typedef typename WriterType::Pointer          WriterPointer;
+    typedef itk::HistogramEqualizationImageFilter<
+      ImageType>                                  EnhancerType;
+    typedef typename EnhancerType::Pointer        EnhancerPointer;
+
+    WriterPointer writer = WriterType::New();
+    EnhancerPointer enhancer = EnhancerType::New();
+
+    /** Try to read input image */
+    ReaderPointer reader = ReaderType::New();
+    reader->SetFileName( m_InputFileName.c_str() );
+    try
+    {
+      reader->Update();
+    }
+    catch (itk::ExceptionObject & err)
+    {
+      std::cerr << "Error while reading input image." << std::endl;
+      std::cerr << err << std::endl;
+      return;
+    }
+
+    /** Setup pipeline and configure its components */
+
+    enhancer->SetInput( reader->GetOutput() );
+    writer->SetInput( enhancer->GetOutput() );
+    writer->SetFileName(m_OutputFileName.c_str());
+
+    /** do it. */
+    std::cout
+      << "Saving image to disk as \""
+      << m_OutputFileName
+      << "\""
+      << std::endl;
+    try
+    {
+      writer->Update();
+    }
+    catch (itk::ExceptionObject & err)
+    {
+      std::cerr << err << std::endl;
+      return;
+    }
+  }
+
+}; // end HistogramEqualizeImage
 
 int main(int argc, char** argv)
 {
@@ -77,23 +173,65 @@ int main(int argc, char** argv)
     return 1;
   }
 
-  /** Instantiate the pixeltypeselector */
-  bool success = false;
-  if (imageDimension == 2)
+  std::string inputFileName("");
+  parser->GetCommandLineArgument("-in", inputFileName);
+
+  std::string outputFileName("");
+  parser->GetCommandLineArgument("-out", outputFileName);
+  
+  std::string pixelTypeString("");
+  bool retpt = parser->GetCommandLineArgument("-pt", pixelTypeString);
+  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileName);
+  if(retpt)
   {
-    success = ptswrap<2>::PixelTypeSelector( parser );
-  }
-  else if (imageDimension == 3)
-  {
-    success = ptswrap<3>::PixelTypeSelector( parser );
-  }
-  else
-  {
-    std::cerr << "ERROR: This imageDimension is not supported" << std::endl;
-    return 1;
+    componentType = itktools::GetComponentTypeFromString(pixelTypeString);
   }
 
-  return success;
+
+
+  /** Class that does the work */
+  ITKToolsHistogramEqualizeImageBase * histogramEqualizeImage = NULL;
+
+  std::cout << "Detected component type: " <<
+    componentType << std::endl;
+
+  try
+  {
+    if (!histogramEqualizeImage) histogramEqualizeImage = ITKToolsHistogramEqualizeImage< short, 2 >::New( componentType, imageDimension );
+    if (!histogramEqualizeImage) histogramEqualizeImage = ITKToolsHistogramEqualizeImage< unsigned short, 2 >::New( componentType, imageDimension );
+    if (!histogramEqualizeImage) histogramEqualizeImage = ITKToolsHistogramEqualizeImage< char, 2 >::New( componentType, imageDimension );
+    if (!histogramEqualizeImage) histogramEqualizeImage = ITKToolsHistogramEqualizeImage< unsigned char, 2 >::New( componentType, imageDimension );
+
+#ifdef ITKTOOLS_3D_SUPPORT
+    if (!histogramEqualizeImage) histogramEqualizeImage = ITKToolsHistogramEqualizeImage< short, 2 >::New( componentType, imageDimension );
+    if (!histogramEqualizeImage) histogramEqualizeImage = ITKToolsHistogramEqualizeImage< unsigned short, 2 >::New( componentType, imageDimension );
+    if (!histogramEqualizeImage) histogramEqualizeImage = ITKToolsHistogramEqualizeImage< char, 2 >::New( componentType, imageDimension );
+    if (!histogramEqualizeImage) histogramEqualizeImage = ITKToolsHistogramEqualizeImage< unsigned char, 2 >::New( componentType, imageDimension );
+#endif
+    if (!histogramEqualizeImage)
+    {
+      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+      std::cerr
+        << "pixel (component) type = " << componentType
+        << " ; dimension = " << imageDimension
+        << std::endl;
+      return 1;
+    }
+
+    histogramEqualizeImage->m_InputFileName = inputFileName;
+    histogramEqualizeImage->m_OutputFileName = outputFileName;
+
+    histogramEqualizeImage->Run();
+
+    delete histogramEqualizeImage;
+  }
+  catch( itk::ExceptionObject &e )
+  {
+    std::cerr << "Caught ITK exception: " << e << std::endl;
+    delete histogramEqualizeImage;
+    return 1;
+  }
+  return EXIT_SUCCESS;
 
 } // end function main
 
