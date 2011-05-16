@@ -155,11 +155,30 @@ int main( int argc, char ** argv )
 } // end main
 
 
-  /*
-   * ******************* InvertIntensity *******************
-   *
-   * The resize function templated over the input pixel type.
-   */
+/**
+ * ******************* GetHelpString *******************
+ */
+
+std::string GetHelpString( void )
+{
+  std::stringstream ss;
+  ss << "This program inverts the intensities of an image." << std::endl
+    << "Usage:" << std::endl
+    << "pxinvertintensityimagefilter" << std::endl
+    << "  -in      inputFilename" << std::endl
+    << "  [-out]   outputFilename; default: in + INVERTED.mhd" << std::endl
+    << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
+
+  return ss.str();
+
+} // end GetHelpString()
+
+
+/*
+ * ******************* InvertIntensity *******************
+ *
+ * The resize function templated over the input pixel type.
+ */
 
 template< class ScalarImageType >
 void InvertIntensity( const std::string & inputFileName,
@@ -178,7 +197,8 @@ void InvertIntensity( const std::string & inputFileName,
   typename ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName( inputFileName.c_str() );
 
-  // In this case, we must manually disassemble the image rather than use a ChannelByChannel filter because the image is not the output,
+  // In this case, we must manually disassemble the image rather than use a
+  // ChannelByChannel filter because the image is not the output,
   // but rather the GetMaximum() function is what we want.
   
   // Create the disassembler
@@ -223,22 +243,3 @@ void InvertIntensity( const std::string & inputFileName,
   writer->Update();
 
 } // end InvertIntensity()
-
-
-/**
- * ******************* GetHelpString *******************
- */
-
-std::string GetHelpString( void )
-{
-  std::stringstream ss;
-  ss << "This program inverts the intensities of an image." << std::endl
-  << "Usage:" << std::endl
-  << "pxinvertintensityimagefilter" << std::endl
-  << "  -in      inputFilename" << std::endl
-  << "  [-out]   outputFilename; default: in + INVERTED.mhd" << std::endl
-  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
-
-  return ss.str();
-
-} // end GetHelpString()

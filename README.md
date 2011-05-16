@@ -41,4 +41,6 @@ Coding style
 
 Good and consistent coding style makes software maintenance easier! Therefore, we have adopted the following style rules:
 - Don't use tabs, but two (2) spaces
-- 
+- Be explicit, so e.g. use void to declare a function with no arguments, i.e. Function( void )
+-
+
