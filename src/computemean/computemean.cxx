@@ -32,8 +32,27 @@
 #include "math.h"
 #include <algorithm>
 
-/** Declare GetHelpString. */
-std::string GetHelpString(void);
+
+/*
+* ******************* GetHelpString *******************
+*/
+std::string GetHelpString()
+{
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+     << "pxcomputemean" << std::endl
+     << "-in      input text file" << std::endl
+     << "[-m]     what kind of mean" << std::endl
+     << "[-c]     column of which the mean is taken" << std::endl
+     << "[-s]     skip: how many rows are skipped" << std::endl
+     << "[-p]     output precision" << std::endl
+     << "-m should be \"arithmetic\", \"geometric\" or \"median\", the default is \"arithmetic\"." << std::endl
+     << "The default output precision is 6." << std::endl
+     << "The output for median is: minimum, first quartile, median, third quartile, maximum.";
+
+  return ss.str();
+} // end GetHelpString
+
 
 //-------------------------------------------------------------------------------------
 
@@ -226,24 +245,3 @@ int main( int argc, char *argv[] )
   return 0;
 
 } // end main
-
-
-/*
-* ******************* GetHelpString *******************
-*/
-std::string GetHelpString()
-{
-  std::stringstream ss;
-  ss << "Usage:" << std::endl
-     << "pxcomputemean" << std::endl
-     << "-in      input text file" << std::endl
-     << "[-m]     what kind of mean" << std::endl
-     << "[-c]     column of which the mean is taken" << std::endl
-     << "[-s]     skip: how many rows are skipped" << std::endl
-     << "[-p]     output precision" << std::endl
-     << "-m should be \"arithmetic\", \"geometric\" or \"median\", the default is \"arithmetic\"." << std::endl
-     << "The default output precision is 6." << std::endl
-     << "The output for median is: minimum, first quartile, median, third quartile, maximum.";
-
-  return ss.str();
-} // end GetHelpString

@@ -30,6 +30,26 @@
 //-------------------------------------------------------------------------------------
 
 
+/**
+  * ******************* GetHelpString *******************
+  */
+std::string GetHelpString()
+{
+  std::stringstream ss;
+  ss << "This program computes the bounding box of an image." << std::endl
+     << "Every pixel > 0 is considered to be within the bounding box." << std::endl
+     << "Returns the minimum and maximum indices/points that lie within the bounding box." << std::endl
+     << "Usage:" << std::endl
+     << "pxcomputeboundingbox" << std::endl
+     << "-in      inputFilename" << std::endl
+     << "[-dim]   dimension, default 3" << std::endl
+     << "[-pt]    pixelType, default short" << std::endl
+     << "Supported: 2D, 3D, short. Images with PixelType other than short are automatically converted.";
+
+  return ss.str();
+} // end GetHelpString
+
+
 /** ComputeBoundingBox */
 
 class ComputeBoundingBoxBase : public itktools::ITKToolsBase
@@ -258,24 +278,3 @@ int main( int argc, char **argv )
   return 0;
 
 } // end main
-
-
-
-/**
-  * ******************* GetHelpString *******************
-  */
-std::string GetHelpString()
-{
-  std::stringstream ss;
-  ss << "This program computes the bounding box of an image." << std::endl
-     << "Every pixel > 0 is considered to be within the bounding box." << std::endl
-     << "Returns the minimum and maximum indices/points that lie within the bounding box." << std::endl
-     << "Usage:" << std::endl
-     << "pxcomputeboundingbox" << std::endl
-     << "-in      inputFilename" << std::endl
-     << "[-dim]   dimension, default 3" << std::endl
-     << "[-pt]    pixelType, default short" << std::endl
-     << "Supported: 2D, 3D, short. Images with PixelType other than short are automatically converted.";
-  
-  return ss.str();
-} // end GetHelpString

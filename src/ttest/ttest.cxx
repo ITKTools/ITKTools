@@ -30,6 +30,33 @@
 
 //-------------------------------------------------------------------------------------
 
+/*
+  * ******************* GetHelpString *******************
+  */
+
+std::string GetHelpString( void )
+{
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxttest" << std::endl
+  << "  -in      inputFilename" << std::endl
+  << "  [-out]   output, choose one of {p,all}, default p" << std::endl
+  << "             p: only print the p-value" << std::endl
+  << "             all: print all" << std::endl
+  << "  -c       the two data sample columns" << std::endl
+  << "  [-tail]  one or two tailed, defauls = 2" << std::endl
+  << "  [-type]  the type of the t-test, default = 1:" << std::endl
+  << "             1: paired" << std::endl
+  << "             2: two-sample equal variance" << std::endl
+  << "             3: two-sample unequal variance" << std::endl
+  << "  [-p]     the output precision, default = 8:" << std::endl
+  << "The input file should be in a certain format. No text is allowed." << std::endl
+  << "No headers are allowed. The data samples should be displayed in columns." << std::endl
+  << "Columns should be separated by a single space or tab.";
+
+  return ss.str();
+} // end GetHelpString()
+
 /* Declare ReadInputData. */
 bool ReadInputData( const std::string & filename, std::vector<std::vector<double> > & matrix );
 
@@ -347,31 +374,3 @@ void ComputeMeanAndStandardDeviation(
   stddiff = vcl_sqrt( ( ssd * N - sd * sd ) / ( N * ( N - 1.0 ) ) );
 
 } // end ComputeMeanAndStandardDeviation()
-
-
-  /*
-   * ******************* GetHelpString *******************
-   */
-
-std::string GetHelpString( void )
-{
-  std::stringstream ss;
-  ss << "Usage:" << std::endl
-  << "pxttest" << std::endl
-  << "  -in      inputFilename" << std::endl
-  << "  [-out]   output, choose one of {p,all}, default p" << std::endl
-  << "             p: only print the p-value" << std::endl
-  << "             all: print all" << std::endl
-  << "  -c       the two data sample columns" << std::endl
-  << "  [-tail]  one or two tailed, defauls = 2" << std::endl
-  << "  [-type]  the type of the t-test, default = 1:" << std::endl
-  << "             1: paired" << std::endl
-  << "             2: two-sample equal variance" << std::endl
-  << "             3: two-sample unequal variance" << std::endl
-  << "  [-p]     the output precision, default = 8:" << std::endl
-  << "The input file should be in a certain format. No text is allowed." << std::endl
-  << "No headers are allowed. The data samples should be displayed in columns." << std::endl
-  << "Columns should be separated by a single space or tab.";
-    
-  return ss.str();
-} // end GetHelpString()

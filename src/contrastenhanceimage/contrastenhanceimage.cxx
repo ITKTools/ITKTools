@@ -39,7 +39,29 @@
 
 #include "itkCommandLineArgumentParser.h"
 
-std::string GetHelpString(void);
+std::string GetHelpString(void)
+{
+  std::stringstream ss;
+  ss << "This program enhances an image." << std::endl
+    << "alpha and beta control the exact behaviour of the filter. See the" << std::endl
+    << "ITK documentation of the AdaptiveHistogramEqualizationImageFilter" << std::endl
+    << "Usage:" << std::endl
+    << "pxcontrastenhanceimage" << std::endl
+    << "-in    \tInputImageFileName" << std::endl
+    << "-out   \tOutputImageFileName" << std::endl
+    << "-pt    \tPixelType <FLOAT, SHORT, USHORT, INT, UINT, CHAR, UCHAR>" << std::endl
+    << "Currently only char, uchar and short are supported." << std::endl
+    << "-id    \tImageDimension <2,3>" << std::endl
+    << "-alpha \t0.0 < alpha < 1.0" << std::endl
+    << "-beta  \t0.0 < beta < 1.0" << std::endl
+    << "-r0    \tInteger radius of window, dimension 0" << std::endl
+    << "-r1    \tInteger radius of window, dimension 1" << std::endl
+    << "[-r2]  \tInteger radius of window, dimension 2" << std::endl
+    << "[-LUT] \tUse Lookup-table <true, false>;" << std::endl
+    << "default = true; Faster, but requires more memory.";
+  return ss.str();
+} // end PrintUsageString
+
 
 /** ContrastEnhanceImage */
 
@@ -253,28 +275,5 @@ int main(int argc, char** argv)
   return EXIT_SUCCESS;
 
 } // end function main
-
-std::string GetHelpString(void)
-{
-  std::stringstream ss;
-  ss << "This program enhances an image." << std::endl
-    << "alpha and beta control the exact behaviour of the filter. See the" << std::endl
-    << "ITK documentation of the AdaptiveHistogramEqualizationImageFilter" << std::endl
-    << "Usage:" << std::endl
-    << "pxcontrastenhanceimage" << std::endl
-    << "-in    \tInputImageFileName" << std::endl
-    << "-out   \tOutputImageFileName" << std::endl
-    << "-pt    \tPixelType <FLOAT, SHORT, USHORT, INT, UINT, CHAR, UCHAR>" << std::endl
-    << "Currently only char, uchar and short are supported." << std::endl
-    << "-id    \tImageDimension <2,3>" << std::endl
-    << "-alpha \t0.0 < alpha < 1.0" << std::endl
-    << "-beta  \t0.0 < beta < 1.0" << std::endl
-    << "-r0    \tInteger radius of window, dimension 0" << std::endl
-    << "-r1    \tInteger radius of window, dimension 1" << std::endl
-    << "[-r2]  \tInteger radius of window, dimension 2" << std::endl
-    << "[-LUT] \tUse Lookup-table <true, false>;" << std::endl
-    << "default = true; Faster, but requires more memory.";
-  return ss.str();
-} // end PrintUsageString
 
 #endif // #ifndef __contrastenhanceimage_cxx

@@ -31,6 +31,27 @@
 
 //-------------------------------------------------------------------------------------
 
+
+/**
+  * ******************* GetHelpString *******************
+  */
+
+std::string GetHelpString( void )
+{
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxextracteveryotherslice" << std::endl
+  << "  -in      inputFilename" << std::endl
+  << "  [-out]   outputFilename, default in + EveryOtherKExtracted.mhd" << std::endl
+  << "  [-K]     every other slice K, default 2" << std::endl
+  << "  [-of]    offset, default 0" << std::endl
+  << "  [-d]     direction, default is z-axes" << std::endl
+  << "Supported: 3D, (unsigned) char, (unsigned) short, float, double.";
+  return ss.str();
+
+} // end GetHelpString()
+
+
 /** ExtractEveryOtherSlice */
 
 class ExtractEveryOtherSliceBase : public itktools::ITKToolsBase
@@ -321,24 +342,3 @@ int main( int argc, char **argv )
   return 0;
 
 } // end main
-
-
-/**
-  * ******************* GetHelpString *******************
-  */
-
-std::string GetHelpString( void )
-{
-  std::stringstream ss;
-  ss << "Usage:" << std::endl
-  << "pxextracteveryotherslice" << std::endl
-  << "  -in      inputFilename" << std::endl
-  << "  [-out]   outputFilename, default in + EveryOtherKExtracted.mhd" << std::endl
-  << "  [-K]     every other slice K, default 2" << std::endl
-  << "  [-of]    offset, default 0" << std::endl
-  << "  [-d]     direction, default is z-axes" << std::endl
-  << "Supported: 3D, (unsigned) char, (unsigned) short, float, double.";
-  return ss.str();
-
-} // end GetHelpString()
-

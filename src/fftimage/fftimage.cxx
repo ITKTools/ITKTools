@@ -35,6 +35,38 @@
 
 //-------------------------------------------------------------------------------------
 
+
+/**
+  * ******************* GetHelpString *******************
+  */
+std::string GetHelpString( void )
+{
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxfftimage" << std::endl
+  << "  -in      inputFilenames" << std::endl
+  << "             forward: only one input" << std::endl
+  << "             backward, # given:" << std::endl
+  << "               1: a complex image" << std::endl
+  << "               2: a real and imaginary part" << std::endl
+  << "  -op      operator, {forward, backward} FFT" << std::endl
+  << "  [-out]   outputFilenames" << std::endl
+  << "             forward, # given:" << std::endl
+  << "               1: write the complex image, default in + Complex.mhd" << std::endl
+  << "               2: write the real and imaginary images, default in + Real.mhd and in + Imaginary.mhd" << std::endl
+  << "               3: write the complex, real and imaginary images" << std::endl
+  << "             backward: only one output, default in + IFFT" << std::endl
+  << "  [-opct]  the output type" << std::endl
+  << "             choose from {float, double}, default float" << std::endl
+  << "  [-xdim]  the backward transform needs to know if the actual x-dimension was odd or even." << std::endl
+  << "             choose from {odd, even}, default even" << std::endl
+  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
+
+  return ss.str();
+
+} // end GetHelpString()
+
+
 /** run: A macro to call a function. */
 #define run( type, dim ) \
 if ( componentType == #type && Dimension == dim ) \
@@ -347,33 +379,3 @@ void IFFTImage( const std::vector<std::string> & inputFileNames,
 
 } // end IFFTImage()
 
-
-  /**
-   * ******************* GetHelpString *******************
-   */
-std::string GetHelpString( void )
-{
-  std::stringstream ss;
-  ss << "Usage:" << std::endl
-  << "pxfftimage" << std::endl
-  << "  -in      inputFilenames" << std::endl
-  << "             forward: only one input" << std::endl
-  << "             backward, # given:" << std::endl
-  << "               1: a complex image" << std::endl
-  << "               2: a real and imaginary part" << std::endl
-  << "  -op      operator, {forward, backward} FFT" << std::endl
-  << "  [-out]   outputFilenames" << std::endl
-  << "             forward, # given:" << std::endl
-  << "               1: write the complex image, default in + Complex.mhd" << std::endl
-  << "               2: write the real and imaginary images, default in + Real.mhd and in + Imaginary.mhd" << std::endl
-  << "               3: write the complex, real and imaginary images" << std::endl
-  << "             backward: only one output, default in + IFFT" << std::endl
-  << "  [-opct]  the output type" << std::endl
-  << "             choose from {float, double}, default float" << std::endl
-  << "  [-xdim]  the backward transform needs to know if the actual x-dimension was odd or even." << std::endl
-  << "             choose from {odd, even}, default even" << std::endl
-  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
-
-  return ss.str();
-
-} // end GetHelpString()

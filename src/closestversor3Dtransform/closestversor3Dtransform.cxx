@@ -34,8 +34,21 @@
 #include <iomanip>
 
 //-------------------------------------------------------------------------------------
+/*
+ * ******************* GetHelpString *******************
+ */
 
-std::string GetHelpString( void );
+std::string GetHelpString( void )
+{
+  std::stringstream ss;
+  ss << "Calculates the closest rigid transform (VersorRigid3D) between" << std::endl
+     << "two sets of landmarks. The two sets should be of equal size." << std::endl
+     << "Usage:" << std::endl
+     << "pxclosestversor3Dtransform" << std::endl
+     << "-f       the file containing the fixed landmarks" << std::endl
+     << "-m       the file containing the moving landmarks";
+  return ss.str();
+} // end GetHelpString()
 
 void ComputeClosestVersor(
   std::string fixedLandmarkFileName,
@@ -271,20 +284,3 @@ void ConvertVersorToEuler(
   parEuler[ 5 ] = parVersor[ 5 ];
 
 } // end ConvertVersorToEuler()
-
-
-/*
- * ******************* GetHelpString *******************
- */
-
-std::string GetHelpString( void )
-{
-  std::stringstream ss;
-  ss << "Calculates the closest rigid transform (VersorRigid3D) between" << std::endl
-     << "two sets of landmarks. The two sets should be of equal size." << std::endl
-     << "Usage:" << std::endl
-     << "pxclosestversor3Dtransform" << std::endl
-     << "-f       the file containing the fixed landmarks" << std::endl
-     << "-m       the file containing the moving landmarks";
-  return ss.str();
-} // end GetHelpString()

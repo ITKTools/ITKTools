@@ -40,6 +40,47 @@
 //-------------------------------------------------------------------------------------
 
 
+/*
+ * ******************* GetHelpString *******************
+ */
+
+std::string GetHelpString( void )
+{
+  std::stringstream ss;
+  ss << "This program thresholds an image." << std::endl
+  << "Usage:" << std::endl
+  << "pxthresholdimage" << std::endl
+  << "  -in        inputFilename" << std::endl
+  << "  [-out]     outputFilename; default in + THRESHOLDED.mhd" << std::endl
+  << "  [-mask]    maskFilename, optional for \"OtsuThreshold\"," << std::endl
+  << "required for \"KappaSigmaThreshold\"" << std::endl
+  << "  [-m]       method, choose one of { Threshold, OtsuThreshold," << std::endl
+  << "OtsuMultipleThreshold, AdaptiveOtsuThreshold, RobustAutomaticThreshold," << std::endl
+  << "KappaSigmaThreshold, MinErrorThreshold }" << std::endl
+  << "             default \"Threshold\"" << std::endl
+  << "  [-t1]      lower threshold, for \"Threshold\", default -infinity" << std::endl
+  << "  [-t2]      upper threshold, for \"Threshold\", default 1.0" << std::endl
+  << "  [-inside]  inside value, default 1" << std::endl
+  << "  [-outside] outside value, default 0" << std::endl
+  << "  [-t]       number of thresholds, for \"OtsuMultipleThreshold\", default 1" << std::endl
+  << "  [-b]       number of histogram bins, for \"OtsuThreshold\", \"MinErrorThreshold\"" << std::endl
+  << "and \"AdaptiveOtsuThreshold\", default 128" << std::endl
+  << "  [-r]       radius, for \"AdaptiveOtsuThreshold\", default 8" << std::endl
+  << "  [-cp]      number of control points, for \"AdaptiveOtsuThreshold\", default 50" << std::endl
+  << "  [-l]       number of levels, for \"AdaptiveOtsuThreshold\", default 3" << std::endl
+  << "  [-s]       number of samples, for \"AdaptiveOtsuThreshold\", default 5000" << std::endl
+  << "  [-o]       spline order, for \"AdaptiveOtsuThreshold\", default 3" << std::endl
+  << "  [-p]       power, for \"RobustAutomaticThreshold\", default 1" << std::endl
+  << "  [-sigma]   sigma factor, for \"KappaSigmaThreshold\", default 2" << std::endl
+  << "  [-iter]    number of iterations, for \"KappaSigmaThreshold\", default 2" << std::endl
+  << "  [-mv]      mask value, for \"KappaSigmaThreshold\", default 1" << std::endl
+  << "  [-mt]      mixture type (1 - Gaussians, 2 - Poissons), for \"MinErrorThreshold\", default 1" << std::endl
+  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
+
+  return ss.str();
+} // end GetHelpString()
+
+
 /** ThresholdImage */
 
 class ThresholdImageBase : public itktools::ITKToolsBase
@@ -344,45 +385,3 @@ int main( int argc, char **argv )
   return 0;
 
 } // end main
-
-
-
-/*
- * ******************* GetHelpString *******************
- */
-
-std::string GetHelpString( void )
-{
-  std::stringstream ss;
-  ss << "This program thresholds an image." << std::endl
-  << "Usage:" << std::endl
-  << "pxthresholdimage" << std::endl
-  << "  -in        inputFilename" << std::endl
-  << "  [-out]     outputFilename; default in + THRESHOLDED.mhd" << std::endl
-  << "  [-mask]    maskFilename, optional for \"OtsuThreshold\"," << std::endl
-  << "required for \"KappaSigmaThreshold\"" << std::endl
-  << "  [-m]       method, choose one of { Threshold, OtsuThreshold," << std::endl
-  << "OtsuMultipleThreshold, AdaptiveOtsuThreshold, RobustAutomaticThreshold," << std::endl
-  << "KappaSigmaThreshold, MinErrorThreshold }" << std::endl
-  << "             default \"Threshold\"" << std::endl
-  << "  [-t1]      lower threshold, for \"Threshold\", default -infinity" << std::endl
-  << "  [-t2]      upper threshold, for \"Threshold\", default 1.0" << std::endl
-  << "  [-inside]  inside value, default 1" << std::endl
-  << "  [-outside] outside value, default 0" << std::endl
-  << "  [-t]       number of thresholds, for \"OtsuMultipleThreshold\", default 1" << std::endl
-  << "  [-b]       number of histogram bins, for \"OtsuThreshold\", \"MinErrorThreshold\"" << std::endl
-  << "and \"AdaptiveOtsuThreshold\", default 128" << std::endl
-  << "  [-r]       radius, for \"AdaptiveOtsuThreshold\", default 8" << std::endl
-  << "  [-cp]      number of control points, for \"AdaptiveOtsuThreshold\", default 50" << std::endl
-  << "  [-l]       number of levels, for \"AdaptiveOtsuThreshold\", default 3" << std::endl
-  << "  [-s]       number of samples, for \"AdaptiveOtsuThreshold\", default 5000" << std::endl
-  << "  [-o]       spline order, for \"AdaptiveOtsuThreshold\", default 3" << std::endl
-  << "  [-p]       power, for \"RobustAutomaticThreshold\", default 1" << std::endl
-  << "  [-sigma]   sigma factor, for \"KappaSigmaThreshold\", default 2" << std::endl
-  << "  [-iter]    number of iterations, for \"KappaSigmaThreshold\", default 2" << std::endl
-  << "  [-mv]      mask value, for \"KappaSigmaThreshold\", default 1" << std::endl
-  << "  [-mt]      mixture type (1 - Gaussians, 2 - Poissons), for \"MinErrorThreshold\", default 1" << std::endl
-  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
-
-  return ss.str();
-} // end GetHelpString()

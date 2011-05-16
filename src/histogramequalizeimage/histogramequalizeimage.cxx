@@ -28,6 +28,23 @@
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 
+std::string GetHelpString(void)
+{
+  std::stringstream ss;
+  ss<< "This program applies histogram equalization to an image." << std::endl
+    << "Works as described by Maintz, Introduction to Image Processing." << std::endl
+    << "Usage:" << std::endl
+    << "pxhistogramequalizeimage" << std::endl
+    << "-in    \tInputImageFileName" << std::endl
+    << "-out   \tOutputImageFileName" << std::endl
+    << "-pt    \tPixelType <FLOAT, SHORT, USHORT, INT, UINT, CHAR, UCHAR>" << std::endl
+    << "Currently only char, uchar, short, and ushort are supported." << std::endl
+    << "-id    \tImageDimension <2,3>" << std::endl;
+
+  return ss.str();
+} // end GetHelpString
+
+
 int main(int argc, char** argv)
 {
   /** Create a command line argument parser. */

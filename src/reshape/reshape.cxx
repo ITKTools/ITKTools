@@ -29,6 +29,25 @@
 #include <itksys/SystemTools.hxx>
 //-------------------------------------------------------------------------------------
 
+/**
+ * ******************* GetHelpString *******************
+ */
+
+std::string GetHelpString( void )
+{
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxpca" << std::endl
+  << "  -in      inputFilename" << std::endl
+  << "  [-out]   outputFileName, default inputFileName_reshaped" << std::endl
+  << "  -s       size of the output image" << std::endl
+  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
+
+  return ss.str();
+
+} // end GetHelpString()
+
+
 
 class ReshapeBase : public itktools::ITKToolsBase
 { 
@@ -246,24 +265,3 @@ int main( int argc, char **argv )
   return 0;
 
 } // end main()
-
-
-
-/**
- * ******************* GetHelpString *******************
- */
-
-std::string GetHelpString( void )
-{
-  std::stringstream ss;
-  ss << "Usage:" << std::endl
-  << "pxpca" << std::endl
-  << "  -in      inputFilename" << std::endl
-  << "  [-out]   outputFileName, default inputFileName_reshaped" << std::endl
-  << "  -s       size of the output image" << std::endl
-  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
-
-  return ss.str();
-
-} // end GetHelpString()
-

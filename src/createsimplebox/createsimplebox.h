@@ -14,36 +14,6 @@
 #include "itkCommandLineArgumentParser.h"
 #include "ITKToolsBase.h"
 
-typedef std::map<std::string, std::string> ArgMapType;
-
-std::string GetHelpString(void)
-{
-  std::stringstream ss;
-  ss << "This program creates an image containing a white box, defined by point A and B." << std::endl
-    << "Usage:" << std::endl
-    << "pxcreatesimplebox" << std::endl
-    << "[-in]  InputImageFileName" << std::endl
-    << "Size, origin, and spacing for the output image will be taken" << std::endl
-    << "from this image. NB: not the dimension and the pixeltype;" << std::endl
-    << "you must set them anyway!" << std::endl
-    << "-out   OutputImageFileName" << std::endl
-    << "-pt    PixelType <FLOAT, SHORT, USHORT, INT, UINT, CHAR, UCHAR>" << std::endl
-    << "Currently only char, uchar and short are supported." << std::endl
-    << "-id    ImageDimension <2,3>" << std::endl
-    << "[-d0]  Size of dimension 0" << std::endl
-    << "[-d1]  Size of dimension 1" << std::endl
-    << "[-d2]  Size of dimension 2" << std::endl
-    << "-pA0  Index 0 of pointA" << std::endl
-    << "-pA1  Index 1 of pointA" << std::endl
-    << "[-pA2]Index 2 of pointA" << std::endl
-    << "-pB0  Index 0 of pointB" << std::endl
-    << "-pB1  Index 1 of pointB" << std::endl
-    << "[-pB2]Index 2 of pointB";
-  return ss.str();
-} // end GetHelpString
-
-
-
 /** CreateSimpleBox */
 
 class CreateSimpleBoxBase : public itktools::ITKToolsBase

@@ -23,41 +23,6 @@ if ( ComponentTypeIn == #typeIn && ComponentTypeOut == #typeOut \
   supported = true; \
 }
 
-/**
- * ******************* GetHelpString *******************
- */
-
-std::string GetHelpString( void )
-{
-  std::stringstream ss;
-  ss << "Performs n-ary operations on multiple (n) images." << std::endl
-  << "Usage:\npxnaryimageoperator" << std::endl
-  << "  -in      inputFilenames, at least 2" << std::endl
-  << "  -out     outputFilename" << std::endl
-  << "  -ops     n-ary operator of the following form:" << std::endl
-  << "           {+,-,*,/,^,%}" << std::endl
-  << "           notation:" << std::endl
-  << "             {ADDITION, MINUS, TIMES, DIVIDE," << std::endl
-  << "             MEAN," << std::endl
-  << "             MAXIMUM, MINIMUM, ABSOLUTEDIFFERENCE," << std::endl
-  << "             NARYMAGNITUDE }" << std::endl
-  << "           notation examples:" << std::endl
-  << "             MINUS = I_0 - I_1 - ... - I_n " << std::endl
-  << "             ABSDIFF = |I_0 - I_1 - ... - I_n|" << std::endl
-  << "             MIN = min( I_0, ..., I_n )" << std::endl
-  << "             MAGNITUDE = sqrt( I_0 * I_0 + ... + I_n * I_n )" << std::endl
-//   std::cout << "  [-arg]   argument, necessary for some ops\n"
-//             << "             WEIGHTEDADDITION: 0.0 < weight alpha < 1.0\n"
-//             << "             MASK[NEG]: background value, e.g. 0." << std::endl;
-  << "  [-z]     compression flag; if provided, the output image is compressed" << std::endl
-  << "  [-s]     number of streams, default equals number of inputs." << std::endl
-  << "  [-opct]  output component type, by default the largest of the two input images" << std::endl
-  << "             choose one of: {[unsigned_]{char,short,int,long},float,double}" << std::endl
-  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
-
-  return ss.str();
-} // end GetHelpString()
-
 
 /**
  * ******************* TypeIsInteger *******************

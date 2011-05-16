@@ -32,6 +32,26 @@
 #include "itkVectorImage.h"
 #include "itkVector.h"
 
+
+/**
+ * ******************* GetHelpString *******************
+ */
+
+std::string GetHelpString()
+{
+  std::stringstream ss;
+  ss << "This program extracts a user specified component from a vector image." << std::endl
+  << "Usage:" << std::endl
+  << "pxextractindexfromvectorimage" << std::endl
+  << "  -in      inputFilename" << std::endl
+  << "  [-out]   outputFilename, default in + INDEXEXTRACTED.mhd" << std::endl
+  << "  -ind     a valid index" << std::endl
+  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int," << std::endl
+  << "long, float, double.";
+  return ss.str();
+} // end GetHelpString()
+
+
 class ExtractIndexBase : public itktools::ITKToolsBase
 {
 public:
@@ -268,23 +288,4 @@ int main( int argc, char ** argv )
   return 0;
 
 } // end main
-
-
-/**
- * ******************* GetHelpString *******************
- */
-
-std::string GetHelpString()
-{
-  std::stringstream ss;
-  ss << "This program extracts a user specified component from a vector image." << std::endl
-  << "Usage:" << std::endl
-  << "pxextractindexfromvectorimage" << std::endl
-  << "  -in      inputFilename" << std::endl
-  << "  [-out]   outputFilename, default in + INDEXEXTRACTED.mhd" << std::endl
-  << "  -ind     a valid index" << std::endl
-  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int," << std::endl
-  << "long, float, double.";
-  return ss.str();
-} // end GetHelpString()
 

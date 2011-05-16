@@ -27,6 +27,22 @@
 #include "itkBinaryThinningImageFilter.h"
 #include "itkImageFileWriter.h"
 
+/**
+  * ******************* GetHelpString *******************
+  */
+std::string GetHelpString()
+{
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+     << "pxbinarythinning" << std::endl
+     << "-in      inputFilename" << std::endl
+     << "[-out]   outputFilename, default in + THINNED.mhd" << std::endl
+     << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl
+     << "Note that the thinning algorithm used here is really a 2D thinning algortihm." << std::endl
+     << "In 3D the thinning is performed slice by slice.";
+  return ss.str();
+} // end GetHelpString()
+
 
 class BinaryThinningBase : public itktools::ITKToolsBase
 {
@@ -219,21 +235,3 @@ int main( int argc, char ** argv )
   return 0;
 
 } // end main
-
-
-  /**
-   * ******************* GetHelpString *******************
-   */
-std::string GetHelpString()
-{
-  std::stringstream ss;
-  ss << "Usage:" << std::endl
-     << "pxbinarythinning" << std::endl
-     << "-in      inputFilename" << std::endl
-     << "[-out]   outputFilename, default in + THINNED.mhd" << std::endl
-     << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl
-     << "Note that the thinning algorithm used here is really a 2D thinning algortihm." << std::endl
-     << "In 3D the thinning is performed slice by slice.";
-  return ss.str();
-} // end GetHelpString()
-

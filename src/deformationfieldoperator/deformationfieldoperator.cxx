@@ -28,6 +28,31 @@
 #include <itksys/SystemTools.hxx>
 
 
+/**
+ * ******************* GetHelpString *******************
+ */
+
+std::string GetHelpString( void )
+{
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxdeformationfieldoperator" << std::endl
+    << "This program converts between deformations (displacement fields)" << std::endl
+  << "and transformations, and computes the magnitude or Jacobian of a" << std::endl
+  << "deformation field." << std::endl
+  << "  -in      inputFilename" << std::endl
+  << "  [-out]   outputFilename; default: in + {operation}.mhd" << std::endl
+  << "  [-ops]   operation; options: DEF2TRANS, TRANS2DEF," << std::endl
+  << "MAGNITUDE, JACOBIAN, DEF2JAC, TRANS2JAC, INVERSE. default: MAGNITUDE" << std::endl
+  << "           TRANS2JAC == JACOBIAN" << std::endl
+  << "  [-s]     number of streams, default 1." << std::endl
+  << "  [-it]    number of iterations, for the iterative inversion, default 1, increase to get better results." << std::endl
+  << "  [-stop]  allowed error, default 0.0, increase to get faster convergence." << std::endl
+  << "Supported: 2D, 3D, vector of floats or doubles, number of components" << std::endl
+  << "must equal number of dimensions.";
+  return ss.str();
+} // end GetHelpString()
+
 //-------------------------------------------------------------------------------------
 
 /** DeformationFieldOperator */
@@ -280,28 +305,3 @@ int main( int argc, char **argv )
 
 } // end main
 
-
-/**
- * ******************* GetHelpString *******************
- */
-
-std::string GetHelpString( void )
-{
-  std::stringstream ss;
-  ss << "Usage:" << std::endl
-  << "pxdeformationfieldoperator" << std::endl
-    << "This program converts between deformations (displacement fields)" << std::endl
-  << "and transformations, and computes the magnitude or Jacobian of a" << std::endl
-  << "deformation field." << std::endl
-  << "  -in      inputFilename" << std::endl
-  << "  [-out]   outputFilename; default: in + {operation}.mhd" << std::endl
-  << "  [-ops]   operation; options: DEF2TRANS, TRANS2DEF," << std::endl
-  << "MAGNITUDE, JACOBIAN, DEF2JAC, TRANS2JAC, INVERSE. default: MAGNITUDE" << std::endl
-  << "           TRANS2JAC == JACOBIAN" << std::endl
-  << "  [-s]     number of streams, default 1." << std::endl
-  << "  [-it]    number of iterations, for the iterative inversion, default 1, increase to get better results." << std::endl
-  << "  [-stop]  allowed error, default 0.0, increase to get faster convergence." << std::endl
-  << "Supported: 2D, 3D, vector of floats or doubles, number of components" << std::endl
-  << "must equal number of dimensions.";
-  return ss.str();
-} // end GetHelpString()

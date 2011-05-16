@@ -32,6 +32,34 @@
 
 //-------------------------------------------------------------------------------------
 
+
+/**
+  * ******************* GetHelpString *******************
+  */
+
+std::string GetHelpString( void )
+{
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxcropimage" << std::endl
+    << "-in      inputFilename" << std::endl
+    << "[-out]   outputFilename, default in + CROPPED.mhd" << std::endl
+    << "[-pA]    a point A" << std::endl
+    << "[-pB]    a point B" << std::endl
+    << "[-sz]    size" << std::endl
+    << "[-lb]    lower bound" << std::endl
+    << "[-ub]    upper bound" << std::endl
+    << "[-force] force to extract a region of size sz, pad if necessary" << std::endl
+  << "pxcropimage can be called in different ways:" << std::endl
+    << "1: supply two points with \"-pA\" and \"-pB\"." << std::endl
+    << "2: supply a points and a size with \"-pA\" and \"-sz\"." << std::endl
+    << "3: supply a lower and an upper bound with \"-lb\" and \"-ub\"." << std::endl
+  << "The points are supplied in index coordinates." << std::endl
+  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
+  return ss.str();
+} // end GetHelpString()
+
+
 /** Declare other functions. */
 std::string GetHelpString( void );
 
@@ -397,34 +425,6 @@ int main( int argc, char **argv )
   return 0;
 
 } // end main()
-
-
-  /**
-   * ******************* GetHelpString *******************
-   */
-
-std::string GetHelpString( void )
-{
-  std::stringstream ss;
-  ss << "Usage:" << std::endl
-  << "pxcropimage" << std::endl
-    << "-in      inputFilename" << std::endl
-    << "[-out]   outputFilename, default in + CROPPED.mhd" << std::endl
-    << "[-pA]    a point A" << std::endl
-    << "[-pB]    a point B" << std::endl
-    << "[-sz]    size" << std::endl
-    << "[-lb]    lower bound" << std::endl
-    << "[-ub]    upper bound" << std::endl
-    << "[-force] force to extract a region of size sz, pad if necessary" << std::endl
-  << "pxcropimage can be called in different ways:" << std::endl
-    << "1: supply two points with \"-pA\" and \"-pB\"." << std::endl
-    << "2: supply a points and a size with \"-pA\" and \"-sz\"." << std::endl
-    << "3: supply a lower and an upper bound with \"-lb\" and \"-ub\"." << std::endl
-  << "The points are supplied in index coordinates." << std::endl
-  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
-  return ss.str();
-} // end GetHelpString()
-
 
   /*
    * ******************* CheckWhichInputOption *******************

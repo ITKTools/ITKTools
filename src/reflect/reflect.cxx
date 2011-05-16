@@ -30,6 +30,27 @@
 //-------------------------------------------------------------------------------------
 
 
+/**
+ * ******************* GetHelpString *******************
+ */
+std::string GetHelpString()
+{
+  std::stringstream ss;
+  ss << "This program reflects an image." << std::endl
+  << "Usage:" << std::endl
+  << "pxreflect" << std::endl
+  << "  -in      inputFilename" << std::endl
+  << "  -out     outputFilename" << std::endl
+  << "  -d       the image direction that should be reflected" << std::endl
+  << "  [-opct]  output pixel type, default equal to input" << std::endl
+  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int," << std::endl
+  << "(unsigned) long, float, double.";
+
+  return ss.str();
+
+} // end GetHelpString()
+
+
 /** Reflect */
 
 class ReflectBase : public itktools::ITKToolsBase
@@ -236,25 +257,3 @@ int main( int argc, char ** argv )
   return 0;
 
 } // end main
-
-
-
-/**
- * ******************* GetHelpString *******************
- */
-std::string GetHelpString()
-{
-  std::stringstream ss;
-  ss << "This program reflects an image." << std::endl
-  << "Usage:" << std::endl
-  << "pxreflect" << std::endl
-  << "  -in      inputFilename" << std::endl
-  << "  -out     outputFilename" << std::endl
-  << "  -d       the image direction that should be reflected" << std::endl
-  << "  [-opct]  output pixel type, default equal to input" << std::endl
-  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int," << std::endl
-  << "(unsigned) long, float, double.";
-
-  return ss.str();
-
-} // end GetHelpString()

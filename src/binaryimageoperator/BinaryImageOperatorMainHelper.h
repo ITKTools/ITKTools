@@ -24,9 +24,9 @@
 #include <itksys/SystemTools.hxx>
 #include "CommandLineArgumentHelper.h"
 
-  /**
-   * ******************* Macro *******************
-   */
+/**
+  * ******************* Macro *******************
+  */
 
 /** run: A macro to call a function. */
 #define run( function, typeIn1, typeIn2, typeOut, dim ) \
@@ -41,43 +41,9 @@ if ( ComponentTypeIn1 == #typeIn1 && ComponentTypeIn2 == #typeIn2 \
   supported = true; \
 }
 
-  /**
-   * ******************* PrintHelp *******************
-   */
-std::string GetHelpString()
-{
-  std::stringstream  ss;
-  ss << "Performs binary operations on two images." << std::endl
-     << "Usage:\npxbinaryimageoperator" << std::endl
-     << "-in      inputFilenames" << std::endl
-     << "[-out]   outputFilename, default in1 + ops + arg + in2 + .mhd" << std::endl
-     << "-ops     binary operator of the following form:" << std::endl
-     << "        {+,-,*,/,^,%}" << std::endl
-     << "        notation:" << std::endl
-     << "          {ADDITION, WEIGHTEDADDITION, MINUS, TIMES,DIVIDE,POWER," << std::endl
-     << "          MAXIMUM, MINIMUM, ABSOLUTEDIFFERENCE, SQUAREDDIFFERENCE," << std::endl
-     << "          BINARYMAGNITUDE, MASK, MASKNEGATED, LOG}" << std::endl
-     << "        notation examples:" << std::endl
-     << "          MINUS = A - B" << std::endl
-     << "          ABSDIFF = |A - B|" << std::endl
-     << "          MIN = min( A, B )" << std::endl
-     << "          MAGNITUDE = sqrt( A * A + B * B )" << std::endl
-     << "[-arg]   argument, necessary for some ops" << std::endl
-     << "          WEIGHTEDADDITION: 0.0 < weight alpha < 1.0" << std::endl
-     << "          MASK[NEG]: background value, e.g. 0." << std::endl
-     << "[-z]     compression flag; if provided, the output image is compressed" << std::endl
-     << "[-opct]  output component type, by default the largest of the two input images" << std::endl
-     << "          choose one of: {[unsigned_]{char,short,int,long},float,double}" << std::endl
-     << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
-
-  return ss.str();
-
-} // end PrintHelp()
-
-
-  /**
-   * ******************* TypeIsInteger *******************
-   */
+/**
+  * ******************* TypeIsInteger *******************
+  */
 
 bool TypeIsInteger( const std::string & componentType )
 {
@@ -98,9 +64,9 @@ bool TypeIsInteger( const std::string & componentType )
 } // end TypeIsInteger()
 
 
-  /**
-   * ******************* DetermineImageProperties *******************
-   */
+/**
+  * ******************* DetermineImageProperties *******************
+  */
 
 int DetermineImageProperties(
   const std::vector<std::string> & inputFileNames,

@@ -34,6 +34,25 @@
 //-------------------------------------------------------------------------------------
 
 
+/**
+  * ******************* GetHelpString *******************
+  */
+
+std::string GetHelpString( void )
+{
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxpca" << std::endl
+  << "  -in      inputFilenames" << std::endl
+  << "  [-out]   outputDirectory, default equal to the inputFilename directory" << std::endl
+  << "  [-opc]   the number of principal components that you want to output, default all" << std::endl
+  << "  [-opct]  output pixel component type, default derived from the input image" << std::endl
+  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
+
+  return ss.str();
+} // end GetHelpString()
+
+
 /** PCA */
 
 class PCABase : public itktools::ITKToolsBase
@@ -286,23 +305,4 @@ int main( int argc, char **argv )
   return 0;
 
 } // end main()
-
-
-/**
-  * ******************* GetHelpString *******************
-  */
-
-std::string GetHelpString( void )
-{
-  std::stringstream ss;
-  ss << "Usage:" << std::endl
-  << "pxpca" << std::endl
-  << "  -in      inputFilenames" << std::endl
-  << "  [-out]   outputDirectory, default equal to the inputFilename directory" << std::endl
-  << "  [-opc]   the number of principal components that you want to output, default all" << std::endl
-  << "  [-opct]  output pixel component type, default derived from the input image" << std::endl
-  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
-
-  return ss.str();
-} // end GetHelpString()
 

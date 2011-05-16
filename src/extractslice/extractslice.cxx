@@ -29,6 +29,27 @@
 #include <vector>
 #include <itksys/SystemTools.hxx>
 
+
+/** Define GetHelpString. */
+std::string GetHelpString( void )
+{
+  std::stringstream ss;
+  ss << "pxextractslice extracts a 2D slice from a 3D image." << std::endl
+  << "Usage:" << std::endl
+  << "pxextractslice" << std::endl
+  << "  -in      input image filename" << std::endl
+  << "  [-out]   output image filename" << std::endl
+  << "  [-pt]    pixel type of input and output images;" << std::endl
+  << "           default: automatically determined from the first input image." << std::endl
+  << "  -sn      slice number" << std::endl
+  << "  [-d]     the dimension from which a slice is extracted, default the z dimension" << std::endl
+  << "Supported pixel types: (unsigned) char, (unsigned) short, float.";
+
+  return ss.str();
+
+} // end GetHelpString
+
+
 /** \todo explain rationale.
  *
  *
@@ -273,22 +294,3 @@ int main( int argc, char ** argv )
 } // end main
 
 //-------------------------------------------------------------------------------------
-
-/** Define GetHelpString. */
-std::string GetHelpString( void )
-{
-  std::stringstream ss;
-  ss << "pxextractslice extracts a 2D slice from a 3D image." << std::endl
-  << "Usage:" << std::endl
-  << "pxextractslice" << std::endl
-  << "  -in      input image filename" << std::endl
-  << "  [-out]   output image filename" << std::endl
-  << "  [-pt]    pixel type of input and output images;" << std::endl
-  << "           default: automatically determined from the first input image." << std::endl
-  << "  -sn      slice number" << std::endl
-  << "  [-d]     the dimension from which a slice is extracted, default the z dimension" << std::endl
-  << "Supported pixel types: (unsigned) char, (unsigned) short, float.";
-
-  return ss.str();
-
-} // end GetHelpString

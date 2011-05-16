@@ -30,7 +30,28 @@
 
 //-------------------------------------------------------------------------------------
 
-std::string GetHelpString( void );
+
+
+/**
+ * ******************* GetHelpString *******************
+ */
+
+std::string GetHelpString( void )
+{
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxcreategridimage" << std::endl
+    << "[-in]    inputFilename, information about size, etc, is taken from it" << std::endl
+    << "-out     outputFilename" << std::endl
+    << "-sz      image size for each dimension" << std::endl
+    << "[-sp]    image spacing, default 1.0" << std::endl
+    << "-d       distance in pixels between two gridlines" << std::endl
+    << "[-stack] for 3D images, create a stack of 2D images, default false" << std::endl
+  << "Supported: 2D, 3D, short.";
+  return ss.str();
+
+} // end GetHelpString()
+
 
 /** CreateGridImage */
 
@@ -297,24 +318,3 @@ int main( int argc, char *argv[] )
   return 0;
 
 } // end main
-
-
-/**
- * ******************* GetHelpString *******************
- */
-
-std::string GetHelpString( void )
-{
-  std::stringstream ss;
-  ss << "Usage:" << std::endl
-  << "pxcreategridimage" << std::endl
-    << "[-in]    inputFilename, information about size, etc, is taken from it" << std::endl
-    << "-out     outputFilename" << std::endl
-    << "-sz      image size for each dimension" << std::endl
-    << "[-sp]    image spacing, default 1.0" << std::endl
-    << "-d       distance in pixels between two gridlines" << std::endl
-    << "[-stack] for 3D images, create a stack of 2D images, default false" << std::endl
-  << "Supported: 2D, 3D, short.";
-  return ss.str();
-
-} // end GetHelpString()

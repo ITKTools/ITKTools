@@ -36,6 +36,28 @@
 
 //-------------------------------------------------------------------------------------
 
+/**
+ * ******************* GetHelpString *******************
+ */
+std::string GetHelpString()
+{
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxrescaleintensityimagefilter" << std::endl
+  << "  -in      inputFilename" << std::endl
+  << "  [-out]   outputFilename, default in + INTENSITYRESCALED.mhd" << std::endl
+  << "  [-mm]    minimum maximum, default: range of pixeltype" << std::endl
+  << "  [-mv]    mean variance, default: 0.0 1.0" << std::endl
+  << "  [-pt]    pixel type of input and output images;" << std::endl
+  << "           default: automatically determined from the first input image." << std::endl
+  << "Either \"-mm\" or \"-mv\" need to be specified." << std::endl
+  << "Supported: 2D, 3D, (unsigned) short, (unsigned) char, float." << std::endl
+  << "When applied to vector images, this program performs the operation on each channel separately.";
+
+  return ss.str();
+
+} // end GetHelpString()
+
 
 /** RescaleIntensityImageFilter */
 
@@ -371,25 +393,3 @@ int main( int argc, char **argv )
 
 } // end main()
 
-
-/**
- * ******************* GetHelpString *******************
- */
-std::string GetHelpString()
-{
-  std::stringstream ss;
-  ss << "Usage:" << std::endl
-  << "pxrescaleintensityimagefilter" << std::endl
-  << "  -in      inputFilename" << std::endl
-  << "  [-out]   outputFilename, default in + INTENSITYRESCALED.mhd" << std::endl
-  << "  [-mm]    minimum maximum, default: range of pixeltype" << std::endl
-  << "  [-mv]    mean variance, default: 0.0 1.0" << std::endl
-  << "  [-pt]    pixel type of input and output images;" << std::endl
-  << "           default: automatically determined from the first input image." << std::endl
-  << "Either \"-mm\" or \"-mv\" need to be specified." << std::endl
-  << "Supported: 2D, 3D, (unsigned) short, (unsigned) char, float." << std::endl
-  << "When applied to vector images, this program performs the operation on each channel separately.";
-
-  return ss.str();
-
-} // end GetHelpString()

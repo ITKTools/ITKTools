@@ -31,6 +31,25 @@
 //-------------------------------------------------------------------------------------
 
 
+/**
+ * ******************* PrintHelp *******************
+ */
+
+std::string GetHelpString( void )
+{
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxcreatecylinder" << std::endl
+  << "-in      inputFilename" << std::endl
+  << "-out     outputFilename" << std::endl
+  << "-c       center (mm)" << std::endl
+  << "-r       radii (mm)" << std::endl
+  << "Supported: 2D, 3D.";
+  return ss.str();
+} // end GetHelpString()
+
+
+
 /** CreateCylinder */
 
 class CreateCylinderBase : public itktools::ITKToolsBase
@@ -236,22 +255,3 @@ int main( int argc, char *argv[] )
   return 0;
 
 } // end main
-
-
-/**
- * ******************* PrintHelp *******************
- */
-
-std::string GetHelpString( void )
-{
-  std::stringstream ss;
-  ss << "Usage:" << std::endl
-  << "pxcreatecylinder" << std::endl
-  << "-in      inputFilename" << std::endl
-  << "-out     outputFilename" << std::endl
-  << "-c       center (mm)" << std::endl
-  << "-r       radii (mm)" << std::endl
-  << "Supported: 2D, 3D.";
-  return ss.str();
-} // end GetHelpString()
-

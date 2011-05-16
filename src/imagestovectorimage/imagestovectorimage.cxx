@@ -30,6 +30,26 @@
 
 //-------------------------------------------------------------------------------------
 
+/**
+ * ******************* GetHelpString *******************
+ */
+
+std::string GetHelpString( void )
+{
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pximagetovectorimage" << std::endl
+  << "  -in      inputFilenames, at least 2" << std::endl
+  << "  [-out]   outputFilename, default VECTOR.mhd" << std::endl
+  << "  [-s]     number of streams, default 1." << std::endl
+  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short," << std::endl
+  << "(unsigned) int, (unsigned) long, float, double." << std::endl
+  << "Note: make sure that the input images are of the same type, size, etc.";
+
+  return ss.str();
+
+} // end GetHelpString()
+
 /** ImagesToVectorImage */
 
 class ImagesToVectorImageBase : public itktools::ITKToolsBase
@@ -243,23 +263,3 @@ int main( int argc, char ** argv )
   return 0;
 
 } // end main
-
-/**
- * ******************* PrintHelp *******************
- */
-
-std::string GetHelpString( void )
-{
-  std::stringstream ss;
-  ss << "Usage:" << std::endl
-  << "pximagetovectorimage" << std::endl
-  << "  -in      inputFilenames, at least 2" << std::endl
-  << "  [-out]   outputFilename, default VECTOR.mhd" << std::endl
-  << "  [-s]     number of streams, default 1." << std::endl
-  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short," << std::endl
-  << "(unsigned) int, (unsigned) long, float, double." << std::endl
-  << "Note: make sure that the input images are of the same type, size, etc.";
-
-  return ss.str();
-
-} // end GetHelpString()

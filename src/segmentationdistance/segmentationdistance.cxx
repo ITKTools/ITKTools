@@ -44,6 +44,31 @@
 #include "itkLinearInterpolateImageFunction.h"
 
 
+
+/**
+  * ******************* GetHelpString *******************
+  */
+std::string GetHelpString()
+{
+  std::stringstream ss;
+  ss << "This program computes a spatial segmentation error map." << std::endl
+  << "Usage:" << std::endl
+  << "pxsegmentationdistance" << std::endl
+  << "  -in      inputFilename1 inputFileName2" << std::endl
+  << "  [-out]   outputFilename, default <in1>DISTANCE<in2>.mhd" << std::endl
+  << "  [-c]     Center of rotation, used to compute the spherical transform. In world coordinates." << std::endl
+  << "  [-s]     samples [unsigned int]; maximum number of samples per pixel, used to do the spherical transform; default 20." << std::endl
+  << "  [-t]     theta size; the size of the theta dimension. default: 180, which yields a spacing of 2 degrees." << std::endl
+  << "  [-p]     phi size; the size of the phi dimension. default: 90, which yields a spacing of 2 degrees." << std::endl
+  << "  [-car]   skip the polar transform and return two output images (outputFileNameDIST and outputFileNameEDGE): true or false; default = false" << std::endl
+  << "           The EDGE output image is an edge mask for inputfile2. The DIST output image contains the distance at each edge pixel to the first inputFile." << std::endl
+  << "Supported: 3D short for inputImage1, and everything convertable to short." << std::endl
+  << "           3D short for inputImage2, and everything convertable to short.";
+
+  return ss.str();
+} // end GetHelpString
+
+
 //-------------------------------------------------------------------------------------
 
 template< class InputImageType1, class InputImageType2, class ImageType >
@@ -702,30 +727,3 @@ void SegmentationDistanceHelper(
   accum2 = accumulator2->GetOutput();
 
 } // end SegmentationDistanceHelper
-
-
-
-
-/**
-  * ******************* GetHelpString *******************
-  */
-std::string GetHelpString()
-{
-  std::stringstream ss;
-  ss << "This program computes a spatial segmentation error map." << std::endl
-  << "Usage:" << std::endl
-  << "pxsegmentationdistance" << std::endl
-  << "  -in      inputFilename1 inputFileName2" << std::endl
-  << "  [-out]   outputFilename, default <in1>DISTANCE<in2>.mhd" << std::endl
-  << "  [-c]     Center of rotation, used to compute the spherical transform. In world coordinates." << std::endl
-  << "  [-s]     samples [unsigned int]; maximum number of samples per pixel, used to do the spherical transform; default 20." << std::endl
-  << "  [-t]     theta size; the size of the theta dimension. default: 180, which yields a spacing of 2 degrees." << std::endl
-  << "  [-p]     phi size; the size of the phi dimension. default: 90, which yields a spacing of 2 degrees." << std::endl
-  << "  [-car]   skip the polar transform and return two output images (outputFileNameDIST and outputFileNameEDGE): true or false; default = false" << std::endl
-  << "           The EDGE output image is an edge mask for inputfile2. The DIST output image contains the distance at each edge pixel to the first inputFile." << std::endl
-  << "Supported: 3D short for inputImage1, and everything convertable to short." << std::endl
-  << "           3D short for inputImage2, and everything convertable to short.";
-
-  return ss.str();
-} // end GetHelpString
-

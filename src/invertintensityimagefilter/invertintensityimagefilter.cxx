@@ -36,6 +36,24 @@
 //-------------------------------------------------------------------------------------
 
 
+/**
+ * ******************* GetHelpString *******************
+ */
+
+std::string GetHelpString( void )
+{
+  std::stringstream ss;
+  ss << "This program inverts the intensities of an image." << std::endl
+  << "Usage:" << std::endl
+  << "pxinvertintensityimagefilter" << std::endl
+  << "  -in      inputFilename" << std::endl
+  << "  [-out]   outputFilename; default: in + INVERTED.mhd" << std::endl
+  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
+
+  return ss.str();
+
+} // end GetHelpString()
+
 /** InvertIntensity */
 
 class InvertIntensityBase : public itktools::ITKToolsBase
@@ -248,21 +266,3 @@ int main( int argc, char ** argv )
 
 } // end main
 
-
-/**
- * ******************* GetHelpString *******************
- */
-
-std::string GetHelpString( void )
-{
-  std::stringstream ss;
-  ss << "This program inverts the intensities of an image." << std::endl
-  << "Usage:" << std::endl
-  << "pxinvertintensityimagefilter" << std::endl
-  << "  -in      inputFilename" << std::endl
-  << "  [-out]   outputFilename; default: in + INVERTED.mhd" << std::endl
-  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
-
-  return ss.str();
-
-} // end GetHelpString()

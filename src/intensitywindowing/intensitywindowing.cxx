@@ -30,6 +30,26 @@
 
 //-------------------------------------------------------------------------------------
 
+/**
+ * ******************* GetHelpString *******************
+ */
+std::string GetHelpString()
+{
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxintensitywindowing" << std::endl
+  << "  -in      inputFilename" << std::endl
+  << "  [-out]   outputFilename, default in + WINDOWED.mhd" << std::endl
+  << "  -w       windowMinimum windowMaximum" << std::endl
+  << "  [-pt]    pixel type of input and output images;" << std::endl
+  << "           default: automatically determined from the first input image." << std::endl
+  << "Supported: 2D, 3D, (unsigned) short, (unsigned) char, float.";
+
+  return ss.str();
+
+} // end GetHelpString
+
+
 
 /** IntensityWindowing */
 
@@ -251,23 +271,3 @@ int main( int argc, char **argv )
   return 0;
 
 } // end main
-
-/**
- * ******************* GetHelpString *******************
- */
-std::string GetHelpString()
-{
-  std::stringstream ss;
-  ss << "Usage:" << std::endl
-  << "pxintensitywindowing" << std::endl
-  << "  -in      inputFilename" << std::endl
-  << "  [-out]   outputFilename, default in + WINDOWED.mhd" << std::endl
-  << "  -w       windowMinimum windowMaximum" << std::endl
-  << "  [-pt]    pixel type of input and output images;" << std::endl
-  << "           default: automatically determined from the first input image." << std::endl
-  << "Supported: 2D, 3D, (unsigned) short, (unsigned) char, float.";
-
-  return ss.str();
-
-} // end GetHelpString
-

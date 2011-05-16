@@ -40,8 +40,19 @@
 #include <iostream>
 #include <string>
 
-std::string GetHelpString();
+std::string GetHelpString()
+{
+  std::stringstream ss;
+  ss << "Calculate the average magnitude of the vectors in a vector image." << std::endl
+     << "Usage:" << std::endl
+     << "AverageVectorMagnitude" << std::endl
+     << "-in InputVectorImageFileName" << std::endl
+     << "[-out OutputImageFileName]" << std::endl
+     << "-id ImageDimension" << std::endl
+     << "-sd SpaceDimension (the dimension of the vectors)" << std::endl;
 
+  return ss.str();
+}
 
 class AverageVectorMagnitudeBase : public itktools::ITKToolsBase
 {
@@ -237,19 +248,4 @@ int main( int argc, char** argv )
 
 } // end function main
 
-std::string GetHelpString()
-{
-  std::stringstream ss;
-  ss << "Calculate the average magnitude of the vectors in a vector image." << std::endl
-     << "Usage:" << std::endl
-     << "AverageVectorMagnitude" << std::endl
-     << "-in InputVectorImageFileName" << std::endl
-     << "[-out OutputImageFileName]" << std::endl
-     << "-id ImageDimension" << std::endl
-     << "-sd SpaceDimension (the dimension of the vectors)" << std::endl;
-
-  return ss.str();
-}
-
 #endif // #ifndef __avm_cxx
-

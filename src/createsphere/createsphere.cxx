@@ -30,6 +30,26 @@
 //-------------------------------------------------------------------------------------
 
 
+/**
+  * ******************* GetHelpString *******************
+  */
+std::string GetHelpString( void )
+{
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxcreatesphere" << std::endl
+    << "-out     outputFilename" << std::endl
+    << "-sz      image size (voxels)" << std::endl
+    << "[-sp]    image spacing (mm)" << std::endl
+    << "-c       center (mm)" << std::endl
+    << "-r       radii (mm)" << std::endl
+    << "[-dim]   dimension, default 3" << std::endl
+    << "[-pt]    pixelType, default short" << std::endl
+  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
+  return ss.str();
+} // end GetHelpString
+
+
 /** CreateSphere */
 
 class CreateSphereBase : public itktools::ITKToolsBase
@@ -246,24 +266,3 @@ int main( int argc, char *argv[] )
   return 0;
 
 } // end main
-
-
-  /**
-   * ******************* GetHelpString *******************
-   */
-std::string GetHelpString( void )
-{
-  std::stringstream ss;
-  ss << "Usage:" << std::endl
-  << "pxcreatesphere" << std::endl
-    << "-out     outputFilename" << std::endl
-    << "-sz      image size (voxels)" << std::endl
-    << "[-sp]    image spacing (mm)" << std::endl
-    << "-c       center (mm)" << std::endl
-    << "-r       radii (mm)" << std::endl
-    << "[-dim]   dimension, default 3" << std::endl
-    << "[-pt]    pixelType, default short" << std::endl
-  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
-  return ss.str();
-} // end GetHelpString
-

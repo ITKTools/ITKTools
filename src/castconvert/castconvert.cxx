@@ -47,6 +47,64 @@
 //#include "itkBrains2MaskImageIOFactory.h"
 #include "itkPhilipsRECImageIOFactory.h"
 
+
+/**
+ * ******************* GetHelpString *******************
+ */
+
+std::string GetHelpString( void )
+{
+  std::stringstream ss;
+  ss << "Description:\n"
+     << "This is done by reading in an image, possibly casting of the image,\n"
+     << "and subsequently writing the image to some format.\n"
+     << "With converting we mean changing the extension of the image,\n"
+     << "such as bmp, mhd, etc. With casting we mean changing the component\n"
+     << "type of a voxel, such as short, unsigned long, float.\n"
+     << "Casting is currently done for scalar images using the ShiftScaleImageFilter,\n"
+     << "where values are mapped to itself, leaving the intensity range\n"
+     << "the same. NOTE that when casting to a component type with a\n"
+     << "smaller dynamic range, information might get lost. In this case\n"
+     << "we might use the RescaleIntensityImageFilter to linearly\n"
+     << "rescale the image values. For multi-component images, such as vector\n"
+     << "or RGB images, casting is done using the itk::VectorCastImageFilter.\n"
+     << "Currently supported are the SCALAR pixel types and also multi-\n"
+     << "component pixel types, such as vector and RGB pixels. For multi-\n"
+     << "component pixel types, everything is read in as an itk::Vector with\n"
+     << "the correct pixel component type and number of components. This is\n"
+     << "also the case for the writer.\n"
+     << "Input images can be in all file formats ITK supports and for which\n"
+     << "the ImageFileReader works, and additionally 3D dicom series\n"
+     << "using the ImageSeriesReader. It is also possible to extract a specific\n"
+     << "DICOM series from a directory by supplying the seriesUID. The pixel\n"
+     << "component type should of course be a component type supported by the\n"
+     << "file format. Output images can be in all file formats ITK supports and\n"
+     << "for which the ImageFileReader works, so no dicom output is\n"
+     << "currently supported.\n" << std::endl
+     << "Usage:\n"
+     << "pxcastconvert\n"
+     << "  -in      inputfilename\n"
+     << "  -out     outputfilename\n"
+     << "  [-opct]  outputPixelComponentType, default equal to input\n"
+     << "  [-z]     compression flag; if provided, the output image is compressed\n"
+     << "OR pxcastconvert\n"
+     << "  -in      dicomDirectory\n"
+     << "  -out     outputfilename\n"
+     << "  [-opct]  outputPixelComponentType, default equal to input\n"
+     << "  [-s]     seriesUID, default the first UID found\n"
+     << "  [-r]     add restrictions to generate a unique seriesUID\n"
+     << "           e.g. \"0020|0012\" to add a check for acquisition number.\n"
+     << "  [-z]     compression flag; if provided, the output image is compressed\n\n"
+     << "OutputPixelComponentType should be one of {[unsigned_]char, [unsigned_]short,\n"
+     << "  [unsigned_]int, [unsigned_]long, float, double}.\n"
+     << "OutputPixelComponentType should additionally be supported by the output file format.\n"
+     << "The compression flag \"-z\" may be ignored by some output image formats." << std::endl;
+
+  return ss.str();
+
+} // end GetHelpString()
+
+
 /* Functions to do the actual conversion. */
 extern int FileConverterScalar(
   const std::string & inputPixelComponentType,

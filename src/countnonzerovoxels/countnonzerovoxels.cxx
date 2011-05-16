@@ -28,7 +28,20 @@
 
 //-------------------------------------------------------------------------------------
 
-std::string GetHelpString( void );
+
+/**
+ * ******************* PrintHelp *******************
+ */
+
+std::string GetHelpString( void )
+{
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxcountnonzerovoxels" << std::endl
+  << "-in      inputFilename" << std::endl;
+  return ss.str();
+} // end GetHelpString()
+
 
 int main( int argc, char *argv[] )
 {
@@ -112,16 +125,3 @@ int main( int argc, char *argv[] )
   return 0;
 
 } // end main
-
-/**
- * ******************* PrintHelp *******************
- */
-
-std::string GetHelpString( void )
-{
-  std::stringstream ss;
-  ss << "Usage:" << std::endl
-  << "pxcountnonzerovoxels" << std::endl
-  << "-in      inputFilename" << std::endl;
-  return ss.str();
-} // end GetHelpString()
