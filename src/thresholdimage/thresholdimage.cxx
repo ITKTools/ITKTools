@@ -24,18 +24,6 @@
 #include "ITKToolsHelpers.h"
 #include "ITKToolsBase.h"
 
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
-#include "itkGradientMagnitudeRecursiveGaussianImageFilter.h"
-
-#include "itkBinaryThresholdImageFilter.h"
-#include "itkOtsuThresholdWithMaskImageFilter.h"
-#include "itkOtsuMultipleThresholdsImageFilter.h"
-#include "itkAdaptiveOtsuThresholdImageFilter.h"
-#include "itkRobustAutomaticThresholdImageFilter.h"
-#include "itkKappaSigmaThresholdImageFilter.h"
-#include "itkMinErrorThresholdImageFilter.h"
-
 #include "ThresholdWrappers.h"
 
 //-------------------------------------------------------------------------------------
