@@ -50,16 +50,16 @@ std::string GetHelpString( void )
 
 
 
-class ReshapeBase : public itktools::ITKToolsBase
+class ITKToolsReshapeBase : public itktools::ITKToolsBase
 { 
 public:
-  ReshapeBase()
+  ITKToolsReshapeBase()
   {
     m_InputFileName = "";
     m_OutputFileName = "";
     //std::vector<unsigned long> m_OutputSize;
   };
-  ~ReshapeBase(){};
+  ~ITKToolsReshapeBase(){};
 
   /** Input parameters */
   std::string m_InputFileName;
@@ -71,13 +71,13 @@ public:
 
 
 template< class TComponentType, unsigned int VDimension >
-class Reshape : public ReshapeBase
+class ITKToolsReshape : public ITKToolsReshapeBase
 {
 public:
-  typedef Reshape Self;
+  typedef ITKToolsReshape Self;
 
-  Reshape(){};
-  ~Reshape(){};
+  ITKToolsReshape(){};
+  ~ITKToolsReshape(){};
 
   static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
@@ -206,7 +206,7 @@ int main( int argc, char **argv )
 
 
   /** Class that does the work */
-  ReshapeBase * reshape = 0; 
+  ITKToolsReshapeBase * reshape = 0; 
 
   /** Short alias */
   unsigned int imageDimension = Dimension;
@@ -220,27 +220,27 @@ int main( int argc, char **argv )
     
   try
   {    
-    if (!reshape) reshape = Reshape< unsigned char, 2 >::New( componentType, imageDimension );
-    if (!reshape) reshape = Reshape< char, 2 >::New( componentType, imageDimension );
-    if (!reshape) reshape = Reshape< unsigned short, 2 >::New( componentType, imageDimension );
-    if (!reshape) reshape = Reshape< short, 2 >::New( componentType, imageDimension );
-    if (!reshape) reshape = Reshape< unsigned int, 2 >::New( componentType, imageDimension );
-    if (!reshape) reshape = Reshape< int, 2 >::New( componentType, imageDimension );
-    if (!reshape) reshape = Reshape< unsigned long, 2 >::New( componentType, imageDimension );
-    if (!reshape) reshape = Reshape< long, 2 >::New( componentType, imageDimension );
-    if (!reshape) reshape = Reshape< float, 2 >::New( componentType, imageDimension );
-    if (!reshape) reshape = Reshape< double, 2 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< unsigned char, 2 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< char, 2 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< unsigned short, 2 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< short, 2 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< unsigned int, 2 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< int, 2 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< unsigned long, 2 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< long, 2 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< float, 2 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< double, 2 >::New( componentType, imageDimension );
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!reshape) reshape = Reshape< unsigned char, 3 >::New( componentType, imageDimension );
-    if (!reshape) reshape = Reshape< char, 3 >::New( componentType, imageDimension );
-    if (!reshape) reshape = Reshape< unsigned short, 3 >::New( componentType, imageDimension );
-    if (!reshape) reshape = Reshape< short, 3 >::New( componentType, imageDimension );
-    if (!reshape) reshape = Reshape< unsigned int, 3 >::New( componentType, imageDimension );
-    if (!reshape) reshape = Reshape< int, 3 >::New( componentType, imageDimension );
-    if (!reshape) reshape = Reshape< unsigned long, 3 >::New( componentType, imageDimension );
-    if (!reshape) reshape = Reshape< long, 3 >::New( componentType, imageDimension );
-    if (!reshape) reshape = Reshape< float, 3 >::New( componentType, imageDimension );
-    if (!reshape) reshape = Reshape< double, 3 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< unsigned char, 3 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< char, 3 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< unsigned short, 3 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< short, 3 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< unsigned int, 3 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< int, 3 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< unsigned long, 3 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< long, 3 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< float, 3 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< double, 3 >::New( componentType, imageDimension );
 #endif
     if (!reshape) 
     {

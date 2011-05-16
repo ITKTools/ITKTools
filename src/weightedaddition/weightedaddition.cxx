@@ -35,16 +35,16 @@ std::string GetHelpString()
 
 /** WeightedAddition */
 
-class WeightedAdditionBase : public itktools::ITKToolsBase
+class ITKToolsWeightedAdditionBase : public itktools::ITKToolsBase
 { 
 public:
-  WeightedAdditionBase()
+  ITKToolsWeightedAdditionBase()
   {
     //std::vector<std::string> m_InputFileNames;
     //std::vector<std::string> m_WeightFileNames;
     m_OutputFileName = "";
   };
-  ~WeightedAdditionBase(){};
+  ~ITKToolsWeightedAdditionBase(){};
 
   /** Input parameters */
   std::vector<std::string> m_InputFileNames;
@@ -55,13 +55,13 @@ public:
 
 
 template< class TComponentType, unsigned int VDimension >
-class WeightedAddition : public WeightedAdditionBase
+class ITKToolsWeightedAddition : public ITKToolsWeightedAdditionBase
 {
 public:
-  typedef WeightedAddition Self;
+  typedef ITKToolsWeightedAddition Self;
 
-  WeightedAddition(){};
-  ~WeightedAddition(){};
+  ITKToolsWeightedAddition(){};
+  ~ITKToolsWeightedAddition(){};
 
   static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
@@ -122,10 +122,6 @@ public:
 
 }; // end WeightedAddition
 
-//-------------------------------------------------------------------------------------
-
-/** Declare GetHelpString. */
-std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -195,7 +191,7 @@ int main( int argc, char **argv )
   }
 
   /** Class that does the work */
-  WeightedAdditionBase * weightedAddition = NULL;
+  ITKToolsWeightedAdditionBase * weightedAddition = NULL;
 
   /** Short alias */
   unsigned int dim = Dimension;
@@ -208,9 +204,9 @@ int main( int argc, char **argv )
   try
   {    
     // now call all possible template combinations.
-    if (!weightedAddition) weightedAddition = WeightedAddition< float, 2 >::New( componentType, dim );
+    if (!weightedAddition) weightedAddition = ITKToolsWeightedAddition< float, 2 >::New( componentType, dim );
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!weightedAddition) weightedAddition = WeightedAddition< float, 3 >::New( componentType, dim );    
+    if (!weightedAddition) weightedAddition = ITKToolsWeightedAddition< float, 3 >::New( componentType, dim );    
 #endif
     if (!weightedAddition) 
     {

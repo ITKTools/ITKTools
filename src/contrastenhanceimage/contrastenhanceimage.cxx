@@ -66,10 +66,10 @@ std::string GetHelpString(void)
 
 /** ContrastEnhanceImage */
 
-class ContrastEnhanceImageBase : public itktools::ITKToolsBase
+class ITKToolsContrastEnhanceImageBase : public itktools::ITKToolsBase
 { 
 public:
-  ContrastEnhanceImageBase()
+  ITKToolsContrastEnhanceImageBase()
   {
     m_Alpha = 0.0f;
     m_Beta = 0.0f;
@@ -79,7 +79,7 @@ public:
     //m_Radius; // does this need to be initialized?
   };
   
-  ~ContrastEnhanceImageBase(){};
+  ~ITKToolsContrastEnhanceImageBase(){};
 
   /** Input parameters */
   std::string m_InputFileName;
@@ -92,13 +92,13 @@ public:
 
 
 template< class TComponentType, unsigned int VImageDimension >
-class ContrastEnhanceImage : public ContrastEnhanceImageBase
+class ITKToolsContrastEnhanceImage : public ITKToolsContrastEnhanceImageBase
 {
 public:
-  typedef ContrastEnhanceImage Self;
+  typedef ITKToolsContrastEnhanceImage Self;
 
-  ContrastEnhanceImage(){};
-  ~ContrastEnhanceImage(){};
+  ITKToolsContrastEnhanceImage(){};
+  ~ITKToolsContrastEnhanceImage(){};
 
   static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
@@ -235,19 +235,19 @@ int main(int argc, char** argv)
   parser->GetCommandLineArgument( "-r", radius);
   
   /** Class that does the work */
-  ContrastEnhanceImageBase * contrastEnhanceImage = NULL; 
+  ITKToolsContrastEnhanceImageBase * contrastEnhanceImage = NULL; 
 
   try
   {    
     // now call all possible template combinations.
-    if (!contrastEnhanceImage) contrastEnhanceImage = ContrastEnhanceImage< short, 2 >::New( componentType, imageDimension );
-    if (!contrastEnhanceImage) contrastEnhanceImage = ContrastEnhanceImage< char, 2 >::New( componentType, imageDimension );
-    if (!contrastEnhanceImage) contrastEnhanceImage = ContrastEnhanceImage< unsigned char, 2 >::New( componentType, imageDimension );
+    if (!contrastEnhanceImage) contrastEnhanceImage = ITKToolsContrastEnhanceImage< short, 2 >::New( componentType, imageDimension );
+    if (!contrastEnhanceImage) contrastEnhanceImage = ITKToolsContrastEnhanceImage< char, 2 >::New( componentType, imageDimension );
+    if (!contrastEnhanceImage) contrastEnhanceImage = ITKToolsContrastEnhanceImage< unsigned char, 2 >::New( componentType, imageDimension );
     
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!rv) contrastEnhanceImage = ContrastEnhanceImage< short, 3 >::New( componentType, imageDimension );    
-    if (!rv) contrastEnhanceImage = ContrastEnhanceImage< char, 3 >::New( componentType, imageDimension );
-    if (!rv) contrastEnhanceImage = ContrastEnhanceImage< unsigned char, 3 >::New( componentType, imageDimension );
+    if (!contrastEnhanceImage) contrastEnhanceImage = ITKToolsContrastEnhanceImage< short, 3 >::New( componentType, imageDimension );
+    if (!contrastEnhanceImage) contrastEnhanceImage = ITKToolsContrastEnhanceImage< char, 3 >::New( componentType, imageDimension );
+    if (!contrastEnhanceImage) contrastEnhanceImage = ITKToolsContrastEnhanceImage< unsigned char, 3 >::New( componentType, imageDimension );
 #endif
     if (!contrastEnhanceImage) 
     {

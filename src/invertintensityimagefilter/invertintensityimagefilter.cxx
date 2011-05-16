@@ -57,15 +57,15 @@ std::string GetHelpString( void )
 
 /** InvertIntensity */
 
-class InvertIntensityBase : public itktools::ITKToolsBase
+class ITKToolsInvertIntensityBase : public itktools::ITKToolsBase
 { 
 public:
-  InvertIntensityBase()
+  ITKToolsInvertIntensityBase()
   {
     m_InputFileName = "";
     m_OutputFileName = "";
   };
-  ~InvertIntensityBase(){};
+  ~ITKToolsInvertIntensityBase(){};
 
   /** Input parameters */
   std::string m_InputFileName;
@@ -75,13 +75,13 @@ public:
 
 
 template< unsigned int VImageDimension, class TComponentType >
-class InvertIntensity : public InvertIntensityBase
+class ITKToolsInvertIntensity : public ITKToolsInvertIntensityBase
 {
 public:
-  typedef InvertIntensity Self;
+  typedef ITKToolsInvertIntensity Self;
 
-  InvertIntensity(){};
-  ~InvertIntensity(){};
+  ITKToolsInvertIntensity(){};
+  ~ITKToolsInvertIntensity(){};
 
   static Self * New( unsigned int imageDimension, itktools::ComponentType componentType )
   {
@@ -217,7 +217,7 @@ int main( int argc, char ** argv )
 
 
   /** Class that does the work */
-  InvertIntensityBase * invertIntensity = NULL; 
+  ITKToolsInvertIntensityBase * invertIntensity = NULL; 
 
   unsigned int imageDimension = 0;
   itktools::GetImageDimension(inputFileName, imageDimension);
@@ -227,20 +227,20 @@ int main( int argc, char ** argv )
   try
   {    
     // now call all possible template combinations.
-    if (!invertIntensity) invertIntensity = InvertIntensity< 2, char >::New( imageDimension, componentType );
-    if (!invertIntensity) invertIntensity = InvertIntensity< 2, unsigned char >::New( imageDimension, componentType );
-    if (!invertIntensity) invertIntensity = InvertIntensity< 2, short >::New( imageDimension, componentType );
-    if (!invertIntensity) invertIntensity = InvertIntensity< 2, unsigned short >::New( imageDimension, componentType );
-    if (!invertIntensity) invertIntensity = InvertIntensity< 2, float >::New( imageDimension, componentType );
-    if (!invertIntensity) invertIntensity = InvertIntensity< 2, double >::New( imageDimension, componentType );
+    if (!invertIntensity) invertIntensity = ITKToolsInvertIntensity< 2, char >::New( imageDimension, componentType );
+    if (!invertIntensity) invertIntensity = ITKToolsInvertIntensity< 2, unsigned char >::New( imageDimension, componentType );
+    if (!invertIntensity) invertIntensity = ITKToolsInvertIntensity< 2, short >::New( imageDimension, componentType );
+    if (!invertIntensity) invertIntensity = ITKToolsInvertIntensity< 2, unsigned short >::New( imageDimension, componentType );
+    if (!invertIntensity) invertIntensity = ITKToolsInvertIntensity< 2, float >::New( imageDimension, componentType );
+    if (!invertIntensity) invertIntensity = ITKToolsInvertIntensity< 2, double >::New( imageDimension, componentType );
     
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!invertIntensity) invertIntensity = InvertIntensity< 3, char >::New( imageDimension, componentType );
-    if (!invertIntensity) invertIntensity = InvertIntensity< 3, unsigned char >::New( imageDimension, componentType );
-    if (!invertIntensity) invertIntensity = InvertIntensity< 3, short >::New( imageDimension, componentType );
-    if (!invertIntensity) invertIntensity = InvertIntensity< 3, unsigned short >::New( imageDimension, componentType );
-    if (!invertIntensity) invertIntensity = InvertIntensity< 3, float >::New( imageDimension, componentType );
-    if (!invertIntensity) invertIntensity = InvertIntensity< 3, double >::New( imageDimension, componentType );
+    if (!invertIntensity) invertIntensity = ITKToolsInvertIntensity< 3, char >::New( imageDimension, componentType );
+    if (!invertIntensity) invertIntensity = ITKToolsInvertIntensity< 3, unsigned char >::New( imageDimension, componentType );
+    if (!invertIntensity) invertIntensity = ITKToolsInvertIntensity< 3, short >::New( imageDimension, componentType );
+    if (!invertIntensity) invertIntensity = ITKToolsInvertIntensity< 3, unsigned short >::New( imageDimension, componentType );
+    if (!invertIntensity) invertIntensity = ITKToolsInvertIntensity< 3, float >::New( imageDimension, componentType );
+    if (!invertIntensity) invertIntensity = ITKToolsInvertIntensity< 3, double >::New( imageDimension, componentType );
 #endif
     if (!invertIntensity) 
     {

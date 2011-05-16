@@ -54,16 +54,16 @@ std::string GetHelpString()
 
 /** Reflect */
 
-class ReflectBase : public itktools::ITKToolsBase
+class ITKToolsReflectBase : public itktools::ITKToolsBase
 { 
 public:
-  ReflectBase()
+  ITKToolsReflectBase()
   {
     m_InputFileName = "";
     m_OutputFileName = "";
     m_Direction = 0;
   };
-  ~ReflectBase(){};
+  ~ITKToolsReflectBase(){};
 
   /** Input parameters */
   std::string m_InputFileName;
@@ -74,13 +74,13 @@ public:
 
 
 template< class TComponentType, unsigned int VDimension >
-class Reflect : public ReflectBase
+class ITKToolsReflect : public ITKToolsReflectBase
 {
 public:
-  typedef Reflect Self;
+  typedef ITKToolsReflect Self;
 
-  Reflect(){};
-  ~Reflect(){};
+  ITKToolsReflect(){};
+  ~ITKToolsReflect(){};
 
   static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
@@ -207,32 +207,32 @@ int main( int argc, char ** argv )
 
  
   /** Class that does the work */
-  ReflectBase * reflect = NULL; 
+  ITKToolsReflectBase * reflect = NULL; 
 
   try
   {    
     // now call all possible template combinations.
-    if (!reflect) reflect = Reflect< unsigned char, 2 >::New( componentType, imageDimension );
-    if (!reflect) reflect = Reflect< char, 2 >::New( componentType, imageDimension );
-    if (!reflect) reflect = Reflect< unsigned short, 2 >::New( componentType, imageDimension );
-    if (!reflect) reflect = Reflect< short, 2 >::New( componentType, imageDimension );
-    if (!reflect) reflect = Reflect< unsigned int, 2 >::New( componentType, imageDimension );
-    if (!reflect) reflect = Reflect< int, 2 >::New( componentType, imageDimension );
-    if (!reflect) reflect = Reflect< unsigned long, 2 >::New( componentType, imageDimension );
-    if (!reflect) reflect = Reflect< long, 2 >::New( componentType, imageDimension );
-    if (!reflect) reflect = Reflect< float, 2 >::New( componentType, imageDimension );
-    if (!reflect) reflect = Reflect< double, 2 >::New( componentType, imageDimension );
+    if (!reflect) reflect = ITKToolsReflect< unsigned char, 2 >::New( componentType, imageDimension );
+    if (!reflect) reflect = ITKToolsReflect< char, 2 >::New( componentType, imageDimension );
+    if (!reflect) reflect = ITKToolsReflect< unsigned short, 2 >::New( componentType, imageDimension );
+    if (!reflect) reflect = ITKToolsReflect< short, 2 >::New( componentType, imageDimension );
+    if (!reflect) reflect = ITKToolsReflect< unsigned int, 2 >::New( componentType, imageDimension );
+    if (!reflect) reflect = ITKToolsReflect< int, 2 >::New( componentType, imageDimension );
+    if (!reflect) reflect = ITKToolsReflect< unsigned long, 2 >::New( componentType, imageDimension );
+    if (!reflect) reflect = ITKToolsReflect< long, 2 >::New( componentType, imageDimension );
+    if (!reflect) reflect = ITKToolsReflect< float, 2 >::New( componentType, imageDimension );
+    if (!reflect) reflect = ITKToolsReflect< double, 2 >::New( componentType, imageDimension );
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!reflect) reflect = Reflect< unsigned char, 3 >::New( componentType, imageDimension );
-    if (!reflect) reflect = Reflect< char, 3 >::New( componentType, imageDimension );
-    if (!reflect) reflect = Reflect< unsigned short, 3 >::New( componentType, imageDimension );
-    if (!reflect) reflect = Reflect< short, 3 >::New( componentType, imageDimension );
-    if (!reflect) reflect = Reflect< unsigned int, 3 >::New( componentType, imageDimension );
-    if (!reflect) reflect = Reflect< int, 3 >::New( componentType, imageDimension );
-    if (!reflect) reflect = Reflect< unsigned long, 3 >::New( componentType, imageDimension );
-    if (!reflect) reflect = Reflect< long, 3 >::New( componentType, imageDimension );
-    if (!reflect) reflect = Reflect< float, 3 >::New( componentType, imageDimension );
-    if (!reflect) reflect = Reflect< double, 3 >::New( componentType, imageDimension );
+    if (!reflect) reflect = ITKToolsReflect< unsigned char, 3 >::New( componentType, imageDimension );
+    if (!reflect) reflect = ITKToolsReflect< char, 3 >::New( componentType, imageDimension );
+    if (!reflect) reflect = ITKToolsReflect< unsigned short, 3 >::New( componentType, imageDimension );
+    if (!reflect) reflect = ITKToolsReflect< short, 3 >::New( componentType, imageDimension );
+    if (!reflect) reflect = ITKToolsReflect< unsigned int, 3 >::New( componentType, imageDimension );
+    if (!reflect) reflect = ITKToolsReflect< int, 3 >::New( componentType, imageDimension );
+    if (!reflect) reflect = ITKToolsReflect< unsigned long, 3 >::New( componentType, imageDimension );
+    if (!reflect) reflect = ITKToolsReflect< long, 3 >::New( componentType, imageDimension );
+    if (!reflect) reflect = ITKToolsReflect< float, 3 >::New( componentType, imageDimension );
+    if (!reflect) reflect = ITKToolsReflect< double, 3 >::New( componentType, imageDimension );
 #endif
     if (!reflect) 
     {

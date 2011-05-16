@@ -55,10 +55,10 @@ std::string GetHelpString( void )
 
 /** ExtractEveryOtherSlice */
 
-class ExtractEveryOtherSliceBase : public itktools::ITKToolsBase
+class ITKToolsExtractEveryOtherSliceBase : public itktools::ITKToolsBase
 { 
 public:
-  ExtractEveryOtherSliceBase()
+  ITKToolsExtractEveryOtherSliceBase()
   {
     m_InputFileName = "";
     m_OutputFileName = "";
@@ -66,7 +66,7 @@ public:
     m_Offset = 0;
     m_Direction = 0;
   };
-  ~ExtractEveryOtherSliceBase(){};
+  ~ITKToolsExtractEveryOtherSliceBase(){};
 
   /** Input parameters */
   std::string m_InputFileName;
@@ -79,13 +79,13 @@ public:
 
 
 template< class TComponentType, unsigned int VDimension >
-class ExtractEveryOtherSlice : public ExtractEveryOtherSliceBase
+class ITKToolsExtractEveryOtherSlice : public ITKToolsExtractEveryOtherSliceBase
 {
 public:
-  typedef ExtractEveryOtherSlice Self;
+  typedef ITKToolsExtractEveryOtherSlice Self;
 
-  ExtractEveryOtherSlice(){};
-  ~ExtractEveryOtherSlice(){};
+  ITKToolsExtractEveryOtherSlice(){};
+  ~ITKToolsExtractEveryOtherSlice(){};
 
   static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
@@ -301,7 +301,7 @@ int main( int argc, char **argv )
   }
 
   /** Class that does the work */
-  ExtractEveryOtherSliceBase * extractEveryOtherSlice = NULL;
+  ITKToolsExtractEveryOtherSliceBase * extractEveryOtherSlice = NULL;
 
   /** Short alias */
   unsigned int dim = Dimension;
@@ -311,12 +311,12 @@ int main( int argc, char **argv )
   try
   {    
     // now call all possible template combinations.
-    if (!extractEveryOtherSlice) extractEveryOtherSlice = ExtractEveryOtherSlice< unsigned char, 2 >::New( componentType, dim );
-    if (!extractEveryOtherSlice) extractEveryOtherSlice = ExtractEveryOtherSlice< char, 2 >::New( componentType, dim );
-    if (!extractEveryOtherSlice) extractEveryOtherSlice = ExtractEveryOtherSlice< unsigned short, 2 >::New( componentType, dim );
-    if (!extractEveryOtherSlice) extractEveryOtherSlice = ExtractEveryOtherSlice< short, 2 >::New( componentType, dim );
-    if (!extractEveryOtherSlice) extractEveryOtherSlice = ExtractEveryOtherSlice< float, 2 >::New( componentType, dim );
-    if (!extractEveryOtherSlice) extractEveryOtherSlice = ExtractEveryOtherSlice< double, 2 >::New( componentType, dim );
+    if (!extractEveryOtherSlice) extractEveryOtherSlice = ITKToolsExtractEveryOtherSlice< unsigned char, 2 >::New( componentType, dim );
+    if (!extractEveryOtherSlice) extractEveryOtherSlice = ITKToolsExtractEveryOtherSlice< char, 2 >::New( componentType, dim );
+    if (!extractEveryOtherSlice) extractEveryOtherSlice = ITKToolsExtractEveryOtherSlice< unsigned short, 2 >::New( componentType, dim );
+    if (!extractEveryOtherSlice) extractEveryOtherSlice = ITKToolsExtractEveryOtherSlice< short, 2 >::New( componentType, dim );
+    if (!extractEveryOtherSlice) extractEveryOtherSlice = ITKToolsExtractEveryOtherSlice< float, 2 >::New( componentType, dim );
+    if (!extractEveryOtherSlice) extractEveryOtherSlice = ITKToolsExtractEveryOtherSlice< double, 2 >::New( componentType, dim );
 
     if (!extractEveryOtherSlice) 
     {

@@ -71,9 +71,6 @@ void ComputeBrainDistance(
   const std::vector<std::string> & outputFileNames,
   unsigned int method);
 
-/** Declare GetHelpString. */
-std::string GetHelpString( void );
-
 //-------------------------------------------------------------------------------------
 
 

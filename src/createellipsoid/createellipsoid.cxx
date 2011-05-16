@@ -57,10 +57,10 @@ std::string GetHelpString( void )
 
 /** CreateEllipsoid */
 
-class CreateEllipsoidBase : public itktools::ITKToolsBase
+class ITKToolsCreateEllipsoidBase : public itktools::ITKToolsBase
 { 
 public:
-  CreateEllipsoidBase()
+  ITKToolsCreateEllipsoidBase()
   {
     m_OutputFileName = "";
     //std::vector<unsigned int> m_Size;
@@ -69,7 +69,7 @@ public:
     //std::vector<double> m_Radius;
     //std::vector<double> m_Orientation;
   }
-  ~CreateEllipsoidBase(){};
+  ~ITKToolsCreateEllipsoidBase(){};
 
   /** Input parameters */
   std::string m_OutputFileName;
@@ -83,13 +83,13 @@ public:
 
 
 template< class TComponentType, unsigned int VDimension >
-class CreateEllipsoid : public CreateEllipsoidBase
+class ITKToolsCreateEllipsoid : public ITKToolsCreateEllipsoidBase
 {
 public:
-  typedef CreateEllipsoid Self;
+  typedef ITKToolsCreateEllipsoid Self;
 
-  CreateEllipsoid(){};
-  ~CreateEllipsoid(){};
+  ITKToolsCreateEllipsoid(){};
+  ~ITKToolsCreateEllipsoid(){};
 
   static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
@@ -243,7 +243,7 @@ int main( int argc, char *argv[] )
 
   
   /** Class that does the work */
-  CreateEllipsoidBase * createEllipsoid = 0; 
+  ITKToolsCreateEllipsoidBase * createEllipsoid = 0; 
 
   /** Short alias */
   unsigned int dim = Dimension;
@@ -253,20 +253,20 @@ int main( int argc, char *argv[] )
   try
   {    
     // now call all possible template combinations.
-    if (!createEllipsoid) createEllipsoid = CreateEllipsoid< unsigned char, 2 >::New( componentType, dim );
-    if (!createEllipsoid) createEllipsoid = CreateEllipsoid< char, 2 >::New( componentType, dim );
-    if (!createEllipsoid) createEllipsoid = CreateEllipsoid< unsigned short, 2 >::New( componentType, dim );
-    if (!createEllipsoid) createEllipsoid = CreateEllipsoid< short, 2 >::New( componentType, dim );
-    if (!createEllipsoid) createEllipsoid = CreateEllipsoid< float, 2 >::New( componentType, dim );
-    if (!createEllipsoid) createEllipsoid = CreateEllipsoid< double, 2 >::New( componentType, dim );
+    if (!createEllipsoid) createEllipsoid = ITKToolsCreateEllipsoid< unsigned char, 2 >::New( componentType, dim );
+    if (!createEllipsoid) createEllipsoid = ITKToolsCreateEllipsoid< char, 2 >::New( componentType, dim );
+    if (!createEllipsoid) createEllipsoid = ITKToolsCreateEllipsoid< unsigned short, 2 >::New( componentType, dim );
+    if (!createEllipsoid) createEllipsoid = ITKToolsCreateEllipsoid< short, 2 >::New( componentType, dim );
+    if (!createEllipsoid) createEllipsoid = ITKToolsCreateEllipsoid< float, 2 >::New( componentType, dim );
+    if (!createEllipsoid) createEllipsoid = ITKToolsCreateEllipsoid< double, 2 >::New( componentType, dim );
     
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!createEllipsoid) createEllipsoid = CreateEllipsoid< unsigned char, 3 >::New( componentType, dim );
-    if (!createEllipsoid) createEllipsoid = CreateEllipsoid< char, 3 >::New( componentType, dim );
-    if (!createEllipsoid) createEllipsoid = CreateEllipsoid< unsigned short, 3 >::New( componentType, dim );
-    if (!createEllipsoid) createEllipsoid = CreateEllipsoid< short, 3 >::New( componentType, dim );
-    if (!createEllipsoid) createEllipsoid = CreateEllipsoid< float, 3 >::New( componentType, dim );
-    if (!createEllipsoid) createEllipsoid = CreateEllipsoid< double, 3 >::New( componentType, dim );
+    if (!createEllipsoid) createEllipsoid = ITKToolsCreateEllipsoid< unsigned char, 3 >::New( componentType, dim );
+    if (!createEllipsoid) createEllipsoid = ITKToolsCreateEllipsoid< char, 3 >::New( componentType, dim );
+    if (!createEllipsoid) createEllipsoid = ITKToolsCreateEllipsoid< unsigned short, 3 >::New( componentType, dim );
+    if (!createEllipsoid) createEllipsoid = ITKToolsCreateEllipsoid< short, 3 >::New( componentType, dim );
+    if (!createEllipsoid) createEllipsoid = ITKToolsCreateEllipsoid< float, 3 >::New( componentType, dim );
+    if (!createEllipsoid) createEllipsoid = ITKToolsCreateEllipsoid< double, 3 >::New( componentType, dim );
 #endif
     if (!createEllipsoid) 
     {

@@ -56,10 +56,10 @@ std::string GetHelpString( void )
 } // end GetHelpString()
 
 
-class ResizeImageBase : public itktools::ITKToolsBase
+class ITKToolsResizeImageBase : public itktools::ITKToolsBase
 { 
 public:
-  ResizeImageBase()
+  ITKToolsResizeImageBase()
   {
     m_InputFileName = "";
     m_OutputFileName = "";
@@ -67,7 +67,7 @@ public:
     m_IsFactor = false;
     m_InterpolationOrder = 0;
   };
-  ~ResizeImageBase(){};
+  ~ITKToolsResizeImageBase(){};
 
   /** Input parameters */
   std::string m_InputFileName;
@@ -81,13 +81,13 @@ public:
 
 
 template< class TComponentType, unsigned int VDimension >
-class ResizeImage : public ResizeImageBase
+class ITKToolsResizeImage : public ITKToolsResizeImageBase
 {
 public:
-  typedef ResizeImage Self;
+  typedef ITKToolsResizeImage Self;
 
-  ResizeImage(){};
-  ~ResizeImage(){};
+  ITKToolsResizeImage(){};
+  ~ITKToolsResizeImage(){};
 
   static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
@@ -286,7 +286,7 @@ int main( int argc, char **argv )
 
 
   /** Class that does the work */
-  ResizeImageBase * resizeImage = 0; 
+  ITKToolsResizeImageBase * resizeImage = 0; 
 
   /** Short alias */
   unsigned int imageDimension = Dimension;
@@ -299,27 +299,27 @@ int main( int argc, char **argv )
     componentType << std::endl;
   try
   {    
-    if (!resizeImage) resizeImage = ResizeImage< unsigned char, 2 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ResizeImage< char, 2 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ResizeImage< unsigned short, 2 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ResizeImage< short, 2 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ResizeImage< unsigned int, 2 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ResizeImage< int, 2 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ResizeImage< unsigned long, 2 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ResizeImage< long, 2 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ResizeImage< float, 2 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ResizeImage< double, 2 >::New( componentType, imageDimension );
+    if (!resizeImage) resizeImage = ITKToolsResizeImage< unsigned char, 2 >::New( componentType, imageDimension );
+    if (!resizeImage) resizeImage = ITKToolsResizeImage< char, 2 >::New( componentType, imageDimension );
+    if (!resizeImage) resizeImage = ITKToolsResizeImage< unsigned short, 2 >::New( componentType, imageDimension );
+    if (!resizeImage) resizeImage = ITKToolsResizeImage< short, 2 >::New( componentType, imageDimension );
+    if (!resizeImage) resizeImage = ITKToolsResizeImage< unsigned int, 2 >::New( componentType, imageDimension );
+    if (!resizeImage) resizeImage = ITKToolsResizeImage< int, 2 >::New( componentType, imageDimension );
+    if (!resizeImage) resizeImage = ITKToolsResizeImage< unsigned long, 2 >::New( componentType, imageDimension );
+    if (!resizeImage) resizeImage = ITKToolsResizeImage< long, 2 >::New( componentType, imageDimension );
+    if (!resizeImage) resizeImage = ITKToolsResizeImage< float, 2 >::New( componentType, imageDimension );
+    if (!resizeImage) resizeImage = ITKToolsResizeImage< double, 2 >::New( componentType, imageDimension );
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!resizeImage) resizeImage = ResizeImage< unsigned char, 3 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ResizeImage< char, 3 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ResizeImage< unsigned short, 3 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ResizeImage< short, 3 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ResizeImage< unsigned int, 3 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ResizeImage< int, 3 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ResizeImage< unsigned long, 3 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ResizeImage< long, 3 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ResizeImage< float, 3 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ResizeImage< double, 3 >::New( componentType, imageDimension );
+    if (!resizeImage) resizeImage = ITKToolsResizeImage< unsigned char, 3 >::New( componentType, imageDimension );
+    if (!resizeImage) resizeImage = ITKToolsResizeImage< char, 3 >::New( componentType, imageDimension );
+    if (!resizeImage) resizeImage = ITKToolsResizeImage< unsigned short, 3 >::New( componentType, imageDimension );
+    if (!resizeImage) resizeImage = ITKToolsResizeImage< short, 3 >::New( componentType, imageDimension );
+    if (!resizeImage) resizeImage = ITKToolsResizeImage< unsigned int, 3 >::New( componentType, imageDimension );
+    if (!resizeImage) resizeImage = ITKToolsResizeImage< int, 3 >::New( componentType, imageDimension );
+    if (!resizeImage) resizeImage = ITKToolsResizeImage< unsigned long, 3 >::New( componentType, imageDimension );
+    if (!resizeImage) resizeImage = ITKToolsResizeImage< long, 3 >::New( componentType, imageDimension );
+    if (!resizeImage) resizeImage = ITKToolsResizeImage< float, 3 >::New( componentType, imageDimension );
+    if (!resizeImage) resizeImage = ITKToolsResizeImage< double, 3 >::New( componentType, imageDimension );
 #endif
     if (!resizeImage) 
     {

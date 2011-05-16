@@ -62,17 +62,17 @@ std::string GetHelpString()
 
 /** RescaleIntensityImageFilter */
 
-class RescaleIntensityImageFilterBase : public itktools::ITKToolsBase
+class ITKToolsRescaleIntensityImageFilterBase : public itktools::ITKToolsBase
 { 
 public:
-  RescaleIntensityImageFilterBase()
+  ITKToolsRescaleIntensityImageFilterBase()
   {
     m_InputFileName = "";
     m_OutputFileName = "";
     //std::vector<double> m_Values;
     m_ValuesAreExtrema = false;
   };
-  ~RescaleIntensityImageFilterBase(){};
+  ~ITKToolsRescaleIntensityImageFilterBase(){};
 
   /** Input parameters */
   std::string m_InputFileName;
@@ -85,13 +85,13 @@ public:
 
 
 template< class TComponentType, unsigned int VDimension >
-class RescaleIntensityImageFilter : public RescaleIntensityImageFilterBase
+class ITKToolsRescaleIntensityImageFilter : public ITKToolsRescaleIntensityImageFilterBase
 {
 public:
-  typedef RescaleIntensityImageFilter Self;
+  typedef ITKToolsRescaleIntensityImageFilter Self;
 
-  RescaleIntensityImageFilter(){};
-  ~RescaleIntensityImageFilter(){};
+  ITKToolsRescaleIntensityImageFilter(){};
+  ~ITKToolsRescaleIntensityImageFilter(){};
 
   static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
@@ -342,7 +342,7 @@ int main( int argc, char **argv )
 
 
   /** Class that does the work */
-  RescaleIntensityImageFilterBase * rescaleIntensityImageFilter = 0; 
+  ITKToolsRescaleIntensityImageFilterBase * rescaleIntensityImageFilter = 0; 
 
   /** Short alias */
   unsigned int imageDimension = Dimension;
@@ -356,17 +356,17 @@ int main( int argc, char **argv )
 
   try
   {    
-    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = RescaleIntensityImageFilter< unsigned char, 2 >::New( componentType, imageDimension );
-    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = RescaleIntensityImageFilter< char, 2 >::New( componentType, imageDimension );
-    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = RescaleIntensityImageFilter< unsigned short, 2 >::New( componentType, imageDimension );
-    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = RescaleIntensityImageFilter< short, 2 >::New( componentType, imageDimension );
-    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = RescaleIntensityImageFilter< float, 2 >::New( componentType, imageDimension );
+    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = ITKToolsRescaleIntensityImageFilter< unsigned char, 2 >::New( componentType, imageDimension );
+    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = ITKToolsRescaleIntensityImageFilter< char, 2 >::New( componentType, imageDimension );
+    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = ITKToolsRescaleIntensityImageFilter< unsigned short, 2 >::New( componentType, imageDimension );
+    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = ITKToolsRescaleIntensityImageFilter< short, 2 >::New( componentType, imageDimension );
+    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = ITKToolsRescaleIntensityImageFilter< float, 2 >::New( componentType, imageDimension );
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = RescaleIntensityImageFilter< unsigned char, 3 >::New( componentType, imageDimension );
-    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = RescaleIntensityImageFilter< char, 3 >::New( componentType, imageDimension );
-    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = RescaleIntensityImageFilter< unsigned short, 3 >::New( componentType, imageDimension );
-    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = RescaleIntensityImageFilter< short, 3 >::New( componentType, imageDimension );
-    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = RescaleIntensityImageFilter< float, 3 >::New( componentType, imageDimension );
+    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = ITKToolsRescaleIntensityImageFilter< unsigned char, 3 >::New( componentType, imageDimension );
+    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = ITKToolsRescaleIntensityImageFilter< char, 3 >::New( componentType, imageDimension );
+    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = ITKToolsRescaleIntensityImageFilter< unsigned short, 3 >::New( componentType, imageDimension );
+    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = ITKToolsRescaleIntensityImageFilter< short, 3 >::New( componentType, imageDimension );
+    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = ITKToolsRescaleIntensityImageFilter< float, 3 >::New( componentType, imageDimension );
 #endif
     if (!rescaleIntensityImageFilter) 
     {

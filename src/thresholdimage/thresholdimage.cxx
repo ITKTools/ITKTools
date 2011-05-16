@@ -84,10 +84,10 @@ std::string GetHelpString( void )
 
 /** ThresholdImage */
 
-class ThresholdImageBase : public itktools::ITKToolsBase
+class ITKToolsThresholdImageBase : public itktools::ITKToolsBase
 { 
 public:
-  ThresholdImageBase()
+  ITKToolsThresholdImageBase()
   {
     m_Bins = 0;
     m_InputFileName = "";
@@ -106,7 +106,7 @@ public:
     m_Threshold1 = 0.0f;
     m_Threshold2 = 0.0f;
   };
-  ~ThresholdImageBase(){};
+  ~ITKToolsThresholdImageBase(){};
 
   /** Input parameters */
   unsigned int m_Bins;
@@ -130,13 +130,13 @@ public:
 
 
 template< class TComponentType, unsigned int VDimension >
-class ThresholdImageSelector : public ThresholdImageBase
+class ITKToolsThresholdImageSelector : public ITKToolsThresholdImageBase
 {
 public:
-  typedef ThresholdImageSelector Self;
+  typedef ITKToolsThresholdImageSelector Self;
 
-  ThresholdImageSelector(){};
-  ~ThresholdImageSelector(){};
+  ITKToolsThresholdImageSelector(){};
+  ~ITKToolsThresholdImageSelector(){};
 
   static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
@@ -333,7 +333,7 @@ int main( int argc, char **argv )
 
 
   /** Class that does the work */
-  ThresholdImageBase * thresholdImage = 0; 
+  ITKToolsThresholdImageBase * thresholdImage = 0; 
 
   /** Short alias */
   unsigned int dim = Dimension;
@@ -348,20 +348,20 @@ int main( int argc, char **argv )
   try
   {    
     // now call all possible template combinations.
-    if (!thresholdImage) thresholdImage = ThresholdImageSelector< char, 2 >::New( componentType, dim );
-    if (!thresholdImage) thresholdImage = ThresholdImageSelector< unsigned char, 2 >::New( componentType, dim );
-    if (!thresholdImage) thresholdImage = ThresholdImageSelector< short, 2 >::New( componentType, dim );
-    if (!thresholdImage) thresholdImage = ThresholdImageSelector< unsigned short, 2 >::New( componentType, dim );
-    if (!thresholdImage) thresholdImage = ThresholdImageSelector< float, 2 >::New( componentType, dim );
-    if (!thresholdImage) thresholdImage = ThresholdImageSelector< double, 2 >::New( componentType, dim );
+    if (!thresholdImage) thresholdImage = ITKToolsThresholdImageSelector< char, 2 >::New( componentType, dim );
+    if (!thresholdImage) thresholdImage = ITKToolsThresholdImageSelector< unsigned char, 2 >::New( componentType, dim );
+    if (!thresholdImage) thresholdImage = ITKToolsThresholdImageSelector< short, 2 >::New( componentType, dim );
+    if (!thresholdImage) thresholdImage = ITKToolsThresholdImageSelector< unsigned short, 2 >::New( componentType, dim );
+    if (!thresholdImage) thresholdImage = ITKToolsThresholdImageSelector< float, 2 >::New( componentType, dim );
+    if (!thresholdImage) thresholdImage = ITKToolsThresholdImageSelector< double, 2 >::New( componentType, dim );
 
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!thresholdImage) thresholdImage = ThresholdImageSelector< char, 3 >::New( componentType, dim );
-    if (!thresholdImage) thresholdImage = ThresholdImageSelector< unsigned char, 3 >::New( componentType, dim );
-    if (!thresholdImage) thresholdImage = ThresholdImageSelector< short, 3 >::New( componentType, dim );
-    if (!thresholdImage) thresholdImage = ThresholdImageSelector< unsigned short, 3 >::New( componentType, dim );
-    if (!thresholdImage) thresholdImage = ThresholdImageSelector< float, 3 >::New( componentType, dim );
-    if (!thresholdImage) thresholdImage = ThresholdImageSelector< double, 3 >::New( componentType, dim );
+    if (!thresholdImage) thresholdImage = ITKToolsThresholdImageSelector< char, 3 >::New( componentType, dim );
+    if (!thresholdImage) thresholdImage = ITKToolsThresholdImageSelector< unsigned char, 3 >::New( componentType, dim );
+    if (!thresholdImage) thresholdImage = ITKToolsThresholdImageSelector< short, 3 >::New( componentType, dim );
+    if (!thresholdImage) thresholdImage = ITKToolsThresholdImageSelector< unsigned short, 3 >::New( componentType, dim );
+    if (!thresholdImage) thresholdImage = ITKToolsThresholdImageSelector< float, 3 >::New( componentType, dim );
+    if (!thresholdImage) thresholdImage = ITKToolsThresholdImageSelector< double, 3 >::New( componentType, dim );
 #endif
     if (!thresholdImage) 
     {

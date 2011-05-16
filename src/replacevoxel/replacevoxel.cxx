@@ -55,17 +55,17 @@ std::string GetHelpString()
 
 /** ReplaceVoxel */
 
-class ReplaceVoxelBase : public itktools::ITKToolsBase
+class ITKToolsReplaceVoxelBase : public itktools::ITKToolsBase
 { 
 public:
-  ReplaceVoxelBase()
+  ITKToolsReplaceVoxelBase()
   {
     m_InputFileName = "";
     m_OutputFileName = "";
     //std::vector<unsigned int> m_Voxel;
     m_Value = 0.0f;
   };
-  ~ReplaceVoxelBase(){};
+  ~ITKToolsReplaceVoxelBase(){};
 
   /** Input parameters */
   std::string m_InputFileName;
@@ -77,13 +77,13 @@ public:
 
 
 template< class TComponentType, unsigned int VDimension >
-class ReplaceVoxel : public ReplaceVoxelBase
+class ITKToolsReplaceVoxel : public ITKToolsReplaceVoxelBase
 {
 public:
-  typedef ReplaceVoxel Self;
+  typedef ITKToolsReplaceVoxel Self;
 
-  ReplaceVoxel(){};
-  ~ReplaceVoxel(){};
+  ITKToolsReplaceVoxel(){};
+  ~ITKToolsReplaceVoxel(){};
 
   static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
@@ -216,7 +216,7 @@ int main( int argc, char ** argv )
   }
 
   /** Class that does the work */
-  ReplaceVoxelBase * replaceVoxel = 0; 
+  ITKToolsReplaceVoxelBase * replaceVoxel = 0; 
 
   /** Short alias */
   unsigned int dim = Dimension;
@@ -231,12 +231,12 @@ int main( int argc, char ** argv )
   try
   {    
     // now call all possible template combinations.
-    if (!replaceVoxel) replaceVoxel = ReplaceVoxel< short, 2 >::New( componentType, dim );
-    if (!replaceVoxel) replaceVoxel = ReplaceVoxel< float, 2 >::New( componentType, dim );
+    if (!replaceVoxel) replaceVoxel = ITKToolsReplaceVoxel< short, 2 >::New( componentType, dim );
+    if (!replaceVoxel) replaceVoxel = ITKToolsReplaceVoxel< float, 2 >::New( componentType, dim );
     
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!replaceVoxel) replaceVoxel = ReplaceVoxel< short, 3 >::New( componentType, dim );    
-    if (!replaceVoxel) replaceVoxel = ReplaceVoxel< float, 3 >::New( componentType, dim );
+    if (!replaceVoxel) replaceVoxel = ITKToolsReplaceVoxel< short, 3 >::New( componentType, dim );    
+    if (!replaceVoxel) replaceVoxel = ITKToolsReplaceVoxel< float, 3 >::New( componentType, dim );
 #endif
     if (!replaceVoxel) 
     {

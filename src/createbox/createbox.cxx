@@ -66,10 +66,10 @@ std::string GetHelpString( void )
 
 /** CreateBox */
 
-class CreateBoxBase : public itktools::ITKToolsBase
+class ITKToolsCreateBoxBase : public itktools::ITKToolsBase
 { 
 public:
-  CreateBoxBase()
+  ITKToolsCreateBoxBase()
   {
     m_InputFileName = "";
     m_OutputFileName = "";
@@ -79,7 +79,7 @@ public:
     m_BoxDefinition = "";
   }
   
-  ~CreateBoxBase(){};
+  ~ITKToolsCreateBoxBase(){};
 
   /** Input parameters */
   std::string m_InputFileName;
@@ -94,13 +94,13 @@ public:
 
 
 template< class TComponentType, unsigned int VDimension >
-class CreateBox : public CreateBoxBase
+class ITKToolsCreateBox : public ITKToolsCreateBoxBase
 {
 public:
-  typedef CreateBox Self;
+  typedef ITKToolsCreateBox Self;
 
-  CreateBox(){};
-  ~CreateBox(){};
+  ITKToolsCreateBox(){};
+  ~ITKToolsCreateBox(){};
 
   static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
@@ -379,20 +379,20 @@ int main( int argc, char** argv )
 
 
   /** Class that does the work */
-  CreateBoxBase * createBox = 0; 
+  ITKToolsCreateBoxBase * createBox = 0; 
 
   try
   {        
-    if (!createBox) createBox = CreateBox< unsigned char, 2 >::New( componentType, Dimension );
-    if (!createBox) createBox = CreateBox< char, 2 >::New( componentType, Dimension );
-    if (!createBox) createBox = CreateBox< unsigned short, 2 >::New( componentType, Dimension );
-    if (!createBox) createBox = CreateBox< short, 2 >::New( componentType, Dimension );
+    if (!createBox) createBox = ITKToolsCreateBox< unsigned char, 2 >::New( componentType, Dimension );
+    if (!createBox) createBox = ITKToolsCreateBox< char, 2 >::New( componentType, Dimension );
+    if (!createBox) createBox = ITKToolsCreateBox< unsigned short, 2 >::New( componentType, Dimension );
+    if (!createBox) createBox = ITKToolsCreateBox< short, 2 >::New( componentType, Dimension );
     
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!createBox) createBox = CreateBox< unsigned char, 3 >::New( componentType, Dimension );    
-    if (!createBox) createBox = CreateBox< char, 3 >::New( componentType, Dimension );
-    if (!createBox) createBox = CreateBox< unsigned short, 3 >::New( componentType, Dimension );
-    if (!createBox) createBox = CreateBox< short, 3 >::New( componentType, Dimension );
+    if (!createBox) createBox = ITKToolsCreateBox< unsigned char, 3 >::New( componentType, Dimension );    
+    if (!createBox) createBox = ITKToolsCreateBox< char, 3 >::New( componentType, Dimension );
+    if (!createBox) createBox = ITKToolsCreateBox< unsigned short, 3 >::New( componentType, Dimension );
+    if (!createBox) createBox = ITKToolsCreateBox< short, 3 >::New( componentType, Dimension );
 #endif
     if (!createBox) 
     {

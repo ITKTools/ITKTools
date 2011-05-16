@@ -67,10 +67,10 @@ std::string GetHelpString( void )
 
 /** LogicalImageOperator */
 
-class LogicalImageOperatorBase : public itktools::ITKToolsBase
+class ITKToolsLogicalImageOperatorBase : public itktools::ITKToolsBase
 { 
 public:
-  LogicalImageOperatorBase()
+  ITKToolsLogicalImageOperatorBase()
   {
     m_InputFileName1 = "";
     m_InputFileName2 = "";
@@ -80,7 +80,7 @@ public:
     m_Argument = 0.0f;
     m_Unary = false;
   };
-  ~LogicalImageOperatorBase(){};
+  ~ITKToolsLogicalImageOperatorBase(){};
 
   /** Input parameters */
   std::string m_InputFileName1;
@@ -95,13 +95,13 @@ public:
 
 
 template< unsigned int VImageDimension, class TComponentType >
-class LogicalImageOperator : public LogicalImageOperatorBase
+class ITKToolsLogicalImageOperator : public ITKToolsLogicalImageOperatorBase
 {
 public:
-  typedef LogicalImageOperator Self;
+  typedef ITKToolsLogicalImageOperator Self;
 
-  LogicalImageOperator(){};
-  ~LogicalImageOperator(){};
+  ITKToolsLogicalImageOperator(){};
+  ~ITKToolsLogicalImageOperator(){};
 
   static Self * New( unsigned int imageDimension, itktools::ComponentType componentType )
   {
@@ -441,7 +441,7 @@ int main( int argc, char **argv )
 
 
   /** Class that does the work */
-  LogicalImageOperatorBase * logicalImageOperator = NULL; 
+  ITKToolsLogicalImageOperatorBase * logicalImageOperator = NULL; 
 
   unsigned int imageDimension = 0;
   itktools::GetImageDimension(inputFileName1, imageDimension);
@@ -454,16 +454,16 @@ int main( int argc, char **argv )
   try
   {    
     // now call all possible template combinations.
-    if (!logicalImageOperator) logicalImageOperator = LogicalImageOperator< 2, unsigned char >::New( imageDimension, componentType );
-    if (!logicalImageOperator) logicalImageOperator = LogicalImageOperator< 2, char >::New( imageDimension, componentType );
-    if (!logicalImageOperator) logicalImageOperator = LogicalImageOperator< 2, unsigned short >::New( imageDimension, componentType );
-    if (!logicalImageOperator) logicalImageOperator = LogicalImageOperator< 2, unsigned short >::New( imageDimension, componentType );
+    if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 2, unsigned char >::New( imageDimension, componentType );
+    if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 2, char >::New( imageDimension, componentType );
+    if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 2, unsigned short >::New( imageDimension, componentType );
+    if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 2, unsigned short >::New( imageDimension, componentType );
     
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!logicalImageOperator) logicalImageOperator = LogicalImageOperator< 3, unsigned char >::New( imageDimension, componentType );
-    if (!logicalImageOperator) logicalImageOperator = LogicalImageOperator< 3, char >::New( imageDimension, componentType );
-    if (!logicalImageOperator) logicalImageOperator = LogicalImageOperator< 3, unsigned short >::New( imageDimension, componentType );
-    if (!logicalImageOperator) logicalImageOperator = LogicalImageOperator< 3, unsigned short >::New( imageDimension, componentType );
+    if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 3, unsigned char >::New( imageDimension, componentType );
+    if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 3, char >::New( imageDimension, componentType );
+    if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 3, unsigned short >::New( imageDimension, componentType );
+    if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 3, unsigned short >::New( imageDimension, componentType );
 #endif
     if (!logicalImageOperator) 
     {

@@ -46,16 +46,16 @@ std::string GetHelpString()
 } // end GetHelpString()
 
 
-class BinaryThinningBase : public itktools::ITKToolsBase
+class ITKToolsBinaryThinningBase : public itktools::ITKToolsBase
 {
 public:
-  BinaryThinningBase()
+  ITKToolsBinaryThinningBase()
   {
     m_InputFileName = "";
     m_OutputFileName = "";
   }
 
-  ~BinaryThinningBase(){};
+  ~ITKToolsBinaryThinningBase(){};
 
   /** Input parameters */
   std::string m_InputFileName;
@@ -67,13 +67,13 @@ public:
 
 
 template< class TComponentType, unsigned int VImageDimension >
-class BinaryThinning : public BinaryThinningBase
+class ITKToolsBinaryThinning : public ITKToolsBinaryThinningBase
 {
 public:
-  typedef BinaryThinning Self;
+  typedef ITKToolsBinaryThinning Self;
 
-  BinaryThinning(){};
-  ~BinaryThinning(){};
+  ITKToolsBinaryThinning(){};
+  ~ITKToolsBinaryThinning(){};
 
   static Self * New( itktools::ComponentType componentType, unsigned int imageDimension )
   {
@@ -182,34 +182,34 @@ int main( int argc, char ** argv )
   unsigned int dimension = 0;
   itktools::GetImageDimension(inputFileName, dimension);
 
-  BinaryThinningBase * binaryThinning = 0;
+  ITKToolsBinaryThinningBase * binaryThinning = 0;
 
   try
   {
     // 2D
-    if (!binaryThinning) binaryThinning = BinaryThinning< char, 2 >::New( componentType, dimension );
-    if (!binaryThinning) binaryThinning = BinaryThinning< unsigned char, 2 >::New( componentType, dimension );
-    if (!binaryThinning) binaryThinning = BinaryThinning< short, 2 >::New( componentType, dimension );
-    if (!binaryThinning) binaryThinning = BinaryThinning< unsigned short, 2 >::New( componentType, dimension );
-    if (!binaryThinning) binaryThinning = BinaryThinning< int, 2 >::New( componentType, dimension );
-    if (!binaryThinning) binaryThinning = BinaryThinning< unsigned int, 2u >::New( componentType, dimension );
-    if (!binaryThinning) binaryThinning = BinaryThinning< long, 2 >::New( componentType, dimension );
-    if (!binaryThinning) binaryThinning = BinaryThinning< unsigned long, 2u >::New( componentType, dimension );
-    if (!binaryThinning) binaryThinning = BinaryThinning< float, 2 >::New( componentType, dimension );
-    if (!binaryThinning) binaryThinning = BinaryThinning< double, 2 >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< char, 2 >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< unsigned char, 2 >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< short, 2 >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< unsigned short, 2 >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< int, 2 >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< unsigned int, 2u >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< long, 2 >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< unsigned long, 2u >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< float, 2 >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< double, 2 >::New( componentType, dimension );
 
     // 3D
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!binaryThinning) binaryThinning = BinaryThinning< char, 3 >::New( componentType, dimension );
-    if (!binaryThinning) binaryThinning = BinaryThinning< unsigned char, 3 >::New( componentType, dimension );
-    if (!binaryThinning) binaryThinning = BinaryThinning< short, 3 >::New( componentType, dimension );
-    if (!binaryThinning) binaryThinning = BinaryThinning< unsigned short, 3 >::New( componentType, dimension );
-    if (!binaryThinning) binaryThinning = BinaryThinning< int, 3 >::New( componentType, dimension );
-    if (!binaryThinning) binaryThinning = BinaryThinning< unsigned int, 3u >::New( componentType, dimension );
-    if (!binaryThinning) binaryThinning = BinaryThinning< long, 3 >::New( componentType, dimension );
-    if (!binaryThinning) binaryThinning = BinaryThinning< unsigned long, 3u >::New( componentType, dimension );
-    if (!binaryThinning) binaryThinning = BinaryThinning< float, 3 >::New( componentType, dimension );
-    if (!binaryThinning) binaryThinning = BinaryThinning< double, 3 >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< char, 3 >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< unsigned char, 3 >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< short, 3 >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< unsigned short, 3 >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< int, 3 >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< unsigned int, 3u >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< long, 3 >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< unsigned long, 3u >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< float, 3 >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< double, 3 >::New( componentType, dimension );
 #endif
     
     if ( !binaryThinning )

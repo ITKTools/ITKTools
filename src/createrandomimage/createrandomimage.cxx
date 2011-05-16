@@ -59,10 +59,10 @@ std::string GetHelpString(void)
 
 /** CreateRandomImage */
 
-class CreateRandomImageBase : public itktools::ITKToolsBase
+class ITKToolsCreateRandomImageBase : public itktools::ITKToolsBase
 { 
 public:
-  CreateRandomImageBase()
+  ITKToolsCreateRandomImageBase()
   {
     m_OutputFileName = "";
     //itk::Array<unsigned int> m_Sizes;
@@ -73,7 +73,7 @@ public:
     m_Rand_seed = 0;
     m_SpaceDimension = 0;
   };
-  ~CreateRandomImageBase(){};
+  ~ITKToolsCreateRandomImageBase(){};
 
   /** Input parameters */
   std::string m_OutputFileName;
@@ -89,13 +89,13 @@ public:
 
 
 template< unsigned int VImageDimension, class TValue >
-class CreateRandomImage : public CreateRandomImageBase
+class ITKToolsCreateRandomImage : public ITKToolsCreateRandomImageBase
 {
 public:
-  typedef CreateRandomImage Self;
+  typedef ITKToolsCreateRandomImage Self;
 
-  CreateRandomImage(){};
-  ~CreateRandomImage(){};
+  ITKToolsCreateRandomImage(){};
+  ~ITKToolsCreateRandomImage(){};
 
   static Self * New( unsigned int imageDimension, itktools::ComponentType componentType )
   {
@@ -433,28 +433,28 @@ int main(int argc, char** argv)
   parser->GetCommandLineArgument("-r", resolution);
   
   /** Class that does the work */
-  CreateRandomImageBase * createRandomImage = NULL; 
+  ITKToolsCreateRandomImageBase * createRandomImage = NULL; 
   itktools::ComponentType componentType = itktools::GetComponentTypeFromString(pixelType);
 
   try
   {
     // now call all possible template combinations.
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, float >::New( imageDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, short >::New( imageDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, unsigned short >::New( imageDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, int >::New( imageDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, unsigned int >::New( imageDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, char >::New( imageDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 2, unsigned char >::New( imageDimension, componentType );
+    if (!createRandomImage) createRandomImage = ITKToolsCreateRandomImage< 2, float >::New( imageDimension, componentType );
+    if (!createRandomImage) createRandomImage = ITKToolsCreateRandomImage< 2, short >::New( imageDimension, componentType );
+    if (!createRandomImage) createRandomImage = ITKToolsCreateRandomImage< 2, unsigned short >::New( imageDimension, componentType );
+    if (!createRandomImage) createRandomImage = ITKToolsCreateRandomImage< 2, int >::New( imageDimension, componentType );
+    if (!createRandomImage) createRandomImage = ITKToolsCreateRandomImage< 2, unsigned int >::New( imageDimension, componentType );
+    if (!createRandomImage) createRandomImage = ITKToolsCreateRandomImage< 2, char >::New( imageDimension, componentType );
+    if (!createRandomImage) createRandomImage = ITKToolsCreateRandomImage< 2, unsigned char >::New( imageDimension, componentType );
     
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, float >::New( imageDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, short >::New( imageDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, unsigned short >::New( imageDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, int >::New( imageDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, unsigned int >::New( imageDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, char >::New( imageDimension, componentType );
-    if (!createRandomImage) createRandomImage = CreateRandomImage< 3, unsigned char >::New( imageDimension, componentType );
+    if (!createRandomImage) createRandomImage = ITKToolsCreateRandomImage< 3, float >::New( imageDimension, componentType );
+    if (!createRandomImage) createRandomImage = ITKToolsCreateRandomImage< 3, short >::New( imageDimension, componentType );
+    if (!createRandomImage) createRandomImage = ITKToolsCreateRandomImage< 3, unsigned short >::New( imageDimension, componentType );
+    if (!createRandomImage) createRandomImage = ITKToolsCreateRandomImage< 3, int >::New( imageDimension, componentType );
+    if (!createRandomImage) createRandomImage = ITKToolsCreateRandomImage< 3, unsigned int >::New( imageDimension, componentType );
+    if (!createRandomImage) createRandomImage = ITKToolsCreateRandomImage< 3, char >::New( imageDimension, componentType );
+    if (!createRandomImage) createRandomImage = ITKToolsCreateRandomImage< 3, unsigned char >::New( imageDimension, componentType );
 
 #endif
     if (!createRandomImage) 

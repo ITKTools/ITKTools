@@ -58,10 +58,10 @@ std::string GetHelpString( void )
 
 /** DeformationFieldOperator */
 
-class DeformationFieldOperatorBase : public itktools::ITKToolsBase
+class ITKToolsDeformationFieldOperatorBase : public itktools::ITKToolsBase
 { 
 public:
-  DeformationFieldOperatorBase()
+  ITKToolsDeformationFieldOperatorBase()
   {
     m_InputFileName = "";
     m_OutputFileName = "";
@@ -70,7 +70,7 @@ public:
     m_NumberOfIterations = 0;
     m_StopValue = 0.0f;
   };
-  ~DeformationFieldOperatorBase(){};
+  ~ITKToolsDeformationFieldOperatorBase(){};
 
   /** Input parameters */
   std::string m_InputFileName;
@@ -89,13 +89,13 @@ public:
  * and compute magnitudes/Jacobians.
  */
 template< class TComponentType, unsigned int VDimension >
-class DeformationFieldOperator : public DeformationFieldOperatorBase
+class ITKToolsDeformationFieldOperator : public ITKToolsDeformationFieldOperatorBase
 {
 public:
-  typedef DeformationFieldOperator Self;
+  typedef ITKToolsDeformationFieldOperator Self;
 
-  DeformationFieldOperator(){};
-  ~DeformationFieldOperator(){};
+  ITKToolsDeformationFieldOperator(){};
+  ~ITKToolsDeformationFieldOperator(){};
 
   static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
@@ -265,7 +265,7 @@ int main( int argc, char **argv )
   /** Run the program. */
   
   /** Class that does the work */
-  DeformationFieldOperatorBase * deformationFieldOperator = 0; 
+  ITKToolsDeformationFieldOperatorBase * deformationFieldOperator = 0; 
 
   /** Short alias */
   unsigned int dim = Dimension;
@@ -275,11 +275,11 @@ int main( int argc, char **argv )
   try
   {    
     // now call all possible template combinations.
-    if (!deformationFieldOperator) deformationFieldOperator = DeformationFieldOperator< float, 2 >::New( componentType, dim );
-    if (!deformationFieldOperator) deformationFieldOperator = DeformationFieldOperator< double, 2 >::New( componentType, dim );
+    if (!deformationFieldOperator) deformationFieldOperator = ITKToolsDeformationFieldOperator< float, 2 >::New( componentType, dim );
+    if (!deformationFieldOperator) deformationFieldOperator = ITKToolsDeformationFieldOperator< double, 2 >::New( componentType, dim );
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!deformationFieldOperator) deformationFieldOperator = DeformationFieldOperator< float, 3 >::New( componentType, dim );
-    if (!deformationFieldOperator) deformationFieldOperator = DeformationFieldOperator< double, 3 >::New( componentType, dim );
+    if (!deformationFieldOperator) deformationFieldOperator = ITKToolsDeformationFieldOperator< float, 3 >::New( componentType, dim );
+    if (!deformationFieldOperator) deformationFieldOperator = ITKToolsDeformationFieldOperator< double, 3 >::New( componentType, dim );
 #endif
     if (!deformationFieldOperator) 
     {

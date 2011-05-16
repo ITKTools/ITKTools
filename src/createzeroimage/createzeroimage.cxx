@@ -52,17 +52,17 @@ std::string GetHelpString( void )
 
 /** CreateZeroImage */
 
-class CreateZeroImageBase : public itktools::ITKToolsBase
+class ITKToolsCreateZeroImageBase : public itktools::ITKToolsBase
 { 
 public:
-  CreateZeroImageBase()
+  ITKToolsCreateZeroImageBase()
   {
     m_OutputFileName = "";
     //std::vector<unsigned int> m_Size;
     //std::vector<double> m_Spacing;
     //std::vector<double> m_Origin;
   };
-  ~CreateZeroImageBase(){};
+  ~ITKToolsCreateZeroImageBase(){};
 
   /** Input parameters */
   std::string m_OutputFileName;
@@ -74,13 +74,13 @@ public:
 
 
 template< class TComponentType, unsigned int VDimension >
-class CreateZeroImage : public CreateZeroImageBase
+class ITKToolsCreateZeroImage : public ITKToolsCreateZeroImageBase
 {
 public:
-  typedef CreateZeroImage Self;
+  typedef ITKToolsCreateZeroImage Self;
 
-  CreateZeroImage(){};
-  ~CreateZeroImage(){};
+  ITKToolsCreateZeroImage(){};
+  ~ITKToolsCreateZeroImage(){};
 
   static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
@@ -253,7 +253,7 @@ int main( int argc, char **argv )
 
 
   /** Class that does the work */
-  CreateZeroImageBase * createZeroImage = 0; 
+  ITKToolsCreateZeroImageBase * createZeroImage = 0; 
 
   /** Short alias */
   unsigned int dim = Dimension;
@@ -263,20 +263,20 @@ int main( int argc, char **argv )
   try
   {    
     // now call all possible template combinations.
-    if (!createZeroImage) createZeroImage = CreateZeroImage< unsigned char, 2 >::New( componentType, dim );
-    if (!createZeroImage) createZeroImage = CreateZeroImage< char, 2 >::New( componentType, dim );
-    if (!createZeroImage) createZeroImage = CreateZeroImage< unsigned short, 2 >::New( componentType, dim );
-    if (!createZeroImage) createZeroImage = CreateZeroImage< short, 2 >::New( componentType, dim );
-    if (!createZeroImage) createZeroImage = CreateZeroImage< float, 2 >::New( componentType, dim );
-    if (!createZeroImage) createZeroImage = CreateZeroImage< double, 2 >::New( componentType, dim );
+    if (!createZeroImage) createZeroImage = ITKToolsCreateZeroImage< unsigned char, 2 >::New( componentType, dim );
+    if (!createZeroImage) createZeroImage = ITKToolsCreateZeroImage< char, 2 >::New( componentType, dim );
+    if (!createZeroImage) createZeroImage = ITKToolsCreateZeroImage< unsigned short, 2 >::New( componentType, dim );
+    if (!createZeroImage) createZeroImage = ITKToolsCreateZeroImage< short, 2 >::New( componentType, dim );
+    if (!createZeroImage) createZeroImage = ITKToolsCreateZeroImage< float, 2 >::New( componentType, dim );
+    if (!createZeroImage) createZeroImage = ITKToolsCreateZeroImage< double, 2 >::New( componentType, dim );
     
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!createZeroImage) createZeroImage = CreateZeroImage< unsigned char, 3 >::New( componentType, dim );
-    if (!createZeroImage) createZeroImage = CreateZeroImage< char, 3 >::New( componentType, dim );
-    if (!createZeroImage) createZeroImage = CreateZeroImage< unsigned short, 3 >::New( componentType, dim );
-    if (!createZeroImage) createZeroImage = CreateZeroImage< short, 3 >::New( componentType, dim );
-    if (!createZeroImage) createZeroImage = CreateZeroImage< float, 3 >::New( componentType, dim );
-    if (!createZeroImage) createZeroImage = CreateZeroImage< double, 3 >::New( componentType, dim );
+    if (!createZeroImage) createZeroImage = ITKToolsCreateZeroImage< unsigned char, 3 >::New( componentType, dim );
+    if (!createZeroImage) createZeroImage = ITKToolsCreateZeroImage< char, 3 >::New( componentType, dim );
+    if (!createZeroImage) createZeroImage = ITKToolsCreateZeroImage< unsigned short, 3 >::New( componentType, dim );
+    if (!createZeroImage) createZeroImage = ITKToolsCreateZeroImage< short, 3 >::New( componentType, dim );
+    if (!createZeroImage) createZeroImage = ITKToolsCreateZeroImage< float, 3 >::New( componentType, dim );
+    if (!createZeroImage) createZeroImage = ITKToolsCreateZeroImage< double, 3 >::New( componentType, dim );
 #endif
     if (!createZeroImage) 
     {

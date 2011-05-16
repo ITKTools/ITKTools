@@ -125,9 +125,6 @@ void CombineSegmentations(
   const std::vector<unsigned int> & inValues,
   const std::vector<unsigned int> & outValues );
 
-/** Declare GetHelpString. */
-std::string GetHelpString( void );
-
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char **argv )

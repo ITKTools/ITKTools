@@ -55,17 +55,17 @@ std::string GetHelpString()
   return ss.str();
 }
 
-class AverageVectorMagnitudeBase : public itktools::ITKToolsBase
+class ITKToolsAverageVectorMagnitudeBase : public itktools::ITKToolsBase
 {
 public:
-  AverageVectorMagnitudeBase()
+  ITKToolsAverageVectorMagnitudeBase()
   {
     m_AverageMagnitude = 0.0f;
     m_InputFileName = "";
     m_OutputFileName = "";
   }
   
-  ~AverageVectorMagnitudeBase(){};
+  ~ITKToolsAverageVectorMagnitudeBase(){};
 
   /** Input parameters */
   std::string m_InputFileName;
@@ -77,13 +77,13 @@ public:
 
 
 template< unsigned int VVectorDimension, unsigned int VImageDimension >
-class AverageVectorMagnitude : public AverageVectorMagnitudeBase
+class ITKToolsAverageVectorMagnitude : public ITKToolsAverageVectorMagnitudeBase
 {
 public:
-  typedef AverageVectorMagnitude Self;
+  typedef ITKToolsAverageVectorMagnitude Self;
 
-  AverageVectorMagnitude(){};
-  ~AverageVectorMagnitude(){};
+  ITKToolsAverageVectorMagnitude(){};
+  ~ITKToolsAverageVectorMagnitude(){};
 
   static Self * New( unsigned int vectorDimension, unsigned int imageDimension )
   {
@@ -208,16 +208,16 @@ int main( int argc, char** argv )
   unsigned int dimension = 0;
   itktools::GetImageDimension(inputFileName, dimension);
 
-  AverageVectorMagnitudeBase * averageVectorMagnitude = 0;
+  ITKToolsAverageVectorMagnitudeBase * averageVectorMagnitude = 0;
 
   float averageMagnitude = 0.0f; // Initialize output to zero
   try
   {
     // 2D
-    if (!averageVectorMagnitude) averageVectorMagnitude = AverageVectorMagnitude< 2, 2 >::New( numberOfComponents, dimension );
-    if (!averageVectorMagnitude) averageVectorMagnitude = AverageVectorMagnitude< 2, 3 >::New( numberOfComponents, dimension );
-    if (!averageVectorMagnitude) averageVectorMagnitude = AverageVectorMagnitude< 3, 2 >::New( numberOfComponents, dimension );
-    if (!averageVectorMagnitude) averageVectorMagnitude = AverageVectorMagnitude< 3, 3 >::New( numberOfComponents, dimension );
+    if (!averageVectorMagnitude) averageVectorMagnitude = ITKToolsAverageVectorMagnitude< 2, 2 >::New( numberOfComponents, dimension );
+    if (!averageVectorMagnitude) averageVectorMagnitude = ITKToolsAverageVectorMagnitude< 2, 3 >::New( numberOfComponents, dimension );
+    if (!averageVectorMagnitude) averageVectorMagnitude = ITKToolsAverageVectorMagnitude< 3, 2 >::New( numberOfComponents, dimension );
+    if (!averageVectorMagnitude) averageVectorMagnitude = ITKToolsAverageVectorMagnitude< 3, 3 >::New( numberOfComponents, dimension );
 
     if (!averageVectorMagnitude)
     {

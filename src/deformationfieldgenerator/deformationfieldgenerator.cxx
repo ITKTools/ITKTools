@@ -82,10 +82,10 @@ std::string GetHelpString()
 
 /** DeformationFieldGenerator */
 
-class DeformationFieldGeneratorBase : public itktools::ITKToolsBase
+class ITKToolsDeformationFieldGeneratorBase : public itktools::ITKToolsBase
 { 
 public:
-  DeformationFieldGeneratorBase()
+  ITKToolsDeformationFieldGeneratorBase()
   {
     m_InputImage1FileName = "";
     m_InputImage2FileName = "";
@@ -95,7 +95,7 @@ public:
     m_KernelName = "";
     m_Stiffness = 0.0f;
   };
-  ~DeformationFieldGeneratorBase(){};
+  ~ITKToolsDeformationFieldGeneratorBase(){};
 
   /** Input parameters */
   std::string m_InputImage1FileName;
@@ -110,13 +110,13 @@ public:
 
 
 template< unsigned int VDimension >
-class DeformationFieldGenerator : public DeformationFieldGeneratorBase
+class ITKToolsDeformationFieldGenerator : public ITKToolsDeformationFieldGeneratorBase
 {
 public:
-  typedef DeformationFieldGenerator Self;
+  typedef ITKToolsDeformationFieldGenerator Self;
 
-  DeformationFieldGenerator(){};
-  ~DeformationFieldGenerator(){};
+  ITKToolsDeformationFieldGenerator(){};
+  ~ITKToolsDeformationFieldGenerator(){};
 
   static Self * New( unsigned int dimension )
   {
@@ -445,7 +445,7 @@ int main( int argc, char **argv )
 
 
   /** Class that does the work */
-  DeformationFieldGeneratorBase * deformationFieldGenerator = NULL;
+  ITKToolsDeformationFieldGeneratorBase * deformationFieldGenerator = NULL;
 
   /** Short alias */
   unsigned int dim = Dimension;
@@ -453,10 +453,10 @@ int main( int argc, char **argv )
   try
   {    
     // now call all possible template combinations.
-    if (!deformationFieldGenerator) deformationFieldGenerator = DeformationFieldGenerator< 2 >::New( dim );
+    if (!deformationFieldGenerator) deformationFieldGenerator = ITKToolsDeformationFieldGenerator< 2 >::New( dim );
     
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!deformationFieldGenerator) deformationFieldGenerator = DeformationFieldGenerator< 3 >::New( dim );
+    if (!deformationFieldGenerator) deformationFieldGenerator = ITKToolsDeformationFieldGenerator< 3 >::New( dim );
 #endif
     if (!deformationFieldGenerator) 
     {

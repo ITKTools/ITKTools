@@ -53,10 +53,10 @@ std::string GetHelpString( void )
 
 /** CreateSphere */
 
-class CreateSphereBase : public itktools::ITKToolsBase
+class ITKToolsCreateSphereBase : public itktools::ITKToolsBase
 { 
 public:
-  CreateSphereBase()
+  ITKToolsCreateSphereBase()
   {
     m_OutputFileName = "";
     //std::vector<unsigned int> m_Size;
@@ -64,7 +64,7 @@ public:
     //std::vector<double> m_Center;
     m_Radius = 0.0f;
   };
-  ~CreateSphereBase(){};
+  ~ITKToolsCreateSphereBase(){};
 
   /** Input parameters */
   std::string m_OutputFileName;
@@ -77,13 +77,13 @@ public:
 
 
 template< class TComponentType, unsigned int VDimension >
-class CreateSphere : public CreateSphereBase
+class ITKToolsCreateSphere : public ITKToolsCreateSphereBase
 {
 public:
-  typedef CreateSphere Self;
+  typedef ITKToolsCreateSphere Self;
 
-  CreateSphere(){};
-  ~CreateSphere(){};
+  ITKToolsCreateSphere(){};
+  ~ITKToolsCreateSphere(){};
 
   static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
@@ -217,7 +217,7 @@ int main( int argc, char *argv[] )
   /** Run the program. */
   
   /** Class that does the work */
-  CreateSphereBase * createSphere = 0; 
+  ITKToolsCreateSphereBase * createSphere = 0; 
 
   /** Short alias */
   unsigned int dim = Dimension;
@@ -227,20 +227,20 @@ int main( int argc, char *argv[] )
   try
   {    
     // now call all possible template combinations.
-    if (!createSphere) createSphere = CreateSphere< unsigned char, 2 >::New( componentType, dim );
-    if (!createSphere) createSphere = CreateSphere< char, 2 >::New( componentType, dim );
-    if (!createSphere) createSphere = CreateSphere< unsigned short, 2 >::New( componentType, dim );
-    if (!createSphere) createSphere = CreateSphere< short, 2 >::New( componentType, dim );
-    if (!createSphere) createSphere = CreateSphere< float, 2 >::New( componentType, dim );
-    if (!createSphere) createSphere = CreateSphere< double, 2 >::New( componentType, dim );
+    if (!createSphere) createSphere = ITKToolsCreateSphere< unsigned char, 2 >::New( componentType, dim );
+    if (!createSphere) createSphere = ITKToolsCreateSphere< char, 2 >::New( componentType, dim );
+    if (!createSphere) createSphere = ITKToolsCreateSphere< unsigned short, 2 >::New( componentType, dim );
+    if (!createSphere) createSphere = ITKToolsCreateSphere< short, 2 >::New( componentType, dim );
+    if (!createSphere) createSphere = ITKToolsCreateSphere< float, 2 >::New( componentType, dim );
+    if (!createSphere) createSphere = ITKToolsCreateSphere< double, 2 >::New( componentType, dim );
     
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!createSphere) createSphere = CreateSphere< unsigned char, 3 >::New( componentType, dim );
-    if (!createSphere) createSphere = CreateSphere< char, 3 >::New( componentType, dim );
-    if (!createSphere) createSphere = CreateSphere< unsigned short, 3 >::New( componentType, dim );
-    if (!createSphere) createSphere = CreateSphere< short, 3 >::New( componentType, dim );
-    if (!createSphere) createSphere = CreateSphere< float, 3 >::New( componentType, dim );
-    if (!createSphere) createSphere = CreateSphere< double, 3 >::New( componentType, dim );
+    if (!createSphere) createSphere = ITKToolsCreateSphere< unsigned char, 3 >::New( componentType, dim );
+    if (!createSphere) createSphere = ITKToolsCreateSphere< char, 3 >::New( componentType, dim );
+    if (!createSphere) createSphere = ITKToolsCreateSphere< unsigned short, 3 >::New( componentType, dim );
+    if (!createSphere) createSphere = ITKToolsCreateSphere< short, 3 >::New( componentType, dim );
+    if (!createSphere) createSphere = ITKToolsCreateSphere< float, 3 >::New( componentType, dim );
+    if (!createSphere) createSphere = ITKToolsCreateSphere< double, 3 >::New( componentType, dim );
 #endif
     if (!createSphere) 
     {

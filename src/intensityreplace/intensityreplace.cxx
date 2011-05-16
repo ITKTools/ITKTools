@@ -56,17 +56,17 @@ std::string GetHelpString()
 
 /** IntensityReplace */
 
-class IntensityReplaceBase : public itktools::ITKToolsBase
+class ITKToolsIntensityReplaceBase : public itktools::ITKToolsBase
 { 
 public:
-  IntensityReplaceBase()
+  ITKToolsIntensityReplaceBase()
   {
     m_InputFileName = "";
     m_OutputFileName = "";
     //std::vector<std::string> m_InValues;
     //std::vector<std::string> m_OutValues;
   };
-  ~IntensityReplaceBase(){};
+  ~ITKToolsIntensityReplaceBase(){};
 
   /** Input parameters */
   std::string m_InputFileName;
@@ -79,13 +79,13 @@ public:
 
 
 template< unsigned int VImageDimension, class TValue >
-class IntensityReplace : public IntensityReplaceBase
+class ITKToolsIntensityReplace : public ITKToolsIntensityReplaceBase
 {
 public:
-  typedef IntensityReplace Self;
+  typedef ITKToolsIntensityReplace Self;
 
-  IntensityReplace(){};
-  ~IntensityReplace(){};
+  ITKToolsIntensityReplace(){};
+  ~ITKToolsIntensityReplace(){};
 
   static Self * New( unsigned int imageDimension, itktools::ComponentType componentType )
   {
@@ -228,7 +228,7 @@ int main( int argc, char ** argv )
   }
   
   /** Class that does the work */
-  IntensityReplaceBase * intensityReplace = NULL; 
+  ITKToolsIntensityReplaceBase * intensityReplace = NULL; 
 
   unsigned int imageDimension = 0;
   itktools::GetImageDimension(inputFileName, imageDimension);
@@ -236,28 +236,28 @@ int main( int argc, char ** argv )
   try
   {    
     // now call all possible template combinations.
-    if (!intensityReplace) intensityReplace = IntensityReplace< 2, char >::New( imageDimension, componentType );
-    if (!intensityReplace) intensityReplace = IntensityReplace< 2, unsigned char >::New( imageDimension, componentType );
-    if (!intensityReplace) intensityReplace = IntensityReplace< 2, short >::New( imageDimension, componentType );
-    if (!intensityReplace) intensityReplace = IntensityReplace< 2, unsigned short >::New( imageDimension, componentType );
-    if (!intensityReplace) intensityReplace = IntensityReplace< 2, int >::New( imageDimension, componentType );
-    if (!intensityReplace) intensityReplace = IntensityReplace< 2, unsigned int >::New( imageDimension, componentType );
-    if (!intensityReplace) intensityReplace = IntensityReplace< 2, long >::New( imageDimension, componentType );
-    if (!intensityReplace) intensityReplace = IntensityReplace< 2, unsigned long >::New( imageDimension, componentType );
-    if (!intensityReplace) intensityReplace = IntensityReplace< 2, float >::New( imageDimension, componentType );
-    if (!intensityReplace) intensityReplace = IntensityReplace< 2, double >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< 2, char >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< 2, unsigned char >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< 2, short >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< 2, unsigned short >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< 2, int >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< 2, unsigned int >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< 2, long >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< 2, unsigned long >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< 2, float >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< 2, double >::New( imageDimension, componentType );
     
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!intensityReplace) intensityReplace = IntensityReplace< 2, char >::New( imageDimension, componentType );
-    if (!intensityReplace) intensityReplace = IntensityReplace< 2, unsigned char >::New( imageDimension, componentType );
-    if (!intensityReplace) intensityReplace = IntensityReplace< 2, short >::New( imageDimension, componentType );
-    if (!intensityReplace) intensityReplace = IntensityReplace< 2, unsigned short >::New( imageDimension, componentType );
-    if (!intensityReplace) intensityReplace = IntensityReplace< 2, int >::New( imageDimension, componentType );
-    if (!intensityReplace) intensityReplace = IntensityReplace< 2, unsigned int >::New( imageDimension, componentType );
-    if (!intensityReplace) intensityReplace = IntensityReplace< 2, long >::New( imageDimension, componentType );
-    if (!intensityReplace) intensityReplace = IntensityReplace< 2, unsigned long >::New( imageDimension, componentType );
-    if (!intensityReplace) intensityReplace = IntensityReplace< 2, float >::New( imageDimension, componentType );
-    if (!intensityReplace) intensityReplace = IntensityReplace< 2, double >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< 2, char >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< 2, unsigned char >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< 2, short >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< 2, unsigned short >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< 2, int >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< 2, unsigned int >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< 2, long >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< 2, unsigned long >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< 2, float >::New( imageDimension, componentType );
+    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< 2, double >::New( imageDimension, componentType );
 #endif
     if (!intensityReplace) 
     {

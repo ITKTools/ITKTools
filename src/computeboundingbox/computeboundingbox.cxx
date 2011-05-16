@@ -53,15 +53,15 @@ std::string GetHelpString()
 
 /** ComputeBoundingBox */
 
-class ComputeBoundingBoxBase : public itktools::ITKToolsBase
+class ITKToolsComputeBoundingBoxBase : public itktools::ITKToolsBase
 { 
 public:
-  ComputeBoundingBoxBase()
+  ITKToolsComputeBoundingBoxBase()
   {
     m_InputFileName = "";
     m_OutputFileName = "";
   }
-  ~ComputeBoundingBoxBase(){};
+  ~ITKToolsComputeBoundingBoxBase(){};
 
   /** Input parameters */
   std::string m_InputFileName;
@@ -71,13 +71,13 @@ public:
 
 
 template< class TComponentType, unsigned int VImageDimension >
-class ComputeBoundingBox : public ComputeBoundingBoxBase
+class ITKToolsComputeBoundingBox : public ITKToolsComputeBoundingBoxBase
 {
 public:
-  typedef ComputeBoundingBox Self;
+  typedef ITKToolsComputeBoundingBox Self;
 
-  ComputeBoundingBox(){};
-  ~ComputeBoundingBox(){};
+  ITKToolsComputeBoundingBox(){};
+  ~ITKToolsComputeBoundingBox(){};
 
   static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
@@ -236,7 +236,7 @@ int main( int argc, char **argv )
   
   
   /** Class that does the work */
-  ComputeBoundingBoxBase * computeBoundingBox = 0; 
+  ITKToolsComputeBoundingBoxBase * computeBoundingBox = 0; 
 
   /** Short alias */
   unsigned int dim = Dimension;
@@ -251,10 +251,10 @@ int main( int argc, char **argv )
   try
   {    
     // now call all possible template combinations.
-    if (!computeBoundingBox) computeBoundingBox = ComputeBoundingBox< short, 2 >::New( componentType, dim );
+    if (!computeBoundingBox) computeBoundingBox = ITKToolsComputeBoundingBox< short, 2 >::New( componentType, dim );
     
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!computeBoundingBox) computeBoundingBox = ComputeBoundingBox< short, 3 >::New( componentType, dim );    
+    if (!computeBoundingBox) computeBoundingBox = ITKToolsComputeBoundingBox< short, 3 >::New( componentType, dim );    
 #endif
     if (!computeBoundingBox) 
     {

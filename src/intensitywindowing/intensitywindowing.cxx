@@ -55,16 +55,16 @@ std::string GetHelpString()
 
 /** IntensityWindowing */
 
-class IntensityWindowingBase : public itktools::ITKToolsBase
+class ITKToolsIntensityWindowingBase : public itktools::ITKToolsBase
 { 
 public:
-  IntensityWindowingBase()
+  ITKToolsIntensityWindowingBase()
   {
     m_InputFileName = "";
     m_OutputFileName = "";
     //std::vector<double> m_Window;
   };
-  ~IntensityWindowingBase(){};
+  ~ITKToolsIntensityWindowingBase(){};
 
   /** Input parameters */
   std::string m_InputFileName;
@@ -76,13 +76,13 @@ public:
 
 
 template< unsigned int VImageDimension, class TComponentType >
-class IntensityWindowing : public IntensityWindowingBase
+class ITKToolsIntensityWindowing : public ITKToolsIntensityWindowingBase
 {
 public:
-  typedef IntensityWindowing Self;
+  typedef ITKToolsIntensityWindowing Self;
 
-  IntensityWindowing(){};
-  ~IntensityWindowing(){};
+  ITKToolsIntensityWindowing(){};
+  ~ITKToolsIntensityWindowing(){};
 
   static Self * New( unsigned int imageDimension, itktools::ComponentType componentType )
   {
@@ -226,7 +226,7 @@ int main( int argc, char **argv )
 
 
   /** Class that does the work */
-  IntensityWindowingBase * intensityWindowing = NULL; 
+  ITKToolsIntensityWindowingBase * intensityWindowing = NULL; 
 
   unsigned int imageDimension = 0;
   itktools::GetImageDimension(inputFileName, imageDimension);
@@ -236,18 +236,18 @@ int main( int argc, char **argv )
   try
   {    
     // now call all possible template combinations.
-    if (!intensityWindowing) intensityWindowing = IntensityWindowing< 2, unsigned char >::New( imageDimension, componentType );
-    if (!intensityWindowing) intensityWindowing = IntensityWindowing< 2, char >::New( imageDimension, componentType );
-    if (!intensityWindowing) intensityWindowing = IntensityWindowing< 2, unsigned short >::New( imageDimension, componentType );
-    if (!intensityWindowing) intensityWindowing = IntensityWindowing< 2, short >::New( imageDimension, componentType );
-    if (!intensityWindowing) intensityWindowing = IntensityWindowing< 2, float >::New( imageDimension, componentType );
+    if (!intensityWindowing) intensityWindowing = ITKToolsIntensityWindowing< 2, unsigned char >::New( imageDimension, componentType );
+    if (!intensityWindowing) intensityWindowing = ITKToolsIntensityWindowing< 2, char >::New( imageDimension, componentType );
+    if (!intensityWindowing) intensityWindowing = ITKToolsIntensityWindowing< 2, unsigned short >::New( imageDimension, componentType );
+    if (!intensityWindowing) intensityWindowing = ITKToolsIntensityWindowing< 2, short >::New( imageDimension, componentType );
+    if (!intensityWindowing) intensityWindowing = ITKToolsIntensityWindowing< 2, float >::New( imageDimension, componentType );
     
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!intensityWindowing) intensityWindowing = IntensityWindowing< 3, unsigned char >::New( imageDimension, componentType );
-    if (!intensityWindowing) intensityWindowing = IntensityWindowing< 3, char >::New( imageDimension, componentType );
-    if (!intensityWindowing) intensityWindowing = IntensityWindowing< 3, unsigned short >::New( imageDimension, componentType );
-    if (!intensityWindowing) intensityWindowing = IntensityWindowing< 3, short >::New( imageDimension, componentType );
-    if (!intensityWindowing) intensityWindowing = IntensityWindowing< 3, float >::New( imageDimension, componentType );
+    if (!intensityWindowing) intensityWindowing = ITKToolsIntensityWindowing< 3, unsigned char >::New( imageDimension, componentType );
+    if (!intensityWindowing) intensityWindowing = ITKToolsIntensityWindowing< 3, char >::New( imageDimension, componentType );
+    if (!intensityWindowing) intensityWindowing = ITKToolsIntensityWindowing< 3, unsigned short >::New( imageDimension, componentType );
+    if (!intensityWindowing) intensityWindowing = ITKToolsIntensityWindowing< 3, short >::New( imageDimension, componentType );
+    if (!intensityWindowing) intensityWindowing = ITKToolsIntensityWindowing< 3, float >::New( imageDimension, componentType );
 #endif
     if (!intensityWindowing) 
     {

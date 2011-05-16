@@ -56,10 +56,10 @@ std::string GetHelpString( void )
 
 /** CreateGridImage */
 
-class CreateGridImageBase : public itktools::ITKToolsBase
+class ITKToolsCreateGridImageBase : public itktools::ITKToolsBase
 { 
 public:
-  CreateGridImageBase()
+  ITKToolsCreateGridImageBase()
   {
     std::string m_InputFileName = "";
     std::string m_OutputFileName = "";
@@ -69,7 +69,7 @@ public:
     //std::vector<unsigned int> m_Distance;
     m_Is2DStack = false;
   };
-  ~CreateGridImageBase(){};
+  ~ITKToolsCreateGridImageBase(){};
 
   /** Input parameters */
   std::string m_InputFileName;
@@ -85,13 +85,13 @@ public:
 
 
 template< unsigned int VDimension >
-class CreateGridImage : public CreateGridImageBase
+class ITKToolsCreateGridImage : public ITKToolsCreateGridImageBase
 {
 public:
-  typedef CreateGridImage Self;
+  typedef ITKToolsCreateGridImage Self;
 
-  CreateGridImage(){};
-  ~CreateGridImage(){};
+  ITKToolsCreateGridImage(){};
+  ~ITKToolsCreateGridImage(){};
 
   static Self * New( unsigned int dim )
   {
@@ -285,7 +285,7 @@ int main( int argc, char *argv[] )
 
 
   /** Class that does the work */
-  CreateGridImageBase * createGridImage = NULL; 
+  ITKToolsCreateGridImageBase * createGridImage = NULL; 
 
   /** Short alias */
   unsigned int dim = imageDimension;
@@ -293,9 +293,9 @@ int main( int argc, char *argv[] )
   try
   {    
     // now call all possible template combinations.
-    if (!createGridImage) createGridImage = CreateGridImage< 2 >::New( dim );
+    if (!createGridImage) createGridImage = ITKToolsCreateGridImage< 2 >::New( dim );
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!createGridImage) createGridImage = CreateGridImage< 3 >::New( dim );    
+    if (!createGridImage) createGridImage = ITKToolsCreateGridImage< 3 >::New( dim );    
 #endif
     if (!createGridImage) 
     {

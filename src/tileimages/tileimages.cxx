@@ -68,10 +68,6 @@ std::string GetHelpString( void )
 
 } // end GetHelpString
 
-//-------------------------------------------------------------------------------------
-
-/** Declare GetHelpString function. */
-std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 

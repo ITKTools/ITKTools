@@ -72,10 +72,10 @@ std::string GetHelpString( void )
 
 /** StatisticsOnImage */
 
-class StatisticsOnImageBase : public itktools::ITKToolsBase
+class ITKToolsStatisticsOnImageBase : public itktools::ITKToolsBase
 {
 public:
-  StatisticsOnImageBase()
+  ITKToolsStatisticsOnImageBase()
   {
     m_InputFileName = "";
     m_MaskFileName = "";
@@ -83,7 +83,7 @@ public:
     m_NumberOfBins = 0;
     m_Select = "";
   };
-  ~StatisticsOnImageBase(){};
+  ~ITKToolsStatisticsOnImageBase(){};
 
   /** Input parameters */
   std::string m_InputFileName;
@@ -96,13 +96,13 @@ public:
 
 
 template< class TComponentType, unsigned int VDimension, unsigned int VNumberOfComponents >
-class StatisticsOnImage : public StatisticsOnImageBase
+class ITKToolsStatisticsOnImage : public ITKToolsStatisticsOnImageBase
 {
 public:
-  typedef StatisticsOnImage Self;
+  typedef ITKToolsStatisticsOnImage Self;
 
-  StatisticsOnImage(){};
-  ~StatisticsOnImage(){};
+  ITKToolsStatisticsOnImage(){};
+  ~ITKToolsStatisticsOnImage(){};
 
   static Self * New( itktools::ComponentType componentType, unsigned int dim, unsigned int numberOfComponents )
   {
@@ -310,7 +310,7 @@ int main( int argc, char ** argv )
   
   
   /** Class that does the work */
-  StatisticsOnImageBase * statisticsOnImage = NULL; 
+  ITKToolsStatisticsOnImageBase * statisticsOnImage = NULL; 
 
   /** Short alias */
   unsigned int dim = Dimension;
@@ -327,14 +327,14 @@ int main( int argc, char ** argv )
   try
   {    
     // now call all possible template combinations.
-    if (!statisticsOnImage) statisticsOnImage = StatisticsOnImage< float, 2, 1 >::New( componentType, dim, numberOfComponents );
-    if (!statisticsOnImage) statisticsOnImage = StatisticsOnImage< float, 2, 2 >::New( componentType, dim, numberOfComponents );
-    if (!statisticsOnImage) statisticsOnImage = StatisticsOnImage< float, 2, 3 >::New( componentType, dim, numberOfComponents );
+    if (!statisticsOnImage) statisticsOnImage = ITKToolsStatisticsOnImage< float, 2, 1 >::New( componentType, dim, numberOfComponents );
+    if (!statisticsOnImage) statisticsOnImage = ITKToolsStatisticsOnImage< float, 2, 2 >::New( componentType, dim, numberOfComponents );
+    if (!statisticsOnImage) statisticsOnImage = ITKToolsStatisticsOnImage< float, 2, 3 >::New( componentType, dim, numberOfComponents );
     
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!statisticsOnImage) statisticsOnImage = StatisticsOnImage< float, 3, 1 >::New( componentType, dim, numberOfComponents );
-    if (!statisticsOnImage) statisticsOnImage = StatisticsOnImage< float, 3, 2 >::New( componentType, dim, numberOfComponents );
-    if (!statisticsOnImage) statisticsOnImage = StatisticsOnImage< float, 3, 3 >::New( componentType, dim, numberOfComponents );
+    if (!statisticsOnImage) statisticsOnImage = ITKToolsStatisticsOnImage< float, 3, 1 >::New( componentType, dim, numberOfComponents );
+    if (!statisticsOnImage) statisticsOnImage = ITKToolsStatisticsOnImage< float, 3, 2 >::New( componentType, dim, numberOfComponents );
+    if (!statisticsOnImage) statisticsOnImage = ITKToolsStatisticsOnImage< float, 3, 3 >::New( componentType, dim, numberOfComponents );
 #endif
 #ifdef ITKTOOLS_4D_SUPPORT
     if (!statisticsOnImage) statisticsOnImage = StatisticsOnImage< float, 4, 1 >::New( componentType, dim, numberOfComponents );

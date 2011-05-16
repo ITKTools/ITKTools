@@ -89,10 +89,10 @@ void SegmentationDistanceHelper(
 
 /** SegmentationDistance */
 
-class SegmentationDistanceBase : public itktools::ITKToolsBase
+class ITKToolsSegmentationDistanceBase : public itktools::ITKToolsBase
 { 
 public:
-  SegmentationDistanceBase()
+  ITKToolsSegmentationDistanceBase()
   {
     m_InputFileName1 = "";
     m_InputFileName2 = "";
@@ -103,7 +103,7 @@ public:
     m_Phisize = 0;
     m_Cartesianonly = false;
   };
-  ~SegmentationDistanceBase(){};
+  ~ITKToolsSegmentationDistanceBase(){};
 
   /** Input parameters */
   std::string m_InputFileName1;
@@ -119,13 +119,13 @@ public:
 
 
 template< class TComponentType, unsigned int VDimension >
-class SegmentationDistance : public SegmentationDistanceBase
+class ITKToolsSegmentationDistance : public ITKToolsSegmentationDistanceBase
 {
 public:
-  typedef SegmentationDistance Self;
+  typedef ITKToolsSegmentationDistance Self;
 
-  SegmentationDistance(){};
-  ~SegmentationDistance(){};
+  ITKToolsSegmentationDistance(){};
+  ~ITKToolsSegmentationDistance(){};
 
   static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
@@ -455,7 +455,7 @@ int main( int argc, char **argv )
   }
 
   /** Class that does the work */
-  SegmentationDistanceBase * segmentationDistance = NULL; 
+  ITKToolsSegmentationDistanceBase * segmentationDistance = NULL; 
 
   /** Short alias */
   unsigned int imageDimension = 0;
@@ -475,7 +475,7 @@ int main( int argc, char **argv )
   try
   {    
     // now call all possible template combinations.
-    if (!segmentationDistance) segmentationDistance = SegmentationDistance< float, 3 >::New( componentType, imageDimension );
+    if (!segmentationDistance) segmentationDistance = ITKToolsSegmentationDistance< float, 3 >::New( componentType, imageDimension );
     
     if (!segmentationDistance) 
     {

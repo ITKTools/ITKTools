@@ -62,17 +62,17 @@ std::string GetHelpString( void )
 
 /** ExtractSlice */
 
-class ExtractSliceBase : public itktools::ITKToolsBase
+class ITKToolsExtractSliceBase : public itktools::ITKToolsBase
 { 
 public:
-  ExtractSliceBase()
+  ITKToolsExtractSliceBase()
   {
     m_InputFileName = "";
     m_OutputFileName = "";
     m_Slicenumber = 0;
     m_Which_dimension = 0;
   };
-  ~ExtractSliceBase(){};
+  ~ITKToolsExtractSliceBase(){};
 
   /** Input parameters */
   std::string m_InputFileName;
@@ -84,13 +84,13 @@ public:
 
 
 template< class TComponentType >
-class ExtractSlice : public ExtractSliceBase
+class ITKToolsExtractSlice : public ITKToolsExtractSliceBase
 {
 public:
-  typedef ExtractSlice Self;
+  typedef ITKToolsExtractSlice Self;
 
-  ExtractSlice(){};
-  ~ExtractSlice(){};
+  ITKToolsExtractSlice(){};
+  ~ITKToolsExtractSlice(){};
 
   static Self * New( itktools::ComponentType componentType )
   {
@@ -259,18 +259,18 @@ int main( int argc, char ** argv )
 
   
   /** Class that does the work */
-  ExtractSliceBase * extractSlice = 0; 
+  ITKToolsExtractSliceBase * extractSlice = 0; 
 
   itktools::ComponentType componentType = itktools::GetComponentTypeFromString(PixelType);
     
   try
   {    
     // now call all possible template combinations.
-    if (!extractSlice) extractSlice = ExtractSlice< unsigned char >::New( componentType );
-    if (!extractSlice) extractSlice = ExtractSlice< char >::New( componentType );
-    if (!extractSlice) extractSlice = ExtractSlice< unsigned short >::New( componentType );
-    if (!extractSlice) extractSlice = ExtractSlice< short >::New( componentType );
-    if (!extractSlice) extractSlice = ExtractSlice< float >::New( componentType );
+    if (!extractSlice) extractSlice = ITKToolsExtractSlice< unsigned char >::New( componentType );
+    if (!extractSlice) extractSlice = ITKToolsExtractSlice< char >::New( componentType );
+    if (!extractSlice) extractSlice = ITKToolsExtractSlice< unsigned short >::New( componentType );
+    if (!extractSlice) extractSlice = ITKToolsExtractSlice< short >::New( componentType );
+    if (!extractSlice) extractSlice = ITKToolsExtractSlice< float >::New( componentType );
 
     if (!extractSlice) 
     {

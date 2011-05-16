@@ -56,16 +56,16 @@ std::string GetHelpString( void )
 
 /** PCA */
 
-class PCABase : public itktools::ITKToolsBase
+class ITKToolsPCABase : public itktools::ITKToolsBase
 { 
 public:
-  PCABase()
+  ITKToolsPCABase()
   {
     //std::vector< std::string > m_InputFileNames;
     m_OutputDirectory = "";
     m_NumberOfPCs = 0;
   };
-  ~PCABase(){};
+  ~ITKToolsPCABase(){};
 
   /** Input parameters */
   std::vector< std::string > m_InputFileNames;
@@ -77,13 +77,13 @@ public:
 
 
 template< class TComponentType, unsigned int VDimension >
-class PCA : public PCABase
+class ITKToolsPCA : public ITKToolsPCABase
 {
 public:
-  typedef PCA Self;
+  typedef ITKToolsPCA Self;
 
-  PCA(){};
-  ~PCA(){};
+  ITKToolsPCA(){};
+  ~ITKToolsPCA(){};
 
   static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
@@ -249,7 +249,7 @@ int main( int argc, char **argv )
   }
   
   /** Class that does the work */
-  PCABase * pca = 0; 
+  ITKToolsPCABase * pca = 0; 
 
   unsigned int imageDimension = 0;
   itktools::GetImageDimension(inputFileNames[0], imageDimension);
@@ -260,27 +260,27 @@ int main( int argc, char **argv )
   try
   {    
     // now call all possible template combinations.
-    if (!pca) pca = PCA< unsigned char, 2 >::New( componentType, imageDimension );
-    if (!pca) pca = PCA< char, 2 >::New( componentType, imageDimension );
-    if (!pca) pca = PCA< unsigned short, 2 >::New( componentType, imageDimension );
-    if (!pca) pca = PCA< short, 2 >::New( componentType, imageDimension );
-    if (!pca) pca = PCA< unsigned int, 2 >::New( componentType, imageDimension );
-    if (!pca) pca = PCA< int, 2 >::New( componentType, imageDimension );
-    if (!pca) pca = PCA< unsigned long, 2 >::New( componentType, imageDimension );
-    if (!pca) pca = PCA< long, 2 >::New( componentType, imageDimension );
-    if (!pca) pca = PCA< float, 2 >::New( componentType, imageDimension );
-    if (!pca) pca = PCA< double, 2 >::New( componentType, imageDimension );
+    if (!pca) pca = ITKToolsPCA< unsigned char, 2 >::New( componentType, imageDimension );
+    if (!pca) pca = ITKToolsPCA< char, 2 >::New( componentType, imageDimension );
+    if (!pca) pca = ITKToolsPCA< unsigned short, 2 >::New( componentType, imageDimension );
+    if (!pca) pca = ITKToolsPCA< short, 2 >::New( componentType, imageDimension );
+    if (!pca) pca = ITKToolsPCA< unsigned int, 2 >::New( componentType, imageDimension );
+    if (!pca) pca = ITKToolsPCA< int, 2 >::New( componentType, imageDimension );
+    if (!pca) pca = ITKToolsPCA< unsigned long, 2 >::New( componentType, imageDimension );
+    if (!pca) pca = ITKToolsPCA< long, 2 >::New( componentType, imageDimension );
+    if (!pca) pca = ITKToolsPCA< float, 2 >::New( componentType, imageDimension );
+    if (!pca) pca = ITKToolsPCA< double, 2 >::New( componentType, imageDimension );
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!pca) pca = PCA< unsigned char, 3 >::New( componentType, imageDimension );
-    if (!pca) pca = PCA< char, 3 >::New( componentType, imageDimension );
-    if (!pca) pca = PCA< unsigned short, 3 >::New( componentType, imageDimension );
-    if (!pca) pca = PCA< short, 3 >::New( componentType, imageDimension );
-    if (!pca) pca = PCA< unsigned int, 3 >::New( componentType, imageDimension );
-    if (!pca) pca = PCA< int, 3 >::New( componentType, imageDimension );
-    if (!pca) pca = PCA< unsigned long, 3 >::New( componentType, imageDimension );
-    if (!pca) pca = PCA< long, 3 >::New( componentType, imageDimension );
-    if (!pca) pca = PCA< float, 3 >::New( componentType, imageDimension );
-    if (!pca) pca = PCA< double, 3 >::New( componentType, imageDimension );
+    if (!pca) pca = ITKToolsPCA< unsigned char, 3 >::New( componentType, imageDimension );
+    if (!pca) pca = ITKToolsPCA< char, 3 >::New( componentType, imageDimension );
+    if (!pca) pca = ITKToolsPCA< unsigned short, 3 >::New( componentType, imageDimension );
+    if (!pca) pca = ITKToolsPCA< short, 3 >::New( componentType, imageDimension );
+    if (!pca) pca = ITKToolsPCA< unsigned int, 3 >::New( componentType, imageDimension );
+    if (!pca) pca = ITKToolsPCA< int, 3 >::New( componentType, imageDimension );
+    if (!pca) pca = ITKToolsPCA< unsigned long, 3 >::New( componentType, imageDimension );
+    if (!pca) pca = ITKToolsPCA< long, 3 >::New( componentType, imageDimension );
+    if (!pca) pca = ITKToolsPCA< float, 3 >::New( componentType, imageDimension );
+    if (!pca) pca = ITKToolsPCA< double, 3 >::New( componentType, imageDimension );
 #endif
     if (!pca) 
     {

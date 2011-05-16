@@ -53,17 +53,17 @@ std::string GetHelpString( void )
 
 /** CreateCylinder */
 
-class CreateCylinderBase : public itktools::ITKToolsBase
+class ITKToolsCreateCylinderBase : public itktools::ITKToolsBase
 { 
 public:
-  CreateCylinderBase()
+  ITKToolsCreateCylinderBase()
   {
     m_InputFileName = "";
     m_OutputFileName = "";
     //std::vector<unsigned int> m_Center;
-    double m_Radius = 0.0f;
+    m_Radius = 0.0f;
   };
-  ~CreateCylinderBase(){};
+  ~ITKToolsCreateCylinderBase(){};
 
   /** Input parameters */
   std::string m_InputFileName;
@@ -75,13 +75,13 @@ public:
 
 
 template< unsigned int VDimension >
-class CreateCylinder : public CreateCylinderBase
+class ITKToolsCreateCylinder : public ITKToolsCreateCylinderBase
 {
 public:
-  typedef CreateCylinder Self;
+  typedef ITKToolsCreateCylinder Self;
 
-  CreateCylinder(){};
-  ~CreateCylinder(){};
+  ITKToolsCreateCylinder(){};
+  ~ITKToolsCreateCylinder(){};
 
   static Self * New( unsigned int dim )
   {
@@ -162,12 +162,6 @@ public:
 
 //-------------------------------------------------------------------------------------
 
-
-/** Declare GetHelpString. */
-std::string GetHelpString( void );
-
-//-------------------------------------------------------------------------------------
-
 int main( int argc, char *argv[] )
 {
   /** Create a command line argument parser. */
@@ -221,7 +215,7 @@ int main( int argc, char *argv[] )
 
   
   /** Class that does the work */
-  CreateCylinderBase * createCylinder = NULL; 
+  ITKToolsCreateCylinderBase * createCylinder = NULL; 
 
   /** Short alias */
   unsigned int dim = Dimension;
@@ -229,9 +223,9 @@ int main( int argc, char *argv[] )
   try
   {    
     // now call all possible template combinations.
-    if (!createCylinder) createCylinder = CreateCylinder< 2 >::New( dim );
+    if (!createCylinder) createCylinder = ITKToolsCreateCylinder< 2 >::New( dim );
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!createCylinder) createCylinder = CreateCylinder< 3 >::New( dim );    
+    if (!createCylinder) createCylinder = ITKToolsCreateCylinder< 3 >::New( dim );    
 #endif
     if (!createCylinder) 
     {

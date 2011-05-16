@@ -78,11 +78,19 @@ public:
 
 /** Texture */
 
-class TextureBase : public itktools::ITKToolsBase
+class ITKToolsTextureBase : public itktools::ITKToolsBase
 { 
 public:
-  TextureBase(){};
-  ~TextureBase(){};
+  ITKToolsTextureBase()
+  {
+    m_InputFileName = "";
+    m_OutputDirectory = "";
+    m_NeighborhoodRadius = 0;
+    //std::vector< unsigned int > m_OffsetScales;
+    m_NumberOfBins = 0;
+    m_NumberOfOutputs = 0;
+  };
+  ~ITKToolsTextureBase(){};
 
   /** Input parameters */
   std::string m_InputFileName;
@@ -96,13 +104,13 @@ public:
 
 
 template< class TInputComponentType, class TOutputComponentType, unsigned int VDimension >
-class Texture : public TextureBase
+class ITKToolsTexture : public ITKToolsTextureBase
 {
 public:
-  typedef Texture Self;
+  typedef ITKToolsTexture Self;
 
-  Texture(){};
-  ~Texture(){};
+  ITKToolsTexture(){};
+  ~ITKToolsTexture(){};
 
   static Self * New( itktools::ComponentType inputComponentType,
 		     itktools::ComponentType outputComponentType, unsigned int dim )
@@ -272,7 +280,7 @@ int main( int argc, char **argv )
   }
 
   /** Class that does the work */
-  TextureBase * texture = NULL;
+  ITKToolsTextureBase * texture = NULL;
 
   /** Short alias */
   unsigned int dim = Dimension;
@@ -289,12 +297,12 @@ int main( int argc, char **argv )
   try
   {    
     // now call all possible template combinations.
-    if (!texture) texture = Texture< float, float, 2 >::New( inputComponentType, outputComponentType, dim );
-    if (!texture) texture = Texture< float, double, 2 >::New( inputComponentType, outputComponentType, dim );
+    if (!texture) texture = ITKToolsTexture< float, float, 2 >::New( inputComponentType, outputComponentType, dim );
+    if (!texture) texture = ITKToolsTexture< float, double, 2 >::New( inputComponentType, outputComponentType, dim );
     
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!texture) texture = Texture< float, float, 3 >::New( inputComponentType, outputComponentType, dim );    
-    if (!texture) texture = Texture< float, double, 3 >::New( inputComponentType, outputComponentType, dim );
+    if (!texture) texture = ITKToolsTexture< float, float, 3 >::New( inputComponentType, outputComponentType, dim );    
+    if (!texture) texture = ITKToolsTexture< float, double, 3 >::New( inputComponentType, outputComponentType, dim );
 #endif
     if (!texture) 
     {

@@ -53,16 +53,16 @@ std::string GetHelpString( void )
 
 /** ImagesToVectorImage */
 
-class ImagesToVectorImageBase : public itktools::ITKToolsBase
+class ITKToolsImagesToVectorImageBase : public itktools::ITKToolsBase
 { 
 public:
-  ImagesToVectorImageBase()
+  ITKToolsImagesToVectorImageBase()
   {
     //std::vector<std::string> m_InputFileNames;
     m_OutputFileName = "";
     m_NumberOfStreams = 0;
   };
-  ~ImagesToVectorImageBase(){};
+  ~ITKToolsImagesToVectorImageBase(){};
 
   /** Input parameters */
   std::vector<std::string> m_InputFileNames;
@@ -73,13 +73,13 @@ public:
 
 
 template< class TComponentType, unsigned int VDimension >
-class ImagesToVectorImage : public ImagesToVectorImageBase
+class ITKToolsImagesToVectorImage : public ITKToolsImagesToVectorImageBase
 {
 public:
-  typedef ImagesToVectorImage Self;
+  typedef ITKToolsImagesToVectorImage Self;
 
-  ImagesToVectorImage(){};
-  ~ImagesToVectorImage(){};
+  ITKToolsImagesToVectorImage(){};
+  ~ITKToolsImagesToVectorImage(){};
 
   static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
@@ -202,7 +202,7 @@ int main( int argc, char ** argv )
   }
 
   /** Class that does the work */
-  ImagesToVectorImageBase * imagesToVectorImage = NULL;
+  ITKToolsImagesToVectorImageBase * imagesToVectorImage = NULL;
 
   unsigned int dim = 0;
   itktools::GetImageDimension(inputFileNames[0], dim);
@@ -217,27 +217,27 @@ int main( int argc, char ** argv )
   try
   {    
     // now call all possible template combinations.
-    if (!imagesToVectorImage) imagesToVectorImage = ImagesToVectorImage< char, 2 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ImagesToVectorImage< unsigned char, 2 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ImagesToVectorImage< short, 2 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ImagesToVectorImage< unsigned short, 2 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ImagesToVectorImage< int, 2 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ImagesToVectorImage< unsigned int, 2 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ImagesToVectorImage< long, 2 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ImagesToVectorImage< unsigned long, 2 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ImagesToVectorImage< float, 2 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ImagesToVectorImage< double, 2 >::New( componentType, dim );
+    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< char, 2 >::New( componentType, dim );
+    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< unsigned char, 2 >::New( componentType, dim );
+    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< short, 2 >::New( componentType, dim );
+    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< unsigned short, 2 >::New( componentType, dim );
+    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< int, 2 >::New( componentType, dim );
+    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< unsigned int, 2 >::New( componentType, dim );
+    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< long, 2 >::New( componentType, dim );
+    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< unsigned long, 2 >::New( componentType, dim );
+    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< float, 2 >::New( componentType, dim );
+    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< double, 2 >::New( componentType, dim );
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!imagesToVectorImage) imagesToVectorImage = ImagesToVectorImage< char, 3 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ImagesToVectorImage< unsigned char, 3 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ImagesToVectorImage< short, 3 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ImagesToVectorImage< unsigned short, 3 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ImagesToVectorImage< int, 3 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ImagesToVectorImage< unsigned int, 3 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ImagesToVectorImage< long, 3 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ImagesToVectorImage< unsigned long, 3 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ImagesToVectorImage< float, 3 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ImagesToVectorImage< double, 3 >::New( componentType, dim );    
+    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< char, 3 >::New( componentType, dim );
+    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< unsigned char, 3 >::New( componentType, dim );
+    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< short, 3 >::New( componentType, dim );
+    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< unsigned short, 3 >::New( componentType, dim );
+    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< int, 3 >::New( componentType, dim );
+    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< unsigned int, 3 >::New( componentType, dim );
+    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< long, 3 >::New( componentType, dim );
+    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< unsigned long, 3 >::New( componentType, dim );
+    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< float, 3 >::New( componentType, dim );
+    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< double, 3 >::New( componentType, dim );    
 #endif
     if (!imagesToVectorImage) 
     {

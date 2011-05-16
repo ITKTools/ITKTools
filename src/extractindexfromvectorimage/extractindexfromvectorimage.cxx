@@ -53,16 +53,16 @@ std::string GetHelpString()
 } // end GetHelpString()
 
 
-class ExtractIndexBase : public itktools::ITKToolsBase
+class ITKToolsExtractIndexBase : public itktools::ITKToolsBase
 {
 public:
-  ExtractIndexBase()
+  ITKToolsExtractIndexBase()
   {
     m_InputFileName = "";
     m_OutputFileName = "";
     //std::vector<unsigned int> m_Indices;
   };
-  ~ExtractIndexBase(){};
+  ~ITKToolsExtractIndexBase(){};
 
   /** Input parameters */
   std::string m_InputFileName;
@@ -73,13 +73,13 @@ public:
 
 
 template< class ComponentType, unsigned int Dimension >
-class ExtractIndex : public ExtractIndexBase
+class ITKToolsExtractIndex : public ITKToolsExtractIndexBase
 {
 public:
-  typedef ExtractIndex Self;
+  typedef ITKToolsExtractIndex Self;
 
-  ExtractIndex(){};
-  ~ExtractIndex(){};
+  ITKToolsExtractIndex(){};
+  ~ITKToolsExtractIndex(){};
 
   static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
@@ -235,35 +235,35 @@ int main( int argc, char ** argv )
 
   /** Run the program. */
   
-  ExtractIndexBase * extractIndex = 0;
+  ITKToolsExtractIndexBase * extractIndex = 0;
   unsigned int dim = Dimension;
   itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileName);
   try
   {
     // 2D
-    if (!extractIndex) extractIndex = ExtractIndex< char, 2 >::New( componentType, dim );
-    if (!extractIndex) extractIndex = ExtractIndex< unsigned char, 2 >::New( componentType, dim );
-    if (!extractIndex) extractIndex = ExtractIndex< short, 2 >::New( componentType, dim );
-    if (!extractIndex) extractIndex = ExtractIndex< unsigned short, 2 >::New( componentType, dim );
-    if (!extractIndex) extractIndex = ExtractIndex< int, 2 >::New( componentType, dim );
-    if (!extractIndex) extractIndex = ExtractIndex< unsigned int, 2 >::New( componentType, dim );
-    if (!extractIndex) extractIndex = ExtractIndex< long, 2 >::New( componentType, dim );
-    if (!extractIndex) extractIndex = ExtractIndex< unsigned long, 2 >::New( componentType, dim );
-    if (!extractIndex) extractIndex = ExtractIndex< float, 2 >::New( componentType, dim );
-    if (!extractIndex) extractIndex = ExtractIndex< double, 2 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ITKToolsExtractIndex< char, 2 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ITKToolsExtractIndex< unsigned char, 2 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ITKToolsExtractIndex< short, 2 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ITKToolsExtractIndex< unsigned short, 2 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ITKToolsExtractIndex< int, 2 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ITKToolsExtractIndex< unsigned int, 2 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ITKToolsExtractIndex< long, 2 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ITKToolsExtractIndex< unsigned long, 2 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ITKToolsExtractIndex< float, 2 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ITKToolsExtractIndex< double, 2 >::New( componentType, dim );
     
 #ifdef ITKTOOLS_3D_SUPPORT
     // 3D
-    if (!extractIndex) extractIndex = ExtractIndex< char, 3 >::New( componentType, dim );
-    if (!extractIndex) extractIndex = ExtractIndex< unsigned char, 3 >::New( componentType, dim );
-    if (!extractIndex) extractIndex = ExtractIndex< short, 3 >::New( componentType, dim );
-    if (!extractIndex) extractIndex = ExtractIndex< unsigned short, 3 >::New( componentType, dim );
-    if (!extractIndex) extractIndex = ExtractIndex< int, 3 >::New( componentType, dim );
-    if (!extractIndex) extractIndex = ExtractIndex< unsigned int, 3 >::New( componentType, dim );
-    if (!extractIndex) extractIndex = ExtractIndex< long, 3 >::New( componentType, dim );
-    if (!extractIndex) extractIndex = ExtractIndex< unsigned long, 3 >::New( componentType, dim );
-    if (!extractIndex) extractIndex = ExtractIndex< float, 3 >::New( componentType, dim );
-    if (!extractIndex) extractIndex = ExtractIndex< double, 3 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ITKToolsExtractIndex< char, 3 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ITKToolsExtractIndex< unsigned char, 3 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ITKToolsExtractIndex< short, 3 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ITKToolsExtractIndex< unsigned short, 3 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ITKToolsExtractIndex< int, 3 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ITKToolsExtractIndex< unsigned int, 3 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ITKToolsExtractIndex< long, 3 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ITKToolsExtractIndex< unsigned long, 3 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ITKToolsExtractIndex< float, 3 >::New( componentType, dim );
+    if (!extractIndex) extractIndex = ITKToolsExtractIndex< double, 3 >::New( componentType, dim );
 #endif
     if (!extractIndex)
     {
