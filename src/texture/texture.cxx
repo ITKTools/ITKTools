@@ -141,16 +141,6 @@ public:
   }
 
 }; // end Texture
-/** run: A macro to call a function. */
-#define run( function, typeIn, typeOut, dim ) \
-if ( componentTypeIn == #typeIn && componentTypeOut == #typeOut && Dimension == dim ) \
-{ \
-  typedef itk::Image< typeIn,  dim > InputImageType; \
-  typedef itk::Image< typeOut, dim > OutputImageType; \
-  function< InputImageType, OutputImageType >( inputFileName, outputDirectory, \
-    neighborhoodRadius, offsetScales, numberOfBins, numberOfOutputs ); \
-  supported = true; \
-}
 
 //-------------------------------------------------------------------------------------
 
