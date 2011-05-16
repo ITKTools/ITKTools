@@ -23,26 +23,9 @@
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 
-#include "itkImageFileReader.h"
-#include "itkImage.h"
-#include "itkAndImageFilter.h"
-#include "itkImageRegionConstIterator.h"
-#include "itkThresholdLabelerImageFilter.h"
-#include "itkNumericTraits.h"
-
-#include "itkDiceOverlapImageFilter.h"
 #include "ComputeOverlapOld.h"
 //#include "ComputeOverlap2.h"
 #include "ComputeOverlap3.h"
-
-#include <iostream>
-#include <string>
-#include <vector>
-#include <map>
-#include <set>
-
-
-
 /*
  * ******************* GetHelpString *******************
  */
@@ -156,17 +139,17 @@ int main( int argc, char ** argv )
 
   if ( retlabel )
   {
-    ComputeOverlap3Base * computeOverlap3 = 0; 
+    ITKToolsComputeOverlap3Base * computeOverlap3 = 0; 
     try
     {
       // now call all possible template combinations.
-      if (!computeOverlap3) computeOverlap3 = ComputeOverlap3< char, 2 >::New( componentType, dim );
-      if (!computeOverlap3) computeOverlap3 = ComputeOverlap3< short, 2 >::New( componentType, dim );
+      if (!computeOverlap3) computeOverlap3 = ITKToolsComputeOverlap3< char, 2 >::New( componentType, dim );
+      if (!computeOverlap3) computeOverlap3 = ITKToolsComputeOverlap3< short, 2 >::New( componentType, dim );
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!computeOverlap3) computeOverlap3 = ComputeOverlap3< char, 3 >::New( componentType, dim );
-    if (!computeOverlap3) computeOverlap3 = ComputeOverlap3< unsigned char, 3 >::New( componentType, dim );
-    if (!computeOverlap3) computeOverlap3 = ComputeOverlap3< short, 3 >::New( componentType, dim );
-    if (!computeOverlap3) computeOverlap3 = ComputeOverlap3< unsigned short, 3 >::New( componentType, dim );
+      if (!computeOverlap3) computeOverlap3 = ITKToolsComputeOverlap3< char, 3 >::New( componentType, dim );
+      if (!computeOverlap3) computeOverlap3 = ITKToolsComputeOverlap3< unsigned char, 3 >::New( componentType, dim );
+      if (!computeOverlap3) computeOverlap3 = ITKToolsComputeOverlap3< short, 3 >::New( componentType, dim );
+      if (!computeOverlap3) computeOverlap3 = ITKToolsComputeOverlap3< unsigned short, 3 >::New( componentType, dim );
 #endif
       if (!computeOverlap3) 
       {
@@ -195,17 +178,17 @@ int main( int argc, char ** argv )
   }
   else
   {
-    ComputeOverlapOldBase * computeOverlapOld = 0; 
+    ITKToolsComputeOverlapOldBase * computeOverlapOld = 0; 
     try
     {
       // now call all possible template combinations.
-      if (!computeOverlapOld) computeOverlapOld = ComputeOverlapOld< char, 2 >::New( componentType, dim );
-      if (!computeOverlapOld) computeOverlapOld = ComputeOverlapOld< short, 2 >::New( componentType, dim );
+      if (!computeOverlapOld) computeOverlapOld = ITKToolsComputeOverlapOld< char, 2 >::New( componentType, dim );
+      if (!computeOverlapOld) computeOverlapOld = ITKToolsComputeOverlapOld< short, 2 >::New( componentType, dim );
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!computeOverlapOld) computeOverlapOld = ComputeOverlapOld< char, 3 >::New( componentType, dim );
-    if (!computeOverlapOld) computeOverlapOld = ComputeOverlapOld< unsigned char, 3 >::New( componentType, dim );
-    if (!computeOverlapOld) computeOverlapOld = ComputeOverlapOld< short, 3 >::New( componentType, dim );
-    if (!computeOverlapOld) computeOverlapOld = ComputeOverlapOld< unsigned short, 3 >::New( componentType, dim );
+      if (!computeOverlapOld) computeOverlapOld = ITKToolsComputeOverlapOld< char, 3 >::New( componentType, dim );
+      if (!computeOverlapOld) computeOverlapOld = ITKToolsComputeOverlapOld< unsigned char, 3 >::New( componentType, dim );
+      if (!computeOverlapOld) computeOverlapOld = ITKToolsComputeOverlapOld< short, 3 >::New( componentType, dim );
+      if (!computeOverlapOld) computeOverlapOld = ITKToolsComputeOverlapOld< unsigned short, 3 >::New( componentType, dim );
 #endif
       if (!computeOverlapOld) 
       {

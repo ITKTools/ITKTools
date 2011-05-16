@@ -1,13 +1,29 @@
 #ifndef ComputeOverlap3_H
 #define ComputeOverlap3_H
 
+
+#include "itkImageFileReader.h"
+#include "itkImage.h"
+#include "itkAndImageFilter.h"
+#include "itkImageRegionConstIterator.h"
+#include "itkThresholdLabelerImageFilter.h"
+#include "itkNumericTraits.h"
+
+#include "itkDiceOverlapImageFilter.h"
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <map>
+#include <set>
+
 /** ComputeOverlap */
 
-class ComputeOverlap3Base : public itktools::ITKToolsBase
+class ITKToolsComputeOverlap3Base : public itktools::ITKToolsBase
 { 
 public:
-  ComputeOverlap3Base(){};
-  ~ComputeOverlap3Base(){};
+  ITKToolsComputeOverlap3Base(){};
+  ~ITKToolsComputeOverlap3Base(){};
 
   /** Input parameters */
   std::vector<std::string> m_InputFileNames;
@@ -17,13 +33,13 @@ public:
 
 
 template< class TComponentType, unsigned int VDimension >
-class ComputeOverlap3 : public ComputeOverlap3Base
+class ITKToolsComputeOverlap3 : public ITKToolsComputeOverlap3Base
 {
 public:
-  typedef ComputeOverlap3 Self;
+  typedef ITKToolsComputeOverlap3 Self;
 
-  ComputeOverlap3(){};
-  ~ComputeOverlap3(){};
+  ITKToolsComputeOverlap3(){};
+  ~ITKToolsComputeOverlap3(){};
 
   static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
