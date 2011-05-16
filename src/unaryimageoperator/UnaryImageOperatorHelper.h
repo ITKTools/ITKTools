@@ -94,7 +94,6 @@ public:
     {
       argumentType = "double";
     }
-    float argument = atof( m_Arg.c_str() );
 
     /** Get the unaryOperatorName. */
     std::string unaryOperatorName = m_Ops;
@@ -132,7 +131,7 @@ public:
     stringToEnumMap["ARCTAN"] = ARCTAN;
 
     UnaryFunctorFactory<InputImageType, OutputImageType> unaryFunctorFactory;
-    typename itk::InPlaceImageFilter<InputImageType, OutputImageType>::Pointer unaryFilter = unaryFunctorFactory.GetFilter(stringToEnumMap[m_Ops]);
+    typename itk::InPlaceImageFilter<InputImageType, OutputImageType>::Pointer unaryFilter = unaryFunctorFactory.GetFilter(stringToEnumMap[m_Ops], m_Arg);
     
     /** Connect the pipeline. */
     unaryFilter->SetInput( reader->GetOutput() );
