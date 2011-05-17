@@ -11,9 +11,16 @@
 #include "itkImageFileWriter.h"
 
 
-  /**
-   * ******************* GaussianImageFilter *******************
-   */
+/**
+ * ******************* GaussianImageFilter *******************
+ *
+ * This function performs Gaussian smoothing of an input image.
+ * Several so-called orders are supported:
+ * 0: plain Gaussian smoothing
+ * 1: first derivative
+ * 2: second derivative
+ * The input is scalar, and so is the output.
+ */
 
 template< class OutputImageType >
 void GaussianImageFilter(
@@ -63,9 +70,20 @@ void GaussianImageFilter(
 } // end GaussianImageFilter()
 
 
-  /**
-   * ******************* GaussianImageFilterMagnitude *******************
-   */
+/**
+ * ******************* GaussianImageFilterMagnitude *******************
+ *
+ * This function computes the magnitude of smoothed versions of an image,
+ * where the input is processed per channel. First a vector image is
+ * constructed as follows:
+ *
+ *   vecImage = [ G^i_x( image ) G^i_y( image ) G^i_z( image ) ]^T
+ *
+ * where i refers to the order (zero = smoothing, 1 = first derivative,
+ * 2 = second derivative ], and where x,y,z refer to the image direction
+ * in which smoothing is performed. After construction of the vector image
+ * the magnitude is taken per voxel: || vecImage(x) ||.
+ */
 
 template< class OutputImageType >
 void GaussianImageFilterMagnitude(
@@ -140,9 +158,19 @@ void GaussianImageFilterMagnitude(
 } // end GaussianImageFilterMagnitude()
 
 
-  /**
-   * ******************* GaussianImageFilterLaplacian *******************
-   */
+/**
+ * ******************* GaussianImageFilterLaplacian *******************
+ *
+ * This function computes the Laplacian of an image using Gaussian derivatives.
+ *
+ *   L( image I ) = sum_i d^2 I / d x_i^2
+ *
+ * i being the direction.
+ * This is actually quite similar to the function GaussianImageFilterMagnitude,
+ * defined above, with order = [ 2 2 2 ]. But instead of using a magnitude filter,
+ * a square magnitude should be used: the Laplacian computes the sum of squares,
+ * while the vector magnitude computes the squareroot of the sum of squares.
+ */
 
 template< class OutputImageType >
 void GaussianImageFilterLaplacian(
@@ -232,9 +260,30 @@ void GaussianImageFilterLaplacian(
 } // end GaussianImageFilterLaplacian()
 
 
-  /**
-   * ******************* GaussianImageFilterInvariants *******************
-   */
+/**
+ * ******************* GaussianImageFilterInvariants *******************
+ *
+ * This function computes some invariants based on Gaussian derivatives.
+ *
+ * It can compute one of the following invariants:
+ *   {LiLi, LiLijLj, LiLijLjkLk, Lii, LijLji, LijLjkLki }
+ * where L is the input image, and using Einstein notation.
+ * Together they form the irreducible set of second order Cartesian structure
+ * invariants. They can also be written in matrix notation:
+ *
+ * Einstein notation     matrix notation
+ * ----------------------------------------
+ * L                     L
+ * L_iL_i                g^T g
+ * L_iL_{ij}L_j          g^T H g
+ * L_iL_{ij}L_{jk}L_k    g^T H H g
+ * L_{ii}                trace(H)
+ * L_{ij}L_{ji}          trace(H H)
+ * L_{ij}L_{jk}L_{ki}    trace(H H H)
+ *
+ * where g is the gradient and H the Hessian, both computed using Gaussian
+ * derivatives at scale sigma.
+ */
 
 template< class OutputImageType >
 void GaussianImageFilterInvariants(
@@ -284,31 +333,5 @@ void GaussianImageFilterInvariants(
 } // end GaussianImageFilterInvariants()
 
 
-  /**
-   * ******************* GetHelpString *******************
-   */
-
-std::string GetHelpString( void )
-{
-  std::stringstream ss;
-  ss << "Usage:" << std::endl
-  << "pxgaussianimagefilter" << std::endl
-  << "  -in      inputFilename" << std::endl
-  << "  [-out]   outputFilename, default in + BLURRED.mhd" << std::endl
-  << "  [-std]   sigma, for each dimension, default 1.0" << std::endl
-  << "  [-ord]   order, for each dimension, default zero" << std::endl
-  << "             0: zero order = blurring" << std::endl
-  << "             1: first order = gradient" << std::endl
-  << "             2: second order derivative" << std::endl
-  << "  [-mag]   compute the magnitude of the separate blurrings, default false" << std::endl
-  << "  [-lap]   compute the laplacian, default false" << std::endl
-  << "  [-inv]   compute invariants, choose one of" << std::endl
-  << "           {LiLi, LiLijLj, LiLijLjkLk, Lii, LijLji, LijLjkLki}" << std::endl
-  << "  [-opct]  output pixel type, default equal to input" << std::endl
-  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
-
-  return ss.str();
-
-} // end GetHelpString()
-
 #endif // end #ifndef __gaussianImageFilterHelper_h
+
