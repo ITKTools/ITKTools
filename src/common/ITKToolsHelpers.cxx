@@ -1,6 +1,9 @@
 #include "ITKToolsHelpers.h"
 
 #include "itkImageIOFactory.h"
+#include <algorithm> // std::transform
+#include <cctype> // std::tolower (there is another one in <locale>)
+
 
 namespace itktools {
 
