@@ -6,10 +6,13 @@ FIND_PACKAGE( ITK REQUIRED )
 INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE( pxcastconvert
- castconvert.cxx
- castconverthelpers.h
- castconverthelpers2.h
- )
+  castconvert.cxx
+  castconvert2D.cxx
+  castconvert3D.cxx
+  castconvertDICOM.cxx
+  castconverthelpers.h
+  castconverthelpers2.h
+)
 
 TARGET_LINK_LIBRARIES( pxcastconvert ITKTools-Common ${ITK_LIBRARIES} )
 
