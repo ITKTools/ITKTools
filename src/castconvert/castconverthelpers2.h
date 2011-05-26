@@ -18,58 +18,19 @@
 #ifndef __castconverthelpers2_h__
 #define __castconverthelpers2_h__
 
-#include "itkCommandLineArgumentParser.h"
 #include <itksys/SystemTools.hxx>
 #include "itkGDCMSeriesFileNames.h"
 
-/**
- * ******************* GetCommandLineArguments *******************
- */
 
-bool GetCommandLineArguments( itk::CommandLineArgumentParser::Pointer parser,
-  std::string & input,
-  std::string & outputFileName,
-  std::string & outputPixelComponentType,
-  std::string & seriesUID,
-  std::vector<std::string> & restrictions,
-  bool & useCompression )
-{
-  /** Get arguments. */
-  parser->GetCommandLineArgument( "-in", input );
-  parser->GetCommandLineArgument( "-out", outputFileName );
-  parser->GetCommandLineArgument( "-opct", outputPixelComponentType );
-  parser->GetCommandLineArgument( "-s", seriesUID );
-  parser->GetCommandLineArgument( "-r", restrictions );
-  useCompression = parser->ArgumentExists( "-z" );
-
-  /** Check outputPixelType. */
-  if ( outputPixelComponentType != ""
-    && outputPixelComponentType != "unsigned_char"
-    && outputPixelComponentType != "char"
-    && outputPixelComponentType != "unsigned_short"
-    && outputPixelComponentType != "short"
-    && outputPixelComponentType != "unsigned_int"
-    && outputPixelComponentType != "int"
-    && outputPixelComponentType != "unsigned_long"
-    && outputPixelComponentType != "long"
-    && outputPixelComponentType != "float"
-    && outputPixelComponentType != "double" )
-  {
-    /** In this case an illegal outputPixelComponentType is given. */
-    std::cerr << "The given outputPixelComponentType is " << 
-      outputPixelComponentType << " which is not supported.";
-    return false;
-  }
-
-  return true; // everything went well
-} // end GetCommandLineArguments()
+// NOTE that these functions can not be moved to castconverthelpers.h,
+// otherwise we get linker errors.
 
 
 /**
  * ******************* IsDICOM *******************
  */
 
-int IsDICOM( std::string & input, std::string & errorMessage, bool & isDICOM )
+bool IsDICOM( std::string & input, bool & isDICOM )
 {
   /** Make sure last character of input != "/".
    * Otherwise FileIsDirectory() won't work.
@@ -85,15 +46,11 @@ int IsDICOM( std::string & input, std::string & errorMessage, bool & isDICOM )
 
   if ( exists && !isDir ) isDICOM = false;
   else if ( exists && isDir ) isDICOM = true;
-  else
-  {
-    /** Something is wrong. */
-    errorMessage = "ERROR: " + input + " does not exist.";
-    return 1;
-  }
+  /** Something is wrong. */
+  else return false;
 
   /** Return a value. */
-  return 0;
+  return true;
 
 } // end IsDICOM()
 
@@ -102,7 +59,7 @@ int IsDICOM( std::string & input, std::string & errorMessage, bool & isDICOM )
  * ******************* GetFileNameFromDICOMDirectory *******************
  */
 
-int GetFileNameFromDICOMDirectory(
+bool GetFileNameFromDICOMDirectory(
   const std::string & inputDirectoryName,
   std::string & fileName,
   const std::string & seriesUID,
@@ -129,12 +86,12 @@ int GetFileNameFromDICOMDirectory(
     if ( fileNames.size() != 0 )
     {
       fileName = fileNames[ 0 ];
-      return 0;
+      return true;
     }
     else
     {
       std::cerr << "ERROR: No files found in this directory." << std::endl;
-      return 1;
+      return false;
     }
   }
 
@@ -143,7 +100,7 @@ int GetFileNameFromDICOMDirectory(
   if ( !seriesNames.size() )
   {
     errorMessage = "ERROR: no DICOM series in directory " + inputDirectoryName + ".";
-    return 1;
+    return false;
   }
 
   /** Get a list of files in series. */
@@ -152,14 +109,14 @@ int GetFileNameFromDICOMDirectory(
   {
     errorMessage = "ERROR: no DICOM series " + seriesUID
       + " in directory " + inputDirectoryName + ".";
-    return 1;
+    return false;
   }
 
   /** Get a name of a 2D image. */
   fileName = fileNames[ 0 ];
 
   /** Return a value. */
-  return 0;
+  return true;
 
 } // end GetFileNameFromDICOMDirectory()
 

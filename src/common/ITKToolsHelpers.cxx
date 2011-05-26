@@ -1,8 +1,12 @@
 #include "ITKToolsHelpers.h"
 
 #include "itkImageIOFactory.h"
+#include <algorithm> // std::transform
+#include <cctype> // std::tolower (there is another one in <locale>)
 
-namespace itktools {
+
+namespace itktools
+{
 
 ComponentType GetComponentTypeFromString(std::string typeString)
 {
@@ -22,9 +26,11 @@ ComponentType GetComponentTypeFromString(std::string typeString)
   return itk::ImageIOBase::GetComponentTypeFromString(typeString);
 }
 
+
 /**
  * ***************** GetImageComponentType ************************
  */
+
 itktools::ComponentType GetImageComponentType(const std::string & filename)
 {
   itk::ImageIOBase::Pointer imageIO = itk::ImageIOFactory::CreateImageIO(
@@ -62,6 +68,8 @@ bool TypeIsInteger( const std::string & componentType )
   return typeIsInteger;
 } // end TypeIsInteger()
 #endif
+
+
 /**
  * ******************* InputIsInteger *******************
  */
@@ -153,10 +161,10 @@ void RemoveUnsignedFromString( std::string & arg )
 
 
 /**
- * *************** CheckForValidComponentType ***********************
+ * *************** ComponentTypeIsValid ***********************
  */
 
-bool ComponentTypeIsValid( const ComponentType componentType )
+bool ComponentTypeIsValid( const ComponentType & componentType )
 {
   /** Check argument. */
   if ( componentType == itk::ImageIOBase::UCHAR
@@ -175,12 +183,14 @@ bool ComponentTypeIsValid( const ComponentType componentType )
 
   return false;
 
-} // end CheckForValidComponentType()
+} // end ComponentTypeIsValid()
+
 
 /**
  * *************** GetUnsignedComponentType ***********************
  */
-ComponentType GetUnsignedComponentType( const ComponentType componentType )
+
+ComponentType GetUnsignedComponentType( const ComponentType & componentType )
 {
   if(componentType == itk::ImageIOBase::UCHAR)
   {
@@ -203,6 +213,7 @@ ComponentType GetUnsignedComponentType( const ComponentType componentType )
     return componentType;
   }
 } // end RemoveUnsignedFromComponentType()
+
 
 /**
  * *************** GetLargestComponentType ***********************
@@ -242,7 +253,7 @@ ComponentType GetLargestComponentType(
   /** Return a value. */
   return outputComponentType;
 
-} // end GetTheLargestComponentType()
+} // end GetLargestComponentType()
 
 
 } // end itktools namespace

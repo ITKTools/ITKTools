@@ -31,26 +31,14 @@
  * ENH: on 09-06-2006 we added support for extracting a specific DICOM serie.
  */
 
-#include <iostream>
-
 #include "itkCommandLineArgumentParser.h"
-#include "ITKToolsBase.h"
-#include "ITKToolsHelpers.h"
-
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
-#include "itkShiftScaleImageFilter.h"
-#include "itkImage.h"
-#include "itkVectorImage.h"
-#include "itkImage.h"
-#include "itkVectorIndexSelectionCastImageFilter.h"
-#include "itkImageToVectorImageFilter.h"
+#include "castconverthelpers.h"
+#include "castconverthelpers2.h"
 
 // Some non-standard IO Factories
 #include "itkGE4ImageIOFactory.h"
 #include "itkGE5ImageIOFactory.h"
 #include "itkGEAdwImageIOFactory.h"
-//#include "itkBrains2MaskImageIOFactory.h"
 #include "itkPhilipsRECImageIOFactory.h"
 
 
@@ -111,103 +99,17 @@ std::string GetHelpString( void )
 } // end GetHelpString()
 
 
-/** CastConvert */
+/** Break the program into smaller compilation units. */
+extern void ITKToolsCastConvert2D(
+  itktools::ComponentType outputComponentType, unsigned int dim,
+  ITKToolsCastConvertBase * & castConvert );
+extern void ITKToolsCastConvert3D(
+  itktools::ComponentType outputComponentType, unsigned int dim,
+  ITKToolsCastConvertBase * & castConvert );
+extern void ITKToolsCastConvertDICOM3D(
+  itktools::ComponentType outputComponentType, unsigned int dim,
+  ITKToolsCastConvertBase * & castConvert );
 
-class ITKToolsCastConvertBase : public itktools::ITKToolsBase
-{
-public:
-  ITKToolsCastConvertBase()
-  {
-    m_InputFileName = "";
-    m_OutputFileName = "";
-    m_UseCompression = false;
-  };
-  ~ITKToolsCastConvertBase(){};
-
-  /** Input parameters */
-  std::string m_InputFileName;
-  std::string m_OutputFileName;
-  bool m_UseCompression;
-
-}; // end CastConvertBase
-
-
-template< class TOutputComponentType, unsigned int VDimension >
-class ITKToolsCastConvert : public ITKToolsCastConvertBase
-{
-public:
-  typedef ITKToolsCastConvert Self;
-
-  ITKToolsCastConvert(){};
-  ~ITKToolsCastConvert(){};
-
-  static Self * New( itktools::ComponentType outputComponentType, unsigned int dim )
-  {
-    if ( itktools::IsType<TOutputComponentType>( outputComponentType ) && VDimension == dim )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
-  void Run(void)
-  {
-    typedef itk::VectorImage<double, VDimension>                InputVectorImageType;
-    typedef itk::VectorImage<TOutputComponentType, VDimension>  OutputVectorImageType;
-
-    typedef itk::Image<double, VDimension>                      InputScalarImageType;
-    typedef itk::Image<TOutputComponentType, VDimension>        OutputScalarImageType;
-    
-    typedef typename itk::ImageFileReader< InputVectorImageType >     ImageReaderType;
-    typedef typename itk::ImageFileWriter< OutputVectorImageType >    ImageWriterType;
-    
-    //typedef typename itk::RescaleIntensityImageFilter<
-      //InputImageType, OutputImageType >                         RescaleFilterType;
-    typedef typename itk::ShiftScaleImageFilter<
-      InputScalarImageType, OutputScalarImageType >                         ShiftScaleFilterType;
-    
-    /** Create and setup the reader. */
-    typename ImageReaderType::Pointer reader = ImageReaderType::New();
-    reader->SetFileName( m_InputFileName.c_str() );
-    reader->Update();
-
-    // Create the disassembler
-    typedef itk::VectorIndexSelectionCastImageFilter<InputVectorImageType, InputScalarImageType> IndexSelectionType;
-    typename IndexSelectionType::Pointer indexSelectionFilter = IndexSelectionType::New();
-    indexSelectionFilter->SetInput(reader->GetOutput());
-
-    // Create the re-assembler
-    typedef itk::ImageToVectorImageFilter<OutputScalarImageType> ImageToVectorImageFilterType;
-    typename ImageToVectorImageFilterType::Pointer imageToVectorImageFilter = ImageToVectorImageFilterType::New();
-
-    // Apply the filter to each channel
-    for(unsigned int channel = 0; channel < reader->GetOutput()->GetNumberOfComponentsPerPixel(); channel++)
-      {
-      // Extract the current channel
-      indexSelectionFilter->SetIndex(channel);
-      indexSelectionFilter->Update();
-
-      // Cast the image
-      //typename RescaleFilterType::Pointer caster = RescaleFilterType::New();
-      typename ShiftScaleFilterType::Pointer caster = ShiftScaleFilterType::New();
-      caster->SetShift( 0.0 );
-      caster->SetScale( 1.0 );
-      caster->SetInput( indexSelectionFilter->GetOutput() );
-      caster->Update();
-      
-      // Reassemble the current channel
-      imageToVectorImageFilter->SetNthInput(channel, caster->GetOutput());
-      }
-
-  imageToVectorImageFilter->Update();
-
-  typename ImageWriterType::Pointer writer = ImageWriterType::New();
-  writer->SetFileName(m_OutputFileName);
-  writer->SetInput(imageToVectorImageFilter->GetOutput());
-  writer->Update();
-  }
-
-}; // end CastConvert
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char **argv )
@@ -215,12 +117,12 @@ int main( int argc, char **argv )
   /** Register some non-standard IO Factories to make the tool more useful.
    * Copied from the Insight Applications.
    */
-  //itk::Brains2MaskImageIOFactory::RegisterOneFactory();
   itk::GE4ImageIOFactory::RegisterOneFactory();
   itk::GE5ImageIOFactory::RegisterOneFactory();
   itk::GEAdwImageIOFactory::RegisterOneFactory();
   itk::PhilipsRECImageIOFactory::RegisterOneFactory();
 
+  /** Construct the command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
   parser->SetProgramHelpText( GetHelpString() );
@@ -228,73 +130,134 @@ int main( int argc, char **argv )
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
   parser->MarkArgumentAsRequired( "-out", "The output filename." );
 
-  /** Get the command line arguments. */
-  bool useCompression = false;
-
+  /** Validate the command line arguments. */
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if ( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if ( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }
 
-  std::string inputFileName = "";
-  parser->GetCommandLineArgument( "-in", inputFileName );
+  /** Get the command line arguments. */
+  std::string input = "";
+  parser->GetCommandLineArgument( "-in", input );
 
   std::string outputFileName = "";
   parser->GetCommandLineArgument( "-out", outputFileName );
+
+  std::string outputPixelComponentType = "";
+  bool retopct = parser->GetCommandLineArgument( "-opct", outputPixelComponentType );
+
+  std::string seriesUID = "";
+  parser->GetCommandLineArgument( "-s", seriesUID );
+
+  std::vector<std::string> restrictions;
+  parser->GetCommandLineArgument( "-r", restrictions );
+
+  bool useCompression = parser->ArgumentExists( "-z" );
+
+  /** Check -opct. */
+  if ( retopct )
+  {
+    if ( !itktools::ComponentTypeIsValid( 
+      itk::ImageIOBase::GetComponentTypeFromString( outputPixelComponentType ) ) )
+    {
+      std::cerr << "The user-provided \"-opct\" is "
+        << outputPixelComponentType
+        << ", which is not supported." << std::endl;
+      return EXIT_FAILURE;
+    }
+  }
+
+  /** Are we dealing with an image or a DICOM series? */
+  bool isDICOM = false;
+  bool allOK = IsDICOM( input, isDICOM );
+  if ( !allOK )
+  {
+    std::cout << "ERROR: " << input << " does not exist." << std::endl;
+    return EXIT_FAILURE;
+  }
   
   /** Class that does the work */
   ITKToolsCastConvertBase * castConvert = NULL;
 
-  /** Short alias */
+  /** Get image information. */
+  std::string inputFileName = "";
+  std::string inputDirectoryName = "";
   unsigned int dim = 0;
-  itktools::GetImageDimension(inputFileName, dim);
+  if ( !isDICOM )
+  {
+    inputFileName = input;
+  }
+  else
+  {
+    inputDirectoryName = input;
 
-  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileName);
+    /** Get the first DICOM image file name, to extract information from. */
+    std::string fileNameOfFirstDICOMImage = "";
+    std::string errorMessage = "";
+    bool allOK = GetFileNameFromDICOMDirectory(
+      inputDirectoryName, fileNameOfFirstDICOMImage,
+      seriesUID, restrictions, errorMessage );
+    if ( !allOK )
+    {
+      std::cerr << errorMessage << std::endl;
+      return EXIT_FAILURE;
+    }
 
+    inputFileName = fileNameOfFirstDICOMImage;
+  }
+
+  /** Get dimension and component type. */
+  itktools::GetImageDimension( inputFileName, dim );
+  itktools::ComponentType componentType
+    = itktools::GetImageComponentType( inputFileName );
+  if ( retopct )
+  {
+    componentType = itk::ImageIOBase::GetComponentTypeFromString( outputPixelComponentType );
+  }
+
+  /** Construct a castconvert class of the correct type. */
   try
   {
-    if (!castConvert) castConvert = ITKToolsCastConvert< short, 2 >::New( componentType, dim );
-    if (!castConvert) castConvert = ITKToolsCastConvert< unsigned short, 2 >::New( componentType, dim );
-    if (!castConvert) castConvert = ITKToolsCastConvert< char, 2 >::New( componentType, dim );
-    if (!castConvert) castConvert = ITKToolsCastConvert< unsigned char, 2 >::New( componentType, dim );
-    if (!castConvert) castConvert = ITKToolsCastConvert< int, 2 >::New( componentType, dim );
-    if (!castConvert) castConvert = ITKToolsCastConvert< unsigned int, 2 >::New( componentType, dim );
-    if (!castConvert) castConvert = ITKToolsCastConvert< long, 2 >::New( componentType, dim );
-    if (!castConvert) castConvert = ITKToolsCastConvert< unsigned long, 2 >::New( componentType, dim );
-    if (!castConvert) castConvert = ITKToolsCastConvert< float, 2 >::New( componentType, dim );
-    if (!castConvert) castConvert = ITKToolsCastConvert< double, 2 >::New( componentType, dim );
+    if ( !isDICOM )
+    {
+      if ( !castConvert ) ITKToolsCastConvert2D( componentType, dim, castConvert );
 
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!castConvert) castConvert = ITKToolsCastConvert< short, 3 >::New( componentType, dim );
-    if (!castConvert) castConvert = ITKToolsCastConvert< unsigned short, 3 >::New( componentType, dim );
-    if (!castConvert) castConvert = ITKToolsCastConvert< char, 3 >::New( componentType, dim );
-    if (!castConvert) castConvert = ITKToolsCastConvert< unsigned char, 3 >::New( componentType, dim );
-    if (!castConvert) castConvert = ITKToolsCastConvert< int, 3 >::New( componentType, dim );
-    if (!castConvert) castConvert = ITKToolsCastConvert< unsigned int, 3 >::New( componentType, dim );
-    if (!castConvert) castConvert = ITKToolsCastConvert< long, 3 >::New( componentType, dim );
-    if (!castConvert) castConvert = ITKToolsCastConvert< unsigned long, 3 >::New( componentType, dim );
-    if (!castConvert) castConvert = ITKToolsCastConvert< float, 3 >::New( componentType, dim );
-    if (!castConvert) castConvert = ITKToolsCastConvert< double, 3 >::New( componentType, dim );
+      if ( !castConvert ) ITKToolsCastConvert3D( componentType, dim, castConvert );
 #endif
-    if (!castConvert)
+    }
+    else
+    {
+#ifdef ITKTOOLS_3D_SUPPORT
+      if ( !castConvert ) ITKToolsCastConvertDICOM3D( componentType, dim, castConvert );
+#endif
+    }
+
+    if ( !castConvert )
     {
       std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
       std::cerr
-        << "pixel (component) type = " << componentType
-        << " ; dimension = " << dim
+        << "  pixel (component type = "
+        << itk::ImageIOBase::GetComponentTypeAsString( componentType )
+        << "\n  dimension = " << dim
         << std::endl;
-      return 1;
+      return EXIT_FAILURE;
     }
 
+    /** Set the arguments. */
     castConvert->m_InputFileName = inputFileName;
     castConvert->m_OutputFileName = outputFileName;
     castConvert->m_UseCompression = useCompression;
+
+    castConvert->m_InputDirectoryName = inputDirectoryName;
+    castConvert->m_DICOMSeriesUID = seriesUID;
+    castConvert->m_DICOMSeriesRestrictions = restrictions;
 
     castConvert->Run();
 
@@ -304,9 +267,10 @@ int main( int argc, char **argv )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
     delete castConvert;
-    return 1;
+    return EXIT_FAILURE;
   }
+
   /** End  program. Return success. */
-  return 0;
+  return EXIT_SUCCESS;
 
 }  // end main

@@ -39,10 +39,10 @@ void ReplaceSpaceWithUnderscore( std::string & arg );
 void RemoveUnsignedFromString( std::string & arg );
 
 /** Remove "unsigned " or "unsigned_" from the input string. */
-ComponentType GetUnsignedComponentType( const ComponentType componentType );
+ComponentType GetUnsignedComponentType( const ComponentType & componentType );
 
 /** Check for a valid component type. */
-bool ComponentTypeIsValid( const ComponentType arg );
+bool ComponentTypeIsValid( const ComponentType & arg );
 
 /** Determine pixeltype (scalar/vector) of an image */
 bool GetImagePixelType(
