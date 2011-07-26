@@ -23,64 +23,77 @@
 #include <string>
 #include <itksys/SystemTools.hxx>
 #include "CommandLineArgumentHelper.h"
-
-/**
-  * ******************* Macro *******************
-  */
-
-/** run: A macro to call a function. */
-#define run( function, typeIn1, typeIn2, typeOut, dim ) \
-if ( ComponentTypeIn1 == #typeIn1 && ComponentTypeIn2 == #typeIn2 \
-  && ComponentTypeOut == #typeOut && inputDimension == dim ) \
-{ \
-  typedef itk::Image< typeIn1, dim > InputImage1Type; \
-  typedef itk::Image< typeIn2, dim > InputImage2Type; \
-  typedef itk::Image< typeOut, dim > OutputImageType; \
-  function< InputImage1Type, InputImage2Type, OutputImageType >( \
-    inputFileNames[ 0 ], inputFileNames[ 1 ], outputFileName, ops, useCompression, argument ); \
-  supported = true; \
-}
+#include "itkImageIOBase.h"
 
 
 /**
-  * ******************* DetermineImageProperties *******************
-  */
+ * ******************* DetermineImageProperties *******************
+ */
 
 int DetermineComponentTypes(
   const std::vector<std::string> & inputFileNames,
   itktools::ComponentType & componentType1,
   itktools::ComponentType & componentType2,
-  itktools::ComponentType & componentTypeOut)
+  itktools::ComponentType & componentTypeOut )
 {
+  // Note: a bit of an ugly combination between itktools
+  // and itk::ImageIOBase functionality.
+
   /** Determine image properties of image 1. */
+  std::string pixelType1AsString = "1";
+  std::string componentType1AsString = "";
   unsigned int inputDimension1 = 0;
   unsigned int numberOfComponents1 = 0;
   std::vector<unsigned int> imagesize1;
+  std::vector<double> dummy;
+  itktools::GetImageProperties(
+    inputFileNames[ 0 ],
+    pixelType1AsString, componentType1AsString,
+    inputDimension1, numberOfComponents1,
+    imagesize1, dummy, dummy, dummy );
+  componentType1 = itktools::GetComponentTypeFromString( componentType1AsString );
 
   /** Determine image properties of image 2. */
+  std::string pixelType2AsString = "2";
+  std::string componentType2AsString = "";
   unsigned int inputDimension2 = 0;
   unsigned int numberOfComponents2 = 0;
   std::vector<unsigned int> imagesize2;
+  itktools::GetImageProperties(
+    inputFileNames[ 1 ],
+    pixelType2AsString, componentType2AsString,
+    inputDimension2, numberOfComponents2,
+    imagesize2, dummy, dummy, dummy );
+  componentType2 = itktools::GetComponentTypeFromString( componentType2AsString );
 
   // Properties of both images
   unsigned int inputDimension = 0;
 
   /** Check the input. */
-  if ( componentType1 != componentType2 )
+  if ( pixelType1AsString != pixelType2AsString )
   {
-    std::cerr << "ERROR: the two input images are of different pixel type (SCALAR, VECTOR, etc)." << std::endl;
+    std::cerr << "ERROR: the two input images are of different pixel type (SCALAR, VECTOR, etc)."
+      << "\n  Image " << inputFileNames[ 0 ] << " is of type " << pixelType1AsString
+      << "\n  Image " << inputFileNames[ 1 ] << " is of type " << pixelType2AsString
+      << std::endl;
     return 1;
   }
 
   if ( numberOfComponents1 != numberOfComponents2 )
   {
-    std::cerr << "ERROR: the two input images have a different number of components." << std::endl;
+    std::cerr << "ERROR: the two input images have a different number of components."
+      << "\n  Image " << inputFileNames[ 0 ] << " has " << numberOfComponents1
+      << "\n  Image " << inputFileNames[ 1 ] << " has " << numberOfComponents2
+      << std::endl;
     return 1;
   }
 
   if ( inputDimension1 != inputDimension2 )
   {
-    std::cerr << "ERROR: the two input images are of different dimension." << std::endl;
+    std::cerr << "ERROR: the two input images are of different dimension."
+      << "\n  Image " << inputFileNames[ 0 ] << " has dimension " << inputDimension1
+      << "\n  Image " << inputFileNames[ 1 ] << " has dimension " << inputDimension2
+      << std::endl;
     return 1;
   }
   else
@@ -88,11 +101,23 @@ int DetermineComponentTypes(
     inputDimension = inputDimension1;
   }
 
-  for(unsigned int i = 0; i < inputDimension; ++i)
+  for ( unsigned int i = 0; i < inputDimension; ++i )
   {
-    if ( imagesize1[i] != imagesize2[i] )
+    if ( imagesize1[ i ] != imagesize2[ i ] )
     {
-      std::cerr << "ERROR: the two input images have different sizes." << std::endl;
+      std::cerr << "ERROR: the two input images have different sizes."
+        << "\n  Image " << inputFileNames[ 0 ] << " has size [ ";
+      for ( unsigned int j = 0; j < inputDimension; ++j )
+      {
+        std::cerr << imagesize1[ j ] << " ";
+      }
+      std::cerr << "]"
+        << "\n  Image " << inputFileNames[ 1 ] << " has size [ ";
+      for ( unsigned int j = 0; j < inputDimension; ++j )
+      {
+        std::cerr << imagesize2[ j ] << " ";
+      }
+      std::cerr << "]" << std::endl;
       return 1;
     }
   }
@@ -118,8 +143,8 @@ int DetermineComponentTypes(
 
 
 /**
-  * ******************* CheckOperator *******************
-  */
+ * ******************* CheckOperator *******************
+ */
 
 int CheckOperator( std::string & operatoR )
 {
@@ -214,9 +239,9 @@ int CheckOperator( std::string & operatoR )
 } // end CheckOperator()
 
 
-  /**
-   * ******************* OperatorNeedsArgument *******************
-   */
+/**
+ * ******************* OperatorNeedsArgument *******************
+ */
 
 bool OperatorNeedsArgument( const std::string & operatoR )
 {
@@ -247,9 +272,9 @@ bool OperatorNeedsArgument( const std::string & operatoR )
 } // end OperatorNeedsArgument()
 
 
-  /**
-   * ******************* CreateOutputFileName *******************
-   */
+/**
+ * ******************* CreateOutputFileName *******************
+ */
 
 void CreateOutputFileName( const std::vector<std::string> & inputFileNames,
   std::string & outputFileName,
@@ -290,9 +315,10 @@ void CreateOutputFileName( const std::vector<std::string> & inputFileNames,
 
 } // end CreateOutputFileName
 
-  /**
-   * ******************* CheckOperatorAndArgument *******************
-   */
+
+/**
+ * ******************* CheckOperatorAndArgument *******************
+ */
 
 bool CheckOperatorAndArgument( const std::string & operatoR,
   const std::string & argument, const bool & retarg )

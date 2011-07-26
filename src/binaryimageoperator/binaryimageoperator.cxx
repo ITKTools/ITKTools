@@ -180,11 +180,11 @@ int main( int argc, char **argv )
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if ( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if ( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }
@@ -224,8 +224,7 @@ int main( int argc, char **argv )
   itktools::ComponentType componentType1;
   itktools::ComponentType componentType2;
   itktools::ComponentType componentTypeOut;
-
-  DetermineComponentTypes( inputFileNames, componentType1, componentType2, componentTypeOut);
+  DetermineComponentTypes( inputFileNames, componentType1, componentType2, componentTypeOut );
 
   /** Let the user override the output component type. */
   if ( retopct )
@@ -251,12 +250,11 @@ int main( int argc, char **argv )
   bool retCOA = CheckOperatorAndArgument( ops, argument, retarg );
   if ( !retCOA ) return 1;
 
-
   /** Class that does the work */
   ITKToolsBinaryImageOperatorBase * binaryImageOperator = NULL;
 
   unsigned int dim = 0;
-  itktools::GetImageDimension(inputFileNames[1], dim);
+  itktools::GetImageDimension( inputFileNames[1], dim );
 
   try
   {
@@ -285,13 +283,14 @@ int main( int argc, char **argv )
 #endif
     if (!binaryImageOperator)
     {
+      typedef itk::ImageIOBase                        ImageIOBaseType;
+      ImageIOBaseType::Pointer imageIOBaseTmp;
       std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
       std::cerr
-        << "input1 pixel (component) type = " << componentType1
-        << "input2 pixel (component) type = " << componentType2
-        << "output pixel (component) type = " << componentTypeOut
-        << " ; dimension = " << dim
-        << std::endl;
+        << "  input1 pixel (component) type = " << imageIOBaseTmp->GetComponentTypeAsString( componentType1 )
+        << "\n  input2 pixel (component) type = " << imageIOBaseTmp->GetComponentTypeAsString( componentType2 )
+        << "\n  output pixel (component) type = " << imageIOBaseTmp->GetComponentTypeAsString( componentTypeOut )
+        << "\n  dimension = " << dim << std::endl;
       return 1;
     }
 
@@ -312,7 +311,6 @@ int main( int argc, char **argv )
     delete binaryImageOperator;
     return 1;
   }
-
 
   /** End program. */
   return 0;
