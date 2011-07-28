@@ -99,7 +99,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     typedef itk::VectorImage<double, VDimension>                InputVectorImageType;
     typedef itk::VectorImage<TOutputComponentType, VDimension>  OutputVectorImageType;
@@ -115,13 +115,13 @@ public:
 
     /** Create and setup the reader. */
     typename ImageReaderType::Pointer reader = ImageReaderType::New();
-    reader->SetFileName( m_InputFileName.c_str() );
+    reader->SetFileName( this->m_InputFileName.c_str() );
     reader->Update();
 
     // Create the disassembler
     typedef itk::VectorIndexSelectionCastImageFilter<InputVectorImageType, InputScalarImageType> IndexSelectionType;
     typename IndexSelectionType::Pointer indexSelectionFilter = IndexSelectionType::New();
-    indexSelectionFilter->SetInput(reader->GetOutput());
+    indexSelectionFilter->SetInput( reader->GetOutput() );
 
     // Create the re-assembler
     typedef itk::ImageToVectorImageFilter<OutputScalarImageType> ImageToVectorImageFilterType;
@@ -131,7 +131,7 @@ public:
     for(unsigned int channel = 0; channel < reader->GetOutput()->GetNumberOfComponentsPerPixel(); channel++)
     {
       // Extract the current channel
-      indexSelectionFilter->SetIndex(channel);
+      indexSelectionFilter->SetIndex( channel );
       indexSelectionFilter->Update();
 
       // Cast the image
@@ -143,16 +143,18 @@ public:
       caster->Update();
 
       // Reassemble the current channel
-      imageToVectorImageFilter->SetNthInput(channel, caster->GetOutput());
+      imageToVectorImageFilter->SetNthInput( channel, caster->GetOutput() );
     }
 
     imageToVectorImageFilter->Update();
 
     typename ImageWriterType::Pointer writer = ImageWriterType::New();
-    writer->SetFileName(m_OutputFileName);
-    writer->SetInput(imageToVectorImageFilter->GetOutput());
+    writer->SetFileName( this->m_OutputFileName.c_str() );
+    writer->SetUseCompression( this->m_UseCompression );
+    writer->SetInput( imageToVectorImageFilter->GetOutput() );
     writer->Update();
-  }
+
+  } // end Run()
 
 }; // end class ITKToolsCastConvert
 
@@ -202,12 +204,12 @@ public:
     /** Get a list of the filenames of the 2D input DICOM images. */
     GDCMNamesGeneratorType::Pointer nameGenerator = GDCMNamesGeneratorType::New();
     nameGenerator->SetUseSeriesDetails( true );
-    for ( unsigned int i = 0; i < m_DICOMSeriesRestrictions.size(); ++i )
+    for ( unsigned int i = 0; i < this->m_DICOMSeriesRestrictions.size(); ++i )
     {
-      nameGenerator->AddSeriesRestriction( m_DICOMSeriesRestrictions[ i ] );
+      nameGenerator->AddSeriesRestriction( this->m_DICOMSeriesRestrictions[ i ] );
     }
-    nameGenerator->SetInputDirectory( m_InputDirectoryName.c_str() );
-    FileNamesContainerType fileNames = nameGenerator->GetFileNames( m_DICOMSeriesUID );
+    nameGenerator->SetInputDirectory( this->m_InputDirectoryName.c_str() );
+    FileNamesContainerType fileNames = nameGenerator->GetFileNames( this->m_DICOMSeriesUID );
 
     /** Create and setup the seriesReader. */
     typename SeriesReaderType::Pointer seriesReader = SeriesReaderType::New();
@@ -217,8 +219,8 @@ public:
     /** Create and setup caster and writer. */
     typename CastFilterType::Pointer caster = CastFilterType::New();
     typename ImageWriterType::Pointer writer = ImageWriterType::New();
-    writer->SetFileName( m_OutputFileName.c_str()  );
-    writer->SetUseCompression( m_UseCompression );
+    writer->SetFileName( this->m_OutputFileName.c_str()  );
+    writer->SetUseCompression( this->m_UseCompression );
 
     /** Connect the pipeline. */
     caster->SetInput(  seriesReader->GetOutput()  );
