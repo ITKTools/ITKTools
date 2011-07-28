@@ -32,23 +32,25 @@
 
 
 /**
-  * ******************* GetHelpString *******************
-  */
-std::string GetHelpString()
+ * ******************* GetHelpString *******************
+ */
+
+std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "This program computes the bounding box of an image." << std::endl
-     << "Every pixel > 0 is considered to be within the bounding box." << std::endl
-     << "Returns the minimum and maximum indices/points that lie within the bounding box." << std::endl
-     << "Usage:" << std::endl
-     << "pxcomputeboundingbox" << std::endl
-     << "-in      inputFilename" << std::endl
-     << "[-dim]   dimension, default 3" << std::endl
-     << "[-pt]    pixelType, default short" << std::endl
-     << "Supported: 2D, 3D, short. Images with PixelType other than short are automatically converted.";
+    << "Every pixel > 0 is considered to be within the bounding box." << std::endl
+    << "Returns the minimum and maximum indices/points that lie within the bounding box." << std::endl
+    << "Usage:" << std::endl
+    << "pxcomputeboundingbox" << std::endl
+    << "-in      inputFilename" << std::endl
+    << "[-dim]   dimension, default 3" << std::endl
+    << "[-pt]    pixelType, default short" << std::endl
+    << "Supported: 2D, 3D, short. Images with PixelType other than short are automatically converted.";
 
   return ss.str();
-} // end GetHelpString
+
+} // end GetHelpString()
 
 
 /** ComputeBoundingBox */
@@ -88,7 +90,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     /** Typedefs. */
     typedef itk::Image<TComponentType, VImageDimension> InputImageType;
@@ -125,12 +127,12 @@ public:
     {
       if ( iterator.Get() > zero )
       {
-	const IndexType & index = iterator.GetIndex();
-	for ( unsigned int i = 0; i < dimension; ++i)
-	{
-	  minIndex[i] = vnl_math_min( index[i], minIndex[i] );
-	  maxIndex[i] = vnl_math_max( index[i], maxIndex[i] );
-	}
+        const IndexType & index = iterator.GetIndex();
+        for ( unsigned int i = 0; i < dimension; ++i)
+        {
+          minIndex[i] = vnl_math_min( index[i], minIndex[i] );
+          maxIndex[i] = vnl_math_max( index[i], maxIndex[i] );
+        }
       }
       ++iterator;
     }
@@ -145,14 +147,10 @@ public:
     std::cout << std::showpoint;
     std::cout << "MinimumPoint = " << minPoint << "\n"
 	      << "MaximumPoint = " << maxPoint << std::endl;
-  }
+
+  } // end Run()
 
 }; // end ComputeBoundingBox
-
-//-------------------------------------------------------------------------------------
-
-/** Declare other functions. */
-std::string GetHelpString( void );
 
 
 //-------------------------------------------------------------------------------------
@@ -208,7 +206,7 @@ int main( int argc, char **argv )
   /** Let the user overrule this */
   bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
   bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
-  if (retdim | retpt)
+  if ( retdim | retpt )
   {
     std::cout << "The user has overruled this by specifying -pt and/or -dim:" << std::endl;
     std::cout << "\tPixelType:          " << ComponentType << std::endl;
@@ -216,7 +214,7 @@ int main( int argc, char **argv )
     std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
   }
 
-  if (NumberOfComponents > 1)
+  if ( NumberOfComponents > 1 )
   {
     std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
     std::cerr << "Vector images are not supported!" << std::endl;
@@ -233,20 +231,15 @@ int main( int argc, char **argv )
     ComponentType = "short";
     std::cout << "WARNING: the image will be converted to short!" << std::endl;
   }
-  
-  
+
   /** Class that does the work */
   ITKToolsComputeBoundingBoxBase * computeBoundingBox = 0; 
 
   /** Short alias */
   unsigned int dim = Dimension;
- 
-  /** \todo some progs allow user to override the pixel type, 
-   * so we need a method to convert string to EnumComponentType */
-  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileName);
-  
-  std::cout << "Detected component type: " << 
-    componentType << std::endl;
+  itk::ImageIOBase::Pointer imageIOBaseTmp;
+  itktools::ComponentType componentType
+    = imageIOBaseTmp->GetComponentTypeFromString( "short" );
 
   try
   {    

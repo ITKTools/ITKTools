@@ -35,8 +35,8 @@
 
 
 /**
-  * ******************* GetHelpString *******************
-  */
+ * ******************* GetHelpString *******************
+ */
 
 std::string GetHelpString( void )
 {
@@ -81,7 +81,12 @@ std::vector<int> GetUpperBoundary( const std::vector<int> & input1,
 class CropImageBase : public itktools::ITKToolsBase
 { 
 public:
-  CropImageBase(){};
+  CropImageBase()
+  {
+    this->m_InputFileName = "";
+    this->m_OutputFileName = "";
+    this->m_Force = false;
+  };
   ~CropImageBase(){};
 
   /** Input parameters */
@@ -113,7 +118,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     /** Typedefs. */
     typedef itk::Image<TComponentType, VDimension>      InputImageType;
@@ -135,25 +140,29 @@ public:
     SizeType input1Size, input2Size;
     for ( unsigned int i = 0; i < Dimension; i++ )
     {
-      input1Size[ i ] = m_Input1[ i ];
-      input2Size[ i ] = m_Input2[ i ];
+      input1Size[ i ] = this->m_Input1[ i ];
+      input2Size[ i ] = this->m_Input2[ i ];
     }
 
     /** Read the image. */
-    reader->SetFileName( m_InputFileName.c_str() );
+    reader->SetFileName( this->m_InputFileName.c_str() );
     reader->Update();
 
     /** Get the size of input image. */
     SizeType imageSize = reader->GetOutput()->GetLargestPossibleRegion().GetSize();
     std::vector<int> imSize( Dimension );
-    for ( unsigned int i = 0; i < Dimension; i++ ) imSize[ i ] = static_cast<int>( imageSize[ i ] );
+    for ( unsigned int i = 0; i < Dimension; i++ )
+    {
+      imSize[ i ] = static_cast<int>( imageSize[ i ] );
+    }
 
     /** Get the lower and upper boundary. */
     std::vector<unsigned long> padLowerBound, padUpperBound;
     std::vector<int> down = GetLowerBoundary(
-      m_Input1, Dimension, m_Force, padLowerBound );
+      this->m_Input1, Dimension, this->m_Force, padLowerBound );
     std::vector<int> up = GetUpperBoundary(
-      m_Input1, m_Input2, imSize, Dimension, m_Option, m_Force, padUpperBound );
+      this->m_Input1, this->m_Input2, imSize, Dimension,
+      this->m_Option, this->m_Force, padUpperBound );
     SizeType downSize, upSize;
     for ( unsigned int i = 0; i < Dimension; i++ )
     {
@@ -166,17 +175,17 @@ public:
     cropFilter->SetLowerBoundaryCropSize( downSize );
     cropFilter->SetUpperBoundaryCropSize( upSize );
 
-    /** In case the force option is set to true, we force the output image to be of the
-    * desired size.
-    */
-    if ( m_Force )
+    /** In case the force option is set to true, we force the
+     * output image to be of the desired size.
+     */
+    if ( this->m_Force )
     {
       unsigned long uBound[ Dimension ];
       unsigned long lBound[ Dimension ];
       for ( unsigned int i = 0; i < Dimension; i++ )
       {
-	lBound[ i ] = padLowerBound[ i ];
-	uBound[ i ] = padUpperBound[ i ];
+        lBound[ i ] = padLowerBound[ i ];
+        uBound[ i ] = padUpperBound[ i ];
       }
       padFilter->SetPadLowerBound( lBound );
       padFilter->SetPadUpperBound( uBound );
@@ -189,9 +198,10 @@ public:
     }
 
     /** Setup and process the pipeline. */
-    writer->SetFileName( m_OutputFileName.c_str() );
+    writer->SetFileName( this->m_OutputFileName.c_str() );
     writer->Update();
-  }
+
+  } // end Run()
 
 }; // end CropImage
 
@@ -361,7 +371,8 @@ int main( int argc, char **argv )
   /** Short alias */
   unsigned int dim = Dimension;
 
-  itktools::ComponentType componentType = itktools::GetComponentTypeFromString(PixelType);
+  itktools::ComponentType componentType
+    = itktools::GetComponentTypeFromString( ComponentTypeIn );
    
   try
   {    
@@ -391,9 +402,10 @@ int main( int argc, char **argv )
 #endif
     if (!cropImage) 
     {
+      itk::ImageIOBase::Pointer imageIOBaseTmp;
       std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
       std::cerr
-        << "pixel (component) type = " << componentType
+        << "pixel (component) type = " << imageIOBaseTmp->GetComponentTypeAsString( componentType )
         << " ; dimension = " << Dimension
         << std::endl;
       return 1;
@@ -423,14 +435,17 @@ int main( int argc, char **argv )
 
 } // end main()
 
-  /*
-   * ******************* CheckWhichInputOption *******************
-   *
-   * 1: supply two points with -pA and -pB
-   * 2: supply a points and a size with -pA and -sz
-   * 3: supply a lower and an upper bound with -lb and -ub
-   */
-bool CheckWhichInputOption( const bool pAGiven, const bool pBGiven, const bool szGiven,
+
+/*
+ * ******************* CheckWhichInputOption *******************
+ *
+ * 1: supply two points with -pA and -pB
+ * 2: supply a points and a size with -pA and -sz
+ * 3: supply a lower and an upper bound with -lb and -ub
+ */
+
+bool CheckWhichInputOption(
+  const bool pAGiven, const bool pBGiven, const bool szGiven,
   const bool lbGiven, const bool ubGiven, unsigned int & arg )
 {
   if ( pAGiven && pBGiven && !szGiven && !lbGiven && !ubGiven )
@@ -458,9 +473,9 @@ bool CheckWhichInputOption( const bool pAGiven, const bool pBGiven, const bool s
 } // end CheckWhichInputOption()
 
 
-  /*
-   * ******************* ProcessArgument *******************
-   */
+/*
+ * ******************* ProcessArgument *******************
+ */
 
 bool ProcessArgument( std::vector<int> & arg, const unsigned int dimension, const bool positive )
 {
@@ -501,9 +516,9 @@ bool ProcessArgument( std::vector<int> & arg, const unsigned int dimension, cons
 } // end ProcessArgument()
 
 
-  /*
-   * ******************* GetBox *******************
-   */
+/*
+ * ******************* GetBox *******************
+ */
 
 void GetBox( std::vector<int> & pA, std::vector<int> & pB, unsigned int dimension )
 {
@@ -522,9 +537,9 @@ void GetBox( std::vector<int> & pA, std::vector<int> & pB, unsigned int dimensio
 } // end GetBox()
 
 
-  /*
-   * ******************* GetLowerBoundary *******************
-   */
+/*
+ * ******************* GetLowerBoundary *******************
+ */
 
 std::vector<int> GetLowerBoundary( const std::vector<int> & input1,
    const unsigned int dimension, const bool force, std::vector<unsigned long> & padLowerBound )
@@ -550,9 +565,9 @@ std::vector<int> GetLowerBoundary( const std::vector<int> & input1,
 } // end GetLowerBoundary()
 
 
-  /*
-   * ******************* GetUpperBoundary *******************
-   */
+/*
+ * ******************* GetUpperBoundary *******************
+ */
 
  std::vector<int> GetUpperBoundary( const std::vector<int> & input1,
    const std::vector<int> & input2, const std::vector<int> & imageSize,
