@@ -21,124 +21,403 @@
 #include "itkNumericTraits.h"
 
 namespace itk {
-
 namespace Functor {
 
-/** A macro to write a binary functor class, using constraints. */
-#define itkBinaryFunctorMacroC( name, operation ) \
-template< class TInput1, class TInput2, class TOutput = TInput1 > \
-class name \
-{ \
-public: \
-  name() {}; \
-  ~name() {}; \
-  bool operator!=( const name & ) const{ return false; } \
-  bool operator==( const name & other ) const{ return !(*this != other); } \
-  inline TOutput operator()( const TInput1 & a, const TInput2 & b ) \
-  {\
-    const double A = static_cast<double>( a ); \
-    const double B = static_cast<double>( b ); \
-    const double result1 = operation; \
-    const double result2 = ( result1 < NumericTraits<TOutput>::max() ) ? result1 : NumericTraits<TOutput>::max(); \
-    const double result3 = ( result2 > NumericTraits<TOutput>::NonpositiveMin() ) ? result2 : NumericTraits<TOutput>::NonpositiveMin(); \
-    return static_cast<TOutput>( result3 ); \
-  } \
-}
 
-/** A macro to write a binary functor class, no constraints. */
-#define itkBinaryFunctorMacro( name, operation ) \
-template< class TInput1, class TInput2, class TOutput = TInput1 > \
-class name \
-{ \
-public: \
-  name() {}; \
-  ~name() {}; \
-  bool operator!=( const name & ) const{ return false; } \
-  bool operator==( const name & other ) const{ return !(*this != other); } \
-  inline TOutput operator()( const TInput1 & a, const TInput2 & b ) \
-  {\
-    const double A = static_cast<double>( a ); \
-    const double B = static_cast<double>( b ); \
-    return static_cast<TOutput>( operation ); \
-  } \
-}
+/**
+ * ***************** ADDITION ************************
+ */
 
-/** A macro to write a binary functor class, using constraints and an input argument. */
-#define itkBinaryFunctorMacroCA( name, operation ) \
-template< class TInput1, class TInput2, class TOutput = TInput1 > \
-class name \
-{ \
-public: \
-  name() {}; \
-  ~name() {}; \
-  bool operator!=( const name & ) const{ return false; } \
-  bool operator==( const name & other ) const{ return !(*this != other); } \
-  inline TOutput operator()( const TInput1 & A, const TInput2 & B ) \
-  {\
-    const double result1 = operation; \
-    const double result2 = ( result1 < NumericTraits<TOutput>::max() ) ? result1 : NumericTraits<TOutput>::max(); \
-    const double result3 = ( result2 > NumericTraits<TOutput>::NonpositiveMin() ) ? result2 : NumericTraits<TOutput>::NonpositiveMin(); \
-    return static_cast<TOutput>( result3 ); \
-  } \
-  void SetArgument( double arg ){ this->m_Argument = arg; }; \
-private: \
-  double m_Argument; \
-}
+template< class TInput1, class TInput2, class TOutput = TInput1 >
+class ADDITION
+{
+public:
+  ADDITION() {};
+  ~ADDITION() {};
 
-/** A macro to write a binary functor class, using an input argument. */
-#define itkBinaryFunctorMacroA( name, operation ) \
-template< class TInput1, class TInput2, class TOutput = TInput1 > \
-class name \
-{ \
-public: \
-  name() {}; \
-  ~name() {}; \
-  bool operator!=( const name & ) const{ return false; } \
-  bool operator==( const name & other ) const{ return !(*this != other); } \
-  inline TOutput operator()( const TInput1 & A, const TInput2 & B ) \
-  {\
-    return static_cast<TOutput>( operation ); \
-  } \
-  void SetArgument( double arg ){ this->m_Argument = arg; }; \
-private: \
-  double m_Argument; \
-}
+  bool operator!=( const ADDITION & ) const
+  { return false; }
+  bool operator==( const ADDITION & other ) const
+  { return !(*this != other); }
 
-/** Arithmetic functors. */
-itkBinaryFunctorMacroC( ADDITION, A + B );
-itkBinaryFunctorMacroCA( WEIGHTEDADDITION, this->m_Argument * A + ( 1.0 - this->m_Argument ) * B );
-itkBinaryFunctorMacroC( MINUS, A - B );
-itkBinaryFunctorMacroC( TIMES, A * B );
-itkBinaryFunctorMacro( DIVIDE, B != 0 ? A / B : NumericTraits<TOutput>::max() );
-itkBinaryFunctorMacroC( POWER, vcl_pow( A, B ) );
+  inline TOutput operator()( const TInput1 & a, const TInput2 & b )
+  {
+    const double A = static_cast<double>( a );
+    const double B = static_cast<double>( b );
+    const double result1 = A + B;
+    const double result2 = ( result1 < NumericTraits<TOutput>::max() )
+      ? result1 : NumericTraits<TOutput>::max();
+    const double result3 = ( result2 > NumericTraits<TOutput>::NonpositiveMin() )
+      ? result2 : NumericTraits<TOutput>::NonpositiveMin();
+    return static_cast<TOutput>( result3 );
+  }
+}; // end class ADDITION
 
-itkBinaryFunctorMacroC( MAXIMUM, vnl_math_max( A, B ) );
-itkBinaryFunctorMacroC( MINIMUM, vnl_math_min( A, B ) );
 
-itkBinaryFunctorMacro( ABSOLUTEDIFFERENCE, A - B > 0.0 ? A - B : B - A );
-itkBinaryFunctorMacro( SQUAREDDIFFERENCE, ( A - B ) * ( A - B ) );
-itkBinaryFunctorMacro( BINARYMAGNITUDE, vcl_sqrt( A * A + B * B ) );
+/**
+ * ***************** WEIGHTEDADDITION ************************
+ */
 
-/** Compose and join functors. */
+template< class TInput1, class TInput2, class TOutput = TInput1 >
+class WEIGHTEDADDITION
+{
+public:
+  WEIGHTEDADDITION() {};
+  ~WEIGHTEDADDITION() {};
 
-/** Mask functors. */
-itkBinaryFunctorMacroA( MASK,
-  B != NumericTraits< TInput1 >::Zero ? A : this->m_Argument );
-itkBinaryFunctorMacroA( MASKNEGATED,
-  B != NumericTraits< TInput1 >::Zero ? this->m_Argument : A );
+  bool operator!=( const WEIGHTEDADDITION & ) const
+  { return false; }
+  bool operator==( const WEIGHTEDADDITION & other ) const
+  { return !(*this != other); }
 
-/** Nonsense functors. */
-//itkBinaryFunctorMacro( MODULO, A % B );
-// log_B( A )
-itkBinaryFunctorMacro( LOG, vcl_log( A ) / vcl_log( B ) );
-// sqrt_B( A )
-//?itkBinaryFunctorMacroC( ROOT, vcl_( A ) / vcl_log( B );
+  inline TOutput operator()( const TInput1 & A, const TInput2 & B )
+  {
+    const double result1 = this->m_Argument * A + ( 1.0 - this->m_Argument ) * B;
+    const double result2 = ( result1 < NumericTraits<TOutput>::max() )
+      ? result1 : NumericTraits<TOutput>::max();
+    const double result3 = ( result2 > NumericTraits<TOutput>::NonpositiveMin() )
+      ? result2 : NumericTraits<TOutput>::NonpositiveMin();
+    return static_cast<TOutput>( result3 );
+  }
+
+  void SetArgument( double arg )
+  { this->m_Argument = arg; };
+
+private:
+  double m_Argument;
+}; // end class WEIGHTEDADDITION
+
+
+/**
+ * ***************** MINUS ************************
+ */
+
+template< class TInput1, class TInput2, class TOutput = TInput1 >
+class MINUS
+{
+public:
+  MINUS() {};
+  ~MINUS() {};
+
+  bool operator!=( const MINUS & ) const
+  { return false; }
+  bool operator==( const MINUS & other ) const
+  { return !(*this != other); }
+
+  inline TOutput operator()( const TInput1 & a, const TInput2 & b )
+  {
+    const double A = static_cast<double>( a );
+    const double B = static_cast<double>( b );
+    const double result1 = A - B;
+    const double result2 = ( result1 < NumericTraits<TOutput>::max() )
+      ? result1 : NumericTraits<TOutput>::max();
+    const double result3 = ( result2 > NumericTraits<TOutput>::NonpositiveMin() )
+      ? result2 : NumericTraits<TOutput>::NonpositiveMin();
+    return static_cast<TOutput>( result3 );
+  }
+}; // end class MINUS
+
+
+/**
+ * ***************** TIMES ************************
+ */
+
+template< class TInput1, class TInput2, class TOutput = TInput1 >
+class TIMES
+{
+public:
+  TIMES() {};
+  ~TIMES() {};
+
+  bool operator!=( const TIMES & ) const
+  { return false; }
+  bool operator==( const TIMES & other ) const
+  { return !(*this != other); }
+
+  inline TOutput operator()( const TInput1 & a, const TInput2 & b )
+  {
+    const double A = static_cast<double>( a );
+    const double B = static_cast<double>( b );
+    const double result1 = A * B;
+    const double result2 = ( result1 < NumericTraits<TOutput>::max() )
+      ? result1 : NumericTraits<TOutput>::max();
+    const double result3 = ( result2 > NumericTraits<TOutput>::NonpositiveMin() )
+      ? result2 : NumericTraits<TOutput>::NonpositiveMin();
+    return static_cast<TOutput>( result3 );
+  }
+}; // end class TIMES
+
+
+/**
+ * ***************** DIVIDE ************************
+ */
+
+template< class TInput1, class TInput2, class TOutput = TInput1 >
+class DIVIDE
+{
+public:
+  DIVIDE() {};
+  ~DIVIDE() {};
+
+  bool operator!=( const DIVIDE & ) const
+  { return false; }
+  bool operator==( const DIVIDE & other ) const
+  { return !(*this != other); }
+
+  inline TOutput operator()( const TInput1 & a, const TInput2 & b )
+  {
+    const double A = static_cast<double>( a );
+    const double B = static_cast<double>( b );
+    return static_cast<TOutput>( B != 0 ? A / B : NumericTraits<TOutput>::max() );
+  }
+}; // end class DIVIDE
+
+
+/**
+ * ***************** POWER ************************
+ */
+
+template< class TInput1, class TInput2, class TOutput = TInput1 >
+class POWER
+{
+public:
+  POWER() {};
+  ~POWER() {};
+
+  bool operator!=( const POWER & ) const
+  { return false; }
+  bool operator==( const POWER & other ) const
+  { return !(*this != other); }
+
+  inline TOutput operator()( const TInput1 & a, const TInput2 & b )
+  {
+    const double A = static_cast<double>( a );
+    const double B = static_cast<double>( b );
+    const double result1 = vcl_pow( A, B );
+    const double result2 = ( result1 < NumericTraits<TOutput>::max() )
+      ? result1 : NumericTraits<TOutput>::max();
+    const double result3 = ( result2 > NumericTraits<TOutput>::NonpositiveMin() )
+      ? result2 : NumericTraits<TOutput>::NonpositiveMin();
+    return static_cast<TOutput>( result3 );
+  }
+}; // end class POWER
+
+
+/**
+ * ***************** MAXIMUM ************************
+ */
+
+template< class TInput1, class TInput2, class TOutput = TInput1 >
+class MAXIMUM
+{
+public:
+  MAXIMUM() {};
+  ~MAXIMUM() {};
+
+  bool operator!=( const MAXIMUM & ) const
+  { return false; }
+  bool operator==( const MAXIMUM & other ) const
+  { return !(*this != other); }
+
+  inline TOutput operator()( const TInput1 & a, const TInput2 & b )
+  {
+    const double A = static_cast<double>( a );
+    const double B = static_cast<double>( b );
+    const double result1 = vnl_math_max( A, B );
+    const double result2 = ( result1 < NumericTraits<TOutput>::max() )
+      ? result1 : NumericTraits<TOutput>::max();
+    const double result3 = ( result2 > NumericTraits<TOutput>::NonpositiveMin() )
+      ? result2 : NumericTraits<TOutput>::NonpositiveMin();
+    return static_cast<TOutput>( result3 );
+  }
+}; // end class MAXIMUM
+
+
+/**
+ * ***************** MINIMUM ************************
+ */
+
+template< class TInput1, class TInput2, class TOutput = TInput1 >
+class MINIMUM
+{
+public:
+  MINIMUM() {};
+  ~MINIMUM() {};
+
+  bool operator!=( const MINIMUM & ) const
+  { return false; }
+  bool operator==( const MINIMUM & other ) const
+  { return !(*this != other); }
+
+  inline TOutput operator()( const TInput1 & a, const TInput2 & b )
+  {
+    const double A = static_cast<double>( a );
+    const double B = static_cast<double>( b );
+    const double result1 = vnl_math_min( A, B );
+    const double result2 = ( result1 < NumericTraits<TOutput>::max() )
+      ? result1 : NumericTraits<TOutput>::max();
+    const double result3 = ( result2 > NumericTraits<TOutput>::NonpositiveMin() )
+      ? result2 : NumericTraits<TOutput>::NonpositiveMin();
+    return static_cast<TOutput>( result3 );
+  }
+}; // end class MINIMUM
+
+
+/**
+ * ***************** ABSOLUTEDIFFERENCE ************************
+ */
+
+template< class TInput1, class TInput2, class TOutput = TInput1 >
+class ABSOLUTEDIFFERENCE
+{
+public:
+  ABSOLUTEDIFFERENCE() {};
+  ~ABSOLUTEDIFFERENCE() {};
+
+  bool operator!=( const ABSOLUTEDIFFERENCE & ) const
+  { return false; }
+  bool operator==( const ABSOLUTEDIFFERENCE & other ) const
+  { return !(*this != other); }
+
+  inline TOutput operator()( const TInput1 & a, const TInput2 & b )
+  {
+    const double A = static_cast<double>( a );
+    const double B = static_cast<double>( b );
+    return static_cast<TOutput>( A - B > 0.0 ? A - B : B - A );
+  }
+}; // end class ABSOLUTEDIFFERENCE
+
+
+/**
+ * ***************** SQUAREDDIFFERENCE ************************
+ */
+
+template< class TInput1, class TInput2, class TOutput = TInput1 >
+class SQUAREDDIFFERENCE
+{
+public:
+  SQUAREDDIFFERENCE() {};
+  ~SQUAREDDIFFERENCE() {};
+
+  bool operator!=( const SQUAREDDIFFERENCE & ) const
+  { return false; }
+  bool operator==( const SQUAREDDIFFERENCE & other ) const
+  { return !(*this != other); }
+
+  inline TOutput operator()( const TInput1 & a, const TInput2 & b )
+  {
+    const double A = static_cast<double>( a );
+    const double B = static_cast<double>( b );
+    return static_cast<TOutput>( ( A - B ) * ( A - B ) );
+  }
+}; // end class SQUAREDDIFFERENCE
+
+
+/**
+ * ***************** BINARYMAGNITUDE ************************
+ */
+
+template< class TInput1, class TInput2, class TOutput = TInput1 >
+class BINARYMAGNITUDE
+{
+public:
+  BINARYMAGNITUDE() {};
+  ~BINARYMAGNITUDE() {};
+
+  bool operator!=( const BINARYMAGNITUDE & ) const
+  { return false; }
+  bool operator==( const BINARYMAGNITUDE & other ) const
+  { return !(*this != other); }
+
+  inline TOutput operator()( const TInput1 & a, const TInput2 & b )
+  {
+    const double A = static_cast<double>( a );
+    const double B = static_cast<double>( b );
+    return static_cast<TOutput>( vcl_sqrt( A * A + B * B ) );
+  }
+}; // end class BINARYMAGNITUDE
+
+
+/**
+ * ***************** MASK ************************
+ */
+
+template< class TInput1, class TInput2, class TOutput = TInput1 >
+class MASK
+{
+public:
+  MASK() {};
+  ~MASK() {};
+
+  bool operator!=( const MASK & ) const
+  { return false; }
+  bool operator==( const MASK & other ) const
+  { return !(*this != other); }
+
+  inline TOutput operator()( const TInput1 & A, const TInput2 & B )
+  {
+    return static_cast<TOutput>( B != NumericTraits< TInput1 >::Zero ? A : this->m_Argument );
+  }
+  void SetArgument( double arg )
+  { this->m_Argument = arg; };
+private:
+  double m_Argument;
+}; // end class MASK
+
+
+/**
+ * ***************** MASKNEGATED ************************
+ */
+
+template< class TInput1, class TInput2, class TOutput = TInput1 >
+class MASKNEGATED
+{
+public:
+  MASKNEGATED() {};
+  ~MASKNEGATED() {};
+
+  bool operator!=( const MASKNEGATED & ) const
+  { return false; }
+  bool operator==( const MASKNEGATED & other ) const
+  { return !(*this != other); }
+
+  inline TOutput operator()( const TInput1 & A, const TInput2 & B )
+  {
+    return static_cast<TOutput>( B != NumericTraits< TInput1 >::Zero ? this->m_Argument : A );
+  }
+  void SetArgument( double arg )
+  { this->m_Argument = arg; };
+private:
+  double m_Argument;
+}; // end class MASKNEGATED
+
+
+/**
+ * ***************** LOG ************************
+ */
+
+template< class TInput1, class TInput2, class TOutput = TInput1 >
+class LOG
+{
+public:
+  LOG() {};
+  ~LOG() {};
+
+  bool operator!=( const LOG & ) const
+  { return false; }
+  bool operator==( const LOG & other ) const
+  { return !(*this != other); }
+
+  inline TOutput operator()( const TInput1 & a, const TInput2 & b )
+  {
+    const double A = static_cast<double>( a );
+    const double B = static_cast<double>( b );
+    return static_cast<TOutput>( vcl_log( A ) / vcl_log( B ) );
+  }
+}; // end class LOG
 
 
 } // end namespace Functor
-
-
 } // end namespace itk
-
 
 #endif // end #ifndef __itkBinaryFunctors_h
