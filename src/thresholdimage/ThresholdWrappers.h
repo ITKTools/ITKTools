@@ -99,8 +99,8 @@ void OtsuThresholdImage(
 
   /** Apply the threshold. */
   thresholder->SetNumberOfHistogramBins( bins );
-  thresholder->SetInsideValue( static_cast<InputPixelType>( inside ) );
-  thresholder->SetOutsideValue( static_cast<InputPixelType>( outside ) );
+  thresholder->SetInsideValue( static_cast<OutputPixelType>( inside ) );
+  thresholder->SetOutsideValue( static_cast<OutputPixelType>( outside ) );
   thresholder->SetInput( reader1->GetOutput() );
   if ( maskFileName != "" )
   {
@@ -270,8 +270,8 @@ void RobustAutomaticThresholdImage(
 
   /** Apply the threshold. */
   thresholder->SetPow( pow );
-  thresholder->SetInsideValue( static_cast<InputPixelType>( inside ) );
-  thresholder->SetOutsideValue( static_cast<InputPixelType>( outside ) );
+  thresholder->SetInsideValue( static_cast<OutputPixelType>( inside ) );
+  thresholder->SetOutsideValue( static_cast<OutputPixelType>( outside ) );
   thresholder->SetInput( reader->GetOutput() );
   thresholder->SetGradientImage( gradientFilter->GetOutput() );
 
@@ -326,8 +326,8 @@ void KappaSigmaThresholdImage(
   thresholder->SetMaskValue( maskValue );
   thresholder->SetSigmaFactor( sigma );
   thresholder->SetNumberOfIterations( iterations );
-  thresholder->SetInsideValue( static_cast<InputPixelType>( inside ) );
-  thresholder->SetOutsideValue( static_cast<InputPixelType>( outside ) );
+  thresholder->SetInsideValue( static_cast<OutputPixelType>( inside ) );
+  thresholder->SetOutsideValue( static_cast<OutputPixelType>( outside ) );
   thresholder->SetInput( reader1->GetOutput() );
   thresholder->SetMaskImage( reader2->GetOutput() );
 
@@ -375,8 +375,8 @@ void MinErrorThresholdImage(
   /** Apply the threshold. */
   thresholder->SetNumberOfHistogramBins( bins );
   thresholder->SetMixtureType( mixtureType );
-  thresholder->SetInsideValue( static_cast<InputPixelType>( inside ) );
-  thresholder->SetOutsideValue( static_cast<InputPixelType>( outside ) );
+  thresholder->SetInsideValue( static_cast<OutputPixelType>( inside ) );
+  thresholder->SetOutsideValue( static_cast<OutputPixelType>( outside ) );
   thresholder->SetInput( reader->GetOutput() );
 
   /** Write the output image. */
