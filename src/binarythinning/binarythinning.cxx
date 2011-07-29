@@ -21,30 +21,96 @@
  \verbinclude binarythinning.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsBase.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsImageProperties.h"
 
 #include "itkImageFileReader.h"
 #include "itkBinaryThinningImageFilter.h"
 #include "itkImageFileWriter.h"
 
+/**
+  * ******************* GetHelpString *******************
+  */
+std::string GetHelpString()
+{
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+     << "pxbinarythinning" << std::endl
+     << "-in      inputFilename" << std::endl
+     << "[-out]   outputFilename, default in + THINNED.mhd" << std::endl
+     << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl
+     << "Note that the thinning algorithm used here is really a 2D thinning algortihm." << std::endl
+     << "In 3D the thinning is performed slice by slice.";
+  return ss.str();
+} // end GetHelpString()
+
+
+class ITKToolsBinaryThinningBase : public itktools::ITKToolsBase
+{
+public:
+  ITKToolsBinaryThinningBase()
+  {
+    m_InputFileName = "";
+    m_OutputFileName = "";
+  }
+
+  ~ITKToolsBinaryThinningBase(){};
+
+  /** Input parameters */
+  std::string m_InputFileName;
+  std::string m_OutputFileName;
+
+  virtual void Run(void) = 0;
+
+}; // end BinaryThinningBase
+
+
+template< class TComponentType, unsigned int VImageDimension >
+class ITKToolsBinaryThinning : public ITKToolsBinaryThinningBase
+{
+public:
+  typedef ITKToolsBinaryThinning Self;
+
+  ITKToolsBinaryThinning(){};
+  ~ITKToolsBinaryThinning(){};
+
+  static Self * New( itktools::ComponentType componentType, unsigned int imageDimension )
+  {
+    if ( itktools::IsType<TComponentType>(componentType) && VImageDimension == imageDimension )
+    {
+      return new Self;
+    }
+    return 0;
+  }
+
+  void Run(void)
+  {
+    /** Typedef's. */
+    typedef itk::Image<TComponentType, VImageDimension>     InputImageType;
+    typedef itk::ImageFileReader< InputImageType >          ReaderType;
+    typedef itk::BinaryThinningImageFilter<
+      InputImageType, InputImageType >                      FilterType;
+    typedef itk::ImageFileWriter< InputImageType >          WriterType;
+
+    /** Read in the input images. */
+    typename ReaderType::Pointer reader = ReaderType::New();
+    reader->SetFileName( m_InputFileName );
+
+    /** Thin the image. */
+    typename FilterType::Pointer filter = FilterType::New();
+    filter->SetInput( reader->GetOutput() );
+
+    /** Write image. */
+    typename WriterType::Pointer writer = WriterType::New();
+    writer->SetFileName( m_OutputFileName );
+    writer->SetInput( filter->GetOutput() );
+    writer->Update();
+  }
+
+}; // end BinaryThinning
 //-------------------------------------------------------------------------------------
 
-/* run: A macro to call a function. */
-#define run( function, type, dim ) \
-if ( ComponentTypeIn == #type && Dimension == dim ) \
-{ \
-  typedef itk::Image< type, dim >       InputImageType; \
-  function< InputImageType >( inputFileName, outputFileName ); \
-  supported = true; \
-}
-
-//-------------------------------------------------------------------------------------
-
-/* Declare BinaryThinning. */
-template< class InputImageType >
-void BinaryThinning(
-  const std::string & inputFileName,
-  const std::string & outputFileName );
 
 /** Declare PrintHelp. */
 std::string GetHelpString( void );
@@ -85,7 +151,7 @@ int main( int argc, char ** argv )
   unsigned int Dimension = 3;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = GetImageProperties(
+  int retgip = itktools::GetImageProperties(
     inputFileName,
     PixelType,
     ComponentTypeIn,
@@ -106,46 +172,67 @@ int main( int argc, char ** argv )
   }
 
   /** Get rid of the possible "_" in ComponentType. */
-  ReplaceUnderscoreWithSpace( ComponentTypeIn );
+  itktools::ReplaceUnderscoreWithSpace( ComponentTypeIn );
 
-  /** Run the program. */
-  bool supported = false;
+
+  /** Determine image properties. */
+
+  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileName);
+  
+  unsigned int dimension = 0;
+  itktools::GetImageDimension(inputFileName, dimension);
+
+  ITKToolsBinaryThinningBase * binaryThinning = 0;
+
   try
   {
-    run( BinaryThinning, char, 2 );
-    run( BinaryThinning, unsigned char, 2 );
-    run( BinaryThinning, short, 2 );
-    run( BinaryThinning, unsigned short, 2 );
-    run( BinaryThinning, int, 2 );
-    run( BinaryThinning, unsigned int, 2u );
-    run( BinaryThinning, long, 2 );
-    run( BinaryThinning, unsigned long, 2u );
-    run( BinaryThinning, float, 2 );
-    run( BinaryThinning, double, 2 );
+    // 2D
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< char, 2 >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< unsigned char, 2 >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< short, 2 >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< unsigned short, 2 >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< int, 2 >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< unsigned int, 2u >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< long, 2 >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< unsigned long, 2u >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< float, 2 >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< double, 2 >::New( componentType, dimension );
 
-    run( BinaryThinning, char, 3 );
-    run( BinaryThinning, unsigned char, 3 );
-    run( BinaryThinning, short, 3 );
-    run( BinaryThinning, unsigned short, 3 );
-    run( BinaryThinning, int, 3 );
-    run( BinaryThinning, unsigned int, 3 );
-    run( BinaryThinning, long, 3 );
-    run( BinaryThinning, unsigned long, 3 );
-    run( BinaryThinning, float, 3 );
-    run( BinaryThinning, double, 3 );
+    // 3D
+#ifdef ITKTOOLS_3D_SUPPORT
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< char, 3 >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< unsigned char, 3 >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< short, 3 >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< unsigned short, 3 >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< int, 3 >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< unsigned int, 3u >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< long, 3 >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< unsigned long, 3u >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< float, 3 >::New( componentType, dimension );
+    if (!binaryThinning) binaryThinning = ITKToolsBinaryThinning< double, 3 >::New( componentType, dimension );
+#endif
+    
+    if ( !binaryThinning )
+    {
+      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+      std::cerr
+        << "pixel (component) type = " << componentType
+        << " ; dimension = " << Dimension
+        << std::endl;
+      return 1;
+    }
+
+    binaryThinning->m_InputFileName = inputFileName;
+    binaryThinning->m_OutputFileName = outputFileName;
+
+    binaryThinning->Run();
+
+    delete binaryThinning;
   }
   catch( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
-    return 1;
-  }
-  if ( !supported )
-  {
-    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-    std::cerr
-      << "pixel (component) type = " << ComponentTypeIn
-      << " ; dimension = " << Dimension
-      << std::endl;
+    delete binaryThinning;
     return 1;
   }
 
@@ -153,52 +240,3 @@ int main( int argc, char ** argv )
   return 0;
 
 } // end main
-
-
-  /*
-   * ******************* BinaryThinning *******************
-   */
-
-template< class InputImageType >
-void BinaryThinning( const std::string & inputFileName,
-  const std::string & outputFileName )
-{
-  /** Typedef's. */
-  typedef itk::ImageFileReader< InputImageType >          ReaderType;
-  typedef itk::BinaryThinningImageFilter<
-    InputImageType, InputImageType >                      FilterType;
-  typedef itk::ImageFileWriter< InputImageType >          WriterType;
-
-  /** Read in the input images. */
-  typename ReaderType::Pointer reader = ReaderType::New();
-  reader->SetFileName( inputFileName );
-
-  /** Thin the image. */
-  typename FilterType::Pointer filter = FilterType::New();
-  filter->SetInput( reader->GetOutput() );
-
-  /** Write image. */
-  typename WriterType::Pointer writer = WriterType::New();
-  writer->SetFileName( outputFileName );
-  writer->SetInput( filter->GetOutput() );
-  writer->Update();
-
-} // end BinaryThinning()
-
-
-  /**
-   * ******************* GetHelpString *******************
-   */
-std::string GetHelpString()
-{
-  std::stringstream ss;
-  ss << "Usage:" << std::endl
-     << "pxbinarythinning" << std::endl
-     << "-in      inputFilename" << std::endl
-     << "[-out]   outputFilename, default in + THINNED.mhd" << std::endl
-     << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl
-     << "Note that the thinning algorithm used here is really a 2D thinning algortihm." << std::endl
-     << "In 3D the thinning is performed slice by slice.";
-  return ss.str();
-} // end GetHelpString()
-

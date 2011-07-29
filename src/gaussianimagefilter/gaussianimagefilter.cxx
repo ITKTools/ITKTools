@@ -34,25 +34,24 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "Usage:" << std::endl
-    << "pxgaussianimagefilter" << std::endl
-    << " -in inputFilename" << std::endl
-    << " [-out] outputFilename, default in + BLURRED.mhd" << std::endl
-    << " [-std] sigma, for each dimension, default 1.0" << std::endl
-    << " [-ord] order, for each dimension, default zero" << std::endl
-    << " 0: zero order = blurring" << std::endl
-    << " 1: first order = gradient" << std::endl
-    << " 2: second order derivative" << std::endl
-    << " [-mag] compute the magnitude of the separate blurrings, default false" << std::endl
-    << " [-lap] compute the laplacian, default false" << std::endl
-    << " [-inv] compute invariants, choose one of" << std::endl
-    << " {LiLi, LiLijLj, LiLijLjkLk, Lii, LijLji, LijLjkLki}" << std::endl
-    << " [-opct] output pixel type, default equal to input" << std::endl
-    << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
+  << "pxgaussianimagefilter" << std::endl
+  << "  -in      inputFilename" << std::endl
+  << "  [-out]   outputFilename, default in + BLURRED.mhd" << std::endl
+  << "  [-std]   sigma, for each dimension, default 1.0" << std::endl
+  << "  [-ord]   order, for each dimension, default zero" << std::endl
+  << "             0: zero order = blurring" << std::endl
+  << "             1: first order = gradient" << std::endl
+  << "             2: second order derivative" << std::endl
+  << "  [-mag]   compute the magnitude of the separate blurrings, default false" << std::endl
+  << "  [-lap]   compute the laplacian, default false" << std::endl
+  << "  [-inv]   compute invariants, choose one of" << std::endl
+  << "           {LiLi, LiLijLj, LiLijLjkLk, Lii, LijLji, LijLjkLki}" << std::endl
+  << "  [-opct]  output pixel type, default equal to input" << std::endl
+  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
 
   return ss.str();
 
 } // end GetHelpString()
-
 
 //-------------------------------------------------------------------------------------
 /** run: A macro to call a function. */
@@ -150,7 +149,7 @@ int main( int argc, char ** argv )
   unsigned int Dimension = 3;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = GetImageProperties(
+  int retgip = itktools::GetImageProperties(
     inputFileName,
     PixelType,
     ComponentTypeIn,
@@ -173,7 +172,7 @@ int main( int argc, char ** argv )
   }
 
   /** Get rid of the possible "_" in ComponentType. */
-  ReplaceUnderscoreWithSpace( ComponentTypeIn );
+  itktools::ReplaceUnderscoreWithSpace( ComponentTypeIn );
 
   /** Check order. */
   if ( !retlap && !retinv )

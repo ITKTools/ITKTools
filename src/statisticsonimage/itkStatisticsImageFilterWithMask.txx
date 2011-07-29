@@ -314,7 +314,7 @@ StatisticsImageFilter<TInputImage>
 template<class TInputImage>
 void
 StatisticsImageFilter<TInputImage>
-::ThreadedGenerateData( const RegionType& outputRegionForThread, int threadId )
+::ThreadedGenerateData( const RegionType& outputRegionForThread, ThreadIdType threadId )
 {
   RealType realValue;
   PixelType value;

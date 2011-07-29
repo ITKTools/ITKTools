@@ -32,6 +32,28 @@
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 
+
+std::string GetHelpString()
+{
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+     << "pxcomputedifferenceimage inputimage1filename inputimage2filename [outputimagefilename] [outputPixelComponentType]" << std::endl
+     << "where outputPixelComponentType is one of:" << std::endl
+     << "- unsigned_char" << std::endl
+     << "- char" << std::endl
+     << "- unsigned_short" << std::endl
+     << "- short" << std::endl
+     << "- unsigned_int" << std::endl
+     << "- int" << std::endl
+     << "- unsigned_long" << std::endl
+     << "- long" << std::endl
+     << "- float" << std::endl
+     << "- double" << std::endl
+     << "provided that the outputPixelComponentType is supported by the output file format." << std::endl
+     << "By default the outputPixelComponentType is set to the inputPixelComponentType of image1.";
+  return ss.str();
+}
+
 // extern int ComputeScalarDifferenceImage( const std::string &inputPixelComponentType1,
 //   const std::string &inputPixelComponentType2, const std::string &outputPixelComponentType,
 //   const std::string &image1FileName, const std::string &image2FileName,
@@ -43,8 +65,6 @@ extern int ComputeVectorDifferenceImage( const std::string &inputPixelComponentT
   const std::string &outputFileName, int inputDimension, int vectorDimension);
 
 //-------------------------------------------------------------------------------------
-
-std::string GetHelpString();
 
 int  main(  int  argc,  char *argv[] )
 {
@@ -321,24 +341,3 @@ int  main(  int  argc,  char *argv[] )
   return 0;
 
 }  // end main
-
-std::string GetHelpString()
-{
-  std::stringstream ss;
-  ss << "Usage:" << std::endl
-     << "pxcomputedifferenceimage inputimage1filename inputimage2filename [outputimagefilename] [outputPixelComponentType]" << std::endl
-     << "where outputPixelComponentType is one of:" << std::endl
-     << "- unsigned_char" << std::endl
-     << "- char" << std::endl
-     << "- unsigned_short" << std::endl
-     << "- short" << std::endl
-     << "- unsigned_int" << std::endl
-     << "- int" << std::endl
-     << "- unsigned_long" << std::endl
-     << "- long" << std::endl
-     << "- float" << std::endl
-     << "- double" << std::endl
-     << "provided that the outputPixelComponentType is supported by the output file format." << std::endl
-     << "By default the outputPixelComponentType is set to the inputPixelComponentType of image1.";
-  return ss.str();
-}

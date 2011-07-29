@@ -332,6 +332,5 @@ void GaussianImageFilterInvariants(
 
 } // end GaussianImageFilterInvariants()
 
-
 #endif // end #ifndef __gaussianImageFilterHelper_h
 

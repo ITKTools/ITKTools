@@ -7,92 +7,200 @@ namespace itk {
 
 namespace Functor {
 
-/** A macro to write a n-ary functor class . */
-#define itkNaryFunctorMacroA( name, iniType, iniValue, start, operation, postprocess ) \
-template< class TInput, class TOutput = TInput > \
-class Nary##name \
-{ \
-public: \
-  typedef typename NumericTraits< TInput >::AccumulateType AccumulateType; \
-  typedef typename NumericTraits< TInput >::ScalarRealType ScalarRealType; \
-  Nary##name() {}; \
-  ~Nary##name() {}; \
-  bool operator!=( const Nary##name & ) const{ return false; } \
-  bool operator==( const Nary##name & other ) const{ return !(*this != other); } \
-  inline TOutput operator()( const std::vector< TInput > & B ) const \
-  { \
-    iniType result = iniValue; \
-    for ( unsigned int i = start; i < B.size(); i++ ) \
-    { \
-      result operation; \
-    } \
-    return static_cast< TOutput >( postprocess ); \
-  } \
-}
 
-/** A macro to write a n-ary functor class, using an input argument. */
-/*
-#define itkNaryFunctorMacroB( name, initialize, start, operation, postprocess ) \
-template< class TInput, class TOutput = TInput > \
-class Nary##name \
-{ \
-public: \
-  typedef typename NumericTraits< TInput >::AccumulateType AccumulateType; \
-  typedef typename NumericTraits< TInput >::ScalarRealType ScalarRealType; \
-  Nary##name() {}; \
-  ~Nary##name() {}; \
-  bool operator!=( const Nary##name & ) const{ return false; } \
-  bool operator==( const Nary##name & other ) const{ return !(*this != other); } \
-  inline TOutput operator()( const std::vector< TInput > & B ) const \
-  { \
-    iniType result = NumericTraits< iniType >::iniValue; \
-    for ( unsigned int i = start; i < B.size(); i++ ) \
-    { \
-      result operation; \
-    } \
-    return static_cast< TOutput >( postprocess ); \
-  } \
-  void SetArgument( double arg ){ this->m_Argument = arg; }; \
-private: \
-  double m_Argument; \
-}
-*/
+template< class TInput, class TOutput = TInput >
+class NaryADDITION
+{
+public:
+  typedef typename NumericTraits< TInput >::AccumulateType AccumulateType;
+  typedef typename NumericTraits< TInput >::ScalarRealType ScalarRealType;
+  NaryADDITION() {};
+  ~NaryADDITION() {};
+  bool operator!=( const NaryADDITION & ) const{ return false; }
+  bool operator==( const NaryADDITION & other ) const{ return !(*this != other); }
+  inline TOutput operator()( const std::vector< TInput > & B ) const
+  {
+    ScalarRealType result = NumericTraits< ScalarRealType >::Zero;
+    for ( unsigned int i = 0; i < B.size(); i++ )
+    {
+      result += B[ i ];
+    }
+    return static_cast< TOutput >( result );
+  }
+};
 
-/** Arithmetic functors. */
-itkNaryFunctorMacroA( ADDITION, ScalarRealType, NumericTraits< ScalarRealType >::Zero,
-                     0, += B[ i ], result );
-itkNaryFunctorMacroA( MEAN, ScalarRealType, NumericTraits< ScalarRealType >::Zero,
-                     0, += B[ i ], result / B.size() );
-itkNaryFunctorMacroA( MINUS,    ScalarRealType, static_cast< ScalarRealType >( B[ 0 ] ),
-                     1, -= B[ i ], result );
-itkNaryFunctorMacroA( TIMES,    ScalarRealType, NumericTraits< ScalarRealType >::One,
-                     0, *= B[ i ], result );
-itkNaryFunctorMacroA( DIVIDE,   ScalarRealType, static_cast< ScalarRealType >( B[ 0 ] ),
-                     1,  = B[ i ] != 0 ? result / B[ i ] : result, result );
-//itkNaryFunctorMacroA( POWER, vcl_pow( A, B ) );
-//itkNaryFunctorMacroB( WEIGHTEDADDITION, this->m_Argument * A + ( 1.0 - this->m_Argument ) * B );
+template< class TInput, class TOutput = TInput >
+class NaryMEAN
+{
+public:
+  typedef typename NumericTraits< TInput >::AccumulateType AccumulateType;
+  typedef typename NumericTraits< TInput >::ScalarRealType ScalarRealType;
+  NaryMEAN() {};
+  ~NaryMEAN() {};
+  bool operator!=( const NaryMEAN & ) const{ return false; }
+  bool operator==( const NaryMEAN & other ) const{ return !(*this != other); }
+  inline TOutput operator()( const std::vector< TInput > & B ) const
+  {
+    ScalarRealType result = NumericTraits< ScalarRealType >::Zero;
+    for ( unsigned int i = 0; i < B.size(); i++ )
+    {
+      result += B[ i ];
+    }
+    return static_cast< TOutput >( result / B.size() );
+  }
+};
 
-itkNaryFunctorMacroA( MAXIMUM,  AccumulateType, static_cast< AccumulateType >( B[ 0 ] ),
-                     1,  = vnl_math_max( result, B[ i ] ), result );
-itkNaryFunctorMacroA( MINIMUM,  AccumulateType, static_cast< AccumulateType >( B[ 0 ] ),
-                     1,  = vnl_math_min( result, B[ i ] ), result );
+template< class TInput, class TOutput = TInput >
+class NaryMINUS
+{
+public:
+  typedef typename NumericTraits< TInput >::AccumulateType AccumulateType;
+  typedef typename NumericTraits< TInput >::ScalarRealType ScalarRealType;
+  NaryMINUS() {};
+  ~NaryMINUS() {};
+  bool operator!=( const NaryMINUS & ) const{ return false; }
+  bool operator==( const NaryMINUS & other ) const{ return !(*this != other); }
+  inline TOutput operator()( const std::vector< TInput > & B ) const
+  {
+    ScalarRealType result = static_cast< ScalarRealType >( B[ 0 ] );
+    for ( unsigned int i = 1; i < B.size(); i++ )
+    {
+      result -= B[ i ];
+    }
+    return static_cast< TOutput >( result );
+  }
+};
 
-itkNaryFunctorMacroA( ABSOLUTEDIFFERENCE, ScalarRealType, static_cast< ScalarRealType >( B[ 0 ] ),
-                     1, -= B[ i ], result > 0.0 ? result : -result );
-itkNaryFunctorMacroA( NARYMAGNITUDE,      ScalarRealType, NumericTraits< ScalarRealType >::Zero,
-                     0, += B[ i ] * B[ i ], vcl_sqrt( result ) );
-//itkNaryFunctorMacro( SQUAREDDIFFERENCE, ( A - B ) * ( A - B ) );
 
-/** Compose and join functors. */
+template< class TInput, class TOutput = TInput >
+class NaryTIMES
+{
+public:
+  typedef typename NumericTraits< TInput >::AccumulateType AccumulateType;
+  typedef typename NumericTraits< TInput >::ScalarRealType ScalarRealType;
+  NaryTIMES() {};
+  ~NaryTIMES() {};
+  bool operator!=( const NaryTIMES & ) const{ return false; }
+  bool operator==( const NaryTIMES & other ) const{ return !(*this != other); }
+  inline TOutput operator()( const std::vector< TInput > & B ) const
+  {
+    ScalarRealType result = NumericTraits< ScalarRealType >::One;
+    for ( unsigned int i = 0; i < B.size(); i++ )
+    {
+      result *= B[ i ];
+    }
+    return static_cast< TOutput >( result );
+  }
+};
 
-/** Mask functors. */
-// itkNaryFunctorMacroA( MASK,
-//   B != NumericTraits< TInput1 >::Zero ? A : this->m_Argument );
-// itkNaryFunctorMacroA( MASKNEGATED,
-//   B != NumericTraits< TInput1 >::Zero ? this->m_Argument : A );
 
-/** Nonsense functors. */
-//itkNaryFunctorMacro( LOG, /= vcl_log( B[ i ] ) );
+template< class TInput, class TOutput = TInput >
+class NaryDIVIDE
+{
+public:
+  typedef typename NumericTraits< TInput >::AccumulateType AccumulateType;
+  typedef typename NumericTraits< TInput >::ScalarRealType ScalarRealType;
+  NaryDIVIDE() {};
+  ~NaryDIVIDE() {};
+  bool operator!=( const NaryDIVIDE & ) const{ return false; }
+  bool operator==( const NaryDIVIDE & other ) const{ return !(*this != other); }
+  inline TOutput operator()( const std::vector< TInput > & B ) const
+  {
+    ScalarRealType result = static_cast< ScalarRealType >( B[ 0 ] );
+    for ( unsigned int i = 1; i < B.size(); i++ )
+    {
+      result = B[ i ] != 0 ? result / B[ i ] : result;
+    }
+    return static_cast< TOutput >( result );
+  }
+};
+
+template< class TInput, class TOutput = TInput >
+class NaryMAXIMUM
+{
+public:
+  typedef typename NumericTraits< TInput >::AccumulateType AccumulateType;
+  typedef typename NumericTraits< TInput >::ScalarRealType ScalarRealType;
+  NaryMAXIMUM() {};
+  ~NaryMAXIMUM() {};
+  bool operator!=( const NaryMAXIMUM & ) const{ return false; }
+  bool operator==( const NaryMAXIMUM & other ) const{ return !(*this != other); }
+  inline TOutput operator()( const std::vector< TInput > & B ) const
+  {
+    AccumulateType result = static_cast< AccumulateType >( B[ 0 ] );
+    for ( unsigned int i = 1; i < B.size(); i++ )
+    {
+      result = vnl_math_max( result, B[ i ] );
+    }
+    return static_cast< TOutput >( result );
+  }
+};
+
+
+template< class TInput, class TOutput = TInput >
+class NaryMINIMUM
+{
+public:
+  typedef typename NumericTraits< TInput >::AccumulateType AccumulateType;
+  typedef typename NumericTraits< TInput >::ScalarRealType ScalarRealType;
+  NaryMINIMUM() {};
+  ~NaryMINIMUM() {};
+  bool operator!=( const NaryMINIMUM & ) const{ return false; }
+  bool operator==( const NaryMINIMUM & other ) const{ return !(*this != other); }
+  inline TOutput operator()( const std::vector< TInput > & B ) const
+  {
+    AccumulateType result = static_cast< AccumulateType >( B[ 0 ] );
+    for ( unsigned int i = 1; i < B.size(); i++ )
+    {
+      result = vnl_math_min( result, B[ i ] );
+    }
+    return static_cast< TOutput >( result );
+  }
+};
+
+
+template< class TInput, class TOutput = TInput >
+class NaryABSOLUTEDIFFERENCE
+{
+public:
+  typedef typename NumericTraits< TInput >::AccumulateType AccumulateType;
+  typedef typename NumericTraits< TInput >::ScalarRealType ScalarRealType;
+  NaryABSOLUTEDIFFERENCE() {};
+  ~NaryABSOLUTEDIFFERENCE() {};
+  bool operator!=( const NaryABSOLUTEDIFFERENCE & ) const{ return false; }
+  bool operator==( const NaryABSOLUTEDIFFERENCE & other ) const{ return !(*this != other); }
+  inline TOutput operator()( const std::vector< TInput > & B ) const
+  {
+    ScalarRealType result = static_cast< ScalarRealType >( B[ 0 ] );
+    for ( unsigned int i = 1; i < B.size(); i++ )
+    {
+      result -= B[ i ];
+    }
+    return static_cast< TOutput >( result > 0.0 ? result : -result );
+  }
+};
+
+
+template< class TInput, class TOutput = TInput >
+class NaryNARYMAGNITUDE
+{
+public:
+  typedef typename NumericTraits< TInput >::AccumulateType AccumulateType;
+  typedef typename NumericTraits< TInput >::ScalarRealType ScalarRealType;
+  NaryNARYMAGNITUDE() {};
+  ~NaryNARYMAGNITUDE() {};
+  bool operator!=( const NaryNARYMAGNITUDE & ) const{ return false; }
+  bool operator==( const NaryNARYMAGNITUDE & other ) const{ return !(*this != other); }
+  inline TOutput operator()( const std::vector< TInput > & B ) const
+  {
+    ScalarRealType result = NumericTraits< ScalarRealType >::Zero;
+    for ( unsigned int i = 0; i < B.size(); i++ )
+    {
+      result += B[ i ] * B[ i ];
+    }
+    return static_cast< TOutput >( vcl_sqrt( result ) );
+  }
+};
 
 } // end namespace Functor
 

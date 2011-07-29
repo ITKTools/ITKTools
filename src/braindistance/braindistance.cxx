@@ -21,7 +21,8 @@
  \verbinclude braindistance.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsBase.h"
 
 #include "itkImageFileReader.h"
 #include "itkBinaryThresholdImageFilter.h"
@@ -38,6 +39,29 @@
 #include "vnl/vnl_math.h"
 #include <fstream>
 
+
+/**
+ * ******************* GetHelpString *******************
+ */
+std::string GetHelpString()
+{
+  std::stringstream ss;
+  ss << "This program computes the distance between brains, based on" << std::endl
+     << "a label mask image of one of the brains and a deformation field." << std::endl
+     << "Usage:" << std::endl
+     << "pxbraindistance" << std::endl
+     << "-in      inputFilename: 3D deformation field" << std::endl
+     << "-out     outputFilenames: two output filenames. The first" << std::endl
+     << "one contains mu_tot and sigma_tot. the second one contains mu_i, sigma_i, and sigma_itot." << std::endl
+     << "-mask    maskFileName: the name of the label image (deformed HAMMER atlas)" << std::endl
+     << "[-m]     method: 0 (jacobian), 1 (bending energy), or 2 (log(jacobian)); default: 0." << std::endl
+     << "Supported: -in: 3D vector of floats, 3 elements per vector" << std::endl
+     << "-mask: 3D unsigned char or anything that is valid after casting to unsigned char";
+  return ss.str();
+
+} // end GetHelpString()
+
+
 //-------------------------------------------------------------------------------------
 
 /* Declare ComputeBrainDistance function. */
@@ -46,9 +70,6 @@ void ComputeBrainDistance(
   const std::string & maskFileName,
   const std::vector<std::string> & outputFileNames,
   unsigned int method);
-
-/** Declare GetHelpString. */
-std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -102,7 +123,7 @@ int main( int argc, char ** argv )
   unsigned int Dimension = 3;
   unsigned int NumberOfComponents = Dimension;
   std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = GetImageProperties(
+  int retgip = itktools::GetImageProperties(
     inputFileName,
     PixelType,
     ComponentTypeIn,
@@ -464,25 +485,3 @@ void ComputeBrainDistance(
   std::cout << "Ready!" << std::endl;
 
 } // end ComputeBrainDistance()
-
-
-/**
- * ******************* GetHelpString *******************
- */
-std::string GetHelpString()
-{
-  std::stringstream ss;
-  ss << "This program computes the distance between brains, based on" << std::endl
-     << "a label mask image of one of the brains and a deformation field." << std::endl
-     << "Usage:" << std::endl
-     << "pxbraindistance" << std::endl
-     << "-in      inputFilename: 3D deformation field" << std::endl
-     << "-out     outputFilenames: two output filenames. The first" << std::endl
-     << "one contains mu_tot and sigma_tot. the second one contains mu_i, sigma_i, and sigma_itot." << std::endl
-     << "-mask    maskFileName: the name of the label image (deformed HAMMER atlas)" << std::endl
-     << "[-m]     method: 0 (jacobian), 1 (bending energy), or 2 (log(jacobian)); default: 0." << std::endl
-     << "Supported: -in: 3D vector of floats, 3 elements per vector" << std::endl
-     << "-mask: 3D unsigned char or anything that is valid after casting to unsigned char";
-  return ss.str();
-
-} // end GetHelpString()

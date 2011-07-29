@@ -11,82 +11,49 @@
 #include "itkSimpleBoxSpatialFunction.h"
 #include "itkSpatialFunctionImageEvaluatorFilter.h"
 
-#include "itkCommandLineArgumentParser.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsBase.h"
 
-typedef std::map<std::string, std::string> ArgMapType;
+/** CreateSimpleBox */
 
-std::string GetHelpString(void)
+class CreateSimpleBoxBase : public itktools::ITKToolsBase
+{ 
+public:
+  CreateSimpleBoxBase(){};
+  ~CreateSimpleBoxBase(){};
+
+  /** Input parameters */
+  std::string m_InputFileName;
+  std::string m_OutputFileName;
+  std::vector<unsigned int> m_BoxSize;
+  std::vector<unsigned int> m_IndexA;
+  std::vector<unsigned int> m_IndexB;
+    
+}; // end CreateSimpleBoxBase
+
+
+template< class TComponentType, unsigned int VDimension >
+class CreateSimpleBox : public CreateSimpleBoxBase
 {
-  std::stringstream ss;
-  ss << "This program creates an image containing a white box, defined by point A and B." << std::endl
-    << "Usage:" << std::endl
-    << "pxcreatesimplebox" << std::endl
-    << "[-in]  InputImageFileName" << std::endl
-    << "Size, origin, and spacing for the output image will be taken" << std::endl
-    << "from this image. NB: not the dimension and the pixeltype;" << std::endl
-    << "you must set them anyway!" << std::endl
-    << "-out   OutputImageFileName" << std::endl
-    << "-pt    PixelType <FLOAT, SHORT, USHORT, INT, UINT, CHAR, UCHAR>" << std::endl
-    << "Currently only char, uchar and short are supported." << std::endl
-    << "-id    ImageDimension <2,3>" << std::endl
-    << "[-d0]  Size of dimension 0" << std::endl
-    << "[-d1]  Size of dimension 1" << std::endl
-    << "[-d2]  Size of dimension 2" << std::endl
-    << "-pA0  Index 0 of pointA" << std::endl
-    << "-pA1  Index 1 of pointA" << std::endl
-    << "[-pA2]Index 2 of pointA" << std::endl
-    << "-pB0  Index 0 of pointB" << std::endl
-    << "-pB1  Index 1 of pointB" << std::endl
-    << "[-pB2]Index 2 of pointB";
-  return ss.str();
-} // end GetHelpString
+public:
+  typedef CreateSimpleBox Self;
 
+  CreateSimpleBox(){};
+  ~CreateSimpleBox(){};
 
-int ReadArgument(const ArgMapType & argmap, const std::string & key, std::string & value, bool optional)
-{
-
-  if ( argmap.count(key) )
+  static Self * New( itktools::ComponentType componentType, unsigned int dim )
   {
-    value = argmap.find(key)->second;
+    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
+    {
+      return new Self;
+    }
     return 0;
   }
-  else
+
+  void Run(void)
   {
-    if (!optional)
-    {
-      std::cerr << "Not enough arguments\n";
-      std::cerr << "Missing argument: " << key << std::endl;
-
-      return 1;
-    }
-    else
-    {
-      return 0;
-    }
-  }
-
-} // end ReadArgument
-
-
-//strange hack:
-#if defined(_MSC_VER) && (_MSC_VER <= 1300)
-#  define CRI_STATIC_ENUM static enum
-#else
-#  define CRI_STATIC_ENUM enum
-#endif
-
-CRI_STATIC_ENUM enum_type { eFLOAT, eINT, eUINT, eSHORT, eUSHORT, eCHAR, eUCHAR, eUNKNOWN };
-
-template < unsigned int NImageDimension, class TPixel>
-class runwrap
-{
-  public:
-
-  static int run_cri(itk::CommandLineArgumentParser::Pointer parser)
-  {
-    const unsigned int ImageDimension = NImageDimension;
-    typedef TPixel                                PixelType;
-    typedef itk::Image<PixelType, ImageDimension> ImageType;
+    typedef TComponentType                        PixelType;
+    typedef itk::Image<PixelType, VDimension>     ImageType;
     typedef typename ImageType::Pointer           ImagePointer;
     typedef typename ImageType::IndexType         IndexType;
     typedef typename ImageType::SizeType          SizeType;
@@ -98,7 +65,7 @@ class runwrap
     typedef typename ReaderType::Pointer          ReaderPointer;
     typedef typename WriterType::Pointer          WriterPointer;
     typedef itk::SimpleBoxSpatialFunction<
-      ImageDimension, PointType>                  BoxFunctionType;
+      VDimension, PointType>                  BoxFunctionType;
     typedef typename BoxFunctionType::Pointer     BoxFunctionPointer;
     typedef itk::SpatialFunctionImageEvaluatorFilter<
       BoxFunctionType, ImageType, ImageType>      FunctionEvaluatorType;
@@ -118,21 +85,13 @@ class runwrap
     PointType pointB;
     FunctionEvaluatorPointer boxGenerator = FunctionEvaluatorType::New();
 
-    /** Read filenames */
-    parser->GetCommandLineArgument("-out", outputImageFileName);
-    parser->GetCommandLineArgument("-in", inputImageFileName);
-
     /** Determine size, origin and spacing */
     if (inputImageFileName == "")
     {
       /** read the dimension from the commandline.*/
-      for (unsigned int i=0; i< ImageDimension ; i++)
+      for (unsigned int i=0; i< VDimension ; i++)
       {
-        std::ostringstream makeString("");
-        makeString << "-d" << i;
-        unsigned int sizeValue = 0;
-        parser->GetCommandLineArgument(makeString.str(), sizeValue);
-        sizes[i] = sizeValue;
+        sizes[i] = m_BoxSize[i];
       }
 
       /** make some assumptions */
@@ -143,7 +102,7 @@ class runwrap
     {
       /** Take dimension, origin and spacing from the inputfile.*/
       ReaderPointer reader = ReaderType::New();
-      reader->SetFileName( inputImageFileName.c_str() );
+      reader->SetFileName( m_InputFileName.c_str() );
       try
       {
         reader->Update();
@@ -152,27 +111,11 @@ class runwrap
       {
         std::cerr << "Error while reading input image." << std::endl;
         std::cerr << err << std::endl;
-        return 2;
       }
       ImagePointer inputImage = reader->GetOutput();
-      sizes= inputImage->GetLargestPossibleRegion().GetSize();
-      origin=inputImage->GetOrigin();
-      spacing=inputImage->GetSpacing();
-
-    }
-
-    /** read point A and B from the commandline.*/
-    IndexType indexA;
-    IndexType indexB;
-    for (unsigned int i=0; i< ImageDimension ; i++)
-    {
-      std::ostringstream makeStringA("");
-      std::ostringstream makeStringB("");
-      makeStringA << "-pA" << i;
-      makeStringB << "-pB" << i;
-
-      parser->GetCommandLineArgument(makeStringA.str(), indexA[i]);
-      parser->GetCommandLineArgument(makeStringB.str(), indexB[i]);
+      sizes = inputImage->GetLargestPossibleRegion().GetSize();
+      origin = inputImage->GetOrigin();
+      spacing = inputImage->GetSpacing();
     }
 
     /** Setup pipeline and configure its components */
@@ -180,6 +123,16 @@ class runwrap
     tempImage->SetRegions(sizes);
     tempImage->SetOrigin(origin);
     tempImage->SetSpacing(spacing);
+    
+    // Convert the indices to the necessary ITK type
+    IndexType indexA;
+    IndexType indexB;
+    
+    for(unsigned int i = 0; i < VDimension; ++i)
+    {
+      indexA[i] = m_IndexA[i];
+      indexB[i] = m_IndexB[i];
+    }
     tempImage->TransformIndexToPhysicalPoint(indexA, pointA);
     tempImage->TransformIndexToPhysicalPoint(indexB, pointB);
 
@@ -187,7 +140,7 @@ class runwrap
      * fall within the box. */
     const double small_factor = 0.1;
     const double small_number = 1e-14;
-    for (unsigned int i=0; i< ImageDimension ; i++)
+    for (unsigned int i=0; i< VDimension ; i++)
     {
       const double distance = pointB[i]-pointA[i];
       double sign = 1.0;
@@ -206,9 +159,8 @@ class runwrap
     boxGenerator->SetInput(tempImage);
 
     writer->SetInput( boxGenerator->GetOutput() );
-    writer->SetFileName(outputImageFileName.c_str());
+    writer->SetFileName( m_OutputFileName.c_str() );
 
-    /** do it. */
     std::cout
       << "Saving image to disk as \""
       << outputImageFileName
@@ -221,69 +173,12 @@ class runwrap
     catch (itk::ExceptionObject & err)
     {
       std::cerr << err << std::endl;
-      return 3;
-    }
-
-    return 0;
-
-  } // end function run_cri
-
-  /** Constructor and destructor */
-  runwrap(){}
-  ~runwrap(){}
-
-
-}; //end class runwrap
-
-
-
-template < unsigned int NImageDimension>
-class ptswrap
-{ public:
-
-  static int PixelTypeSelector(itk::CommandLineArgumentParser::Pointer parser)
-  {
-    const unsigned int ImageDimension = NImageDimension;
-    std::string pixelType("");
-
-    parser->GetCommandLineArgument( "-pt", pixelType );
-
-    std::map<std::string, enum_type> typemap;
-    typemap["FLOAT"] = eFLOAT;
-    typemap["INT"] = eINT;
-    typemap["UINT"] = eUINT;
-    typemap["SHORT"] = eSHORT;
-    typemap["USHORT"] = eUSHORT;
-    typemap["CHAR"] = eCHAR;
-    typemap["UCHAR"] = eUCHAR;
-
-    enum_type pt = eUNKNOWN;
-    if ( typemap.count(pixelType) )
-    {
-      pt = typemap[ pixelType ];
-    }
-    switch( pt )
-    {
-    case eSHORT :
-      return  runwrap<ImageDimension, short>::run_cri(parser);
-    case eCHAR :
-      return  runwrap<ImageDimension, char>::run_cri(parser);
-    case eUCHAR :
-      return  runwrap<ImageDimension, unsigned char>::run_cri(parser);
-    default :
-      std::cerr << "ERROR: PixelType not supported" << std::endl;
-      return 1;
+      return;
     }
 
   }
 
-  /** constructor and destructor */
-  ptswrap(){}
-  ~ptswrap(){}
-
-}; //end class ptswrap
-
+}; // end CreateSimpleBox
 
 
 #endif // #ifndef __createbox_h
-

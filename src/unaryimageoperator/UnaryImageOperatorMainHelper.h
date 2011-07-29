@@ -23,73 +23,9 @@
 #include <string>
 #include <itksys/SystemTools.hxx>
 
-
-/**
- * ******************* GetHelpString *******************
- */
-
-std::string GetHelpString( void )
-{
-  std::stringstream ss;
-  ss << "Unary operations on one image." << std::endl
-  << "Usage:" << std::endl
-  << "pxunaryimageoperator" << std::endl
-  << "  -in      inputFilename" << std::endl
-  << "  -ops     UnaryOperator of the following form:" << std::endl
-  << "           {+,-,*,/,^,%}" << std::endl
-  << "           notation:" << std::endl
-  << "             {PLUS,{R,L}MINUS,TIMES,{R,L}DIVIDE,{R,L}POWER,{R,L}MOD," << std::endl
-  << "             NEG,SIGN,ABS,FLOOR,CEIL,ROUND," << std::endl
-  << "             LN,LOG10,NLOG,EXP,[ARC]SIN,[ARC]COS,[ARC]TAN}" << std::endl
-  << "           notation examples:" << std::endl
-  << "             RMINUS = A - arg" << std::endl
-  << "             LMINUS = arg - A" << std::endl
-  << "             SIN = sin(A)" << std::endl
-  << "             RPOWER = A ^ arg" << std::endl
-  << "             TIMES = A * arg" << std::endl
-  << "  [-arg]   argument, necessary for some ops" << std::endl
-  << "  [-out]   outputFilename, default in + <ops> + <arg> + .mhd" << std::endl
-  << "  [-pto]   outputPixelType, default: same as inputimage" << std::endl
-  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, float.";
-  return ss.str();
-} // end GetHelpString()
+#include "ITKToolsBase.h"
 
 
-/**
- * ******************* InputIsInteger *******************
- */
-
-void InputIsInteger( const std::string & inputComponentType,
-  bool & inputIsInteger )
-{
-  /** Check if the input image is of integer type. */
-  inputIsInteger = false;
-  if ( inputComponentType == "unsigned_char" || inputComponentType == "char"
-    || inputComponentType == "unsigned_short" || inputComponentType == "short"
-    || inputComponentType == "unsigned_int" || inputComponentType == "int"
-    || inputComponentType == "unsigned_long" || inputComponentType == "long" )
-  {
-    inputIsInteger = true;
-  }
-} // end InputIsInteger()
-
-
-/**
- * ******************* ArgumentIsInteger *******************
- */
-
-void ArgumentIsInteger( const std::string & argument, bool & argumentIsInteger )
-{
-  /** Check if the argument is of integer type. */
-  argumentIsInteger = false;
-  std::basic_string<char>::size_type pos = argument.find( "." );
-  const std::basic_string<char>::size_type npos = std::basic_string<char>::npos;
-  if ( pos == npos )
-  {
-    argumentIsInteger = true;
-  }
-
-} // end ArgumentIsInteger()
 
 
 /**

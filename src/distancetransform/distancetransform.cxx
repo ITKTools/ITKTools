@@ -36,6 +36,30 @@
 #include "itkMorphologicalDistanceTransformImageFilter.h"
 //#include "itkOrderKDistanceTransformImageFilter.h"
 
+
+/**
+ * ******************* GetHelpString *******************
+ */
+
+std::string GetHelpString( void )
+{
+  std::stringstream ss;
+  ss << "This program creates a signed distance transform." << std::endl
+  << "Usage:" << std::endl
+  << "pxdistancetransform" << std::endl
+  << "  -in      inputFilename: the input image (a binary mask;" << std::endl
+  << "threshold at 0 is performed if the image is not binary)." << std::endl
+  << "  -out     outputFilename: the output of distance transform" << std::endl
+  << "  [-s]     flag: if set, output squared distances instead of distances" << std::endl
+  << "  [-m]     method, one of {Maurer, Danielsson, Morphological, MorphologicalSigned}, default Maurer" << std::endl
+  << "Note: voxel spacing is taken into account. Voxels inside the" << std::endl
+  << "object (=1) receive a negative distance." << std::endl
+  << "Supported: 2D/3D. input: unsigned char, output: float";
+  //std::cout << "  [-m]     method, one of {Maurer, Danielsson, OrderK}, default Maurer\n";
+  //std::cout << "  [-K]     for method \"OrderK\", specify K, default 5\n";
+  return ss.str();
+} // end GetHelpString()
+
 /* Declare DistanceTransform. */
 template <unsigned int NDimensions>
 void DistanceTransform(
@@ -44,9 +68,6 @@ void DistanceTransform(
   bool outputSquaredDistance,
   const std::string & method,
   const unsigned int & K );
-
-/** Declare GetHelpString. */
-std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -113,7 +134,7 @@ int main( int argc, char **argv )
   unsigned int Dimension = 2;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = GetImageProperties(
+  int retgip = itktools::GetImageProperties(
     inputFileName,
     PixelType,
     ComponentType,
@@ -340,26 +361,3 @@ void DistanceTransform(
 
 } // end DistanceTransform()
 
-
-/**
- * ******************* GetHelpString *******************
- */
-
-std::string GetHelpString( void )
-{
-  std::stringstream ss;
-  ss << "This program creates a signed distance transform." << std::endl
-  << "Usage:" << std::endl
-  << "pxdistancetransform" << std::endl
-  << "  -in      inputFilename: the input image (a binary mask;" << std::endl
-  << "threshold at 0 is performed if the image is not binary)." << std::endl
-  << "  -out     outputFilename: the output of distance transform" << std::endl
-  << "  [-s]     flag: if set, output squared distances instead of distances" << std::endl
-  << "  [-m]     method, one of {Maurer, Danielsson, Morphological, MorphologicalSigned}, default Maurer" << std::endl
-  << "Note: voxel spacing is taken into account. Voxels inside the" << std::endl
-  << "object (=1) receive a negative distance." << std::endl
-  << "Supported: 2D/3D. input: unsigned char, output: float";
-  //std::cout << "  [-m]     method, one of {Maurer, Danielsson, OrderK}, default Maurer\n";
-  //std::cout << "  [-K]     for method \"OrderK\", specify K, default 5\n";
-  return ss.str();
-} // end GetHelpString()

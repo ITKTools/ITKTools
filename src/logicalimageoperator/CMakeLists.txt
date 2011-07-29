@@ -7,7 +7,8 @@ INCLUDE( ${ITK_USE_FILE} )
 
 ADD_EXECUTABLE( pxlogicalimageoperator
   logicalimageoperator.cxx
-  itkLogicalFunctors.h
+  itkUnaryLogicalFunctors.h
+  itkBinaryLogicalFunctors.h
   LogicalImageOperatorHelper.h )
 
 TARGET_LINK_LIBRARIES( pxlogicalimageoperator ITKTools-Common ${ITK_LIBRARIES} )

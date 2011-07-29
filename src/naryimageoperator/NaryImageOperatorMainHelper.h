@@ -5,84 +5,8 @@
 #include <utility> // for pair
 #include <string>
 #include <itksys/SystemTools.hxx>
-#include "CommandLineArgumentHelper.h"
-
-/**
- * ******************* Macro *******************
- */
-
-/** run: A macro to call a function. */
-#define run( function, typeIn, typeOut, dim ) \
-if ( ComponentTypeIn == #typeIn && ComponentTypeOut == #typeOut \
-  && inputDimension == dim ) \
-{ \
-  typedef itk::Image< typeIn, dim >   InputImageType; \
-  typedef itk::Image< typeOut, dim >  OutputImageType; \
-  function< InputImageType, OutputImageType >( \
-    inputFileNames, outputFileName, ops, useCompression, numberOfStreams, argument ); \
-  supported = true; \
-}
-
-/**
- * ******************* GetHelpString *******************
- */
-
-std::string GetHelpString( void )
-{
-  std::stringstream ss;
-  ss << "Performs n-ary operations on multiple (n) images." << std::endl
-  << "Usage:\npxnaryimageoperator" << std::endl
-  << "  -in      inputFilenames, at least 2" << std::endl
-  << "  -out     outputFilename" << std::endl
-  << "  -ops     n-ary operator of the following form:" << std::endl
-  << "           {+,-,*,/,^,%}" << std::endl
-  << "           notation:" << std::endl
-  << "             {ADDITION, MINUS, TIMES, DIVIDE," << std::endl
-  << "             MEAN," << std::endl
-  << "             MAXIMUM, MINIMUM, ABSOLUTEDIFFERENCE," << std::endl
-  << "             NARYMAGNITUDE }" << std::endl
-  << "           notation examples:" << std::endl
-  << "             MINUS = I_0 - I_1 - ... - I_n " << std::endl
-  << "             ABSDIFF = |I_0 - I_1 - ... - I_n|" << std::endl
-  << "             MIN = min( I_0, ..., I_n )" << std::endl
-  << "             MAGNITUDE = sqrt( I_0 * I_0 + ... + I_n * I_n )" << std::endl
-//   std::cout << "  [-arg]   argument, necessary for some ops\n"
-//             << "             WEIGHTEDADDITION: 0.0 < weight alpha < 1.0\n"
-//             << "             MASK[NEG]: background value, e.g. 0." << std::endl;
-  << "  [-z]     compression flag; if provided, the output image is compressed" << std::endl
-  << "  [-s]     number of streams, default equals number of inputs." << std::endl
-  << "  [-opct]  output component type, by default the largest of the two input images" << std::endl
-  << "             choose one of: {[unsigned_]{char,short,int,long},float,double}" << std::endl
-  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
-
-  return ss.str();
-} // end GetHelpString()
-
-
-/**
- * ******************* TypeIsInteger *******************
- */
-
-bool TypeIsInteger( const std::string & componentType )
-{
-  /** Make sure the input has "_" instead of " ". */
-  std::string compType = componentType;
-  ReplaceSpaceWithUnderscore( compType );
-
-  /** Check if the input image is of integer type. */
-  bool typeIsInteger = false;
-  if ( compType == "unsigned_char" || compType == "char"
-    || compType == "unsigned_short" || compType == "short"
-    || compType == "unsigned_int" || compType == "int"
-    || compType == "unsigned_long" || compType == "long" )
-  {
-    typeIsInteger = true;
-  }
-
-  return typeIsInteger;
-
-} // end TypeIsInteger()
-
+#include "ITKToolsImageProperties.h"
+#include "ITKToolsHelpers.h"
 
 /**
  * ******************* DetermineImageProperties *******************
@@ -90,36 +14,36 @@ bool TypeIsInteger( const std::string & componentType )
 
 int DetermineImageProperties(
   const std::vector<std::string> & inputFileNames,
-  std::string & ComponentTypeIn,
-  std::string & ComponentTypeOut,
+  itktools::ComponentType & componentTypeIn,
+  itktools::ComponentType & componentTypeOut,
   unsigned int & inputDimension )
 {
   /** Determine image properties of image 1. */
-  std::string inputPixelType1 = "";
+  itk::ImageIOBase::IOPixelType inputPixelType1;
   unsigned int inputDimension1 = 2;
   unsigned int numberOfComponents1 = 1;
   std::vector<unsigned int> imagesize1( inputDimension1, 0 );
-  int retgip1 = GetImageProperties(
+  int retgip1 = itktools::GetImageProperties(
     inputFileNames[ 0 ],
     inputPixelType1,
-    ComponentTypeIn,
+    componentTypeIn,
     inputDimension1,
     numberOfComponents1,
     imagesize1 );
   if ( retgip1 ) return retgip1;
 
   /** Determine image properties of other images. */
-  std::string inputPixelType_i = "";
-  std::string ComponentTypeIn_i = ComponentTypeIn;
+  itk::ImageIOBase::IOPixelType inputPixelType_i;
+  itktools::ComponentType componentTypeIn_i = componentTypeIn;
   unsigned int inputDimension_i = 2;
   unsigned int numberOfComponents_i = 1;
-  std::vector<unsigned int> imagesize_i( inputDimension1, 0 );
+  std::vector<unsigned int> imagesize_i;
   for ( unsigned int i = 1; i < inputFileNames.size(); i++ )
   {
-    int retgip_i = GetImageProperties(
+    int retgip_i = itktools::GetImageProperties(
       inputFileNames[ 1 ],
       inputPixelType_i,
-      ComponentTypeIn_i,
+      componentTypeIn_i,
       inputDimension_i,
       numberOfComponents_i,
       imagesize_i );
@@ -155,13 +79,19 @@ int DetermineImageProperties(
     }
 
     /** The output type is the largest of the input types. */
-    ComponentTypeOut = GetLargestComponentType( ComponentTypeOut, ComponentTypeIn_i );
+    componentTypeOut = itktools::GetLargestComponentType( componentTypeOut, componentTypeIn_i );
   }
 
   /** The input type is set to long or double, depending on the output type. */
-  bool outIsInteger = TypeIsInteger( ComponentTypeOut );
-  if ( outIsInteger ) ComponentTypeIn = "long";
-  else ComponentTypeIn = "double";
+  bool outIsInteger = itktools::ComponentTypeIsInteger( componentTypeOut );
+  if ( outIsInteger )
+  {
+    componentTypeIn = itk::ImageIOBase::LONG;
+  }
+  else
+  {
+    componentTypeIn = itk::ImageIOBase::DOUBLE;
+  }
 
   /** Return a value. */
   return 0;

@@ -28,8 +28,24 @@
 #include "itkGDCMImageIO.h"
 #include "itkGDCMSeriesFileNames.h"
 
-/** Declare GetHelpString. */
-std::string GetHelpString( void );
+
+/**
+ * ******************* GetHelpString *******************
+ */
+std::string GetHelpString()
+{
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxgetdicominformation" << std::endl
+  << "  -in      inputDirectoryName" << std::endl
+  << "  [-s]     seriesUID" << std::endl
+  << "  [-r]     add restrictions to generate a unique seriesUID" << std::endl
+  << "           e.g. \"0020|0012\" to add a check for acquisition number." << std::endl
+  << "By default the first series encountered is used.";
+
+  return ss.str();
+
+} // end GetHelpString()
 
 int main( int argc, char **argv )
 {
@@ -288,21 +304,3 @@ int main( int argc, char **argv )
   return 0;
 
 }  // end main
-
-/**
- * ******************* GetHelpString *******************
- */
-std::string GetHelpString()
-{
-  std::stringstream ss;
-  ss << "Usage:" << std::endl
-  << "pxgetdicominformation" << std::endl
-  << "  -in      inputDirectoryName" << std::endl
-  << "  [-s]     seriesUID" << std::endl
-  << "  [-r]     add restrictions to generate a unique seriesUID" << std::endl
-  << "           e.g. \"0020|0012\" to add a check for acquisition number." << std::endl
-  << "By default the first series encountered is used.";
-
-  return ss.str();
-
-} // end GetHelpString()

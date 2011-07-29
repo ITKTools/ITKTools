@@ -21,9 +21,53 @@
  \verbinclude logicalimageoperator.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsBase.h"
 
 #include "LogicalImageOperatorHelper.h"
+
+/**
+ * ******************* GetHelpString *******************
+ */
+
+std::string GetHelpString( void )
+{
+  std::stringstream ss;
+  ss << "Logical operations on one or two images.\n"
+    << "NOTE: The output of this filter is an image with pixels of values 0 and 1.\n"
+    << "An appropriate scaling must be performed either manually (with pxrescaleintensityimagefilter)\n"
+    << "or with the application used to view the image.\n"
+    << "In the case of a vector image, this is a componentwise logical operator.\n"
+    << "Usage:" << std::endl << "pxlogicalimageoperator\n"
+    << "  -in      inputFilename1 [inputFilename2]\n"
+    << "  [-out]   outputFilename, default in1 + <ops> + in2 + .mhd\n"
+    << "  -ops     LogicalOperator of the following form:\n"
+    << "             [!]( ([!] A) [{&,|,^} ([!] B])] )\n"
+    << "           notation:\n"
+    << "             [NOT_][NOT][{AND,OR,XOR}[NOT]]\n"
+    << "           notation examples:\n"
+    << "             ANDNOT = A & (!B)\n"
+    << "             NOTAND = (!A) & B\n"
+    << "             NOTANDNOT = (!A) & (!B)\n"
+    << "             NOT_NOTANDNOT = !( (!A) & (!B) )\n"
+    << "             NOT_AND = !(A & B)\n"
+    << "             OR = A | B\n"
+    << "             XOR = A ^ B\n"
+    << "             NOT = !A\n"
+    << "             NOT_NOT = A\n"
+    << "           Internally this expression is simplified.\n"
+    << "  [-z]     compression flag; if provided, the output image is compressed\n"
+    << "  [-arg]   argument, necessary for some ops\n"
+    << "  [-dim]   dimension, default: automatically determined from inputimage1\n"
+    << "  [-pt]    pixelType, default: automatically determined from inputimage1\n"
+    << "Supported: 2D, 3D, (unsigned) short, (unsigned) char.\n"
+    << "NOTE: for historical reasons this functionality is not part of the unary or binary image operator." << std::endl;
+
+  return ss.str();
+
+} // end GetHelpString()
+
+//-------------------------------------------------------------------------------------
 
 
 int main( int argc, char **argv )
@@ -68,7 +112,7 @@ int main( int argc, char **argv )
 
   std::string inputFileName1 = inputFileNames[ 0 ];
   std::string inputFileName2 = "";
-  if( (inputFileNames.size() == 2) & (ops != "NOT") )
+  if ( ( inputFileNames.size() == 2 ) & (ops != "NOT") )
   {
     inputFileName2 = inputFileNames[ 1 ];
   }
@@ -77,45 +121,12 @@ int main( int argc, char **argv )
     std::cerr << "ERROR: The operator \"EQUAL\" expects 1 input image and a \"-arg\"." << std::endl;
     return 1;
   }
-
-  /** Determine image properties. */
-  std::string ComponentType = "short";
-  std::string PixelType; //we don't use this
-  unsigned int Dimension = 2;
-  unsigned int NumberOfComponents = 1;
-  std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = GetImageProperties(
-    inputFileName1,
-    PixelType,
-    ComponentType,
-    Dimension,
-    NumberOfComponents,
-    imagesize );
-
-  if ( retgip != 0 )
+  
+  bool unary = false;
+  if ( ops.compare("EQUAL") == 0 || ops.compare("NOT") == 0 )
   {
-    return 1;
+    unary = true;
   }
-  std::cout << "The first input image has the following properties:" << std::endl;
-  /** Do not bother the user with the difference between pixeltype and componenttype:*/
-  //std::cout << "\tPixelType:          " << PixelType << std::endl;
-  std::cout << "\tPixelType:          " << ComponentType << std::endl;
-  std::cout << "\tDimension:          " << Dimension << std::endl;
-  std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
-
-  /** Let the user overrule this */
-  bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
-  bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
-  if ( retdim | retpt )
-  {
-    std::cout << "The user has overruled this by specifying -pt and/or -dim:" << std::endl;
-    std::cout << "\tPixelType:          " << ComponentType << std::endl;
-    std::cout << "\tDimension:          " << Dimension << std::endl;
-    std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
-  }
-
-  /** Get rid of the possible "_" in ComponentType. */
-  ReplaceUnderscoreWithSpace( ComponentType );
 
   /** outputFileName */
   std::string outputFileName = "";
@@ -123,8 +134,8 @@ int main( int argc, char **argv )
   if ( outputFileName == "" )
   {
     /** get file name without its last (shortest) extension  */
-    std::string part1 =
-      itksys::SystemTools::GetFilenameWithoutLastExtension(inputFileName1);
+    std::string part1
+      = itksys::SystemTools::GetFilenameWithoutLastExtension(inputFileName1);
     /** get file name of a full filename (i.e. file name without path) */
     std::string part2;
     if ( inputFileName2 != "" )
@@ -140,36 +151,60 @@ int main( int argc, char **argv )
     outputFileName = part1 + ops + part2;
   }
 
-  /** Run the program. */
-  bool supported = false;
+  /** Class that does the work */
+  ITKToolsLogicalImageOperatorBase * logicalImageOperator = NULL; 
+
+  unsigned int imageDimension = 0;
+  itktools::GetImageDimension( inputFileName1, imageDimension );
+
+  itktools::ComponentType componentType = itktools::GetImageComponentType( inputFileName1 );
+    
+  /** NB: do not add floating point support, since logical operators are
+   * not defined on those types */
+    
   try
-  {
-    /** NB: do not add floating point support, since logical operators are
-     * not defined on those types */
-    run( LogicalImageOperator, unsigned char, 2 );
-    run( LogicalImageOperator, unsigned char, 3 );
-    run( LogicalImageOperator, char, 2 );
-    run( LogicalImageOperator, char, 3 );
-    run( LogicalImageOperator, unsigned short, 2 );
-    run( LogicalImageOperator, unsigned short, 3 );
-    run( LogicalImageOperator, short, 2 );
-    run( LogicalImageOperator, short, 3 );
+  {    
+    // now call all possible template combinations.
+    if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 2, unsigned char >::New( imageDimension, componentType );
+    if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 2, char >::New( imageDimension, componentType );
+    if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 2, unsigned short >::New( imageDimension, componentType );
+    if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 2, unsigned short >::New( imageDimension, componentType );
+    
+#ifdef ITKTOOLS_3D_SUPPORT
+    if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 3, unsigned char >::New( imageDimension, componentType );
+    if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 3, char >::New( imageDimension, componentType );
+    if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 3, unsigned short >::New( imageDimension, componentType );
+    if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 3, unsigned short >::New( imageDimension, componentType );
+#endif
+    if (!logicalImageOperator) 
+    {
+      std::cerr << "ERROR: this combination of pixeltype, image dimension, and space dimension is not supported!" << std::endl;
+      std::cerr
+        << " image dimension = " << imageDimension << std::endl
+        << " pixel type = " << componentType << std::endl
+        << std::endl;
+      return 1;
+    }
+
+    logicalImageOperator->m_OutputFileName = outputFileName;
+    logicalImageOperator->m_InputFileName1 = inputFileName1;
+    logicalImageOperator->m_InputFileName2 = inputFileName2;
+    logicalImageOperator->m_Ops = ops;
+    logicalImageOperator->m_UseCompression = useCompression;
+    logicalImageOperator->m_Argument = argument;
+    logicalImageOperator->m_Unary = unary;
+    
+    logicalImageOperator->Run();
+    
+    delete logicalImageOperator;
   }
   catch( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
+    delete logicalImageOperator;
     return 1;
   }
-  if ( !supported )
-  {
-    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-    std::cerr
-      << "pixel (component) type = " << ComponentType
-      << " ; dimension = " << Dimension
-      << std::endl;
-    return 1;
-  }
-
+  
   /** End program. */
   return 0;
 

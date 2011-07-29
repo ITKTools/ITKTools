@@ -26,8 +26,20 @@
 #include <itksys/SystemTools.hxx>
 #include "itkGDCMSeriesFileNames.h"
 
-/** GetHelpString. */
-std::string GetHelpString( void );
+
+std::string GetHelpString( void )
+{
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxgetDICOMseriesUIDs" << std::endl
+  << "  -in      inputDirectoryName" << std::endl
+  << "  [-r]     add restrictions to generate a unique seriesUID" << std::endl
+  << "           e.g. \"0020|0012\" to add a check for acquisition" << std::endl
+  << "number.";
+
+  return ss.str();
+
+} // end GetHelpString()
 
 //-------------------------------------------------------------------------------------
 
@@ -108,17 +120,3 @@ int main( int argc, char **argv )
   return 0;
 
 }  // end main
-
-std::string GetHelpString( void )
-{
-  std::stringstream ss;
-  ss << "Usage:" << std::endl
-  << "pxgetDICOMseriesUIDs" << std::endl
-  << "  -in      inputDirectoryName" << std::endl
-  << "  [-r]     add restrictions to generate a unique seriesUID" << std::endl
-  << "           e.g. \"0020|0012\" to add a check for acquisition" << std::endl
-  << "number.";
-
-  return ss.str();
-
-} // end GetHelpString()

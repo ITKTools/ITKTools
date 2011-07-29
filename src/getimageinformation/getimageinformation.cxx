@@ -27,8 +27,34 @@
 #include "itkImageFileReader.h"
 #include <iomanip>
 
-/** Declare GetHelpString. */
-std::string GetHelpString(void);
+
+/**
+  * ******************* GetHelpString *******************
+  */
+std::string GetHelpString()
+{
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxgetimageinformation" << std::endl
+  << "  -in      inputFileName" << std::endl
+  << "  [-dim]   dimension" << std::endl
+  << "  [-pt]    pixelType" << std::endl
+  << "  [-ct]    componentType" << std::endl
+  << "  [-noc]   #components" << std::endl
+  << "  [-sz]    size" << std::endl
+  << "  [-sp]    spacing" << std::endl
+  << "  [-vol]   voxel volume" << std::endl
+  << "  [-o]     origin" << std::endl
+  << "  [-dc]    direction cosines" << std::endl
+  << "  [-all]   all of the above" << std::endl
+  << "Image information about the inputFileName is printed to screen." << std::endl
+  << "Only one option should be given, e.g. -sp, then the spacing is printed." << std::endl
+  << "  [-i]     index, if this option is given only e.g." << std::endl
+  << "spacing[index] is printed.";
+
+  return ss.str();
+
+} // end GetHelpString()
 
 //-------------------------------------------------------------------------------------
 
@@ -317,33 +343,3 @@ int main( int argc, char **argv )
   return 1;
 
 } // end main
-
-
-
-  /**
-   * ******************* GetHelpString *******************
-   */
-std::string GetHelpString()
-{
-  std::stringstream ss;
-  ss << "Usage:" << std::endl
-  << "pxgetimageinformation" << std::endl
-  << "  -in      inputFileName" << std::endl
-  << "  [-dim]   dimension" << std::endl
-  << "  [-pt]    pixelType" << std::endl
-  << "  [-ct]    componentType" << std::endl
-  << "  [-noc]   #components" << std::endl
-  << "  [-sz]    size" << std::endl
-  << "  [-sp]    spacing" << std::endl
-  << "  [-vol]   voxel volume" << std::endl
-  << "  [-o]     origin" << std::endl
-  << "  [-dc]    direction cosines" << std::endl
-  << "  [-all]   all of the above" << std::endl
-  << "Image information about the inputFileName is printed to screen." << std::endl
-  << "Only one option should be given, e.g. -sp, then the spacing is printed." << std::endl
-  << "  [-i]     index, if this option is given only e.g." << std::endl
-  << "spacing[index] is printed.";
-
-  return ss.str();
-
-} // end GetHelpString()

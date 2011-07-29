@@ -4,7 +4,9 @@
  \verbinclude weightedaddition.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsBase.h"
+
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
@@ -14,27 +16,112 @@
 
 //-------------------------------------------------------------------------------------
 
-/** run: A macro to call a function. */
-#define run(function,type,dim) \
-if ( ComponentType == #type && Dimension == dim ) \
-{ \
-  typedef  itk::Image< type, dim >   InputImageType; \
-  function< InputImageType >( inputFileNames, weightFileNames, outputFileName ); \
-  supported = true; \
-}
+/**
+ * ******************* GetHelpString *******************
+ */
+std::string GetHelpString()
+{
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxweightedaddition" << std::endl
+  << "  -in      inputFilenames" << std::endl
+  << "  -w       weightFilenames" << std::endl
+  << "  -out     outputFilename; always written as float" << std::endl
+  << "Supported: 2D, 3D, (unsigned) short, (unsigned) char, float.";
 
-//-------------------------------------------------------------------------------------
+  return ss.str();
 
-/* Declare WeightedAddition. */
-template< class InputImageType >
-void WeightedAddition(
-  const std::vector<std::string> & inputFileNames,
-  const std::vector<std::string> & weightFileNames,
-  const std::string & outputFileName
-  );
+} // end GetHelpString()
 
-/** Declare GetHelpString. */
-std::string GetHelpString( void );
+/** WeightedAddition */
+
+class ITKToolsWeightedAdditionBase : public itktools::ITKToolsBase
+{ 
+public:
+  ITKToolsWeightedAdditionBase()
+  {
+    //std::vector<std::string> m_InputFileNames;
+    //std::vector<std::string> m_WeightFileNames;
+    m_OutputFileName = "";
+  };
+  ~ITKToolsWeightedAdditionBase(){};
+
+  /** Input parameters */
+  std::vector<std::string> m_InputFileNames;
+  std::vector<std::string> m_WeightFileNames;
+  std::string m_OutputFileName;
+
+}; // end WeightedAdditionBase
+
+
+template< class TComponentType, unsigned int VDimension >
+class ITKToolsWeightedAddition : public ITKToolsWeightedAdditionBase
+{
+public:
+  typedef ITKToolsWeightedAddition Self;
+
+  ITKToolsWeightedAddition(){};
+  ~ITKToolsWeightedAddition(){};
+
+  static Self * New( itktools::ComponentType componentType, unsigned int dim )
+  {
+    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
+    {
+      return new Self;
+    }
+    return 0;
+  }
+
+  void Run(void)
+  {
+    /** TYPEDEF's. */
+    typedef itk::Image<TComponentType, VDimension>        InputImageType;
+    typedef itk::ImageFileReader< InputImageType >        ReaderType;
+    typedef itk::MultiplyImageFilter<
+      InputImageType, InputImageType, InputImageType>     MultiplierType;
+    typedef itk::NaryAddImageFilter<
+      InputImageType, InputImageType >                    AdderType;
+    typedef itk::ImageFileWriter< InputImageType >        WriterType;
+    typedef typename InputImageType::PixelType            PixelType;
+    typedef typename ReaderType::Pointer                  ReaderPointer;
+    typedef typename MultiplierType::Pointer              MultiplierPointer;
+    typedef typename AdderType::Pointer                   AdderPointer;
+    typedef typename WriterType::Pointer                  WriterPointer;
+
+    /** DECLARATION'S. */
+    unsigned int nrInputs = m_InputFileNames.size();
+    if ( m_WeightFileNames.size() != nrInputs )
+    {
+      itkGenericExceptionMacro( << "ERROR: Number of weight images does not equal number of input images!" );
+    }
+
+    std::vector< ReaderPointer > inReaders( nrInputs );
+    std::vector< ReaderPointer > wReaders( nrInputs );
+    std::vector< MultiplierPointer > multipliers( nrInputs );
+    AdderPointer adder = AdderType::New();
+    WriterPointer writer = WriterType::New();
+
+    for ( unsigned int i = 0; i < nrInputs; ++i )
+    {
+      inReaders[i] = ReaderType::New();
+      inReaders[i]->SetFileName( m_InputFileNames[i].c_str() );
+      wReaders[i] = ReaderType::New();
+      wReaders[i]->SetFileName( m_WeightFileNames[i].c_str() );
+      multipliers[i] = MultiplierType::New();
+      multipliers[i]->SetInput(0, inReaders[i]->GetOutput() );
+      multipliers[i]->SetInput(1, wReaders[i]->GetOutput() );
+      multipliers[i]->InPlaceOn();
+      adder->SetInput(i, multipliers[i]->GetOutput() );
+    }
+
+    /** Write the output image. */
+    writer->SetFileName( m_OutputFileName.c_str() );
+    writer->SetInput( adder->GetOutput() );
+    writer->Update();
+  }
+
+}; // end WeightedAddition
+
 
 //-------------------------------------------------------------------------------------
 
@@ -76,7 +163,7 @@ int main( int argc, char **argv )
   unsigned int Dimension = 3;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = GetImageProperties(
+  int retgip = itktools::GetImageProperties(
     inputFileNames[0],
     PixelType,
     ComponentType,
@@ -93,7 +180,7 @@ int main( int argc, char **argv )
   // bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
 
   /** Get rid of the possible "_" in ComponentType. */
-  ReplaceUnderscoreWithSpace( ComponentType );
+  itktools::ReplaceUnderscoreWithSpace( ComponentType );
 
   /** Error checking. */
   if ( NumberOfComponents > 1 )
@@ -103,36 +190,46 @@ int main( int argc, char **argv )
     return 1;
   }
 
+  /** Class that does the work */
+  ITKToolsWeightedAdditionBase * weightedAddition = NULL;
 
-  /** Run the program. */
-  bool supported = false;
+  /** Short alias */
+  unsigned int dim = Dimension;
+ 
+  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileNames[0]);
+  
+  std::cout << "Detected component type: " << 
+    componentType << std::endl;
+
   try
-  {
-    run( WeightedAddition, float, 2 );
-    run( WeightedAddition, float, 3 );
+  {    
+    // now call all possible template combinations.
+    if (!weightedAddition) weightedAddition = ITKToolsWeightedAddition< float, 2 >::New( componentType, dim );
+#ifdef ITKTOOLS_3D_SUPPORT
+    if (!weightedAddition) weightedAddition = ITKToolsWeightedAddition< float, 3 >::New( componentType, dim );    
+#endif
+    if (!weightedAddition) 
+    {
+      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+      std::cerr
+        << "pixel (component) type = " << componentType
+        << " ; dimension = " << Dimension
+        << std::endl;
+      return 1;
+    }
+
+    weightedAddition->m_InputFileNames = inputFileNames;
+    weightedAddition->m_WeightFileNames = weightFileNames;
+    weightedAddition->m_OutputFileName = outputFileName;
+  
+    weightedAddition->Run();
+    
+    delete weightedAddition;  
   }
   catch( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
-    return 1;
-  }
-  catch( std::exception & e )
-  {
-    std::cerr << "Caught std::exception: " << e.what() << std::endl;
-    return 1;
-  }
-  catch ( ... )
-  {
-    std::cerr << "Caught unknown exception" << std::endl;
-    return 1;
-  }
-  if ( !supported )
-  {
-    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-    std::cerr
-      << "pixel (component) type = " << ComponentType
-      << " ; dimension = " << Dimension
-      << std::endl;
+    delete weightedAddition;
     return 1;
   }
 
@@ -140,78 +237,3 @@ int main( int argc, char **argv )
   return 0;
 
 } // end main()
-
-
-/*
- * ******************* WeightedAddition *******************
- */
-
-template< class InputImageType >
-void WeightedAddition(
-  const std::vector<std::string> & inputFileNames,
-  const std::vector<std::string> & weightFileNames,
-  const std::string & outputFileName )
-{
-  /** TYPEDEF's. */
-  typedef itk::ImageFileReader< InputImageType >        ReaderType;
-  typedef itk::MultiplyImageFilter<
-    InputImageType, InputImageType, InputImageType>     MultiplierType;
-  typedef itk::NaryAddImageFilter<
-    InputImageType, InputImageType >                    AdderType;
-  typedef itk::ImageFileWriter< InputImageType >        WriterType;
-  typedef typename InputImageType::PixelType            PixelType;
-  typedef typename ReaderType::Pointer                  ReaderPointer;
-  typedef typename MultiplierType::Pointer              MultiplierPointer;
-  typedef typename AdderType::Pointer                   AdderPointer;
-  typedef typename WriterType::Pointer                  WriterPointer;
-
-  /** DECLARATION'S. */
-  unsigned int nrInputs = inputFileNames.size();
-  if ( weightFileNames.size() != nrInputs )
-  {
-    itkGenericExceptionMacro( << "ERROR: Number of weight images does not equal number of input images!" );
-  }
-
-  std::vector< ReaderPointer > inReaders( nrInputs );
-  std::vector< ReaderPointer > wReaders( nrInputs );
-  std::vector< MultiplierPointer > multipliers( nrInputs );
-  AdderPointer adder = AdderType::New();
-  WriterPointer writer = WriterType::New();
-
-  for ( unsigned int i = 0; i < nrInputs; ++i )
-  {
-    inReaders[i] = ReaderType::New();
-    inReaders[i]->SetFileName( inputFileNames[i].c_str() );
-    wReaders[i] = ReaderType::New();
-    wReaders[i]->SetFileName( weightFileNames[i].c_str() );
-    multipliers[i] = MultiplierType::New();
-    multipliers[i]->SetInput(0, inReaders[i]->GetOutput() );
-    multipliers[i]->SetInput(1, wReaders[i]->GetOutput() );
-    multipliers[i]->InPlaceOn();
-    adder->SetInput(i, multipliers[i]->GetOutput() );
-  }
-
-  /** Write the output image. */
-  writer->SetFileName( outputFileName.c_str() );
-  writer->SetInput( adder->GetOutput() );
-  writer->Update();
-
-} // end WeightedAddition()
-
-
-/**
- * ******************* GetHelpString *******************
- */
-std::string GetHelpString()
-{
-  std::stringstream ss;
-  ss << "Usage:" << std::endl
-  << "pxweightedaddition" << std::endl
-  << "  -in      inputFilenames" << std::endl
-  << "  -w       weightFilenames" << std::endl
-  << "  -out     outputFilename; always written as float" << std::endl
-  << "Supported: 2D, 3D, (unsigned) short, (unsigned) char, float.";
-  
-  return ss.str();
-
-} // end GetHelpString()

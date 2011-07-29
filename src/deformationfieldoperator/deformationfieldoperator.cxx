@@ -21,23 +21,157 @@
  \verbinclude deformationfieldoperator.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsBase.h"
 
 #include "deformationfieldoperator.h"
 #include "itkExceptionObject.h"
 #include <itksys/SystemTools.hxx>
 
 
+/**
+ * ******************* GetHelpString *******************
+ */
+
+std::string GetHelpString( void )
+{
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxdeformationfieldoperator" << std::endl
+    << "This program converts between deformations (displacement fields)" << std::endl
+  << "and transformations, and computes the magnitude or Jacobian of a" << std::endl
+  << "deformation field." << std::endl
+  << "  -in      inputFilename" << std::endl
+  << "  [-out]   outputFilename; default: in + {operation}.mhd" << std::endl
+  << "  [-ops]   operation; options: DEF2TRANS, TRANS2DEF," << std::endl
+  << "MAGNITUDE, JACOBIAN, DEF2JAC, TRANS2JAC, INVERSE. default: MAGNITUDE" << std::endl
+  << "           TRANS2JAC == JACOBIAN" << std::endl
+  << "  [-s]     number of streams, default 1." << std::endl
+  << "  [-it]    number of iterations, for the iterative inversion, default 1, increase to get better results." << std::endl
+  << "  [-stop]  allowed error, default 0.0, increase to get faster convergence." << std::endl
+  << "Supported: 2D, 3D, vector of floats or doubles, number of components" << std::endl
+  << "must equal number of dimensions.";
+  return ss.str();
+} // end GetHelpString()
+
 //-------------------------------------------------------------------------------------
 
-/** run: A macro to call a function. */
-#define run(function,type,dim) \
-if ( ComponentType == #type && Dimension == dim ) \
-{ \
-  function< type, dim >( inputFileName, outputFileName, ops, \
-    numberOfStreams, numberOfIterations, stopValue ); \
-  supported = true; \
-}
+/** DeformationFieldOperator */
+
+class ITKToolsDeformationFieldOperatorBase : public itktools::ITKToolsBase
+{ 
+public:
+  ITKToolsDeformationFieldOperatorBase()
+  {
+    m_InputFileName = "";
+    m_OutputFileName = "";
+    m_Ops = "";
+    m_NumberOfStreams = 0;
+    m_NumberOfIterations = 0;
+    m_StopValue = 0.0f;
+  };
+  ~ITKToolsDeformationFieldOperatorBase(){};
+
+  /** Input parameters */
+  std::string m_InputFileName;
+  std::string m_OutputFileName;
+  std::string m_Ops;
+  unsigned int m_NumberOfStreams;
+  unsigned int m_NumberOfIterations;
+  double m_StopValue;
+    
+}; // end DeformationFieldOperatorBase
+
+/**
+ * **************** DeformationFieldOperator *******************
+ *
+ * converts between deformation fields and transformation 'fields',
+ * and compute magnitudes/Jacobians.
+ */
+template< class TComponentType, unsigned int VDimension >
+class ITKToolsDeformationFieldOperator : public ITKToolsDeformationFieldOperatorBase
+{
+public:
+  typedef ITKToolsDeformationFieldOperator Self;
+
+  ITKToolsDeformationFieldOperator(){};
+  ~ITKToolsDeformationFieldOperator(){};
+
+  static Self * New( itktools::ComponentType componentType, unsigned int dim )
+  {
+    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
+    {
+      return new Self;
+    }
+    return 0;
+  }
+
+  void Run(void)
+  {
+    /** TYPEDEF's. */
+    typedef TComponentType                               ComponentType;
+    typedef ComponentType                                ScalarPixelType;
+    typedef itk::Vector< ComponentType, VDimension >     VectorPixelType;
+
+    typedef itk::Image< ScalarPixelType, VDimension >    ScalarImageType;
+    typedef itk::Image< VectorPixelType, VDimension >    VectorImageType;
+    typedef itk::ImageFileReader< VectorImageType >     ReaderType;
+
+    /** DECLARATION'S. */
+    typename VectorImageType::Pointer workingImage;
+    typename ReaderType::Pointer reader = ReaderType::New();
+
+    /** Read in the inputImage. */
+    reader->SetFileName( m_InputFileName.c_str() );
+    // temporarily: only streaming support for Jacobian case needed for EMPIRE10 challenge.
+    if ( m_Ops != "DEF2JAC" && m_Ops != "TRANS2JAC" && m_Ops != "JACOBIAN" )
+    {
+      std::cout << "Reading input image: " << m_InputFileName << std::endl;
+      reader->Update();
+      std::cout << "Input image read." << std::endl;
+    }
+
+    /** Change to Transformation or Deformation by adding/subtracting pixel coordinates */
+    workingImage = reader->GetOutput();
+
+    /** Do something with this image and save the result */
+    if ( m_Ops == "DEF2TRANS" )
+    {
+      Deformation2Transformation<VectorImageType>(
+	workingImage, m_OutputFileName, true );
+    }
+    else if ( m_Ops == "TRANS2DEF" )
+    {
+      Deformation2Transformation<VectorImageType>(
+	workingImage, m_OutputFileName, false );
+    }
+    else if ( m_Ops == "MAGNITUDE" )
+    {
+      ComputeMagnitude<VectorImageType, ScalarImageType>(
+	workingImage, m_OutputFileName );
+    }
+    else if ( m_Ops == "JACOBIAN" || m_Ops == "TRANS2JAC" )
+    {
+      ComputeJacobian<VectorImageType, ScalarImageType>(
+	m_InputFileName, m_OutputFileName, m_NumberOfStreams, true );
+    }
+    else if ( m_Ops == "DEF2JAC" )
+    {
+      ComputeJacobian<VectorImageType, ScalarImageType>(
+	m_InputFileName, m_OutputFileName, m_NumberOfStreams, false );
+    }
+    else if ( m_Ops == "INVERSE" )
+    {
+      ComputeInverse<VectorImageType>(
+	m_InputFileName, m_OutputFileName, m_NumberOfStreams, m_NumberOfIterations, m_StopValue );
+    }
+    else
+    {
+      itkGenericExceptionMacro( << "<< invalid operator: " << m_Ops );
+    }
+  }
+
+}; // end DeformationFieldOperator
 
 //-------------------------------------------------------------------------------------
 
@@ -101,7 +235,7 @@ int main( int argc, char **argv )
   unsigned int Dimension = 2;
   unsigned int NumberOfComponents = Dimension;
   std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = GetImageProperties(
+  int retgip = itktools::GetImageProperties(
     inputFileName,
     PixelType,
     ComponentType,
@@ -126,33 +260,52 @@ int main( int argc, char **argv )
   }
 
   /** Get rid of the possible "_" in ComponentType. */
-  ReplaceUnderscoreWithSpace( ComponentType );
+  itktools::ReplaceUnderscoreWithSpace( ComponentType );
 
   /** Run the program. */
-  bool supported = false;
-  try
-  {
-    run( DeformationFieldOperator, float, 2 );
-    run( DeformationFieldOperator, float, 3 );
+  
+  /** Class that does the work */
+  ITKToolsDeformationFieldOperatorBase * deformationFieldOperator = 0; 
 
-    run( DeformationFieldOperator, double, 2 );
-    run( DeformationFieldOperator, double, 3 );
+  /** Short alias */
+  unsigned int dim = Dimension;
+
+  itktools::ComponentType componentType = itktools::GetComponentTypeFromString(PixelType);
+   
+  try
+  {    
+    // now call all possible template combinations.
+    if (!deformationFieldOperator) deformationFieldOperator = ITKToolsDeformationFieldOperator< float, 2 >::New( componentType, dim );
+    if (!deformationFieldOperator) deformationFieldOperator = ITKToolsDeformationFieldOperator< double, 2 >::New( componentType, dim );
+#ifdef ITKTOOLS_3D_SUPPORT
+    if (!deformationFieldOperator) deformationFieldOperator = ITKToolsDeformationFieldOperator< float, 3 >::New( componentType, dim );
+    if (!deformationFieldOperator) deformationFieldOperator = ITKToolsDeformationFieldOperator< double, 3 >::New( componentType, dim );
+#endif
+    if (!deformationFieldOperator) 
+    {
+      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+      std::cerr
+        << "pixel (component) type = " << componentType
+        << " ; dimension = " << Dimension
+        << std::endl;
+      return 1;
+    }
+
+    deformationFieldOperator->m_InputFileName = inputFileName;
+    deformationFieldOperator->m_OutputFileName = outputFileName;
+    deformationFieldOperator->m_Ops = ops;
+    deformationFieldOperator->m_NumberOfStreams = numberOfStreams;
+    deformationFieldOperator->m_NumberOfIterations = numberOfIterations;
+    deformationFieldOperator->m_StopValue = stopValue;
+  
+    deformationFieldOperator->Run();
+    
+    delete deformationFieldOperator;
   }
-  catch ( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
-    return 1;
-  }
-  if ( !supported )
-  {
-    std::cerr << "ERROR: this combination of pixeltype and dimension is not "
-      << "supported!" << std::endl;
-    std::cerr
-      << "pixel (component) type = " << ComponentType
-      << " ; dimension = " << Dimension
-      << std::endl;
-    std::cerr << "Call \"pxdeformationfieldoperator --help\" to get a list "
-      << "of supported images." << std::endl;
+    delete deformationFieldOperator;
     return 1;
   }
 
@@ -161,28 +314,3 @@ int main( int argc, char **argv )
 
 } // end main
 
-
-/**
- * ******************* GetHelpString *******************
- */
-
-std::string GetHelpString( void )
-{
-  std::stringstream ss;
-  ss << "Usage:" << std::endl
-  << "pxdeformationfieldoperator" << std::endl
-    << "This program converts between deformations (displacement fields)" << std::endl
-  << "and transformations, and computes the magnitude or Jacobian of a" << std::endl
-  << "deformation field." << std::endl
-  << "  -in      inputFilename" << std::endl
-  << "  [-out]   outputFilename; default: in + {operation}.mhd" << std::endl
-  << "  [-ops]   operation; options: DEF2TRANS, TRANS2DEF," << std::endl
-  << "MAGNITUDE, JACOBIAN, DEF2JAC, TRANS2JAC, INVERSE. default: MAGNITUDE" << std::endl
-  << "           TRANS2JAC == JACOBIAN" << std::endl
-  << "  [-s]     number of streams, default 1." << std::endl
-  << "  [-it]    number of iterations, for the iterative inversion, default 1, increase to get better results." << std::endl
-  << "  [-stop]  allowed error, default 0.0, increase to get faster convergence." << std::endl
-  << "Supported: 2D, 3D, vector of floats or doubles, number of components" << std::endl
-  << "must equal number of dimensions.";
-  return ss.str();
-} // end GetHelpString()

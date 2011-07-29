@@ -21,7 +21,8 @@
  \verbinclude invertintensityimagefilter.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsBase.h"
 
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
@@ -35,22 +36,126 @@
 #include "itkChannelByChannelVectorImageFilter2.h"
 //-------------------------------------------------------------------------------------
 
-/** run: A macro to call a function. */
-#define run( function, type, dim ) \
-if ( ComponentTypeIn == #type && Dimension == dim ) \
-{ \
-  typedef itk::Image< type, dim > InputImageType; \
-  function< InputImageType >( inputFileName, outputFileName ); \
-  supported = true; \
-}
+
+/**
+ * ******************* GetHelpString *******************
+ */
+
+std::string GetHelpString( void )
+{
+  std::stringstream ss;
+  ss << "This program inverts the intensities of an image." << std::endl
+  << "Usage:" << std::endl
+  << "pxinvertintensityimagefilter" << std::endl
+  << "  -in      inputFilename" << std::endl
+  << "  [-out]   outputFilename; default: in + INVERTED.mhd" << std::endl
+  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
+
+  return ss.str();
+
+} // end GetHelpString()
+
+/** InvertIntensity */
+
+class ITKToolsInvertIntensityBase : public itktools::ITKToolsBase
+{ 
+public:
+  ITKToolsInvertIntensityBase()
+  {
+    m_InputFileName = "";
+    m_OutputFileName = "";
+  };
+  ~ITKToolsInvertIntensityBase(){};
+
+  /** Input parameters */
+  std::string m_InputFileName;
+  std::string m_OutputFileName;
+    
+}; // end InvertIntensityBase
+
+
+template< unsigned int VImageDimension, class TComponentType >
+class ITKToolsInvertIntensity : public ITKToolsInvertIntensityBase
+{
+public:
+  typedef ITKToolsInvertIntensity Self;
+
+  ITKToolsInvertIntensity(){};
+  ~ITKToolsInvertIntensity(){};
+
+  static Self * New( unsigned int imageDimension, itktools::ComponentType componentType )
+  {
+    if ( VImageDimension == imageDimension && itktools::IsType<TComponentType>( componentType ) )
+    {
+      return new Self;
+    }
+    return 0;
+  }
+
+  void Run(void)
+  {
+    /** Some typedef's. */
+    typedef itk::Image<TComponentType, VImageDimension>             ScalarImageType;
+    typedef typename ScalarImageType::PixelType                InputPixelType;
+    typedef itk::VectorImage<InputPixelType, ScalarImageType::ImageDimension> VectorImageType;
+    typedef itk::ImageFileReader< VectorImageType >            ReaderType;
+    typedef itk::ImageFileWriter< VectorImageType >            WriterType;
+    typedef itk::StatisticsImageFilter< ScalarImageType >      StatisticsFilterType;
+    typedef typename StatisticsFilterType::RealType           RealType;
+    typedef itk::InvertIntensityImageFilter< ScalarImageType > InvertIntensityFilterType;
+
+    /** Create reader. */
+    typename ReaderType::Pointer reader = ReaderType::New();
+    reader->SetFileName( m_InputFileName.c_str() );
+
+    // In this case, we must manually disassemble the image rather than use a ChannelByChannel filter because the image is not the output,
+    // but rather the GetMaximum() function is what we want.
+    
+    // Create the disassembler
+    typedef itk::VectorIndexSelectionCastImageFilter<VectorImageType, ScalarImageType> IndexSelectionType;
+    typename IndexSelectionType::Pointer indexSelectionFilter = IndexSelectionType::New();
+    indexSelectionFilter->SetInput(reader->GetOutput());
+
+    double max = std::numeric_limits<double>::min(); // Initialize so that any number will be bigger than this one
+
+    // Get the max of each channel, keeping the largest
+    for(unsigned int channel = 0; channel < reader->GetOutput()->GetNumberOfComponentsPerPixel(); channel++)
+      {
+      // Extract the current channel
+      indexSelectionFilter->SetIndex(channel);
+      indexSelectionFilter->Update();
+
+      /** Create statistics filter. */
+      typename StatisticsFilterType::Pointer statistics = StatisticsFilterType::New();
+      statistics->SetInput( indexSelectionFilter->GetOutput() );
+      statistics->Update();
+      if(statistics->GetMaximum() > max)
+	{
+	max = statistics->GetMaximum();
+	}
+      }
+
+    /** Create invert filter. */
+    typename InvertIntensityFilterType::Pointer invertFilter = InvertIntensityFilterType::New();
+    invertFilter->SetMaximum( max );
+
+    // Setup the filter to apply the invert filter to every channel
+    typedef itk::ChannelByChannelVectorImageFilter2<VectorImageType, InvertIntensityFilterType> ChannelByChannelInvertType;
+    typename ChannelByChannelInvertType::Pointer channelByChannelInvertFilter = ChannelByChannelInvertType::New();
+    channelByChannelInvertFilter->SetInput(reader->GetOutput());
+    channelByChannelInvertFilter->SetFilter(invertFilter);
+    channelByChannelInvertFilter->Update();
+
+    /** Create writer. */
+    typename WriterType::Pointer writer = WriterType::New();
+    writer->SetFileName( m_OutputFileName.c_str() );
+    writer->SetInput( channelByChannelInvertFilter->GetOutput() );
+    writer->Update();
+  }
+
+}; // end InvertIntensity
 
 //-------------------------------------------------------------------------------------
-
-/* Declare InvertIntensity. */
-template< class InputImageType >
-void InvertIntensity(
-  const std::string & inputFileName,
-  const std::string & outputFileName );
 
 /** Declare GetHelpString. */
 std::string GetHelpString( void );
@@ -90,7 +195,7 @@ int main( int argc, char ** argv )
   unsigned int Dimension = 2;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = GetImageProperties(
+  int retgip = itktools::GetImageProperties(
     inputFileName,
     PixelType,
     ComponentTypeIn,
@@ -110,136 +215,58 @@ int main( int argc, char ** argv )
     return 1;
   }
 
-  /** Get rid of the possible "_" in ComponentType. */
-  ReplaceUnderscoreWithSpace( ComponentTypeIn );
 
-  /** Run the program. */
-  bool supported = false;
+  /** Class that does the work */
+  ITKToolsInvertIntensityBase * invertIntensity = NULL; 
+
+  unsigned int imageDimension = 0;
+  itktools::GetImageDimension(inputFileName, imageDimension);
+
+  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileName);
+    
   try
-  {
-    /** 2D. */
-    run( InvertIntensity, char, 2 );
-    run( InvertIntensity, unsigned char, 2 );
-    run( InvertIntensity, short, 2 );
-    run( InvertIntensity, unsigned short, 2 );
-    run( InvertIntensity, float, 2 );
-    run( InvertIntensity, double, 2 );
+  {    
+    // now call all possible template combinations.
+    if (!invertIntensity) invertIntensity = ITKToolsInvertIntensity< 2, char >::New( imageDimension, componentType );
+    if (!invertIntensity) invertIntensity = ITKToolsInvertIntensity< 2, unsigned char >::New( imageDimension, componentType );
+    if (!invertIntensity) invertIntensity = ITKToolsInvertIntensity< 2, short >::New( imageDimension, componentType );
+    if (!invertIntensity) invertIntensity = ITKToolsInvertIntensity< 2, unsigned short >::New( imageDimension, componentType );
+    if (!invertIntensity) invertIntensity = ITKToolsInvertIntensity< 2, float >::New( imageDimension, componentType );
+    if (!invertIntensity) invertIntensity = ITKToolsInvertIntensity< 2, double >::New( imageDimension, componentType );
+    
+#ifdef ITKTOOLS_3D_SUPPORT
+    if (!invertIntensity) invertIntensity = ITKToolsInvertIntensity< 3, char >::New( imageDimension, componentType );
+    if (!invertIntensity) invertIntensity = ITKToolsInvertIntensity< 3, unsigned char >::New( imageDimension, componentType );
+    if (!invertIntensity) invertIntensity = ITKToolsInvertIntensity< 3, short >::New( imageDimension, componentType );
+    if (!invertIntensity) invertIntensity = ITKToolsInvertIntensity< 3, unsigned short >::New( imageDimension, componentType );
+    if (!invertIntensity) invertIntensity = ITKToolsInvertIntensity< 3, float >::New( imageDimension, componentType );
+    if (!invertIntensity) invertIntensity = ITKToolsInvertIntensity< 3, double >::New( imageDimension, componentType );
+#endif
+    if (!invertIntensity) 
+    {
+      std::cerr << "ERROR: this combination of pixeltype, image dimension, and space dimension is not supported!" << std::endl;
+      std::cerr
+        << " image dimension = " << imageDimension << std::endl
+        << " pixel type = " << componentType << std::endl
+        << std::endl;
+      return 1;
+    }
 
-    /** 3D. */
-    run( InvertIntensity, char, 3 );
-    run( InvertIntensity, unsigned char, 3 );
-    run( InvertIntensity, short, 3 );
-    run( InvertIntensity, unsigned short, 3 );
-    run( InvertIntensity, float, 3 );
-    run( InvertIntensity, double, 3 );
-
-  } // end run
-  catch ( itk::ExceptionObject &e )
+    invertIntensity->m_OutputFileName = outputFileName;
+    invertIntensity->m_InputFileName = inputFileName;
+    
+    invertIntensity->Run();
+    
+    delete invertIntensity;
+  }
+  catch( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
+    delete invertIntensity;
     return 1;
   }
-  if ( !supported )
-  {
-    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-    std::cerr
-      << "pixel (component) type = " << ComponentTypeIn
-      << " ; dimension = " << Dimension
-      << std::endl;
-    return 1;
-  }
-
+  
   /** End program. */
   return 0;
 
 } // end main
-
-
-/**
- * ******************* GetHelpString *******************
- */
-
-std::string GetHelpString( void )
-{
-  std::stringstream ss;
-  ss << "This program inverts the intensities of an image." << std::endl
-    << "Usage:" << std::endl
-    << "pxinvertintensityimagefilter" << std::endl
-    << "  -in      inputFilename" << std::endl
-    << "  [-out]   outputFilename; default: in + INVERTED.mhd" << std::endl
-    << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
-
-  return ss.str();
-
-} // end GetHelpString()
-
-
-/*
- * ******************* InvertIntensity *******************
- *
- * The resize function templated over the input pixel type.
- */
-
-template< class ScalarImageType >
-void InvertIntensity( const std::string & inputFileName,
-  const std::string & outputFileName )
-{
-  /** Some typedef's. */
-  typedef typename ScalarImageType::PixelType                InputPixelType;
-  typedef itk::VectorImage<InputPixelType, ScalarImageType::ImageDimension> VectorImageType;
-  typedef itk::ImageFileReader< VectorImageType >            ReaderType;
-  typedef itk::ImageFileWriter< VectorImageType >            WriterType;
-  typedef itk::StatisticsImageFilter< ScalarImageType >      StatisticsFilterType;
-  typedef typename StatisticsFilterType::RealType           RealType;
-  typedef itk::InvertIntensityImageFilter< ScalarImageType > InvertIntensityFilterType;
-
-  /** Create reader. */
-  typename ReaderType::Pointer reader = ReaderType::New();
-  reader->SetFileName( inputFileName.c_str() );
-
-  // In this case, we must manually disassemble the image rather than use a
-  // ChannelByChannel filter because the image is not the output,
-  // but rather the GetMaximum() function is what we want.
-  
-  // Create the disassembler
-  typedef itk::VectorIndexSelectionCastImageFilter<VectorImageType, ScalarImageType> IndexSelectionType;
-  typename IndexSelectionType::Pointer indexSelectionFilter = IndexSelectionType::New();
-  indexSelectionFilter->SetInput(reader->GetOutput());
-
-  double max = std::numeric_limits<double>::min(); // Initialize so that any number will be bigger than this one
-
-  // Get the max of each channel, keeping the largest
-  for(unsigned int channel = 0; channel < reader->GetOutput()->GetNumberOfComponentsPerPixel(); channel++)
-    {
-    // Extract the current channel
-    indexSelectionFilter->SetIndex(channel);
-    indexSelectionFilter->Update();
-
-    /** Create statistics filter. */
-    typename StatisticsFilterType::Pointer statistics = StatisticsFilterType::New();
-    statistics->SetInput( indexSelectionFilter->GetOutput() );
-    statistics->Update();
-    if(statistics->GetMaximum() > max)
-      {
-      max = statistics->GetMaximum();
-      }
-    }
-
-  /** Create invert filter. */
-  typename InvertIntensityFilterType::Pointer invertFilter = InvertIntensityFilterType::New();
-  invertFilter->SetMaximum( max );
-
-  // Setup the filter to apply the invert filter to every channel
-  typedef itk::ChannelByChannelVectorImageFilter2<VectorImageType, InvertIntensityFilterType> ChannelByChannelInvertType;
-  typename ChannelByChannelInvertType::Pointer channelByChannelInvertFilter = ChannelByChannelInvertType::New();
-  channelByChannelInvertFilter->SetInput(reader->GetOutput());
-  channelByChannelInvertFilter->SetFilter(invertFilter);
-  channelByChannelInvertFilter->Update();
-
-  /** Create writer. */
-  typename WriterType::Pointer writer = WriterType::New();
-  writer->SetFileName( outputFileName.c_str() );
-  writer->SetInput( channelByChannelInvertFilter->GetOutput() );
-  writer->Update();
-
-} // end InvertIntensity()

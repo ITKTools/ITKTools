@@ -22,10 +22,44 @@
  */
 
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsBase.h"
+#include "ITKToolsImageProperties.h"
 
 #include "BinaryImageOperatorMainHelper.h"
 #include "BinaryImageOperatorHelper.h"
+
+
+std::string GetHelpString()
+{
+  std::stringstream  ss;
+  ss << "Performs binary operations on two images." << std::endl
+     << "Usage:\npxbinaryimageoperator" << std::endl
+     << "  -in      inputFilenames" << std::endl
+     << "  [-out]   outputFilename, default in1 + ops + arg + in2 + .mhd" << std::endl
+     << "  -ops     binary operator of the following form:" << std::endl
+     << "           {+,-,*,/,^,%}" << std::endl
+     << "           notation:" << std::endl
+     << "             {ADDITION, WEIGHTEDADDITION, MINUS, TIMES,DIVIDE,POWER," << std::endl
+     << "             MAXIMUM, MINIMUM, ABSOLUTEDIFFERENCE, SQUAREDDIFFERENCE," << std::endl
+     << "             BINARYMAGNITUDE, MASK, MASKNEGATED, LOG}" << std::endl
+     << "           notation examples:" << std::endl
+     << "             MINUS = A - B" << std::endl
+     << "             ABSDIFF = |A - B|" << std::endl
+     << "             MIN = min( A, B )" << std::endl
+     << "             MAGNITUDE = sqrt( A * A + B * B )" << std::endl
+     << "  [-arg]   argument, necessary for some ops" << std::endl
+     << "             WEIGHTEDADDITION: 0.0 < weight alpha < 1.0" << std::endl
+     << "             MASK[NEG]: background value, e.g. 0." << std::endl
+     << "  [-z]     compression flag; if provided, the output image is compressed" << std::endl
+     << "  [-opct]  output component type, by default the largest of the two input images" << std::endl
+     << "           choose one of: {[unsigned_]{char,short,int,long},float,double}" << std::endl
+     << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
+
+  return ss.str();
+
+} // end GetHelpString()
+
 
 //-------------------------------------------------------------------------------------
 
@@ -40,11 +74,11 @@ int main( int argc, char **argv )
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if ( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if ( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }
@@ -69,9 +103,9 @@ int main( int argc, char **argv )
   std::string argument = "0";
   bool retarg = parser->GetCommandLineArgument( "-arg", argument );
 
-  std::string opct = "";
-  bool retopct = parser->GetCommandLineArgument( "-opct", opct );
-
+  std::string outputComponentTypeString = "";
+  bool retopct = parser->GetCommandLineArgument( "-opct", outputComponentTypeString );
+  
   const bool useCompression = parser->ArgumentExists( "-z" );
 
   /** Create outputFileName. */
@@ -81,26 +115,24 @@ int main( int argc, char **argv )
   }
 
   /** Determine image properties. */
-  std::string ComponentTypeIn1 = "long";
-  std::string ComponentTypeIn2 = "long";
-  std::string ComponentTypeOut = "long";
-  unsigned int inputDimension = 2;
-  int retdip = DetermineImageProperties( inputFileNames,
-    ComponentTypeIn1, ComponentTypeIn2, ComponentTypeOut,
-    inputDimension );
-  if ( retdip ) return 1;
+  itktools::ComponentType componentType1;
+  itktools::ComponentType componentType2;
+  itktools::ComponentType componentTypeOut;
+  DetermineComponentTypes( inputFileNames, componentType1, componentType2, componentTypeOut );
 
   /** Let the user override the output component type. */
   if ( retopct )
   {
-    if ( !CheckForValidComponentType( opct ) )
+    componentTypeOut = itktools::GetComponentTypeFromString(outputComponentTypeString);
+    if ( !itktools::ComponentTypeIsValid( componentTypeOut ) )
     {
       std::cerr << "ERROR: the you specified a wrong opct." << std::endl;
       return 1;
     }
-    ComponentTypeOut = opct;
-    ReplaceUnderscoreWithSpace( ComponentTypeOut );
-  if ( !TypeIsInteger( opct ) ) ComponentTypeIn1 = ComponentTypeIn2 = "double";
+    if ( !itktools::ComponentTypeIsInteger( componentTypeOut ) )
+    {
+      componentType1 = componentType2 = itk::ImageIOBase::DOUBLE;
+    }
   }
 
   /** Check if a valid operator is given. */
@@ -112,45 +144,65 @@ int main( int argc, char **argv )
   bool retCOA = CheckOperatorAndArgument( ops, argument, retarg );
   if ( !retCOA ) return 1;
 
-  /** Run the program. */
-  bool supported = false;
+  /** Class that does the work */
+  ITKToolsBinaryImageOperatorBase * binaryImageOperator = NULL;
+
+  unsigned int dim = 0;
+  itktools::GetImageDimension( inputFileNames[1], dim );
+
   try
   {
-    run( BinaryImageOperator, long, long, char, 2 );
-    run( BinaryImageOperator, long, long, unsigned char, 2 );
-    run( BinaryImageOperator, long, long, short, 2 );
-    run( BinaryImageOperator, long, long, unsigned short, 2 );
-    run( BinaryImageOperator, long, long, int, 2 );
-    run( BinaryImageOperator, long, long, unsigned int, 2 );
-    run( BinaryImageOperator, long, long, long, 2 );
-    run( BinaryImageOperator, long, long, unsigned long, 2 );
-    run( BinaryImageOperator, double, double, float, 2 );
-    run( BinaryImageOperator, double, double, double, 2 );
+    // now call all possible template combinations.
+    if (!binaryImageOperator) binaryImageOperator = ITKToolsBinaryImageOperator< long, long, char, 2 >::New( componentType1, componentType2, componentTypeOut, dim );
+    if (!binaryImageOperator) binaryImageOperator = ITKToolsBinaryImageOperator< long, long, unsigned char, 2 >::New( componentType1, componentType2, componentTypeOut, dim );
+    if (!binaryImageOperator) binaryImageOperator = ITKToolsBinaryImageOperator< long, long, short, 2 >::New( componentType1, componentType2, componentTypeOut, dim );
+    if (!binaryImageOperator) binaryImageOperator = ITKToolsBinaryImageOperator< long, long, unsigned short, 2 >::New( componentType1, componentType2, componentTypeOut, dim );
+    if (!binaryImageOperator) binaryImageOperator = ITKToolsBinaryImageOperator< long, long, int, 2 >::New( componentType1, componentType2, componentTypeOut, dim );
+    if (!binaryImageOperator) binaryImageOperator = ITKToolsBinaryImageOperator< long, long, unsigned int, 2 >::New( componentType1, componentType2, componentTypeOut, dim );
+    if (!binaryImageOperator) binaryImageOperator = ITKToolsBinaryImageOperator< long, long, long, 2 >::New( componentType1, componentType2, componentTypeOut, dim );
+    if (!binaryImageOperator) binaryImageOperator = ITKToolsBinaryImageOperator< long, long, unsigned long, 2 >::New( componentType1, componentType2, componentTypeOut, dim );
+    if (!binaryImageOperator) binaryImageOperator = ITKToolsBinaryImageOperator< double, double, float, 2 >::New( componentType1, componentType2, componentTypeOut, dim );
+    if (!binaryImageOperator) binaryImageOperator = ITKToolsBinaryImageOperator< double, double, double, 2 >::New( componentType1, componentType2, componentTypeOut, dim );
+#ifdef ITKTOOLS_3D_SUPPORT
+    if (!binaryImageOperator) binaryImageOperator = ITKToolsBinaryImageOperator< long, long, char, 3 >::New( componentType1, componentType2, componentTypeOut, dim );
+    if (!binaryImageOperator) binaryImageOperator = ITKToolsBinaryImageOperator< long, long, unsigned char, 3 >::New( componentType1, componentType2, componentTypeOut, dim );
+    if (!binaryImageOperator) binaryImageOperator = ITKToolsBinaryImageOperator< long, long, short, 3 >::New( componentType1, componentType2, componentTypeOut, dim );
+    if (!binaryImageOperator) binaryImageOperator = ITKToolsBinaryImageOperator< long, long, unsigned short, 3 >::New( componentType1, componentType2, componentTypeOut, dim );
+    if (!binaryImageOperator) binaryImageOperator = ITKToolsBinaryImageOperator< long, long, int, 3 >::New( componentType1, componentType2, componentTypeOut, dim );
+    if (!binaryImageOperator) binaryImageOperator = ITKToolsBinaryImageOperator< long, long, unsigned int, 3 >::New( componentType1, componentType2, componentTypeOut, dim );
+    if (!binaryImageOperator) binaryImageOperator = ITKToolsBinaryImageOperator< long, long, long, 3 >::New( componentType1, componentType2, componentTypeOut, dim );
+    if (!binaryImageOperator) binaryImageOperator = ITKToolsBinaryImageOperator< long, long, unsigned long, 3 >::New( componentType1, componentType2, componentTypeOut, dim );
+    if (!binaryImageOperator) binaryImageOperator = ITKToolsBinaryImageOperator< double, double, float, 3 >::New( componentType1, componentType2, componentTypeOut, dim );
+    if (!binaryImageOperator) binaryImageOperator = ITKToolsBinaryImageOperator< double, double, double, 3 >::New( componentType1, componentType2, componentTypeOut, dim );
+#endif
+    if (!binaryImageOperator)
+    {
+      typedef itk::ImageIOBase                        ImageIOBaseType;
+      ImageIOBaseType::Pointer imageIOBaseTmp;
+      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+      std::cerr
+        << "  input1 pixel (component) type = " << imageIOBaseTmp->GetComponentTypeAsString( componentType1 )
+        << "\n  input2 pixel (component) type = " << imageIOBaseTmp->GetComponentTypeAsString( componentType2 )
+        << "\n  output pixel (component) type = " << imageIOBaseTmp->GetComponentTypeAsString( componentTypeOut )
+        << "\n  dimension = " << dim << std::endl;
+      return 1;
+    }
 
-    run( BinaryImageOperator, long, long, char, 3 );
-    run( BinaryImageOperator, long, long, unsigned char, 3 );
-    run( BinaryImageOperator, long, long, short, 3 );
-    run( BinaryImageOperator, long, long, unsigned short, 3 );
-    run( BinaryImageOperator, long, long, int, 3 );
-    run( BinaryImageOperator, long, long, unsigned int, 3 );
-    run( BinaryImageOperator, long, long, long, 3 );
-    run( BinaryImageOperator, long, long, unsigned long, 3 );
-    run( BinaryImageOperator, double, double, float, 3 );
-    run( BinaryImageOperator, double, double, double, 3 );
+    binaryImageOperator->m_InputFileName1 = inputFileNames[0];
+    binaryImageOperator->m_InputFileName2 = inputFileNames[1];
+    binaryImageOperator->m_OutputFileName = outputFileName;
+    binaryImageOperator->m_Ops = ops;
+    binaryImageOperator->m_UseCompression = useCompression;
+    binaryImageOperator->m_Arg = argument;
+  
+    binaryImageOperator->Run();
 
-  } // end try
-  catch ( itk::ExceptionObject &e )
+    delete binaryImageOperator;
+  }
+  catch( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
-    return 1;
-  }
-  if ( !supported )
-  {
-    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-    std::cerr
-      << "pixel (component) type = " << ComponentTypeOut
-      << " ; dimension = " << inputDimension
-      << std::endl;
+    delete binaryImageOperator;
     return 1;
   }
 

@@ -21,7 +21,8 @@
  \verbinclude reshape.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
+#include "ITKToolsBase.h"
 
 #include "itkImageFileReader.h"
 #include "itkReshapeImageToImageFilter.h"
@@ -29,23 +30,101 @@
 #include <itksys/SystemTools.hxx>
 //-------------------------------------------------------------------------------------
 
-/** run: A macro to call a function. */
-#define run(function,type,dim) \
-if ( ComponentTypeIn == #type && Dimension == dim ) \
-{ \
-  typedef itk::Image< type, dim > ImageType; \
-  function< ImageType >( inputFilename, outputFilename, outputSize ); \
-  supported = true; \
-}
+/**
+ * ******************* GetHelpString *******************
+ */
+
+std::string GetHelpString( void )
+{
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pxpca" << std::endl
+  << "  -in      inputFilename" << std::endl
+  << "  [-out]   outputFileName, default inputFileName_reshaped" << std::endl
+  << "  -s       size of the output image" << std::endl
+  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
+
+  return ss.str();
+
+} // end GetHelpString()
+
+
+
+class ITKToolsReshapeBase : public itktools::ITKToolsBase
+{ 
+public:
+  ITKToolsReshapeBase()
+  {
+    m_InputFileName = "";
+    m_OutputFileName = "";
+    //std::vector<unsigned long> m_OutputSize;
+  };
+  ~ITKToolsReshapeBase(){};
+
+  /** Input parameters */
+  std::string m_InputFileName;
+  std::string m_OutputFileName;
+  std::vector<unsigned long> m_OutputSize;
+
+    
+}; // end ReshapeBase
+
+
+template< class TComponentType, unsigned int VDimension >
+class ITKToolsReshape : public ITKToolsReshapeBase
+{
+public:
+  typedef ITKToolsReshape Self;
+
+  ITKToolsReshape(){};
+  ~ITKToolsReshape(){};
+
+  static Self * New( itktools::ComponentType componentType, unsigned int dim )
+  {
+    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
+    {
+      return new Self;
+    }
+    return 0;
+  }
+
+  void Run(void)
+  {
+    /** Typedefs. */
+    typedef itk::Image<TComponentType, VDimension>      ImageType;
+    typedef itk::ImageFileReader< ImageType >           ReaderType;
+    typedef itk::ReshapeImageToImageFilter< ImageType > ReshapeFilterType;
+    typedef itk::ImageFileWriter< ImageType >           WriterType;
+    typedef typename ReshapeFilterType::SizeType        SizeType;
+
+    /** Translate vector to SizeType. */
+    SizeType size;
+    for ( unsigned int i = 0; i < m_OutputSize.size(); ++i )
+    {
+      size[ i ] = m_OutputSize[ i ];
+    }
+
+
+    /** Reader. */
+    typename ReaderType::Pointer reader = ReaderType::New();
+    reader->SetFileName( m_InputFileName.c_str() );
+
+    /** Reshaper. */
+    typename ReshapeFilterType::Pointer reshaper = ReshapeFilterType::New();
+    reshaper->SetInput( reader->GetOutput() );
+    reshaper->SetOutputSize( size );
+    reshaper->Update();
+
+    /** Writer. */
+    typename WriterType::Pointer writer = WriterType::New();
+    writer->SetFileName( m_OutputFileName.c_str() );
+    writer->SetInput( reshaper->GetOutput() );
+    writer->Update();
+  }
+
+}; // end Reshape
 
 //-------------------------------------------------------------------------------------
-
-/* Declare PerformPCA. */
-template< class ImageType >
-void Reshape(
-  const std::string & inputFileName,
-  const std::string & outputFileName,
-  const std::vector<unsigned long> & outputSize );
 
 /** Declare other functions. */
 std::string GetHelpString( void );
@@ -93,7 +172,7 @@ int main( int argc, char **argv )
   unsigned int Dimension = 3;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> inputSize( Dimension, 0 );
-  int retgip = GetImageProperties(
+  int retgip = itktools::GetImageProperties(
     inputFilename,
     PixelType,
     ComponentTypeIn,
@@ -114,7 +193,7 @@ int main( int argc, char **argv )
   }
 
   /** Get rid of the possible "_" in ComponentType. */
-  ReplaceUnderscoreWithSpace( ComponentTypeIn );
+  itktools::ReplaceUnderscoreWithSpace( ComponentTypeIn );
 
   /** Check dimensions. */
   if ( inputSize.size() != outputSize.size() )
@@ -125,111 +204,70 @@ int main( int argc, char **argv )
     return 1;
   }
 
-  /** Run the program. */
-  bool supported = false;
-  try
-  {
-    run( Reshape, unsigned char, 2 );
-    run( Reshape, char, 2 );
-    run( Reshape, unsigned short, 2 );
-    run( Reshape, short, 2 );
-    run( Reshape, unsigned int, 2 );
-    run( Reshape, int, 2 );
-    run( Reshape, unsigned long, 2 );
-    run( Reshape, long, 2 );
-    run( Reshape, float, 2 );
-    run( Reshape, double, 2 );
 
-    /*run( Reshape, unsigned char, 3 );
-    run( Reshape, char, 3 );
-    run( Reshape, unsigned short, 3 );
-    run( Reshape, short, 3 );
-    run( Reshape, unsigned int, 3 );
-    run( Reshape, int, 3 );
-    run( Reshape, unsigned long, 3 );
-    run( Reshape, long, 3 );
-    run( Reshape, float, 3 );
-    run( Reshape, double, 3 );*/
+  /** Class that does the work */
+  ITKToolsReshapeBase * reshape = 0; 
+
+  /** Short alias */
+  unsigned int imageDimension = Dimension;
+ 
+  /** \todo some progs allow user to override the pixel type, 
+   * so we need a method to convert string to EnumComponentType */
+  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFilename);
+  
+  std::cout << "Detected component type: " << 
+    componentType << std::endl;
+    
+  try
+  {    
+    if (!reshape) reshape = ITKToolsReshape< unsigned char, 2 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< char, 2 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< unsigned short, 2 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< short, 2 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< unsigned int, 2 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< int, 2 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< unsigned long, 2 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< long, 2 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< float, 2 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< double, 2 >::New( componentType, imageDimension );
+#ifdef ITKTOOLS_3D_SUPPORT
+    if (!reshape) reshape = ITKToolsReshape< unsigned char, 3 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< char, 3 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< unsigned short, 3 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< short, 3 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< unsigned int, 3 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< int, 3 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< unsigned long, 3 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< long, 3 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< float, 3 >::New( componentType, imageDimension );
+    if (!reshape) reshape = ITKToolsReshape< double, 3 >::New( componentType, imageDimension );
+#endif
+    if (!reshape) 
+    {
+      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+      std::cerr
+        << "pixel (component) type = " << componentType
+        << " ; dimension = " << Dimension
+        << std::endl;
+      return 1;
+    }
+
+    reshape->m_InputFileName = inputFilename;
+    reshape->m_OutputFileName = outputFilename;
+    reshape->m_OutputSize = outputSize;
+
+    reshape->Run();
+    
+    delete reshape;  
   }
-  catch ( itk::ExceptionObject & e )
+  catch( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
+    delete reshape;
     return 1;
   }
-  if ( !supported )
-  {
-    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-    std::cerr
-      << "pixel (component) type = " << ComponentTypeIn
-      << " ; dimension = " << Dimension
-      << std::endl;
-    return 1;
-  }
-
+  
   /** End program. */
   return 0;
 
 } // end main()
-
-
-/*
- * ******************* Reshape *******************
- */
-
-template< class ImageType >
-void Reshape(
-  const std::string & inputFilename,
-  const std::string & outputFilename,
-  const std::vector<unsigned long> & outputSize )
-{
-  /** Typedefs. */
-  typedef itk::ImageFileReader< ImageType >           ReaderType;
-  typedef itk::ReshapeImageToImageFilter< ImageType > ReshapeFilterType;
-  typedef itk::ImageFileWriter< ImageType >           WriterType;
-  typedef typename ReshapeFilterType::SizeType        SizeType;
-
-  /** Translate vector to SizeType. */
-  SizeType size;
-  for ( unsigned int i = 0; i < outputSize.size(); ++i )
-  {
-    size[ i ] = outputSize[ i ];
-  }
-
-
-  /** Reader. */
-  typename ReaderType::Pointer reader = ReaderType::New();
-  reader->SetFileName( inputFilename.c_str() );
-
-  /** Reshaper. */
-  typename ReshapeFilterType::Pointer reshaper = ReshapeFilterType::New();
-  reshaper->SetInput( reader->GetOutput() );
-  reshaper->SetOutputSize( size );
-  reshaper->Update();
-
-  /** Writer. */
-  typename WriterType::Pointer writer = WriterType::New();
-  writer->SetFileName( outputFilename.c_str() );
-  writer->SetInput( reshaper->GetOutput() );
-  writer->Update();
-
-} // end Reshape()
-
-
-/**
- * ******************* GetHelpString *******************
- */
-
-std::string GetHelpString( void )
-{
-  std::stringstream ss;
-  ss << "Usage:" << std::endl
-  << "pxpca" << std::endl
-  << "  -in      inputFilename" << std::endl
-  << "  [-out]   outputFileName, default inputFileName_reshaped" << std::endl
-  << "  -s       size of the output image" << std::endl
-  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
-
-  return ss.str();
-
-} // end GetHelpString()
-

@@ -43,6 +43,19 @@ SET( ITKTools_EXECUTABLE_PATH "${EXECUTABLE_OUTPUT_PATH}" )
 INCLUDE_DIRECTORIES( ${ITKTools_SOURCE_DIR}/common )
 
 #---------------------------------------------------------------------
+# Compilation options
+SET( ITKTOOLS_3D_SUPPORT OFF CACHE BOOL
+  "Support operations on 3D Images." )
+if(ITKTOOLS_3D_SUPPORT)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DITKTOOLS_3D_SUPPORT")
+endif()
+
+SET( ITKTOOLS_4D_SUPPORT OFF CACHE BOOL
+  "Support operations on 4D Images." )
+if(ITKTOOLS_4D_SUPPORT)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DITKTOOLS_4D_SUPPORT")
+endif()
+#---------------------------------------------------------------------
 # Testing
 
 SET( ITKTOOLS_BUILD_TESTING OFF CACHE BOOL

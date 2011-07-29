@@ -11,9 +11,6 @@
 
 //-------------------------------------------------------------------------------------
 
-/** Declare GetHelpString. */
-std::string GetHelpString( void );
-
 /** Declare GetInputData. */
 bool GetInputData( const std::string & filename,
   const std::vector<unsigned int> & columns,

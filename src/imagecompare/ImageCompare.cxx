@@ -35,11 +35,22 @@
 #include "itkImageSource.h" // This should not be necessary after ITK patch is merged
 #include "itkTestingComparisonImageFilter.h"
 
+
+std::string GetHelpString( void )
+{
+  std::stringstream ss;
+  ss << "Usage:" << std::endl
+  << "pximagecompare" << std::endl
+  << "  -test      image filename to test against baseline" << std::endl
+  << "  -base      baseline image filename";
+  return ss.str();
+} // end GetHelpString
+
+
+
 // This comparison works on all image types by reading images in a 6D double images. If images > 6 dimensions
 // must be compared, change this variable.
 static const unsigned int ITK_TEST_DIMENSION_MAX = 6;
-
-std::string GetHelpString( void );
 
 int main( int argc, char **argv )
 {
@@ -176,14 +187,3 @@ int main( int argc, char **argv )
   return EXIT_SUCCESS;
 
 } // end main
-
-std::string GetHelpString( void )
-{
-  std::stringstream ss;
-  ss << "Usage:" << std::endl
-  << "pximagecompare" << std::endl
-  << "  -test      image filename to test against baseline" << std::endl
-  << "  -base      baseline image filename";
-  return ss.str();
-} // end GetHelpString
-
