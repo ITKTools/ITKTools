@@ -32,9 +32,10 @@ private:
 template< class TImage > 
 struct UnaryLogicalFunctorFactory
 {
-  typename itk::InPlaceImageFilter<TImage, TImage>::Pointer GetFilter(UnaryFunctorEnum filterType, typename TImage::PixelType argument)
+  typename itk::InPlaceImageFilter<TImage, TImage>::Pointer
+    GetFilter( UnaryFunctorEnum filterType, typename TImage::PixelType argument )
   {
-    if(filterType == EQUAL)
+    if ( filterType == EQUAL )
     {
       typedef itk::UnaryFunctorImageFilter<TImage, TImage, 
 					  itk::Functor::EQUAL<typename TImage::PixelType> >  FilterType;
@@ -42,7 +43,7 @@ struct UnaryLogicalFunctorFactory
       filter->GetFunctor().SetArgument(argument);
       return filter.GetPointer();
     }
-    else if(filterType == NOT)
+    else if( filterType == NOT )
     {
       typedef itk::UnaryFunctorImageFilter<TImage, TImage, 
 					  itk::Functor::NOT<typename TImage::PixelType> >  FilterType;
@@ -55,5 +56,6 @@ struct UnaryLogicalFunctorFactory
       return NULL;
     }
   }
-};
+}; // end struct UnaryLogicalFunctorFactory
+
 #endif
