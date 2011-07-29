@@ -140,7 +140,6 @@ public:
 
 }; // end class ITKToolsCastConvert
 
-
 /**
  * \class ITKToolsCastConvertDICOM
  * \brief Class that castconverts DICOM images.
