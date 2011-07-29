@@ -116,7 +116,7 @@ public:
     typename IndexSelectionType::Pointer indexSelectionFilter = IndexSelectionType::New();
     indexSelectionFilter->SetInput(reader->GetOutput());
 
-    double max = std::numeric_limits<double>::min(); // Initialize so that any number will be bigger than this one
+    TComponentType max = std::numeric_limits<TComponentType>::min(); // Initialize so that any number will be bigger than this one
 
     // Get the max of each channel, keeping the largest
     for(unsigned int channel = 0; channel < reader->GetOutput()->GetNumberOfComponentsPerPixel(); channel++)
