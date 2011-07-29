@@ -41,8 +41,8 @@
 #include "itkVectorCastImageFilter.h"
 #include "itkVectorIndexSelectionCastImageFilter.h"
 #include "itkImageToVectorImageFilter.h"
-#include "itkShiftScaleImageFilter.h"
-
+//#include "itkShiftScaleImageFilter.h"
+#include "itkVectorCastImageFilter.h"
 
 /**
  * \class ITKToolsCastConvertBase
@@ -110,9 +110,6 @@ public:
     typedef typename itk::ImageFileReader< InputVectorImageType >     ImageReaderType;
     typedef typename itk::ImageFileWriter< OutputVectorImageType >    ImageWriterType;
 
-    typedef typename itk::ShiftScaleImageFilter<
-      InputScalarImageType, OutputScalarImageType >                         ShiftScaleFilterType;
-
     /** Create and setup the reader. */
     typename ImageReaderType::Pointer reader = ImageReaderType::New();
     reader->SetFileName( this->m_InputFileName.c_str() );
@@ -127,31 +124,16 @@ public:
     typedef itk::ImageToVectorImageFilter<OutputScalarImageType> ImageToVectorImageFilterType;
     typename ImageToVectorImageFilterType::Pointer imageToVectorImageFilter = ImageToVectorImageFilterType::New();
 
-    // Apply the filter to each channel
-    for(unsigned int channel = 0; channel < reader->GetOutput()->GetNumberOfComponentsPerPixel(); channel++)
-    {
-      // Extract the current channel
-      indexSelectionFilter->SetIndex( channel );
-      indexSelectionFilter->Update();
-
-      // Cast the image
-      //typename RescaleFilterType::Pointer caster = RescaleFilterType::New();
-      typename ShiftScaleFilterType::Pointer caster = ShiftScaleFilterType::New();
-      caster->SetShift( 0.0 );
-      caster->SetScale( 1.0 );
-      caster->SetInput( indexSelectionFilter->GetOutput() );
-      caster->Update();
-
-      // Reassemble the current channel
-      imageToVectorImageFilter->SetNthInput( channel, caster->GetOutput() );
-    }
-
-    imageToVectorImageFilter->Update();
+    typedef itk::CastImageFilter<InputVectorImageType, OutputVectorImageType> CastImageFilterType;
+    typename CastImageFilterType::Pointer castImageFilter = CastImageFilterType::New();
+    
+    castImageFilter->SetInput(reader->GetOutput());
+    castImageFilter->Update();
 
     typename ImageWriterType::Pointer writer = ImageWriterType::New();
     writer->SetFileName( this->m_OutputFileName.c_str() );
     writer->SetUseCompression( this->m_UseCompression );
-    writer->SetInput( imageToVectorImageFilter->GetOutput() );
+    writer->SetInput( castImageFilter->GetOutput() );
     writer->Update();
 
   } // end Run()
