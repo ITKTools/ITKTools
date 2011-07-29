@@ -29,6 +29,7 @@
 #include "BinaryImageOperatorMainHelper.h"
 #include "BinaryImageOperatorHelper.h"
 
+
 std::string GetHelpString()
 {
   std::stringstream  ss;
@@ -60,116 +61,6 @@ std::string GetHelpString()
 } // end GetHelpString()
 
 
-/** ITKToolsBinaryImageOperator */
-
-class ITKToolsBinaryImageOperatorBase : public itktools::ITKToolsBase
-{
-public:
-  ITKToolsBinaryImageOperatorBase()
-  {
-    this->m_InputFileName1 = "";
-    this->m_InputFileName2 = "";
-    this->m_OutputFileName = "";
-    this->m_Ops = "";
-    this->m_UseCompression = false;
-    this->m_Arg = "";
-  }
-  ~ITKToolsBinaryImageOperatorBase(){};
-
-  /** Input parameters */
-  std::string m_InputFileName1;
-  std::string m_InputFileName2;
-  std::string m_OutputFileName;
-  std::string m_Ops;
-  bool m_UseCompression;
-  std::string m_Arg;
-
-  virtual void Run( void ) = 0;
-
-}; // end ITKToolsBinaryImageOperatorBase
-
-
-template< class TComponentType1, class TComponentType2, class TComponentTypeOut, unsigned int VDimension >
-class ITKToolsBinaryImageOperator : public ITKToolsBinaryImageOperatorBase
-{
-public:
-  typedef ITKToolsBinaryImageOperator Self;
-
-  ITKToolsBinaryImageOperator(){};
-  ~ITKToolsBinaryImageOperator(){};
-
-  static Self * New( itktools::ComponentType componentType1,
-    itktools::ComponentType componentType2,
-    itktools::ComponentType componentTypeOut, unsigned int dim )
-  {
-    if ( itktools::IsType<TComponentType1>( componentType1 ) &&
-         itktools::IsType<TComponentType2>( componentType2 ) &&
-         itktools::IsType<TComponentTypeOut>( componentTypeOut ) && VDimension == dim )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
-  void Run( void )
-  {
-    /** Typedefs. */
-    typedef itk::Image<TComponentType1, VDimension>     InputImage1Type;
-    typedef itk::Image<TComponentType2, VDimension>     InputImage2Type;
-    typedef itk::Image<TComponentTypeOut, VDimension>   OutputImageType;
-    
-    typedef typename InputImage1Type::PixelType         InputPixel1Type;
-    typedef typename InputImage2Type::PixelType         InputPixel2Type;
-    typedef typename OutputImageType::PixelType         OutputPixelType;
-    typedef itk::ImageToImageFilter<InputImage1Type, OutputImageType> BaseFilterType;
-    typedef itk::ImageFileReader< InputImage1Type >     Reader1Type;
-    typedef itk::ImageFileReader< InputImage2Type >     Reader2Type;
-    typedef itk::ImageFileWriter< OutputImageType >     WriterType;
-
-    /** Read the input images. */
-    typename Reader1Type::Pointer reader1 = Reader1Type::New();
-    reader1->SetFileName( this->m_InputFileName1.c_str() );
-    typename Reader2Type::Pointer reader2 = Reader2Type::New();
-    reader2->SetFileName( this->m_InputFileName2.c_str() );
-
-    /** Get the argument. */
-    double argument = atof( this->m_Arg.c_str() );
-
-    /** Get the binaryOperatorName. */
-    std::string binaryOperatorName = this->m_Ops;
-
-    /** Set up the binaryFilter. */
-    typename BaseFilterType::Pointer binaryFilter = 0;
-    InstantiateBinaryFilterNoArg( ADDITION );
-    InstantiateBinaryFilterNoArg( MINUS );
-    InstantiateBinaryFilterNoArg( TIMES );
-    InstantiateBinaryFilterNoArg( DIVIDE );
-    InstantiateBinaryFilterNoArg( POWER );
-    InstantiateBinaryFilterNoArg( MAXIMUM );
-    InstantiateBinaryFilterNoArg( MINIMUM );
-    InstantiateBinaryFilterNoArg( ABSOLUTEDIFFERENCE );
-    InstantiateBinaryFilterNoArg( SQUAREDDIFFERENCE );
-    InstantiateBinaryFilterNoArg( BINARYMAGNITUDE );
-    //InstantiateBinaryFilterNoArg( MODULO );
-    InstantiateBinaryFilterNoArg( LOG );
-
-    InstantiateBinaryFilterWithArg( WEIGHTEDADDITION );
-    InstantiateBinaryFilterWithArg( MASK );
-    InstantiateBinaryFilterWithArg( MASKNEGATED );
-
-    /** Connect the pipeline. */
-    binaryFilter->SetInput( 0, reader1->GetOutput() );
-    binaryFilter->SetInput( 1, reader2->GetOutput() );
-
-    /** Write the image to disk */
-    typename WriterType::Pointer writer = WriterType::New();
-    writer->SetFileName( this->m_OutputFileName.c_str() );
-    writer->SetInput( binaryFilter->GetOutput() );
-    writer->SetUseCompression( this->m_UseCompression );
-    writer->Update();
-  }
-
-}; // end ITKToolsBinaryImageOperator
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char **argv )
