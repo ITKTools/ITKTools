@@ -67,12 +67,12 @@ class ITKToolsBinaryImageOperatorBase : public itktools::ITKToolsBase
 public:
   ITKToolsBinaryImageOperatorBase()
   {
-    m_InputFileName1 = "";
-    m_InputFileName2 = "";
-    m_OutputFileName = "";
-    m_Ops = "";
-    m_UseCompression = false;
-    m_Arg = "";
+    this->m_InputFileName1 = "";
+    this->m_InputFileName2 = "";
+    this->m_OutputFileName = "";
+    this->m_Ops = "";
+    this->m_UseCompression = false;
+    this->m_Arg = "";
   }
   ~ITKToolsBinaryImageOperatorBase(){};
 
@@ -84,7 +84,8 @@ public:
   bool m_UseCompression;
   std::string m_Arg;
 
-  virtual void Run(void) = 0;
+  virtual void Run( void ) = 0;
+
 }; // end ITKToolsBinaryImageOperatorBase
 
 
@@ -97,7 +98,9 @@ public:
   ITKToolsBinaryImageOperator(){};
   ~ITKToolsBinaryImageOperator(){};
 
-  static Self * New( itktools::ComponentType componentType1, itktools::ComponentType componentType2, itktools::ComponentType componentTypeOut, unsigned int dim )
+  static Self * New( itktools::ComponentType componentType1,
+    itktools::ComponentType componentType2,
+    itktools::ComponentType componentTypeOut, unsigned int dim )
   {
     if ( itktools::IsType<TComponentType1>( componentType1 ) &&
          itktools::IsType<TComponentType2>( componentType2 ) &&
@@ -108,7 +111,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     /** Typedefs. */
     typedef itk::Image<TComponentType1, VDimension>     InputImage1Type;
@@ -125,15 +128,15 @@ public:
 
     /** Read the input images. */
     typename Reader1Type::Pointer reader1 = Reader1Type::New();
-    reader1->SetFileName( m_InputFileName1.c_str() );
+    reader1->SetFileName( this->m_InputFileName1.c_str() );
     typename Reader2Type::Pointer reader2 = Reader2Type::New();
-    reader2->SetFileName( m_InputFileName2.c_str() );
+    reader2->SetFileName( this->m_InputFileName2.c_str() );
 
     /** Get the argument. */
-    double argument = atof( m_Arg.c_str() );
+    double argument = atof( this->m_Arg.c_str() );
 
     /** Get the binaryOperatorName. */
-    std::string binaryOperatorName = m_Ops;
+    std::string binaryOperatorName = this->m_Ops;
 
     /** Set up the binaryFilter. */
     typename BaseFilterType::Pointer binaryFilter = 0;
@@ -160,9 +163,9 @@ public:
 
     /** Write the image to disk */
     typename WriterType::Pointer writer = WriterType::New();
-    writer->SetFileName( m_OutputFileName.c_str() );
+    writer->SetFileName( this->m_OutputFileName.c_str() );
     writer->SetInput( binaryFilter->GetOutput() );
-    writer->SetUseCompression( m_UseCompression );
+    writer->SetUseCompression( this->m_UseCompression );
     writer->Update();
   }
 
