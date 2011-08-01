@@ -6,17 +6,17 @@ FIND_PACKAGE( ITK REQUIRED )
 INCLUDE( ${ITK_USE_FILE} )
 
 ADD_LIBRARY( ITKTools-Common
- itkCommandLineArgumentParser.cxx
- itkCommandLineArgumentParser.h
- CommandLineArgumentHelper.cxx
- CommandLineArgumentHelper.h
- ITKToolsHelpers.h
- ITKToolsHelpers.cxx
- ITKToolsImageProperties.h
- ITKToolsImageProperties.cxx
- ITKToolsBase.h
-
- )
+  itkCommandLineArgumentParser.cxx
+  itkCommandLineArgumentParser.h
+  CommandLineArgumentHelper.cxx
+  CommandLineArgumentHelper.txx
+  CommandLineArgumentHelper.h
+  ITKToolsHelpers.h
+  ITKToolsHelpers.cxx
+  ITKToolsImageProperties.h
+  ITKToolsImageProperties.cxx
+  ITKToolsBase.h
+  ITKToolsBase.cxx )
 
 TARGET_LINK_LIBRARIES( ITKTools-Common ${ITK_LIBRARIES} )
 

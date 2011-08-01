@@ -1,14 +1,3 @@
-# This project is intended to be built outside the Insight source tree
-PROJECT( intensitywindowing )
-
-# Find ITK.
-FIND_PACKAGE( ITK REQUIRED )
-INCLUDE( ${ITK_USE_FILE} )
-
-ADD_EXECUTABLE( pxintensitywindowing intensitywindowing.cxx )
-
-TARGET_LINK_LIBRARIES( pxintensitywindowing ITKTools-Common ${ITK_LIBRARIES} )
-
-INSTALL( TARGETS pxintensitywindowing
-  RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )
+# Add the tool
+ADD_ITKTOOL( intensitywindowing )
 

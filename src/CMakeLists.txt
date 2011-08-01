@@ -1,75 +1,115 @@
-CMAKE_MINIMUM_REQUIRED( VERSION 2.6 )
+cmake_minimum_required( VERSION 2.6 )
 
 # This project is intended to be built outside the Insight source tree
-PROJECT( ITKTools )
-ENABLE_TESTING()
+project( ITKTools )
+#enable_testing()
 
-# Define where to install ITKTools
-IF( WIN32 )
-  SET( ITKTools_INSTALL_DIR ${CMAKE_INSTALL_PREFIX} )
-ELSE()
-  SET( ITKTools_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/bin )
-ENDIF()
+#---------------------------------------------------------------------
+# Find ITK.
+FIND_PACKAGE( ITK 4 REQUIRED )
 
-# Include all subdirs
-file( GLOB listOfTools RELATIVE ${CMAKE_SOURCE_DIR} "*/CMakeLists.txt" )
-foreach( tool ${listOfTools} )
-  get_filename_component( path_to_tool ${tool} PATH )
-  subdirs( ${path_to_tool} )
-  #add_subdirectory( ${path_to_tool} )
-endforeach()
+# ITKTools depends on some ITK settings
+#IF( NOT Module_ITKIOPhilipsREC )
+#  message( SEND_ERROR "Module_ITKIOPhilipsREC has not been set to ON when compiling ITK. This option is mandatory for pxcastconvert to build.\nPlease recompile your ITK installation." )
+#ENDIF()
 
 #---------------------------------------------------------------------
 # Kill the anoying MS VS warning about non-safe functions.
 # They hide real warnings.
-IF( MSVC )
-  ADD_DEFINITIONS(
+if( MSVC )
+  add_definitions(
     /D_SCL_SECURE_NO_DEPRECATE
     /D_CRT_SECURE_NO_DEPRECATE
     /D_CRT_TIME_FUNCTIONS_NO_DEPRECATE
     )
-ENDIF( MSVC )
+endif( MSVC )
 
 #---------------------------------------------------------------------
 # Output directories.
-
-SET( LIBRARY_OUTPUT_PATH ${ITKTools_BINARY_DIR}/bin
+set( LIBRARY_OUTPUT_PATH ${ITKTools_BINARY_DIR}/bin
   CACHE INTERNAL "Single output directory for building all libraries." )
-SET( EXECUTABLE_OUTPUT_PATH ${ITKTools_BINARY_DIR}/bin
+set( EXECUTABLE_OUTPUT_PATH ${ITKTools_BINARY_DIR}/bin
   CACHE INTERNAL "Single output directory for building all executables." )
-MARK_AS_ADVANCED( LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH )
-SET( ITKTools_LIBRARY_PATH    "${LIBRARY_OUTPUT_PATH}" )
-SET( ITKTools_EXECUTABLE_PATH "${EXECUTABLE_OUTPUT_PATH}" )
-INCLUDE_DIRECTORIES( ${ITKTools_SOURCE_DIR}/common )
+mark_as_advanced( LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH )
+set( ITKTools_LIBRARY_PATH    "${LIBRARY_OUTPUT_PATH}" )
+set( ITKTools_EXECUTABLE_PATH "${EXECUTABLE_OUTPUT_PATH}" )
+include_directories( ${ITKTools_SOURCE_DIR}/common )
 
 #---------------------------------------------------------------------
 # Compilation options
-SET( ITKTOOLS_3D_SUPPORT OFF CACHE BOOL
+set( ITKTOOLS_3D_SUPPORT OFF CACHE BOOL
   "Support operations on 3D Images." )
 if(ITKTOOLS_3D_SUPPORT)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DITKTOOLS_3D_SUPPORT")
 endif()
 
-SET( ITKTOOLS_4D_SUPPORT OFF CACHE BOOL
+set( ITKTOOLS_4D_SUPPORT OFF CACHE BOOL
   "Support operations on 4D Images." )
 if(ITKTOOLS_4D_SUPPORT)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DITKTOOLS_4D_SUPPORT")
 endif()
+
+#---------------------------------------------------------------------
+# Define where to install ITKTools
+if( WIN32 )
+  set( ITKTools_INSTALL_DIR ${CMAKE_INSTALL_PREFIX} )
+else()
+  set( ITKTools_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/bin )
+endif()
+
 #---------------------------------------------------------------------
 # Testing
-
-SET( ITKTOOLS_BUILD_TESTING OFF CACHE BOOL
+set( ITKTOOLS_BUILD_TESTING OFF CACHE BOOL
   "Perform some tests on basic functionality of ITKTools." )
-IF( ITKTOOLS_BUILD_TESTING )
- ENABLE_TESTING()
- ADD_SUBDIRECTORY( ${ITKTools_SOURCE_DIR}/../Testing ${ITKTools_BINARY_DIR}/Testing )
- INCLUDE( CTest )
-ENDIF()
+if( ITKTOOLS_BUILD_TESTING )
+ enable_testing()
+ add_subdirectory( ${ITKTools_SOURCE_DIR}/../Testing ${ITKTools_BINARY_DIR}/Testing )
+ include( CTest )
+endif()
 
 #---------------------------------------------------------------------
 # Documentation
-SET( ITKTOOLS_BUILD_DOCUMENTATION OFF CACHE BOOL
+set( ITKTOOLS_BUILD_DOCUMENTATION OFF CACHE BOOL
   "Create the documentation of ITKTools." )
-IF( ITKTOOLS_BUILD_DOCUMENTATION)
- ADD_SUBDIRECTORY( ${ITKTools_SOURCE_DIR}/../Documentation ${ITKTools_BINARY_DIR}/Documentation )
-ENDIF()
+if( ITKTOOLS_BUILD_DOCUMENTATION)
+ add_subdirectory( ${ITKTools_SOURCE_DIR}/../Documentation ${ITKTools_BINARY_DIR}/Documentation )
+endif()
+
+#---------------------------------------------------------------------
+# Macro to simplify the addition of an ITKTool
+macro( ADD_ITKTOOL name )
+  # Define the project
+  project( name )
+
+  # Increases address capacity
+  if ( WIN32 )
+    set( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /bigobj" )
+    set( CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /bigobj" )
+  endif()
+
+  # Include ITK headers.
+  include( ${ITK_USE_FILE} )
+
+  # Get the list of files in this directory
+  file( GLOB filelist RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} * )
+  list( REMOVE_ITEM filelist "CMakeLists.txt" )
+
+  # Create the executable
+  add_executable( px${name} ${filelist} )
+
+  # Link
+  target_link_libraries( px${name} ITKTools-Common ${ITK_LIBRARIES} )
+
+  # Install
+  install( TARGETS px${name}
+    RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )
+endmacro()
+
+#---------------------------------------------------------------------
+# Include all ITKTools
+file( GLOB listOfTools RELATIVE ${CMAKE_SOURCE_DIR} "*/CMakeLists.txt" )
+foreach( tool ${listOfTools} )
+  get_filename_component( path_to_tool ${tool} PATH )
+  add_subdirectory( ${path_to_tool} )
+endforeach()
+
