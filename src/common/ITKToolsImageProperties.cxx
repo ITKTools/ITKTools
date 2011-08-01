@@ -408,15 +408,21 @@ bool GetImageInformationFromImageIOBase(
   pixelTypeAsString = imageIOBase->GetPixelTypeAsString(
     imageIOBase->GetPixelType() );
 
-  /** Get the image size, spacing, origin. */
+  /** Get the image size, spacing, origin, direction. */
   size.resize( imageDimension );
   spacing.resize( imageDimension );
   origin.resize( imageDimension );
+  direction.resize( imageDimension * imageDimension );
   for ( unsigned int i = 0; i < imageDimension; i++ )
   {
     size[ i ] = imageIOBase->GetDimensions( i );
     spacing[ i ] = imageIOBase->GetSpacing( i );
     origin[ i ] = imageIOBase->GetOrigin( i );
+    std::vector<double> tmpDirectionVec = imageIOBase->GetDirection( i );
+    for ( unsigned int j = 0; j < imageDimension; j++ )
+    {
+      direction[ i * imageDimension + j ] = tmpDirectionVec[ j ];
+    }
   }
 
   /** Check inputPixelType. */
