@@ -163,25 +163,26 @@ int main( int argc, char **argv )
    * not defined on those types */
     
   try
-  {    
+  {
     // now call all possible template combinations.
     if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 2, unsigned char >::New( imageDimension, componentType );
     if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 2, char >::New( imageDimension, componentType );
     if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 2, unsigned short >::New( imageDimension, componentType );
-    if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 2, unsigned short >::New( imageDimension, componentType );
+    if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 2, short >::New( imageDimension, componentType );
     
 #ifdef ITKTOOLS_3D_SUPPORT
     if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 3, unsigned char >::New( imageDimension, componentType );
     if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 3, char >::New( imageDimension, componentType );
     if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 3, unsigned short >::New( imageDimension, componentType );
-    if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 3, unsigned short >::New( imageDimension, componentType );
+    if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 3, short >::New( imageDimension, componentType );
 #endif
     if (!logicalImageOperator) 
     {
+      itk::ImageIOBase::Pointer imageIOBaseTmp;
       std::cerr << "ERROR: this combination of pixeltype, image dimension, and space dimension is not supported!" << std::endl;
       std::cerr
         << " image dimension = " << imageDimension << std::endl
-        << " pixel type = " << componentType << std::endl
+        << "pixel (component) type = " << imageIOBaseTmp->GetComponentTypeAsString( componentType )
         << std::endl;
       return 1;
     }
