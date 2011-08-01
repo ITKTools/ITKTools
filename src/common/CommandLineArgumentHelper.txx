@@ -11,10 +11,10 @@ void ConvertImageInformationToITKTypes(
   const std::vector<double> & spacing,
   const std::vector<double> & origin,
   const std::vector<double> & direction,
-  typename itk::ImageBase<Dimension>::SizeType      sizeITK,
-  typename itk::ImageBase<Dimension>::SpacingType   spacingITK,
-  typename itk::ImageBase<Dimension>::PointType     originITK,
-  typename itk::ImageBase<Dimension>::DirectionType directionITK )
+  typename itk::ImageBase<Dimension>::SizeType      & sizeITK,
+  typename itk::ImageBase<Dimension>::SpacingType   & spacingITK,
+  typename itk::ImageBase<Dimension>::PointType     & originITK,
+  typename itk::ImageBase<Dimension>::DirectionType & directionITK )
 {
   typedef itk::ImageBase<Dimension> ImageBaseType;
   typedef typename ImageBaseType::SizeValueType      SizeValueType;
