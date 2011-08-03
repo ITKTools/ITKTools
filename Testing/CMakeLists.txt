@@ -2,7 +2,7 @@ Project( ITKToolsTesting )
 
 #---------------------------------------------------------------------
 #
-# To run those tests on Windows, type:
+# To run those tests on Windows, change to the binary directory, and type:
 #   ctest -C Release
 # Or build the RUN_TESTS project in the IDE of ITKTools.sln.
 #
