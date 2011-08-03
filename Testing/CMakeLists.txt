@@ -1,6 +1,11 @@
 Project( ITKToolsTesting )
 
 #---------------------------------------------------------------------
+#
+# To run those tests on Windows, type:
+#   ctest -C Release
+# Or build the RUN_TESTS project in the IDE of ITKTools.sln.
+#
 # Every exectuable has at least one test. Each tests is composed of two add_test commands.
 # The first is [name]Output. This runs the executable with the specified parameters to produce an output.
 # The second is [name]Test. This runs the imagecompare program to compaer the baseline for the given test
