@@ -17,6 +17,8 @@ The move to git(hub) in April 2011 under the name ITKTools was inspired by David
 
 Building
 --------
+Linux:
+
 - Create a 'bin' directory at the same level as the 'src' directory:
 ITKTools]$ mkdir bin
 
@@ -25,7 +27,13 @@ ITKTools]$ cd bin
 bin]$ cmake ../src
 
 - Run 'make' from the 'build' directory
-bin]$ make
+
+Windows:
+- Create a 'bin' directory at the same level as the 'src' directory
+
+- Run cmake, set the source directory to ITKTools/src and the binary directory to ITKTools/bin.
+
+- Open bin/ITKTools.sln, and start build.
 
 Conventions
 -----------
@@ -50,7 +58,7 @@ Good and consistent coding style makes software maintenance easier! Therefore, w
 
 Testing
 -------
-First, set the CMake option ITKTOOLS_BUILD_TESTING=ON while building ITKTools. Then, from your build directory, run 'ctest'. This will execute the entire suite of tests.
+First, set the CMake option ITKTOOLS_BUILD_TESTING=ON while building ITKTools. Then, on Linux, from your build directory, run 'ctest'. This will execute the entire suite of tests. On Windows, type "ctest -C Release", or "ctest -C Debug". 
 
 CDash
 -----
