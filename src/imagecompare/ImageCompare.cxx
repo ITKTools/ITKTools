@@ -29,7 +29,6 @@
 #include "itkImageFileWriter.h"
 #include "itkRescaleIntensityImageFilter.h"
 #include "itkExtractImageFilter.h"
-#include "itkDifferenceImageFilter.h"
 #include "itksys/SystemTools.hxx"
 
 #include "itkImageSource.h" // This should not be necessary after ITK patch is merged
@@ -144,22 +143,7 @@ int main( int argc, char **argv )
   if(numberOfDifferentPixels > 0)
   {
     std::cerr << "There are " << numberOfDifferentPixels << " different pixels!" << std::endl;
-    
-    // If there are discrepencies, create a difference image
-    typedef itk::DifferenceImageFilter<ImageType,ImageType>   DiffType;
-    DiffType::Pointer diff = DiffType::New();
-    diff->SetValidInput( baselineReader->GetOutput() );
-    diff->SetTestInput( testReader->GetOutput() );
-    try
-    {
-      diff->Update();
-    }
-    catch ( itk::ExceptionObject & err )
-    {
-      std::cerr << "Error during computing difference image: " << err << std::endl;
-      return EXIT_FAILURE;
-    }
-
+        
     // Create name for diff image
     std::string diffImageFileName =
       itksys::SystemTools::GetFilenameWithoutLastExtension( testImageFileName );
@@ -169,7 +153,7 @@ int main( int argc, char **argv )
     typedef itk::ImageFileWriter<ImageType>                    WriterType;
     WriterType::Pointer writer = WriterType::New();
     writer->SetFileName( diffImageFileName );
-    writer->SetInput( diff->GetOutput() );
+    writer->SetInput( comparisonFilter->GetOutput() );
     try
     {
       writer->Write();
