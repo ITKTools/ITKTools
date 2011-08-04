@@ -17,18 +17,22 @@ The move to git(hub) in April 2011 under the name ITKTools was inspired by David
 
 Building
 --------
+
 Linux:
 
 - Create a 'bin' directory at the same level as the 'src' directory:
+
 ITKTools]$ mkdir bin
 
 - From the new 'build' directory, run cmake on the source directory:
+
 ITKTools]$ cd bin
 bin]$ cmake ../src
 
 - Run 'make' from the 'build' directory
 
 Windows:
+
 - Create a 'bin' directory at the same level as the 'src' directory
 
 - Run cmake, set the source directory to ITKTools/src and the binary directory to ITKTools/bin.
@@ -37,29 +41,40 @@ Windows:
 
 Conventions
 -----------
+
 Use --help with any of the programs to display their specific usage information.
 Optional and required arguments are listed as [-key] and -key, respectively.
 
 PixelType vs ComponentType
 --------------------------
+
 In ITK, PixelType is either SCALAR or VECTOR. ComponentType is the type of each component of the pixels, e.g. float, char, etc.
 
 Contributing
 ------------
+
 Please contact one of the authors or produce a pull request on github.
 
 Coding style
 ------------
 
 Good and consistent coding style makes software maintenance easier! Therefore, we have adopted the following style rules:
+
 - Don't use tabs, but two (2) spaces
+
 - Be explicit, so e.g. use void to declare a function with no arguments, i.e. Function( void )
--
+
 
 Testing
 -------
-First, set the CMake option ITKTOOLS_BUILD_TESTING=ON while building ITKTools. Then, on Linux, from your build directory, run 'ctest'. This will execute the entire suite of tests. On Windows, type "ctest -C Release", or "ctest -C Debug". 
+First, set the CMake option ITKTOOLS_BUILD_TESTING=ON while building ITKTools. Then, on Linux, from your build directory, run 'ctest'. This will execute the entire suite of tests. On Windows, type "ctest -C Release", or "ctest -C Debug".
 
 CDash
 -----
-TODO: explain where the dashboard is, etc.
+
+The nightly dashboard is located at
+
+  http://my.cdash.org/index.php?project=ITKTools
+
+TODO: fill the dashboard, etc.
+
