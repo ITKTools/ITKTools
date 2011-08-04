@@ -129,7 +129,7 @@ if( NOT EXISTS "${CTEST_SOURCE_DIRECTORY}"
 
   # Assume git version 1.6.5 or higher, which has git clone -b option.
   set( CTEST_CHECKOUT_COMMAND
-     "\"${CTEST_GIT_COMMAND}\" clone -b ${dashboard_git_branch} \"${dashboard_git_url}\" \"${CTEST_ITKTOOLS_DIRECTORY\"" )
+     "\"${CTEST_GIT_COMMAND}\" clone -b ${dashboard_git_branch} \"${dashboard_git_url}\" \"${CTEST_ITKTOOLS_DIRECTORY}\"" )
 
   # CTest delayed initialization is broken, so we copy the
   # CTestConfig.cmake info here.
