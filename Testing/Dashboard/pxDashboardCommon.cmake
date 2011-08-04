@@ -255,7 +255,7 @@ if( dashboard_model STREQUAL Continuous )
 else()
   write_cache()
   ctest_start( ${dashboard_model} )
-  ctest_update( SOURCE ${CTEST_ITKTOOLS_DIRECTORY )
+  ctest_update( SOURCE ${CTEST_ITKTOOLS_DIRECTORY} )
   # run cmake twice; this seems to be necessary, otherwise the
   # KNN lib is not built
   #ctest_configure()
