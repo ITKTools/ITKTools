@@ -68,13 +68,21 @@ if(NOT DEFINED dashboard_git_branch)
   set(dashboard_git_branch master)
 endif()
 
+# Select GIT directory
+if( NOT DEFINED CTEST_ITKTOOLS_DIRECTORY )
+  set( CTEST_ITKTOOLS_DIRECTORY "${CTEST_DASHBOARD_ROOT}/ITKTools" )
+endif()
 
 # Select a source directory name.
 if( NOT DEFINED CTEST_SOURCE_DIRECTORY )
-  set( CTEST_SOURCE_DIRECTORY "${CTEST_DASHBOARD_ROOT}/src" )
+  set( CTEST_SOURCE_DIRECTORY "${CTEST_GIT_DIRECTORY}/src" )
 endif()
 
 # Select a build directory name.
+# Note: We cannot put the bin directory on the same level as the 
+# src directory (as we recommend in the README.md), because the
+# bin directory is created before git clone is called, and git clone
+# demands an empty directory.
 if( NOT DEFINED CTEST_BINARY_DIRECTORY )
   set( CTEST_BINARY_DIRECTORY ${CTEST_DASHBOARD_ROOT}/bin )
 endif()
@@ -121,7 +129,7 @@ if( NOT EXISTS "${CTEST_SOURCE_DIRECTORY}"
 
   # Assume git version 1.6.5 or higher, which has git clone -b option.
   set( CTEST_CHECKOUT_COMMAND
-     "\"${CTEST_GIT_COMMAND}\" clone -b ${dashboard_git_branch} \"${dashboard_git_url}\" \"${CTEST_DASHBOARD_ROOT}\"" )
+     "\"${CTEST_GIT_COMMAND}\" clone -b ${dashboard_git_branch} \"${dashboard_git_url}\" \"${CTEST_ITKTOOLS_DIRECTORY\"" )
 
   # CTest delayed initialization is broken, so we copy the
   # CTestConfig.cmake info here.
@@ -155,6 +163,8 @@ endforeach()
 foreach( v
   CTEST_SITE
   CTEST_BUILD_NAME
+  CTEST_DASHBOARD_ROOT
+  CTEST_ITKTOOLS_DIRECTORY
   CTEST_SOURCE_DIRECTORY
   CTEST_BINARY_DIRECTORY
   CTEST_CMAKE_GENERATOR
@@ -220,7 +230,7 @@ if( dashboard_model STREQUAL Continuous )
     endif()
 
     # Check for changes
-    ctest_update( SOURCE ${CTEST_DASHBOARD_ROOT} RETURN_VALUE res )
+    ctest_update( SOURCE ${CTEST_ITKTOOLS_DIRECTORY} RETURN_VALUE res )
     message( "Found ${res} changed files" )
     # SK: Only do initial checkout at the first iteration.
     # After that, the CHECKOUT_COMMAND has to be removed, otherwise
@@ -245,7 +255,7 @@ if( dashboard_model STREQUAL Continuous )
 else()
   write_cache()
   ctest_start( ${dashboard_model} )
-  ctest_update( SOURCE ${CTEST_DASHBOARD_ROOT} )
+  ctest_update( SOURCE ${CTEST_ITKTOOLS_DIRECTORY )
   # run cmake twice; this seems to be necessary, otherwise the
   # KNN lib is not built
   #ctest_configure()
