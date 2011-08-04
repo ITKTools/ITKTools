@@ -60,7 +60,7 @@ endif()
 
 # Select git source to use.
 if( NOT DEFINED dashboard_git_url )
-  set( dashboard_git_url "git://github.com/ITKTools/ITKTools.git" 
+  set( dashboard_git_url "git://github.com/ITKTools/ITKTools.git" ) 
 endif()
 
 # select branch to use
