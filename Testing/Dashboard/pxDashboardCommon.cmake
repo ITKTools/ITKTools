@@ -75,7 +75,7 @@ endif()
 
 # Select a source directory name.
 if( NOT DEFINED CTEST_SOURCE_DIRECTORY )
-  set( CTEST_SOURCE_DIRECTORY "${CTEST_TOOLS_DIRECTORY}/src" )
+  set( CTEST_SOURCE_DIRECTORY "${CTEST_ITKTOOLS_DIRECTORY}/src" )
 endif()
 
 # Select a build directory name.
