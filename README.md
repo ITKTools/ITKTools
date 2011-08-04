@@ -77,5 +77,6 @@ The nightly dashboard is located at
   http://my.cdash.org/index.php?project=ITKTools
 
 To submit a test, copy and edit a dashboard script from Testing/Dashboard, and call the script using:
-ctest -C Release -S <path/to/dashboardscript.cmake>,<Nightly,Experimental,Continuous> -VV
+ctest -C Release -S path/to/dashboardscript.cmake,TestType -VV
+where TestType is Nightly, Experimental, or Continuous.
 
