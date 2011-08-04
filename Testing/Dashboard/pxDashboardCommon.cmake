@@ -99,16 +99,19 @@ if( NOT DEFINED CTEST_MEMORYCHECK_COMMAND )
   find_program( CTEST_MEMORYCHECK_COMMAND valgrind )
 endif()
 
+# Dangerous option: you might delete something by accident that you don't want to delete.
+# Better given an error message.
+#
 # Delete source tree if it is incompatible with current Version control system (VCS).
-if(EXISTS ${CTEST_DASHBOARD_ROOT})
-  if(NOT EXISTS "${CTEST_DASHBOARD_ROOT}/.git")
-    set(vcs_refresh "because it is not managed by git.")
-  endif()
-  if(vcs_refresh AND "${CTEST_DASHBOARD_ROOT}" MATCHES "/(ITKTools|itktools|itkTools|ITKtools)[^/]*")
-    message("Deleting source tree\n  ${CTEST_DASHBOARD_ROOT}\n${vcs_refresh}")
-    file(REMOVE_RECURSE "${CTEST_DASHBOARD_ROOT}")
-  endif()
-endif()
+#if(EXISTS ${CTEST_DASHBOARD_ROOT})
+#  if(NOT EXISTS "${CTEST_DASHBOARD_ROOT}/.git")
+#    set(vcs_refresh "because it is not managed by git.")
+#  endif()
+#  if(vcs_refresh AND "${CTEST_DASHBOARD_ROOT}" MATCHES "/(ITKTools|itktools|itkTools|ITKtools)[^/]*")
+#    message("Deleting source tree\n  ${CTEST_DASHBOARD_ROOT}\n${vcs_refresh}")
+#    file(REMOVE_RECURSE "${CTEST_DASHBOARD_ROOT}")
+#  endif()
+#endif()
 
 
 # Support initial checkout if necessary;
@@ -119,7 +122,6 @@ if( NOT EXISTS "${CTEST_SOURCE_DIRECTORY}"
   # Assume git version 1.6.5 or higher, which has git clone -b option.
   set( CTEST_CHECKOUT_COMMAND
      "\"${CTEST_GIT_COMMAND}\" -clone -b ${dashboard_git_branch} \"${dashboard_git_url}\" ${CTEST_DASHBOARD_ROOT}" )
-
 
   # CTest delayed initialization is broken, so we copy the
   # CTestConfig.cmake info here.
