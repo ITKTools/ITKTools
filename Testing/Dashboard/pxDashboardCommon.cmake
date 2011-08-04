@@ -121,7 +121,7 @@ if( NOT EXISTS "${CTEST_SOURCE_DIRECTORY}"
 
   # Assume git version 1.6.5 or higher, which has git clone -b option.
   set( CTEST_CHECKOUT_COMMAND
-     "\"${CTEST_GIT_COMMAND}\" -clone -b ${dashboard_git_branch} \"${dashboard_git_url}\" ${CTEST_DASHBOARD_ROOT}" )
+     "\"${CTEST_GIT_COMMAND}\" clone -b ${dashboard_git_branch} \"${dashboard_git_url}\" \"${CTEST_DASHBOARD_ROOT}\"" )
 
   # CTest delayed initialization is broken, so we copy the
   # CTestConfig.cmake info here.
@@ -188,8 +188,6 @@ macro(write_cache)
   file(WRITE ${CTEST_BINARY_DIRECTORY}/CMakeCache.txt "
 SITE:STRING=${CTEST_SITE}
 BUILDNAME:STRING=${CTEST_BUILD_NAME}
-CTEST_USE_LAUNCHERS:BOOL=${CTEST_USE_LAUNCHERS}
-DART_TESTING_TIMEOUT:STRING=${CTEST_TEST_TIMEOUT}
 ${cache_build_type}
 ${cache_make_program}
 ${dashboard_cache}
