@@ -60,12 +60,12 @@ endif()
 
 # Select git source to use.
 if( NOT DEFINED dashboard_git_url )
-  set( dashboard_git_url "git://github.com/ITKTools/ITKTools.git" ) 
+  set( dashboard_git_url "git://github.com/ITKTools/ITKTools.git" )
 endif()
 
 # select branch to use
-if(NOT DEFINED dashboard_git_branch)
-  set(dashboard_git_branch master)
+if( NOT DEFINED dashboard_git_branch )
+  set( dashboard_git_branch master )
 endif()
 
 # Select GIT directory
@@ -79,7 +79,7 @@ if( NOT DEFINED CTEST_SOURCE_DIRECTORY )
 endif()
 
 # Select a build directory name.
-# Note: We cannot put the bin directory on the same level as the 
+# Note: We cannot put the bin directory on the same level as the
 # src directory (as we recommend in the README.md), because the
 # bin directory is created before git clone is called, and git clone
 # demands an empty directory.
@@ -89,13 +89,12 @@ endif()
 make_directory( ${CTEST_BINARY_DIRECTORY} )
 
 # Look for a GIT command-line client.
-if(NOT DEFINED CTEST_GIT_COMMAND)
-  find_program(CTEST_GIT_COMMAND NAMES git git.cmd)
+if( NOT DEFINED CTEST_GIT_COMMAND )
+  find_program( CTEST_GIT_COMMAND NAMES git git.cmd )
 endif()
-if(NOT DEFINED CTEST_GIT_COMMAND)
-  message(FATAL_ERROR "No Git Found.")
+if( NOT DEFINED CTEST_GIT_COMMAND )
+  message( FATAL_ERROR "No Git Found." )
 endif()
-
 
 # Look for a coverage command-line client.
 if( NOT DEFINED CTEST_COVERAGE_COMMAND )
@@ -186,33 +185,31 @@ message( "Dashboard script configuration:\n${vars}\n" )
 set( ENV{LC_ALL} C )
 
 # Helper macro to write the initial cache.
-macro(write_cache)
-  set(cache_build_type "")
-  set(cache_make_program "")
-  if(CTEST_CMAKE_GENERATOR MATCHES "Make")
-    set(cache_build_type CMAKE_BUILD_TYPE:STRING=${CTEST_BUILD_CONFIGURATION})
-    if(CMAKE_MAKE_PROGRAM)
-      set(cache_make_program CMAKE_MAKE_PROGRAM:FILEPATH=${CMAKE_MAKE_PROGRAM})
+macro( write_cache )
+  set( cache_build_type "" )
+  set( cache_make_program "" )
+  if( CTEST_CMAKE_GENERATOR MATCHES "Make" )
+    set( cache_build_type CMAKE_BUILD_TYPE:STRING=${CTEST_BUILD_CONFIGURATION} )
+    if( CMAKE_MAKE_PROGRAM )
+      set( cache_make_program CMAKE_MAKE_PROGRAM:FILEPATH=${CMAKE_MAKE_PROGRAM} )
     endif()
   endif()
-  file(WRITE ${CTEST_BINARY_DIRECTORY}/CMakeCache.txt "
+  file( WRITE ${CTEST_BINARY_DIRECTORY}/CMakeCache.txt "
 SITE:STRING=${CTEST_SITE}
 BUILDNAME:STRING=${CTEST_BUILD_NAME}
 ${cache_build_type}
 ${cache_make_program}
 ${dashboard_cache}
 ")
-endmacro(write_cache)
-
+endmacro()
 
 # Start with a fresh build tree.
-file(MAKE_DIRECTORY "${CTEST_BINARY_DIRECTORY}")
-if(NOT "${CTEST_SOURCE_DIRECTORY}" STREQUAL "${CTEST_BINARY_DIRECTORY}"
-    AND NOT dashboard_no_clean)
-  message("Clearing build tree...")
-  ctest_empty_binary_directory(${CTEST_BINARY_DIRECTORY})
+file( MAKE_DIRECTORY "${CTEST_BINARY_DIRECTORY}" )
+if( NOT "${CTEST_SOURCE_DIRECTORY}" STREQUAL "${CTEST_BINARY_DIRECTORY}"
+    AND NOT dashboard_no_clean )
+  message( "Clearing build tree..." )
+  ctest_empty_binary_directory( ${CTEST_BINARY_DIRECTORY} )
 endif()
-
 
 # Support each testing model
 if( dashboard_model STREQUAL Continuous )

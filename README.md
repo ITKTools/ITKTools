@@ -80,3 +80,20 @@ To submit a test, copy and edit a dashboard script from Testing/Dashboard, and c
 ctest -C Release -S path/to/dashboardscript.cmake,TestType -VV
 where TestType is Nightly, Experimental, or Continuous.
 
+Sometimes git clone does not work for you and you get something like:
+
+$ git "clone" "-b" "master" "git://github.com/ITKTools/ITKTools.git" "D:/local directory/nightly/ITKTools"
+co-out> Cloning into D:/local directory/nightly/ITKTools...
+co-err> github.com[0: 207.97.227.239]: errno=No error
+co-err> fatal: unable to connect a socket (No error)
+
+This may be caused by your company firewall refusing git protocol traffic. In this case you can resort to the html protocol.
+Either replace the dashboard_git_url variable in the dashboard script by:
+
+  set( dashboard_git_url "http://github.com/ITKTools/ITKTools.git" )
+
+or use git config:
+
+  $ git config --global url.http://github.com/ITKTools/.insteadOf git://github.c
+om/ITKTools/
+
