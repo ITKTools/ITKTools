@@ -52,7 +52,6 @@ int DetermineComponentTypes(
     pixelType1AsString, componentType1AsString,
     inputDimension1, numberOfComponents1,
     imagesize1, dummy, dummy, dummy );
-  //componentType1 = itktools::GetComponentTypeFromString( componentType1AsString );
   itktools::ReplaceSpaceWithUnderscore( componentType1AsString );
   componentType1 = imageIOBaseTmp->GetComponentTypeFromString( componentType1AsString );
 
@@ -67,7 +66,6 @@ int DetermineComponentTypes(
     pixelType2AsString, componentType2AsString,
     inputDimension2, numberOfComponents2,
     imagesize2, dummy, dummy, dummy );
-  //componentType2 = itktools::GetComponentTypeFromString( componentType2AsString );
   itktools::ReplaceSpaceWithUnderscore( componentType2AsString );
   componentType2 = imageIOBaseTmp->GetComponentTypeFromString( componentType2AsString );
 

@@ -38,17 +38,17 @@
  * ******************* GetHelpString *******************
  */
 
-std::string GetHelpString()
+std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "This program extracts a user specified component from a vector image." << std::endl
-  << "Usage:" << std::endl
-  << "pxextractindexfromvectorimage" << std::endl
-  << "  -in      inputFilename" << std::endl
-  << "  [-out]   outputFilename, default in + INDEXEXTRACTED.mhd" << std::endl
-  << "  -ind     a valid index" << std::endl
-  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int," << std::endl
-  << "long, float, double.";
+  ss << "This program extracts a user specified component from a vector image.\n"
+    << "Usage:\n"
+    << "pxextractindexfromvectorimage\n"
+    << "  -in      inputFilename\n"
+    << "  [-out]   outputFilename, default in + INDEXEXTRACTED.mhd\n"
+    << "  -ind     a valid index\n"
+    << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int,\n"
+    << "long, float, double." << std::endl;
   return ss.str();
 } // end GetHelpString()
 
@@ -58,9 +58,8 @@ class ITKToolsExtractIndexBase : public itktools::ITKToolsBase
 public:
   ITKToolsExtractIndexBase()
   {
-    m_InputFileName = "";
-    m_OutputFileName = "";
-    //std::vector<unsigned int> m_Indices;
+    this->m_InputFileName = "";
+    this->m_OutputFileName = "";
   };
   ~ITKToolsExtractIndexBase(){};
 
@@ -68,7 +67,7 @@ public:
   std::string m_InputFileName;
   std::string m_OutputFileName;
   std::vector<unsigned int> m_Indices;
-  
+
 }; // end ExtractIndexBase
 
 
@@ -90,53 +89,48 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     /** Use vector image type that dynamically determines vector length: */
     typedef itk::VectorImage< ComponentType, Dimension >    VectorImageType;
     typedef itk::Image< ComponentType, Dimension >          ScalarImageType;
-    typedef itk::ImageFileReader< VectorImageType >     ImageReaderType;
+    typedef itk::ImageFileReader< VectorImageType >         ImageReaderType;
     typedef itk::VectorIndexSelectionCastImageFilter<
-      VectorImageType, ScalarImageType >                      IndexExtractorType;
-    typedef itk::ImageFileWriter< VectorImageType >           ImageWriterType;
+      VectorImageType, ScalarImageType >                    IndexExtractorType;
+    typedef itk::ImageFileWriter< VectorImageType >         ImageWriterType;
 
     /** Read input image. */
     typename ImageReaderType::Pointer reader = ImageReaderType::New();
-    reader->SetFileName( m_InputFileName );
+    reader->SetFileName( this->m_InputFileName );
     reader->Update();
 
     /** Extract indices. */
-    
+
     // Create the assembler
     typedef itk::ImageToVectorImageFilter<ScalarImageType> ImageToVectorImageFilterType;
     typename ImageToVectorImageFilterType::Pointer imageToVectorImageFilter = ImageToVectorImageFilterType::New();
-    
-    for(unsigned int i = 0; i < reader->GetOutput()->GetNumberOfComponentsPerPixel(); ++i)
+
+    for( unsigned int i = 0; i < this->m_Indices.size(); ++i )
     {
       typename IndexExtractorType::Pointer extractor = IndexExtractorType::New();
       extractor->SetInput( reader->GetOutput() );
-      extractor->SetIndex( m_Indices[i] );
+      extractor->SetIndex( this->m_Indices[ i ] );
       extractor->Update();
       //extractor->DisconnectPipeline();
-      
-      imageToVectorImageFilter->SetNthInput(i, extractor->GetOutput());
+
+      imageToVectorImageFilter->SetNthInput( i, extractor->GetOutput() );
     }
 
     imageToVectorImageFilter->Update();
-  
+
     /** Write output image. */
     typename ImageWriterType::Pointer writer = ImageWriterType::New();
-    writer->SetFileName( m_OutputFileName );
+    writer->SetFileName( this->m_OutputFileName );
     writer->SetInput( imageToVectorImageFilter->GetOutput() );
     writer->Update();
   }
 
 }; // end ReplaceVoxel
-//-------------------------------------------------------------------------------------
-
-
-/** Declare GetHelpString. */
-std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 
@@ -152,15 +146,15 @@ int main( int argc, char ** argv )
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }
-  
+
   /** Get arguments. */
   std::string inputFileName = "";
   parser->GetCommandLineArgument( "-in", inputFileName );
@@ -172,30 +166,15 @@ int main( int argc, char ** argv )
   // We must get the number of components here so we can construct the indices vector appropriately
   unsigned int numberOfComponents = 1;
   itktools::GetImageNumberOfComponents(inputFileName, numberOfComponents);
-  
-  // Determine if the argument passed as -ind is a string containing "all" or not
-  std::string indicesString;
-  parser->GetCommandLineArgument( "-ind", indicesString );
-  
+
   std::vector<unsigned int> indices;
-  if(indicesString.compare("all") == 0)
-  {
-    // Add all channels to the list of channels to extract
-    for(unsigned int i = 0; i < indices.size(); ++i)
-    {
-      indices.push_back(i);
-    }
-  }
-  else
-  {
-    parser->GetCommandLineArgument( "-ind", indices );
-  }
-  
+  parser->GetCommandLineArgument( "-ind", indices );
+
   /** Determine image properties. */
   std::string ComponentTypeIn = "short";
   std::string PixelType; //we don't use this
   unsigned int Dimension = 3;
-  
+
   std::vector<unsigned int> imagesize( Dimension, 0 );
   int retgip = itktools::GetImageProperties(
     inputFileName,
@@ -222,22 +201,22 @@ int main( int argc, char ** argv )
   itktools::ReplaceUnderscoreWithSpace( ComponentTypeIn );
 
   /** Sanity check. */
-  for(unsigned int i = 0; i < indices.size(); ++i)
+  for( unsigned int i = 0; i < indices.size(); ++i )
   {
-    if ( indices[i] > numberOfComponents - 1 )
+    if ( indices[ i ] > numberOfComponents - 1 )
     {
       std::cerr << "ERROR: You selected index "
-	<< indices[i] << ", where the input image only has "
-	<< numberOfComponents << " components." << std::endl;
+        << indices[ i ] << ", where the input image only has "
+        << numberOfComponents << " components." << std::endl;
       return 1;
     }
   }
 
   /** Run the program. */
-  
+
   ITKToolsExtractIndexBase * extractIndex = 0;
   unsigned int dim = Dimension;
-  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileName);
+  itktools::ComponentType componentType = itktools::GetImageComponentType( inputFileName );
   try
   {
     // 2D
@@ -251,7 +230,7 @@ int main( int argc, char ** argv )
     if (!extractIndex) extractIndex = ITKToolsExtractIndex< unsigned long, 2 >::New( componentType, dim );
     if (!extractIndex) extractIndex = ITKToolsExtractIndex< float, 2 >::New( componentType, dim );
     if (!extractIndex) extractIndex = ITKToolsExtractIndex< double, 2 >::New( componentType, dim );
-    
+
 #ifdef ITKTOOLS_3D_SUPPORT
     // 3D
     if (!extractIndex) extractIndex = ITKToolsExtractIndex< char, 3 >::New( componentType, dim );
@@ -269,7 +248,7 @@ int main( int argc, char ** argv )
     {
       std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
       std::cerr
-        << "pixel (component) type = " << ComponentTypeIn // so here we also need a string - we don't need to convert to a string here right? just output the string that was input.
+        << "pixel (component) type = " << ComponentTypeIn
         << " ; dimension = " << Dimension
         << std::endl;
       return 1;
