@@ -21,10 +21,10 @@ Project( ITKToolsTesting )
 #---------------------------------------------------------------------
 
 # Setup directories
-set(BaselineDir ${ITKTools_SOURCE_DIR}/../Testing/Baselines/)
-set(DataDir ${ITKTools_SOURCE_DIR}/../Testing/Data/)
+set(BaselineDir ${ITKTools_SOURCE_DIR}/../Testing/Baselines)
+set(DataDir ${ITKTools_SOURCE_DIR}/../Testing/Data)
 set(ExeDir ${EXECUTABLE_OUTPUT_PATH})
-set(OutDir ${ITKTools_BINARY_DIR}/Testing/)
+set(OutDir ${ITKTools_BINARY_DIR}/Testing)
 
 ######### AverageVectorMagnitude #########
 # This tests the magnitude image. Also should test the average vector magnitude (not an image)
