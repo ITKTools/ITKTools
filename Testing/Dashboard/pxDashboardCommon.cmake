@@ -235,10 +235,9 @@ if( dashboard_model STREQUAL Continuous )
     set( CTEST_CHECKOUT_COMMAND )
 
     if( (res GREATER 0) OR (FRESH_BUILD) )
-      # run cmake twice; this seems to be necessary, otherwise the
-      # KNN lib is not built
-      #ctest_configure()
-      # # only for elastix; for ITKTools once should be sufficient:
+      # run cmake twice; this seems to be necessary on linux,
+      # I don't know why.
+      ctest_configure()
       ctest_configure()
       ctest_read_custom_files( ${CTEST_BINARY_DIRECTORY} )
       ctest_build()
@@ -253,10 +252,9 @@ else()
   write_cache()
   ctest_start( ${dashboard_model} )
   ctest_update( SOURCE ${CTEST_ITKTOOLS_DIRECTORY} )
-  # run cmake twice; this seems to be necessary, otherwise the
-  # KNN lib is not built
-  #ctest_configure()
-  # # only for elastix; for ITKTools once should be sufficient:
+  # run cmake twice; this seems to be necessary on linux,
+  # I don't know why.
+  ctest_configure()
   ctest_configure()
   ctest_read_custom_files( ${CTEST_BINARY_DIRECTORY} )
   ctest_build()
