@@ -329,9 +329,6 @@ int main( int argc, char **argv )
   /** \todo some progs allow user to override the pixel type, 
    * so we need a method to convert string to EnumComponentType */
   itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileName);
-  
-  std::cout << "Detected component type: " << 
-    componentType << std::endl;
 
   try
   {    
