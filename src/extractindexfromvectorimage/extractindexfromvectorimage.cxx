@@ -46,7 +46,7 @@ std::string GetHelpString( void )
     << "pxextractindexfromvectorimage\n"
     << "  -in      inputFilename\n"
     << "  [-out]   outputFilename, default in + INDEXEXTRACTED.mhd\n"
-    << "  -ind     a valid index\n"
+    << "  -ind     one or more valid indices\n"
     << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int,\n"
     << "long, float, double." << std::endl;
   return ss.str();
