@@ -8,10 +8,22 @@ project( ITKTools )
 # Find ITK.
 FIND_PACKAGE( ITK 4 REQUIRED )
 
-# ITKTools depends on some ITK settings
-#IF( NOT Module_ITKIOPhilipsREC )
-#  message( SEND_ERROR "Module_ITKIOPhilipsREC has not been set to ON when compiling ITK. This option is mandatory for pxcastconvert to build.\nPlease recompile your ITK installation." )
-#ENDIF()
+# ITKTools depends on some ITK modules. Check for them:
+# NOTE: not sure if this is the best way to check for this,
+# but for now it works.
+set( listofrequiredcomponents ITKCommon ITKIOPhilipsREC )
+foreach( item ${listofrequiredcomponents} )
+  # Find the item in the list of enabled modules
+  list( FIND ITK_MODULES_ENABLED ${item} found )
+
+  # Notify the user and fail gracefully.
+  if( found EQUAL -1 )
+    message( SEND_ERROR "The module "${item}" has not been set to ON when compiling ITK. This option is mandatory for ITKTools to build.\nPlease recompile your ITK installation." )
+  else()
+    message( STATUS "Found required ITK module "${item} )
+  endif()
+endforeach()
+message( STATUS "Found all ITK modules required to build ITKTools!" )
 
 #---------------------------------------------------------------------
 # Kill the anoying MS VS warning about non-safe functions.
