@@ -2,7 +2,6 @@ cmake_minimum_required( VERSION 2.6 )
 
 # This project is intended to be built outside the Insight source tree
 project( ITKTools )
-#enable_testing()
 
 #---------------------------------------------------------------------
 # Find ITK.
@@ -49,16 +48,16 @@ include_directories( ${ITKTools_SOURCE_DIR}/common )
 
 #---------------------------------------------------------------------
 # Compilation options
-set( ITKTOOLS_3D_SUPPORT OFF CACHE BOOL
+set( ITKTOOLS_3D_SUPPORT ON CACHE BOOL
   "Support operations on 3D Images." )
-if(ITKTOOLS_3D_SUPPORT)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DITKTOOLS_3D_SUPPORT")
+if( ITKTOOLS_3D_SUPPORT )
+  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DITKTOOLS_3D_SUPPORT" )
 endif()
 
 set( ITKTOOLS_4D_SUPPORT OFF CACHE BOOL
   "Support operations on 4D Images." )
-if(ITKTOOLS_4D_SUPPORT)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DITKTOOLS_4D_SUPPORT")
+if( ITKTOOLS_4D_SUPPORT )
+  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DITKTOOLS_4D_SUPPORT" )
 endif()
 
 #---------------------------------------------------------------------
