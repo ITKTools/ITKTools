@@ -39,8 +39,9 @@
 #include "itkGE4ImageIOFactory.h"
 #include "itkGE5ImageIOFactory.h"
 #include "itkGEAdwImageIOFactory.h"
+#ifdef ITKTOOLS_ITKIOPhilipsREC_Found
 #include "itkPhilipsRECImageIOFactory.h"
-
+#endif
 
 /**
  * ******************* GetHelpString *******************
@@ -120,7 +121,9 @@ int main( int argc, char **argv )
   itk::GE4ImageIOFactory::RegisterOneFactory();
   itk::GE5ImageIOFactory::RegisterOneFactory();
   itk::GEAdwImageIOFactory::RegisterOneFactory();
+#ifdef ITKTOOLS_ITKIOPhilipsREC_Found
   itk::PhilipsRECImageIOFactory::RegisterOneFactory();
+#endif
 
   /** Construct the command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
