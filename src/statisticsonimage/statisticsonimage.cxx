@@ -337,8 +337,8 @@ int main( int argc, char ** argv )
     if (!statisticsOnImage) statisticsOnImage = ITKToolsStatisticsOnImage< float, 3, 3 >::New( componentType, dim, numberOfComponents );
 #endif
 #ifdef ITKTOOLS_4D_SUPPORT
-    if (!statisticsOnImage) statisticsOnImage = StatisticsOnImage< float, 4, 1 >::New( componentType, dim, numberOfComponents );
-    if (!statisticsOnImage) statisticsOnImage = StatisticsOnImage< float, 4, 4 >::New( componentType, dim, numberOfComponents );
+    if (!statisticsOnImage) statisticsOnImage = ITKToolsStatisticsOnImage< float, 4, 1 >::New( componentType, dim, numberOfComponents );
+    if (!statisticsOnImage) statisticsOnImage = ITKToolsStatisticsOnImage< float, 4, 4 >::New( componentType, dim, numberOfComponents );
 #endif
     if (!statisticsOnImage) 
     {
