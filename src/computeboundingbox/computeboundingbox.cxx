@@ -237,9 +237,8 @@ int main( int argc, char **argv )
 
   /** Short alias */
   unsigned int dim = Dimension;
-  itk::ImageIOBase::Pointer imageIOBaseTmp;
   itktools::ComponentType componentType
-    = imageIOBaseTmp->GetComponentTypeFromString( "short" );
+    = itk::ImageIOBase::GetComponentTypeFromString( "short" );
 
   try
   {    

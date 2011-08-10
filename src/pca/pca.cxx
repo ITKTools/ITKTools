@@ -245,7 +245,7 @@ int main( int argc, char **argv )
  
   if ( !retpt ) 
   {
-    componentType = itktools::GetComponentTypeFromString(componentTypeString);
+    componentType = itk::ImageIOBase::GetComponentTypeFromString( componentTypeString );
   }
   
   /** Class that does the work */

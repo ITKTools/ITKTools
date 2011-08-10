@@ -122,7 +122,7 @@ int main( int argc, char **argv )
   /** Let the user override the output component type. */
   if ( retopct )
   {
-    componentTypeOut = itktools::GetComponentTypeFromString(outputComponentTypeString);
+    componentTypeOut = itk::ImageIOBase::GetComponentTypeFromString( outputComponentTypeString );
     if ( !itktools::ComponentTypeIsValid( componentTypeOut ) )
     {
       std::cerr << "ERROR: the you specified a wrong opct." << std::endl;
@@ -177,12 +177,11 @@ int main( int argc, char **argv )
     if (!binaryImageOperator)
     {
       typedef itk::ImageIOBase                        ImageIOBaseType;
-      ImageIOBaseType::Pointer imageIOBaseTmp;
       std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
       std::cerr
-        << "  input1 pixel (component) type = " << imageIOBaseTmp->GetComponentTypeAsString( componentType1 )
-        << "\n  input2 pixel (component) type = " << imageIOBaseTmp->GetComponentTypeAsString( componentType2 )
-        << "\n  output pixel (component) type = " << imageIOBaseTmp->GetComponentTypeAsString( componentTypeOut )
+        << "  input1 pixel (component) type = " << itk::ImageIOBase::GetComponentTypeAsString( componentType1 )
+        << "\n  input2 pixel (component) type = " << itk::ImageIOBase::GetComponentTypeAsString( componentType2 )
+        << "\n  output pixel (component) type = " << itk::ImageIOBase::GetComponentTypeAsString( componentTypeOut )
         << "\n  dimension = " << dim << std::endl;
       return 1;
     }

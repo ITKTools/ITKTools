@@ -247,7 +247,6 @@ int main( int argc, char** argv )
 #endif
     if (!createBox) 
     {
-      itk::ImageIOBase::Pointer imageIOBaseTmp;
       std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
       std::cerr
         << "pixel (component) type = " << componentType

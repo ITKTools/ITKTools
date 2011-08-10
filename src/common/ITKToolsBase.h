@@ -4,7 +4,6 @@
 namespace itktools
 {
 
-
 /** \class ITKToolsBase
  * Base class for all ITKTools applications.
  */
@@ -19,6 +18,6 @@ public:
 
 };
 
-} // end namespace
+} // end namespace itktools
 
 #endif //__ITKToolsBase_h

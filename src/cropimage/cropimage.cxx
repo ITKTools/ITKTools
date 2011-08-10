@@ -372,7 +372,7 @@ int main( int argc, char **argv )
   unsigned int dim = Dimension;
 
   itktools::ComponentType componentType
-    = itktools::GetComponentTypeFromString( ComponentTypeIn );
+    = itk::ImageIOBase::GetComponentTypeFromString( ComponentTypeIn );
    
   try
   {    
@@ -402,10 +402,9 @@ int main( int argc, char **argv )
 #endif
     if (!cropImage) 
     {
-      itk::ImageIOBase::Pointer imageIOBaseTmp;
       std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
       std::cerr
-        << "pixel (component) type = " << imageIOBaseTmp->GetComponentTypeAsString( componentType )
+        << "pixel (component) type = " << itk::ImageIOBase::GetComponentTypeAsString( componentType )
         << " ; dimension = " << Dimension
         << std::endl;
       return 1;

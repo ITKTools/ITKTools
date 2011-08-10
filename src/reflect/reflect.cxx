@@ -181,7 +181,7 @@ int main( int argc, char ** argv )
   itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileName);
   if ( !retpt ) 
   {
-    componentType = itktools::GetComponentTypeFromString(componentTypeString);
+    componentType = itk::ImageIOBase::GetComponentTypeFromString( componentTypeString );
   }
   
   /** Check for vector images. */

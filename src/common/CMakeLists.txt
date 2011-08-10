@@ -15,8 +15,7 @@ ADD_LIBRARY( ITKTools-Common
   ITKToolsHelpers.cxx
   ITKToolsImageProperties.h
   ITKToolsImageProperties.cxx
-  ITKToolsBase.h
-  ITKToolsBase.cxx )
+  ITKToolsBase.h )
 
 TARGET_LINK_LIBRARIES( ITKTools-Common ${ITK_LIBRARIES} )
 

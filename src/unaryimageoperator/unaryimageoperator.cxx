@@ -231,7 +231,7 @@ int main( int argc, char **argv )
   bool retpto = parser->GetCommandLineArgument( "-pto", componentTypeOutString );
   if(retpto)
   {
-    outputComponentType = itktools::GetComponentTypeFromString(componentTypeOutString);
+    outputComponentType = itk::ImageIOBase::GetComponentTypeFromString( componentTypeOutString );
   }
   
   /** Get the correct form of ops. For some operators

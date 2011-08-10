@@ -261,7 +261,7 @@ int main( int argc, char ** argv )
   /** Class that does the work */
   ITKToolsExtractSliceBase * extractSlice = 0; 
 
-  itktools::ComponentType componentType = itktools::GetComponentTypeFromString(PixelType);
+  itktools::ComponentType componentType = itk::ImageIOBase::GetComponentTypeFromString( PixelType );
     
   try
   {    

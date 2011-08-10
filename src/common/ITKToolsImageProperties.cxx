@@ -6,6 +6,7 @@
 
 namespace itktools
 {
+
 /**
  * ***************** GetImageProperties ************************
  */
@@ -95,7 +96,7 @@ int GetImageProperties(
   std::vector<double> & direction )
 {
   itk::ImageIOBase::Pointer testImageIOBase;
-  GetImageIOBase(filename, testImageIOBase);
+  GetImageIOBase( filename, testImageIOBase );
 
   /** Extract information from the ImageIOBase. */
   if ( !GetImageInformationFromImageIOBase( testImageIOBase,
@@ -267,99 +268,13 @@ void FillImageIOBase( itk::ImageIOBase::Pointer & imageIOBase,
   imageIOBase->SetNumberOfComponents( numberOfComponents );
 
   /** Set pixel type. */
-  itk::ImageIOBase::IOPixelType pixelType;
-  if ( pixelTypeAsString == "scalar" )
-  {
-    pixelType = itk::ImageIOBase::SCALAR;
-  }
-  else if ( pixelTypeAsString == "vector" )
-  {
-    pixelType = itk::ImageIOBase::VECTOR;
-  }
-  else if ( pixelTypeAsString == "covariant_vector" )
-  {
-    pixelType = itk::ImageIOBase::COVARIANTVECTOR;
-  }
-  else if ( pixelTypeAsString == "point" )
-  {
-    pixelType = itk::ImageIOBase::POINT;
-  }
-  else if ( pixelTypeAsString == "offset" )
-  {
-    pixelType = itk::ImageIOBase::OFFSET;
-  }
-  else if ( pixelTypeAsString == "rgb" )
-  {
-    pixelType = itk::ImageIOBase::RGB;
-  }
-  else if ( pixelTypeAsString == "rgba" )
-  {
-    pixelType = itk::ImageIOBase::RGBA;
-  }
-  else if ( pixelTypeAsString == "symmetric_second_rank_tensor" )
-  {
-    pixelType = itk::ImageIOBase::SYMMETRICSECONDRANKTENSOR;
-  }
-  else if ( pixelTypeAsString == "diffusion_tensor_3D" )
-  {
-    pixelType = itk::ImageIOBase::DIFFUSIONTENSOR3D;
-  }
-  else if ( pixelTypeAsString == "complex" )
-  {
-    pixelType = itk::ImageIOBase::COMPLEX;
-  }
-  else
-  {
-    pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
-  }
+  itk::ImageIOBase::IOPixelType pixelType
+    = itk::ImageIOBase::GetPixelTypeFromString( pixelTypeAsString );
   imageIOBase->SetPixelType( pixelType );
 
   /** Set component type. */
-  itk::ImageIOBase::IOComponentType componentType;
-  if ( componentTypeAsString == "unsigned_char" )
-  {
-    componentType = itk::ImageIOBase::UCHAR;
-  }
-  else if ( componentTypeAsString == "char" )
-  {
-    componentType = itk::ImageIOBase::CHAR;
-  }
-  else if ( componentTypeAsString == "unsigned_short" )
-  {
-    componentType = itk::ImageIOBase::USHORT;
-  }
-  else if ( componentTypeAsString == "short" )
-  {
-    componentType = itk::ImageIOBase::SHORT;
-  }
-  else if ( componentTypeAsString == "unsigned_int" )
-  {
-    componentType = itk::ImageIOBase::UINT;
-  }
-  else if ( componentTypeAsString == "int" )
-  {
-    componentType = itk::ImageIOBase::INT;
-  }
-  else if ( componentTypeAsString == "unsigned_long" )
-  {
-    componentType = itk::ImageIOBase::ULONG;
-  }
-  else if ( componentTypeAsString == "long" )
-  {
-    componentType = itk::ImageIOBase::LONG;
-  }
-  else if ( componentTypeAsString == "float" )
-  {
-    componentType = itk::ImageIOBase::FLOAT;
-  }
-  else if ( componentTypeAsString == "double" )
-  {
-    componentType = itk::ImageIOBase::DOUBLE;
-  }
-  else
-  {
-    componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
-  }
+  itk::ImageIOBase::IOComponentType componentType
+    = itk::ImageIOBase::GetComponentTypeFromString( componentTypeAsString );
   imageIOBase->SetComponentType( componentType );
 
   /** Set size, spacing, origin. */

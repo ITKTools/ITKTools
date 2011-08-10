@@ -38,7 +38,6 @@ int DetermineComponentTypes(
 {
   // Note: a bit of an ugly combination between itktools
   // and itk::ImageIOBase functionality.
-  itk::ImageIOBase::Pointer imageIOBaseTmp;
 
   /** Determine image properties of image 1. */
   std::string pixelType1AsString = "1";
@@ -53,7 +52,7 @@ int DetermineComponentTypes(
     inputDimension1, numberOfComponents1,
     imagesize1, dummy, dummy, dummy );
   itktools::ReplaceSpaceWithUnderscore( componentType1AsString );
-  componentType1 = imageIOBaseTmp->GetComponentTypeFromString( componentType1AsString );
+  componentType1 = itk::ImageIOBase::GetComponentTypeFromString( componentType1AsString );
 
   /** Determine image properties of image 2. */
   std::string pixelType2AsString = "2";
@@ -67,7 +66,7 @@ int DetermineComponentTypes(
     inputDimension2, numberOfComponents2,
     imagesize2, dummy, dummy, dummy );
   itktools::ReplaceSpaceWithUnderscore( componentType2AsString );
-  componentType2 = imageIOBaseTmp->GetComponentTypeFromString( componentType2AsString );
+  componentType2 = itk::ImageIOBase::GetComponentTypeFromString( componentType2AsString );
 
   // Properties of both images
   unsigned int inputDimension = 0;

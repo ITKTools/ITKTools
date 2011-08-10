@@ -178,11 +178,10 @@ int main( int argc, char **argv )
 #endif
     if (!logicalImageOperator) 
     {
-      itk::ImageIOBase::Pointer imageIOBaseTmp;
       std::cerr << "ERROR: this combination of pixeltype, image dimension, and space dimension is not supported!" << std::endl;
       std::cerr
         << " image dimension = " << imageDimension << std::endl
-        << "pixel (component) type = " << imageIOBaseTmp->GetComponentTypeAsString( componentType )
+        << "pixel (component) type = " << itk::ImageIOBase::GetComponentTypeAsString( componentType )
         << std::endl;
       return 1;
     }

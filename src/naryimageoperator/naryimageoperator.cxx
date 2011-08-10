@@ -235,7 +235,7 @@ int main( int argc, char **argv )
   /** Let the user override the output component type. */
   if ( retopct )
   {
-    componentTypeOut = itktools::GetComponentTypeFromString(opct);
+    componentTypeOut = itk::ImageIOBase::GetComponentTypeFromString( opct );
     if ( !itktools::ComponentTypeIsValid( componentTypeOut ) )
     {
       std::cerr << "ERROR: the you specified an invalid opct." << std::endl;

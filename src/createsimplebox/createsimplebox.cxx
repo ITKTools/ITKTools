@@ -109,19 +109,17 @@ int main(int argc, char** argv)
 
   unsigned int dim = 0;
   itktools::ComponentType componentType = itk::ImageIOBase::UCHAR; // to prevent uninitialized variable warning
-  if(retin) // if an input file was specified
+  if( retin ) // if an input file was specified
   {
-    itktools::GetImageDimension(inputFileName, dim);
-  
+    itktools::GetImageDimension( inputFileName, dim );
     componentType = itktools::GetImageComponentType(inputFileName);
   }
-    
-  
-  if(retpt) // if a pixel type was specified on the command line
+
+  if( retpt ) // if a pixel type was specified on the command line
   {
-    componentType = itktools::GetComponentTypeFromString(pixelTypeString);
+    componentType = itk::ImageIOBase::GetComponentTypeFromString( pixelTypeString );
   }
-    
+
   try
   {    
     // now call all possible template combinations.

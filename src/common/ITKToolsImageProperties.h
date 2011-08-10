@@ -10,17 +10,17 @@ namespace itktools
 /** Determine componenttype (short, float etc) of an image */
 bool GetImageComponentType(
   const std::string & filename,
-  ComponentType & componenttype);
+  ComponentType & componenttype );
 
 /** Determine dimension of an image */
 bool GetImageDimension(
   const std::string & filename,
-  unsigned int & dimension);
+  unsigned int & dimension );
 
 /** Determine the number of components of each pixel in an image. */
 bool GetImageNumberOfComponents(
   const std::string & filename,
-  unsigned int & numberofcomponents);
+  unsigned int & numberofcomponents );
 
 /** Determine the size of an image.*/
 bool GetImageSize(
@@ -112,4 +112,5 @@ bool GetImageInformationFromImageIOBase(
   std::vector<double> & direction );
 
 } // end namespace itktools
+
 #endif

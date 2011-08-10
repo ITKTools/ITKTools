@@ -270,7 +270,7 @@ int main( int argc, char **argv )
   /** Short alias */
   unsigned int dim = Dimension;
 
-  itktools::ComponentType componentType = itktools::GetComponentTypeFromString(PixelType);
+  itktools::ComponentType componentType = itk::ImageIOBase::GetComponentTypeFromString( PixelType );
    
   try
   {    

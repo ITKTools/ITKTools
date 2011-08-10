@@ -184,7 +184,7 @@ int main(int argc, char** argv)
   itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileName);
   if(retpt)
   {
-    componentType = itktools::GetComponentTypeFromString(pixelTypeString);
+    componentType = itk::ImageIOBase::GetComponentTypeFromString( pixelTypeString );
   }
 
 

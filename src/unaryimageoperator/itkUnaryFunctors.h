@@ -540,14 +540,15 @@ private:
 template< class TInputImage, class TOutputImage = TInputImage, class TArgument = typename TInputImage::PixelType >
 struct UnaryFunctorFactory
 {
-  typename itk::InPlaceImageFilter<TInputImage, TOutputImage>::Pointer GetFilter(UnaryFunctorEnum filterType, std::string & strArgument )
+  typename itk::InPlaceImageFilter<TInputImage, TOutputImage>::Pointer
+    GetFilter( UnaryFunctorEnum filterType, std::string & strArgument )
   {
     // Convert the argument to the correct type
-    std::stringstream ssArgument(strArgument);
+    std::stringstream ssArgument( strArgument );
     TArgument argument;
     ssArgument >> argument;
 
-    if(filterType == PLUS)
+    if( filterType == PLUS )
     {
       typedef itk::UnaryFunctorImageFilter<TInputImage, TOutputImage,
                                             itk::Functor::PLUS< TArgument> >  FilterType;

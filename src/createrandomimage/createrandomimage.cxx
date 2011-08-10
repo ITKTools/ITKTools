@@ -434,7 +434,8 @@ int main(int argc, char** argv)
   
   /** Class that does the work */
   ITKToolsCreateRandomImageBase * createRandomImage = NULL; 
-  itktools::ComponentType componentType = itktools::GetComponentTypeFromString(pixelType);
+
+  itktools::ComponentType componentType = itk::ImageIOBase::GetComponentTypeFromString( pixelType );
 
   try
   {

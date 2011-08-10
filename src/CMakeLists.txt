@@ -39,7 +39,7 @@ if( MSVC )
     /D_CRT_SECURE_NO_DEPRECATE
     /D_CRT_TIME_FUNCTIONS_NO_DEPRECATE
     )
-endif( MSVC )
+endif()
 
 #---------------------------------------------------------------------
 # Output directories.

@@ -213,7 +213,7 @@ int main( int argc, char ** argv )
    * specifying -pt in the command line.   */
   if ( !retpt ) 
   {
-    componentType = itktools::GetComponentTypeFromString(ComponentTypeString);
+    componentType = itk::ImageIOBase::GetComponentTypeFromString( ComponentTypeString );
   }
 
   /** Check for vector images. */
