@@ -51,5 +51,5 @@ ITKTOOLS_4D_SUPPORT:BOOL=OF
 
 
 # Load the common dashboard script.
-include( ${CTEST_SCRIPT_DIRECTORY}/elxDashboardCommon.cmake )
+include( ${CTEST_SCRIPT_DIRECTORY}/pxDashboardCommon.cmake )
 
