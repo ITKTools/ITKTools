@@ -46,7 +46,7 @@ ITK_DIR:PATH=/home/sklein/tk/itk/git/release
 // Some ITKTools settings, defining the configuration
 ITKTOOLS_BUILD_TESTING:BOOL=ON
 ITKTOOLS_3D_SUPPORT:BOOL=ON
-ITKTOOLS_4D_SUPPORT:BOOL=OF
+ITKTOOLS_4D_SUPPORT:BOOL=ON
 ")
 
 
