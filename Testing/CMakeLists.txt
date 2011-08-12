@@ -26,18 +26,43 @@ set(DataDir ${ITKTools_SOURCE_DIR}/../Testing/Data)
 set(ExeDir ${EXECUTABLE_OUTPUT_PATH})
 set(OutDir ${ITKTools_BINARY_DIR}/Testing)
 
+# Define helpful testing macro
+# This macro assumes there are two tests: one that creates an output,
+# and one that compares the output with a baseline.
+#  _name: test main name
+#  subtest: name of subtest
+#  ext: file extension of the output
+#  cl1: command line of creation test
+#  cl2: command line of comparison test (baseline name)
+macro( itktools_add_test _name subtest ext cl1 cl2 )
+  set( subtestname _${subtest} )
+  string( COMPARE EQUAL ${subtestname} "_" eq )
+  if( eq )
+    set( subtestname "" )
+  endif()
+  set( outName ${OutDir}/${_name}${subtestname}.${ext} )
+  add_test( NAME ${_name}${subtestname}_OUTPUT
+    COMMAND ${ExeDir}/px${_name} ${cl1} -out ${outName} )
+  add_test( NAME ${_name}${subtestname}_COMPARE
+    COMMAND ${ExeDir}/pximagecompare -base ${BaselineDir}/${cl2} -test ${outName} )
+  set_tests_properties( ${_name}${subtestname}_COMPARE
+    PROPERTIES DEPENDS ${_name}${subtestname}_OUTPUT )
+endmacro()
+
+
+###########################################################
+# Start of tests
+
+
 ######### AverageVectorMagnitude #########
 # This tests the magnitude image. Also should test the average vector magnitude (not an image)
 # add_test(NAME AverageVectorMagnitudeOutput COMMAND averagevectormagnitude -in ${DataDir}/BlackSquare.png -out ${OutDir}/AverageVectorMagnitude.png)
 # add_test(NAME AverageVectorMagnitudeTest COMMAND imagecompare -base ${BaselineDir}//AverageVectorMagnitude.png -test ${OutDir}/AverageVectorMagnitude.png PROPERTIES DEPENDS AverageVectorMagnitudeOutput)
 
 ######### BinaryImageOperator #########
-# Add images
-add_test(NAME BinaryImageOperatorOutput_Add
-         COMMAND ${ExeDir}/pxbinaryimageoperator -in ${DataDir}/BlackSquare.png ${DataDir}/WhiteSquare.png -ops ADDITION -out ${OutDir}/binaryimageoperator_add.png)
-add_test(NAME BinaryImageOperatorTest_Add
-         COMMAND ${ExeDir}/pximagecompare -base ${BaselineDir}/BinaryImageOperator_Add.png -test ${OutDir}/binaryimageoperator_add.png
-         PROPERTIES DEPENDS BinaryImageOperatorOutput_Add)
+itktools_add_test( binaryimageoperator add png
+  "-in;${DataDir}/BlackSquare.png;${DataDir}/WhiteSquare.png;-ops;ADDITION"
+  "BinaryImageOperator_Add.png" )
 
 ######### BinaryThinning #########
 # add_test(NAME BinaryThinningOutput
@@ -54,11 +79,9 @@ add_test(NAME BinaryImageOperatorTest_Add
 #          PROPERTIES DEPENDS BrainDistanceOutput)
 
 ######### CastConvert #########
-add_test(NAME CastConvertOutput
-         COMMAND ${ExeDir}/pxcastconvert -in ${DataDir}/WhiteSquare.png -out ${OutDir}/castconvert.mhd)
-add_test(NAME CastConvertTest
-         COMMAND ${ExeDir}/pximagecompare -base ${BaselineDir}/CastConvert.mhd -test ${OutDir}/castconvert.mhd
-         PROPERTIES DEPENDS CastConvertOutput)
+itktools_add_test( castconvert "" mhd
+  "-in;${DataDir}/WhiteSquare.png"
+  "CastConvert.mhd" )
 
 ######### ClosestVersor3DTransform #########
 # add_test(NAME ClosestVersor3DTransformOutput
@@ -215,11 +238,9 @@ add_test(NAME CastConvertTest
 #          PROPERTIES DEPENDS ExtractEveryOtherSliceOutput)
 
 ######### ExtractIndexFromVectorImage #########
-add_test(NAME ExtractIndexFromVectorImageOutput
-         COMMAND ${ExeDir}/pxextractindexfromvectorimage -in ${DataDir}/BlackSquare.png -out ${OutDir}/ExtractIndex0.mhd -ind 0)
-add_test(NAME ExtractIndexFromVectorImageTest
-         COMMAND ${ExeDir}/pximagecompare -base ${BaselineDir}/ExtractIndex0.mhd -test ${OutDir}/ExtractIndex0.mhd
-         PROPERTIES DEPENDS ExtractIndexFromVectorImageOutput)
+itktools_add_test( extractindexfromvectorimage "" mhd
+  "-in;${DataDir}/BlackSquare.png;-ind;0"
+  "ExtractIndex0.mhd" )
 
 ######### ExtractSlice #########
 # add_test(NAME ExtractSliceOutput
@@ -292,11 +313,9 @@ add_test(NAME ExtractIndexFromVectorImageTest
 #          PROPERTIES DEPENDS ImageCompareOutput)
 
 ######### ImagesToVectorImage #########
-add_test(NAME ImagesToVectorImageOutput
-         COMMAND ${ExeDir}/pximagestovectorimage -in ${DataDir}/BlackSquare.png ${DataDir}/WhiteSquare.png -out ${OutDir}/imagestovectorimage.mhd)
-add_test(NAME ImagesToVectorImageTest
-         COMMAND ${ExeDir}/pximagecompare -base ${BaselineDir}/ImagesToVectorImage.mhd -test ${OutDir}/imagestovectorimage.mhd
-         PROPERTIES DEPENDS ImagesToVectorImageOutput)
+itktools_add_test( imagestovectorimage "" mhd
+  "-in;${DataDir}/BlackSquare.png;${DataDir}/WhiteSquare.png"
+  "ImagesToVectorImage.mhd" )
 
 ######### IntensityReplace #########
 # add_test(NAME IntensityReplaceOutput
@@ -327,17 +346,12 @@ add_test(NAME ImagesToVectorImageTest
 #          PROPERTIES DEPENDS KappaStatisticOutput)
 
 ######### LogicalImageOperator #########
-add_test(NAME LogicalImageOperatorOutput_AND
-         COMMAND ${ExeDir}/pxlogicalimageoperator -in ${DataDir}/BlackSquare.png ${DataDir}/WhiteSquare.png -ops AND -out ${OutDir}/logicalimageoperator_and.png)
-add_test(NAME LogicalImageOperatorTest_AND
-         COMMAND ${ExeDir}/pximagecompare -base ${BaselineDir}/LogicalImageOperator_And.png -test ${OutDir}/logicalimageoperator_and.png
-         PROPERTIES DEPENDS LogicalImageOperatorOutput_AND)
-
-add_test(NAME LogicalImageOperatorOutput_OR
-        COMMAND ${ExeDir}/pxlogicalimageoperator -in ${DataDir}/BlackSquare.png ${DataDir}/WhiteSquare.png -ops OR -out ${OutDir}/logicalimageoperator_or.png)
-add_test(NAME LogicalImageOperatorTest_OR
-         COMMAND ${ExeDir}/pximagecompare -base ${BaselineDir}/LogicalImageOperator_Or.png -test ${OutDir}/logicalimageoperator_or.png
-         PROPERTIES DEPENDS LogicalImageOperatorOutput_OR)
+itktools_add_test( logicalimageoperator "AND" png
+  "-in;${DataDir}/BlackSquare.png;${DataDir}/WhiteSquare.png;-ops;AND"
+  "LogicalImageOperator_And.png" )
+itktools_add_test( logicalimageoperator "OR" png
+  "-in;${DataDir}/BlackSquare.png;${DataDir}/WhiteSquare.png;-ops;OR"
+  "LogicalImageOperator_Or.png" )
 
 ######### Morphology #########
 # add_test(NAME MorphologyOutput
@@ -453,11 +467,12 @@ add_test(NAME LogicalImageOperatorTest_OR
 #These tests are not px applications, but internal tests
 # ADD_EXECUTABLE( ChannelByChannelVectorImageFilterTest
 #   ChannelByChannelVectorImageFilterTest.cxx )
-# 
+#
 # TARGET_LINK_LIBRARIES( ChannelByChannelVectorImageFilterTest ITKTools-Common ${ITK_LIBRARIES} )
-# 
+#
 # INSTALL( TARGETS ChannelByChannelVectorImageFilterTest
 #   RUNTIME DESTINATION ${ITKTools_INSTALL_DIR} )
-# 
+#
 # add_test(NAME ChannelByChannelVectorImageFilterOutput COMMAND ChannelByChannelVectorImageFilterTest )
 # add_test(NAME ChannelByChannelVectorImageFilterValidate COMMAND ${ExeDir}/pximagecompare PROPERTIES DEPENDS ChannelByChannelVectorImageFilterOutput)
+
