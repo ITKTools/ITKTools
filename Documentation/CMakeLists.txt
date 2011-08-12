@@ -13,7 +13,7 @@ Project( ITKToolsDocumentation )
 
 IF( ITKTOOLS_BUILD_DOCUMENTATION )
   set( ExeDir ${EXECUTABLE_OUTPUT_PATH} )
-  set( OutDir ${ITKTools_BINARY_DIR}/Documentation/ )
+  set( OutDir ${ITKTOOLS_BINARY_DIR}/Documentation/ )
 
   execute_process( COMMAND ${ExeDir}/pxaveragevectormagnitude --help ERROR_FILE ${OutDir}/averagevectormagnitude.help )
   execute_process( COMMAND ${ExeDir}/pxbinaryimageoperator --help ERROR_FILE ${OutDir}/binaryimageoperator.help )

@@ -21,10 +21,10 @@ Project( ITKToolsTesting )
 #---------------------------------------------------------------------
 
 # Setup directories
-set(BaselineDir ${ITKTools_SOURCE_DIR}/../Testing/Baselines)
-set(DataDir ${ITKTools_SOURCE_DIR}/../Testing/Data)
+set(BaselineDir ${ITKTOOLS_SOURCE_DIR}/../Testing/Baselines)
+set(DataDir ${ITKTOOLS_SOURCE_DIR}/../Testing/Data)
 set(ExeDir ${EXECUTABLE_OUTPUT_PATH})
-set(OutDir ${ITKTools_BINARY_DIR}/Testing)
+set(OutDir ${ITKTOOLS_BINARY_DIR}/Testing)
 
 # Define helpful testing macro
 # This macro assumes there are two tests: one that creates an output,
