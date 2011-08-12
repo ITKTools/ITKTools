@@ -37,7 +37,7 @@ std::string GetHelpString()
 {
   std::stringstream ss;
   ss << "Usage:" << std::endl
-     << "pxcomputedifferenceimage inputimage1filename inputimage2filename [outputimagefilename] [outputPixelComponentType]" << std::endl
+     << "pxcomputedifferenceimageBIG inputimage1filename inputimage2filename [outputimagefilename] [outputPixelComponentType]" << std::endl
      << "where outputPixelComponentType is one of:" << std::endl
      << "- unsigned_char" << std::endl
      << "- char" << std::endl

@@ -1,0 +1,27 @@
+#
+# See UseITKTools.cmake for explanation how to use ITKTools code
+# from an external project.
+#
+
+MESSAGE( STATUS "Configuring ITKTOOLS" )
+
+#---------------------------------------------------------------------
+# Set all necessary include directories for itktools
+SET( ITKTOOLS_INCLUDE_DIRECTORIES "@ITKTOOLS_INCLUDE_DIRECTORIES@" )
+
+# Set the directory that contains the itktools libraries,
+# such as ITKTools-Common.
+SET( ITKTOOLS_LIBRARY_OUTPUT_PATH "@LIBRARY_OUTPUT_PATH@" )
+
+# Read in the library dependencies
+SET( ITKTOOLS_LIBRARY_DEPENDS_FILE "@ITKTOOLS_LIBRARY_DEPENDS_FILE@" )
+
+#---------------------------------------------------------------------
+# Set some variables that the user might want to use
+SET( ITKTOOLS_LIBRARIES @ITKTOOLS_LIBRARIES@ )
+SET( ITKTOOLS_3D_SUPPORT @ITKTOOLS_3D_SUPPORT@ )
+SET( ITKTOOLS_4D_SUPPORT @ITKTOOLS_4D_SUPPORT@ )
+SET( ITKTOOLS_INSTALL_DIR "@ITKTOOLS_INSTALL_DIR@" )
+SET( ITKTOOLS_MACRO_DEFINITIONS "@ITKTOOLS_MACRO_DEFINITIONS@" )
+SET( ITKTOOLS_USE_FILE "@ITKTOOLS_USE_FILE@" )
+
