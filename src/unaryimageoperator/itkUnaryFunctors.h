@@ -3,8 +3,10 @@
 
 #include "vnl/vnl_math.h"
 
-enum UnaryFunctorEnum {PLUS, RMINUS, LMINUS, TIMES, LDIVIDE, RDIVIDE, RMODINT, RMODDOUBLE, LMODINT, LMODDOUBLE, NLOG, RPOWER, LPOWER, NEG,
-                       SIGNINT, SIGNDOUBLE, ABSINT, ABSDOUBLE, FLOOR, CEIL, ROUND, LN, LOG10, EXP, SIN, COS, TAN, ARCSIN, ARCCOS, ARCTAN};
+enum UnaryFunctorEnum { PLUS, RMINUS, LMINUS, TIMES, LDIVIDE, RDIVIDE,
+  RMODINT, RMODDOUBLE, LMODINT, LMODDOUBLE, NLOG, RPOWER, LPOWER, NEG,
+  SIGNINT, SIGNDOUBLE, ABSINT, ABSDOUBLE, FLOOR, CEIL, ROUND,
+  LN, LOG10, EXP, SIN, COS, TAN, ARCSIN, ARCCOS, ARCTAN };
 
 namespace itk {
 
@@ -541,8 +543,12 @@ template< class TInputImage, class TOutputImage = TInputImage, class TArgument =
 struct UnaryFunctorFactory
 {
   typename itk::InPlaceImageFilter<TInputImage, TOutputImage>::Pointer
-    GetFilter( UnaryFunctorEnum filterType, std::string & strArgument )
+    GetFilter( const UnaryFunctorEnum filterType, const std::string & strArgument )
   {
+    //
+    typedef typename TInputImage::PixelType   InputPixelType;
+    typedef typename TOutputImage::PixelType  OutputPixelType;
+
     // Convert the argument to the correct type
     std::stringstream ssArgument( strArgument );
     TArgument argument;
@@ -550,226 +556,226 @@ struct UnaryFunctorFactory
 
     if( filterType == PLUS )
     {
-      typedef itk::UnaryFunctorImageFilter<TInputImage, TOutputImage,
-                                            itk::Functor::PLUS< TArgument> >  FilterType;
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::PLUS< InputPixelType, TArgument, OutputPixelType > >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       filter->GetFunctor().SetArgument( argument );
       return filter.GetPointer();
     }
-    else if(filterType == RMINUS)
+    else if( filterType == RMINUS )
     {
-      typedef itk::UnaryFunctorImageFilter<TInputImage, TOutputImage,
-            itk::Functor::RMINUS< TArgument> >  FilterType;
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::RMINUS< InputPixelType, TArgument, OutputPixelType > >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       filter->GetFunctor().SetArgument( argument );
       return filter.GetPointer();
     }
-    else if(filterType == LMINUS)
+    else if( filterType == LMINUS )
     {
-      typedef itk::UnaryFunctorImageFilter<TInputImage, TOutputImage,
-            itk::Functor::LMINUS< TArgument> >  FilterType;
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::LMINUS< InputPixelType, TArgument, OutputPixelType > >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       filter->GetFunctor().SetArgument( argument );
       return filter.GetPointer();
     }
-    else if(filterType == TIMES)
+    else if( filterType == TIMES )
     {
-      typedef itk::UnaryFunctorImageFilter<TInputImage, TOutputImage,
-            itk::Functor::TIMES< TArgument> >  FilterType;
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::TIMES< InputPixelType, TArgument, OutputPixelType > >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       filter->GetFunctor().SetArgument( argument );
       return filter.GetPointer();
     }
-    else if(filterType == LDIVIDE)
+    else if( filterType == LDIVIDE )
     {
-      typedef itk::UnaryFunctorImageFilter<TInputImage, TOutputImage,
-            itk::Functor::LDIVIDE< TArgument> >  FilterType;
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::LDIVIDE< InputPixelType, TArgument, OutputPixelType > >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       filter->GetFunctor().SetArgument( argument );
       return filter.GetPointer();
     }
-    else if(filterType == RDIVIDE)
+    else if( filterType == RDIVIDE )
     {
-      typedef itk::UnaryFunctorImageFilter<TInputImage, TOutputImage,
-            itk::Functor::RDIVIDE< TArgument> >  FilterType;
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::RDIVIDE< InputPixelType, TArgument, OutputPixelType > >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       filter->GetFunctor().SetArgument( argument );
       return filter.GetPointer();
     }
-    else if(filterType == RMODINT)
+    else if( filterType == RMODINT )
     {
-      typedef itk::UnaryFunctorImageFilter<TInputImage, TOutputImage,
-            itk::Functor::RMODINT< TArgument> >  FilterType;
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::RMODINT< InputPixelType, TArgument, OutputPixelType > >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       filter->GetFunctor().SetArgument( argument );
       return filter.GetPointer();
     }
-    else if(filterType == RMODDOUBLE)
+    else if( filterType == RMODDOUBLE )
     {
-      typedef itk::UnaryFunctorImageFilter<TInputImage, TOutputImage,
-            itk::Functor::RMODDOUBLE< TArgument> >  FilterType;
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::RMODDOUBLE< InputPixelType, TArgument, OutputPixelType > >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       filter->GetFunctor().SetArgument( argument );
       return filter.GetPointer();
     }
-    else if(filterType == LMODINT)
+    else if( filterType == LMODINT )
     {
-      typedef itk::UnaryFunctorImageFilter<TInputImage, TOutputImage,
-            itk::Functor::LMODINT< TArgument> >  FilterType;
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::LMODINT< InputPixelType, TArgument, OutputPixelType > >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       filter->GetFunctor().SetArgument( argument );
       return filter.GetPointer();
     }
-    else if(filterType == LMODDOUBLE)
+    else if( filterType == LMODDOUBLE )
     {
-      typedef itk::UnaryFunctorImageFilter<TInputImage, TOutputImage,
-            itk::Functor::LMODDOUBLE< TArgument> >  FilterType;
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::LMODDOUBLE< InputPixelType, TArgument, OutputPixelType > >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       filter->GetFunctor().SetArgument( argument );
       return filter.GetPointer();
     }
-    else if(filterType == NLOG)
+    else if( filterType == NLOG )
     {
-      typedef itk::UnaryFunctorImageFilter<TInputImage, TOutputImage,
-            itk::Functor::NLOG< TArgument> >  FilterType;
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::NLOG< InputPixelType, TArgument, OutputPixelType > >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       filter->GetFunctor().SetArgument( argument );
       return filter.GetPointer();
     }
     /** In the following filters, the argument is always double */
-    else if(filterType == RPOWER)
+    else if( filterType == RPOWER )
     {
-      typedef itk::UnaryFunctorImageFilter<TInputImage, TOutputImage,
-            itk::Functor::RPOWER< double> >  FilterType;
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::RPOWER< InputPixelType, double, OutputPixelType > >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       filter->GetFunctor().SetArgument( argument );
       return filter.GetPointer();
     }
-    else if(filterType == LPOWER)
+    else if( filterType == LPOWER )
     {
-      typedef itk::UnaryFunctorImageFilter<TInputImage, TOutputImage,
-            itk::Functor::LPOWER< double> >  FilterType;
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::LPOWER< InputPixelType, double, OutputPixelType > >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       filter->GetFunctor().SetArgument( argument );
       return filter.GetPointer();
     }
     /** The following filters do not use the argument at all.*/
-    else if(filterType == NEG)
+    else if( filterType == NEG )
     {
-      typedef itk::UnaryFunctorImageFilter<TInputImage, TOutputImage,
-            itk::Functor::NEG< TArgument> >  FilterType;
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::NEG< InputPixelType, TArgument, OutputPixelType > >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
-    else if(filterType == SIGNINT)
+    else if( filterType == SIGNINT )
     {
-      typedef itk::UnaryFunctorImageFilter<TInputImage, TOutputImage,
-            itk::Functor::SIGNINT< TArgument> >  FilterType;
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::SIGNINT< InputPixelType, TArgument, OutputPixelType > >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
-    else if(filterType == SIGNDOUBLE)
+    else if( filterType == SIGNDOUBLE )
     {
-      typedef itk::UnaryFunctorImageFilter<TInputImage, TOutputImage,
-            itk::Functor::SIGNDOUBLE< TArgument> >  FilterType;
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::SIGNDOUBLE< InputPixelType, TArgument, OutputPixelType > >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
-    else if(filterType == ABSINT)
+    else if( filterType == ABSINT )
     {
-      typedef itk::UnaryFunctorImageFilter<TInputImage, TOutputImage,
-            itk::Functor::ABSINT< TArgument> >  FilterType;
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::ABSINT< InputPixelType, TArgument, OutputPixelType > >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
-    else if(filterType == ABSDOUBLE)
+    else if( filterType == ABSDOUBLE )
     {
-      typedef itk::UnaryFunctorImageFilter<TInputImage, TOutputImage,
-            itk::Functor::ABSDOUBLE< TArgument> >  FilterType;
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::ABSDOUBLE< InputPixelType, TArgument, OutputPixelType > >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
-    else if(filterType == FLOOR)
+    else if( filterType == FLOOR )
     {
-      typedef itk::UnaryFunctorImageFilter<TInputImage, TOutputImage,
-            itk::Functor::FLOOR< TArgument> >  FilterType;
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::FLOOR< InputPixelType, TArgument, OutputPixelType > >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
-    else if(filterType == CEIL)
+    else if( filterType == CEIL )
     {
-      typedef itk::UnaryFunctorImageFilter<TInputImage, TOutputImage,
-            itk::Functor::CEIL< TArgument> >  FilterType;
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::CEIL< InputPixelType, TArgument, OutputPixelType > >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
-    else if(filterType == ROUND)
+    else if( filterType == ROUND )
     {
-      typedef itk::UnaryFunctorImageFilter<TInputImage, TOutputImage,
-            itk::Functor::ROUND< TArgument> >  FilterType;
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::ROUND< InputPixelType, TArgument, OutputPixelType > >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
-    else if(filterType == LN)
+    else if( filterType == LN )
     {
-      typedef itk::UnaryFunctorImageFilter<TInputImage, TOutputImage,
-            itk::Functor::LN< TArgument> >  FilterType;
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::LN< InputPixelType, TArgument, OutputPixelType > >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
-    else if(filterType == LOG10)
+    else if( filterType == LOG10 )
     {
-      typedef itk::UnaryFunctorImageFilter<TInputImage, TOutputImage,
-            itk::Functor::LOG10< TArgument> >  FilterType;
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::LOG10< InputPixelType, TArgument, OutputPixelType > >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
-    else if(filterType == EXP)
+    else if( filterType == EXP )
     {
-      typedef itk::UnaryFunctorImageFilter<TInputImage, TOutputImage,
-            itk::Functor::EXP< TArgument> >  FilterType;
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::EXP< InputPixelType, TArgument, OutputPixelType > >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
-    else if(filterType == SIN)
+    else if( filterType == SIN )
     {
-      typedef itk::UnaryFunctorImageFilter<TInputImage, TOutputImage,
-            itk::Functor::SIN< TArgument> >  FilterType;
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::SIN< InputPixelType, TArgument, OutputPixelType > >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
-    else if(filterType == COS)
+    else if( filterType == COS )
     {
-      typedef itk::UnaryFunctorImageFilter<TInputImage, TOutputImage,
-            itk::Functor::COS< TArgument> >  FilterType;
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::COS< InputPixelType, TArgument, OutputPixelType > >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
-    else if(filterType == TAN)
+    else if( filterType == TAN )
     {
-      typedef itk::UnaryFunctorImageFilter<TInputImage, TOutputImage,
-            itk::Functor::TAN< TArgument> >  FilterType;
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::TAN< InputPixelType, TArgument, OutputPixelType > >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
-    else if(filterType == ARCSIN)
+    else if( filterType == ARCSIN )
     {
-      typedef itk::UnaryFunctorImageFilter<TInputImage, TOutputImage,
-            itk::Functor::ARCSIN< TArgument> >  FilterType;
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::ARCSIN< InputPixelType, TArgument, OutputPixelType > >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
-    else if(filterType == ARCCOS)
+    else if( filterType == ARCCOS )
     {
-      typedef itk::UnaryFunctorImageFilter<TInputImage, TOutputImage,
-            itk::Functor::ARCCOS< TArgument> >  FilterType;
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::ARCCOS< InputPixelType, TArgument, OutputPixelType > >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
-    else if(filterType == ARCTAN)
+    else if( filterType == ARCTAN )
     {
-      typedef itk::UnaryFunctorImageFilter<TInputImage, TOutputImage,
-            itk::Functor::ARCTAN< TArgument> >  FilterType;
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::ARCTAN< InputPixelType, TArgument, OutputPixelType > >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }

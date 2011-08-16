@@ -34,26 +34,26 @@ std::string GetHelpString( void )
 {
   std::stringstream  ss;
   ss << "Performs binary operations on two images." << std::endl
-    << "Usage:\npxbinaryimageoperator" << std::endl
-    << "  -in      inputFilenames" << std::endl
-    << "  [-out]   outputFilename, default in1 + ops + arg + in2 + .mhd" << std::endl
-    << "  -ops     binary operator of the following form:" << std::endl
-    << "           {+,-,*,/,^,%}" << std::endl
-    << "           notation:" << std::endl
-    << "             {ADDITION, WEIGHTEDADDITION, MINUS, TIMES,DIVIDE,POWER," << std::endl
-    << "             MAXIMUM, MINIMUM, ABSOLUTEDIFFERENCE, SQUAREDDIFFERENCE," << std::endl
-    << "             BINARYMAGNITUDE, MASK, MASKNEGATED, LOG}" << std::endl
-    << "           notation examples:" << std::endl
-    << "             MINUS = A - B" << std::endl
-    << "             ABSDIFF = |A - B|" << std::endl
-    << "             MIN = min( A, B )" << std::endl
-    << "             MAGNITUDE = sqrt( A * A + B * B )" << std::endl
-    << "  [-arg]   argument, necessary for some ops" << std::endl
-    << "             WEIGHTEDADDITION: 0.0 < weight alpha < 1.0" << std::endl
-    << "             MASK[NEG]: background value, e.g. 0." << std::endl
-    << "  [-z]     compression flag; if provided, the output image is compressed" << std::endl
-    << "  [-opct]  output component type, by default the largest of the two input images" << std::endl
-    << "           choose one of: {[unsigned_]{char,short,int,long},float,double}" << std::endl
+    << "Usage:\npxbinaryimageoperator\n"
+    << "  -in      inputFilenames\n"
+    << "  [-out]   outputFilename, default in1 + ops + arg + in2 + .mhd\n"
+    << "  -ops     binary operator of the following form:\n"
+    << "           {+,-,*,/,^,%}\n"
+    << "           notation:\n"
+    << "             {ADDITION, WEIGHTEDADDITION, MINUS, TIMES,DIVIDE,POWER,\n"
+    << "             MAXIMUM, MINIMUM, ABSOLUTEDIFFERENCE, SQUAREDDIFFERENCE,\n"
+    << "             BINARYMAGNITUDE, MASK, MASKNEGATED, LOG}\n"
+    << "           notation examples:\n"
+    << "             MINUS = A - B\n"
+    << "             ABSDIFF = |A - B|\n"
+    << "             MIN = min( A, B )\n"
+    << "             MAGNITUDE = sqrt( A * A + B * B )\n"
+    << "  [-arg]   argument, necessary for some ops\n"
+    << "             WEIGHTEDADDITION: 0.0 < weight alpha < 1.0\n"
+    << "             MASK[NEG]: background value, e.g. 0.\n"
+    << "  [-z]     compression flag; if provided, the output image is compressed\n"
+    << "  [-opct]  output component type, by default the largest of the two input images\n"
+    << "           choose one of: {[unsigned_]{char,short,int,long},float,double}\n"
     << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
   return ss.str();
 

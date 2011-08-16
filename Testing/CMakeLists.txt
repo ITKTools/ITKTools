@@ -451,6 +451,13 @@ itktools_add_test( logicalimageoperator "OR" png
 #          PROPERTIES DEPENDS ThresholdImageOutput)
 
 ######### UnaryImageOperator #########
+itktools_add_test( unaryimageoperator "RDIVIDE" png
+  "-in;${DataDir}/WhiteStripe4.png;-ops;RDIVIDE;-arg;2;-z"
+  "unaryimageoperator_RDIVIDE.png" )
+itktools_add_test( unaryimageoperator "SIN" mhd
+  "-in;${DataDir}/brain_pd.png;-ops;SIN;-opct;float"
+  "unaryimageoperator_SIN.mha" )
+
 # add_test(NAME UnaryImageOperatorOutput
 #          COMMAND ${ExeDir}/pxunaryimageoperator )
 # add_test(NAME UnaryImageOperatorTest

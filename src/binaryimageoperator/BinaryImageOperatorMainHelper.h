@@ -27,7 +27,7 @@
 
 
 /**
- * ******************* DetermineImageProperties *******************
+ * ******************* DetermineComponentTypes *******************
  */
 
 int DetermineComponentTypes(
@@ -141,7 +141,7 @@ int DetermineComponentTypes(
   /** Return a value. */
   return 0;
 
-} // end DetermineImageProperties()
+} // end DetermineComponentTypes()
 
 
 /**

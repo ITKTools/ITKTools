@@ -23,10 +23,6 @@
 #include <string>
 #include <itksys/SystemTools.hxx>
 
-#include "ITKToolsBase.h"
-
-
-
 
 /**
  * ******************* CheckOps *******************
@@ -65,7 +61,6 @@ int CheckOps( std::string & ops, bool isInteger )
   operatorMap["ARCSIN"]   = false;
   operatorMap["ARCCOS"]   = false;
   operatorMap["ARCTAN"]   = false;
-
   operatorMap["EQUAL"]    = false;
 
   /** Append with INT or DOUBLE if necessary. */
@@ -93,7 +88,7 @@ int CheckOps( std::string & ops, bool isInteger )
  * ******************* OperatorNeedsArgument *******************
  */
 
-bool OperatorNeedsArgument( std::string & ops )
+bool OperatorNeedsArgument( const std::string & ops )
 {
   /** A map to store if OperatorNeedsArgument. */
   std::map< std::string, bool > operatorMap;
@@ -125,7 +120,6 @@ bool OperatorNeedsArgument( std::string & ops )
   operatorMap["ARCSIN"]  = false;
   operatorMap["ARCCOS"]  = false;
   operatorMap["ARCTAN"]  = false;
-
   operatorMap["EQUAL"]   = true;
 
   return operatorMap[ ops ];
@@ -173,7 +167,6 @@ void CreateOutputFileName( const std::string & inputFileName,
   operatorMap["ARCSIN"] = PairPairType( true, PairType( false, true ) );
   operatorMap["ARCCOS"] = PairPairType( true, PairType( false, true ) );
   operatorMap["ARCTAN"] = PairPairType( true, PairType( false, true ) );
-
   operatorMap["EQUAL"]  = PairPairType( false, PairType( true, false ) );
 
   /** Get parts of file name. */
