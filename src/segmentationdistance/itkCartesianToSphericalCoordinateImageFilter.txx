@@ -126,7 +126,7 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
   /** Set the output origin to zero. Later we may extend this to
    * only generate a part of the r,theta,phi space */
   this->m_OutputOrigin.Fill(0.0);
-  outputPtr->SetOrigin( m_OutputOrigin );
+  outputPtr->SetOrigin( this->m_OutputOrigin );
 
   /** Set output size and index; size was given by the user */
   this->m_OutputStartIndex.Fill(0);
@@ -179,7 +179,7 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
 template <class TInputImage, class TOutputImage>
 void
 CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
-::GenerateData(void)
+::GenerateData( void )
 {
   InputImageConstPointer inputImage = this->GetInput();
   OutputImagePointer outputImage = this->GetOutput();
@@ -519,8 +519,8 @@ PointType &       randomPoint)
   {
     randomPoint[ i ] = static_cast<CoordRepType>(
       this->m_RandomGenerator->GetUniformVariate(
-      inputPoint[ i ] - 0.5* m_InputSpacing[i],
-      inputPoint[ i ] + 0.5* m_InputSpacing[i] ) );
+      inputPoint[ i ] - 0.5* this->m_InputSpacing[i],
+      inputPoint[ i ] + 0.5* this->m_InputSpacing[i] ) );
   }
 } // end GenerateRandomCoordinate
 

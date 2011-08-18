@@ -50,7 +50,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     typedef TComponentType                        PixelType;
     typedef itk::Image<PixelType, VDimension>     ImageType;
@@ -91,7 +91,7 @@ public:
       /** read the dimension from the commandline.*/
       for (unsigned int i=0; i< VDimension ; i++)
       {
-        sizes[i] = m_BoxSize[i];
+        sizes[i] = this->m_BoxSize[i];
       }
 
       /** make some assumptions */
@@ -102,7 +102,7 @@ public:
     {
       /** Take dimension, origin and spacing from the inputfile.*/
       ReaderPointer reader = ReaderType::New();
-      reader->SetFileName( m_InputFileName.c_str() );
+      reader->SetFileName( this->m_InputFileName.c_str() );
       try
       {
         reader->Update();
@@ -130,8 +130,8 @@ public:
     
     for(unsigned int i = 0; i < VDimension; ++i)
     {
-      indexA[i] = m_IndexA[i];
-      indexB[i] = m_IndexB[i];
+      indexA[i] = this->m_IndexA[i];
+      indexB[i] = this->m_IndexB[i];
     }
     tempImage->TransformIndexToPhysicalPoint(indexA, pointA);
     tempImage->TransformIndexToPhysicalPoint(indexB, pointB);
@@ -159,7 +159,7 @@ public:
     boxGenerator->SetInput(tempImage);
 
     writer->SetInput( boxGenerator->GetOutput() );
-    writer->SetFileName( m_OutputFileName.c_str() );
+    writer->SetFileName( this->m_OutputFileName.c_str() );
 
     std::cout
       << "Saving image to disk as \""

@@ -85,7 +85,7 @@ public:
   itkSetObjectMacro( MaskImage, MaskImageType );
 
   /** Compute the Otsu's threshold for the input image. */
-  void Compute(void);
+  void Compute( void );
 
   /** Return the Otsu's threshold value. */
   itkGetConstMacro(Threshold,PixelType);

@@ -62,11 +62,11 @@ class ITKToolsResizeImageBase : public itktools::ITKToolsBase
 public:
   ITKToolsResizeImageBase()
   {
-    m_InputFileName = "";
-    m_OutputFileName = "";
-    //std::vector<double> m_FactorOrSpacing;
-    m_IsFactor = false;
-    m_InterpolationOrder = 0;
+    this->m_InputFileName = "";
+    this->m_OutputFileName = "";
+    //std::vector<double> this->m_FactorOrSpacing;
+    this->m_IsFactor = false;
+    this->m_InterpolationOrder = 0;
   };
   ~ITKToolsResizeImageBase(){};
 
@@ -99,7 +99,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     /** Typedefs. */
     typedef itk::Image<TComponentType, VDimension>      InputImageType;
@@ -127,7 +127,7 @@ public:
       = BSplineInterpolatorType::New();
 
     /** Read in the inputImage. */
-    reader->SetFileName( m_InputFileName.c_str() );
+    reader->SetFileName( this->m_InputFileName.c_str() );
     inputImage = reader->GetOutput();
     inputImage->Update();
 
@@ -136,20 +136,20 @@ public:
     SizeType    inputSize     = inputImage->GetLargestPossibleRegion().GetSize();
     SpacingType outputSpacing = inputSpacing;
     SizeType    outputSize    = inputSize;
-    if ( m_IsFactor )
+    if ( this->m_IsFactor )
     {
       for ( unsigned int i = 0; i < Dimension; i++ )
       {
-	outputSpacing[ i ] /= m_FactorOrSpacing[ i ];
-	outputSize[ i ] = static_cast<unsigned int>( outputSize[ i ] * m_FactorOrSpacing[ i ] );
+	outputSpacing[ i ] /= this->m_FactorOrSpacing[ i ];
+	outputSize[ i ] = static_cast<unsigned int>( outputSize[ i ] * this->m_FactorOrSpacing[ i ] );
       }
     }
     else
     {
       for ( unsigned int i = 0; i < Dimension; i++ )
       {
-	outputSpacing[ i ] = m_FactorOrSpacing[ i ];
-	outputSize[ i ] = static_cast<unsigned int>( inputSpacing[ i ] * inputSize[ i ] / m_FactorOrSpacing[ i ] );
+	outputSpacing[ i ] = this->m_FactorOrSpacing[ i ];
+	outputSize[ i ] = static_cast<unsigned int>( inputSpacing[ i ] * inputSize[ i ] / this->m_FactorOrSpacing[ i ] );
       }
     }
 
@@ -162,18 +162,18 @@ public:
     resampler->SetOutputOrigin( inputImage->GetOrigin() );
     /* The interpolator: the resampler has by default a LinearInterpolateImageFunction
     * as interpolator. */
-    if ( m_InterpolationOrder == 0 )
+    if ( this->m_InterpolationOrder == 0 )
     {
       resampler->SetInterpolator( nnInterpolator );
     }
-    else if ( m_InterpolationOrder > 1 )
+    else if ( this->m_InterpolationOrder > 1 )
     {
-      bsInterpolator->SetSplineOrder( m_InterpolationOrder );
+      bsInterpolator->SetSplineOrder( this->m_InterpolationOrder );
       resampler->SetInterpolator( bsInterpolator );
     }
 
     /** Write the output image. */
-    writer->SetFileName( m_OutputFileName.c_str() );
+    writer->SetFileName( this->m_OutputFileName.c_str() );
     writer->SetInput( resampler->GetOutput() );
     writer->Update();
   }
@@ -198,11 +198,11 @@ int main( int argc, char **argv )
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }
@@ -289,7 +289,7 @@ int main( int argc, char **argv )
  
   /** \todo some progs allow user to override the pixel type, 
    * so we need a method to convert string to EnumComponentType */
-  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileName);
+  itktools::ComponentType componentType = itktools::GetImageComponentType( inputFileName );
   
   std::cout << "Detected component type: " << 
     componentType << std::endl;

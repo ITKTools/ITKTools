@@ -205,9 +205,9 @@ HistogramEqualizationImageFilter<TImage>
 {
   Superclass::PrintSelf(os,indent);
 
-  os << indent << "NumberOfBins: "  << m_NumberOfBins << std::endl;
-  os << indent << "Minimum intensity: "  << m_Min << std::endl;
-  os << indent << "Maximum intensity: "  << m_Max << std::endl;
+  os << indent << "NumberOfBins: "  << this->m_NumberOfBins << std::endl;
+  os << indent << "Minimum intensity: "  << this->m_Min << std::endl;
+  os << indent << "Maximum intensity: "  << this->m_Max << std::endl;
 
 }
 

@@ -59,8 +59,8 @@ class ITKToolsHistogramEqualizeImageBase : public itktools::ITKToolsBase
 public:
   ITKToolsHistogramEqualizeImageBase()
   {
-    m_InputFileName = "";
-    m_OutputFileName = "";
+    this->m_InputFileName = "";
+    this->m_OutputFileName = "";
   };
   ~ITKToolsHistogramEqualizeImageBase(){};
 
@@ -89,7 +89,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     typedef itk::Image<TComponentType, VDimension> ImageType;
     typedef typename ImageType::Pointer           ImagePointer;
@@ -110,7 +110,7 @@ public:
 
     /** Try to read input image */
     ReaderPointer reader = ReaderType::New();
-    reader->SetFileName( m_InputFileName.c_str() );
+    reader->SetFileName( this->m_InputFileName.c_str() );
     try
     {
       reader->Update();
@@ -126,12 +126,12 @@ public:
 
     enhancer->SetInput( reader->GetOutput() );
     writer->SetInput( enhancer->GetOutput() );
-    writer->SetFileName(m_OutputFileName.c_str());
+    writer->SetFileName( this->m_OutputFileName.c_str());
 
     /** do it. */
     std::cout
       << "Saving image to disk as \""
-      << m_OutputFileName
+      << this->m_OutputFileName
       << "\""
       << std::endl;
     try
@@ -160,11 +160,11 @@ int main(int argc, char** argv)
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }
@@ -187,7 +187,7 @@ int main(int argc, char** argv)
   
   std::string pixelTypeString("");
   bool retpt = parser->GetCommandLineArgument("-pt", pixelTypeString);
-  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileName);
+  itktools::ComponentType componentType = itktools::GetImageComponentType( inputFileName );
   if(retpt)
   {
     componentType = itk::ImageIOBase::GetComponentTypeFromString( pixelTypeString );

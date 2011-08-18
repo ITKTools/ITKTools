@@ -10,8 +10,8 @@ template <unsigned int VImageDimension,typename TInput>
 SimpleBoxSpatialFunction<VImageDimension,TInput>
 ::SimpleBoxSpatialFunction()
 {
-  m_PointA.Fill(0.0);
-  m_PointB.Fill(0.0);
+  this->m_PointA.Fill(0.0);
+  this->m_PointB.Fill(0.0);
 }
 
 template <unsigned int VImageDimension,typename TInput>
@@ -31,8 +31,8 @@ SimpleBoxSpatialFunction<VImageDimension,TInput>
   for(unsigned int i = 0; i < VImageDimension; i++)
   {
     /** Check if the i'th coordinate of position lies within the two points. */
-    acc &= (   ( (position[i] > m_PointA[i]) && (position[i] < m_PointB[i]) )
-      || ( (position[i] > m_PointB[i]) && (position[i] < m_PointA[i]) )   );
+    acc &= (   ( (position[i] > this->m_PointA[i]) && (position[i] < this->m_PointB[i]) )
+      || ( (position[i] > this->m_PointB[i]) && (position[i] < this->m_PointA[i]) )   );
   }
 
   if (acc)
@@ -56,14 +56,14 @@ SimpleBoxSpatialFunction<VImageDimension,TInput>
   os << indent << "PointA: [";
   for (i=0; i < VImageDimension - 1; i++)
     {
-    os << m_PointA[i] << ", ";
+    os << this->m_PointA[i] << ", ";
     }
   os << "]" << std::endl;
 
   os << indent << "PointB: [";
   for (i=0; i < VImageDimension - 1; i++)
     {
-    os << m_PointB[i] << ", ";
+    os << this->m_PointB[i] << ", ";
     }
   os << "]" << std::endl;
 

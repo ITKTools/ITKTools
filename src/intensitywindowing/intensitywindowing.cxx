@@ -60,9 +60,9 @@ class ITKToolsIntensityWindowingBase : public itktools::ITKToolsBase
 public:
   ITKToolsIntensityWindowingBase()
   {
-    m_InputFileName = "";
-    m_OutputFileName = "";
-    //std::vector<double> m_Window;
+    this->m_InputFileName = "";
+    this->m_OutputFileName = "";
+    //std::vector<double> this->m_Window;
   };
   ~ITKToolsIntensityWindowingBase(){};
 
@@ -93,7 +93,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     /** Typedefs. */
     typedef itk::Image<TComponentType, VImageDimension>     InputImageType;
@@ -109,10 +109,10 @@ public:
     typename WriterType::Pointer writer = WriterType::New();
 
     /** Setup the pipeline. */
-    reader->SetFileName( m_InputFileName.c_str() );
-    writer->SetFileName( m_OutputFileName.c_str() );
-    InputPixelType min = static_cast<InputPixelType>( m_Window[ 0 ] );
-    InputPixelType max = static_cast<InputPixelType>( m_Window[ 1 ] );
+    reader->SetFileName( this->m_InputFileName.c_str() );
+    writer->SetFileName( this->m_OutputFileName.c_str() );
+    InputPixelType min = static_cast<InputPixelType>( this->m_Window[ 0 ] );
+    InputPixelType max = static_cast<InputPixelType>( this->m_Window[ 1 ] );
     windowfilter->SetWindowMinimum( min );
     windowfilter->SetWindowMaximum( max );
     windowfilter->SetOutputMinimum( min );
@@ -139,11 +139,11 @@ int main( int argc, char **argv )
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }
@@ -225,7 +225,7 @@ int main( int argc, char **argv )
   unsigned int imageDimension = 0;
   itktools::GetImageDimension(inputFileName, imageDimension);
 
-  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileName);
+  itktools::ComponentType componentType = itktools::GetImageComponentType( inputFileName );
   
   try
   {    

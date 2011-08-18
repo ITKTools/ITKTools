@@ -76,7 +76,7 @@ ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
   // Next, find the minimum radius that encloses all the offsets.
   unsigned int minRadius = 0;
   typename OffsetVector::ConstIterator offsets;
-  for ( offsets = m_Offsets->Begin(); offsets != m_Offsets->End(); offsets++ )
+  for ( offsets = this->m_Offsets->Begin(); offsets != this->m_Offsets->End(); offsets++ )
   {
     for ( unsigned int i = 0; i < offsets.Value().GetOffsetDimension(); i++ )
     {
@@ -124,7 +124,7 @@ ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
   // co-occurrence pair to the histogram
   typedef ConstNeighborhoodIterator<ImageType> NeighborhoodIteratorType;
   NeighborhoodIteratorType neighborIt;
-  neighborIt = NeighborhoodIteratorType( radius, m_Input, region );
+  neighborIt = NeighborhoodIteratorType( radius, this->m_Input, region );
 
   OffsetType zeroOffset; zeroOffset.Fill( 0 );
   MeasurementVectorType cooccur;
@@ -140,7 +140,7 @@ ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
     }
 
     typename OffsetVector::ConstIterator offsets;
-    for ( offsets = m_Offsets->Begin(); offsets != m_Offsets->End(); offsets++ )
+    for ( offsets = this->m_Offsets->Begin(); offsets != this->m_Offsets->End(); offsets++ )
     {
       bool pixelInBounds;
       const PixelType pixelIntensity
@@ -187,7 +187,7 @@ ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
 
   /** \todo: this won't work with the new statistics framework, since
   * frequency are always integer then... */
-  for ( hit = m_Output->Begin(); hit != m_Output->End(); ++hit )
+  for ( hit = this->m_Output->Begin(); hit != this->m_Output->End(); ++hit )
   {
     hit.SetFrequency( hit.GetFrequency() / totalFrequency );
   }

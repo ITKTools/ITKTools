@@ -177,7 +177,7 @@ public:
 
     /** Write image. */
     typename ImageWriterType::Pointer writer = ImageWriterType::New();
-    writer->SetFileName( m_OutputFileName.c_str() );
+    writer->SetFileName( this->m_OutputFileName.c_str() );
     writer->SetInput( image );
     writer->Update();
 

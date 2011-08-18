@@ -111,15 +111,15 @@ public:
   /** Is the transform in world or voxel units - default is world */
   void SetUseImageSpacing(bool uis)
   {
-    m_Erode->SetUseImageSpacing(uis);
-    m_Dilate->SetUseImageSpacing(uis);
+    this->m_Erode->SetUseImageSpacing(uis);
+    this->m_Dilate->SetUseImageSpacing(uis);
     this->Modified();
   }
 
 
   const bool GetUseImageSpacing()
   {
-    return m_Erode->GetUseImageSpacing();
+    return this->m_Erode->GetUseImageSpacing();
   }
 
 

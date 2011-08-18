@@ -28,9 +28,9 @@ template < class TImage >
 ScalarImageToHistogramGenerator2< TImage >
 ::ScalarImageToHistogramGenerator2()
 {
-  m_ImageToListAdaptor = AdaptorType::New();
-  m_HistogramGenerator = GeneratorType::New();
-  m_HistogramGenerator->SetInput( m_ImageToListAdaptor );
+  this->m_ImageToListAdaptor = AdaptorType::New();
+  this->m_HistogramGenerator = GeneratorType::New();
+  this->m_HistogramGenerator->SetInput( this->m_ImageToListAdaptor );
 }
 
 template < class TImage >
@@ -38,7 +38,7 @@ void
 ScalarImageToHistogramGenerator2< TImage >
 ::SetInput( const ImageType * image )
 {
-  m_ImageToListAdaptor->SetImage( image );
+  this->m_ImageToListAdaptor->SetImage( image );
 }
 
 
@@ -47,7 +47,7 @@ const typename ScalarImageToHistogramGenerator2< TImage >::HistogramType *
 ScalarImageToHistogramGenerator2< TImage >
 ::GetOutput() const
 {
-  return m_HistogramGenerator->GetOutput();
+  return this->m_HistogramGenerator->GetOutput();
 }
 
 template < class TImage >
@@ -55,7 +55,7 @@ void
 ScalarImageToHistogramGenerator2< TImage >
 ::Compute()
 {
-  m_HistogramGenerator->Update();
+  this->m_HistogramGenerator->Update();
 }
 
 template < class TImage >
@@ -66,7 +66,7 @@ ScalarImageToHistogramGenerator2< TImage >
   typename HistogramType::SizeType size;
   size.SetSize(1);
   size.Fill( numberOfBins );
-  m_HistogramGenerator->SetHistogramSize( size );
+  this->m_HistogramGenerator->SetHistogramSize( size );
 }
 
 
@@ -78,7 +78,7 @@ ScalarImageToHistogramGenerator2< TImage >
   typedef typename GeneratorType::HistogramMeasurementVectorType     MeasurementVectorType;
   MeasurementVectorType minVector(1);
   minVector[0] = minimumValue;
-  m_HistogramGenerator->SetHistogramBinMinimum( minVector );
+  this->m_HistogramGenerator->SetHistogramBinMinimum( minVector );
 }
 
 
@@ -90,7 +90,7 @@ ScalarImageToHistogramGenerator2< TImage >
   typedef typename GeneratorType::HistogramMeasurementVectorType     MeasurementVectorType;
   MeasurementVectorType maxVector(1);
   maxVector[0] = maximumValue;
-  m_HistogramGenerator->SetHistogramBinMaximum( maxVector );
+  this->m_HistogramGenerator->SetHistogramBinMaximum( maxVector );
 }
 
 template < class TImage >
@@ -98,7 +98,7 @@ void
 ScalarImageToHistogramGenerator2< TImage >
 ::SetMarginalScale( double marginalScale )
 {
-  m_HistogramGenerator->SetMarginalScale( marginalScale );
+  this->m_HistogramGenerator->SetMarginalScale( marginalScale );
 }
 
 template < class TImage >
@@ -106,7 +106,7 @@ void
 ScalarImageToHistogramGenerator2< TImage >
 ::SetAutoMinMax(bool autoMinMax)
 {
-  m_HistogramGenerator->SetAutoMinimumMaximum(autoMinMax);
+  this->m_HistogramGenerator->SetAutoMinimumMaximum(autoMinMax);
 }
 
 template < class TImage >
@@ -115,8 +115,8 @@ ScalarImageToHistogramGenerator2< TImage >
 ::PrintSelf(std::ostream& os, Indent indent) const
 {
   Superclass::PrintSelf(os,indent);
-  os << "ImageToListSample adaptor = " << m_ImageToListAdaptor << std::endl;
-  os << "HistogramGenerator = " << m_HistogramGenerator << std::endl;
+  os << "ImageToListSample adaptor = " << this->m_ImageToListAdaptor << std::endl;
+  os << "HistogramGenerator = " << this->m_HistogramGenerator << std::endl;
 }
 
 } // end of namespace Statistics

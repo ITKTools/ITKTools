@@ -60,9 +60,9 @@ class ITKToolsPCABase : public itktools::ITKToolsBase
 public:
   ITKToolsPCABase()
   {
-    //std::vector< std::string > m_InputFileNames;
-    m_OutputDirectory = "";
-    m_NumberOfPCs = 0;
+    //std::vector< std::string > this->m_InputFileNames;
+    this->m_OutputDirectory = "";
+    this->m_NumberOfPCs = 0;
   };
   ~ITKToolsPCABase(){};
 
@@ -93,7 +93,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     /** Typedefs. */
     typedef itk::Image< TComponentType, VDimension >      OutputImageType;
@@ -108,12 +108,12 @@ public:
     typedef typename WriterType::Pointer                  WriterPointer;
 
     /** Get some sizes. */
-    unsigned int noInputs = m_InputFileNames.size();
+    unsigned int noInputs = this->m_InputFileNames.size();
 
     /** Create the PCA estimator. */
     typename PCAEstimatorType::Pointer pcaEstimator = PCAEstimatorType::New();
     pcaEstimator->SetNumberOfFeatureImages( noInputs );
-    pcaEstimator->SetNumberOfPrincipalComponentsRequired( m_NumberOfPCs );
+    pcaEstimator->SetNumberOfPrincipalComponentsRequired( this->m_NumberOfPCs );
 
     /** For all inputs... */
     std::vector<ReaderPointer> readers( noInputs );
@@ -121,7 +121,7 @@ public:
     {
       /** Read in the input images. */
       readers[ i ] = ReaderType::New();
-      readers[ i ]->SetFileName( m_InputFileNames[ i ] );
+      readers[ i ]->SetFileName( this->m_InputFileNames[ i ] );
       readers[ i ]->Update();
 
       /** Setup PCA estimator. */
@@ -156,7 +156,7 @@ public:
     {
       /** Create output filename. */
       std::ostringstream makeFileName( "" );
-      makeFileName << m_OutputDirectory << "pc" << i << ".mhd";
+      makeFileName << this->m_OutputDirectory << "pc" << i << ".mhd";
 
       /** Write principal components. */
       writers[ i ] = WriterType::New();
@@ -191,11 +191,11 @@ int main( int argc, char **argv )
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }

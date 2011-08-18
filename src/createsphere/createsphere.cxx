@@ -20,13 +20,10 @@
  
  \verbinclude createsphere.help
  */
+
 #include "itkCommandLineArgumentParser.h"
 #include "ITKToolsHelpers.h"
-#include "ITKToolsBase.h"
-
-#include "itkSphereSpatialFunction.h"
-#include "itkImageRegionIterator.h"
-#include "itkImageFileWriter.h"
+#include "createsphere.h"
 
 
 /**
@@ -50,113 +47,6 @@ std::string GetHelpString( void )
 } // end GetHelpString()
 
 
-/** CreateSphere */
-
-class ITKToolsCreateSphereBase : public itktools::ITKToolsBase
-{ 
-public:
-  ITKToolsCreateSphereBase()
-  {
-    m_OutputFileName = "";
-    //std::vector<unsigned int> m_Size;
-    //std::vector<double> m_Spacing;
-    //std::vector<double> m_Center;
-    m_Radius = 0.0f;
-  };
-  ~ITKToolsCreateSphereBase(){};
-
-  /** Input parameters */
-  std::string m_OutputFileName;
-  std::vector<unsigned int> m_Size;
-  std::vector<double> m_Spacing;
-  std::vector<double> m_Center;
-  double m_Radius;
-    
-}; // end CreateSphereBase
-
-
-template< class TComponentType, unsigned int VDimension >
-class ITKToolsCreateSphere : public ITKToolsCreateSphereBase
-{
-public:
-  typedef ITKToolsCreateSphere Self;
-
-  ITKToolsCreateSphere(){};
-  ~ITKToolsCreateSphere(){};
-
-  static Self * New( itktools::ComponentType componentType, unsigned int dim )
-  {
-    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
-  void Run(void)
-  {
-    /** Typedefs. */
-    typedef itk::Image<TComponentType, VDimension>  ImageType;
-    typedef itk::ImageRegionIterator< ImageType >   IteratorType;
-    typedef itk::SphereSpatialFunction< VDimension > SphereSpatialFunctionType;
-    typedef typename SphereSpatialFunctionType::InputType    InputType;
-    typedef itk::ImageFileWriter< ImageType >       ImageWriterType;
-
-    typedef typename ImageType::RegionType      RegionType;
-    typedef typename RegionType::SizeType     SizeType;
-    typedef typename RegionType::SizeValueType  SizeValueType;
-    typedef typename ImageType::PointType     PointType;
-    typedef typename ImageType::IndexType     IndexType;
-    typedef typename ImageType::SpacingType   SpacingType;
-
-    /** Parse the arguments. */
-    SizeType    Size;
-    SpacingType Spacing;
-    InputType   Center;
-    for ( unsigned int i = 0; i < VDimension; i++ )
-    {
-      Size[ i ] = static_cast<SizeValueType>( m_Size[ i ] );
-      Spacing[ i ] = m_Spacing[ i ];
-      Center[ i ] = static_cast<double>( m_Center[ i ] );
-    }
-
-    /** Create image. */
-    RegionType region;
-    region.SetSize( Size );
-    typename ImageType::Pointer image = ImageType::New();
-    image->SetRegions( region );
-    image->SetSpacing( Spacing );
-    image->Allocate();
-
-    /** Create and initialize ellipsoid. */
-    typename SphereSpatialFunctionType::Pointer sphere = SphereSpatialFunctionType::New();
-    sphere->SetCenter( Center );
-    sphere->SetRadius( m_Radius );
-
-    /** Create iterator, index and point. */
-    IteratorType it( image, region );
-    it.GoToBegin();
-    PointType point;
-    IndexType index;
-
-    /** Walk over the image. */
-    while ( !it.IsAtEnd() )
-    {
-      index = it.GetIndex();
-      image->TransformIndexToPhysicalPoint( index, point );
-      it.Set( sphere->Evaluate( point ) );
-      ++it;
-    }
-
-    /** Write image. */
-    typename ImageWriterType::Pointer writer = ImageWriterType::New();
-    writer->SetFileName( m_OutputFileName.c_str() );
-    writer->SetInput( image );
-    writer->Update();
-  }
-
-}; // end CreateSphere
-
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char *argv[] )
@@ -173,11 +63,11 @@ int main( int argc, char *argv[] )
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }

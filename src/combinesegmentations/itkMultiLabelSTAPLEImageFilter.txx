@@ -160,7 +160,7 @@ namespace itk
     {
       if ( this->m_PriorProbabilities.GetSize() < this->m_TotalLabelCount )
       {
-        itkExceptionMacro ("m_PriorProbabilities array has wrong size " << m_PriorProbabilities << "; should be at least " << 1+this->m_TotalLabelCount );
+        itkExceptionMacro ("m_PriorProbabilities array has wrong size " << this->m_PriorProbabilities << "; should be at least " << 1+this->m_TotalLabelCount );
       }
     }
     else

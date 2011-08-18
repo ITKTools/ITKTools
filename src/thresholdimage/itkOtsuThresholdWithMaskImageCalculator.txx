@@ -34,11 +34,11 @@ template<class TInputImage>
 OtsuThresholdWithMaskImageCalculator<TInputImage>
 ::OtsuThresholdWithMaskImageCalculator()
 {
-  m_Image = NULL;
-  m_MaskImage = NULL;
-  m_Threshold = NumericTraits<PixelType>::Zero;
-  m_NumberOfHistogramBins = 128;
-  m_RegionSetByUser = false;
+  this->m_Image = NULL;
+  this->m_MaskImage = NULL;
+  this->m_Threshold = NumericTraits<PixelType>::Zero;
+  this->m_NumberOfHistogramBins = 128;
+  this->m_RegionSetByUser = false;
 }
 
 
@@ -48,29 +48,29 @@ OtsuThresholdWithMaskImageCalculator<TInputImage>
 template<class TInputImage>
 void
 OtsuThresholdWithMaskImageCalculator<TInputImage>
-::Compute(void)
+::Compute( void )
 {
   unsigned int j;
 
   if ( !m_Image ) { return; }
   if( !m_RegionSetByUser )
   {
-    m_Region = m_Image->GetRequestedRegion();
+    this->m_Region = this->m_Image->GetRequestedRegion();
   }
 
-  double totalPixels = (double) m_Region.GetNumberOfPixels();
+  double totalPixels = (double) this->m_Region.GetNumberOfPixels();
   if ( totalPixels == 0 ) { return; }
   totalPixels = 0.0;
 
   typedef ImageRegionConstIteratorWithIndex<ImageType> IteratorType;
-  IteratorType iter( m_Image, m_Region );
+  IteratorType iter( this->m_Image, this->m_Region );
   iter.GoToBegin();
 
   typedef ImageRegionConstIterator<MaskImageType> MaskIteratorType;
   MaskIteratorType itMask;
-  if ( m_MaskImage )
+  if ( this->m_MaskImage )
   {
-    itMask = MaskIteratorType( m_MaskImage, m_Region );
+    itMask = MaskIteratorType( this->m_MaskImage, this->m_Region );
     itMask.GoToBegin();
   }
 
@@ -79,7 +79,7 @@ OtsuThresholdWithMaskImageCalculator<TInputImage>
   PixelType imageMax = NumericTraits<PixelType>::NonpositiveMin();
   while ( !iter.IsAtEnd() )
   {
-    if ( m_MaskImage && itMask.Value() == 0 )
+    if ( this->m_MaskImage && itMask.Value() == 0 )
     {
       ++iter; ++itMask;
       continue;
@@ -90,31 +90,31 @@ OtsuThresholdWithMaskImageCalculator<TInputImage>
     imageMax = imageMax < current ? current : imageMax;
 
     ++iter;
-    if ( m_MaskImage ) ++itMask;
+    if ( this->m_MaskImage ) ++itMask;
   }
 
   if ( imageMin >= imageMax )
   {
-    m_Threshold = imageMin;
+    this->m_Threshold = imageMin;
     return;
   }
 
   // create a histogram
   std::vector<double> relativeFrequency;
-  relativeFrequency.resize( m_NumberOfHistogramBins );
-  for ( j = 0; j < m_NumberOfHistogramBins; j++ )
+  relativeFrequency.resize( this->m_NumberOfHistogramBins );
+  for ( j = 0; j < this->m_NumberOfHistogramBins; j++ )
     {
     relativeFrequency[j] = 0.0;
     }
 
-  double binMultiplier = (double) m_NumberOfHistogramBins /
+  double binMultiplier = (double) this->m_NumberOfHistogramBins /
     (double) ( imageMax - imageMin );
 
   iter.GoToBegin();
-  if ( m_MaskImage ) itMask.GoToBegin();
+  if ( this->m_MaskImage ) itMask.GoToBegin();
   while ( !iter.IsAtEnd() )
   {
-    if ( m_MaskImage && itMask.Value() == 0 )
+    if ( this->m_MaskImage && itMask.Value() == 0 )
     {
       ++iter; ++itMask;
       continue;
@@ -130,7 +130,7 @@ OtsuThresholdWithMaskImageCalculator<TInputImage>
     else
       {
       binNumber = (unsigned int) vcl_ceil((value - imageMin) * binMultiplier ) - 1;
-      if ( binNumber == m_NumberOfHistogramBins ) // in case of rounding errors
+      if ( binNumber == this->m_NumberOfHistogramBins ) // in case of rounding errors
         {
         binNumber -= 1;
         }
@@ -140,12 +140,12 @@ OtsuThresholdWithMaskImageCalculator<TInputImage>
     totalPixels += 1.0;
 
     ++iter;
-    if ( m_MaskImage ) ++itMask;
+    if ( this->m_MaskImage ) ++itMask;
   }
 
   // normalize the frequencies
   double totalMean = 0.0;
-  for ( j = 0; j < m_NumberOfHistogramBins; j++ )
+  for ( j = 0; j < this->m_NumberOfHistogramBins; j++ )
     {
     relativeFrequency[j] /= totalPixels;
     totalMean += (j+1) * relativeFrequency[j];
@@ -165,7 +165,7 @@ OtsuThresholdWithMaskImageCalculator<TInputImage>
   double freqLeftOld = freqLeft;
   double meanLeftOld = meanLeft;
 
-  for ( j = 1; j < m_NumberOfHistogramBins; j++ )
+  for ( j = 1; j < this->m_NumberOfHistogramBins; j++ )
     {
     freqLeft += relativeFrequency[j];
     meanLeft = ( meanLeftOld * freqLeftOld +
@@ -194,7 +194,7 @@ OtsuThresholdWithMaskImageCalculator<TInputImage>
 
     }
 
-  m_Threshold = static_cast<PixelType>( imageMin +
+  this->m_Threshold = static_cast<PixelType>( imageMin +
                                         ( maxBinNumber + 1 ) / binMultiplier );
 }
 
@@ -203,8 +203,8 @@ void
 OtsuThresholdWithMaskImageCalculator<TInputImage>
 ::SetRegion( const RegionType & region )
 {
-  m_Region = region;
-  m_RegionSetByUser = true;
+  this->m_Region = region;
+  this->m_RegionSetByUser = true;
 }
 
 
@@ -215,9 +215,9 @@ OtsuThresholdWithMaskImageCalculator<TInputImage>
 {
   Superclass::PrintSelf(os,indent);
 
-  os << indent << "Threshold: " << m_Threshold << std::endl;
-  os << indent << "NumberOfHistogramBins: " << m_NumberOfHistogramBins << std::endl;
-  os << indent << "Image: " << m_Image.GetPointer() << std::endl;
+  os << indent << "Threshold: " << this->m_Threshold << std::endl;
+  os << indent << "NumberOfHistogramBins: " << this->m_NumberOfHistogramBins << std::endl;
+  os << indent << "Image: " << this->m_Image.GetPointer() << std::endl;
 }
 
 } // end namespace itk

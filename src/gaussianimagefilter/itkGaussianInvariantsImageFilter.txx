@@ -169,7 +169,7 @@ GaussianInvariantsImageFilter<TInputImage,TOutputImage>
 template <typename TInputImage, typename TOutputImage >
 void
 GaussianInvariantsImageFilter<TInputImage,TOutputImage >
-::GenerateData(void)
+::GenerateData( void )
 {
   /** Typedefs. */
   typedef ImageRegionIterator<
@@ -305,7 +305,7 @@ GaussianInvariantsImageFilter<TInputImage,TOutputImage>
 {
   Superclass::PrintSelf(os,indent);
 
-  os << "NormalizeAcrossScale: " << m_NormalizeAcrossScale << std::endl;
+  os << "NormalizeAcrossScale: " << this->m_NormalizeAcrossScale << std::endl;
 }
 
 

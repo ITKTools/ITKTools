@@ -9,7 +9,7 @@ namespace itk
 template <typename TInputImage, bool doOpen, typename TOutputImage>
 void
 ParabolicOpenCloseSafeBorderImageFilter<TInputImage, doOpen, TOutputImage>
-::GenerateData(void)
+::GenerateData( void )
 {
 
   ProgressAccumulator::Pointer progress = ProgressAccumulator::New();
@@ -24,14 +24,14 @@ ParabolicOpenCloseSafeBorderImageFilter<TInputImage, doOpen, TOutputImage>
     {
     // need to compute some image statistics and determine the padding
     // extent. This will almost certainly be an over estimate
-    m_StatsFilt->SetInput(this->GetInput());
-    m_StatsFilt->Update();
-    InputPixelType range = m_StatsFilt->GetMaximum() - m_StatsFilt->GetMinimum();
-    typename MorphFilterType::RadiusType Sigma = m_MorphFilt->GetScale();
-    typename TInputImage::SpacingType spcing = m_StatsFilt->GetOutput()->GetSpacing();
+    this->m_StatsFilt->SetInput(this->GetInput());
+    this->m_StatsFilt->Update();
+    InputPixelType range = this->m_StatsFilt->GetMaximum() - this->m_StatsFilt->GetMinimum();
+    typename MorphFilterType::RadiusType Sigma = this->m_MorphFilt->GetScale();
+    typename TInputImage::SpacingType spcing = this->m_StatsFilt->GetOutput()->GetSpacing();
     for (unsigned s = 0; s < ImageDimension;s++)
       {
-      if (m_MorphFilt->GetUseImageSpacing())
+      if ( this->m_MorphFilt->GetUseImageSpacing())
 	{
 	RealType image_scale =spcing[s];
 	Bounds[s] = (unsigned long)ceil(sqrt(2*(Sigma[s]/(image_scale*image_scale))*range));
@@ -44,37 +44,37 @@ ParabolicOpenCloseSafeBorderImageFilter<TInputImage, doOpen, TOutputImage>
 	}
       }
 
-    m_PadFilt->SetPadLowerBound(Bounds);
-    m_PadFilt->SetPadUpperBound(Bounds);
-    m_PadFilt->SetConstant(NumericTraits<InputPixelType>::max());
-    m_PadFilt->SetInput(m_StatsFilt->GetOutput());
-    progress->RegisterInternalFilter(m_PadFilt, 0.1f );
-    inputImage = m_PadFilt->GetOutput();
+    this->m_PadFilt->SetPadLowerBound(Bounds);
+    this->m_PadFilt->SetPadUpperBound(Bounds);
+    this->m_PadFilt->SetConstant(NumericTraits<InputPixelType>::max());
+    this->m_PadFilt->SetInput( this->m_StatsFilt->GetOutput());
+    progress->RegisterInternalFilter( this->m_PadFilt, 0.1f );
+    inputImage = this->m_PadFilt->GetOutput();
     }
   else
     {
     inputImage = this->GetInput();
     }
 
-  m_MorphFilt->SetInput(inputImage);
-  progress->RegisterInternalFilter(m_MorphFilt, 0.8f);
+  this->m_MorphFilt->SetInput(inputImage);
+  progress->RegisterInternalFilter( this->m_MorphFilt, 0.8f);
 
   if (this->m_SafeBorder)
     {
     // crop
-    m_CropFilt->SetInput(m_MorphFilt->GetOutput());
-    m_CropFilt->SetUpperBoundaryCropSize(BoundsSize);
-    m_CropFilt->SetLowerBoundaryCropSize(BoundsSize);
-    progress->RegisterInternalFilter(m_CropFilt, 0.1f );
-    m_CropFilt->GraftOutput( this->GetOutput() );
-    m_CropFilt->Update();
-    this->GraftOutput( m_CropFilt->GetOutput() );
+    this->m_CropFilt->SetInput( this->m_MorphFilt->GetOutput());
+    this->m_CropFilt->SetUpperBoundaryCropSize(BoundsSize);
+    this->m_CropFilt->SetLowerBoundaryCropSize(BoundsSize);
+    progress->RegisterInternalFilter( this->m_CropFilt, 0.1f );
+    this->m_CropFilt->GraftOutput( this->GetOutput() );
+    this->m_CropFilt->Update();
+    this->GraftOutput( this->m_CropFilt->GetOutput() );
     }
   else
     {
-    m_MorphFilt->GraftOutput( this->GetOutput() );
-    m_MorphFilt->Update();
-    this->GraftOutput( m_MorphFilt->GetOutput() );
+    this->m_MorphFilt->GraftOutput( this->GetOutput() );
+    this->m_MorphFilt->Update();
+    this->GraftOutput( this->m_MorphFilt->GetOutput() );
     // std::cout << "Finished grafting" << std::endl;
     }
 
@@ -87,10 +87,10 @@ ParabolicOpenCloseSafeBorderImageFilter<TInputImage, doOpen, TOutputImage>
 ::Modified() const
 {
   Superclass::Modified();
-  m_MorphFilt->Modified();
-  m_PadFilt->Modified();
-  m_CropFilt->Modified();
-  m_StatsFilt->Modified();
+  this->m_MorphFilt->Modified();
+  this->m_PadFilt->Modified();
+  this->m_CropFilt->Modified();
+  this->m_StatsFilt->Modified();
 }
 
 
@@ -100,7 +100,7 @@ void
 ParabolicOpenCloseSafeBorderImageFilter<TInputImage, doOpen, TOutputImage>
 ::PrintSelf(std::ostream &os, Indent indent) const
 {
-  os << indent << "SafeBorder: " << m_SafeBorder << std::endl;
+  os << indent << "SafeBorder: " << this->m_SafeBorder << std::endl;
   if( this->GetUseImageSpacing() )
     {
     os << "Scale in world units: " << this->GetScale() << std::endl;

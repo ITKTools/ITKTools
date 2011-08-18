@@ -111,7 +111,7 @@ public:
 protected:
   ConnectedComponentVectorImageFilter()
     {
-    m_FullyConnected = true;
+    this->m_FullyConnected = true;
     }
   virtual ~ConnectedComponentVectorImageFilter() {}
   void PrintSelf(std::ostream& os, Indent indent) const;

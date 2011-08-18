@@ -84,9 +84,9 @@ void
 CommandLineArgumentParser
 ::PrintAllArguments() const
 {
-  ArgumentMapType::const_iterator iter = m_ArgumentMap.begin();
+  ArgumentMapType::const_iterator iter = this->m_ArgumentMap.begin();
  
-  for(; iter != m_ArgumentMap.end(); ++iter) 
+  for(; iter != this->m_ArgumentMap.end(); ++iter) 
   {
    std::cout << iter->first << std::endl;
   } 

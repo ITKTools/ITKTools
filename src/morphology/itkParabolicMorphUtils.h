@@ -69,11 +69,11 @@ void doOneDimension(TInIter &inputIterator, TOutIter &outputIterator,
   // instead of std::vector.
   typedef typename itk::Array<RealType> LineBufferType;
   RealType iscale = 1.0;
-  if (m_UseImageSpacing)
+  if ( this->m_UseImageSpacing)
     {
     iscale = image_scale;
     }
-  const RealType magnitude = m_MagnitudeSign * 1.0/(2.0 * Sigma/(iscale*iscale));
+  const RealType magnitude = this->m_MagnitudeSign * 1.0/(2.0 * Sigma/(iscale*iscale));
   LineBufferType LineBuf(LineLength);
   LineBufferType tmpLineBuf(LineLength);
   inputIterator.SetDirection(direction);
@@ -93,7 +93,7 @@ void doOneDimension(TInIter &inputIterator, TOutIter &outputIterator,
       ++inputIterator;
       }
 
-    DoLine<LineBufferType, RealType, doDilate>(LineBuf, tmpLineBuf, magnitude, m_Extreme);
+    DoLine<LineBufferType, RealType, doDilate>(LineBuf, tmpLineBuf, magnitude, this->m_Extreme);
     // copy the line back
     unsigned int j=0;
     while( !outputIterator.IsAtEndOfLine() )

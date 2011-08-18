@@ -160,14 +160,14 @@ namespace itk
     {
       if ( this->m_PriorProbabilityImageArray.size() < this->m_NumberOfClasses )
       {
-        itkExceptionMacro("m_PriorProbabilityImageArray has wrong size: " << m_PriorProbabilityImageArray.size() << "; should have at least " << this->m_NumberOfClasses << "elements!");
+        itkExceptionMacro("m_PriorProbabilityImageArray has wrong size: " << this->m_PriorProbabilityImageArray.size() << "; should have at least " << this->m_NumberOfClasses << "elements!");
       }
     }
     else if ( this->m_HasPriorProbabilities )
     {
       if ( this->m_PriorProbabilities.GetSize() < this->m_NumberOfClasses )
       {
-        itkExceptionMacro ("m_PriorProbabilities array has wrong size " << m_PriorProbabilities << "; should have at least " << this->m_NumberOfClasses << "elements!" );
+        itkExceptionMacro ("m_PriorProbabilities array has wrong size " << this->m_PriorProbabilities << "; should have at least " << this->m_NumberOfClasses << "elements!" );
       }
     }
     else

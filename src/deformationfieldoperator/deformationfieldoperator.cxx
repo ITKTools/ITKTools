@@ -64,12 +64,12 @@ class ITKToolsDeformationFieldOperatorBase : public itktools::ITKToolsBase
 public:
   ITKToolsDeformationFieldOperatorBase()
   {
-    m_InputFileName = "";
-    m_OutputFileName = "";
-    m_Ops = "";
-    m_NumberOfStreams = 0;
-    m_NumberOfIterations = 0;
-    m_StopValue = 0.0f;
+    this->m_InputFileName = "";
+    this->m_OutputFileName = "";
+    this->m_Ops = "";
+    this->m_NumberOfStreams = 0;
+    this->m_NumberOfIterations = 0;
+    this->m_StopValue = 0.0f;
   };
   ~ITKToolsDeformationFieldOperatorBase(){};
 
@@ -107,7 +107,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     /** TYPEDEF's. */
     typedef TComponentType                               ComponentType;
@@ -123,11 +123,11 @@ public:
     typename ReaderType::Pointer reader = ReaderType::New();
 
     /** Read in the inputImage. */
-    reader->SetFileName( m_InputFileName.c_str() );
+    reader->SetFileName( this->m_InputFileName.c_str() );
     // temporarily: only streaming support for Jacobian case needed for EMPIRE10 challenge.
-    if ( m_Ops != "DEF2JAC" && m_Ops != "TRANS2JAC" && m_Ops != "JACOBIAN" )
+    if ( this->m_Ops != "DEF2JAC" && this->m_Ops != "TRANS2JAC" && this->m_Ops != "JACOBIAN" )
     {
-      std::cout << "Reading input image: " << m_InputFileName << std::endl;
+      std::cout << "Reading input image: " << this->m_InputFileName << std::endl;
       reader->Update();
       std::cout << "Input image read." << std::endl;
     }
@@ -136,39 +136,39 @@ public:
     workingImage = reader->GetOutput();
 
     /** Do something with this image and save the result */
-    if ( m_Ops == "DEF2TRANS" )
+    if ( this->m_Ops == "DEF2TRANS" )
     {
       Deformation2Transformation<VectorImageType>(
-	workingImage, m_OutputFileName, true );
+	workingImage, this->m_OutputFileName, true );
     }
-    else if ( m_Ops == "TRANS2DEF" )
+    else if ( this->m_Ops == "TRANS2DEF" )
     {
       Deformation2Transformation<VectorImageType>(
-	workingImage, m_OutputFileName, false );
+	workingImage, this->m_OutputFileName, false );
     }
-    else if ( m_Ops == "MAGNITUDE" )
+    else if ( this->m_Ops == "MAGNITUDE" )
     {
       ComputeMagnitude<VectorImageType, ScalarImageType>(
-	workingImage, m_OutputFileName );
+	workingImage, this->m_OutputFileName );
     }
-    else if ( m_Ops == "JACOBIAN" || m_Ops == "TRANS2JAC" )
+    else if ( this->m_Ops == "JACOBIAN" || this->m_Ops == "TRANS2JAC" )
     {
       ComputeJacobian<VectorImageType, ScalarImageType>(
-	m_InputFileName, m_OutputFileName, m_NumberOfStreams, true );
+	m_InputFileName, this->m_OutputFileName, this->m_NumberOfStreams, true );
     }
-    else if ( m_Ops == "DEF2JAC" )
+    else if ( this->m_Ops == "DEF2JAC" )
     {
       ComputeJacobian<VectorImageType, ScalarImageType>(
-	m_InputFileName, m_OutputFileName, m_NumberOfStreams, false );
+	m_InputFileName, this->m_OutputFileName, this->m_NumberOfStreams, false );
     }
-    else if ( m_Ops == "INVERSE" )
+    else if ( this->m_Ops == "INVERSE" )
     {
       ComputeInverse<VectorImageType>(
-	m_InputFileName, m_OutputFileName, m_NumberOfStreams, m_NumberOfIterations, m_StopValue );
+	m_InputFileName, this->m_OutputFileName, this->m_NumberOfStreams, this->m_NumberOfIterations, this->m_StopValue );
     }
     else
     {
-      itkGenericExceptionMacro( << "<< invalid operator: " << m_Ops );
+      itkGenericExceptionMacro( << "<< invalid operator: " << this->m_Ops );
     }
   }
 
@@ -187,11 +187,11 @@ int main( int argc, char **argv )
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }

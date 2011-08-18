@@ -166,7 +166,7 @@ int main( int argc, char ** argv )
 
   // We must get the number of components here so we can construct the indices vector appropriately
   unsigned int numberOfComponents = 1;
-  itktools::GetImageNumberOfComponents(inputFileName, numberOfComponents);
+  itktools::GetImageNumberOfComponents( inputFileName, numberOfComponents );
 
   std::vector<unsigned int> indices;
   parser->GetCommandLineArgument( "-ind", indices );

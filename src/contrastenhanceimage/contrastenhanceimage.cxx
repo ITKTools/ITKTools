@@ -76,11 +76,11 @@ class ITKToolsContrastEnhanceImageBase : public itktools::ITKToolsBase
 public:
   ITKToolsContrastEnhanceImageBase()
   {
-    m_Alpha = 0.0f;
-    m_Beta = 0.0f;
-    m_InputFileName = "";
-    m_OutputFileName = "";
-    m_LookUpTable = false;
+    this->m_Alpha = 0.0f;
+    this->m_Beta = 0.0f;
+    this->m_InputFileName = "";
+    this->m_OutputFileName = "";
+    this->m_LookUpTable = false;
     //m_Radius; // does this need to be initialized?
   };
   
@@ -114,7 +114,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     const unsigned int ImageDimension =           VImageDimension;
     typedef itk::Image<TComponentType, ImageDimension> ImageType;
@@ -142,7 +142,7 @@ public:
 
     /** Try to read input image */
     ReaderPointer reader = ReaderType::New();
-    reader->SetFileName( m_InputFileName.c_str() );
+    reader->SetFileName( this->m_InputFileName.c_str() );
     try
     {
       reader->Update();
@@ -156,24 +156,24 @@ public:
 
     /** Setup pipeline and configure its components */
 
-    enhancer->SetUseLookupTable(m_LookUpTable);
-    enhancer->SetAlpha(m_Alpha);
-    enhancer->SetBeta(m_Beta);
+    enhancer->SetUseLookupTable( this->m_LookUpTable);
+    enhancer->SetAlpha( this->m_Alpha);
+    enhancer->SetBeta( this->m_Beta);
     
     itk::Size<VImageDimension> radiusSize;
     for(unsigned int i = 0; i < VImageDimension; ++i)
       {
-      radiusSize[i] = m_Radius[i];
+      radiusSize[i] = this->m_Radius[i];
       }
     enhancer->SetRadius(radiusSize);
     enhancer->SetInput( reader->GetOutput() );
     writer->SetInput( enhancer->GetOutput() );
-    writer->SetFileName(m_OutputFileName.c_str());
+    writer->SetFileName( this->m_OutputFileName.c_str());
 
     /** do it. */
     std::cout
       << "Saving image to disk as \""
-      << m_OutputFileName
+      << this->m_OutputFileName
       << "\""
       << std::endl;
     try
@@ -203,11 +203,11 @@ int main(int argc, char** argv)
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }

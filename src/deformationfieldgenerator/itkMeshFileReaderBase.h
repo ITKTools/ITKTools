@@ -67,7 +67,7 @@ namespace itk
 
     /** Prepare the allocation of the output mesh during the first back
      * propagation of the pipeline. */
-    virtual void GenerateOutputInformation(void);
+    virtual void GenerateOutputInformation( void );
 
     /** Give the reader a chance to indicate that it will produce more
      * output than it was requested to produce. MeshFileReader cannot

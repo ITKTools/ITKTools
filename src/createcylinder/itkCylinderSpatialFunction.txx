@@ -26,8 +26,8 @@ template <unsigned int VImageDimension,typename TInput>
 CylinderSpatialFunction<VImageDimension,TInput>
 ::CylinderSpatialFunction()
 {
-  m_Radius = 1.0;
-  m_Center.Fill(0.0);
+  this->m_Radius = 1.0;
+  this->m_Center.Fill(0.0);
 }
 
 template <unsigned int VImageDimension,typename TInput>
@@ -46,10 +46,10 @@ CylinderSpatialFunction<VImageDimension,TInput>
 
   for(unsigned int i = 0; i < VImageDimension - 1; i++)
     {
-    acc += (position[i] - m_Center[i]) * (position[i] - m_Center[i]);
+    acc += (position[i] - this->m_Center[i]) * (position[i] - this->m_Center[i]);
     }
 
-  acc -= m_Radius*m_Radius;
+  acc -= this->m_Radius*m_Radius;
 
   if(acc <= 0) // inside the sphere
     {
@@ -72,11 +72,11 @@ CylinderSpatialFunction<VImageDimension,TInput>
   os << indent << "Center: [";
   for (i=0; i < VImageDimension - 1; i++)
     {
-    os << m_Center[i] << ", ";
+    os << this->m_Center[i] << ", ";
     }
   os << "]" << std::endl;
 
-  os << indent << "Radius: " << m_Radius << std::endl;
+  os << indent << "Radius: " << this->m_Radius << std::endl;
 }
 
 } // end namespace itk

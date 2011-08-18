@@ -29,23 +29,23 @@ ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage>
   if (doOpen)
     {
     // erosion then dilation
-    m_Extreme1 = NumericTraits<PixelType>::max();
-    m_Extreme2 = NumericTraits<PixelType>::min();
-    m_MagnitudeSign1 = -1;
-    m_MagnitudeSign2 = 1;
+    this->m_Extreme1 = NumericTraits<PixelType>::max();
+    this->m_Extreme2 = NumericTraits<PixelType>::min();
+    this->m_MagnitudeSign1 = -1;
+    this->m_MagnitudeSign2 = 1;
     }
   else
     {
     // dilation then erosion
-    m_Extreme1 = NumericTraits<PixelType>::min();
-    m_Extreme2 = NumericTraits<PixelType>::max();
-    m_MagnitudeSign1 = 1;
-    m_MagnitudeSign2 = -1;
+    this->m_Extreme1 = NumericTraits<PixelType>::min();
+    this->m_Extreme2 = NumericTraits<PixelType>::max();
+    this->m_MagnitudeSign1 = 1;
+    this->m_MagnitudeSign2 = -1;
     }
-  m_Extreme = m_Extreme1;
-  m_MagnitudeSign = m_MagnitudeSign1;
-  m_UseImageSpacing = false;
-  m_Stage=1;  // indicate whether we are on the first pass or the second
+  this->m_Extreme = this->m_Extreme1;
+  this->m_MagnitudeSign = this->m_MagnitudeSign1;
+  this->m_UseImageSpacing = false;
+  this->m_Stage=1;  // indicate whether we are on the first pass or the second
 }
 
 template <typename TInputImage, bool doOpen, typename TOutputImage>
@@ -155,7 +155,7 @@ ParabolicOpenCloseImageFilter<TInputImage,doOpen, TOutputImage>
 template <typename TInputImage, bool doOpen,  typename TOutputImage >
 void
 ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage >
-::GenerateData(void)
+::GenerateData( void )
 {
 
   typedef ImageLinearConstIteratorWithIndex< TInputImage  >  InputConstIteratorType;
@@ -183,27 +183,27 @@ ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage >
   this->GetMultiThreader()->SetSingleMethod(this->ThreaderCallback, &str);
 
   // multithread the execution - stage 1
-  m_Stage=1;
+  this->m_Stage=1;
   for( unsigned int d=0; d<ImageDimension; d++ )
     {
-    m_CurrentDimension = d;
+    this->m_CurrentDimension = d;
     this->GetMultiThreader()->SingleMethodExecute();
     }
   // swap over the parameters controlling erosion/dilation
-  m_Extreme = m_Extreme2;
-  m_MagnitudeSign = m_MagnitudeSign2;
+  this->m_Extreme = this->m_Extreme2;
+  this->m_MagnitudeSign = this->m_MagnitudeSign2;
 
   // multithread the execution - stage 2
-  m_Stage=2;
+  this->m_Stage=2;
   for( unsigned int d=0; d<ImageDimension; d++ )
     {
-    m_CurrentDimension = d;
+    this->m_CurrentDimension = d;
     this->GetMultiThreader()->SingleMethodExecute();
     }
   // swap them back
-  m_Extreme = m_Extreme1;
-  m_MagnitudeSign = m_MagnitudeSign1;
-  m_Stage=1;
+  this->m_Extreme = this->m_Extreme1;
+  this->m_MagnitudeSign = this->m_MagnitudeSign1;
+  this->m_Stage=1;
 
 }
 
@@ -231,7 +231,7 @@ ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage >
     }
   float progressPerDimension = 1.0/ImageDimension;
 
-  ProgressReporter * progress = new ProgressReporter(this, threadId, NumberOfRows[m_CurrentDimension], 30, m_CurrentDimension * progressPerDimension, progressPerDimension);
+  ProgressReporter * progress = new ProgressReporter(this, threadId, NumberOfRows[m_CurrentDimension], 30, this->m_CurrentDimension * progressPerDimension, progressPerDimension);
 
 
   typedef ImageLinearConstIteratorWithIndex< TInputImage  >  InputConstIteratorType;
@@ -258,16 +258,16 @@ ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage >
   OutputIteratorType      outputIterator( outputImage, region );
   OutputConstIteratorType inputIteratorStage2( outputImage, region );
 
-  if (m_Stage == 1)
+  if ( this->m_Stage == 1)
     {
     // deal with the first dimension - this should be copied to the
     // output if the scale is 0
-    if (m_CurrentDimension == 0)
+    if ( this->m_CurrentDimension == 0)
       {
-      if (m_Scale[0] > 0)
+      if ( this->m_Scale[0] > 0)
 	{
 	// Perform as normal
-//     RealType magnitude = 1.0/(2.0 * m_Scale[0]);
+//     RealType magnitude = 1.0/(2.0 * this->m_Scale[0]);
 	unsigned long LineLength = region.GetSize()[0];
 	RealType image_scale = this->GetInput()->GetSpacing()[0];
 	
@@ -305,7 +305,7 @@ ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage >
 
       doOneDimension<OutputConstIteratorType,OutputIteratorType,
 	RealType, OutputPixelType, !doOpen>(inputIteratorStage2, outputIterator,
-					    *progress, LineLength, m_CurrentDimension,
+					    *progress, LineLength, this->m_CurrentDimension,
 					    this->m_MagnitudeSign,
 					    this->m_UseImageSpacing,
 					    this->m_Extreme,
@@ -317,15 +317,15 @@ ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage >
   else
     {
     // deal with the other dimensions for second stage
-    if (m_Scale[m_CurrentDimension] > 0)
+    if ( this->m_Scale[m_CurrentDimension] > 0)
       {
-      //RealType magnitude = 1.0/(2.0 * m_Scale[dd]);
+      //RealType magnitude = 1.0/(2.0 * this->m_Scale[dd]);
       unsigned long LineLength = region.GetSize()[m_CurrentDimension];
       RealType image_scale = this->GetInput()->GetSpacing()[m_CurrentDimension];
 
       doOneDimension<OutputConstIteratorType,OutputIteratorType,
  	RealType, OutputPixelType, doOpen>(inputIteratorStage2, outputIterator,
-					   *progress, LineLength, m_CurrentDimension,
+					   *progress, LineLength, this->m_CurrentDimension,
 					   this->m_MagnitudeSign,
 					   this->m_UseImageSpacing,
 					   this->m_Extreme,
@@ -342,13 +342,13 @@ ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage>
 ::PrintSelf(std::ostream& os, Indent indent) const
 {
   Superclass::PrintSelf(os,indent);
-  if (m_UseImageSpacing)
+  if ( this->m_UseImageSpacing)
     {
-    os << "Scale in world units: " << m_Scale << std::endl;
+    os << "Scale in world units: " << this->m_Scale << std::endl;
     }
   else
     {
-    os << "Scale in voxels: " << m_Scale << std::endl;
+    os << "Scale in voxels: " << this->m_Scale << std::endl;
     }
 }
 

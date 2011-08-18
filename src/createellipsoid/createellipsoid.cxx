@@ -60,7 +60,7 @@ class ITKToolsCreateEllipsoidBase : public itktools::ITKToolsBase
 public:
   ITKToolsCreateEllipsoidBase()
   {
-    m_OutputFileName = "";
+    this->m_OutputFileName = "";
     //std::vector<unsigned int> m_Size;
     //std::vector<double> m_Spacing;
     //std::vector<double> m_Center;
@@ -98,7 +98,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     /** Typedefs. */
     typedef itk::Image<TComponentType, VDimension>           ImageType;
@@ -124,13 +124,13 @@ public:
     OrientationType Orientation;
     for ( unsigned int i = 0; i < VDimension; i++ )
     {
-      Size[ i ] = static_cast<SizeValueType>( m_Size[ i ] );
-      Spacing[ i ] = m_Spacing[ i ];
-      Center[ i ] = m_Center[ i ];
-      Radius[ i ] = m_Radius[ i ];
+      Size[ i ] = static_cast<SizeValueType>( this->m_Size[ i ] );
+      Spacing[ i ] = this->m_Spacing[ i ];
+      Center[ i ] = this->m_Center[ i ];
+      Radius[ i ] = this->m_Radius[ i ];
       for ( unsigned int j = 0; j < VDimension; j++ )
       {
-	Orientation[ i ][ j ] = m_Orientation[ i * VDimension + j ];
+	Orientation[ i ][ j ] = this->m_Orientation[ i * VDimension + j ];
       }
     }
 
@@ -165,7 +165,7 @@ public:
 
     /** Write image. */
     typename ImageWriterType::Pointer writer = ImageWriterType::New();
-    writer->SetFileName( m_OutputFileName.c_str() );
+    writer->SetFileName( this->m_OutputFileName.c_str() );
     writer->SetInput( image );
     writer->Update();
   }
@@ -189,11 +189,11 @@ int main( int argc, char *argv[] )
   
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }

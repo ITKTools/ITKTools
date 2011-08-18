@@ -28,10 +28,10 @@ template<class TInputImage, class TOutputImage>
 OtsuThresholdWithMaskImageFilter<TInputImage, TOutputImage>
 ::OtsuThresholdWithMaskImageFilter()
 {
-  m_OutsideValue   = NumericTraits<OutputPixelType>::Zero;
-  m_InsideValue    = NumericTraits<OutputPixelType>::max();
-  m_Threshold      = NumericTraits<InputPixelType>::Zero;
-  m_NumberOfHistogramBins = 128;
+  this->m_OutsideValue   = NumericTraits<OutputPixelType>::Zero;
+  this->m_InsideValue    = NumericTraits<OutputPixelType>::max();
+  this->m_Threshold      = NumericTraits<InputPixelType>::Zero;
+  this->m_NumberOfHistogramBins = 128;
 }
 
 template<class TInputImage, class TOutputImage>
@@ -47,9 +47,9 @@ OtsuThresholdWithMaskImageFilter<TInputImage, TOutputImage>
     OtsuThresholdWithMaskImageCalculator<TInputImage>::New();
   otsu->SetImage( this->GetInput() );
   otsu->SetMaskImage( this->GetMaskImage() );
-  otsu->SetNumberOfHistogramBins (m_NumberOfHistogramBins);
+  otsu->SetNumberOfHistogramBins ( this->m_NumberOfHistogramBins);
   otsu->Compute();
-  m_Threshold = otsu->GetThreshold();
+  this->m_Threshold = otsu->GetThreshold();
 
   typename BinaryThresholdImageFilter<TInputImage,TOutputImage>::Pointer threshold =
     BinaryThresholdImageFilter<TInputImage,TOutputImage>::New();
@@ -59,8 +59,8 @@ OtsuThresholdWithMaskImageFilter<TInputImage, TOutputImage>
   threshold->SetInput (this->GetInput());
   threshold->SetLowerThreshold(NumericTraits<InputPixelType>::NonpositiveMin());
   threshold->SetUpperThreshold(otsu->GetThreshold());
-  threshold->SetInsideValue (m_InsideValue);
-  threshold->SetOutsideValue (m_OutsideValue);
+  threshold->SetInsideValue ( this->m_InsideValue);
+  threshold->SetOutsideValue ( this->m_OutsideValue);
   threshold->Update();
 
   this->GraftOutput(threshold->GetOutput());
@@ -86,13 +86,13 @@ OtsuThresholdWithMaskImageFilter<TInputImage,TOutputImage>
   Superclass::PrintSelf(os,indent);
 
   os << indent << "OutsideValue: "
-     << static_cast<typename NumericTraits<OutputPixelType>::PrintType>(m_OutsideValue) << std::endl;
+     << static_cast<typename NumericTraits<OutputPixelType>::PrintType>( this->m_OutsideValue) << std::endl;
   os << indent << "InsideValue: "
-     << static_cast<typename NumericTraits<OutputPixelType>::PrintType>(m_InsideValue) << std::endl;
+     << static_cast<typename NumericTraits<OutputPixelType>::PrintType>( this->m_InsideValue) << std::endl;
   os << indent << "NumberOfHistogramBins: "
-     << m_NumberOfHistogramBins << std::endl;
+     << this->m_NumberOfHistogramBins << std::endl;
   os << indent << "Threshold (computed): "
-     << static_cast<typename NumericTraits<InputPixelType>::PrintType>(m_Threshold) << std::endl;
+     << static_cast<typename NumericTraits<InputPixelType>::PrintType>( this->m_Threshold) << std::endl;
 
 }
 

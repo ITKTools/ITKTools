@@ -50,7 +50,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     /** Some typedef's. */
     typedef itk::Image<TComponentType, VDimension>      ImageType;
@@ -62,16 +62,16 @@ public:
 
     /** Translate vector of labels to set. */
     LabelsType requestedLabels;
-    for ( std::size_t i = 0; i < m_Labels.size(); i++ )
+    for ( std::size_t i = 0; i < this->m_Labels.size(); i++ )
     {
-      requestedLabels.insert( m_Labels[ i ] );
+      requestedLabels.insert( this->m_Labels[ i ] );
     }
 
     /** Create and setup readers. */
     ImageReaderPointer reader1 = ImageReaderType::New();
-    reader1->SetFileName( m_InputFileNames[ 0 ].c_str() );
+    reader1->SetFileName( this->m_InputFileNames[ 0 ].c_str() );
     ImageReaderPointer reader2 = ImageReaderType::New();
-    reader2->SetFileName( m_InputFileNames[ 1 ].c_str() );
+    reader2->SetFileName( this->m_InputFileNames[ 1 ].c_str() );
 
     /** Create Dice overlap filter. */
     typename DiceComputeFilter::Pointer diceFilter = DiceComputeFilter::New();

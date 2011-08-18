@@ -58,9 +58,9 @@ class ITKToolsReflectBase : public itktools::ITKToolsBase
 public:
   ITKToolsReflectBase()
   {
-    m_InputFileName = "";
-    m_OutputFileName = "";
-    m_Direction = 0;
+    this->m_InputFileName = "";
+    this->m_OutputFileName = "";
+    this->m_Direction = 0;
   };
   ~ITKToolsReflectBase(){};
 
@@ -90,7 +90,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     /** Typedefs. */
     typedef TComponentType                                    OutputPixelType;
@@ -111,13 +111,13 @@ public:
     typename WriterType::Pointer writer = WriterType::New();
 
     /** Set up pipeline. */
-    reader->SetFileName( m_InputFileName );
+    reader->SetFileName( this->m_InputFileName );
     
     itk::FixedArray<bool, Dimension> flipAxes(false);
     flipAxes[m_Direction] = true;
     
     reflectFilter->SetFlipAxes( flipAxes );
-    writer->SetFileName( m_OutputFileName );
+    writer->SetFileName( this->m_OutputFileName );
 
     reflectFilter->SetInput( reader->GetOutput() );
     writer->SetInput( reflectFilter->GetOutput() );
@@ -150,11 +150,11 @@ int main( int argc, char ** argv )
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }
@@ -174,7 +174,7 @@ int main( int argc, char ** argv )
 
   /** The default output is equal to the input, but can be overridden by
    * specifying -pt in the command line.   */
-  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileName);
+  itktools::ComponentType componentType = itktools::GetImageComponentType( inputFileName );
   if ( !retpt ) 
   {
     componentType = itk::ImageIOBase::GetComponentTypeFromString( componentTypeString );

@@ -88,12 +88,12 @@ public:
   ITKToolsDeformationFieldGeneratorBase()
   {
     m_InputImage1FileName = "";
-    m_InputImage2FileName = "";
-    m_InputPoints1FileName = "";
-    m_InputPoints2FileName = "";
-    m_OutputImageFileName = "";
-    m_KernelName = "";
-    m_Stiffness = 0.0f;
+    this->m_InputImage2FileName = "";
+    this->m_InputPoints1FileName = "";
+    this->m_InputPoints2FileName = "";
+    this->m_OutputImageFileName = "";
+    this->m_KernelName = "";
+    this->m_Stiffness = 0.0f;
   };
   ~ITKToolsDeformationFieldGeneratorBase(){};
 
@@ -127,7 +127,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     /** Typedefs. */
     typedef short InputPixelType;
@@ -180,8 +180,8 @@ public:
     typename DeformationFieldType::Pointer deformationField = DeformationFieldType::New();
     typename DeformationFieldWriterType::Pointer writer = DeformationFieldWriterType::New();
 
-    ipp1Reader->SetFileName( m_InputPoints1FileName.c_str() );
-    std::cout << "Reading input point file 1: " << m_InputPoints1FileName << std::endl;
+    ipp1Reader->SetFileName( this->m_InputPoints1FileName.c_str() );
+    std::cout << "Reading input point file 1: " << this->m_InputPoints1FileName << std::endl;
     try
     {
       ipp1Reader->Update();
@@ -204,8 +204,8 @@ public:
     std::cout << "  Number of specified input points: " << nrofpoints1 << std::endl;
     inputPointSet1 = ipp1Reader->GetOutput();
 
-    ipp2Reader->SetFileName( m_InputPoints2FileName.c_str() );
-    std::cout << "Reading input point file 2: " << m_InputPoints2FileName << std::endl;
+    ipp2Reader->SetFileName( this->m_InputPoints2FileName.c_str() );
+    std::cout << "Reading input point file 2: " << this->m_InputPoints2FileName << std::endl;
     try
     {
       ipp2Reader->Update();
@@ -237,18 +237,18 @@ public:
 
     /** Read input images */
     std::cout << "Reading Input image(s)." << std::endl;
-    reader1->SetFileName( m_InputImage1FileName.c_str() );
+    reader1->SetFileName( this->m_InputImage1FileName.c_str() );
     reader1->UpdateOutputInformation();
     if ( ipp2Reader->GetPointsAreIndices() )
     {
-      if ( m_InputImage2FileName!=""  )
+      if ( this->m_InputImage2FileName!=""  )
       {
-	reader2->SetFileName( m_InputImage2FileName.c_str() );
+	reader2->SetFileName( this->m_InputImage2FileName.c_str() );
 	reader2->UpdateOutputInformation();
       }
       else
       {
-	std::cerr << "The input points in " << m_InputImage2FileName
+	std::cerr << "The input points in " << this->m_InputImage2FileName
 	  << " are given as indices, but no accompanying image is provided." << std::endl;
 	itkGenericExceptionMacro( << "Second input image is needed!" );
       }
@@ -301,33 +301,33 @@ public:
       inputPointSet2 = tempPointSet;
     }
 
-    if ( m_KernelName == "TPS" )
+    if ( this->m_KernelName == "TPS" )
     {
       kernelTransform = TPSTransformType::New();
     }
-    else if ( m_KernelName == "TPSR2LOGR" )
+    else if ( this->m_KernelName == "TPSR2LOGR" )
     {
       kernelTransform = TPSR2LOGRTransformType::New();
     }
-    else if ( m_KernelName == "VS" )
+    else if ( this->m_KernelName == "VS" )
     {
       kernelTransform = VSTransformType::New();
     }
-    else if ( m_KernelName == "EBS" )
+    else if ( this->m_KernelName == "EBS" )
     {
       kernelTransform = EBSTransformType::New();
     }
-    else if ( m_KernelName == "EBSR" )
+    else if ( this->m_KernelName == "EBSR" )
     {
       kernelTransform = EBSRTransformType::New();
     }
     else
     {
-      std::cerr << "Invalid kernel transform type: " << m_KernelName << std::endl;
+      std::cerr << "Invalid kernel transform type: " << this->m_KernelName << std::endl;
       itkGenericExceptionMacro( << "Unknown kernel transform!." );
     }
 
-    kernelTransform->SetStiffness( m_Stiffness );
+    kernelTransform->SetStiffness( this->m_Stiffness );
     kernelTransform->SetSourceLandmarks( inputPointSet1 );
     kernelTransform->SetTargetLandmarks( inputPointSet2 );
     kernelTransform->ComputeWMatrix();
@@ -354,8 +354,8 @@ public:
       ++iterator;
     }
 
-    std::cout << "Saving deformation field to disk as " << m_OutputImageFileName << std::endl;
-    writer->SetFileName( m_OutputImageFileName.c_str() );
+    std::cout << "Saving deformation field to disk as " << this->m_OutputImageFileName << std::endl;
+    writer->SetFileName( this->m_OutputImageFileName.c_str() );
     writer->SetInput( deformationField );
     writer->Update();
   }
@@ -378,11 +378,11 @@ int main( int argc, char **argv )
   
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }

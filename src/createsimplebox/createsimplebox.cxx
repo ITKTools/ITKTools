@@ -71,11 +71,11 @@ int main(int argc, char** argv)
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }
@@ -118,7 +118,7 @@ int main(int argc, char** argv)
   if( retin ) // if an input file was specified
   {
     itktools::GetImageDimension( inputFileName, dim );
-    componentType = itktools::GetImageComponentType(inputFileName);
+    componentType = itktools::GetImageComponentType( inputFileName );
   }
 
   if( retpt ) // if a pixel type was specified on the command line

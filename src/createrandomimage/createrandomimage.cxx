@@ -70,14 +70,14 @@ class ITKToolsCreateRandomImageBase : public itktools::ITKToolsBase
 public:
   ITKToolsCreateRandomImageBase()
   {
-    m_OutputFileName = "";
-    //itk::Array<unsigned int> m_Sizes;
-    m_Min_value = 0.0f;
-    m_Max_value = 0.0f;
-    m_Resolution = 0;
-    m_Sigma = 0.0f;
-    m_Rand_seed = 0;
-    m_SpaceDimension = 0;
+    this->m_OutputFileName = "";
+    //itk::Array<unsigned int> this->m_Sizes;
+    this->m_Min_value = 0.0f;
+    this->m_Max_value = 0.0f;
+    this->m_Resolution = 0;
+    this->m_Sigma = 0.0f;
+    this->m_Rand_seed = 0;
+    this->m_SpaceDimension = 0;
   };
   ~ITKToolsCreateRandomImageBase(){};
 
@@ -112,7 +112,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     /** Typedefs */
 
@@ -178,19 +178,19 @@ public:
     /** Create variables */
     VectorWriterPointer vectorWriter = 0;
     
-    SetOfChannelsType setOfChannels(m_SpaceDimension);
+    SetOfChannelsType setOfChannels( this->m_SpaceDimension);
     
-    SetOfBlurrersType setOfBlurrers(m_SpaceDimension);
+    SetOfBlurrersType setOfBlurrers( this->m_SpaceDimension);
     
-    SetOfCastersType setOfCasters(m_SpaceDimension);
+    SetOfCastersType setOfCasters( this->m_SpaceDimension);
     
-    SetOfExtractersType setOfExtracters(m_SpaceDimension);
+    SetOfExtractersType setOfExtracters( this->m_SpaceDimension);
     
     RandomGeneratorPointer randomGenerator = RandomGeneratorType::New();
     bool randomiterating = true;
 
     /** Set the random seed */
-    randomGenerator->SetSeed(m_Rand_seed);
+    randomGenerator->SetSeed( this->m_Rand_seed);
 
     /** Convert the itkArray to an itkSizeType and calculate nrOfPixels */
     InternalSizeType internalimagesize;
@@ -204,20 +204,20 @@ public:
     unsigned long nrOfPixels = 1;
     for (unsigned int i = 0; i< ImageDimension; i++)
     {
-      internalimagesize.SetElement(i, m_Sizes[i]); //will be changed later
-      imagesize.SetElement(i, m_Sizes[i]);
+      internalimagesize.SetElement(i, this->m_Sizes[i]); //will be changed later
+      imagesize.SetElement(i, this->m_Sizes[i]);
       imageindex.SetElement(i, 0);
       imageorigin.SetElement(i,0.0);
-      nrOfPixels *= m_Sizes[i];
+      nrOfPixels *= this->m_Sizes[i];
     }
 
     /** Compute the standard deviation of the Gaussian used for blurring
     * the random images */
-    if ( m_Sigma < 0 )
+    if ( this->m_Sigma < 0 )
     {
-      m_Sigma = static_cast<double>(
+      this->m_Sigma = static_cast<double>(
 	static_cast<double>(nrOfPixels) /
-	static_cast<double>(m_Resolution) /
+	static_cast<double>( this->m_Resolution) /
 	pow( 2.0, static_cast<double>(ImageDimension) )
 	);
     }
@@ -239,13 +239,13 @@ public:
     imageregion.SetIndex(imageindex);
 
     /** Check whether a random iterator should be used or a region */
-    if ( m_Resolution ==0 )
+    if ( this->m_Resolution ==0 )
     {
       randomiterating = false;
     }
 
     /** Create the images */
-    for (unsigned int i = 0; i< m_SpaceDimension; i++)
+    for (unsigned int i = 0; i< this->m_SpaceDimension; i++)
     {
 
       setOfChannels[i] = InternalImageType::New();
@@ -264,18 +264,18 @@ public:
 	  << "Channel"
 	  << i
 	  << ": Setting random values to "
-	  << m_Resolution
+	  << this->m_Resolution
 	  << " random points."
 	  << std::endl;
 	RandomIteratorType iterator =
 	  RandomIteratorType( setOfChannels[i], setOfChannels[i]->GetLargestPossibleRegion() );
-	iterator.SetNumberOfSamples(m_Resolution);
+	iterator.SetNumberOfSamples( this->m_Resolution);
 	iterator.GoToBegin();
 	while( !iterator.IsAtEnd() )
 	{
 	  /** Set a random value to a random point */
 	  iterator.Set( static_cast<InternalValueType>(
-	    randomGenerator->GetUniformVariate(m_Min_value, m_Max_value) ) );
+	    randomGenerator->GetUniformVariate( this->m_Min_value, this->m_Max_value) ) );
 	  ++iterator;
 	}
       }
@@ -294,7 +294,7 @@ public:
 	{
 	  /** Set a random value to a point */
 	  iterator.Set( static_cast<InternalValueType>(
-	    randomGenerator->GetUniformVariate(m_Min_value,m_Max_value) ) );
+	    randomGenerator->GetUniformVariate( this->m_Min_value,m_Max_value) ) );
 	  ++iterator;
 	}
 
@@ -305,12 +305,12 @@ public:
 	<< "Channel"
 	<< i
 	<< ": Blurring with standard deviation "
-	<< m_Sigma
+	<< this->m_Sigma
 	<< "."
 	<< std::endl;
 
       setOfBlurrers[i] = BlurFilterType::New();
-      setOfBlurrers[i]->SetSigma(m_Sigma);
+      setOfBlurrers[i]->SetSigma( this->m_Sigma);
 
       //setOfBlurrers[i]->SetVariance( sigma*sigma );
       //setOfBlurrers[i]->SetUseImageSpacingOff();
@@ -346,7 +346,7 @@ public:
 
     typedef itk::ImageToVectorImageFilter<ScalarOutputImageType> ImageToVectorImageFilterType;
     typename ImageToVectorImageFilterType::Pointer imageToVectorImageFilter = ImageToVectorImageFilterType::New();
-    for(unsigned int spaceDimensionIndex = 0; spaceDimensionIndex < m_SpaceDimension; ++spaceDimensionIndex)
+    for(unsigned int spaceDimensionIndex = 0; spaceDimensionIndex < this->m_SpaceDimension; ++spaceDimensionIndex)
     {
       imageToVectorImageFilter->SetNthInput(spaceDimensionIndex, setOfExtracters[spaceDimensionIndex]->GetOutput());
     }
@@ -354,7 +354,7 @@ public:
     
     std::cout
       << "Saving image to disk as \""
-      << m_OutputFileName
+      << this->m_OutputFileName
       << "\""
       << std::endl;
     
@@ -397,11 +397,11 @@ int main(int argc, char** argv)
   
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }

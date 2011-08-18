@@ -86,13 +86,13 @@ public:
   /** Is the transform in world or voxel units - default is world */
   void SetUseImageSpacing(bool uis)
   {
-    m_Erode->SetUseImageSpacing(uis);
+    this->m_Erode->SetUseImageSpacing(uis);
   }
 
 
   const bool GetUseImageSpacing()
   {
-    return m_Erode->GetUseImageSpacing();
+    return this->m_Erode->GetUseImageSpacing();
   }
 
   itkSetMacro(SqrDist, bool);

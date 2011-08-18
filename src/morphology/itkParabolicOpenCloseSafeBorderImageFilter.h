@@ -117,11 +117,11 @@ protected:
 
   ParabolicOpenCloseSafeBorderImageFilter()
   {
-    m_MorphFilt = MorphFilterType::New();
-    m_PadFilt = PadFilterType::New();
-    m_CropFilt = CropFilterType::New();
-    m_StatsFilt = StatsFilterType::New();
-    m_SafeBorder = true;
+    this->m_MorphFilt = MorphFilterType::New();
+    this->m_PadFilt = PadFilterType::New();
+    this->m_CropFilt = CropFilterType::New();
+    this->m_StatsFilt = StatsFilterType::New();
+    this->m_SafeBorder = true;
   }
   virtual ~ParabolicOpenCloseSafeBorderImageFilter() {};
 

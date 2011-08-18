@@ -36,26 +36,26 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
 ::OrderKDistanceTransformImageFilter()
 {
 
-  m_SquaredDistance     = false;
-  m_InputIsBinary       = true; // for my purposes this should be true as default...
-  m_UseImageSpacing     = true; // this also
-  m_FullyConnected    = true;  /// should this be true or false?
-  m_K                   = 5;
+  this->m_SquaredDistance     = false;
+  this->m_InputIsBinary       = true; // for my purposes this should be true as default...
+  this->m_UseImageSpacing     = true; // this also
+  this->m_FullyConnected    = true;  /// should this be true or false?
+  this->m_K                   = 5;
 
   this->SetNumberOfRequiredOutputs( 3 );
 
   KDistanceImagePointer kdistanceImage = KDistanceImageType::New();
-  kdistanceImage->SetVectorLength(m_K);
+  kdistanceImage->SetVectorLength( this->m_K);
   this->SetNthOutput( 0, kdistanceImage.GetPointer() );
 
   KIDImagePointer kidImage = KIDImageType::New();
-  kidImage->SetVectorLength(m_K);
+  kidImage->SetVectorLength( this->m_K);
   this->SetNthOutput( 1, kidImage.GetPointer() );
 
   OutputImagePointer voronoiMap = OutputImageType::New();
   this->SetNthOutput( 2, voronoiMap.GetPointer() );
 
-//  m_IndexLookUpTable.reserve(1000);
+//  this->m_IndexLookUpTable.reserve(1000);
 }
 
 /**
@@ -66,12 +66,12 @@ void
 OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, TKIDImage >
 ::SetK( unsigned int k)
 {
-  m_K = k;
+  this->m_K = k;
   // set length of arrays in these images, to accomodate for k closest points
   KDistanceImagePointer kdistanceImage = this->GetKDistanceMap();
-  kdistanceImage->SetVectorLength(m_K);
+  kdistanceImage->SetVectorLength( this->m_K);
   KIDImagePointer kidImage = this->GetKclosestIDMap();
-  kidImage->SetVectorLength(m_K);
+  kidImage->SetVectorLength( this->m_K);
 }
 
 
@@ -85,7 +85,7 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
 template <class TInputImage, class TOutputImage, class TKDistanceImage, class TKIDImage >
 TKDistanceImage *
 OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, TKIDImage >
-::GetKDistanceMap(void)
+::GetKDistanceMap( void )
 {
   return  dynamic_cast< KDistanceImageType * >(
     this->ProcessObject::GetOutput(0) );
@@ -101,7 +101,7 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
 template <class TInputImage, class TOutputImage, class TKDistanceImage, class TKIDImage >
 TKIDImage *
 OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, TKIDImage >
-::GetKclosestIDMap(void)
+::GetKclosestIDMap( void )
 {
   return  dynamic_cast< KIDImageType * >(
     this->ProcessObject::GetOutput(1) );
@@ -116,7 +116,7 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
 template <class TInputImage, class TOutputImage, class TKDistanceImage, class TKIDImage >
 TOutputImage*
 OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, TKIDImage >
-::GetVoronoiMap(void)
+::GetVoronoiMap( void )
 {
   return  dynamic_cast< OutputImageType * >(
     this->ProcessObject::GetOutput(2) );
@@ -133,7 +133,7 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
 template <class TInputImage, class TOutputImage, class TKDistanceImage, class TKIDImage >
 void
 OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, TKIDImage >
-::PrepareData(void)
+::PrepareData( void )
 {
 
   itkDebugMacro(<< "PrepareData Start");
@@ -151,7 +151,7 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
   typename TInputImage::SizeType size = region.GetSize();
   typename TInputImage::SpacingType spacing = inputImage->GetSpacing();
   double maxLength = 0;
-  if (m_InputIsBinary)
+  if ( this->m_InputIsBinary)
     {
     for( unsigned int dim=0; dim < TInputImage::ImageDimension; dim++)
       {
@@ -214,20 +214,20 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
 
   ImageRegionConstIteratorWithIndex< TInputImage >  it( inputImage,  region );
 
-  typename KIDImageType::PixelType idObject( m_K );
-  typename KIDImageType::PixelType idBackground( m_K );
+  typename KIDImageType::PixelType idObject( this->m_K );
+  typename KIDImageType::PixelType idBackground( this->m_K );
   idObject.Fill(-1);
   idBackground.Fill(-1);
 
-  typename KDistanceImageType::PixelType distanceObect( m_K );
-  typename KDistanceImageType::PixelType distanceBackground( m_K );
+  typename KDistanceImageType::PixelType distanceObect( this->m_K );
+  typename KDistanceImageType::PixelType distanceBackground( this->m_K );
   distanceObect.Fill(2*maxLength);
   distanceObect[0] = 0;
   distanceBackground.Fill(2*maxLength);
 
   it.GoToBegin();
   int npt = 1;
-  if (m_InputIsBinary)
+  if ( this->m_InputIsBinary)
   {
     while( !it.IsAtEnd() )
       {
@@ -237,7 +237,7 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
         kdistanceImage->SetPixel(index, distanceObect);
         idObject[0] = npt++;
         kidImage->SetPixel(index, idObject);
-        m_IndexLookUpTable.push_back(index);
+        this->m_IndexLookUpTable.push_back(index);
         }
       else
         {
@@ -275,7 +275,7 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
       }
      std::sort( indices.begin(), indices.end() );
      for (unsigned int kk=0; kk<indices.size(); kk++)    {
-        m_IndexLookUpTable.push_back( indices[kk].index );
+        this->m_IndexLookUpTable.push_back( indices[kk].index );
         }
     } // End If: Input is binary
 
@@ -319,16 +319,16 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
 {
 
   IndexType  there            = here + offset;
-  typename KDistanceImageType::PixelType kd = m_KDistanceImage->GetPixel(here);
-  typename KIDImageType::PixelType       kid_here = m_KIDImage->GetPixel(here);
-  typename KIDImageType::PixelType       kid_there = m_KIDImage->GetPixel(there);
+  typename KDistanceImageType::PixelType kd = this->m_KDistanceImage->GetPixel(here);
+  typename KIDImageType::PixelType       kid_here = this->m_KIDImage->GetPixel(here);
+  typename KIDImageType::PixelType       kid_there = this->m_KIDImage->GetPixel(there);
 
   for (unsigned int j=0; j<m_K; j++)
     {
-    // instead of this (using distance components), use ID image and m_IndexLookUpTable
+    // instead of this (using distance components), use ID image and this->m_IndexLookUpTable
     if (kid_there[j]>-1)
       {
-      IndexType objectIndex = m_IndexLookUpTable[kid_there[j]-1];
+      IndexType objectIndex = this->m_IndexLookUpTable[kid_there[j]-1];
       OffsetType offsetToObject = objectIndex - here;
 
       typename InputImageType::SpacingType spacing = Self::GetInput()->GetSpacing();
@@ -338,7 +338,7 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
         {
         double v1 = static_cast< double >(  offsetToObject[i]  );
 
-        if (m_UseImageSpacing)
+        if ( this->m_UseImageSpacing)
           {
           double spacingComponent = static_cast< double >(spacing[i]);
           v1 *= spacingComponent;
@@ -439,8 +439,8 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
 
   InputImagePointer    inputimage             =  this->GetInput();
 
-  m_KDistanceImage    =  this->GetKDistanceMap();
-  m_KIDImage          =  this->GetKclosestIDMap();
+  this->m_KDistanceImage    =  this->GetKDistanceMap();
+  this->m_KIDImage          =  this->GetKclosestIDMap();
 
   std::cerr << "to here inside 2";
 
@@ -550,9 +550,9 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
   Superclass::PrintSelf(os,indent);
 
   os << indent << "Order K Distance Transform: " << std::endl;
-  os << indent << "Input Is Binary   : " << m_InputIsBinary << std::endl;
-  os << indent << "Use Image Spacing : " << m_UseImageSpacing << std::endl;
-  os << indent << "Squared Distance  : " << m_SquaredDistance << std::endl;
+  os << indent << "Input Is Binary   : " << this->m_InputIsBinary << std::endl;
+  os << indent << "Use Image Spacing : " << this->m_UseImageSpacing << std::endl;
+  os << indent << "Squared Distance  : " << this->m_SquaredDistance << std::endl;
 
 }
 

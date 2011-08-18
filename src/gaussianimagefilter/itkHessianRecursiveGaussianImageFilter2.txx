@@ -40,7 +40,7 @@ HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
   {
     GaussianFilterPointer filter = GaussianFilterType::New();
     filter->SetOrder( GaussianFilterType::ZeroOrder );
-    filter->SetNormalizeAcrossScale( m_NormalizeAcrossScale );
+    filter->SetNormalizeAcrossScale( this->m_NormalizeAcrossScale );
     filter->ReleaseDataFlagOn();
     this->m_SmoothingFilters.push_back( filter );
   }

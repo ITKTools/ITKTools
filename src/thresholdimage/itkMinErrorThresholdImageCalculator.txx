@@ -34,18 +34,18 @@ template<class TInputImage>
 MinErrorThresholdImageCalculator<TInputImage>
 ::MinErrorThresholdImageCalculator()
 {
-  m_Image = NULL;
-  m_Threshold = NumericTraits<PixelType>::Zero;
-  m_NumberOfHistogramBins = 128;
-  m_RegionSetByUser = false;
-  m_AlphaLeft = 0.0;
-  m_AlphaRight= 0.0;
-  m_PriorLeft = 0.0;
-  m_PriorRight= 0.0;
-  m_StdLeft = 0.0;
-  m_StdRight = 0.0;
-  m_UseGaussian = 0;
-  m_usePoisson = 1;
+  this->m_Image = NULL;
+  this->m_Threshold = NumericTraits<PixelType>::Zero;
+  this->m_NumberOfHistogramBins = 128;
+  this->m_RegionSetByUser = false;
+  this->m_AlphaLeft = 0.0;
+  this->m_AlphaRight= 0.0;
+  this->m_PriorLeft = 0.0;
+  this->m_PriorRight= 0.0;
+  this->m_StdLeft = 0.0;
+  this->m_StdRight = 0.0;
+  this->m_UseGaussian = 0;
+  this->m_usePoisson = 1;
 }
 
 
@@ -59,13 +59,13 @@ MinErrorThresholdImageCalculator<TInputImage>
 {
   if(TYPE)
     {
-    m_UseGaussian = 1;
-    m_usePoisson = 0;
+    this->m_UseGaussian = 1;
+    this->m_usePoisson = 0;
     }
   else
     {
-    m_UseGaussian = 0;
-    m_usePoisson = 1;
+    this->m_UseGaussian = 0;
+    this->m_usePoisson = 1;
     }
 }
 
@@ -75,7 +75,7 @@ MinErrorThresholdImageCalculator<TInputImage>
 template<class TInputImage>
 void
 MinErrorThresholdImageCalculator<TInputImage>
-::Compute(void)
+::Compute( void )
 {
 
   unsigned int j, i;
@@ -83,17 +83,17 @@ MinErrorThresholdImageCalculator<TInputImage>
   if ( !m_Image ) { return; }
   if( !m_RegionSetByUser )
     {
-    m_Region = m_Image->GetRequestedRegion();
+    this->m_Region = this->m_Image->GetRequestedRegion();
     }
 
-  double totalPixels = (double) m_Region.GetNumberOfPixels();
+  double totalPixels = (double) this->m_Region.GetNumberOfPixels();
   if ( totalPixels == 0 ) { return; }
 
 
   // compute image max and min
   typedef MinimumMaximumImageCalculator<TInputImage> RangeCalculator;
   typename RangeCalculator::Pointer rangeCalculator = RangeCalculator::New();
-  rangeCalculator->SetImage( m_Image );
+  rangeCalculator->SetImage( this->m_Image );
   rangeCalculator->Compute();
 
   PixelType imageMin = rangeCalculator->GetMinimum();
@@ -101,7 +101,7 @@ MinErrorThresholdImageCalculator<TInputImage>
 
   if ( imageMin >= imageMax )
     {
-    m_Threshold = imageMin;
+    this->m_Threshold = imageMin;
     return;
     }
 
@@ -110,19 +110,19 @@ MinErrorThresholdImageCalculator<TInputImage>
   std::vector<double> errorFunctionPois;
   std::vector<double> errorFunctionGaus;
 
-  relativeFrequency.resize( m_NumberOfHistogramBins );
-  errorFunctionPois.resize( m_NumberOfHistogramBins );
-  errorFunctionGaus.resize( m_NumberOfHistogramBins );
-  for ( j = 0; j < m_NumberOfHistogramBins; j++ )
+  relativeFrequency.resize( this->m_NumberOfHistogramBins );
+  errorFunctionPois.resize( this->m_NumberOfHistogramBins );
+  errorFunctionGaus.resize( this->m_NumberOfHistogramBins );
+  for ( j = 0; j < this->m_NumberOfHistogramBins; j++ )
     {
     relativeFrequency[j] = errorFunctionPois[j] = errorFunctionGaus[j] = 0.0;
     }
 
-  double binMultiplier = (double) m_NumberOfHistogramBins /
+  double binMultiplier = (double) this->m_NumberOfHistogramBins /
     (double) ( imageMax - imageMin );
 
   typedef ImageRegionConstIteratorWithIndex<TInputImage> Iterator;
-  Iterator iter( m_Image, m_Region );
+  Iterator iter( this->m_Image, this->m_Region );
 
   while ( !iter.IsAtEnd() )
     {
@@ -136,7 +136,7 @@ MinErrorThresholdImageCalculator<TInputImage>
     else
       {
       binNumber = (unsigned int) vcl_ceil((value - imageMin) * binMultiplier ) - 1;
-      if ( binNumber == m_NumberOfHistogramBins ) // in case of rounding errors
+      if ( binNumber == this->m_NumberOfHistogramBins ) // in case of rounding errors
         {
         binNumber -= 1;
         }
@@ -149,7 +149,7 @@ MinErrorThresholdImageCalculator<TInputImage>
 
   // normalize the histogram
   double totalMean = 0.0;
-  for ( j = 0; j < m_NumberOfHistogramBins; j++ )
+  for ( j = 0; j < this->m_NumberOfHistogramBins; j++ )
     {
     relativeFrequency[j] /= totalPixels;
     totalMean += (j+1) * relativeFrequency[j];
@@ -167,7 +167,7 @@ MinErrorThresholdImageCalculator<TInputImage>
   double stdLeft = 0.0;
   double stdRight = 0.0;
 
-  for ( j = 1; j < m_NumberOfHistogramBins-1; j++ )
+  for ( j = 1; j < this->m_NumberOfHistogramBins-1; j++ )
     {
     //compute the current parameters for left (background) mixture component
     priorLeft = 0.0; //Prior Probability
@@ -215,9 +215,9 @@ MinErrorThresholdImageCalculator<TInputImage>
 
   //find the threshold value that minimizes each of the error functions
   i = 1;
-  if(m_UseGaussian)
+  if( this->m_UseGaussian)
     {
-    for ( j = 2; j < m_NumberOfHistogramBins-1; j++ )
+    for ( j = 2; j < this->m_NumberOfHistogramBins-1; j++ )
       {
       if(errorFunctionGaus[j]<errorFunctionGaus[i])
          i = j;
@@ -225,7 +225,7 @@ MinErrorThresholdImageCalculator<TInputImage>
     }
   else
     {
-    for ( j = 2; j < m_NumberOfHistogramBins-1; j++ )
+    for ( j = 2; j < this->m_NumberOfHistogramBins-1; j++ )
       {
       if(errorFunctionPois[j]<errorFunctionPois[i])
          i = j;
@@ -233,26 +233,26 @@ MinErrorThresholdImageCalculator<TInputImage>
     }
 
    //Finally, compute the threshold
-    m_Threshold = static_cast<PixelType>( imageMin +
+    this->m_Threshold = static_cast<PixelType>( imageMin +
                                         (i+1) / binMultiplier );
 
   //estimate the parameters of the resulting mixture
   for (j=0; j<=i; j++)
     {
-    m_PriorLeft+=relativeFrequency[j];
-    m_AlphaLeft+=(j*relativeFrequency[j]);
+    this->m_PriorLeft+=relativeFrequency[j];
+    this->m_AlphaLeft+=(j*relativeFrequency[j]);
     }
-  m_AlphaLeft/= m_PriorLeft;
+  this->m_AlphaLeft/= this->m_PriorLeft;
 
   for ( j=i+1; j<m_NumberOfHistogramBins; j++)
     {
-    m_PriorRight+=relativeFrequency[j];
-    m_AlphaRight+=(j*relativeFrequency[j]);
+    this->m_PriorRight+=relativeFrequency[j];
+    this->m_AlphaRight+=(j*relativeFrequency[j]);
     }
-  m_AlphaRight/= m_PriorRight;
+  this->m_AlphaRight/= this->m_PriorRight;
 
 
-  if(m_UseGaussian)
+  if( this->m_UseGaussian)
     {
     varLeft = 0.0;
     for (j=0; j<=i; j++)
@@ -260,7 +260,7 @@ MinErrorThresholdImageCalculator<TInputImage>
       varLeft+=(vnl_math_sqr(j-m_AlphaLeft)*relativeFrequency[j]);
       }
     varLeft/=m_PriorLeft;
-    m_StdLeft=vcl_sqrt(varLeft);
+    this->m_StdLeft=vcl_sqrt(varLeft);
 
     varRight = 0.0;
     for ( j=i+1; j<m_NumberOfHistogramBins; j++)
@@ -268,12 +268,12 @@ MinErrorThresholdImageCalculator<TInputImage>
       varRight+=(vnl_math_sqr(j-m_AlphaRight)*relativeFrequency[j]);
       }
     varRight/=m_PriorRight;
-    m_StdRight=vcl_sqrt(varRight);
+    this->m_StdRight=vcl_sqrt(varRight);
     }
-  m_AlphaLeft= imageMin + (m_AlphaLeft+1) / binMultiplier ;
-  m_AlphaRight= imageMin + (m_AlphaRight+1) / binMultiplier ;
-  m_StdLeft/= binMultiplier ;
-  m_StdRight/= binMultiplier ;
+  this->m_AlphaLeft= imageMin + ( this->m_AlphaLeft+1) / binMultiplier ;
+  this->m_AlphaRight= imageMin + ( this->m_AlphaRight+1) / binMultiplier ;
+  this->m_StdLeft/= binMultiplier ;
+  this->m_StdRight/= binMultiplier ;
 }
 
 template<class TInputImage>
@@ -281,8 +281,8 @@ void
 MinErrorThresholdImageCalculator<TInputImage>
 ::SetRegion( const RegionType & region )
 {
-  m_Region = region;
-  m_RegionSetByUser = true;
+  this->m_Region = region;
+  this->m_RegionSetByUser = true;
 }
 
 
@@ -293,8 +293,8 @@ MinErrorThresholdImageCalculator<TInputImage>
 {
   Superclass::PrintSelf(os,indent);
 
-  os << indent << "Threshold: " << m_Threshold << std::endl;
-  os << indent << "Image: " << m_Image.GetPointer() << std::endl;
+  os << indent << "Threshold: " << this->m_Threshold << std::endl;
+  os << indent << "Image: " << this->m_Image.GetPointer() << std::endl;
 }
 
 } // end namespace itk

@@ -67,10 +67,10 @@ class ITKToolsRescaleIntensityImageFilterBase : public itktools::ITKToolsBase
 public:
   ITKToolsRescaleIntensityImageFilterBase()
   {
-    m_InputFileName = "";
-    m_OutputFileName = "";
-    //std::vector<double> m_Values;
-    m_ValuesAreExtrema = false;
+    this->m_InputFileName = "";
+    this->m_OutputFileName = "";
+    //std::vector<double> this->m_Values;
+    this->m_ValuesAreExtrema = false;
   };
   ~ITKToolsRescaleIntensityImageFilterBase(){};
 
@@ -102,7 +102,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     /** TYPEDEF's. */
     typedef itk::Image<TComponentType, VDimension>        ScalarImageType;
@@ -126,7 +126,7 @@ public:
     typename ShiftScalerType::Pointer shiftscaler;
 
     /** Read in the inputImage. */
-    reader->SetFileName( m_InputFileName.c_str() );
+    reader->SetFileName( this->m_InputFileName.c_str() );
     reader->Update();
 
     // Setup type to disassemble the components
@@ -147,22 +147,22 @@ public:
       * then an IntensityRescaler is used. Otherwise, the values represent
       * the desired mean and variance and a ShiftScaler is used.
       */
-      if ( m_ValuesAreExtrema )
+      if ( this->m_ValuesAreExtrema )
       {
 	/** Create instance. */
 	rescaler = RescalerType::New();
 
 	/** Define the extrema. */
 	PixelType min, max;
-	if ( m_Values[ 0 ] == 0.0 && m_Values[ 1 ] == 0.0 )
+	if ( this->m_Values[ 0 ] == 0.0 && this->m_Values[ 1 ] == 0.0 )
 	{
 	  min = itk::NumericTraits<PixelType>::NonpositiveMin();
 	  max = itk::NumericTraits<PixelType>::max();
 	}
 	else
 	{
-	  min = static_cast<PixelType>( m_Values[ 0 ] );
-	  max = static_cast<PixelType>( m_Values[ 1 ] );
+	  min = static_cast<PixelType>( this->m_Values[ 0 ] );
+	  max = static_cast<PixelType>( this->m_Values[ 1 ] );
 	}
 
 	/** Setup the rescaler. */
@@ -191,8 +191,8 @@ public:
 
 	/** Setup the shiftscaler. */
 	shiftscaler->SetInput( indexSelectionFilter->GetOutput() );
-	shiftscaler->SetShift( m_Values[ 0 ] * sigma / vcl_sqrt( m_Values[ 1 ] ) - mean );
-	shiftscaler->SetScale( vcl_sqrt( m_Values[ 1 ] ) / sigma );
+	shiftscaler->SetShift( this->m_Values[ 0 ] * sigma / vcl_sqrt( this->m_Values[ 1 ] ) - mean );
+	shiftscaler->SetScale( vcl_sqrt( this->m_Values[ 1 ] ) / sigma );
 	shiftscaler->Update();
 
 	/** Setup the recombining. */
@@ -205,7 +205,7 @@ public:
     writer->SetInput(imageToVectorImageFilter->GetOutput());
     
     /** Write the output image. */
-    writer->SetFileName( m_OutputFileName.c_str() );
+    writer->SetFileName( this->m_OutputFileName.c_str() );
     writer->Update();
   }
 
@@ -239,11 +239,11 @@ int main( int argc, char **argv )
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }
@@ -346,7 +346,7 @@ int main( int argc, char **argv )
  
   /** \todo some progs allow user to override the pixel type, 
    * so we need a method to convert string to EnumComponentType */
-  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileName);
+  itktools::ComponentType componentType = itktools::GetImageComponentType( inputFileName );
   
   std::cout << "Detected component type: " << 
     componentType << std::endl;

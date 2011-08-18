@@ -164,15 +164,15 @@ SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
     /** Set the order for the first smoothing filter. */
     if ( order[ 0 ] == 0 )
     {
-      m_FirstSmoothingFilter->SetOrder( FirstGaussianFilterType::ZeroOrder );
+      this->m_FirstSmoothingFilter->SetOrder( FirstGaussianFilterType::ZeroOrder );
     }
     else if ( order[ 0 ] == 1 )
     {
-      m_FirstSmoothingFilter->SetOrder( FirstGaussianFilterType::FirstOrder );
+      this->m_FirstSmoothingFilter->SetOrder( FirstGaussianFilterType::FirstOrder );
     }
     else if ( order[ 0 ] == 2 )
     {
-      m_FirstSmoothingFilter->SetOrder( FirstGaussianFilterType::SecondOrder );
+      this->m_FirstSmoothingFilter->SetOrder( FirstGaussianFilterType::SecondOrder );
     }
     //else warning??
 
@@ -181,15 +181,15 @@ SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
     {
       if ( order[ i + 1 ] == 0 )
       {
-        m_SmoothingFilters[ i ]->SetOrder( InternalGaussianFilterType::ZeroOrder );
+        this->m_SmoothingFilters[ i ]->SetOrder( InternalGaussianFilterType::ZeroOrder );
       }
       else if ( order[ i + 1 ] == 1 )
       {
-        m_SmoothingFilters[ i ]->SetOrder( InternalGaussianFilterType::FirstOrder );
+        this->m_SmoothingFilters[ i ]->SetOrder( InternalGaussianFilterType::FirstOrder );
       }
       else if ( order[ i + 1 ] == 2 )
       {
-        m_SmoothingFilters[ i ]->SetOrder( InternalGaussianFilterType::SecondOrder );
+        this->m_SmoothingFilters[ i ]->SetOrder( InternalGaussianFilterType::SecondOrder );
       }
       //else warning??
     } // end for
@@ -243,7 +243,7 @@ SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
 template <typename TInputImage, typename TOutputImage >
 void
 SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage >
-::GenerateData(void)
+::GenerateData( void )
 {
 
   itkDebugMacro(<< "SmoothingRecursiveGaussianImageFilter generating data ");
@@ -270,13 +270,13 @@ SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage >
   // equal weight proportion
   for( unsigned int i = 0; i<ImageDimension-1; i++ )
     {
-    progress->RegisterInternalFilter(m_SmoothingFilters[i],1.0 / (ImageDimension));
+    progress->RegisterInternalFilter( this->m_SmoothingFilters[i],1.0 / (ImageDimension));
     }
 
-  progress->RegisterInternalFilter(m_FirstSmoothingFilter,1.0 / (ImageDimension));
-  m_FirstSmoothingFilter->SetInput( inputImage );
-  m_CastingFilter->Update();
-  this->GraftOutput(m_CastingFilter->GetOutput());
+  progress->RegisterInternalFilter( this->m_FirstSmoothingFilter,1.0 / (ImageDimension));
+  this->m_FirstSmoothingFilter->SetInput( inputImage );
+  this->m_CastingFilter->Update();
+  this->GraftOutput( this->m_CastingFilter->GetOutput());
 
 }
 
@@ -288,7 +288,7 @@ SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
 {
   Superclass::PrintSelf(os,indent);
 
-  os << "NormalizeAcrossScale: " << m_NormalizeAcrossScale << std::endl;
+  os << "NormalizeAcrossScale: " << this->m_NormalizeAcrossScale << std::endl;
 }
 
 

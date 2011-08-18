@@ -57,9 +57,9 @@ class ITKToolsImagesToVectorImageBase : public itktools::ITKToolsBase
 public:
   ITKToolsImagesToVectorImageBase()
   {
-    //std::vector<std::string> m_InputFileNames;
-    m_OutputFileName = "";
-    m_NumberOfStreams = 0;
+    //std::vector<std::string> this->m_InputFileNames;
+    this->m_OutputFileName = "";
+    this->m_NumberOfStreams = 0;
   };
   ~ITKToolsImagesToVectorImageBase(){};
 
@@ -89,7 +89,7 @@ public:
     return NULL;
   }
 
-  void Run(void)
+  void Run( void )
   {
     /** Typedef's. */
     typedef itk::VectorImage<TComponentType, VDimension>    VectorImageType;
@@ -100,10 +100,10 @@ public:
     
     /** Read in the input images. */
     std::vector<typename ReaderType::Pointer> readers( m_InputFileNames.size() );
-    for ( unsigned int i = 0; i < m_InputFileNames.size(); ++i )
+    for ( unsigned int i = 0; i < this->m_InputFileNames.size(); ++i )
     {
       readers[ i ] = ReaderType::New();
-      readers[ i ]->SetFileName( m_InputFileNames[ i ] );
+      readers[ i ]->SetFileName( this->m_InputFileNames[ i ] );
       readers[ i ]->Update();
     }
 
@@ -112,9 +112,9 @@ public:
     typename ImageToVectorImageFilterType::Pointer imageToVectorImageFilter = ImageToVectorImageFilterType::New();
 
     // For each input image
-    std::cout << "There are " << m_InputFileNames.size() << " input images." << std::endl;
+    std::cout << "There are " << this->m_InputFileNames.size() << " input images." << std::endl;
     unsigned int currentOutputIndex = 0;
-    for ( unsigned int inputImageIndex = 0; inputImageIndex < m_InputFileNames.size(); ++inputImageIndex )
+    for ( unsigned int inputImageIndex = 0; inputImageIndex < this->m_InputFileNames.size(); ++inputImageIndex )
     {
       typedef itk::VectorIndexSelectionCastImageFilter<VectorImageType, ScalarImageType> ComponentExtractionType;
 
@@ -139,9 +139,9 @@ public:
 
     /** Write vector image. */
     typename WriterType::Pointer writer = WriterType::New();
-    writer->SetFileName( m_OutputFileName );
+    writer->SetFileName( this->m_OutputFileName );
     writer->SetInput( imageToVectorImageFilter->GetOutput() );
-    writer->SetNumberOfStreamDivisions( m_NumberOfStreams );
+    writer->SetNumberOfStreamDivisions( this->m_NumberOfStreams );
     writer->Update();
 
   }
@@ -170,11 +170,11 @@ int main( int argc, char ** argv )
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }

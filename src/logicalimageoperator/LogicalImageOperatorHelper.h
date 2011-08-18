@@ -297,10 +297,10 @@ public:
     std::cout << "Done performing logical operation." << std::endl;
 
     /** Write the image to disk */
-    writer->SetFileName( m_OutputFileName.c_str() );
+    writer->SetFileName( this->m_OutputFileName.c_str() );
     writer->SetInput( imageToVectorImageFilter->GetOutput() );
-    writer->SetUseCompression( m_UseCompression );
-    std::cout << "Writing output to disk as: " << m_OutputFileName << std::endl;
+    writer->SetUseCompression( this->m_UseCompression );
+    std::cout << "Writing output to disk as: " << this->m_OutputFileName << std::endl;
     writer->Update();
     std::cout << "Done writing output to disk." << std::endl;
   }

@@ -56,10 +56,10 @@ class ITKToolsCreateZeroImageBase : public itktools::ITKToolsBase
 public:
   ITKToolsCreateZeroImageBase()
   {
-    m_OutputFileName = "";
-    //std::vector<unsigned int> m_Size;
-    //std::vector<double> m_Spacing;
-    //std::vector<double> m_Origin;
+    this->m_OutputFileName = "";
+    //std::vector<unsigned int> this->m_Size;
+    //std::vector<double> this->m_Spacing;
+    //std::vector<double> this->m_Origin;
   };
   ~ITKToolsCreateZeroImageBase(){};
 
@@ -90,7 +90,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     /** Typedefs. */
     typedef itk::Image<TComponentType, VDimension>ImageType;
@@ -106,9 +106,9 @@ public:
     OriginType  imOrigin;
     for ( unsigned int i = 0; i < VDimension; i++ )
     {
-      imSize[ i ] = m_Size[ i ];
-      imSpacing[ i ] = m_Spacing[ i ];
-      imOrigin[ i ] = m_Origin[ i ];
+      imSize[ i ] = this->m_Size[ i ];
+      imSpacing[ i ] = this->m_Spacing[ i ];
+      imOrigin[ i ] = this->m_Origin[ i ];
     }
 
     /** Create image. */
@@ -121,7 +121,7 @@ public:
 
     /** Write the image. */
     typename WriterType::Pointer writer = WriterType::New();
-    writer->SetFileName( m_OutputFileName.c_str() );
+    writer->SetFileName( this->m_OutputFileName.c_str() );
     writer->SetInput( image );
     writer->Update();
   }
@@ -147,11 +147,11 @@ int main( int argc, char **argv )
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }

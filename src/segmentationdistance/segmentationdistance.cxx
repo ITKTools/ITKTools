@@ -95,14 +95,14 @@ class ITKToolsSegmentationDistanceBase : public itktools::ITKToolsBase
 public:
   ITKToolsSegmentationDistanceBase()
   {
-    m_InputFileName1 = "";
-    m_InputFileName2 = "";
-    m_OutputFileName = "";
-    //std::vector<double> m_Mancor; // manual correlation
-    m_Samples = 0;
-    m_Thetasize = 0;
-    m_Phisize = 0;
-    m_Cartesianonly = false;
+    this->m_InputFileName1 = "";
+    this->m_InputFileName2 = "";
+    this->m_OutputFileName = "";
+    //std::vector<double> this->m_Mancor; // manual correlation
+    this->m_Samples = 0;
+    this->m_Thetasize = 0;
+    this->m_Phisize = 0;
+    this->m_Cartesianonly = false;
   };
   ~ITKToolsSegmentationDistanceBase(){};
 
@@ -137,7 +137,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
 
     /** constants */
@@ -204,8 +204,8 @@ public:
     typename WriterCartesianType::Pointer writerEdgeCartesian = WriterCartesianType::New();
 
     /** Read in the inputImages. */
-    reader1->SetFileName( m_InputFileName1.c_str() );
-    reader2->SetFileName( m_InputFileName2.c_str() );
+    reader1->SetFileName( this->m_InputFileName1.c_str() );
+    reader2->SetFileName( this->m_InputFileName2.c_str() );
     std::cout << "Reading input images..." << std::endl;
     reader1->Update();
     reader2->Update();
@@ -235,11 +235,11 @@ public:
     typename ImageType::Pointer dist = 0;
     typename ImageType::Pointer edge = 0;
 
-    std::vector<double> cor = m_Mancor;
+    std::vector<double> cor = this->m_Mancor;
 
     SegmentationDistanceHelper<InputImageType1, InputImageType2, ImageType>(
       padder1->GetOutput(), padder2->GetOutput(), accum1, accum2, dist, edge,
-      cor, m_Samples, m_Thetasize, m_Phisize, m_Cartesianonly, false);
+      cor, this->m_Samples, this->m_Thetasize, this->m_Phisize, this->m_Cartesianonly, false);
 
     /** Compute 1 minus the input images */
     typename InputImageType1::Pointer invInputImage1 = InputImageType1::New();
@@ -280,10 +280,10 @@ public:
 
     SegmentationDistanceHelper<InputImageType1, InputImageType2, ImageType>(
       invInputImage1, invInputImage2, accum1inv, accum2inv, distinv, edgeinv,
-      cor, m_Samples, m_Thetasize, m_Phisize, m_Cartesianonly, true);
+      cor, this->m_Samples, this->m_Thetasize, this->m_Phisize, this->m_Cartesianonly, true);
 
     //
-    if ( m_Cartesianonly )
+    if ( this->m_Cartesianonly )
     {
 
 
@@ -297,10 +297,10 @@ public:
 
       /** outputfilename extensie afknippen en DIST en EDGE toevoegen.*/
       std::string part1 =
-	itksys::SystemTools::GetFilenameWithoutLastExtension(m_OutputFileName);
+	itksys::SystemTools::GetFilenameWithoutLastExtension( this->m_OutputFileName);
       /** get file name extension */
       std::string part2 = "";
-      part2 += itksys::SystemTools::GetFilenameLastExtension(m_OutputFileName);
+      part2 += itksys::SystemTools::GetFilenameLastExtension( this->m_OutputFileName);
       std::string diststr = "DIST";
       std::string edgestr = "EDGE";
 
@@ -369,8 +369,8 @@ public:
 
     /** Write the output image. */
     writer->SetInput( extracter->GetOutput() );
-    writer->SetFileName( m_OutputFileName.c_str() );
-    std::cout << "Saving the result to disk as: " << m_OutputFileName << std::endl;
+    writer->SetFileName( this->m_OutputFileName.c_str() );
+    std::cout << "Saving the result to disk as: " << this->m_OutputFileName << std::endl;
     writer->Update();
     std::cout << "Done." << std::endl;
 
@@ -391,11 +391,11 @@ int main( int argc, char **argv )
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }

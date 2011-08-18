@@ -25,8 +25,6 @@
 
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
-#include "ITKToolsBase.h"
-
 #include "statisticsonimage.h"
 
 
@@ -59,184 +57,8 @@ std::string GetHelpString( void )
 
 } // end GetHelpString()
 
-//-------------------------------------------------------------------------------------
-
-
-/**
- * ******************* StatisticsOnImage *******************
- *
- * The real functionality of pxstatisticsonimage,
- * templated over image properties.
- */
-
-
-/** StatisticsOnImage */
-
-class ITKToolsStatisticsOnImageBase : public itktools::ITKToolsBase
-{
-public:
-  ITKToolsStatisticsOnImageBase()
-  {
-    m_InputFileName = "";
-    m_MaskFileName = "";
-    m_HistogramOutputFileName = "";
-    m_NumberOfBins = 0;
-    m_Select = "";
-  };
-  ~ITKToolsStatisticsOnImageBase(){};
-
-  /** Input parameters */
-  std::string m_InputFileName;
-  std::string m_MaskFileName;
-  std::string m_HistogramOutputFileName;
-  unsigned int m_NumberOfBins;
-  std::string m_Select;
-
-}; // end StatisticsOnImageBase
-
-
-template< class TComponentType, unsigned int VDimension, unsigned int VNumberOfComponents >
-class ITKToolsStatisticsOnImage : public ITKToolsStatisticsOnImageBase
-{
-public:
-  typedef ITKToolsStatisticsOnImage Self;
-
-  ITKToolsStatisticsOnImage(){};
-  ~ITKToolsStatisticsOnImage(){};
-
-  static Self * New( itktools::ComponentType componentType, unsigned int dim, unsigned int numberOfComponents )
-  {
-    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim && VNumberOfComponents == numberOfComponents )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
-  void Run(void)
-  {
-    /** Typedefs. */
-    typedef TComponentType ScalarPixelType;
-    typedef double InternalPixelType;
-    typedef unsigned char MaskPixelType;
-    typedef itk::Vector<TComponentType, VNumberOfComponents>  VectorPixelType;
-    typedef itk::Image<ScalarPixelType, VDimension>          ScalarImageType;
-    typedef itk::Image<VectorPixelType, VDimension>          VectorImageType;
-
-    typedef itk::Image<InternalPixelType, VDimension>    InternalImageType;
-    typedef itk::Image<MaskPixelType, VDimension>        MaskImageType;
-
-    typedef itk::ImageToImageFilter<
-      InternalImageType, InternalImageType>             BaseFilterType;
-    typedef itk::ImageFileReader< ScalarImageType >     ScalarReaderType;
-    typedef itk::ImageFileReader< InternalImageType >   InternalScalarReaderType;
-    typedef itk::ImageFileReader< VectorImageType >     VectorReaderType;
-    typedef itk::ImageFileReader< MaskImageType >       MaskReaderType;
-    typedef itk::CastImageFilter<
-      InternalImageType, InternalImageType>             CopierType;
-    typedef itk::GradientToMagnitudeImageFilter<
-      VectorImageType, InternalImageType >              MagnitudeFilterType;
-    typedef itk::StatisticsImageFilter<
-      InternalImageType >                               StatisticsFilterType;
-    typedef itk::Statistics::ScalarImageToHistogramGenerator2<
-      InternalImageType >                               HistogramGeneratorType;
-    typedef itk::MaskImageFilter< InternalImageType,
-      MaskImageType, InternalImageType >                MaskerType;
-    typedef typename
-      HistogramGeneratorType::HistogramType             HistogramType;
-
-    /** Create StatisticsFilter. */
-    typename StatisticsFilterType::Pointer statistics
-      = StatisticsFilterType::New();
-
-    /** Read mask */
-    typename MaskReaderType::Pointer maskReader;
-    typename BaseFilterType::Pointer maskerOrCopier
-      = (CopierType::New()).GetPointer();
-    if ( m_MaskFileName != "" )
-    {
-      /** Read mask */
-      maskReader = MaskReaderType::New();
-      maskReader->SetFileName( m_MaskFileName.c_str() );
-      maskReader->Update();
-
-      /** Set mask. */
-      statistics->SetMask( maskReader->GetOutput() );
-
-      /** Prepare filter that applies masking to an image by
-      * replacing all pixels that fall outside the mask by
-      * -infinity. Needed for histogram.
-      */
-      typename MaskerType::Pointer maskFilter = MaskerType::New();
-      maskFilter->SetInput2( maskReader->GetOutput() );
-      maskFilter->SetOutsideValue(
-        itk::NumericTraits<InternalPixelType>::NonpositiveMin() );
-      maskerOrCopier = maskFilter.GetPointer();
-    }
-
-    /** Create histogram generator. */
-    typename HistogramGeneratorType::Pointer histogramGenerator
-      = HistogramGeneratorType::New();
-
-    /** For scalar images. */
-    if ( VNumberOfComponents == 1 )
-    {
-      std::cout << "Statistics are computed on the gray values." << std::endl;
-
-      typename InternalScalarReaderType::Pointer reader
-        = InternalScalarReaderType::New();
-      reader->SetFileName( m_InputFileName.c_str() );
-      reader->Update();
-
-      /** Call the generic ComputeStatistics function. */
-      ComputeStatistics<
-        InternalImageType,
-        BaseFilterType,
-        StatisticsFilterType,
-        HistogramGeneratorType>(
-          reader->GetOutput(),
-          maskerOrCopier,
-          statistics,
-          histogramGenerator,
-          m_NumberOfBins,
-          m_HistogramOutputFileName,
-          m_Select );
-
-    } // end scalar images
-    /** For vector images. */
-    else
-    {
-      std::cout << "Statistics are computed on the magnitude of the vectors." << std::endl;
-
-      typename VectorReaderType::Pointer reader = VectorReaderType::New();
-      reader->SetFileName( m_InputFileName.c_str() );
-
-      typename MagnitudeFilterType::Pointer magnitudeFilter = MagnitudeFilterType::New();
-      magnitudeFilter->SetInput( reader->GetOutput() );
-      std::cout << "Computing magnitude image ..." << std::endl;
-      magnitudeFilter->Update();
-
-      /** Call the generic ComputeStatistics function */
-      ComputeStatistics<
-        InternalImageType,
-        BaseFilterType,
-        StatisticsFilterType,
-        HistogramGeneratorType>(
-          magnitudeFilter->GetOutput(),
-          maskerOrCopier,
-          statistics,
-          histogramGenerator,
-          m_NumberOfBins,
-          m_HistogramOutputFileName,
-          m_Select );
-
-    } // end vector images
-  }
-
-}; // end StatisticsOnImage
 
 //-------------------------------------------------------------------------------------
-
 
 int main( int argc, char ** argv )
 {
@@ -249,11 +71,11 @@ int main( int argc, char ** argv )
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }
@@ -315,11 +137,11 @@ int main( int argc, char ** argv )
   /** Short alias */
   unsigned int dim = Dimension;
  
-  //itktools::EnumComponentType componentType = itktools::GetImageComponentType(inputFileName);
+  //itktools::EnumComponentType componentType = itktools::GetImageComponentType( inputFileName );
   itktools::ComponentType componentType = itk::ImageIOBase::FLOAT;
   
   unsigned int numberOfComponents = 0;
-  itktools::GetImageNumberOfComponents(inputFileName, numberOfComponents);
+  itktools::GetImageNumberOfComponents( inputFileName, numberOfComponents );
   
   std::cout << "Detected component type: " << 
     componentType << std::endl;

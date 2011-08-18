@@ -27,11 +27,11 @@ namespace itk
   template <class TOutputMesh>
   void
   MeshFileReaderBase<TOutputMesh>
-  ::GenerateOutputInformation(void)
+  ::GenerateOutputInformation( void )
   {
     OutputMeshPointer output = this->GetOutput();
 
-    itkDebugMacro(<<"Reading file for GenerateOutputInformation()" << m_FileName);
+    itkDebugMacro(<<"Reading file for GenerateOutputInformation()" << this->m_FileName);
 
     /** Check to see if we can read the file given the name or prefix */
     if ( this->m_FileName == "" )
@@ -44,8 +44,8 @@ namespace itk
     this->TestFileExistanceAndReadability();
 
     //Copy MetaDataDictionary from instantiated reader to output mesh?
-    //output->SetMetaDataDictionary(m_ImageIO->GetMetaDataDictionary());
-    //this->SetMetaDataDictionary(m_ImageIO->GetMetaDataDictionary());
+    //output->SetMetaDataDictionary( this->m_ImageIO->GetMetaDataDictionary());
+    //this->SetMetaDataDictionary( this->m_ImageIO->GetMetaDataDictionary());
 
     // This makes not really sense i think.
     //MeshRegionType region;

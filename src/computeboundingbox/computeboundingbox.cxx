@@ -20,13 +20,10 @@
  
  \verbinclude computeboundingbox.help
  */
+
 #include "itkCommandLineArgumentParser.h"
 #include "ITKToolsHelpers.h"
-#include "ITKToolsBase.h"
-
-#include "itkImageRegionConstIteratorWithIndex.h"
-#include "itkImageFileReader.h"
-#include "vnl/vnl_math.h"
+#include "computeboundingbox.h"
 
 
 /**
@@ -51,106 +48,6 @@ std::string GetHelpString( void )
 } // end GetHelpString()
 
 
-/** ComputeBoundingBox */
-
-class ITKToolsComputeBoundingBoxBase : public itktools::ITKToolsBase
-{ 
-public:
-  ITKToolsComputeBoundingBoxBase()
-  {
-    m_InputFileName = "";
-    m_OutputFileName = "";
-  }
-  ~ITKToolsComputeBoundingBoxBase(){};
-
-  /** Input parameters */
-  std::string m_InputFileName;
-  std::string m_OutputFileName;
-    
-}; // end ComputeBoundingBoxBase
-
-
-template< class TComponentType, unsigned int VImageDimension >
-class ITKToolsComputeBoundingBox : public ITKToolsComputeBoundingBoxBase
-{
-public:
-  typedef ITKToolsComputeBoundingBox Self;
-
-  ITKToolsComputeBoundingBox(){};
-  ~ITKToolsComputeBoundingBox(){};
-
-  static Self * New( itktools::ComponentType componentType, unsigned int dim )
-  {
-    if ( itktools::IsType<TComponentType>( componentType ) && VImageDimension == dim )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
-  void Run( void )
-  {
-    /** Typedefs. */
-    typedef itk::Image<TComponentType, VImageDimension> InputImageType;
-    typedef itk::ImageFileReader< InputImageType >      ReaderType;
-    typedef itk::ImageRegionConstIteratorWithIndex<
-      InputImageType>                                   IteratorType;
-    typedef typename InputImageType::PixelType          PixelType;
-    typedef typename InputImageType::IndexType          IndexType;
-    typedef typename InputImageType::PointType          PointType;
-    const unsigned int dimension = InputImageType::GetImageDimension();
-
-    /** Declarations */
-    typename ReaderType::Pointer reader = ReaderType::New();
-    typename InputImageType::Pointer image;
-    IndexType minIndex;
-    IndexType maxIndex;
-
-    /** Read input image */
-    reader->SetFileName( m_InputFileName.c_str() );
-    reader->Update();
-    image = reader->GetOutput();
-
-    /** Define iterator on input image */
-    IteratorType iterator( image, image->GetLargestPossibleRegion() );
-
-    /** Initialize the two corner points */
-    iterator.GoToReverseBegin();
-    minIndex = iterator.GetIndex();
-    iterator.GoToBegin();
-    maxIndex = iterator.GetIndex();
-    PixelType zero = itk::NumericTraits< PixelType>::Zero;
-
-    while ( ! iterator.IsAtEnd() )
-    {
-      if ( iterator.Get() > zero )
-      {
-        const IndexType & index = iterator.GetIndex();
-        for ( unsigned int i = 0; i < dimension; ++i)
-        {
-          minIndex[i] = vnl_math_min( index[i], minIndex[i] );
-          maxIndex[i] = vnl_math_max( index[i], maxIndex[i] );
-        }
-      }
-      ++iterator;
-    }
-
-    PointType minPoint;
-    PointType maxPoint;
-    image->TransformIndexToPhysicalPoint(minIndex, minPoint);
-    image->TransformIndexToPhysicalPoint(maxIndex, maxPoint);
-
-    std::cout << "MinimumIndex = " << minIndex << "\n"
-	      << "MaximumIndex = " << maxIndex << std::endl;
-    std::cout << std::showpoint;
-    std::cout << "MinimumPoint = " << minPoint << "\n"
-	      << "MaximumPoint = " << maxPoint << std::endl;
-
-  } // end Run()
-
-}; // end ComputeBoundingBox
-
-
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char **argv )
@@ -164,11 +61,11 @@ int main( int argc, char **argv )
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }

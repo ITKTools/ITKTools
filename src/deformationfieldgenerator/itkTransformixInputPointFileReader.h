@@ -63,14 +63,14 @@ namespace itk
 
     /** Prepare the allocation of the output mesh during the first back
      * propagation of the pipeline. Updates the PointsAreIndices and NumberOfPoints. */
-    virtual void GenerateOutputInformation(void);
+    virtual void GenerateOutputInformation( void );
 
   protected:
     TransformixInputPointFileReader();
     virtual ~TransformixInputPointFileReader();
 
     /** Fill the point container of the output. */
-    virtual void GenerateData(void);
+    virtual void GenerateData( void );
 
     unsigned long m_NumberOfPoints;
     bool m_PointsAreIndices;

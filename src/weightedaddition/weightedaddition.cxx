@@ -56,9 +56,9 @@ class ITKToolsWeightedAdditionBase : public itktools::ITKToolsBase
 public:
   ITKToolsWeightedAdditionBase()
   {
-    //std::vector<std::string> m_InputFileNames;
-    //std::vector<std::string> m_WeightFileNames;
-    m_OutputFileName = "";
+    //std::vector<std::string> this->m_InputFileNames;
+    //std::vector<std::string> this->m_WeightFileNames;
+    this->m_OutputFileName = "";
   };
   ~ITKToolsWeightedAdditionBase(){};
 
@@ -88,7 +88,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     /** TYPEDEF's. */
     typedef itk::Image<TComponentType, VDimension>        InputImageType;
@@ -105,8 +105,8 @@ public:
     typedef typename WriterType::Pointer                  WriterPointer;
 
     /** DECLARATION'S. */
-    unsigned int nrInputs = m_InputFileNames.size();
-    if ( m_WeightFileNames.size() != nrInputs )
+    unsigned int nrInputs = this->m_InputFileNames.size();
+    if ( this->m_WeightFileNames.size() != nrInputs )
     {
       itkGenericExceptionMacro( << "ERROR: Number of weight images does not equal number of input images!" );
     }
@@ -120,9 +120,9 @@ public:
     for ( unsigned int i = 0; i < nrInputs; ++i )
     {
       inReaders[i] = ReaderType::New();
-      inReaders[i]->SetFileName( m_InputFileNames[i].c_str() );
+      inReaders[i]->SetFileName( this->m_InputFileNames[i].c_str() );
       wReaders[i] = ReaderType::New();
-      wReaders[i]->SetFileName( m_WeightFileNames[i].c_str() );
+      wReaders[i]->SetFileName( this->m_WeightFileNames[i].c_str() );
       multipliers[i] = MultiplierType::New();
       multipliers[i]->SetInput(0, inReaders[i]->GetOutput() );
       multipliers[i]->SetInput(1, wReaders[i]->GetOutput() );
@@ -131,7 +131,7 @@ public:
     }
 
     /** Write the output image. */
-    writer->SetFileName( m_OutputFileName.c_str() );
+    writer->SetFileName( this->m_OutputFileName.c_str() );
     writer->SetInput( adder->GetOutput() );
     writer->Update();
   }
@@ -153,11 +153,11 @@ int main( int argc, char **argv )
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }

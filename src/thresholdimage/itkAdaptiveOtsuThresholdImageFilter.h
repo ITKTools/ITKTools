@@ -170,12 +170,12 @@ public:
 
   OutputImagePointer GetThresholdImage()
     {
-    return m_Threshold;
+    return this->m_Threshold;
     }
 
   void SetPointSet( PointSetPointer pt )
     {
-    m_PointSet = pt;
+    this->m_PointSet = pt;
     }
 
 protected:

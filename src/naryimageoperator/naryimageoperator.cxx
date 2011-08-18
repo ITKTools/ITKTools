@@ -72,12 +72,12 @@ class ITKToolsNaryImageOperatorBase : public itktools::ITKToolsBase
 public:
   ITKToolsNaryImageOperatorBase()
   {
-    //std::vector<std::string> m_InputFileNames;
-    m_OutputFileName = "";
-    m_NaryOperatorName = "";
-    m_UseCompression = false;
-    m_NumberOfStreams = 0;
-    m_Arg = "";
+    //std::vector<std::string> this->m_InputFileNames;
+    this->m_OutputFileName = "";
+    this->m_NaryOperatorName = "";
+    this->m_UseCompression = false;
+    this->m_NumberOfStreams = 0;
+    this->m_Arg = "";
   };
   ~ITKToolsNaryImageOperatorBase(){};
 
@@ -111,7 +111,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     /** Typedefs. */
     typedef itk::Image<TComponentTypeIn, VDimension>    InputImageType;
@@ -123,11 +123,11 @@ public:
     typedef itk::ImageFileWriter< OutputImageType >     WriterType;
 
     /** Read the input images. */
-    std::vector<typename ReaderType::Pointer> readers( m_InputFileNames.size() );
-    for ( unsigned int i = 0; i < m_InputFileNames.size(); ++i )
+    std::vector<typename ReaderType::Pointer> readers( this->m_InputFileNames.size() );
+    for ( unsigned int i = 0; i < this->m_InputFileNames.size(); ++i )
     {
       readers[ i ] = ReaderType::New();
-      readers[ i ]->SetFileName( m_InputFileNames[ i ] );
+      readers[ i ]->SetFileName( this->m_InputFileNames[ i ] );
     }
 
     std::map <std::string, NaryFilterEnum> naryOperatorMap;
@@ -157,17 +157,17 @@ public:
     //InstantiateNaryFilterWithArg( MASKNEGATED );
 
     /** Connect the pipeline. */
-    for ( unsigned int i = 0; i < m_InputFileNames.size(); ++i )
+    for ( unsigned int i = 0; i < this->m_InputFileNames.size(); ++i )
     {
       naryFilter->SetInput( i, readers[ i ]->GetOutput() );
     }
 
     /** Write the image to disk */
     typename WriterType::Pointer writer = WriterType::New();
-    writer->SetFileName( m_OutputFileName.c_str() );
+    writer->SetFileName( this->m_OutputFileName.c_str() );
     writer->SetInput( naryFilter->GetOutput() );
-    writer->SetUseCompression( m_UseCompression );
-    writer->SetNumberOfStreamDivisions( m_NumberOfStreams );
+    writer->SetUseCompression( this->m_UseCompression );
+    writer->SetNumberOfStreamDivisions( this->m_NumberOfStreams );
     writer->Update();
   }
 
@@ -187,11 +187,11 @@ int main( int argc, char **argv )
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }

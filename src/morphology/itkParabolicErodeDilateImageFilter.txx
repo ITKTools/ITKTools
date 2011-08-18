@@ -28,15 +28,15 @@ ParabolicErodeDilateImageFilter<TInputImage, doDilate, TOutputImage>
 
   if (doDilate)
     {
-    m_Extreme = NumericTraits<PixelType>::min();
-    m_MagnitudeSign = 1;
+    this->m_Extreme = NumericTraits<PixelType>::min();
+    this->m_MagnitudeSign = 1;
     }
   else
     {
-    m_Extreme = NumericTraits<PixelType>::max();
-    m_MagnitudeSign = -1;
+    this->m_Extreme = NumericTraits<PixelType>::max();
+    this->m_MagnitudeSign = -1;
     }
-  m_UseImageSpacing = false;
+  this->m_UseImageSpacing = false;
 }
 
 template <typename TInputImage, bool doDilate, typename TOutputImage>
@@ -145,7 +145,7 @@ ParabolicErodeDilateImageFilter<TInputImage,doDilate, TOutputImage>
 template <typename TInputImage, bool doDilate, typename TOutputImage >
 void
 ParabolicErodeDilateImageFilter<TInputImage, doDilate, TOutputImage >
-::GenerateData(void)
+::GenerateData( void )
 {
 
   typename TInputImage::ConstPointer   inputImage(    this->GetInput ()   );
@@ -163,7 +163,7 @@ ParabolicErodeDilateImageFilter<TInputImage, doDilate, TOutputImage >
   // multithread the execution
   for( unsigned int d=0; d<ImageDimension; d++ )
     {
-    m_CurrentDimension = d;
+    this->m_CurrentDimension = d;
     this->GetMultiThreader()->SingleMethodExecute();
     }
 
@@ -191,7 +191,7 @@ ParabolicErodeDilateImageFilter<TInputImage, doDilate, TOutputImage>
     }
   float progressPerDimension = 1.0/ImageDimension;
 
-  ProgressReporter * progress = new ProgressReporter(this, threadId, NumberOfRows[m_CurrentDimension], 30, m_CurrentDimension * progressPerDimension, progressPerDimension);
+  ProgressReporter * progress = new ProgressReporter(this, threadId, NumberOfRows[m_CurrentDimension], 30, this->m_CurrentDimension * progressPerDimension, progressPerDimension);
 
 
   typedef ImageLinearConstIteratorWithIndex< TInputImage  >  InputConstIteratorType;
@@ -226,12 +226,12 @@ ParabolicErodeDilateImageFilter<TInputImage, doDilate, TOutputImage>
 
   // deal with the first dimension - this should be copied to the
   // output if the scale is 0
-  if(m_CurrentDimension == 0)
+  if( this->m_CurrentDimension == 0)
     {
-    if (m_Scale[0] > 0)
+    if ( this->m_Scale[0] > 0)
       {
       // Perform as normal
-      //RealType magnitude = 1.0/(2.0 * m_Scale[0]);
+      //RealType magnitude = 1.0/(2.0 * this->m_Scale[0]);
       unsigned long LineLength = region.GetSize()[0];
       RealType image_scale = this->GetInput()->GetSpacing()[0];
 
@@ -263,16 +263,16 @@ ParabolicErodeDilateImageFilter<TInputImage, doDilate, TOutputImage>
   else
     {
       // other dimensions
-      if (m_Scale[m_CurrentDimension] > 0)
+      if ( this->m_Scale[m_CurrentDimension] > 0)
 	{
 	// create a vector to buffer lines
 	unsigned long LineLength = region.GetSize()[m_CurrentDimension];
-	//RealType magnitude = 1.0/(2.0 * m_Scale[dd]);
+	//RealType magnitude = 1.0/(2.0 * this->m_Scale[dd]);
       RealType image_scale = this->GetInput()->GetSpacing()[m_CurrentDimension];
 
       doOneDimension<OutputConstIteratorType,OutputIteratorType,
 	RealType, OutputPixelType, doDilate>(inputIteratorStage2, outputIterator,
-					     *progress, LineLength, m_CurrentDimension,
+					     *progress, LineLength, this->m_CurrentDimension,
 					     this->m_MagnitudeSign,
 					     this->m_UseImageSpacing,
 					     this->m_Extreme,
@@ -289,13 +289,13 @@ ParabolicErodeDilateImageFilter<TInputImage, doDilate, TOutputImage>
 ::PrintSelf(std::ostream& os, Indent indent) const
 {
   Superclass::PrintSelf(os,indent);
-  if (m_UseImageSpacing)
+  if ( this->m_UseImageSpacing)
     {
-    os << "Scale in world units: " << m_Scale << std::endl;
+    os << "Scale in world units: " << this->m_Scale << std::endl;
     }
   else
     {
-    os << "Scale in voxels: " << m_Scale << std::endl;
+    os << "Scale in voxels: " << this->m_Scale << std::endl;
     }
 }
 

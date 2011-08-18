@@ -22,9 +22,7 @@
  */
 #include "itkCommandLineArgumentParser.h"
 #include "ITKToolsHelpers.h"
-#include "ITKToolsBase.h"
-
-#include "ThresholdWrappers.h"
+#include "thresholdimage.h"
 
 
 /**
@@ -35,152 +33,39 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "This program thresholds an image." << std::endl
-  << "Usage:" << std::endl
-  << "pxthresholdimage" << std::endl
-  << "  -in        inputFilename" << std::endl
-  << "  [-out]     outputFilename; default in + THRESHOLDED.mhd" << std::endl
-  << "  [-mask]    maskFilename, optional for \"OtsuThreshold\"," << std::endl
-  << "required for \"KappaSigmaThreshold\"" << std::endl
-  << "  [-m]       method, choose one of { Threshold, OtsuThreshold," << std::endl
-  << "OtsuMultipleThreshold, AdaptiveOtsuThreshold, RobustAutomaticThreshold," << std::endl
-  << "KappaSigmaThreshold, MinErrorThreshold }" << std::endl
-  << "             default \"Threshold\"" << std::endl
-  << "  [-t1]      lower threshold, for \"Threshold\", default -infinity" << std::endl
-  << "  [-t2]      upper threshold, for \"Threshold\", default 1.0" << std::endl
-  << "  [-inside]  inside value, default 1" << std::endl
-  << "  [-outside] outside value, default 0" << std::endl
-  << "  [-t]       number of thresholds, for \"OtsuMultipleThreshold\", default 1" << std::endl
-  << "  [-b]       number of histogram bins, for \"OtsuThreshold\", \"MinErrorThreshold\"" << std::endl
-  << "and \"AdaptiveOtsuThreshold\", default 128" << std::endl
-  << "  [-r]       radius, for \"AdaptiveOtsuThreshold\", default 8" << std::endl
-  << "  [-cp]      number of control points, for \"AdaptiveOtsuThreshold\", default 50" << std::endl
-  << "  [-l]       number of levels, for \"AdaptiveOtsuThreshold\", default 3" << std::endl
-  << "  [-s]       number of samples, for \"AdaptiveOtsuThreshold\", default 5000" << std::endl
-  << "  [-o]       spline order, for \"AdaptiveOtsuThreshold\", default 3" << std::endl
-  << "  [-p]       power, for \"RobustAutomaticThreshold\", default 1" << std::endl
-  << "  [-sigma]   sigma factor, for \"KappaSigmaThreshold\", default 2" << std::endl
-  << "  [-iter]    number of iterations, for \"KappaSigmaThreshold\", default 2" << std::endl
-  << "  [-mv]      mask value, for \"KappaSigmaThreshold\", default 1" << std::endl
-  << "  [-mt]      mixture type (1 - Gaussians, 2 - Poissons), for \"MinErrorThreshold\", default 1" << std::endl
-  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
+    << "Usage:" << std::endl
+    << "pxthresholdimage" << std::endl
+    << "  -in        inputFilename" << std::endl
+    << "  [-out]     outputFilename; default in + THRESHOLDED.mhd" << std::endl
+    << "  [-mask]    maskFilename, optional for \"OtsuThreshold\"," << std::endl
+    << "required for \"KappaSigmaThreshold\"" << std::endl
+    << "  [-m]       method, choose one of { Threshold, OtsuThreshold," << std::endl
+    << "OtsuMultipleThreshold, AdaptiveOtsuThreshold, RobustAutomaticThreshold," << std::endl
+    << "KappaSigmaThreshold, MinErrorThreshold }" << std::endl
+    << "             default \"Threshold\"" << std::endl
+    << "  [-t1]      lower threshold, for \"Threshold\", default -infinity" << std::endl
+    << "  [-t2]      upper threshold, for \"Threshold\", default 1.0" << std::endl
+    << "  [-inside]  inside value, default 1" << std::endl
+    << "  [-outside] outside value, default 0" << std::endl
+    << "  [-t]       number of thresholds, for \"OtsuMultipleThreshold\", default 1" << std::endl
+    << "  [-b]       number of histogram bins, for \"OtsuThreshold\", \"MinErrorThreshold\"" << std::endl
+    << "and \"AdaptiveOtsuThreshold\", default 128" << std::endl
+    << "  [-r]       radius, for \"AdaptiveOtsuThreshold\", default 8" << std::endl
+    << "  [-cp]      number of control points, for \"AdaptiveOtsuThreshold\", default 50" << std::endl
+    << "  [-l]       number of levels, for \"AdaptiveOtsuThreshold\", default 3" << std::endl
+    << "  [-s]       number of samples, for \"AdaptiveOtsuThreshold\", default 5000" << std::endl
+    << "  [-o]       spline order, for \"AdaptiveOtsuThreshold\", default 3" << std::endl
+    << "  [-p]       power, for \"RobustAutomaticThreshold\", default 1" << std::endl
+    << "  [-sigma]   sigma factor, for \"KappaSigmaThreshold\", default 2" << std::endl
+    << "  [-iter]    number of iterations, for \"KappaSigmaThreshold\", default 2" << std::endl
+    << "  [-mv]      mask value, for \"KappaSigmaThreshold\", default 1" << std::endl
+    << "  [-mt]      mixture type (1 - Gaussians, 2 - Poissons), for \"MinErrorThreshold\", default 1" << std::endl
+    << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
 
   return ss.str();
 
 } // end GetHelpString()
 
-
-/** ThresholdImage */
-
-class ITKToolsThresholdImageBase : public itktools::ITKToolsBase
-{ 
-public:
-  ITKToolsThresholdImageBase()
-  {
-    m_Bins = 0;
-    m_InputFileName = "";
-    m_Inside = 0.0f;
-    m_Iterations = 0;
-    m_MaskFileName = "";
-    m_MaskValue = 0;
-    m_Method = "";
-    m_MixtureType = 0;
-    m_NumThresholds = 0;
-    m_OutputFileName = "";
-    m_Outside = 0.0f;
-    m_Pow = 0.0f;
-    m_Sigma = 0.0f;
-    m_Supported = false;
-    m_Threshold1 = 0.0f;
-    m_Threshold2 = 0.0f;
-  };
-  ~ITKToolsThresholdImageBase(){};
-
-  /** Input parameters */
-  unsigned int m_Bins;
-  std::string m_InputFileName;
-  double m_Inside;
-  unsigned int m_Iterations;
-  std::string m_MaskFileName;
-  unsigned int m_MaskValue;
-  std::string m_Method;
-  unsigned int m_MixtureType;
-  unsigned int m_NumThresholds;
-  std::string m_OutputFileName;
-  double m_Outside;
-  double m_Pow;
-  double m_Sigma;
-  bool m_Supported;
-  double m_Threshold1;
-  double m_Threshold2;
-    
-}; // end ThresholdImageBase
-
-
-template< class TComponentType, unsigned int VDimension >
-class ITKToolsThresholdImageSelector : public ITKToolsThresholdImageBase
-{
-public:
-  typedef ITKToolsThresholdImageSelector Self;
-
-  ITKToolsThresholdImageSelector(){};
-  ~ITKToolsThresholdImageSelector(){};
-
-  static Self * New( itktools::ComponentType componentType, unsigned int dim )
-  {
-    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
-  void Run(void)
-  {
-    typedef itk::Image< TComponentType, VDimension > InputImageType;
-    if ( m_Method == "Threshold" )
-    {
-      ThresholdImage< InputImageType >( m_InputFileName, m_OutputFileName,
-      m_Inside, m_Outside,
-      m_Threshold1, m_Threshold2 );
-    }
-    else if ( m_Method == "OtsuThreshold" )
-    {
-      OtsuThresholdImage< InputImageType >( m_InputFileName, m_OutputFileName, m_MaskFileName,
-      m_Inside, m_Outside,
-      m_Bins );
-    }
-    else if ( m_Method == "OtsuMultipleThreshold" )
-    {
-      OtsuMultipleThresholdImage< InputImageType >( m_InputFileName, m_OutputFileName, m_MaskFileName,
-      m_Inside, m_Outside,
-      m_Bins, m_NumThresholds );
-    }
-    else if ( m_Method == "RobustAutomaticThreshold" )
-    {
-      RobustAutomaticThresholdImage< InputImageType >( m_InputFileName, m_OutputFileName,
-      m_Inside, m_Outside,
-      m_Pow );
-    }
-    else if ( m_Method == "KappaSigmaThreshold" )
-    {
-      KappaSigmaThresholdImage< InputImageType >( m_InputFileName, m_OutputFileName, m_MaskFileName,
-      m_Inside, m_Outside,
-      m_MaskValue, m_Sigma, m_Iterations );
-    }
-    else if ( m_Method == "MinErrorThreshold" )
-    {
-      MinErrorThresholdImage< InputImageType >( m_InputFileName, m_OutputFileName,
-      m_Inside, m_Outside,
-      m_Bins, m_MixtureType );
-    }
-    else
-    {
-      std::cerr << "Not supported!" << std::endl;
-      return;
-    }
-  }
-
-}; // end ThresholdImage
 
 //-------------------------------------------------------------------------------------
 
@@ -195,11 +80,11 @@ int main( int argc, char **argv )
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }
@@ -321,7 +206,7 @@ int main( int argc, char **argv )
  
   /** \todo some progs allow user to override the pixel type, 
    * so we need a method to convert string to EnumComponentType */
-  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileName);
+  itktools::ComponentType componentType = itktools::GetImageComponentType( inputFileName );
 
   try
   {    

@@ -43,8 +43,8 @@ ConnectedComponentVectorImageFilter<TInputImage, TOutputImage>
 ::SortArray( const InputPixelType vec)
 {
    /*
-   int m_K = this->GetInput()->GetVectorLength();
-   Array<int> sortedVec(m_K);
+   int this->m_K = this->GetInput()->GetVectorLength();
+   Array<int> sortedVec( this->m_K);
    for (unsigned int k=0; k<m_K; k++)
      sortedVec[k] = vec[k];
 
@@ -72,9 +72,9 @@ ConnectedComponentVectorImageFilter<TInputImage, TOutputImage>
 
    */
    int m_K = this->GetInput()->GetVectorLength();
-   InputPixelType sortedVec(m_K);
+   InputPixelType sortedVec( this->m_K);
    std::vector<int> stdvec;
-   stdvec.resize(m_K);
+   stdvec.resize( this->m_K);
    for (unsigned int k=0; k<m_K; k++)
      stdvec[k] = vec[k];
    std::sort(stdvec.begin(), stdvec.end());
@@ -313,7 +313,7 @@ ConnectedComponentVectorImageFilter< TInputImage, TOutputImage >
 {
   Superclass::PrintSelf(os,indent);
 
-  os << indent << "FullyConnected: "  << m_FullyConnected << std::endl;
+  os << indent << "FullyConnected: "  << this->m_FullyConnected << std::endl;
 }
 
 } // end namespace itk

@@ -62,12 +62,12 @@ class ShowProgressObject
 public:
   ShowProgressObject( itk::ProcessObject* o )
   {
-    m_Process = o;
+    this->m_Process = o;
   }
   void ShowProgress()
   {
     std::cout << "\rProgress: "
-      << static_cast<unsigned int>( 100.0 * m_Process->GetProgress() ) << "%";
+      << static_cast<unsigned int>( 100.0 * this->m_Process->GetProgress() ) << "%";
   }
   itk::ProcessObject::Pointer m_Process;
 };
@@ -82,12 +82,12 @@ class ITKToolsTextureBase : public itktools::ITKToolsBase
 public:
   ITKToolsTextureBase()
   {
-    m_InputFileName = "";
-    m_OutputDirectory = "";
-    m_NeighborhoodRadius = 0;
-    //std::vector< unsigned int > m_OffsetScales;
-    m_NumberOfBins = 0;
-    m_NumberOfOutputs = 0;
+    this->m_InputFileName = "";
+    this->m_OutputDirectory = "";
+    this->m_NeighborhoodRadius = 0;
+    //std::vector< unsigned int > this->m_OffsetScales;
+    this->m_NumberOfBins = 0;
+    this->m_NumberOfOutputs = 0;
   };
   ~ITKToolsTextureBase(){};
 
@@ -122,7 +122,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     /** Typedefs. */
     typedef itk::Image<TInputComponentType, VDimension>   InputImageType;
@@ -134,16 +134,16 @@ public:
 
     /** Read the input. */
     typename ReaderType::Pointer reader = ReaderType::New();
-    reader->SetFileName( m_InputFileName.c_str() );
+    reader->SetFileName( this->m_InputFileName.c_str() );
 
     /** Setup the texture filter. */
     typename TextureFilterType::Pointer textureFilter = TextureFilterType::New();
     textureFilter->SetInput( reader->GetOutput() );
-    textureFilter->SetNeighborhoodRadius( m_NeighborhoodRadius );
-    textureFilter->SetOffsetScales( m_OffsetScales );
-    textureFilter->SetNumberOfHistogramBins( m_NumberOfBins );
+    textureFilter->SetNeighborhoodRadius( this->m_NeighborhoodRadius );
+    textureFilter->SetOffsetScales( this->m_OffsetScales );
+    textureFilter->SetNumberOfHistogramBins( this->m_NumberOfBins );
     textureFilter->SetNormalizeHistogram( false );
-    textureFilter->SetNumberOfRequestedOutputs( m_NumberOfOutputs );
+    textureFilter->SetNumberOfRequestedOutputs( this->m_NumberOfOutputs );
 
     /** Create and attach a progress observer. */
     ShowProgressObject progressWatch( textureFilter );
@@ -154,17 +154,17 @@ public:
 
     /** Create the output file names. */
     std::vector< std::string > outputFileNames( 8, "" );
-    outputFileNames[ 0 ] = m_OutputDirectory + "energy.mhd";
-    outputFileNames[ 1 ] = m_OutputDirectory + "entropy.mhd";
-    outputFileNames[ 2 ] = m_OutputDirectory + "correlation.mhd";
-    outputFileNames[ 3 ] = m_OutputDirectory + "inverseDifferenceMoment.mhd";
-    outputFileNames[ 4 ] = m_OutputDirectory + "inertia.mhd";
-    outputFileNames[ 5 ] = m_OutputDirectory + "clusterShade.mhd";
-    outputFileNames[ 6 ] = m_OutputDirectory + "clusterProminence.mhd";
-    outputFileNames[ 7 ] = m_OutputDirectory + "HaralickCorrelation.mhd";
+    outputFileNames[ 0 ] = this->m_OutputDirectory + "energy.mhd";
+    outputFileNames[ 1 ] = this->m_OutputDirectory + "entropy.mhd";
+    outputFileNames[ 2 ] = this->m_OutputDirectory + "correlation.mhd";
+    outputFileNames[ 3 ] = this->m_OutputDirectory + "inverseDifferenceMoment.mhd";
+    outputFileNames[ 4 ] = this->m_OutputDirectory + "inertia.mhd";
+    outputFileNames[ 5 ] = this->m_OutputDirectory + "clusterShade.mhd";
+    outputFileNames[ 6 ] = this->m_OutputDirectory + "clusterProminence.mhd";
+    outputFileNames[ 7 ] = this->m_OutputDirectory + "HaralickCorrelation.mhd";
 
     /** Setup and process the pipeline. */
-    for ( unsigned int i = 0; i < m_NumberOfOutputs; ++i )
+    for ( unsigned int i = 0; i < this->m_NumberOfOutputs; ++i )
     {
       typename WriterType::Pointer writer = WriterType::New();
       writer->SetFileName( outputFileNames[ i ].c_str() );
@@ -200,11 +200,11 @@ int main( int argc, char **argv )
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }
@@ -284,7 +284,7 @@ int main( int argc, char **argv )
   /** Input images are read in as float, always. The default output is float,
    * but can be overridden by specifying -opct in the command line.
    */
-  //itktools::EnumComponentType inputComponentType = itktools::GetImageComponentType(inputFileName);
+  //itktools::EnumComponentType inputComponentType = itktools::GetImageComponentType( inputFileName );
   itktools::ComponentType inputComponentType = itk::ImageIOBase::FLOAT;
   
   itktools::ComponentType outputComponentType = itktools::GetImageComponentType(componentTypeOutString);

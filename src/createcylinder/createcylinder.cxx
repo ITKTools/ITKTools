@@ -56,10 +56,10 @@ class ITKToolsCreateCylinderBase : public itktools::ITKToolsBase
 public:
   ITKToolsCreateCylinderBase()
   {
-    m_InputFileName = "";
-    m_OutputFileName = "";
-    //std::vector<unsigned int> m_Center;
-    m_Radius = 0.0f;
+    this->m_InputFileName = "";
+    this->m_OutputFileName = "";
+    //std::vector<unsigned int> this->m_Center;
+    this->m_Radius = 0.0f;
   };
   ~ITKToolsCreateCylinderBase(){};
 
@@ -90,7 +90,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     /** Typedefs. */
     typedef float               InputPixelType;
@@ -107,7 +107,7 @@ public:
 
     /** Create a testReader. */
     typename ReaderType::Pointer testReader = ReaderType::New();
-    testReader->SetFileName( m_InputFileName.c_str() );
+    testReader->SetFileName( this->m_InputFileName.c_str() );
     testReader->Update();
 
     typename OutputImageType::Pointer outputImage = OutputImageType::New();
@@ -122,7 +122,7 @@ public:
     IndexType index;
     for ( unsigned int i = 0; i < VDimension; i++ )
     {
-      index[ i ] = m_Center[ i ];
+      index[ i ] = this->m_Center[ i ];
     }
     outputImage->TransformIndexToPhysicalPoint( index, point );
     for ( unsigned int i = 0; i < VDimension; i++ )
@@ -134,7 +134,7 @@ public:
     typename CylinderSpatialFunctionType::Pointer cylinder
       = CylinderSpatialFunctionType::New();
     cylinder->SetCenter( Center );
-    cylinder->SetRadius( m_Radius );
+    cylinder->SetRadius( this->m_Radius );
 
     /** Create iterator, index and point. */
     IteratorType it( outputImage, outputImage->GetLargestPossibleRegion() );
@@ -151,7 +151,7 @@ public:
 
     /** Write image. */
     typename WriterType::Pointer writer = WriterType::New();
-    writer->SetFileName( m_OutputFileName.c_str() );
+    writer->SetFileName( this->m_OutputFileName.c_str() );
     writer->SetInput( outputImage );
     writer->Update();
   }
@@ -174,11 +174,11 @@ int main( int argc, char *argv[] )
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }

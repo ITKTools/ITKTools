@@ -39,7 +39,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
   /** Some typedef's. */
     typedef itk::Image<TComponentType, VDimension>            ImageType;

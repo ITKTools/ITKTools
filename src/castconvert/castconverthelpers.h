@@ -54,12 +54,12 @@ class ITKToolsCastConvertBase : public itktools::ITKToolsBase
 public:
   ITKToolsCastConvertBase()
   {
-    m_InputFileName = "";
-    m_OutputFileName = "";
-    m_UseCompression = false;
+    this->m_InputFileName = "";
+    this->m_OutputFileName = "";
+    this->m_UseCompression = false;
 
-    m_InputDirectoryName = "";
-    m_DICOMSeriesUID = "";
+    this->m_InputDirectoryName = "";
+    this->m_DICOMSeriesUID = "";
   };
   ~ITKToolsCastConvertBase(){};
 

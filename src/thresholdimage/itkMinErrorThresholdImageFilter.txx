@@ -28,15 +28,15 @@ template<class TInputImage, class TOutputImage>
 MinErrorThresholdImageFilter<TInputImage, TOutputImage>
 ::MinErrorThresholdImageFilter()
 {
-  m_OutsideValue   = NumericTraits<OutputPixelType>::max();
-  m_InsideValue    = NumericTraits<OutputPixelType>::Zero;
-  m_Threshold      = NumericTraits<InputPixelType>::Zero;
-  m_NumberOfHistogramBins = 128;
-  m_AlphaLeft = 0.0;
-  m_AlphaRight= 0.0;
-  m_PriorLeft = 0.0;
-  m_PriorRight= 0.0;
-  m_MixtureType= 1;
+  this->m_OutsideValue   = NumericTraits<OutputPixelType>::max();
+  this->m_InsideValue    = NumericTraits<OutputPixelType>::Zero;
+  this->m_Threshold      = NumericTraits<InputPixelType>::Zero;
+  this->m_NumberOfHistogramBins = 128;
+  this->m_AlphaLeft = 0.0;
+  this->m_AlphaRight= 0.0;
+  this->m_PriorLeft = 0.0;
+  this->m_PriorRight= 0.0;
+  this->m_MixtureType= 1;
 }
 
 template<class TInputImage, class TOutputImage>
@@ -51,23 +51,23 @@ MinErrorThresholdImageFilter<TInputImage, TOutputImage>
   typename MinErrorThresholdImageCalculator<TInputImage>::Pointer MinError =
     MinErrorThresholdImageCalculator<TInputImage>::New();
   MinError->SetImage (this->GetInput());
-  MinError->SetNumberOfHistogramBins (m_NumberOfHistogramBins);
-  if(m_MixtureType == 1)
+  MinError->SetNumberOfHistogramBins ( this->m_NumberOfHistogramBins);
+  if( this->m_MixtureType == 1)
 	MinError->UseGaussianMixture(false);
   else
   	MinError->UseGaussianMixture(true);
   MinError->Compute();
 
   //Get the threshold and the estimated mixture parameters
-  m_Threshold = MinError->GetThreshold();
-  m_AlphaLeft = MinError->GetAlphaLeft();
-  m_AlphaRight = MinError->GetAlphaRight();
-  m_PriorLeft = MinError->GetPriorLeft();
-  m_PriorRight= MinError->GetPriorRight();
-  if(m_MixtureType==1)
+  this->m_Threshold = MinError->GetThreshold();
+  this->m_AlphaLeft = MinError->GetAlphaLeft();
+  this->m_AlphaRight = MinError->GetAlphaRight();
+  this->m_PriorLeft = MinError->GetPriorLeft();
+  this->m_PriorRight= MinError->GetPriorRight();
+  if( this->m_MixtureType==1)
     {
-    m_StdLeft= MinError->GetStdLeft();
-    m_StdRight= MinError->GetStdRight();
+    this->m_StdLeft= MinError->GetStdLeft();
+    this->m_StdRight= MinError->GetStdRight();
     }
 
   //Once we have the threshold, binarize the image using "BinaryThresholdImageFilter"
@@ -79,8 +79,8 @@ MinErrorThresholdImageFilter<TInputImage, TOutputImage>
   threshold->SetInput (this->GetInput());
   threshold->SetLowerThreshold(NumericTraits<InputPixelType>::NonpositiveMin());
   threshold->SetUpperThreshold(MinError->GetThreshold());
-  threshold->SetInsideValue (m_InsideValue);
-  threshold->SetOutsideValue (m_OutsideValue);
+  threshold->SetInsideValue ( this->m_InsideValue);
+  threshold->SetOutsideValue ( this->m_OutsideValue);
   threshold->Update();
 
   this->GraftOutput(threshold->GetOutput());
@@ -105,11 +105,11 @@ MinErrorThresholdImageFilter<TInputImage,TOutputImage>
 {
   //Superclass::PrintSelf(os,indent);
   os << indent << "Computed Threshold : "
-     << static_cast<typename NumericTraits<InputPixelType>::PrintType>(m_Threshold) << std::endl;
+     << static_cast<typename NumericTraits<InputPixelType>::PrintType>( this->m_Threshold) << std::endl;
   os << indent << "Estimated Mixture Parameters : "<<std::endl;
   os << indent << "Background Mean="<<m_AlphaLeft<<"  Foreground Mean="<<m_AlphaRight<<std::endl;
   os << indent << "Background Prior="<<m_PriorLeft<<"  Foreground Prior="<<m_PriorRight<<std::endl;
-  if(m_MixtureType==1)
+  if( this->m_MixtureType==1)
     os << indent << "Background Stdv="<<m_StdLeft<<"  Foreground Stdv="<<m_StdRight<<std::endl;
 
 }

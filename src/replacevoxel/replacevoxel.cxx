@@ -59,10 +59,10 @@ class ITKToolsReplaceVoxelBase : public itktools::ITKToolsBase
 public:
   ITKToolsReplaceVoxelBase()
   {
-    m_InputFileName = "";
-    m_OutputFileName = "";
-    //std::vector<unsigned int> m_Voxel;
-    m_Value = 0.0f;
+    this->m_InputFileName = "";
+    this->m_OutputFileName = "";
+    //std::vector<unsigned int> this->m_Voxel;
+    this->m_Value = 0.0f;
   };
   ~ITKToolsReplaceVoxelBase(){};
 
@@ -93,7 +93,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     typedef TComponentType                         PixelType;
     typedef itk::Image< PixelType, VDimension >    ImageType;
@@ -107,7 +107,7 @@ public:
     typename WriterType::Pointer writer = WriterType::New();
 
     /** Read input image. */
-    reader->SetFileName( m_InputFileName );
+    reader->SetFileName( this->m_InputFileName );
     reader->Update();
     typename ImageType::Pointer image = reader->GetOutput();
 
@@ -115,7 +115,7 @@ public:
     SizeType size = image->GetLargestPossibleRegion().GetSize();
     for ( unsigned int i = 0; i < VDimension; ++i )
     {
-      if ( m_Voxel[ i ] < 0 || m_Voxel[ i ] > size[ i ] - 1 )
+      if ( this->m_Voxel[ i ] < 0 || this->m_Voxel[ i ] > size[ i ] - 1 )
       {
         itkGenericExceptionMacro( << "ERROR: invalid voxel index." );
       }
@@ -125,12 +125,12 @@ public:
     IndexType index;
     for ( unsigned int i = 0; i < VDimension; ++i )
     {
-      index[ i ] = m_Voxel[ i ];
+      index[ i ] = this->m_Voxel[ i ];
     }
-    image->SetPixel( index, static_cast<PixelType>( m_Value ) );
+    image->SetPixel( index, static_cast<PixelType>( this->m_Value ) );
 
     /** Write output image. */
-    writer->SetFileName( m_OutputFileName );
+    writer->SetFileName( this->m_OutputFileName );
     writer->SetInput( image );
     writer->Update();
   }
@@ -152,11 +152,11 @@ int main( int argc, char ** argv )
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }
@@ -222,7 +222,7 @@ int main( int argc, char ** argv )
  
   /** \todo some progs allow user to override the pixel type, 
    * so we need a method to convert string to EnumComponentType */
-  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileName);
+  itktools::ComponentType componentType = itktools::GetImageComponentType( inputFileName );
   
   std::cout << "Detected component type: " << 
     componentType << std::endl;

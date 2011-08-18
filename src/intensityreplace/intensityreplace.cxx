@@ -61,10 +61,10 @@ class ITKToolsIntensityReplaceBase : public itktools::ITKToolsBase
 public:
   ITKToolsIntensityReplaceBase()
   {
-    m_InputFileName = "";
-    m_OutputFileName = "";
-    //std::vector<std::string> m_InValues;
-    //std::vector<std::string> m_OutValues;
+    this->m_InputFileName = "";
+    this->m_OutputFileName = "";
+    //std::vector<std::string> this->m_InValues;
+    //std::vector<std::string> this->m_OutValues;
   };
   ~ITKToolsIntensityReplaceBase(){};
 
@@ -96,7 +96,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     /** Typedefs. */
     typedef TValue                                          OutputPixelType;
@@ -118,35 +118,35 @@ public:
     typename WriterType::Pointer writer = WriterType::New();
 
     /** Set up reader */
-    reader->SetFileName( m_InputFileName );
+    reader->SetFileName( this->m_InputFileName );
 
     /** Setup the the input and the 'change map' of the replace filter. */
     replaceFilter->SetInput( reader->GetOutput() );
     if ( itk::NumericTraits<OutputPixelType>::is_integer )
     {
-      for (unsigned int i = 0; i < m_InValues.size(); ++i)
+      for (unsigned int i = 0; i < this->m_InValues.size(); ++i)
       {
 	const InputPixelType inval = static_cast< InputPixelType >(
-	  atoi( m_InValues[i].c_str() )   );
+	  atoi( this->m_InValues[i].c_str() )   );
 	const OutputPixelType outval = static_cast< OutputPixelType >(
-	  atoi( m_OutValues[i].c_str() )   );
+	  atoi( this->m_OutValues[i].c_str() )   );
 	replaceFilter->SetChange( inval, outval );
       }
     }
     else
     {
-      for (unsigned int i = 0; i < m_InValues.size(); ++i)
+      for (unsigned int i = 0; i < this->m_InValues.size(); ++i)
       {
 	const InputPixelType inval = static_cast< InputPixelType >(
-	  atof( m_InValues[i].c_str() )   );
+	  atof( this->m_InValues[i].c_str() )   );
 	const OutputPixelType outval = static_cast< OutputPixelType >(
-	  atof( m_OutValues[i].c_str() )   );
+	  atof( this->m_OutValues[i].c_str() )   );
 	replaceFilter->SetChange( inval, outval );
       }
     }
 
     /** Set up writer. */
-    writer->SetFileName( m_OutputFileName );
+    writer->SetFileName( this->m_OutputFileName );
     writer->SetInput( replaceFilter->GetOutput() );
     writer->Update();
   }
@@ -168,11 +168,11 @@ int main( int argc, char ** argv )
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }
@@ -203,7 +203,7 @@ int main( int argc, char ** argv )
   }
 
 
-  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileName);
+  itktools::ComponentType componentType = itktools::GetImageComponentType( inputFileName );
   /** The default output is equal to the input, but can be overridden by
    * specifying -pt in the command line.   */
   if ( !retpt ) 
@@ -213,7 +213,7 @@ int main( int argc, char ** argv )
 
   /** Check for vector images. */
   unsigned int numberOfComponents = 0;
-  itktools::GetImageNumberOfComponents(inputFileName, numberOfComponents);
+  itktools::GetImageNumberOfComponents( inputFileName, numberOfComponents );
   
   if ( numberOfComponents > 1 )
   {

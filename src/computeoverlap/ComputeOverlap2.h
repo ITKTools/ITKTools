@@ -12,7 +12,7 @@ public:
   ~ComputeOverlap2Base(){};
 
   /** Input parameters */
-  std::vector<std::string> m_InputFileNames;
+  std::vector<std::string> this->m_InputFileNames;
   std::vector<unsigned int> m_Labels;
     
 }; // end ComputeOverlap2
@@ -36,7 +36,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     /** Some typedef's. */
     typedef TImage                                      ImageType;

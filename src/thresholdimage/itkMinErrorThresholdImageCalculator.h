@@ -74,7 +74,7 @@ public:
   itkSetConstObjectMacro(Image,ImageType);
 
   /** Compute the MinError's threshold for the input image. */
-  void Compute(void);
+  void Compute( void );
 
   /** This function sets the option to use a mixture of Gaussians */
   void UseGaussianMixture(bool);

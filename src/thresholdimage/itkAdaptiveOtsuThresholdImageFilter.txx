@@ -50,16 +50,16 @@ template <class TInputImage, class TOutputImage>
 AdaptiveOtsuThresholdImageFilter<TInputImage, TOutputImage>::
 AdaptiveOtsuThresholdImageFilter()
 {
-  m_Radius.Fill( 8 );
-  m_NumberOfHistogramBins = 256;
-  m_NumberOfControlPoints = 50;
-  m_SplineOrder = 3;
-  m_NumberOfLevels = 3;
-  m_NumberOfSamples = 5000;
-  m_OutsideValue = 0;
-  m_InsideValue = 1;
+  this->m_Radius.Fill( 8 );
+  this->m_NumberOfHistogramBins = 256;
+  this->m_NumberOfControlPoints = 50;
+  this->m_SplineOrder = 3;
+  this->m_NumberOfLevels = 3;
+  this->m_NumberOfSamples = 5000;
+  this->m_OutsideValue = 0;
+  this->m_InsideValue = 1;
 
-  m_PointSet = NULL;
+  this->m_PointSet = NULL;
 
   this->Superclass::SetNumberOfRequiredInputs( 1 );
   this->Superclass::SetNumberOfRequiredOutputs( 1 );
@@ -80,18 +80,18 @@ AdaptiveOtsuThresholdImageFilter<TInputImage, TOutputImage>
 
   // Find a random number generator
   RandomIteratorType rIt( input, inputRegion );
-  rIt.SetNumberOfSamples( m_NumberOfSamples );
+  rIt.SetNumberOfSamples( this->m_NumberOfSamples );
   rIt.GoToBegin();
 
-  m_PointSet = PointSetType::New();
+  this->m_PointSet = PointSetType::New();
   PointsContainerPointer
-    pointscontainer = m_PointSet->GetPoints();
-  pointscontainer->Reserve( m_NumberOfSamples );
+    pointscontainer = this->m_PointSet->GetPoints();
+  pointscontainer->Reserve( this->m_NumberOfSamples );
 
   PointDataContainerPointer
     pointdatacontainer = PointDataContainer::New();
-  pointdatacontainer->Reserve( m_NumberOfSamples );
-  m_PointSet->SetPointData( pointdatacontainer );
+  pointdatacontainer->Reserve( this->m_NumberOfSamples );
+  this->m_PointSet->SetPointData( pointdatacontainer );
 
   unsigned long i = 0;
 
@@ -101,10 +101,10 @@ AdaptiveOtsuThresholdImageFilter<TInputImage, TOutputImage>
 
     for( unsigned int j = 0; j < ImageDimension; j++ )
       {
-      endIndex[j] = startIndex[j] + m_Radius[j] - 1;
+      endIndex[j] = startIndex[j] + this->m_Radius[j] - 1;
       if( endIndex[j] >= static_cast< InputIndexValueType >( inputSize[j] ) )
         {
-          startIndex[j] = inputSize[j] - m_Radius[j];
+          startIndex[j] = inputSize[j] - this->m_Radius[j];
         }
       }
 
@@ -133,7 +133,7 @@ AdaptiveOtsuThresholdImageFilter<TInputImage, TOutputImage>
 
   InputIndexType startIndex;
   InputImageRegionType region;
-  region.SetSize( m_Radius );
+  region.SetSize( this->m_Radius );
 
   PointSetPointType point;
   VectorPixelType V;
@@ -144,9 +144,9 @@ AdaptiveOtsuThresholdImageFilter<TInputImage, TOutputImage>
     }
 
   PointsContainerPointer
-    pointscontainer = m_PointSet->GetPoints();
-  PointDataContainerPointer pointdatacontainer =  m_PointSet->GetPointData();
-  for( unsigned long i = 0; i < m_NumberOfSamples; i++ )
+    pointscontainer = this->m_PointSet->GetPoints();
+  PointDataContainerPointer pointdatacontainer =  this->m_PointSet->GetPointData();
+  for( unsigned long i = 0; i < this->m_NumberOfSamples; i++ )
   {
     point = pointscontainer->GetElement( i );
     input->TransformPhysicalPointToIndex( point, startIndex );
@@ -159,7 +159,7 @@ AdaptiveOtsuThresholdImageFilter<TInputImage, TOutputImage>
 
     OtsuThresholdPointer otsu = OtsuThresholdType::New();
     otsu->SetImage( roi->GetOutput() );
-    otsu->SetNumberOfHistogramBins(m_NumberOfHistogramBins);
+    otsu->SetNumberOfHistogramBins( this->m_NumberOfHistogramBins);
     otsu->Compute();
 
     V[0] = static_cast<InputCoordType>( otsu->GetThreshold() );
@@ -167,27 +167,27 @@ AdaptiveOtsuThresholdImageFilter<TInputImage, TOutputImage>
   }
 
   typename SDAFilterType::ArrayType ncps;
-  ncps.Fill( m_NumberOfControlPoints );
+  ncps.Fill( this->m_NumberOfControlPoints );
 
   SDAFilterPointer filter = SDAFilterType::New();
-  filter->SetSplineOrder( m_SplineOrder );
+  filter->SetSplineOrder( this->m_SplineOrder );
   filter->SetNumberOfControlPoints( ncps );
-  filter->SetNumberOfLevels( m_NumberOfLevels );
+  filter->SetNumberOfLevels( this->m_NumberOfLevels );
 
   // Define the parametric domain.
   filter->SetOrigin( input->GetOrigin() );
   filter->SetSpacing( input->GetSpacing() );
   filter->SetSize( inputRegion.GetSize() );
-  filter->SetInput( m_PointSet );
+  filter->SetInput( this->m_PointSet );
   filter->Update();
 
   IndexFilterPointer componentExtractor = IndexFilterType::New();
   componentExtractor->SetInput( filter->GetOutput() );
   componentExtractor->SetIndex( 0 );
   componentExtractor->Update();
-  m_Threshold = componentExtractor->GetOutput();
+  this->m_Threshold = componentExtractor->GetOutput();
 
-  OutputIteratorType Itt( m_Threshold, inputRegion );
+  OutputIteratorType Itt( this->m_Threshold, inputRegion );
   Itt.GoToBegin();
 
   OutputIteratorType oIt( output, inputRegion );
@@ -202,11 +202,11 @@ AdaptiveOtsuThresholdImageFilter<TInputImage, TOutputImage>
     p = Itt.Get();
     if ( p < iIt.Get() )
       {
-      oIt.Set( m_InsideValue  );
+      oIt.Set( this->m_InsideValue  );
       }
     else
       {
-      oIt.Set( m_OutsideValue );
+      oIt.Set( this->m_OutsideValue );
       }
     ++Itt;
     ++oIt;

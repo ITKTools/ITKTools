@@ -61,8 +61,8 @@ class ITKToolsInvertIntensityBase : public itktools::ITKToolsBase
 public:
   ITKToolsInvertIntensityBase()
   {
-    m_InputFileName = "";
-    m_OutputFileName = "";
+    this->m_InputFileName = "";
+    this->m_OutputFileName = "";
   };
   ~ITKToolsInvertIntensityBase(){};
 
@@ -91,7 +91,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     /** Some typedef's. */
     typedef itk::Image<TComponentType, VImageDimension>             ScalarImageType;
@@ -105,7 +105,7 @@ public:
 
     /** Create reader. */
     typename ReaderType::Pointer reader = ReaderType::New();
-    reader->SetFileName( m_InputFileName.c_str() );
+    reader->SetFileName( this->m_InputFileName.c_str() );
 
     // In this case, we must manually disassemble the image rather than use a ChannelByChannel filter because the image is not the output,
     // but rather the GetMaximum() function is what we want.
@@ -147,7 +147,7 @@ public:
 
     /** Create writer. */
     typename WriterType::Pointer writer = WriterType::New();
-    writer->SetFileName( m_OutputFileName.c_str() );
+    writer->SetFileName( this->m_OutputFileName.c_str() );
     writer->SetInput( channelByChannelInvertFilter->GetOutput() );
     writer->Update();
   }
@@ -166,11 +166,11 @@ int main( int argc, char ** argv )
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }
@@ -216,7 +216,7 @@ int main( int argc, char ** argv )
   unsigned int imageDimension = 0;
   itktools::GetImageDimension(inputFileName, imageDimension);
 
-  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileName);
+  itktools::ComponentType componentType = itktools::GetImageComponentType( inputFileName );
     
   try
   {    

@@ -195,7 +195,7 @@ public:
    * Each object should be labeled by a number (larger than 0),
    * so the map has a value for each pixel corresponding to the label
    * of the closest object.  */
-  OutputImageType * GetVoronoiMap(void);
+  OutputImageType * GetVoronoiMap( void );
 
   /** Get vectorimage of distances to k-closest object pixels.
    * The distance map is shown as a gray
@@ -206,11 +206,11 @@ public:
    * output image gives for each pixel its minimal distance from the
    * object (if there is more than one object the closest object is
    * considered). **/
-  KDistanceImageType * GetKDistanceMap(void);
+  KDistanceImageType * GetKDistanceMap( void );
 
   /** Get VectorImage<int, Dimension> of IDs of k closest
    *  pixels (use together with m_IndexLookUpTable). */
-  KIDImageType *       GetKclosestIDMap(void);
+  KIDImageType *       GetKclosestIDMap( void );
 
   /** inserts a new found closest object pixel in ascending order of distance */
   bool InsertSorted( KDistanceValueType dist, KIDValueType index, KDistancePixelType& distances, KIDPixelType& indices);

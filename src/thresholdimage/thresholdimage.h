@@ -1,6 +1,24 @@
-#ifndef THRESHOLDWRAPPERS_h
-#define THRESHOLDWRAPPERS_h
+/*=========================================================================
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
+#ifndef __thresholdimage_h
+#define __thresholdimage_h
 
+#include "ITKToolsBase.h"
 
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
@@ -12,7 +30,123 @@
 #include "itkRobustAutomaticThresholdImageFilter.h"
 #include "itkKappaSigmaThresholdImageFilter.h"
 #include "itkMinErrorThresholdImageFilter.h"
-/*
+
+
+/** ThresholdImage */
+
+class ITKToolsThresholdImageBase : public itktools::ITKToolsBase
+{ 
+public:
+  ITKToolsThresholdImageBase()
+  {
+    this->m_Bins = 0;
+    this->m_InputFileName = "";
+    this->m_Inside = 0.0f;
+    this->m_Iterations = 0;
+    this->m_MaskFileName = "";
+    this->m_MaskValue = 0;
+    this->m_Method = "";
+    this->m_MixtureType = 0;
+    this->m_NumThresholds = 0;
+    this->m_OutputFileName = "";
+    this->m_Outside = 0.0f;
+    this->m_Pow = 0.0f;
+    this->m_Sigma = 0.0f;
+    this->m_Supported = false;
+    this->m_Threshold1 = 0.0f;
+    this->m_Threshold2 = 0.0f;
+  };
+  ~ITKToolsThresholdImageBase(){};
+
+  /** Input parameters */
+  unsigned int m_Bins;
+  std::string m_InputFileName;
+  double m_Inside;
+  unsigned int m_Iterations;
+  std::string m_MaskFileName;
+  unsigned int m_MaskValue;
+  std::string m_Method;
+  unsigned int m_MixtureType;
+  unsigned int m_NumThresholds;
+  std::string m_OutputFileName;
+  double m_Outside;
+  double m_Pow;
+  double m_Sigma;
+  bool m_Supported;
+  double m_Threshold1;
+  double m_Threshold2;
+
+}; // end ThresholdImageBase
+
+
+template< class TComponentType, unsigned int VDimension >
+class ITKToolsThresholdImageSelector : public ITKToolsThresholdImageBase
+{
+public:
+  typedef ITKToolsThresholdImageSelector Self;
+
+  ITKToolsThresholdImageSelector(){};
+  ~ITKToolsThresholdImageSelector(){};
+
+  static Self * New( itktools::ComponentType componentType, unsigned int dim )
+  {
+    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
+    {
+      return new Self;
+    }
+    return 0;
+  }
+
+  void Run( void )
+  {
+    typedef itk::Image< TComponentType, VDimension > InputImageType;
+    if ( this->m_Method == "Threshold" )
+    {
+      ThresholdImage< InputImageType >( this->m_InputFileName, this->m_OutputFileName,
+        this->m_Inside, this->m_Outside,
+        this->m_Threshold1, this->m_Threshold2 );
+    }
+    else if ( this->m_Method == "OtsuThreshold" )
+    {
+      OtsuThresholdImage< InputImageType >( this->m_InputFileName, this->m_OutputFileName, this->m_MaskFileName,
+        this->m_Inside, this->m_Outside,
+        this->m_Bins );
+    }
+    else if ( this->m_Method == "OtsuMultipleThreshold" )
+    {
+      OtsuMultipleThresholdImage< InputImageType >( this->m_InputFileName, this->m_OutputFileName, this->m_MaskFileName,
+        this->m_Inside, this->m_Outside,
+        this->m_Bins, this->m_NumThresholds );
+    }
+    else if ( this->m_Method == "RobustAutomaticThreshold" )
+    {
+      RobustAutomaticThresholdImage< InputImageType >( this->m_InputFileName, this->m_OutputFileName,
+        this->m_Inside, this->m_Outside,
+        this->m_Pow );
+    }
+    else if ( this->m_Method == "KappaSigmaThreshold" )
+    {
+      KappaSigmaThresholdImage< InputImageType >( this->m_InputFileName, this->m_OutputFileName, this->m_MaskFileName,
+        this->m_Inside, this->m_Outside,
+        this->m_MaskValue, this->m_Sigma, this->m_Iterations );
+    }
+    else if ( this->m_Method == "MinErrorThreshold" )
+    {
+      MinErrorThresholdImage< InputImageType >( this->m_InputFileName, this->m_OutputFileName,
+        this->m_Inside, this->m_Outside,
+        this->m_Bins, this->m_MixtureType );
+    }
+    else
+    {
+      std::cerr << "Not supported!" << std::endl;
+      return;
+    }
+  } // end Run()
+
+}; // end ThresholdImage
+
+
+/**
  * ******************* ThresholdImage *******************
  */
 
@@ -61,7 +195,7 @@ void ThresholdImage(
 } // end ThresholdImage()
 
 
-/*
+/**
  * ******************* OtsuThresholdImage *******************
  */
 
@@ -116,7 +250,7 @@ void OtsuThresholdImage(
 } // end OtsuThresholdImage()
 
 
-/*
+/**
  * ******************* OtsuMultipleThresholdImage *******************
  */
 
@@ -173,7 +307,7 @@ void OtsuMultipleThresholdImage(
 } // end OtsuMultipleThresholdImage()
 
 
-// /*
+// /**
 //  * ******************* AdaptiveOtsuThresholdImage *******************
 //  */
 //
@@ -227,7 +361,7 @@ void OtsuMultipleThresholdImage(
 // } // end AdaptiveOtsuThresholdImage()
 
 
-/*
+/**
  * ******************* RobustAutomaticThresholdImage *******************
  */
 
@@ -283,7 +417,7 @@ void RobustAutomaticThresholdImage(
 } // end RobustAutomaticThresholdImage()
 
 
-/*
+/**
  * ******************* KappaSigmaThresholdImage *******************
  */
 
@@ -339,7 +473,7 @@ void KappaSigmaThresholdImage(
 } // end KappaSigmaThresholdImage()
 
 
-/*
+/**
  * ******************* MinErrorThresholdImage *******************
  */
 
@@ -386,5 +520,4 @@ void MinErrorThresholdImage(
 
 } // end MinErrorThresholdImage()
 
-
-#endif
+#endif // end #ifndef __thresholdimage_h

@@ -13,15 +13,15 @@ MorphologicalSignedDistanceTransformImageFilter<TInputImage, TOutputImage>
   this->SetNumberOfRequiredOutputs( 1 );
   this->SetNumberOfRequiredInputs( 1 );
 
-  m_Erode = ErodeType::New();
-  m_Dilate = DilateType::New();
-  m_Thresh = ThreshType::New();
-  m_Helper = HelperType::New();
-  m_Erode->SetScale(0.5);
-  m_Dilate->SetScale(0.5);
+  this->m_Erode = ErodeType::New();
+  this->m_Dilate = DilateType::New();
+  this->m_Thresh = ThreshType::New();
+  this->m_Helper = HelperType::New();
+  this->m_Erode->SetScale(0.5);
+  this->m_Dilate->SetScale(0.5);
   this->SetUseImageSpacing(true);
   this->SetInsideIsPositive(false);
-  m_OutsideValue = 0;
+  this->m_OutsideValue = 0;
 
 }
 template <typename TInputImage, typename TOutputImage> 
@@ -30,26 +30,26 @@ MorphologicalSignedDistanceTransformImageFilter<TInputImage, TOutputImage>
 ::Modified() const
 {
   Superclass::Modified();
-  m_Erode->Modified();
-  m_Dilate->Modified();
-  m_Thresh->Modified();
-  m_Helper->Modified();
+  this->m_Erode->Modified();
+  this->m_Dilate->Modified();
+  this->m_Thresh->Modified();
+  this->m_Helper->Modified();
 }
 
 template <typename TInputImage, typename TOutputImage> 
 void
 MorphologicalSignedDistanceTransformImageFilter<TInputImage, TOutputImage>
-::GenerateData(void)
+::GenerateData( void )
 {
 
   ProgressAccumulator::Pointer progress = ProgressAccumulator::New();
   progress->SetMiniPipelineFilter(this);
   // these values are guesses at present - need to profile to get a
   // real idea
-  progress->RegisterInternalFilter(m_Thresh, 0.1f);
-  progress->RegisterInternalFilter(m_Erode, 0.4f);
-  progress->RegisterInternalFilter(m_Dilate, 0.4f);
-  progress->RegisterInternalFilter(m_Helper, 0.1f);
+  progress->RegisterInternalFilter( this->m_Thresh, 0.1f);
+  progress->RegisterInternalFilter( this->m_Erode, 0.4f);
+  progress->RegisterInternalFilter( this->m_Dilate, 0.4f);
+  progress->RegisterInternalFilter( this->m_Helper, 0.1f);
 
   this->AllocateOutputs();
   // figure out the maximum value of distance transform using the
@@ -75,34 +75,34 @@ MorphologicalSignedDistanceTransformImageFilter<TInputImage, TOutputImage>
       }
     }
 
-  m_Thresh->SetLowerThreshold(m_OutsideValue);
-  m_Thresh->SetUpperThreshold(m_OutsideValue);
+  this->m_Thresh->SetLowerThreshold( this->m_OutsideValue);
+  this->m_Thresh->SetUpperThreshold( this->m_OutsideValue);
   if (this->GetInsideIsPositive())
     {
-    m_Thresh->SetOutsideValue(MaxDist);
-    m_Thresh->SetInsideValue(-MaxDist);
+    this->m_Thresh->SetOutsideValue(MaxDist);
+    this->m_Thresh->SetInsideValue(-MaxDist);
     }
   else
     {
-    m_Thresh->SetOutsideValue(-MaxDist);
-    m_Thresh->SetInsideValue(MaxDist);
+    this->m_Thresh->SetOutsideValue(-MaxDist);
+    this->m_Thresh->SetInsideValue(MaxDist);
     }
 
-  m_Thresh->SetInput(this->GetInput());
-  m_Erode->SetInput(m_Thresh->GetOutput());
-  m_Dilate->SetInput(m_Thresh->GetOutput());
+  this->m_Thresh->SetInput(this->GetInput());
+  this->m_Erode->SetInput( this->m_Thresh->GetOutput());
+  this->m_Dilate->SetInput( this->m_Thresh->GetOutput());
 #if 1
-  m_Helper->SetInput(m_Erode->GetOutput());
-  m_Helper->SetInput2(m_Dilate->GetOutput());
-  m_Helper->SetInput3(m_Thresh->GetOutput());
-  m_Helper->SetVal(MaxDist);
-  m_Helper->GraftOutput(this->GetOutput());
-  m_Helper->Update();
-  this->GraftOutput(m_Helper->GetOutput());
+  this->m_Helper->SetInput( this->m_Erode->GetOutput());
+  this->m_Helper->SetInput2( this->m_Dilate->GetOutput());
+  this->m_Helper->SetInput3( this->m_Thresh->GetOutput());
+  this->m_Helper->SetVal(MaxDist);
+  this->m_Helper->GraftOutput(this->GetOutput());
+  this->m_Helper->Update();
+  this->GraftOutput( this->m_Helper->GetOutput());
 #else
-  m_Dilate->GraftOutput(this->GetOutput());
-  m_Dilate->Update();
-  this->GraftOutput(m_Dilate->GetOutput());
+  this->m_Dilate->GraftOutput(this->GetOutput());
+  this->m_Dilate->Update();
+  this->GraftOutput( this->m_Dilate->GetOutput());
 #endif
 
 }
@@ -113,7 +113,7 @@ MorphologicalSignedDistanceTransformImageFilter<TInputImage, TOutputImage>
 {
   Superclass::PrintSelf(os,indent);
   os << "Outside Value = " << (OutputPixelType)m_OutsideValue << std::endl;
-  os << "ImageScale = " << m_Erode->GetUseImageSpacing() << std::endl;
+  os << "ImageScale = " << this->m_Erode->GetUseImageSpacing() << std::endl;
 
 }
 

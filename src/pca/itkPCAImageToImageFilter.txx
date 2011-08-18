@@ -112,7 +112,7 @@ namespace itk
     PCAImageToImageFilter< TInputImage, TOutputImage >
     ::SetNumberOfPrincipalComponentsRequired( unsigned int n )
   {
-    if ( m_NumberOfPrincipalComponentsRequired != n )
+    if ( this->m_NumberOfPrincipalComponentsRequired != n )
     {
       this->m_NumberOfPrincipalComponentsRequired = n;
       this->Modified();
@@ -347,7 +347,7 @@ namespace itk
       this->m_NumberOfPixels, this->m_NumberOfFeatureImages );
 
     /** Center the training images by subtracting the mean. */
-    for ( unsigned int i = 0; i < m_NumberOfFeatureImages; ++i )
+    for ( unsigned int i = 0; i < this->m_NumberOfFeatureImages; ++i )
     {
       for ( unsigned int pix = 0; pix < this->m_NumberOfPixels; pix++ )
       {

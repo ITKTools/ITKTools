@@ -21,13 +21,11 @@
  \verbinclude binarythinning.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "ITKToolsBase.h"
+
 #include "ITKToolsHelpers.h"
 #include "ITKToolsImageProperties.h"
 
-#include "itkImageFileReader.h"
-#include "itkBinaryThinningImageFilter.h"
-#include "itkImageFileWriter.h"
+#include "binarythinning.h"
 
 
 /**
@@ -45,72 +43,9 @@ std::string GetHelpString( void )
      << "Note that the thinning algorithm used here is really a 2D thinning algortihm." << std::endl
      << "In 3D the thinning is performed slice by slice.";
   return ss.str();
+
 } // end GetHelpString()
 
-
-class ITKToolsBinaryThinningBase : public itktools::ITKToolsBase
-{
-public:
-  ITKToolsBinaryThinningBase()
-  {
-    m_InputFileName = "";
-    m_OutputFileName = "";
-  }
-
-  ~ITKToolsBinaryThinningBase(){};
-
-  /** Input parameters */
-  std::string m_InputFileName;
-  std::string m_OutputFileName;
-
-  virtual void Run(void) = 0;
-
-}; // end BinaryThinningBase
-
-
-template< class TComponentType, unsigned int VImageDimension >
-class ITKToolsBinaryThinning : public ITKToolsBinaryThinningBase
-{
-public:
-  typedef ITKToolsBinaryThinning Self;
-
-  ITKToolsBinaryThinning(){};
-  ~ITKToolsBinaryThinning(){};
-
-  static Self * New( itktools::ComponentType componentType, unsigned int imageDimension )
-  {
-    if ( itktools::IsType<TComponentType>(componentType) && VImageDimension == imageDimension )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
-  void Run(void)
-  {
-    /** Typedef's. */
-    typedef itk::Image<TComponentType, VImageDimension>     InputImageType;
-    typedef itk::ImageFileReader< InputImageType >          ReaderType;
-    typedef itk::BinaryThinningImageFilter<
-      InputImageType, InputImageType >                      FilterType;
-    typedef itk::ImageFileWriter< InputImageType >          WriterType;
-
-    /** Read in the input images. */
-    typename ReaderType::Pointer reader = ReaderType::New();
-    reader->SetFileName( m_InputFileName );
-
-    /** Thin the image. */
-    typename FilterType::Pointer filter = FilterType::New();
-    filter->SetInput( reader->GetOutput() );
-
-    /** Write image. */
-    typename WriterType::Pointer writer = WriterType::New();
-    writer->SetFileName( m_OutputFileName );
-    writer->SetInput( filter->GetOutput() );
-    writer->Update();
-  }
-
-}; // end BinaryThinning
 
 //-------------------------------------------------------------------------------------
 
@@ -133,11 +68,11 @@ int main( int argc, char ** argv )
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }
@@ -171,13 +106,11 @@ int main( int argc, char ** argv )
   /** Get rid of the possible "_" in ComponentType. */
   itktools::ReplaceUnderscoreWithSpace( ComponentTypeIn );
 
-
   /** Determine image properties. */
-
-  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileName);
+  itktools::ComponentType componentType = itktools::GetImageComponentType( inputFileName );
   
   unsigned int dimension = 0;
-  itktools::GetImageDimension(inputFileName, dimension);
+  itktools::GetImageDimension( inputFileName, dimension );
 
   ITKToolsBinaryThinningBase * binaryThinning = 0;
 

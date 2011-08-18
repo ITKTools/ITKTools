@@ -58,11 +58,11 @@ class ITKToolsExtractEveryOtherSliceBase : public itktools::ITKToolsBase
 public:
   ITKToolsExtractEveryOtherSliceBase()
   {
-    m_InputFileName = "";
-    m_OutputFileName = "";
-    m_EveryOther = 0;
-    m_Offset = 0;
-    m_Direction = 0;
+    this->m_InputFileName = "";
+    this->m_OutputFileName = "";
+    this->m_EveryOther = 0;
+    this->m_Offset = 0;
+    this->m_Direction = 0;
   };
   ~ITKToolsExtractEveryOtherSliceBase(){};
 
@@ -94,7 +94,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     /** Typedefs. */
     typedef itk::Image<TComponentType, VDimension>      InputImageType;
@@ -110,16 +110,16 @@ public:
 
     /** Read in the inputImage. */
     typename ReaderType::Pointer reader = ReaderType::New();
-    reader->SetFileName( m_InputFileName.c_str() );
+    reader->SetFileName( this->m_InputFileName.c_str() );
     reader->Update();
 
     /** Define size of output image. */
     SizeType sizeIn = reader->GetOutput()->GetLargestPossibleRegion().GetSize();
     SizeType sizeOut = sizeIn;
     float newSize = vcl_ceil(
-      ( static_cast<float>( sizeOut[ m_Direction ] - m_Offset ) )
-      / static_cast<float>( m_EveryOther ) );
-    sizeOut[ m_Direction ] = static_cast<unsigned int>( newSize );
+      ( static_cast<float>( sizeOut[ this->m_Direction ] - this->m_Offset ) )
+      / static_cast<float>( this->m_EveryOther ) );
+    sizeOut[ this->m_Direction ] = static_cast<unsigned int>( newSize );
 
     /** Define region of output image. */
     RegionType region;
@@ -138,21 +138,21 @@ public:
     SliceIteratorType itOut( outputImage, outputImage->GetLargestPossibleRegion() );
 
     /** Set direction, default slice = z. */
-    if ( m_Direction == 0 )
+    if ( this->m_Direction == 0 )
     {
       itIn.SetFirstDirection(1);
       itIn.SetSecondDirection(2);
       itOut.SetFirstDirection(1);
       itOut.SetSecondDirection(2);
     }
-    else if ( m_Direction == 1 )
+    else if ( this->m_Direction == 1 )
     {
       itIn.SetFirstDirection(0);
       itIn.SetSecondDirection(2);
       itOut.SetFirstDirection(0);
       itOut.SetSecondDirection(2);
     }
-    else if ( m_Direction == 2 )
+    else if ( this->m_Direction == 2 )
     {
       itIn.SetFirstDirection(0);
       itIn.SetSecondDirection(1);
@@ -164,7 +164,7 @@ public:
     itIn.GoToBegin();
     itOut.GoToBegin();
     IndexType index= itIn.GetIndex();
-    index[ m_Direction ] += m_Offset;
+    index[ this->m_Direction ] += this->m_Offset;
     itIn.SetIndex( index );
 
     /** Loop over images. */
@@ -186,16 +186,16 @@ public:
 
       /** Skip some slices in inputImage. */
       index = itIn.GetIndex();
-      for ( unsigned int i = 1; i < m_EveryOther; i++ )
+      for ( unsigned int i = 1; i < this->m_EveryOther; i++ )
       {
-	index[ m_Direction ]++;
+	index[ this->m_Direction ]++;
       }
       itIn.SetIndex( index );
     }
 
     /** Write the output image. */
     typename WriterType::Pointer writer = WriterType::New();
-    writer->SetFileName( m_OutputFileName.c_str() );
+    writer->SetFileName( this->m_OutputFileName.c_str() );
     writer->SetInput( outputImage );
     writer->Update();
   }
@@ -215,11 +215,11 @@ int main( int argc, char **argv )
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }

@@ -19,10 +19,10 @@ public:
   ITKToolsComputeOverlapOldBase()
   {
     //std::vector<std::string> m_InputFileNames;
-    m_MaskFileName1 = "";
-    m_MaskFileName2 = "";
-    m_T1 = 0;
-    m_T2 = 0;
+    this->m_MaskFileName1 = "";
+    this->m_MaskFileName2 = "";
+    this->m_T1 = 0;
+    this->m_T2 = 0;
   };
   ~ITKToolsComputeOverlapOldBase(){};
 
@@ -54,7 +54,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     /** Some typedef's. */
     typedef itk::Image<TComponentType, VDimension>      ImageType;
@@ -77,9 +77,9 @@ public:
 
     /** Create readers and an AND filter. */
     ImageReaderPointer reader1 = ImageReaderType::New();
-    reader1->SetFileName( m_InputFileNames[ 0 ].c_str() );
+    reader1->SetFileName( this->m_InputFileNames[ 0 ].c_str() );
     ImageReaderPointer reader2 = ImageReaderType::New();
-    reader2->SetFileName( m_InputFileNames[ 1 ].c_str() );
+    reader2->SetFileName( this->m_InputFileNames[ 1 ].c_str() );
     AndFilterPointer finalANDFilter = AndFilterType::New();
 
     /** Create images, threshold filters, and threshold vectors. */
@@ -91,10 +91,10 @@ public:
     ThresholdVectorType thresholdVector2( 2 );
 
     /** If there is a threshold given for image1, use it. */
-    if ( m_T1 != 0 )
+    if ( this->m_T1 != 0 )
     {
       thresholder1 = ThresholdFilterType::New();
-      thresholdVector1[ 0 ] = m_T1;
+      thresholdVector1[ 0 ] = this->m_T1;
       thresholdVector1[ 1 ] = itk::NumericTraits<PixelType>::max();
       thresholder1->SetThresholds( thresholdVector1 );
       thresholder1->SetInput( reader1->GetOutput() );
@@ -107,10 +107,10 @@ public:
     }
 
     /** If there is a threshold given for image2, use it. */
-    if ( m_T2 != 0 )
+    if ( this->m_T2 != 0 )
     {
       thresholder2 = ThresholdFilterType::New();
-      thresholdVector2[ 0 ] = m_T2;
+      thresholdVector2[ 0 ] = this->m_T2;
       thresholdVector2[ 1 ] = itk::NumericTraits<PixelType>::max();
       thresholder2->SetThresholds( thresholdVector2 );
       thresholder2->SetInput( reader2->GetOutput() );
@@ -128,10 +128,10 @@ public:
     AndFilterPointer im1ANDmask2Filter = 0;
 
     /** If there is a mask given for image1, use it on image2. */
-    if ( m_MaskFileName1 != "" )
+    if ( this->m_MaskFileName1 != "" )
     {
       maskReader1 = ImageReaderType::New();
-      maskReader1->SetFileName( m_MaskFileName1.c_str() );
+      maskReader1->SetFileName( this->m_MaskFileName1.c_str() );
       im2ANDmask1Filter = AndFilterType::New();
       im2ANDmask1Filter->SetInput1( im2 );
       im2ANDmask1Filter->SetInput2( maskReader1->GetOutput() );
@@ -144,10 +144,10 @@ public:
     }
 
     /** If there is a mask given for image2, use it on image1. */
-    if ( m_MaskFileName2 != "" )
+    if ( this->m_MaskFileName2 != "" )
     {
       maskReader2 = ImageReaderType::New();
-      maskReader2->SetFileName( m_MaskFileName2.c_str() );
+      maskReader2->SetFileName( this->m_MaskFileName2.c_str() );
       im1ANDmask2Filter = AndFilterType::New();
       im1ANDmask2Filter->SetInput1( im1 );
       im1ANDmask2Filter->SetInput2( maskReader2->GetOutput() );

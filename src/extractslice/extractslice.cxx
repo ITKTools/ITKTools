@@ -64,10 +64,10 @@ class ITKToolsExtractSliceBase : public itktools::ITKToolsBase
 public:
   ITKToolsExtractSliceBase()
   {
-    m_InputFileName = "";
-    m_OutputFileName = "";
-    m_Slicenumber = 0;
-    m_Which_dimension = 0;
+    this->m_InputFileName = "";
+    this->m_OutputFileName = "";
+    this->m_Slicenumber = 0;
+    this->m_Which_dimension = 0;
   };
   ~ITKToolsExtractSliceBase(){};
 
@@ -98,7 +98,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     /** Some typedef's. */
     typedef itk::Image<TComponentType, 3>              Image3DType;
@@ -114,7 +114,7 @@ public:
 
     /** Create reader. */
     typename ImageReaderType::Pointer reader = ImageReaderType::New();
-    reader->SetFileName( m_InputFileName.c_str() );
+    reader->SetFileName( this->m_InputFileName.c_str() );
     reader->Update();
 
     /** Create extractor. */
@@ -124,11 +124,11 @@ public:
     /** Get the size and set which_dimension to zero. */
     RegionType inputRegion = reader->GetOutput()->GetLargestPossibleRegion();
     SizeType size = inputRegion.GetSize();
-    size[ m_Which_dimension ] = 0;
+    size[ this->m_Which_dimension ] = 0;
 
     /** Get the index and set which_dimension to the correct slice. */
     IndexType start = inputRegion.GetIndex();
-    start[ m_Which_dimension ] = m_Slicenumber;
+    start[ this->m_Which_dimension ] = this->m_Slicenumber;
 
     /** Create a desired extraction region and set it into the extractor. */
     RegionType desiredRegion;
@@ -138,7 +138,7 @@ public:
 
     /** Write the 2D output image. */
     typename ImageWriterType::Pointer writer = ImageWriterType::New();
-    writer->SetFileName( m_OutputFileName.c_str() );
+    writer->SetFileName( this->m_OutputFileName.c_str() );
     writer->SetInput( extractor->GetOutput() );
     writer->Update();
   }
@@ -159,11 +159,11 @@ int main( int argc, char ** argv )
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }

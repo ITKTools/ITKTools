@@ -237,18 +237,18 @@ StatisticsImageFilter<TInputImage>
   int numberOfThreads = this->GetNumberOfThreads();
 
   // Resize the thread temporaries
-  m_Count.SetSize(numberOfThreads);
-  m_SumOfSquares.SetSize(numberOfThreads);
-  m_ThreadSum.SetSize(numberOfThreads);
-  m_ThreadMin.SetSize(numberOfThreads);
-  m_ThreadMax.SetSize(numberOfThreads);
+  this->m_Count.SetSize(numberOfThreads);
+  this->m_SumOfSquares.SetSize(numberOfThreads);
+  this->m_ThreadSum.SetSize(numberOfThreads);
+  this->m_ThreadMin.SetSize(numberOfThreads);
+  this->m_ThreadMax.SetSize(numberOfThreads);
 
   // Initialize the temporaries
-  m_Count.Fill(NumericTraits<long>::Zero);
-  m_ThreadSum.Fill(NumericTraits<RealType>::Zero);
-  m_SumOfSquares.Fill(NumericTraits<RealType>::Zero);
-  m_ThreadMin.Fill(NumericTraits<PixelType>::max());
-  m_ThreadMax.Fill(NumericTraits<PixelType>::NonpositiveMin());
+  this->m_Count.Fill(NumericTraits<long>::Zero);
+  this->m_ThreadSum.Fill(NumericTraits<RealType>::Zero);
+  this->m_SumOfSquares.Fill(NumericTraits<RealType>::Zero);
+  this->m_ThreadMin.Fill(NumericTraits<PixelType>::max());
+  this->m_ThreadMax.Fill(NumericTraits<PixelType>::NonpositiveMin());
 
 }
 
@@ -279,17 +279,17 @@ StatisticsImageFilter<TInputImage>
   maximum = NumericTraits<PixelType>::NonpositiveMin();
   for( i = 0; i < numberOfThreads; i++)
     {
-    count += m_Count[i];
-    sum += m_ThreadSum[i];
-    sumOfSquares += m_SumOfSquares[i];
+    count += this->m_Count[i];
+    sum += this->m_ThreadSum[i];
+    sumOfSquares += this->m_SumOfSquares[i];
 
-    if (m_ThreadMin[i] < minimum)
+    if ( this->m_ThreadMin[i] < minimum)
       {
-      minimum = m_ThreadMin[i];
+      minimum = this->m_ThreadMin[i];
       }
-    if (m_ThreadMax[i] > maximum)
+    if ( this->m_ThreadMax[i] > maximum)
       {
-      maximum = m_ThreadMax[i];
+      maximum = this->m_ThreadMax[i];
       }
     }
   // compute statistics
@@ -329,18 +329,18 @@ StatisticsImageFilter<TInputImage>
     {
         value = it.Get();
         realValue = static_cast<RealType>( value );
-        if (value < m_ThreadMin[threadId])
+        if (value < this->m_ThreadMin[threadId])
         {
-        m_ThreadMin[threadId] = value;
+        this->m_ThreadMin[threadId] = value;
         }
-        if (value > m_ThreadMax[threadId])
+        if (value > this->m_ThreadMax[threadId])
         {
-        m_ThreadMax[threadId] = value;
+        this->m_ThreadMax[threadId] = value;
         }
 
-        m_ThreadSum[threadId] += realValue;
-        m_SumOfSquares[threadId] += (realValue * realValue);
-        m_Count[threadId]++;
+        this->m_ThreadSum[threadId] += realValue;
+        this->m_SumOfSquares[threadId] += (realValue * realValue);
+        this->m_Count[threadId]++;
         ++it;
         progress.CompletedPixel();
     } // end while
@@ -360,18 +360,18 @@ StatisticsImageFilter<TInputImage>
         {
             value = itIm.Get();
             realValue = static_cast<RealType>( value );
-            if (value < m_ThreadMin[threadId])
+            if (value < this->m_ThreadMin[threadId])
             {
-            m_ThreadMin[threadId] = value;
+            this->m_ThreadMin[threadId] = value;
             }
-            if (value > m_ThreadMax[threadId])
+            if (value > this->m_ThreadMax[threadId])
             {
-            m_ThreadMax[threadId] = value;
+            this->m_ThreadMax[threadId] = value;
             }
 
-            m_ThreadSum[threadId] += realValue;
-            m_SumOfSquares[threadId] += (realValue * realValue);
-            m_Count[threadId]++;
+            this->m_ThreadSum[threadId] += realValue;
+            this->m_SumOfSquares[threadId] += (realValue * realValue);
+            this->m_Count[threadId]++;
         }
         ++itIm; ++itMask;
         progress.CompletedPixel();

@@ -41,7 +41,7 @@ namespace itk
   template <class TOutputMesh>
   void
   TransformixInputPointFileReader<TOutputMesh>
-  ::GenerateOutputInformation(void)
+  ::GenerateOutputInformation( void )
   {
     this->Superclass::GenerateOutputInformation();
 

@@ -55,9 +55,9 @@ class ITKToolsReshapeBase : public itktools::ITKToolsBase
 public:
   ITKToolsReshapeBase()
   {
-    m_InputFileName = "";
-    m_OutputFileName = "";
-    //std::vector<unsigned long> m_OutputSize;
+    this->m_InputFileName = "";
+    this->m_OutputFileName = "";
+    //std::vector<unsigned long> this->m_OutputSize;
   };
   ~ITKToolsReshapeBase(){};
 
@@ -88,7 +88,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     /** Typedefs. */
     typedef itk::Image<TComponentType, VDimension>      ImageType;
@@ -99,15 +99,15 @@ public:
 
     /** Translate vector to SizeType. */
     SizeType size;
-    for ( unsigned int i = 0; i < m_OutputSize.size(); ++i )
+    for ( unsigned int i = 0; i < this->m_OutputSize.size(); ++i )
     {
-      size[ i ] = m_OutputSize[ i ];
+      size[ i ] = this->m_OutputSize[ i ];
     }
 
 
     /** Reader. */
     typename ReaderType::Pointer reader = ReaderType::New();
-    reader->SetFileName( m_InputFileName.c_str() );
+    reader->SetFileName( this->m_InputFileName.c_str() );
 
     /** Reshaper. */
     typename ReshapeFilterType::Pointer reshaper = ReshapeFilterType::New();
@@ -117,7 +117,7 @@ public:
 
     /** Writer. */
     typename WriterType::Pointer writer = WriterType::New();
-    writer->SetFileName( m_OutputFileName.c_str() );
+    writer->SetFileName( this->m_OutputFileName.c_str() );
     writer->SetInput( reshaper->GetOutput() );
     writer->Update();
   }
@@ -138,11 +138,11 @@ int main( int argc, char **argv )
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }

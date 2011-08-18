@@ -205,7 +205,7 @@ namespace itk
 
     itkGetConstReferenceMacro( PriorPreference, PriorPreferenceType );
 
-    virtual void UnsetPriorPreference(void)
+    virtual void UnsetPriorPreference( void )
     {
       if ( this->m_HasPriorPreference )
       {
@@ -222,12 +222,12 @@ namespace itk
       this->Modified();
     }
 
-    virtual const PriorProbabilityImageArrayType & GetPriorProbabilityImageArray(void) const
+    virtual const PriorProbabilityImageArrayType & GetPriorProbabilityImageArray( void ) const
     {
       return this->m_PriorProbabilityImageArray;
     }
 
-    virtual void UnsetPriorProbabilityImageArray(void)
+    virtual void UnsetPriorProbabilityImageArray( void )
     {
       if ( this->m_HasPriorProbabilityImageArray )
       {
@@ -246,7 +246,7 @@ namespace itk
 
     itkGetConstReferenceMacro( PriorProbabilities, PriorProbabilitiesType );
 
-    virtual void UnsetPriorProbabilities(void)
+    virtual void UnsetPriorProbabilities( void )
     {
       if ( this->m_HasPriorProbabilities )
       {
@@ -265,7 +265,7 @@ namespace itk
 
     itkGetConstReferenceMacro( ObserverTrust, ObserverTrustType);
 
-    virtual void UnsetObserverTrust(void)
+    virtual void UnsetObserverTrust( void )
     {
       if ( this->m_HasObserverTrust )
       {
@@ -283,7 +283,7 @@ namespace itk
       this->Modified();
     }
 
-    virtual void UnsetNumberOfClasses(void)
+    virtual void UnsetNumberOfClasses( void )
     {
       if ( this->m_HasNumberOfClasses )
       {
@@ -315,14 +315,14 @@ namespace itk
      * SetGenerateProbabilisticSegmentations(true) has been
      * invoked before updating this filter. */
     virtual const ProbabilisticSegmentationArrayType &
-      GetProbabilisticSegmentationArray(void) const
+      GetProbabilisticSegmentationArray( void ) const
     {
       return this->m_ProbabilisticSegmentationArray;
     }
 
     /** If you have inspected the probabilistic segmentations and want to get rid
      * of those float images sitting in your memory, call this function */
-    virtual void CleanProbabilisticSegmentations(void)
+    virtual void CleanProbabilisticSegmentations( void )
     {
       if ( this->m_ProbabilisticSegmentationArray.size() > 0 )
       {

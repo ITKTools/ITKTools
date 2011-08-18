@@ -22,7 +22,7 @@ class MorphSDTHelper
 public:
   MorphSDTHelper() {}
   ~MorphSDTHelper() {}
-  void SetVal(double i) { m_Val = i; }
+  void SetVal(double i) { this->m_Val = i; }
   bool operator!=( const MorphSDTHelper & ) const
   {
     return false;
@@ -37,12 +37,12 @@ public:
     if ( C > 0)
       {
       // inside the mask
-      return static_cast<TOutput>(vcl_sqrt((double)A + m_Val));
+      return static_cast<TOutput>(vcl_sqrt((double)A + this->m_Val));
       }
     else
       {
       // outside the mask
-      return static_cast<TOutput>(- vcl_sqrt(m_Val -(double)B));
+      return static_cast<TOutput>(- vcl_sqrt( this->m_Val -(double)B));
       }
   }
 private:

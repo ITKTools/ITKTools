@@ -58,13 +58,13 @@ class ITKToolsCreateGridImageBase : public itktools::ITKToolsBase
 public:
   ITKToolsCreateGridImageBase()
   {
-    std::string m_InputFileName = "";
-    std::string m_OutputFileName = "";
+    this->m_InputFileName = "";
+    this->m_OutputFileName = "";
 
-    //std::vector<unsigned int> m_ImageSize;
-    //std::vector<float> m_ImageSpacing;
-    //std::vector<unsigned int> m_Distance;
-    m_Is2DStack = false;
+    //std::vector<unsigned int> this->m_ImageSize;
+    //std::vector<float> this->m_ImageSpacing;
+    //std::vector<unsigned int> this->m_Distance;
+    this->m_Is2DStack = false;
   };
   ~ITKToolsCreateGridImageBase(){};
 
@@ -99,7 +99,7 @@ public:
     return 0;
   }
 
-  void Run(void)
+  void Run( void )
   {
     /** Typedef's. */
     typedef unsigned char                                   PixelType;
@@ -118,9 +118,9 @@ public:
     typename WriterType::Pointer writer = WriterType::New();
 
     /** Get and set grid image information. */
-    if ( m_InputFileName != "" )
+    if ( this->m_InputFileName != "" )
     {
-      reader->SetFileName( m_InputFileName.c_str() );
+      reader->SetFileName( this->m_InputFileName.c_str() );
       reader->GenerateOutputInformation();
 
       SizeType size = reader->GetOutput()->GetLargestPossibleRegion().GetSize();
@@ -135,8 +135,8 @@ public:
       SpacingType spacing;
       for ( unsigned int i = 0; i < VDimension; ++i )
       {
-	size[ i ] = m_ImageSize[ i ];
-	spacing[ i ] = m_ImageSpacing[ i ];
+	size[ i ] = this->m_ImageSize[ i ];
+	spacing[ i ] = this->m_ImageSpacing[ i ];
       }
       image->SetRegions( size );
       image->SetSpacing( spacing );
@@ -154,14 +154,14 @@ public:
       /** Check if on grid. */
       ind = it.GetIndex();
       bool onGrid = false;
-      onGrid |= ind[ 0 ] % m_Distance[ 0 ] == 0;
-      onGrid |= ind[ 1 ] % m_Distance[ 1 ] == 0;
+      onGrid |= ind[ 0 ] % this->m_Distance[ 0 ] == 0;
+      onGrid |= ind[ 1 ] % this->m_Distance[ 1 ] == 0;
       if ( VDimension == 3 && !m_Is2DStack )
       {
-	if ( ind[ 2 ] % m_Distance[ 2 ] != 0 )
+	if ( ind[ 2 ] % this->m_Distance[ 2 ] != 0 )
 	{
-	  onGrid = ind[ 0 ] % m_Distance[ 0 ] == 0;
-	  onGrid &= ind[ 1 ] % m_Distance[ 1 ] == 0;
+	  onGrid = ind[ 0 ] % this->m_Distance[ 0 ] == 0;
+	  onGrid &= ind[ 1 ] % this->m_Distance[ 1 ] == 0;
 	}
       }
       /** Set the value and continue. */
@@ -171,7 +171,7 @@ public:
     } // end while
 
     /* Write result to file. */
-    writer->SetFileName( m_OutputFileName.c_str() );
+    writer->SetFileName( this->m_OutputFileName.c_str() );
     writer->SetInput( image );
     writer->Update();
   }
@@ -191,11 +191,11 @@ int main( int argc, char *argv[] )
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if(validateArguments == itk::CommandLineArgumentParser::FAILED)
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if(validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED)
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }
