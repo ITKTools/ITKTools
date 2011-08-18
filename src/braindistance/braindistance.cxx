@@ -43,7 +43,8 @@
 /**
  * ******************* GetHelpString *******************
  */
-std::string GetHelpString()
+
+std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "This program computes the distance between brains, based on" << std::endl

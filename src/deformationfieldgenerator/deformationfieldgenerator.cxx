@@ -38,18 +38,17 @@
 #include "vnl/vnl_math.h"
 
 
-//-------------------------------------------------------------------------------------
-
 /**
-  * ******************* GetHelpString *******************
-  */
-std::string GetHelpString()
+ * ******************* GetHelpString *******************
+ */
+
+std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "This program generates a deformation field (from fixed" << std::endl
-  << "to moving image) based on some corresponding points." << std::endl
-  << "Usage:" << std::endl
-  << "pxdeformationfieldgenerator" << std::endl
+    << "to moving image) based on some corresponding points." << std::endl
+    << "Usage:" << std::endl
+    << "pxdeformationfieldgenerator" << std::endl
     << "-in1     inputFilename1: the fixed image on which the" << std::endl
     << "          deformaton field must be defined." << std::endl
     << "[-in2]   inputFilename2: only needed to convert from" << std::endl
@@ -75,9 +74,10 @@ std::string GetHelpString()
     << "          for more information on these methods." << std::endl
     << "-out     outputFilename: the name of the resulting deformation field," << std::endl
     << "          which is written as a vector<float,dim> image." << std::endl
-  << "Supported: 2D, 3D, any scalar pixeltype.";
+    << "Supported: 2D, 3D, any scalar pixeltype.";
   return ss.str();
-} // end GetHelpString
+
+} // end GetHelpString()
 
 
 /** DeformationFieldGenerator */
@@ -361,13 +361,6 @@ public:
   }
 
 }; // end DeformationFieldGenerator
-
-//-------------------------------------------------------------------------------------
-
-
-/** Declare other functions. */
-std::string GetHelpString(void);
-
 
 //-------------------------------------------------------------------------------------
 

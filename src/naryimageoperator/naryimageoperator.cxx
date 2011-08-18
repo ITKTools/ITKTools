@@ -61,6 +61,7 @@ std::string GetHelpString( void )
   << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double." << std::endl;
 
   return ss.str();
+
 } // end GetHelpString()
 
 

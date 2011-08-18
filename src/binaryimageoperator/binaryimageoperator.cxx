@@ -30,6 +30,10 @@
 #include "BinaryImageOperatorHelper.h"
 
 
+/**
+ * ******************* GetHelpString *******************
+ */
+
 std::string GetHelpString( void )
 {
   std::stringstream  ss;

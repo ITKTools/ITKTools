@@ -28,7 +28,7 @@
 #include "itkReshapeImageToImageFilter.h"
 #include "itkImageFileWriter.h"
 #include <itksys/SystemTools.hxx>
-//-------------------------------------------------------------------------------------
+
 
 /**
  * ******************* GetHelpString *******************
@@ -123,11 +123,6 @@ public:
   }
 
 }; // end Reshape
-
-//-------------------------------------------------------------------------------------
-
-/** Declare other functions. */
-std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 

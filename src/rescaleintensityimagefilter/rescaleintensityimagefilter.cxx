@@ -35,12 +35,12 @@
 
 #include "vnl/vnl_math.h"
 
-//-------------------------------------------------------------------------------------
 
 /**
  * ******************* GetHelpString *******************
  */
-std::string GetHelpString()
+
+std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "Usage:" << std::endl
@@ -220,9 +220,6 @@ void RescaleIntensity(
   const std::string & outputFileName,
   const std::vector<double> & values,
   const bool & valuesAreExtrema );
-
-/** Declare GetHelpString. */
-std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 

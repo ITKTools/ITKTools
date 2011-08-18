@@ -33,8 +33,8 @@
 #include <fstream>
 #include <iomanip>
 
-//-------------------------------------------------------------------------------------
-/*
+
+/**
  * ******************* GetHelpString *******************
  */
 
@@ -48,6 +48,7 @@ std::string GetHelpString( void )
      << "-f       the file containing the fixed landmarks" << std::endl
      << "-m       the file containing the moving landmarks";
   return ss.str();
+
 } // end GetHelpString()
 
 void ComputeClosestVersor(

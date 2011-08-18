@@ -29,10 +29,12 @@
 #include "itkBinaryThinningImageFilter.h"
 #include "itkImageFileWriter.h"
 
+
 /**
-  * ******************* GetHelpString *******************
-  */
-std::string GetHelpString()
+ * ******************* GetHelpString *******************
+ */
+
+std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "Usage:" << std::endl
@@ -109,11 +111,6 @@ public:
   }
 
 }; // end BinaryThinning
-//-------------------------------------------------------------------------------------
-
-
-/** Declare PrintHelp. */
-std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 

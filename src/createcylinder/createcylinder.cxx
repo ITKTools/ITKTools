@@ -29,11 +29,9 @@
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
-//-------------------------------------------------------------------------------------
-
 
 /**
- * ******************* PrintHelp *******************
+ * ******************* GetHelpString *******************
  */
 
 std::string GetHelpString( void )

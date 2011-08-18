@@ -58,6 +58,7 @@ std::string GetHelpString( void )
   //std::cout << "  [-m]     method, one of {Maurer, Danielsson, OrderK}, default Maurer\n";
   //std::cout << "  [-K]     for method \"OrderK\", specify K, default 5\n";
   return ss.str();
+
 } // end GetHelpString()
 
 /* Declare DistanceTransform. */

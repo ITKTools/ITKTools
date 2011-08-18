@@ -32,12 +32,10 @@
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
-//-------------------------------------------------------------------------------------
-
 
 /**
-  * ******************* GetHelpString *******************
-  */
+ * ******************* GetHelpString *******************
+ */
 
 std::string GetHelpString( void )
 {
@@ -51,6 +49,7 @@ std::string GetHelpString( void )
   << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
 
   return ss.str();
+
 } // end GetHelpString()
 
 
@@ -178,8 +177,6 @@ void PerformPCA(
   const std::string & outputDirectory,
   unsigned int numberOfPCs );
 
-/** Declare other functions. */
-std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 

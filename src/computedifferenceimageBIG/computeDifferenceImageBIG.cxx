@@ -33,7 +33,11 @@
 #include "CommandLineArgumentHelper.h"
 
 
-std::string GetHelpString()
+/**
+ * ******************* GetHelpString *******************
+ */
+
+std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "Usage:" << std::endl
@@ -52,7 +56,7 @@ std::string GetHelpString()
      << "provided that the outputPixelComponentType is supported by the output file format." << std::endl
      << "By default the outputPixelComponentType is set to the inputPixelComponentType of image1.";
   return ss.str();
-}
+} // end GetHelpString()
 
 // extern int ComputeScalarDifferenceImage( const std::string &inputPixelComponentType1,
 //   const std::string &inputPixelComponentType2, const std::string &outputPixelComponentType,

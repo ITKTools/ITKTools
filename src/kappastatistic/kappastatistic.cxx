@@ -26,7 +26,6 @@
 #include "itkFleissKappaStatistic.h"
 #include "itkCohenWeightedKappaStatistic.h"
 
-//-------------------------------------------------------------------------------------
 
 /**
  * ******************* GetHelpString *******************
@@ -36,31 +35,32 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "Usage:" << std::endl
-  << "pxkappastatistic" << std::endl
-  << "  -in      inputFilename" << std::endl
-  << "  -type    the type of the kappa test:" << std::endl
-  << "             fleiss: unweighted, for many observers" << std::endl
-  << "             cohen: weighted, for two observers only" << std::endl
-  << "  -c       the data columns on which the kappa test is performed" << std::endl
-  << "  [-w]     the weights used in the Cohen kappa test, default linear:" << std::endl
-  << "             linear:    1 - | i - j | / ( k - 1 )" << std::endl
-  << "             quadratic: 1 - [ (i - j ) / ( k - 1 ) ]^2" << std::endl
-  << "             identity:  I_k, the identity matrix" << std::endl
-  << "  [-std]   use this option to calculate the standard deviation" << std::endl
-  << "  [-cmp]   use this option to specify a kappa to which you want to compare" << std::endl
-  << "           the found kappa. The returned standard deviation is different if" << std::endl
-  << "           this option is not specified." << std::endl
-  << "  [-out]   output, choose one of {kappa,all,ALL}, default all" << std::endl
-  << "             kappa: only print the kappa-value" << std::endl
-  << "             all: print all" << std::endl
-  << "             ALL: print more" << std::endl
-  << " [-p]     the output precision, default = 8:" << std::endl
-  << "The input file should be in a certain format. No text is allowed." << std::endl
-  << "No headers are allowed. The data samples should be displayed in columns." << std::endl
-  << "Columns should be separated by a single space or tab." << std::endl
-  << "For more information about the kappa statistic and this implementation, read the tex-file found in the repository.";
+    << "pxkappastatistic" << std::endl
+    << "  -in      inputFilename" << std::endl
+    << "  -type    the type of the kappa test:" << std::endl
+    << "             fleiss: unweighted, for many observers" << std::endl
+    << "             cohen: weighted, for two observers only" << std::endl
+    << "  -c       the data columns on which the kappa test is performed" << std::endl
+    << "  [-w]     the weights used in the Cohen kappa test, default linear:" << std::endl
+    << "             linear:    1 - | i - j | / ( k - 1 )" << std::endl
+    << "             quadratic: 1 - [ (i - j ) / ( k - 1 ) ]^2" << std::endl
+    << "             identity:  I_k, the identity matrix" << std::endl
+    << "  [-std]   use this option to calculate the standard deviation" << std::endl
+    << "  [-cmp]   use this option to specify a kappa to which you want to compare" << std::endl
+    << "           the found kappa. The returned standard deviation is different if" << std::endl
+    << "           this option is not specified." << std::endl
+    << "  [-out]   output, choose one of {kappa,all,ALL}, default all" << std::endl
+    << "             kappa: only print the kappa-value" << std::endl
+    << "             all: print all" << std::endl
+    << "             ALL: print more" << std::endl
+    << " [-p]     the output precision, default = 8:" << std::endl
+    << "The input file should be in a certain format. No text is allowed." << std::endl
+    << "No headers are allowed. The data samples should be displayed in columns." << std::endl
+    << "Columns should be separated by a single space or tab." << std::endl
+    << "For more information about the kappa statistic and this implementation, read the tex-file found in the repository.";
 
   return ss.str();
+
 } // end GetHelpString()
 
 int main( int argc, char **argv )

@@ -37,7 +37,10 @@
 #include <string>
 
 
-/** Define GetHelpString. */
+/**
+ * ******************* GetHelpString *******************
+ */
+
 std::string GetHelpString( void )
 {
   std::stringstream ss;
@@ -66,7 +69,7 @@ std::string GetHelpString( void )
 
   return ss.str();
 
-} // end GetHelpString
+} // end GetHelpString()
 
 
 //-------------------------------------------------------------------------------------

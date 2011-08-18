@@ -45,11 +45,11 @@
 #include "itkLinearInterpolateImageFunction.h"
 
 
-
 /**
-  * ******************* GetHelpString *******************
-  */
-std::string GetHelpString()
+ * ******************* GetHelpString *******************
+ */
+
+std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "This program computes a spatial segmentation error map." << std::endl
@@ -67,7 +67,8 @@ std::string GetHelpString()
   << "           3D short for inputImage2, and everything convertable to short.";
 
   return ss.str();
-} // end GetHelpString
+
+} // end GetHelpString()
 
 
 //-------------------------------------------------------------------------------------
@@ -376,11 +377,6 @@ public:
     }
 
 }; // end SegmentationDistance
-
-//-------------------------------------------------------------------------------------
-
-/** Declare GetHelpString. */
-std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 

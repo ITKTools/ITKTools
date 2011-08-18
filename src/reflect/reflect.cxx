@@ -28,13 +28,12 @@
 #include "itkFlipImageFilter.h"
 #include "itkImageFileWriter.h"
 
-//-------------------------------------------------------------------------------------
-
 
 /**
  * ******************* GetHelpString *******************
  */
-std::string GetHelpString()
+
+std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "This program reflects an image." << std::endl
@@ -135,9 +134,6 @@ void ReflectImageFilter(
   const std::string & inputFileName,
   const std::string & outputFileName,
   const unsigned int direction );
-
-/** Declare GetHelpString. */
-std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 

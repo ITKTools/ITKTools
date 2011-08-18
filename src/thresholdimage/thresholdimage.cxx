@@ -26,10 +26,8 @@
 
 #include "ThresholdWrappers.h"
 
-//-------------------------------------------------------------------------------------
 
-
-/*
+/**
  * ******************* GetHelpString *******************
  */
 
@@ -67,6 +65,7 @@ std::string GetHelpString( void )
   << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
 
   return ss.str();
+
 } // end GetHelpString()
 
 
@@ -182,12 +181,6 @@ public:
   }
 
 }; // end ThresholdImage
-
-//-------------------------------------------------------------------------------------
-
-
-/** Declare GetHelpString. */
-std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 

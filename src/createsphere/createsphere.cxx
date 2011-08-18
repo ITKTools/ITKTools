@@ -28,12 +28,11 @@
 #include "itkImageRegionIterator.h"
 #include "itkImageFileWriter.h"
 
-//-------------------------------------------------------------------------------------
-
 
 /**
-  * ******************* GetHelpString *******************
-  */
+ * ******************* GetHelpString *******************
+ */
+
 std::string GetHelpString( void )
 {
   std::stringstream ss;
@@ -48,7 +47,7 @@ std::string GetHelpString( void )
     << "[-pt]    pixelType, default short" << std::endl
   << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
   return ss.str();
-} // end GetHelpString
+} // end GetHelpString()
 
 
 /** CreateSphere */
@@ -157,12 +156,6 @@ public:
   }
 
 }; // end CreateSphere
-
-//-------------------------------------------------------------------------------------
-
-
-/** Declare GetHelpString. */
-std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 

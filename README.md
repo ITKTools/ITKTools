@@ -2,7 +2,7 @@ ITK Tools
 ==========
 
 Practical command line tools based on the ITK, intended for image processing.
-These tools are designed to take an input image from the command line, perform a single operation, and produce an output image. For example smoothing of an image can be done with the tool pxgaussianimagefilter.
+These tools are designed to take one or more input image(s) from the command line, perform a single operation, and produce an output image. For example smoothing of an image can be done with the tool pxgaussianimagefilter.
 
 Historical note
 ---------------
@@ -18,6 +18,8 @@ The move to git(hub) in April 2011 under the name ITKTools was inspired by David
 Building
 --------
 
+Building ITKTools from source requires to first build the ITK. Currently we relky on ITK4 the latest git version, available at git://itk.org/ITK.git.
+
 Linux:
 
 - Create a 'bin' directory at the same level as the 'src' directory:
@@ -27,6 +29,7 @@ ITKTools]$ mkdir bin
 - From the new 'build' directory, run cmake on the source directory:
 
 ITKTools]$ cd bin
+
 bin]$ cmake ../src
 
 - Run 'make' from the 'build' directory
@@ -35,9 +38,9 @@ Windows:
 
 - Create a 'bin' directory at the same level as the 'src' directory
 
-- Run cmake, set the source directory to ITKTools/src and the binary directory to ITKTools/bin.
+- Run cmake, set the source directory to ITKTools/src and the binary directory to ITKTools/bin, press configure, press generate.
 
-- Open bin/ITKTools.sln, and start build.
+- Open bin/ITKTools.sln, and start the build.
 
 Conventions
 -----------
@@ -60,24 +63,35 @@ Coding style
 
 Good and consistent coding style makes software maintenance easier! Therefore, we have adopted the following style rules:
 
-- Don't use tabs, but two (2) spaces
+- Don't use tabs, but two (2) spaces.
 
-- Be explicit, so e.g. use void to declare a function with no arguments, i.e. Function( void )
+- Be explicit, so e.g. use void to declare a function with no arguments, i.e. Function( void ).
+
+- Use full names with CamelCase for variable and function names.
+
+- Use helper functionality from src/common as much as possible.
+
+- Functionality is implemented in a Run() function, which is a member of a class derived from itktools::ITKToolsBase.
+
+- Put a help text function std::string GetHelpString( void ) on top of the main cxx file. Put the implementation is a helper header file, especially if it is large.
 
 
 Testing
 -------
+
 First, set the CMake option ITKTOOLS_BUILD_TESTING=ON while building ITKTools. Then, on Linux, from your build directory, run 'ctest'. This will execute the entire suite of tests. On Windows, type "ctest -C Release", or "ctest -C Debug".
 
-CDash
+Nightly Dashboard
 -----
 
-The nightly dashboard is located at
+The nightly CDash dashboard is located at
 
   http://my.cdash.org/index.php?project=ITKTools
 
 To submit a test, copy and edit a dashboard script from Testing/Dashboard, and call the script using:
+
 ctest -C Release -S path/to/dashboardscript.cmake,TestType -VV
+
 where TestType is Nightly, Experimental, or Continuous.
 
 Sometimes git clone does not work for you and you get something like:

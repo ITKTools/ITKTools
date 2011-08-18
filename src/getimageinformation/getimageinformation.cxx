@@ -29,9 +29,10 @@
 
 
 /**
-  * ******************* GetHelpString *******************
-  */
-std::string GetHelpString()
+ * ******************* GetHelpString *******************
+ */
+
+std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "Usage:" << std::endl

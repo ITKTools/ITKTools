@@ -40,7 +40,12 @@
 
 #include "itkCommandLineArgumentParser.h"
 
-std::string GetHelpString(void)
+
+/**
+ * ******************* GetHelpString *******************
+ */
+
+std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "This program enhances an image." << std::endl
@@ -61,7 +66,7 @@ std::string GetHelpString(void)
     << "[-LUT] \tUse Lookup-table <true, false>;" << std::endl
     << "default = true; Faster, but requires more memory.";
   return ss.str();
-} // end PrintUsageString
+} // end GetHelpString()
 
 
 /** ContrastEnhanceImage */

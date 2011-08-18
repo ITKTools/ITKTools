@@ -30,12 +30,10 @@
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
-//-------------------------------------------------------------------------------------
-
 
 /**
-  * ******************* GetHelpString *******************
-  */
+ * ******************* GetHelpString *******************
+ */
 
 std::string GetHelpString( void )
 {
@@ -203,11 +201,6 @@ public:
   }
 
 }; // end ExtractEveryOtherSlice
-
-//-------------------------------------------------------------------------------------
-
-/** Declare GetHelpString. */
-std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 

@@ -52,6 +52,7 @@ std::string GetHelpString( void )
   << "Supported: 2D, 3D, vector of floats or doubles, number of components" << std::endl
   << "must equal number of dimensions.";
   return ss.str();
+
 } // end GetHelpString()
 
 //-------------------------------------------------------------------------------------
@@ -172,11 +173,6 @@ public:
   }
 
 }; // end DeformationFieldOperator
-
-//-------------------------------------------------------------------------------------
-
-/** Declare GetHelpString. */
-std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 

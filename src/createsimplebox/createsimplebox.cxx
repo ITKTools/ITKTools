@@ -28,7 +28,12 @@
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 
-std::string GetHelpString(void)
+
+/**
+ * ******************* GetHelpString *******************
+ */
+
+std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "This program creates an image containing a white box, defined by point A and B." << std::endl
@@ -52,7 +57,8 @@ std::string GetHelpString(void)
     << "-pB1  Index 1 of pointB" << std::endl
     << "[-pB2]Index 2 of pointB";
   return ss.str();
-} // end GetHelpString
+
+} // end GetHelpString()
 
 int main(int argc, char** argv)
 {

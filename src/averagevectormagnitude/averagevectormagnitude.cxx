@@ -41,7 +41,12 @@
 #include <iostream>
 #include <string>
 
-std::string GetHelpString()
+
+/**
+ * ******************* GetHelpString *******************
+ */
+
+std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "Calculate the average magnitude of the vectors in a vector image." << std::endl
@@ -53,7 +58,7 @@ std::string GetHelpString()
      << "-sd SpaceDimension (the dimension of the vectors)" << std::endl;
 
   return ss.str();
-}
+} // end GetHelpString()
 
 class ITKToolsAverageVectorMagnitudeBase : public itktools::ITKToolsBase
 {

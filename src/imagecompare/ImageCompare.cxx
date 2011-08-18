@@ -35,15 +35,20 @@
 #include "itkTestingComparisonImageFilter.h"
 
 
+/**
+ * ******************* GetHelpString *******************
+ */
+
 std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "Usage:" << std::endl
-  << "pximagecompare" << std::endl
-  << "  -test      image filename to test against baseline" << std::endl
-  << "  -base      baseline image filename";
+    << "pximagecompare" << std::endl
+    << "  -test      image filename to test against baseline" << std::endl
+    << "  -base      baseline image filename";
   return ss.str();
-} // end GetHelpString
+
+} // end GetHelpString()
 
 
 

@@ -30,12 +30,12 @@
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
-//-------------------------------------------------------------------------------------
 
 /**
  * ******************* GetHelpString *******************
  */
-std::string GetHelpString()
+
+std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "Usage:" << std::endl
@@ -49,7 +49,7 @@ std::string GetHelpString()
 
   return ss.str();
 
-} // end GetHelpString
+} // end GetHelpString()
 
 
 
@@ -125,12 +125,6 @@ public:
   }
 
 }; // end IntensityWindowing
-
-//-------------------------------------------------------------------------------------
-
-
-/** Declare GetHelpString. */
-std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 

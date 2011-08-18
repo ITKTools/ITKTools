@@ -26,7 +26,9 @@
 #include "ComputeOverlapOld.h"
 //#include "ComputeOverlap2.h"
 #include "ComputeOverlap3.h"
-/*
+
+
+/**
  * ******************* GetHelpString *******************
  */
 
@@ -55,6 +57,7 @@ std::string GetHelpString( void )
   << "Supported: 2D, 3D, (unsigned) char, (unsigned) short";
 
   return ss.str();
+
 } // end GetHelpString()
 
 //-------------------------------------------------------------------------------------

@@ -28,13 +28,12 @@
 #include "itkChangeLabelImageFilter.h"
 #include "itkImageFileWriter.h"
 
-//-------------------------------------------------------------------------------------
-
 
 /**
  * ******************* GetHelpString *******************
  */
-std::string GetHelpString()
+
+std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "This program replaces some user specified intensity values in an image." << std::endl
@@ -51,6 +50,7 @@ std::string GetHelpString()
   << "type, after which the intensity replacement is performed.";
 
   return ss.str();
+
 } // end GetHelpString()
 
 
@@ -152,11 +152,6 @@ public:
   }
 
 }; // end IntensityReplace
-
-//-------------------------------------------------------------------------------------
-
-/** Declare GetHelpString. */
-std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 

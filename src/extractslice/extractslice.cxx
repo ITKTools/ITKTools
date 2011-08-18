@@ -34,7 +34,10 @@
 #include <itksys/SystemTools.hxx>
 
 
-/** Define GetHelpString. */
+/**
+ * ******************* GetHelpString *******************
+ */
+
 std::string GetHelpString( void )
 {
   std::stringstream ss;
@@ -51,13 +54,7 @@ std::string GetHelpString( void )
 
   return ss.str();
 
-} // end GetHelpString
-
-
-/** \todo explain rationale.
- *
- *
- */
+} // end GetHelpString()
 
 
 /** ExtractSlice */
@@ -147,11 +144,6 @@ public:
   }
 
 }; // end ExtractSlice
-
-//-------------------------------------------------------------------------------------
-
-/** Declare GetHelpString function. */
-std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 

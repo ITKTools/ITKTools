@@ -32,11 +32,11 @@
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
-//-------------------------------------------------------------------------------------
 
 /**
-  * ******************* GetHelpString *******************
-  */
+ * ******************* GetHelpString *******************
+ */
+
 std::string GetHelpString( void )
 {
   std::stringstream ss;
@@ -53,6 +53,7 @@ std::string GetHelpString( void )
   << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
 
   return ss.str();
+
 } // end GetHelpString()
 
 
@@ -178,11 +179,6 @@ public:
   }
 
 }; // end ResizeImage
-
-//-------------------------------------------------------------------------------------
-
-/** Declare GetHelpString. */
-std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 

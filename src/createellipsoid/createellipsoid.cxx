@@ -28,13 +28,11 @@
 #include "itkImageRegionIterator.h"
 #include "itkImageFileWriter.h"
 
-//-------------------------------------------------------------------------------------
-
-
 
 /**
-  * ******************* GetHelpString *******************
-  */
+ * ******************* GetHelpString *******************
+ */
+
 std::string GetHelpString( void )
 {
   std::stringstream ss;
@@ -52,7 +50,7 @@ std::string GetHelpString( void )
   << "The user should take care of supplying an orthogonal matrix." << std::endl
   << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
   return ss.str();
-} // end GetHelpString
+} // end GetHelpString()
 
 
 /** CreateEllipsoid */
@@ -174,11 +172,6 @@ public:
 
 }; // end CreateEllipsoid
 
-
-//-------------------------------------------------------------------------------------
-
-/** Declare GetHelpString. */
-std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 

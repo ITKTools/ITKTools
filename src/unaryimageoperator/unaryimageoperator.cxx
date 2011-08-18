@@ -26,6 +26,7 @@
 #include "UnaryImageOperatorMainHelper.h"
 #include "UnaryImageOperatorHelper.h"
 
+
 /**
  * ******************* GetHelpString *******************
  */
@@ -55,6 +56,7 @@ std::string GetHelpString( void )
     << "  [-opct]  outputPixelComponentType, default: same as input image\n"
     << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, float.";
   return ss.str();
+
 } // end GetHelpString()
 
 //-------------------------------------------------------------------------------------

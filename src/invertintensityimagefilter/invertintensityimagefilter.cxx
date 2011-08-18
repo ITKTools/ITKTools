@@ -34,7 +34,6 @@
 #include "itkVectorIndexSelectionCastImageFilter.h" // decompose
 #include "itkImageToVectorImageFilter.h" // reassemble
 #include "itkChannelByChannelVectorImageFilter2.h"
-//-------------------------------------------------------------------------------------
 
 
 /**
@@ -154,11 +153,6 @@ public:
   }
 
 }; // end InvertIntensity
-
-//-------------------------------------------------------------------------------------
-
-/** Declare GetHelpString. */
-std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 

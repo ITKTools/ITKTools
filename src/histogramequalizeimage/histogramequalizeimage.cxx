@@ -29,7 +29,12 @@
 #include "ITKToolsBase.h"
 #include "ITKToolsHelpers.h"
 
-std::string GetHelpString(void)
+
+/**
+ * ******************* GetHelpString *******************
+ */
+
+std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss<< "This program applies histogram equalization to an image." << std::endl
@@ -43,7 +48,8 @@ std::string GetHelpString(void)
     << "-id    \tImageDimension <2,3>" << std::endl;
 
   return ss.str();
-} // end GetHelpString
+
+} // end GetHelpString()
 
 
 /** HistogramEqualizeImage */

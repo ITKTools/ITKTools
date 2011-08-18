@@ -31,7 +31,12 @@
 
 #include "itkImageToVectorImageFilter.h"
 
-std::string GetHelpString(void)
+
+/**
+ * ******************* GetHelpString *******************
+ */
+
+std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "This program creates a random image." << std::endl
@@ -54,7 +59,8 @@ std::string GetHelpString(void)
   //<< "\t[-d3]  \tSize of dimension 3\n"
   //<< "\t[-d4]  \tSize of dimension 4\n"
   return ss.str();
-} // end GetHelpString
+
+} // end GetHelpString()
 
 
 /** CreateRandomImage */

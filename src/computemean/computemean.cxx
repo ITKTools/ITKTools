@@ -33,10 +33,11 @@
 #include <algorithm>
 
 
-/*
-* ******************* GetHelpString *******************
-*/
-std::string GetHelpString()
+/**
+ * ******************* GetHelpString *******************
+ */
+
+std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "Usage:" << std::endl
@@ -51,7 +52,7 @@ std::string GetHelpString()
      << "The output for median is: minimum, first quartile, median, third quartile, maximum.";
 
   return ss.str();
-} // end GetHelpString
+} // end GetHelpString()
 
 
 //-------------------------------------------------------------------------------------

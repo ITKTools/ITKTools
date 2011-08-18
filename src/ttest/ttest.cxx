@@ -28,11 +28,10 @@
 #include <itksys/SystemTools.hxx>
 #include "itkTDistribution.h"
 
-//-------------------------------------------------------------------------------------
 
-/*
-  * ******************* GetHelpString *******************
-  */
+/**
+ * ******************* GetHelpString *******************
+ */
 
 std::string GetHelpString( void )
 {
@@ -55,6 +54,7 @@ std::string GetHelpString( void )
   << "Columns should be separated by a single space or tab.";
 
   return ss.str();
+
 } // end GetHelpString()
 
 /* Declare ReadInputData. */
@@ -73,9 +73,6 @@ void ComputeMeanAndStandardDeviation(
   const std::vector<double> & samples2,
   double & mean1, double & mean2, double & meandiff,
   double & std1, double & std2, double & stddiff );
-
-/** Declare GetHelpString. */
-std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 

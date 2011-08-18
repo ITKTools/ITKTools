@@ -27,6 +27,10 @@
 #include "itkGDCMSeriesFileNames.h"
 
 
+/**
+ * ******************* GetHelpString *******************
+ */
+
 std::string GetHelpString( void )
 {
   std::stringstream ss;

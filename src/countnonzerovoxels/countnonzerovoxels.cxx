@@ -26,11 +26,9 @@
 #include "itkImageFileReader.h"
 #include "itkImageRegionConstIterator.h"
 
-//-------------------------------------------------------------------------------------
-
 
 /**
- * ******************* PrintHelp *******************
+ * ******************* GetHelpString *******************
  */
 
 std::string GetHelpString( void )

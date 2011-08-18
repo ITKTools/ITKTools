@@ -28,13 +28,12 @@
 //#include "itkChangeLabelImageFilter.h"
 #include "itkImageFileWriter.h"
 
-//-------------------------------------------------------------------------------------
-
 
 /**
  * ******************* GetHelpString *******************
  */
-std::string GetHelpString()
+
+std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "This program replaces the value of a user specified voxel." << std::endl

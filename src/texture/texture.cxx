@@ -31,7 +31,6 @@
 #include "itkImageFileWriter.h"
 #include "itkMultiThreader.h"
 
-//-------------------------------------------------------------------------------------
 
 /**
  * ******************* GetHelpString *******************
@@ -187,9 +186,6 @@ void PerformTextureAnalysis(
   const std::vector< unsigned int > & offsetScales,
   unsigned int numberOfBins,
   unsigned int numberOfOutputs );
-
-/** Declare other functions. */
-std::string GetHelpString( void );
 
 //-------------------------------------------------------------------------------------
 

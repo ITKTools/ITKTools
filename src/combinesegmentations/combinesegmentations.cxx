@@ -48,7 +48,7 @@
  * ******************* GetHelpString *******************
  */
 
-std::string GetHelpString()
+std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "This program combines multiple segmentations into one." << std::endl
@@ -103,7 +103,8 @@ std::string GetHelpString()
      << "Supported: 2D/3D.";
 
   return ss.str();
-} // end GetHelpString
+
+} // end GetHelpString()
 
 
 /* Declare CombineSegmentations. */
