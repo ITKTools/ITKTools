@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief This program generates a deformation field (from fixed to moving image) based on some corresponding points.
- 
+
  \verbinclude deformationfieldgenerator.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -83,11 +83,11 @@ std::string GetHelpString( void )
 /** DeformationFieldGenerator */
 
 class ITKToolsDeformationFieldGeneratorBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   ITKToolsDeformationFieldGeneratorBase()
   {
-    m_InputImage1FileName = "";
+    this->m_InputImage1FileName = "";
     this->m_InputImage2FileName = "";
     this->m_InputPoints1FileName = "";
     this->m_InputPoints2FileName = "";
@@ -105,8 +105,8 @@ public:
   std::string m_OutputImageFileName;
   std::string m_KernelName;
   double m_Stiffness;
-    
-}; // end CropImageBase
+
+}; // end class ITKToolsDeformationFieldGeneratorBase
 
 
 template< unsigned int VDimension >
@@ -181,7 +181,8 @@ public:
     typename DeformationFieldWriterType::Pointer writer = DeformationFieldWriterType::New();
 
     ipp1Reader->SetFileName( this->m_InputPoints1FileName.c_str() );
-    std::cout << "Reading input point file 1: " << this->m_InputPoints1FileName << std::endl;
+    std::cout << "Reading input point file 1: "
+      << this->m_InputPoints1FileName << std::endl;
     try
     {
       ipp1Reader->Update();
@@ -243,14 +244,14 @@ public:
     {
       if ( this->m_InputImage2FileName!=""  )
       {
-	reader2->SetFileName( this->m_InputImage2FileName.c_str() );
-	reader2->UpdateOutputInformation();
+        reader2->SetFileName( this->m_InputImage2FileName.c_str() );
+        reader2->UpdateOutputInformation();
       }
       else
       {
-	std::cerr << "The input points in " << this->m_InputImage2FileName
-	  << " are given as indices, but no accompanying image is provided." << std::endl;
-	itkGenericExceptionMacro( << "Second input image is needed!" );
+        std::cerr << "The input points in " << this->m_InputImage2FileName
+          << " are given as indices, but no accompanying image is provided." << std::endl;
+        itkGenericExceptionMacro( << "Second input image is needed!" );
       }
     }
 
@@ -263,17 +264,18 @@ public:
       dummyImage->SetOrigin( reader1->GetOutput()->GetOrigin() );
       dummyImage->SetRegions( reader1->GetOutput()->GetLargestPossibleRegion() );
       typename PointSetType::Pointer tempPointSet = PointSetType::New();
+
+      PointType point; point.Fill( 0.0 );
+      IndexType index;
       for ( unsigned int j = 0; j < nrofpoints; j++ )
       {
-	PointType point;
-	IndexType index;
-	inputPointSet1->GetPoint(j, &point);
-	for ( unsigned int i = 0; i < VDimension; i++ )
-	{
-	  index[i] = static_cast< IndexValueType >( vnl_math_rnd( point[i] ) );
-	}
-	dummyImage->TransformIndexToPhysicalPoint( index, point );
-	tempPointSet->SetPoint(j, point);
+        inputPointSet1->GetPoint( j, &point );
+        for ( unsigned int i = 0; i < VDimension; i++ )
+        {
+          index[i] = static_cast< IndexValueType >( vnl_math_rnd( point[i] ) );
+        }
+        dummyImage->TransformIndexToPhysicalPoint( index, point );
+        tempPointSet->SetPoint( j, point );
       }
       inputPointSet1 = tempPointSet;
     }
@@ -286,17 +288,18 @@ public:
       dummyImage->SetOrigin( reader2->GetOutput()->GetOrigin() );
       dummyImage->SetRegions( reader2->GetOutput()->GetLargestPossibleRegion() );
       typename PointSetType::Pointer tempPointSet = PointSetType::New();
+
+      PointType point; point.Fill( 0.0 );
+      IndexType index;
       for ( unsigned int j = 0; j < nrofpoints; j++ )
       {
-	PointType point;
-	IndexType index;
-	inputPointSet2->GetPoint(j, &point);
-	for ( unsigned int i = 0; i < VDimension; i++ )
-	{
-	  index[i] = static_cast< IndexValueType >( vnl_math_rnd( point[i] ) );
-	}
-	dummyImage->TransformIndexToPhysicalPoint( index, point );
-	tempPointSet->SetPoint(j, point);
+        inputPointSet2->GetPoint(j, &point);
+        for ( unsigned int i = 0; i < VDimension; i++ )
+        {
+          index[i] = static_cast< IndexValueType >( vnl_math_rnd( point[i] ) );
+        }
+        dummyImage->TransformIndexToPhysicalPoint( index, point );
+        tempPointSet->SetPoint(j, point);
       }
       inputPointSet2 = tempPointSet;
     }
@@ -370,12 +373,12 @@ int main( int argc, char **argv )
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
   parser->SetProgramHelpText( GetHelpString() );
-  
+
   parser->MarkArgumentAsRequired( "-in1", "The inputImage1 filename." );
   parser->MarkArgumentAsRequired( "-ipp1", "The inputPoints1 filename." );
   parser->MarkArgumentAsRequired( "-ipp2", "The inputPoints2 filename." );
   parser->MarkArgumentAsRequired( "-out", "The output filename." );
-  
+
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
   if( validateArguments == itk::CommandLineArgumentParser::FAILED )
@@ -386,7 +389,7 @@ int main( int argc, char **argv )
   {
     return EXIT_SUCCESS;
   }
-  
+
   std::string inputImage1FileName = "";
   std::string inputImage2FileName = "";
   std::string inputPoints1FileName = "";
@@ -444,18 +447,18 @@ int main( int argc, char **argv )
   unsigned int dim = Dimension;
 
   try
-  {    
+  {
     // now call all possible template combinations.
     if (!deformationFieldGenerator) deformationFieldGenerator = ITKToolsDeformationFieldGenerator< 2 >::New( dim );
-    
+
 #ifdef ITKTOOLS_3D_SUPPORT
     if (!deformationFieldGenerator) deformationFieldGenerator = ITKToolsDeformationFieldGenerator< 3 >::New( dim );
 #endif
-    if (!deformationFieldGenerator) 
+    if (!deformationFieldGenerator)
     {
-      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-      std::cerr
-        << " dimension = " << Dimension
+      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!"
+        << std::endl;
+      std::cerr << " dimension = " << Dimension
         << std::endl;
       return 1;
     }
@@ -467,9 +470,9 @@ int main( int argc, char **argv )
     deformationFieldGenerator->m_OutputImageFileName = outputImageFileName;
     deformationFieldGenerator->m_KernelName = kernelName;
     deformationFieldGenerator->m_Stiffness = stiffness;
-  
+
     deformationFieldGenerator->Run();
-    
+
     delete deformationFieldGenerator;
   }
   catch( itk::ExceptionObject &e )
@@ -478,9 +481,9 @@ int main( int argc, char **argv )
     delete deformationFieldGenerator;
     return 1;
   }
-  
 
   /** End program. */
   return 0;
 
 } // end main
+

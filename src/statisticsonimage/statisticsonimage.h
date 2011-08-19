@@ -108,3 +108,4 @@ public:
 #include "statisticsonimage.hxx"
 
 #endif // #ifndef __statisticsonimage_h
+
