@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Compute the bounding box of an image.
- 
+
  \verbinclude computeboundingbox.help
  */
 
@@ -34,7 +34,7 @@
 /** ComputeBoundingBox */
 
 class ITKToolsComputeBoundingBoxBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   ITKToolsComputeBoundingBoxBase()
   {
@@ -46,7 +46,7 @@ public:
   /** Input parameters */
   std::string m_InputFileName;
   std::string m_OutputFileName;
-    
+
 }; // end ComputeBoundingBoxBase
 
 
@@ -131,3 +131,4 @@ public:
 }; // end ComputeBoundingBox
 
 #endif // end #ifndef __computeboundingbox_h
+
