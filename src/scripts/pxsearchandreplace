@@ -1,5 +1,10 @@
 #/bin/bash
 
+if [ $# -eq 0 ] || [[ $1 == "--help" ]]
+then
+  echo "Usage: "`basename $0`" source target files"
+fi
+
 source="$1"
 target="$2"
 files="$3"
