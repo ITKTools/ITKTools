@@ -79,9 +79,12 @@ itktools_add_test( binaryimageoperator add png
 #          PROPERTIES DEPENDS BrainDistanceOutput)
 
 ######### CastConvert #########
-itktools_add_test( castconvert "" mhd
+itktools_add_test( castconvert "SCALAR" mhd
   "-in;${DataDir}/WhiteSquare.png"
   "CastConvert.mhd" )
+itktools_add_test( castconvert "DICOM" mha
+  "-in;${DataDir}/dicom"
+  "CastConvert_DICOM.mha" )
 
 ######### ClosestVersor3DTransform #########
 # add_test(NAME ClosestVersor3DTransformOutput
