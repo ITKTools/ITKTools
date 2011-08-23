@@ -35,11 +35,14 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "Usage:" << std::endl
-  << "pxcountnonzerovoxels" << std::endl
-  << "-in      inputFilename" << std::endl;
+    << "pxcountnonzerovoxels\n"
+    << "  -in      inputFilename";
   return ss.str();
+
 } // end GetHelpString()
 
+
+//-------------------------------------------------------------------------------------
 
 int main( int argc, char *argv[] )
 {
@@ -103,7 +106,7 @@ int main( int argc, char *argv[] )
   IteratorType it( reader->GetOutput(),
     reader->GetOutput()->GetLargestPossibleRegion() );
   it.GoToBegin();
-  unsigned int counter = 0;
+  std::size_t counter = 0;
 
   /** Walk over the image. */
   while ( !it.IsAtEnd() )
@@ -117,7 +120,7 @@ int main( int argc, char *argv[] )
 
   /** Print to screen. */
   std::cout << "count: " << counter << std::endl;
-  std::cout << "volume: " << counter / voxelVolume / 1000.0 << std::endl;
+  std::cout << "volume: " << counter * voxelVolume / 1000.0 << std::endl;
 
   /** End program. Return a value. */
   return 0;
