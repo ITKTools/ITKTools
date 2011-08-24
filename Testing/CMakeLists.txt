@@ -349,6 +349,9 @@ itktools_add_test( imagestovectorimage "" mhd
 #          PROPERTIES DEPENDS KappaStatisticOutput)
 
 ######### LogicalImageOperator #########
+itktools_add_test( logicalimageoperator "NOT" png
+  "-in;${DataDir}/BlackSquare.png;-ops;NOT"
+  "LogicalImageOperator_Not.png" )
 itktools_add_test( logicalimageoperator "AND" png
   "-in;${DataDir}/BlackSquare.png;${DataDir}/WhiteSquare.png;-ops;AND"
   "LogicalImageOperator_And.png" )
