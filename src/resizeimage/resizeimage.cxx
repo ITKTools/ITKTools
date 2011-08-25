@@ -41,16 +41,15 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "Usage:" << std::endl
-  << "pxresizeimage" << std::endl
-  << "  -in      inputFilename" << std::endl
-  << "  [-out]   outputFilename, default in + RESIZED.mhd" << std::endl
-  << "  [-f]     factor" << std::endl
-  << "  [-sp]    spacing" << std::endl
-  << "  [-io]    interpolation order, default 1" << std::endl
-  << "  [-dim]   dimension, default 3" << std::endl
-  << "  [-pt]    pixelType, default short" << std::endl
-  << "One of -f and -sp should be given." << std::endl
-  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
+    << "pxresizeimage\n"
+    << "  -in      inputFilename\n"
+    << "  [-out]   outputFilename, default in + RESIZED.mhd\n"
+    << "  [-f]     factor\n"
+    << "  [-sp]    spacing\n"
+    << "  [-io]    interpolation order, default 1\n"
+    << "  [-dim]   dimension, default 3\n"
+    << "One of -f and -sp should be given.\n"
+    << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
 
   return ss.str();
 
@@ -140,16 +139,17 @@ public:
     {
       for ( unsigned int i = 0; i < Dimension; i++ )
       {
-	outputSpacing[ i ] /= this->m_FactorOrSpacing[ i ];
-	outputSize[ i ] = static_cast<unsigned int>( outputSize[ i ] * this->m_FactorOrSpacing[ i ] );
+        outputSpacing[ i ] /= this->m_FactorOrSpacing[ i ];
+        outputSize[ i ] = static_cast<unsigned int>( outputSize[ i ] * this->m_FactorOrSpacing[ i ] );
       }
     }
     else
     {
       for ( unsigned int i = 0; i < Dimension; i++ )
       {
-	outputSpacing[ i ] = this->m_FactorOrSpacing[ i ];
-	outputSize[ i ] = static_cast<unsigned int>( inputSpacing[ i ] * inputSize[ i ] / this->m_FactorOrSpacing[ i ] );
+        outputSpacing[ i ] = this->m_FactorOrSpacing[ i ];
+        outputSize[ i ] = static_cast<unsigned int>(
+          inputSpacing[ i ] * inputSize[ i ] / this->m_FactorOrSpacing[ i ] );
       }
     }
 
@@ -160,8 +160,10 @@ public:
     resampler->SetOutputStartIndex( inputImage->GetLargestPossibleRegion().GetIndex() );
     resampler->SetOutputSpacing( outputSpacing );
     resampler->SetOutputOrigin( inputImage->GetOrigin() );
-    /* The interpolator: the resampler has by default a LinearInterpolateImageFunction
-    * as interpolator. */
+
+    /* The interpolator: the resampler has by default a
+     * LinearInterpolateImageFunction as interpolator.
+     */
     if ( this->m_InterpolationOrder == 0 )
     {
       resampler->SetInterpolator( nnInterpolator );
@@ -176,9 +178,9 @@ public:
     writer->SetFileName( this->m_OutputFileName.c_str() );
     writer->SetInput( resampler->GetOutput() );
     writer->Update();
-  }
+  } // end Run()
 
-}; // end ResizeImage
+}; // end class ResizeImage
 
 //-------------------------------------------------------------------------------------
 
@@ -192,9 +194,9 @@ int main( int argc, char **argv )
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
 
   std::vector<std::string> exactlyOneArguments;
-  exactlyOneArguments.push_back("-f");
-  exactlyOneArguments.push_back("-sp");
-  parser->MarkExactlyOneOfArgumentsAsRequired(exactlyOneArguments);
+  exactlyOneArguments.push_back( "-f" );
+  exactlyOneArguments.push_back( "-sp" );
+  parser->MarkExactlyOneOfArgumentsAsRequired( exactlyOneArguments );
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
@@ -225,14 +227,8 @@ int main( int argc, char **argv )
   unsigned int Dimension = 3;
   parser->GetCommandLineArgument( "-dim", Dimension );
 
-  std::string PixelType = "short";
-  parser->GetCommandLineArgument( "-pt", PixelType );
-
   unsigned int interpolationOrder = 1;
   parser->GetCommandLineArgument( "-io", interpolationOrder );
-
-  /** Get rid of the possible "_" in PixelType. */
-  itktools::ReplaceUnderscoreWithSpace( PixelType );
 
   /** Check factor and spacing. */
   if ( retf )
@@ -280,7 +276,6 @@ int main( int argc, char **argv )
     }
   }
 
-
   /** Class that does the work */
   ITKToolsResizeImageBase * resizeImage = 0; 
 
@@ -292,7 +287,7 @@ int main( int argc, char **argv )
   itktools::ComponentType componentType = itktools::GetImageComponentType( inputFileName );
   
   std::cout << "Detected component type: " << 
-    componentType << std::endl;
+    itk::ImageIOBase::GetComponentTypeAsString( componentType ) << std::endl;
   try
   {    
     if (!resizeImage) resizeImage = ITKToolsResizeImage< unsigned char, 2 >::New( componentType, imageDimension );
@@ -321,7 +316,7 @@ int main( int argc, char **argv )
     {
       std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
       std::cerr
-        << "pixel (component) type = " << componentType
+        << "pixel (component) type = " << itk::ImageIOBase::GetComponentTypeAsString( componentType )
         << " ; dimension = " << Dimension
         << std::endl;
       return 1;
@@ -348,4 +343,3 @@ int main( int argc, char **argv )
   return 0;
 
 } // end main
-

@@ -143,7 +143,7 @@ int main( int argc, char **argv )
   exactlyOneArguments.push_back("-sz");
   exactlyOneArguments.push_back("-in");
   
-  parser->MarkExactlyOneOfArgumentsAsRequired(exactlyOneArguments);
+  parser->MarkExactlyOneOfArgumentsAsRequired( exactlyOneArguments );
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 

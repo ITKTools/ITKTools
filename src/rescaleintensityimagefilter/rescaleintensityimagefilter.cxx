@@ -235,7 +235,7 @@ int main( int argc, char **argv )
   std::vector<std::string> exactlyOneArguments;
   exactlyOneArguments.push_back("-mm");
   exactlyOneArguments.push_back("-mv");
-  parser->MarkExactlyOneOfArgumentsAsRequired(exactlyOneArguments);
+  parser->MarkExactlyOneOfArgumentsAsRequired( exactlyOneArguments );
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
