@@ -7,7 +7,7 @@
 #include "itkDeformationFieldJacobianDeterminantFilter.h"
 #include "itkDisplacementFieldJacobianDeterminantFilter.h"
 #include "itkGradientToMagnitudeImageFilter.h"
-#include "itkIterativeInverseDeformationFieldImageFilter.h"
+#include "itkIterativeInverseDisplacementFieldImageFilter.h"
 
 
 /**
@@ -181,7 +181,7 @@ void ComputeInverse(
   typedef TVectorImage                                VectorImageType;
   typedef itk::ImageFileReader< VectorImageType >     ReaderType;
   typedef itk::ImageFileWriter< VectorImageType >     WriterType;
-  typedef itk::IterativeInverseDeformationFieldImageFilter<
+  typedef itk::IterativeInverseDisplacementFieldImageFilter<
     VectorImageType, VectorImageType >                InverseDeformationFilterType;
 
   /** Declare filters. */
