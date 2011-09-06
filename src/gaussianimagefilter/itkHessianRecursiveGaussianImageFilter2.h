@@ -40,16 +40,14 @@ namespace itk
  * \ingroup GradientFilters
  * \ingroup Singlethreaded
  */
-// NOTE that the ITK_TYPENAME macro has to be used here in lieu
-// of "typename" because VC++ doesn't like the typename keyword
-// on the defaults of template parameters
+
 template <typename TInputImage,
-          typename TOutputImage= Image< SymmetricSecondRankTensor<
-  ITK_TYPENAME NumericTraits< ITK_TYPENAME TInputImage::PixelType>::RealType,
+  typename TOutputImage= Image< SymmetricSecondRankTensor<
+  typename NumericTraits< typename TInputImage::PixelType>::RealType,
   ::itk::GetImageDimension<TInputImage>::ImageDimension >,
-                                        ::itk::GetImageDimension<TInputImage>::ImageDimension > >
+  ::itk::GetImageDimension<TInputImage>::ImageDimension > >
 class ITK_EXPORT HessianRecursiveGaussianImageFilter2:
-    public ImageToImageFilter<TInputImage,TOutputImage>
+  public ImageToImageFilter<TInputImage,TOutputImage>
 {
 public:
   /** Standard class typedefs. */
