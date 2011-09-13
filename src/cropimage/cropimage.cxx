@@ -127,9 +127,6 @@ int main( int argc, char **argv )
     return 1;
   }
 
-  /** Get rid of the possible "_" in ComponentType. */
-  itktools::ReplaceUnderscoreWithSpace( ComponentTypeIn );
-
   /** Check which input option is used:
    * 1: supply two points with -pA and -pB
    * 2: supply a points and a size with -pA and -sz
@@ -219,6 +216,8 @@ int main( int argc, char **argv )
   /** Short alias */
   unsigned int dim = Dimension;
 
+  /** Add "_" in ComponentType and convert. */
+  itktools::ReplaceSpaceWithUnderscore( ComponentTypeIn );
   itktools::ComponentType componentType
     = itk::ImageIOBase::GetComponentTypeFromString( ComponentTypeIn );
    
