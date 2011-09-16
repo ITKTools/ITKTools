@@ -37,20 +37,20 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "Usage:" << std::endl
-  << "pxdeformationfieldoperator" << std::endl
-    << "This program converts between deformations (displacement fields)" << std::endl
-  << "and transformations, and computes the magnitude or Jacobian of a" << std::endl
-  << "deformation field." << std::endl
-  << "  -in      inputFilename" << std::endl
-  << "  [-out]   outputFilename; default: in + {operation}.mhd" << std::endl
-  << "  [-ops]   operation; options: DEF2TRANS, TRANS2DEF," << std::endl
-  << "MAGNITUDE, JACOBIAN, DEF2JAC, TRANS2JAC, INVERSE. default: MAGNITUDE" << std::endl
-  << "           TRANS2JAC == JACOBIAN" << std::endl
-  << "  [-s]     number of streams, default 1." << std::endl
-  << "  [-it]    number of iterations, for the iterative inversion, default 1, increase to get better results." << std::endl
-  << "  [-stop]  allowed error, default 0.0, increase to get faster convergence." << std::endl
-  << "Supported: 2D, 3D, vector of floats or doubles, number of components" << std::endl
-  << "must equal number of dimensions.";
+    << "pxdeformationfieldoperator\n"
+    << "This program converts between deformations (displacement fields)\n"
+    << "and transformations, and computes the magnitude or Jacobian of a\n"
+    << "deformation field.\n"
+    << "  -in      inputFilename\n"
+    << "  [-out]   outputFilename; default: in + {operation}.mhd\n"
+    << "  [-ops]   operation, choose one of {DEF2TRANS, TRANS2DEF,\n"
+    << "           MAGNITUDE, JACOBIAN, DEF2JAC, INVERSE}.\n"
+    << "           default: MAGNITUDE\n"
+    << "  [-s]     number of streams, default 1\n"
+    << "  [-it]    number of iterations, for the iterative inversion, default 1, increase to get better results\n"
+    << "  [-stop]  allowed error, default 0.0, increase to get faster convergence\n"
+    << "Supported: 2D, 3D, vector of floats or doubles, number of components\n"
+    << "must equal number of dimensions.";
   return ss.str();
 
 } // end GetHelpString()
@@ -89,6 +89,7 @@ public:
  * converts between deformation fields and transformation 'fields',
  * and compute magnitudes/Jacobians.
  */
+
 template< class TComponentType, unsigned int VDimension >
 class ITKToolsDeformationFieldOperator : public ITKToolsDeformationFieldOperatorBase
 {
@@ -125,7 +126,7 @@ public:
     /** Read in the inputImage. */
     reader->SetFileName( this->m_InputFileName.c_str() );
     // temporarily: only streaming support for Jacobian case needed for EMPIRE10 challenge.
-    if ( this->m_Ops != "DEF2JAC" && this->m_Ops != "TRANS2JAC" && this->m_Ops != "JACOBIAN" )
+    if ( this->m_Ops != "DEF2JAC" && this->m_Ops != "JACOBIAN" )
     {
       std::cout << "Reading input image: " << this->m_InputFileName << std::endl;
       reader->Update();
@@ -139,32 +140,28 @@ public:
     if ( this->m_Ops == "DEF2TRANS" )
     {
       Deformation2Transformation<VectorImageType>(
-	workingImage, this->m_OutputFileName, true );
+        workingImage, this->m_OutputFileName, true );
     }
     else if ( this->m_Ops == "TRANS2DEF" )
     {
       Deformation2Transformation<VectorImageType>(
-	workingImage, this->m_OutputFileName, false );
+        workingImage, this->m_OutputFileName, false );
     }
     else if ( this->m_Ops == "MAGNITUDE" )
     {
       ComputeMagnitude<VectorImageType, ScalarImageType>(
-	workingImage, this->m_OutputFileName );
-    }
-    else if ( this->m_Ops == "JACOBIAN" || this->m_Ops == "TRANS2JAC" )
-    {
-      ComputeJacobian<VectorImageType, ScalarImageType>(
-	m_InputFileName, this->m_OutputFileName, this->m_NumberOfStreams, true );
+        workingImage, this->m_OutputFileName );
     }
     else if ( this->m_Ops == "DEF2JAC" )
     {
       ComputeJacobian<VectorImageType, ScalarImageType>(
-	m_InputFileName, this->m_OutputFileName, this->m_NumberOfStreams, false );
+        this->m_InputFileName, this->m_OutputFileName, this->m_NumberOfStreams );
     }
     else if ( this->m_Ops == "INVERSE" )
     {
       ComputeInverse<VectorImageType>(
-	m_InputFileName, this->m_OutputFileName, this->m_NumberOfStreams, this->m_NumberOfIterations, this->m_StopValue );
+        this->m_InputFileName, this->m_OutputFileName, this->m_NumberOfStreams,
+        this->m_NumberOfIterations, this->m_StopValue );
     }
     else
     {
@@ -309,4 +306,3 @@ int main( int argc, char **argv )
   return 0;
 
 } // end main
-

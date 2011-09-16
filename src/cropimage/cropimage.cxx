@@ -234,7 +234,7 @@ int main( int argc, char **argv )
     if (!cropImage) cropImage = CropImage< long, 2 >::New( componentType, dim );
     if (!cropImage) cropImage = CropImage< float, 2 >::New( componentType, dim );
     if (!cropImage) cropImage = CropImage< double, 2 >::New( componentType, dim );
-    
+
 #ifdef ITKTOOLS_3D_SUPPORT
     if (!cropImage) cropImage = CropImage< unsigned char, 3 >::New( componentType, dim );
     if (!cropImage) cropImage = CropImage< char, 3 >::New( componentType, dim );
@@ -247,7 +247,7 @@ int main( int argc, char **argv )
     if (!cropImage) cropImage = CropImage< float, 3 >::New( componentType, dim );
     if (!cropImage) cropImage = CropImage< double, 3 >::New( componentType, dim );
 #endif
-    if (!cropImage) 
+    if (!cropImage)
     {
       std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
       std::cerr

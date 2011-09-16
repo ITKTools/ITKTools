@@ -4,7 +4,6 @@
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "itkImageRegionIteratorWithIndex.h"
-#include "itkDeformationFieldJacobianDeterminantFilter.h"
 #include "itkDisplacementFieldJacobianDeterminantFilter.h"
 #include "itkGradientToMagnitudeImageFilter.h"
 #include "itkIterativeInverseDisplacementFieldImageFilter.h"
@@ -108,15 +107,14 @@ void ComputeMagnitude(
 
 /**
  * ******************* ComputeJacobian ************************
- * Compute Jacobian of deformation or transformation field
+ * Compute Jacobian of deformation field
  */
 
 template<class TVectorImage, class TScalarImage>
 void ComputeJacobian(
   const std::string & inputFileName,
   const std::string & outputFileName,
-  const unsigned int & numberOfStreams,
-  const bool & transToJac )
+  const unsigned int & numberOfStreams )
 {
   /** Typedef's. */
   typedef TVectorImage                                InputImageType;
@@ -124,39 +122,23 @@ void ComputeJacobian(
   typedef typename OutputImageType::PixelType         OutputPixelType;
   typedef itk::ImageFileReader< InputImageType >      ReaderType;
   typedef itk::ImageFileWriter< OutputImageType >     WriterType;
-  typedef itk::DeformationFieldJacobianDeterminantFilter<
-    InputImageType, OutputPixelType >                 TransToJacFilterType;
   typedef itk::DisplacementFieldJacobianDeterminantFilter<
     InputImageType, OutputPixelType >                 DefToJacFilterType;
 
-  /** Declare filters. */
-  typename ReaderType::Pointer reader = ReaderType::New();
-  typename TransToJacFilterType::Pointer transToJacFilter;
-  typename DefToJacFilterType::Pointer defToJacFilter;
-  typename WriterType::Pointer writer = WriterType::New();
-
   /** Setup reader. */
+  typename ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName( inputFileName.c_str() );
 
   /** Setup Jacobian filter. */
-  if ( transToJac )
-  {
-    transToJacFilter = TransToJacFilterType::New();
-    transToJacFilter->SetUseImageSpacingOn();
-    transToJacFilter->SetInput( reader->GetOutput() );
-    writer->SetInput( transToJacFilter->GetOutput() );
-  }
-  else
-  {
-    defToJacFilter = DefToJacFilterType::New();
-    defToJacFilter->SetUseImageSpacingOn();
-    defToJacFilter->SetInput( reader->GetOutput() );
-    writer->SetInput( defToJacFilter->GetOutput() );
-  }
+  typename DefToJacFilterType::Pointer defToJacFilter = DefToJacFilterType::New();
+  defToJacFilter->SetUseImageSpacingOn();
+  defToJacFilter->SetInput( reader->GetOutput() );
 
   /** Setup writer.  No intermediate calls to Update() are allowed,
    * otherwise streaming does not work.
    */
+  typename WriterType::Pointer writer = WriterType::New();
+  writer->SetInput( defToJacFilter->GetOutput() );
   writer->SetFileName( outputFileName.c_str() );
   writer->SetNumberOfStreamDivisions( numberOfStreams );
   writer->Update();
