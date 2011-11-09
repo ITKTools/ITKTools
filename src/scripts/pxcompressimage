@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# 
+#
 # pxcompressimage
 # compresses an image, and, if mhd, deletes the uncompressed raw.
 #
@@ -12,6 +12,7 @@ then
   echo "Usage: pxcompressimage <inputfilename1> ..."
   echo
   echo "If the input is an uncompressed mhd, the raw file is deleted."
+  echo "If the input is a .raw file, it is ignored."
   echo
   exit 64
 fi
@@ -21,8 +22,20 @@ inputimages="$*"
 
 for inputimage in $inputimages
 do
+  # Check for raw
+  dummy=`expr match "$inputimage" '.*\([.][rR][aA][wW]\)'`
+  israw="$?"
+
+  # If so, ignore
+  if [ "$israw" = "0" ]
+  then
+    continue
+  fi
+
+  echo $inputimage
+
   # Compress image
-  pxcastconvert -in "$inputimage" -out "$inputimage" -z
+  pxcastconvert -in "$inputimage" -out "$inputimage" -z >> /dev/null
 
   # Check for success
   if [ "$?" != "0" ]
@@ -34,7 +47,7 @@ do
   ext=`expr match "$inputimage" '.*\([.][mM][hH][dD]\)'`
   ismhd="$?"
 
-  # If so. remove .raw file
+  # If so, remove .raw file
   if [ "$ismhd" = "0" ]
   then
     inputimageraw="${inputimage/%$ext/.raw}"
