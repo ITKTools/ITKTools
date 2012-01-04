@@ -50,7 +50,7 @@
 #endif
 
 #include "itkImageToImageFilter.h"
-#include "itkOtsuThresholdImageCalculator.h"
+#include "itkOtsuThresholdCalculator.h"
 #include "itkNumericTraits.h"
 
 #include "itkVector.h"
@@ -117,7 +117,7 @@ public:
   typedef typename ROIFilterType::Pointer
     ROIFilterPointer;
 
-  typedef OtsuThresholdImageCalculator< InputImageType >  OtsuThresholdType;
+  typedef OtsuThresholdCalculator< InputImageType >       OtsuThresholdType;
   typedef typename OtsuThresholdType::Pointer             OtsuThresholdPointer;
 
   typedef Vector< InputCoordType, 1 >         VectorType;
