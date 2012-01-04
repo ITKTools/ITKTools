@@ -13,7 +13,7 @@
 #
 # Setup: Linux 64bit, Ubuntu 2.6.32-25-server
 # gcc 4.4.3
-# Debug mode, ITK git, code coverage by gcov
+# Debug mode, ITK 4.0.0, code coverage by gcov
 # PC: LKEB (MS), goliath
 
 # Client maintainer: m.staring@lumc.nl
@@ -45,7 +45,7 @@ set( dashboard_do_memcheck ON )
 # Dashboard settings
 SET( dashboard_cache "
 // Which ITK to use
-ITK_DIR:PATH=/usr/local/toolkits/ITK/git/bin_debug
+ITK_DIR:PATH=/usr/local/toolkits/ITK/4.0.0/bin_debug
 
 // Coverage settings: -fprofile-arcs -ftest-coverage
 CMAKE_CXX_FLAGS_DEBUG:STRING=-g -O0 -fprofile-arcs -ftest-coverage
