@@ -11,7 +11,7 @@
 # and defaults to Nightly.
 # NOTE that Model should directly follow the comma: no space allowed!
 #
-# Setup: Windows 7, Visual Studio 9 2008 Win64, Release mode, ITK git
+# Setup: Windows 7, Visual Studio 9 2008 Win64, Release mode, ITK 4.0.0
 # PC: LKEB, MS personal computer
 
 # Client maintainer: m.staring@lumc.nl
@@ -36,7 +36,7 @@ ENDIF()
 
 SET( dashboard_cache "
 // Which ITK to use
-ITK_DIR:PATH=D:/toolkits/ITK/git/bin
+ITK_DIR:PATH=D:/toolkits/ITK/4.0.0/binVS2008
 
 // Some ITKTools settings, defining the configuration
 ITKTOOLS_BUILD_TESTING:BOOL=ON
