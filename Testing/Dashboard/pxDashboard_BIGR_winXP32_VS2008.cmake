@@ -36,7 +36,7 @@ ENDIF()
 
 SET( dashboard_cache "
 // Which ITK to use
-ITK_DIR:PATH=D:/tk/itk/git/bin
+ITK_DIR:PATH=D:/tk/itk/4.0.0/bin
 
 // Some ITKTools settings, defining the configuration
 ITKTOOLS_BUILD_TESTING:BOOL=ON
