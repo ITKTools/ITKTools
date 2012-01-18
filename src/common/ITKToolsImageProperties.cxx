@@ -319,7 +319,7 @@ bool GetImageInformationFromImageIOBase(
   numberOfComponents = imageIOBase->GetNumberOfComponents();
   componentTypeAsString = imageIOBase->GetComponentTypeAsString(
     imageIOBase->GetComponentType() );
-  itktools::ReplaceUnderscoreWithSpace( componentTypeAsString );
+  //itktools::ReplaceUnderscoreWithSpace( componentTypeAsString );
   pixelTypeAsString = imageIOBase->GetPixelTypeAsString(
     imageIOBase->GetPixelType() );
 
@@ -341,16 +341,7 @@ bool GetImageInformationFromImageIOBase(
   }
 
   /** Check inputPixelType. */
-  if ( componentTypeAsString != "unsigned char"
-    && componentTypeAsString != "char"
-    && componentTypeAsString != "unsigned short"
-    && componentTypeAsString != "short"
-    && componentTypeAsString != "unsigned int"
-    && componentTypeAsString != "int"
-    && componentTypeAsString != "unsigned long"
-    && componentTypeAsString != "long"
-    && componentTypeAsString != "float"
-    && componentTypeAsString != "double" )
+  if ( componentTypeAsString == "unknown" )
   {
     /** In this case an illegal pixeltype is found. */
     std::cerr

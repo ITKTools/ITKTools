@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief This program converts and possibly casts images.
- 
+
  \verbinclude castconvert.help
  */
 /*
@@ -167,7 +167,7 @@ int main( int argc, char **argv )
   /** Check -opct. */
   if ( retopct )
   {
-    if ( !itktools::ComponentTypeIsValid( 
+    if ( !itktools::ComponentTypeIsValid(
       itk::ImageIOBase::GetComponentTypeFromString( outputPixelComponentType ) ) )
     {
       std::cerr << "The user-provided \"-opct\" is "
@@ -185,7 +185,7 @@ int main( int argc, char **argv )
     std::cout << "ERROR: " << input << " does not exist." << std::endl;
     return EXIT_FAILURE;
   }
-  
+
   /** Class that does the work */
   ITKToolsCastConvertBase * castConvert = NULL;
 

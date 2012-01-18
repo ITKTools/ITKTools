@@ -41,16 +41,16 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "pxextractslice extracts a 2D slice from a 3D image." << std::endl
-  << "Usage:" << std::endl
-  << "pxextractslice" << std::endl
-  << "  -in      input image filename" << std::endl
-  << "  [-out]   output image filename" << std::endl
-  << "  [-pt]    pixel type of input and output images;" << std::endl
-  << "           default: automatically determined from the first input image." << std::endl
-  << "  -sn      slice number" << std::endl
-  << "  [-d]     the dimension from which a slice is extracted, default the z dimension" << std::endl
-  << "Supported pixel types: (unsigned) char, (unsigned) short, float.";
+  ss << "pxextractslice extracts a 2D slice from a 3D image.\n"
+    << "Usage:\n"
+    << "pxextractslice\n"
+    << "  -in      input image filename\n"
+    << "  [-out]   output image filename\n"
+    << "  [-pt]    pixel type of input and output images;\n"
+    << "           default: automatically determined from the first input image.\n"
+    << "  -sn      slice number\n"
+    << "  [-d]     the dimension from which a slice is extracted, default the z dimension\n"
+    << "Supported pixel types: (unsigned) char, (unsigned) short, float.";
 
   return ss.str();
 
@@ -67,7 +67,7 @@ public:
     this->m_InputFileName = "";
     this->m_OutputFileName = "";
     this->m_Slicenumber = 0;
-    this->m_Which_dimension = 0;
+    this->m_WhichDimension = 0;
   };
   ~ITKToolsExtractSliceBase(){};
 
@@ -75,7 +75,7 @@ public:
   std::string m_InputFileName;
   std::string m_OutputFileName;
   unsigned int m_Slicenumber;
-  unsigned int m_Which_dimension;
+  unsigned int m_WhichDimension;
     
 }; // end ExtractSliceBase
 
@@ -101,8 +101,8 @@ public:
   void Run( void )
   {
     /** Some typedef's. */
-    typedef itk::Image<TComponentType, 3>              Image3DType;
-    typedef itk::Image<TComponentType, 2>              Image2DType;
+    typedef itk::Image<TComponentType, 3>         Image3DType;
+    typedef itk::Image<TComponentType, 2>         Image2DType;
     typedef itk::ImageFileReader<Image3DType>     ImageReaderType;
     typedef itk::ExtractImageFilter<
       Image3DType, Image2DType >                  ExtractFilterType;
@@ -124,11 +124,11 @@ public:
     /** Get the size and set which_dimension to zero. */
     RegionType inputRegion = reader->GetOutput()->GetLargestPossibleRegion();
     SizeType size = inputRegion.GetSize();
-    size[ this->m_Which_dimension ] = 0;
+    size[ this->m_WhichDimension ] = 0;
 
     /** Get the index and set which_dimension to the correct slice. */
     IndexType start = inputRegion.GetIndex();
-    start[ this->m_Which_dimension ] = this->m_Slicenumber;
+    start[ this->m_WhichDimension ] = this->m_Slicenumber;
 
     /** Create a desired extraction region and set it into the extractor. */
     RegionType desiredRegion;
@@ -136,12 +136,16 @@ public:
     desiredRegion.SetIndex( start );
     extractor->SetExtractionRegion( desiredRegion );
 
+    /** The direction cosines of the 2D extracted data is set to
+     * a submatrix of the 3D input image. */
+    extractor->SetDirectionCollapseToSubmatrix();
+
     /** Write the 2D output image. */
     typename ImageWriterType::Pointer writer = ImageWriterType::New();
     writer->SetFileName( this->m_OutputFileName.c_str() );
     writer->SetInput( extractor->GetOutput() );
     writer->Update();
-  }
+  } // end Run()
 
 }; // end ExtractSlice
 
@@ -248,12 +252,12 @@ int main( int argc, char ** argv )
     itksys::SystemTools::GetFilenameLastExtension( inputFileName );
   std::string outputFileName = part1 + "_slice_" + direction + "=" + slicenumberstring + part2;
   parser->GetCommandLineArgument( "-out", outputFileName );
-
   
   /** Class that does the work */
   ITKToolsExtractSliceBase * extractSlice = 0; 
 
-  itktools::ComponentType componentType = itk::ImageIOBase::GetComponentTypeFromString( PixelType );
+  itktools::ComponentType componentType
+    = itk::ImageIOBase::GetComponentTypeFromString( ComponentType );
     
   try
   {    
@@ -268,7 +272,7 @@ int main( int argc, char ** argv )
     {
       std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
       std::cerr
-        << "pixel (component) type = " << componentType
+        << "pixel (component) type = " << ComponentType
         << " ; dimension = " << Dimension
         << std::endl;
       return 1;
@@ -276,7 +280,7 @@ int main( int argc, char ** argv )
 
     extractSlice->m_InputFileName = inputFileName;
     extractSlice->m_OutputFileName = outputFileName;
-    extractSlice->m_Which_dimension = which_dimension;
+    extractSlice->m_WhichDimension = which_dimension;
     extractSlice->m_Slicenumber = slicenumber;
   
     extractSlice->Run();
@@ -294,5 +298,3 @@ int main( int argc, char ** argv )
   return 0;
 
 } // end main
-
-//-------------------------------------------------------------------------------------

@@ -195,7 +195,7 @@ ComponentType GetLargestComponentType(
   /** Remove unsigned. */
   ComponentType type1Cleaned = RemoveUnsignedFromComponentType( type1 );
   ComponentType type2Cleaned = RemoveUnsignedFromComponentType( type2 );
-  
+
   /** Determine which one is the largest. */
   ComponentType outputComponentType;
   if ( type1Cleaned == type2Cleaned )
