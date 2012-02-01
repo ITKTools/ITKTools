@@ -31,7 +31,7 @@ CartesianToSphericalCoordinateImageFilter<TInputImage, TOutputImage>
   this->m_MaskImage = 0;
   this->m_MaximumNumberOfSamplesPerVoxel = 5;
 
-  this->m_RandomGenerator = RandomGeneratorType::New();
+  this->m_RandomGenerator = RandomGeneratorType::GetInstance();
 
 }
 

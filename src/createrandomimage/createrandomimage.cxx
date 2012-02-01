@@ -186,7 +186,7 @@ public:
     
     SetOfExtractersType setOfExtracters( this->m_SpaceDimension);
     
-    RandomGeneratorPointer randomGenerator = RandomGeneratorType::New();
+    RandomGeneratorPointer randomGenerator = RandomGeneratorType::GetInstance();
     bool randomiterating = true;
 
     /** Set the random seed */
