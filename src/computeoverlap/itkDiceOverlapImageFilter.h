@@ -99,7 +99,7 @@ protected:
   /** ThreadedGenerateData. */
   virtual void ThreadedGenerateData(
     const InputImageRegionType & outputRegionForThread,
-    int threadId );
+    ThreadIdType threadId );
 
 private:
   DiceOverlapImageFilter(const Self&); //purposely not implemented

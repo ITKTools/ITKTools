@@ -212,7 +212,7 @@ ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage >
 template <typename TInputImage, bool doOpen,  typename TOutputImage >
 void
 ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage >
-::ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread, int threadId)
+::ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread, ThreadIdType threadId)
 {
   // compute the number of rows first, so we can setup a progress reporter
   typename std::vector< unsigned int > NumberOfRows;

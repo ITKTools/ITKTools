@@ -255,7 +255,7 @@ namespace itk
     void BeforeThreadedGenerateData ();
     void AfterThreadedGenerateData ();
     void ThreadedGenerateData
-      ( const OutputImageRegionType &outputRegionForThread, int threadId);
+      ( const OutputImageRegionType &outputRegionForThread, ThreadIdType threadId);
 
     void PrintSelf(std::ostream&, Indent) const;
 

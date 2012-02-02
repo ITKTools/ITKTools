@@ -157,7 +157,7 @@ protected:
 
   /** Starts the image modeling process. */
   void BeforeThreadedGenerateData( void );
-  void ThreadedGenerateData( const OutputImageRegionType & region, int threadId );
+  void ThreadedGenerateData( const OutputImageRegionType & region, ThreadIdType threadId );
 
 private:
 

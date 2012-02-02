@@ -200,7 +200,7 @@ TextureImageToImageFilter< TInputImage, TOutputImage >
 template< class TInputImage, class TOutputImage >
 void
 TextureImageToImageFilter< TInputImage, TOutputImage >
-::ThreadedGenerateData( const OutputImageRegionType & regionForThread, int threadId )
+::ThreadedGenerateData( const OutputImageRegionType & regionForThread, ThreadIdType threadId )
 {
   /** Support for progress methods/callbacks. */
   ProgressReporter progress( this, threadId, regionForThread.GetNumberOfPixels() );

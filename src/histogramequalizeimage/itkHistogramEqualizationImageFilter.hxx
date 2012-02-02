@@ -146,7 +146,7 @@ template<class TImage>
 void
 HistogramEqualizationImageFilter<TImage>
 ::ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread,
-                       int threadId)
+                       ThreadIdType threadId)
 {
 
   typedef ImageRegionConstIterator<InputImageType>   InputImageIteratorType;

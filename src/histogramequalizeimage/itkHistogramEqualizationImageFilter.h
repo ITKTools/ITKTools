@@ -98,7 +98,7 @@ protected:
   /** Multi-thread version GenerateData. Applies the LUT on the image. */
   void  ThreadedGenerateData (const OutputImageRegionType&
                               outputRegionForThread,
-                              int threadId) ;
+                              ThreadIdType threadId) ;
 private:
   HistogramEqualizationImageFilter(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented

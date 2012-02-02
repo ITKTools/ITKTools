@@ -172,7 +172,7 @@ namespace itk
     void
     LabelVoting2ImageFilter< TInputImage, TOutputImage, TWeights >
     ::ThreadedGenerateData( const OutputImageRegionType &outputRegionForThread,
-    int threadId)
+    ThreadIdType threadId)
   {
     typedef Array<WeightsType>                  WType;
     typedef std::vector<InputConstIteratorType> InputConstIteratorArrayType;

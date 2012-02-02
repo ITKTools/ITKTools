@@ -54,7 +54,7 @@ void
 DiceOverlapImageFilter<TInputImage>
 ::ThreadedGenerateData(
   const InputImageRegionType & inputRegionForThread,
-  int threadId )
+  ThreadIdType threadId )
 {
   typedef itk::ImageRegionConstIterator<InputImageType>    IteratorType;
 
