@@ -87,6 +87,10 @@ int main( int argc, char **argv )
   std::string seperator("\t");
   parser->GetCommandLineArgument( "-seperator", seperator );
 
+  if seperator.compare("\\t") == 0 {
+	seperator = "\t";
+  }
+
   /** Determine image properties. */
   std::string ComponentTypeIn = "char";
   std::string PixelType; //we don't use this

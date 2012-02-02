@@ -68,6 +68,7 @@ public:
 
   /** Typedef. */
   typedef itk::Image< TComponentType, VDimension > InputImageType;
+  typedef itk::Image< float, VDimension > OutputImageType;
 
   /** Main function Run(). */
   void Run( void )
