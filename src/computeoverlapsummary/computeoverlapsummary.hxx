@@ -50,8 +50,8 @@ ITKToolsComputeOverlapSummary< TComponentType, VDimension >
     throw invalidfilexception();
   }
 
-  fprintf ( pFile, "%s%s%s%s%s%s%s%s%s%s%s\n", "Label", seperator, "Union (jaccard)", seperator, "Mean (dice)", seperator, "Volume sim.", seperator, "False negative", seperator, "False positive");
-  fprintf ( pFile, "%s%s%f%s%f%s%f%s%f%s%f\n", "Total", seperator, filter->GetUnionOverlap(), seperator, filter->GetMeanOverlap(), seperator, filter->GetVolumeSimilarity(), seperator, filter->GetFalseNegativeError(), seperator, filter->GetFalsePositiveError() );
+  fprintf ( pFile, "%s%s%s%s%s%s%s%s%s%s%s\n", "Label", seperator.c_str(), "Union (jaccard)", seperator.c_str(), "Mean (dice)", seperator.c_str(), "Volume sim.", seperator.c_str(), "False negative", seperator.c_str(), "False positive");
+  fprintf ( pFile, "%s%s%f%s%f%s%f%s%f%s%f\n", "Total", seperator.c_str(), filter->GetUnionOverlap(), seperator.c_str(), filter->GetMeanOverlap(), seperator.c_str(), filter->GetVolumeSimilarity(), seperator.c_str(), filter->GetFalseNegativeError(), seperator.c_str(), filter->GetFalsePositiveError() );
 
   typename FilterType::MapType labelMap = filter->GetLabelSetMeasures();
   typename FilterType::MapType::const_iterator it;
@@ -63,7 +63,7 @@ ITKToolsComputeOverlapSummary< TComponentType, VDimension >
     }
 
     int label = (*it).first;
-    fprintf ( pFile, "%i%s%f%s%f%s%f%s%f%s%f\n", label, seperator, filter->GetUnionOverlap( label ), seperator, filter->GetMeanOverlap( label ), seperator, filter->GetVolumeSimilarity( label ), seperator, filter->GetFalseNegativeError( label ), seperator, filter->GetFalsePositiveError( label ) );
+    fprintf ( pFile, "%i%s%f%s%f%s%f%s%f%s%f\n", label, seperator.c_str(), filter->GetUnionOverlap( label ), seperator.c_str(), filter->GetMeanOverlap( label ), seperator.c_str(), filter->GetVolumeSimilarity( label ), seperator.c_str(), filter->GetFalseNegativeError( label ), seperator.c_str(), filter->GetFalsePositiveError( label ) );
   }
   fclose (pFile);
 } // end ComputeOverlapSummary()
