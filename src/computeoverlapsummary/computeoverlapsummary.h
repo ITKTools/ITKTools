@@ -45,6 +45,13 @@ public:
   std::string m_Seperator;
 }; // end class ComputeOverlapSummaryBase
 
+class invalidfilexception: public std::exception
+{
+	virtual const char* what() const throw()
+	{
+		return "Could not open output file stream for writing!";
+	}
+};
 
 template< class TComponentType, unsigned int VDimension >
 class ITKToolsComputeOverlapSummary : public ITKToolsComputeOverlapSummaryBase

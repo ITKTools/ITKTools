@@ -71,12 +71,12 @@ int main( int argc, char **argv )
   std::vector<std::string> inputFileNames;
   parser->GetCommandLineArgument( "-in", inputFileNames );
 
-  std::string outputFileNameMean("")
-  parser->GetCommandLineArgument( "-out", outputFileName );
+  std::string outputFileNameMean("");
+  parser->GetCommandLineArgument( "-out", outputFileNameMean );
   bool retoutmean = parser->GetCommandLineArgument( "-outmean", outputFileNameMean );
 
   std::string outputFileNameStd("");
-  parser->GetCommandLineArgument( "-mask", maskFileName );
+  parser->GetCommandLineArgument( "-mask", outputFileNameStd );
   bool retoutstd  = parser->GetCommandLineArgument( "-outstd", outputFileNameStd );
 
   /** Determine image properties. */
@@ -86,7 +86,7 @@ int main( int argc, char **argv )
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
   int retgip = itktools::GetImageProperties(
-    inputFileName,
+    inputFileNames[0],
     PixelType,
     ComponentTypeIn,
     Dimension,
@@ -114,7 +114,7 @@ int main( int argc, char **argv )
  
   /** \todo some progs allow user to override the pixel type, 
    * so we need a method to convert string to EnumComponentType */
-  itktools::ComponentType componentType = itktools::GetImageComponentType( inputFileName );
+  itktools::ComponentType componentType = itktools::GetImageComponentType( inputFileNames[0] );
 
   try
   {    
@@ -134,7 +134,7 @@ int main( int argc, char **argv )
     if (!meanStdImage) meanStdImage = ITKToolsMeanStdImage< float, 3 >::New( componentType, dim );
     if (!meanStdImage) meanStdImage = ITKToolsMeanStdImage< double, 3 >::New( componentType, dim );
 #endif
-    if (!thresholdImage) 
+    if (!meanStdImage) 
     {
       std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
       std::cerr
@@ -157,7 +157,7 @@ int main( int argc, char **argv )
   catch( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
-    delete thresholdImage;
+    delete meanStdImage;
     return 1;
   }
 

@@ -31,13 +31,13 @@ ITKToolsComputeOverlapSummary< TComponentType, VDimension >
  const std::string & outputFileName,
  const std::string & seperator )
 {
-  typedef itk::ImageFileReader<ImageType>  ReaderType;
+  typedef itk::ImageFileReader<InputImageType>  ReaderType;
   typename ReaderType::Pointer reader1 = ReaderType::New();
   reader1->SetFileName( inputImage1.c_str() );
   typename ReaderType::Pointer reader2 = ReaderType::New();
   reader2->SetFileName( inputImage2.c_str() );
 
-  typedef itk::LabelOverlapMeasuresImageFilter<ImageType> FilterType;
+  typedef itk::LabelOverlapMeasuresImageFilter<InputImageType> FilterType;
   typename FilterType::Pointer filter = FilterType::New();
   filter->SetSourceImage( reader1->GetOutput() );
   filter->SetTargetImage( reader2->GetOutput() );
@@ -66,7 +66,6 @@ ITKToolsComputeOverlapSummary< TComponentType, VDimension >
     fprintf ( pFile, "%i%s%f%s%f%s%f%s%f%s%f\n", label, seperator, filter->GetUnionOverlap( label ), seperator, filter->GetMeanOverlap( label ), seperator, filter->GetVolumeSimilarity( label ), seperator, filter->GetFalseNegativeError( label ), seperator, filter->GetFalsePositiveError( label ) );
   }
   fclose (pFile);
-  return EXIT_SUCCESS;
 } // end ComputeOverlapSummary()
 
 #endif // end #ifndef __computeoverlapsummary_hxx

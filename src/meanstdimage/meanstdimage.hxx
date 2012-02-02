@@ -103,18 +103,17 @@ ITKToolsMeanStdImage< TComponentType, VDimension >
   /** Divide images by N to get E(X) and E(X^2)*/
   mean_iterator.GoToBegin();
   sq_mean_iterator.GoToBegin();
+  float denominator( 1.0f / nrInputs );
   for (; !mean_iterator.IsAtEnd(); ++mean_iterator, ++sq_mean_iterator )
   {
-    mean_iterator.Set( mean_iterator.Get() / (nrInputs) );
+    mean_iterator.Set( mean_iterator.Get() * denominator );
     if (calc_std)
-      sq_mean_iterator.Set( sq_mean_iterator.Get() / (nrInputs) );
-	float temp_mean = mean_iterator.Get();
-	float temp_sqmean = sq_mean_iterator.Get();
+      sq_mean_iterator.Set( sq_mean_iterator.Get() * denominator );
 
 	bool nothing = false;
   }
 
-  /** Calculate standard devation: sqrt( E(X^2) - (E(X))^2 ) */
+  /** Calculate standard deviation: sqrt( E(X^2) - (E(X))^2 ) */
   if (calc_std)
   {
     mean_iterator.GoToBegin();
@@ -123,7 +122,7 @@ ITKToolsMeanStdImage< TComponentType, VDimension >
 
     for (; !mean_iterator.IsAtEnd(); ++mean_iterator, ++sq_mean_iterator, ++std_iterator )
     {
-		std_iterator.Set( std::sqrt( std::abs( sq_mean_iterator.Get() - (mean_iterator.Get() * mean_iterator.Get() ) ) ) );
+		std_iterator.Set( std::sqrt( (float) std::abs( sq_mean_iterator.Get() - (mean_iterator.Get() * mean_iterator.Get() ) ) ) );
     }
   }
   
