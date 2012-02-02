@@ -359,6 +359,15 @@ itktools_add_test( logicalimageoperator "OR" png
   "-in;${DataDir}/BlackSquare.png;${DataDir}/WhiteSquare.png;-ops;OR"
   "LogicalImageOperator_Or.png" )
 
+######### MeanStdImage #########
+itktools_add_test( meanstdimage "MEAN" mhd
+  "-in;${DataDir}/WhiteStripe1.mhd;${DataDir}/WhiteStripe2.mhd;${DataDir}/WhiteStripe3.mhd;${DataDir}/WhiteStripe4.mhd;-outmean;${OutDir}/meanstdimage_MEAN.mhd"
+  "MeanStdImage_Mean.mhd" )
+
+itktools_add_test( meanstdimage "STD" mhd
+  "-in;${DataDir}/WhiteStripe1.mhd;${DataDir}/WhiteStripe2.mhd;${DataDir}/WhiteStripe3.mhd;${DataDir}/WhiteStripe4.mhd;-outstd;${OutDir}/meanstdimage_STD.mhd"
+  "MeanStdImage_Std.mhd" )
+
 ######### Morphology #########
 # add_test(NAME MorphologyOutput
 #          COMMAND ${ExeDir}/pxmorphology )
