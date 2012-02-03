@@ -44,28 +44,28 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "pxtileimages EITHER tiles a stack of 2D images into a 3D image," << std::endl
-  << "OR tiles nD images to form another nD image." << std::endl
-  << "In the last case the way to tile is specified by a layout." << std::endl
-  << "To stack a pile of 2D images an itk::SeriesFileReader is employed." << std::endl
-  << "If no layout is specified with \"-ly\" 2D-3D tiling is done," << std::endl
-  << "otherwise 2D-2D or 3D-3D tiling is performed." << std::endl
-  << "Usage:  \npxtileimages" << std::endl
-  << "  -in      input image filenames, at least 2" << std::endl
-  << "  -out     output image filename" << std::endl
-  << "  [-pt]    pixel type of input and output images" << std::endl
-  << "           default: automatically determined from the first input image" << std::endl
-  << "  [-sp]    spacing in z-direction for 2D-3D tiling [double];" << std::endl
-  << "           if omitted, the origins of the 2d images are used to find the spacing;" << std::endl
-  << "           if these are identical, a spacing of 1.0 is assumed" << std::endl
-  << "  [-ly]    layout of the nD-nD tiling" << std::endl
-  << "           example: in 2D for 4 images \"-ly 2 2\" results in" << std::endl
-  << "             im1 im2" << std::endl
-  << "             im3 im4" << std::endl
-  << "           example: in 2D for 4 images \"-ly 4 1\" (or \"-ly 0 1\") results in" << std::endl
-  << "             im1 im2 im3 im4" << std::endl
-  << "  [-d]     default value, by default 0." << std::endl
-  << "Supported pixel types: (unsigned) char, (unsigned) short, float.";
+  ss << "pxtileimages EITHER tiles a stack of 2D images into a 3D image,\n"
+    << "OR tiles nD images to form another nD image.\n"
+    << "In the last case the way to tile is specified by a layout.\n"
+    << "To stack a pile of 2D images an itk::SeriesFileReader is employed.\n"
+    << "If no layout is specified with \"-ly\" 2D-3D tiling is done,\n"
+    << "otherwise 2D-2D or 3D-3D tiling is performed.\n"
+    << "Usage:  \npxtileimages\n"
+    << "  -in      input image filenames, at least 2\n"
+    << "  -out     output image filename\n"
+    << "  [-pt]    pixel type of input and output images\n"
+    << "           default: automatically determined from the first input image\n"
+    << "  [-sp]    spacing in z-direction for 2D-3D tiling [double];\n"
+    << "           if omitted, the origins of the 2d images are used to find the spacing;\n"
+    << "           if these are identical, a spacing of 1.0 is assumed\n"
+    << "  [-ly]    layout of the nD-nD tiling\n"
+    << "           example: in 2D for 4 images \"-ly 2 2\" results in\n"
+    << "             im1 im2\n"
+    << "             im3 im4\n"
+    << "           example: in 2D for 4 images \"-ly 4 1\" (or \"-ly 0 1\") results in\n"
+    << "             im1 im2 im3 im4\n"
+    << "  [-d]     default value, by default 0.\n"
+    << "Supported pixel types: (unsigned) char, (unsigned) short, float.";
 
   return ss.str();
 
@@ -94,7 +94,7 @@ int main( int argc, char ** argv )
   {
     return EXIT_SUCCESS;
   }
-  
+
   /** Get the input file names. */
   std::vector< std::string >  inputFileNames;
   parser->GetCommandLineArgument( "-in", inputFileNames );
@@ -165,21 +165,18 @@ int main( int argc, char ** argv )
   }
 
   /** Run the program. */
-  
-
   if ( !retly )
   {
-    
     /** Class that does the work */
     TileImages2D3DBase * tileImages2D3D = NULL;
 
-    itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileNames[0]);
-    
-    std::cout << "Detected component type: " << 
-      componentType << std::endl;
+    itktools::ComponentType componentType = itktools::GetImageComponentType( inputFileNames[ 0 ] );
+
+    std::cout << "Detected component type: " <<
+      itk::ImageIOBase::GetComponentTypeAsString( componentType ) << std::endl;
 
     try
-    {    
+    {
       // now call all possible template combinations.
       if (!tileImages2D3D) tileImages2D3D = TileImages2D3D< unsigned char >::New( componentType );
       if (!tileImages2D3D) tileImages2D3D = TileImages2D3D< char >::New( componentType );
@@ -187,22 +184,20 @@ int main( int argc, char ** argv )
       if (!tileImages2D3D) tileImages2D3D = TileImages2D3D< short >::New( componentType );
       if (!tileImages2D3D) tileImages2D3D = TileImages2D3D< float >::New( componentType );
 
-      if (!tileImages2D3D) 
+      if (!tileImages2D3D)
       {
-	std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-	std::cerr
-	  << "pixel (component) type = " << componentType
-	  << std::endl;
-	return 1;
+        std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+        std::cerr << "pixel (component) type = " << componentType << std::endl;
+        return 1;
       }
 
       tileImages2D3D->m_InputFileNames = inputFileNames;
       tileImages2D3D->m_OutputFileName = outputFileName;
       tileImages2D3D->m_Zspacing = zspacing;
-      
+
       tileImages2D3D->Run();
-      
-      delete tileImages2D3D;  
+
+      delete tileImages2D3D;
     }
     catch( itk::ExceptionObject &e )
     {
@@ -210,33 +205,33 @@ int main( int argc, char ** argv )
       delete tileImages2D3D;
       return 1;
     }
-
   }
   else
   {
-      
+
     /** Class that does the work */
-    TileImagesBase * tileImages = NULL; 
+    TileImagesBase * tileImages = NULL;
 
     /** Short alias */
     unsigned int dim = Dimension;
-  
-    /** \todo some progs allow user to override the pixel type, 
-    * so we need a method to convert string to EnumComponentType */
-    itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileNames[0]);
-    
-    std::cout << "Detected component type: " << 
-      componentType << std::endl;
-    
+
+    /** \todo some progs allow user to override the pixel type,
+     * so we need a method to convert string to EnumComponentType.
+     */
+    itktools::ComponentType componentType = itktools::GetImageComponentType( inputFileNames[0] );
+
+    std::cout << "Detected component type: "
+      << itk::ImageIOBase::GetComponentTypeAsString( componentType ) << std::endl;
+
     try
-    {    
+    {
       // now call all possible template combinations.
       if (!tileImages) tileImages = TileImages< unsigned char, 2 >::New( componentType, dim );
       if (!tileImages) tileImages = TileImages< char, 2 >::New( componentType, dim );
       if (!tileImages) tileImages = TileImages< unsigned short, 2 >::New( componentType, dim );
       if (!tileImages) tileImages = TileImages< short, 2 >::New( componentType, dim );
       if (!tileImages) tileImages = TileImages< float, 2 >::New( componentType, dim );
-      
+
   #ifdef ITKTOOLS_3D_SUPPORT
       if (!tileImages) tileImages = TileImages< unsigned char, 3 >::New( componentType, dim );
       if (!tileImages) tileImages = TileImages< char, 3 >::New( componentType, dim );
@@ -244,14 +239,12 @@ int main( int argc, char ** argv )
       if (!tileImages) tileImages = TileImages< short, 3 >::New( componentType, dim );
       if (!tileImages) tileImages = TileImages< float, 3 >::New( componentType, dim );
   #endif
-      if (!tileImages) 
+      if( !tileImages )
       {
-	std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-	std::cerr
-	  << "pixel (component) type = " << componentType
-	  << " ; dimension = " << Dimension
-	  << std::endl;
-	return 1;
+        std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
+        std::cerr << "pixel (component) type = " << componentType
+          << " ; dimension = " << Dimension << std::endl;
+        return 1;
       }
 
       tileImages->m_InputFileNames = inputFileNames;
@@ -260,8 +253,8 @@ int main( int argc, char ** argv )
       tileImages->m_Defaultvalue = defaultvalue;
 
       tileImages->Run();
-      
-      delete tileImages;  
+
+      delete tileImages;
     }
     catch( itk::ExceptionObject &e )
     {
@@ -271,11 +264,9 @@ int main( int argc, char ** argv )
     }
 
   }
-  
+
   /** Return a value. */
   return 0;
 
 } // end main
 
-
-//-------------------------------------------------------------------------------------

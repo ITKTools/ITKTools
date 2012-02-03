@@ -6,7 +6,7 @@
 /** TileImages2D3D */
 
 class TileImages2D3DBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   TileImages2D3DBase(){};
   ~TileImages2D3DBase(){};
@@ -15,7 +15,7 @@ public:
   std::vector<std::string> m_InputFileNames;
   std::string m_OutputFileName;
   double m_Zspacing;
-    
+
 }; // end TileImages2D3DBase
 
 
@@ -43,14 +43,14 @@ public:
     const unsigned int Dimension = 3;
 
     /** Some typedef's. */
-    typedef itk::Image<TComponentType, Dimension>            ImageType;
+    typedef itk::Image<TComponentType, Dimension>       ImageType;
     typedef typename ImageType::SpacingType             SpacingType;
     typedef itk::ImageSeriesReader<ImageType>           ImageSeriesReaderType;
     typedef itk::ImageFileWriter<ImageType>             ImageWriterType;
 
     /** Create reader. */
     typename ImageSeriesReaderType::Pointer reader = ImageSeriesReaderType::New();
-    reader->SetFileNames( m_InputFileNames );
+    reader->SetFileNames( this->m_InputFileNames );
 
     /** Update the reader. */
     std::cout << "Input images are read..." << std::endl;
@@ -59,19 +59,19 @@ public:
     typename ImageType::Pointer tiledImage = reader->GetOutput();
 
     /** Get and set the spacing, if it was set by the user. */
-    if ( m_Zspacing > 0.0 )
+    if ( this->m_Zspacing > 0.0 )
     {
       /** Make sure that changes are not undone */
       tiledImage->DisconnectPipeline();
       /** Set the zspacing */
       SpacingType spacing = tiledImage->GetSpacing();
-      spacing[ 2 ] = m_Zspacing;
+      spacing[ 2 ] = this->m_Zspacing;
       tiledImage->SetSpacing( spacing );
     }
 
     /** Write to disk. */
     typename ImageWriterType::Pointer writer = ImageWriterType::New();
-    writer->SetFileName( m_OutputFileName.c_str() );
+    writer->SetFileName( this->m_OutputFileName.c_str() );
     writer->SetInput( tiledImage );
     std::cout << "Writing tiled image..." << std::endl;
     writer->Update();
