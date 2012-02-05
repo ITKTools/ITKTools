@@ -51,7 +51,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "Description:\n"
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+     << "Description:\n"
      << "This program converts between many image formats.\n"
      << "This is done by reading in an image, possibly casting of the image,\n"
      << "and subsequently writing the image to the user-specified format.\n"

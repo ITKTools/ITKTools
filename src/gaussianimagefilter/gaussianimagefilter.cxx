@@ -33,7 +33,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "Usage:" << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+  << "Usage:" << std::endl
   << "pxgaussianimagefilter" << std::endl
   << "  -in      inputFilename" << std::endl
   << "  [-out]   outputFilename, default in + BLURRED.mhd" << std::endl

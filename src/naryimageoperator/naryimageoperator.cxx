@@ -35,7 +35,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "Performs n-ary operations on multiple (n) images." << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+    << "Performs n-ary operations on multiple (n) images." << std::endl
     << "Usage:\npxnaryimageoperator" << std::endl
     << "  -in      inputFilenames, at least 2" << std::endl
     << "  -out     outputFilename" << std::endl

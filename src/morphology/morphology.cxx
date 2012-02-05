@@ -34,7 +34,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "Usage:" << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+     << "Usage:" << std::endl
      << "pxmorphology" << std::endl
      << "  -in      inputFilename" << std::endl
      << "  -op      operation, choose one of {erosion, dilation, opening, closing, gradient}" << std::endl

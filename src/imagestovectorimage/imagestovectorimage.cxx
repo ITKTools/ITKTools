@@ -37,7 +37,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "Usage:" << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+    << "Usage:" << std::endl
     << "pximagetovectorimage" << std::endl
     << "  -in      inputFilenames, at least 2" << std::endl
     << "  [-out]   outputFilename, default VECTOR.mhd" << std::endl

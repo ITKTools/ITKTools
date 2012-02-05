@@ -37,7 +37,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss<< "This program applies histogram equalization to an image." << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+    << "This program applies histogram equalization to an image." << std::endl
     << "Works as described by Maintz, Introduction to Image Processing." << std::endl
     << "Usage:" << std::endl
     << "pxhistogramequalizeimage" << std::endl

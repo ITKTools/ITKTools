@@ -22,6 +22,7 @@
  \verbinclude averagevectormagnitude.help
  */
 
+#include "ITKToolsHelpers.h"
 #include "ITKToolsImageProperties.h"
 #include "itkCommandLineArgumentParser.h"
 
@@ -39,7 +40,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "Calculate the average magnitude of the vectors in a vector image." << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+     << "Calculate the average magnitude of the vectors in a vector image." << std::endl
      << "Usage:" << std::endl
      << "AverageVectorMagnitude" << std::endl
      << "-in InputVectorImageFileName" << std::endl

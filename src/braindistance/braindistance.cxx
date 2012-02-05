@@ -47,7 +47,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "This program computes the distance between brains, based on\n"
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+    << "This program computes the distance between brains, based on\n"
     << "a label mask image of one of the brains and a deformation field.\n"
     << "Usage:\n"
     << "pxbraindistance\n"

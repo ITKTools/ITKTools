@@ -22,6 +22,7 @@
  */
 
 #include "itkCommandLineArgumentParser.h"
+#include "ITKToolsHelpers.h"
 
 #include <itksys/SystemTools.hxx>
 #include "itkImageSeriesReader.h"
@@ -36,7 +37,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "Usage:" << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+  << "Usage:" << std::endl
   << "pxgetdicominformation" << std::endl
   << "  -in      inputDirectoryName" << std::endl
   << "  [-s]     seriesUID" << std::endl

@@ -22,6 +22,7 @@
  */
 
 #include "itkCommandLineArgumentParser.h"
+#include "ITKToolsHelpers.h"
 #include <iostream>
 #include <itksys/SystemTools.hxx>
 #include "itkGDCMSeriesFileNames.h"
@@ -34,7 +35,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "Usage:" << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+  << "Usage:" << std::endl
   << "pxgetDICOMseriesUIDs" << std::endl
   << "  -in      inputDirectoryName" << std::endl
   << "  [-r]     add restrictions to generate a unique seriesUID" << std::endl

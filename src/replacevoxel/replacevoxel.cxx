@@ -36,7 +36,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "This program replaces the value of a user specified voxel." << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+  << "This program replaces the value of a user specified voxel." << std::endl
   << "Usage:" << std::endl
   << "pxreplacevoxel" << std::endl
   << "  -in      inputFilename" << std::endl

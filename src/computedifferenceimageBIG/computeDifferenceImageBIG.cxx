@@ -40,7 +40,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "Usage:" << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+     << "Usage:" << std::endl
      << "pxcomputedifferenceimageBIG inputimage1filename inputimage2filename [outputimagefilename] [outputPixelComponentType]" << std::endl
      << "where outputPixelComponentType is one of:" << std::endl
      << "- unsigned_char" << std::endl

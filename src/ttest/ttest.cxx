@@ -21,6 +21,7 @@
  \verbinclude ttest.help
  */
 #include "itkCommandLineArgumentParser.h"
+#include "ITKToolsHelpers.h"
 
 #include <vector>
 #include <fstream>
@@ -36,7 +37,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "Usage:" << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+  << "Usage:" << std::endl
   << "pxttest" << std::endl
   << "  -in      inputFilename" << std::endl
   << "  [-out]   output, choose one of {p,all}, default p" << std::endl

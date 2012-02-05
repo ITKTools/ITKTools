@@ -48,7 +48,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "This program enhances an image." << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+    << "This program enhances an image." << std::endl
     << "alpha and beta control the exact behaviour of the filter. See the" << std::endl
     << "ITK documentation of the AdaptiveHistogramEqualizationImageFilter" << std::endl
     << "Usage:" << std::endl

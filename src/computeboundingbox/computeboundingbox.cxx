@@ -33,7 +33,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "This program computes the bounding box of an image." << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+    << "This program computes the bounding box of an image." << std::endl
     << "Every pixel > 0 is considered to be within the bounding box." << std::endl
     << "Returns the minimum and maximum indices/points that lie within the bounding box." << std::endl
     << "Usage:" << std::endl

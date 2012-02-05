@@ -32,7 +32,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "This program thresholds an image." << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+    << "This program thresholds an image." << std::endl
     << "Usage:" << std::endl
     << "pxthresholdimage" << std::endl
     << "  -in        inputFilename" << std::endl

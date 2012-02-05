@@ -39,7 +39,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "This program creates a random image." << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+    << "This program creates a random image." << std::endl
     << "Usage:" << std::endl
     << "pxcreaterandomimage" << std::endl
     << "-out   \tOutputImageFileName" << std::endl

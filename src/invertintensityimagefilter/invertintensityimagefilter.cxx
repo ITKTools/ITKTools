@@ -43,7 +43,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "This program inverts the intensities of an image." << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+  << "This program inverts the intensities of an image." << std::endl
   << "Usage:" << std::endl
   << "pxinvertintensityimagefilter" << std::endl
   << "  -in      inputFilename" << std::endl

@@ -6,6 +6,9 @@
 namespace itktools
 {
 
+/** Return the version number. */
+std::string GetITKToolsVersion(void);
+
 /** Provide a shorter name for the component type enum */
 typedef itk::ImageIOBase::IOComponentType ComponentType;
 

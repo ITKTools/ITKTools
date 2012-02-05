@@ -32,7 +32,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "This program creates a signed distance transform." << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+    << "This program creates a signed distance transform." << std::endl
     << "Usage:\n"
     << "pxdistancetransform\n"
     << "  -in      inputFilename: the input image (a binary mask\n"

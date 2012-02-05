@@ -41,7 +41,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "pxextractslice extracts a 2D slice from a 3D image.\n"
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+    << "pxextractslice extracts a 2D slice from a 3D image.\n"
     << "Usage:\n"
     << "pxextractslice\n"
     << "  -in      input image filename\n"

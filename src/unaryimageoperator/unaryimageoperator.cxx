@@ -34,7 +34,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "Unary operations on one image." << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+    << "Unary operations on one image." << std::endl
     << "Usage:\n"
     << "pxunaryimageoperator\n"
     << "  -in      inputFilename\n"

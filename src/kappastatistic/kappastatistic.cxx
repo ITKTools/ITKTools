@@ -21,6 +21,7 @@
  \verbinclude kappastatistic.help
  */
 #include "itkCommandLineArgumentParser.h"
+#include "ITKToolsHelpers.h"
 #include "KappaStatisticMainHelper.h"
 
 #include "itkFleissKappaStatistic.h"
@@ -34,7 +35,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "Usage:" << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+    << "Usage:" << std::endl
     << "pxkappastatistic" << std::endl
     << "  -in      inputFilename" << std::endl
     << "  -type    the type of the kappa test:" << std::endl

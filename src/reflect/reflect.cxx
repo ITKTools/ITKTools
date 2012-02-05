@@ -36,7 +36,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "This program reflects an image." << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+  << "This program reflects an image." << std::endl
   << "Usage:" << std::endl
   << "pxreflect" << std::endl
   << "  -in      inputFilename" << std::endl

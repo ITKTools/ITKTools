@@ -34,7 +34,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "Usage:" << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+    << "Usage:" << std::endl
     << "pxcreatebox" << std::endl
     << "  -out     outputFilename" << std::endl
     << "  Arguments to specify the output image:" << std::endl

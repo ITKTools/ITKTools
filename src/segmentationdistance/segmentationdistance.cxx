@@ -52,7 +52,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "This program computes a spatial segmentation error map." << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+  << "This program computes a spatial segmentation error map." << std::endl
   << "Usage:" << std::endl
   << "pxsegmentationdistance" << std::endl
   << "  -in      inputFilename1 inputFileName2" << std::endl

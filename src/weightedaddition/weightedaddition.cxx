@@ -38,7 +38,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "Usage:" << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+  << "Usage:" << std::endl
   << "pxweightedaddition" << std::endl
   << "  -in      inputFilenames" << std::endl
   << "  -w       weightFilenames" << std::endl

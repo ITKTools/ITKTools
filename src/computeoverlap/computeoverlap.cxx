@@ -35,7 +35,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "Usage:" << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+    << "Usage:" << std::endl
     << "pxcomputeoverlap" << std::endl
     << "This program computes the overlap of two images." << std::endl
     << "By default the overlap of nonzero regions is computed." << std::endl

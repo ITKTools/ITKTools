@@ -44,7 +44,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "pxtileimages EITHER tiles a stack of 2D images into a 3D image,\n"
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+    << "pxtileimages EITHER tiles a stack of 2D images into a 3D image,\n"
     << "OR tiles nD images to form another nD image.\n"
     << "In the last case the way to tile is specified by a layout.\n"
     << "To stack a pile of 2D images an itk::SeriesFileReader is employed.\n"

@@ -32,7 +32,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "Computes overlap measures between the set same set of labels of pixels of two images."<< std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+    << "Computes overlap measures between the set same set of labels of pixels of two images."<< std::endl
     << "Usage:" << std::endl
     << "pxcomputeoverlap summary" << std::endl
     

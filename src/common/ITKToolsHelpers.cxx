@@ -6,6 +6,14 @@
 namespace itktools
 {
 
+/**
+ * ***************** GetITKToolsVersion ************************
+ */
+
+std::string GetITKToolsVersion(void)
+{
+  return "0.2.1";
+}
 
 /**
  * ***************** GetImageComponentType ************************

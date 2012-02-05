@@ -41,7 +41,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "This program extracts a user specified component from a vector image.\n"
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+    << "This program extracts a user specified component from a vector image.\n"
     << "Usage:\n"
     << "pxextractindexfromvectorimage\n"
     << "  -in      inputFilename\n"

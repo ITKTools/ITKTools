@@ -36,7 +36,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "This program creates an image containing a white box, defined by point A and B." << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+    << "This program creates an image containing a white box, defined by point A and B." << std::endl
     << "Usage:" << std::endl
     << "pxcreatesimplebox" << std::endl
     << "[-in]  InputImageFileName" << std::endl

@@ -36,7 +36,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "This program replaces some user specified intensity values in an image." << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+    << "This program replaces some user specified intensity values in an image." << std::endl
     << "Usage:" << std::endl
     << "pxintensityreplace" << std::endl
     << "  -in      inputFilename" << std::endl

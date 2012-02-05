@@ -36,7 +36,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "Usage:" << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+    << "Usage:" << std::endl
     << "pxdeformationfieldoperator\n"
     << "This program converts between deformations (displacement fields)\n"
     << "and transformations, and computes the magnitude or Jacobian of a\n"

@@ -21,6 +21,7 @@
  \verbinclude closestversor3Dtransform.help
  */
 #include "itkCommandLineArgumentParser.h"
+#include "ITKToolsHelpers.h"
 
 #include "closestversor3Dtransform.h"
 
@@ -32,7 +33,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "Calculates the closest rigid transform (VersorRigid3D) between" << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+     << "Calculates the closest rigid transform (VersorRigid3D) between" << std::endl
      << "two sets of landmarks. The two sets should be of equal size." << std::endl
      << "Usage:" << std::endl
      << "pxclosestversor3Dtransform" << std::endl

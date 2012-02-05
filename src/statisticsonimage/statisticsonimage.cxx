@@ -35,7 +35,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "Compute statistics on an image. For vector images, the magnitude is used." << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+  << "Compute statistics on an image. For vector images, the magnitude is used." << std::endl
   << "Usage:" << std::endl
   << "pxstatisticsonimage" << std::endl
   << "  -in      inputFilename" << std::endl

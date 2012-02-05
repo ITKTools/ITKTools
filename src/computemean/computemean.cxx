@@ -40,7 +40,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "Usage:" << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+     << "Usage:" << std::endl
      << "pxcomputemean" << std::endl
      << "-in      input text file" << std::endl
      << "[-m]     what kind of mean" << std::endl

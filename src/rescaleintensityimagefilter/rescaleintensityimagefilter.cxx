@@ -43,7 +43,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "Usage:" << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+  << "Usage:" << std::endl
   << "pxrescaleintensityimagefilter" << std::endl
   << "  -in      inputFilename" << std::endl
   << "  [-out]   outputFilename, default in + INTENSITYRESCALED.mhd" << std::endl

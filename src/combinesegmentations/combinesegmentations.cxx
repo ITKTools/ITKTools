@@ -51,7 +51,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "This program combines multiple segmentations into one." << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+     << "This program combines multiple segmentations into one." << std::endl
      << "Usage:" << std::endl
      << "pxcombinesegmentations" << std::endl
      << "[-m]     {STAPLE, VOTE, MULTISTAPLE, MULTISTAPLE2, VOTE_MULTISTAPLE2}:" << std::endl

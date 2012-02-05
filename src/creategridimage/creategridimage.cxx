@@ -37,7 +37,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "Usage:" << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+  << "Usage:" << std::endl
   << "pxcreategridimage" << std::endl
     << "[-in]    inputFilename, information about size, etc, is taken from it" << std::endl
     << "-out     outputFilename" << std::endl

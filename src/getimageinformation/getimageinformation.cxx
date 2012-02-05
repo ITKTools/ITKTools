@@ -21,7 +21,7 @@
  \verbinclude getimageinformation.help
  */
 #include "itkCommandLineArgumentParser.h"
-
+#include "ITKToolsHelpers.h"
 #include "itkImage.h"
 #include "itkImageIOBase.h"
 #include "itkImageFileReader.h"
@@ -35,7 +35,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "Usage:" << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+  << "Usage:" << std::endl
   << "pxgetimageinformation" << std::endl
   << "  -in      inputFileName" << std::endl
   << "  [-dim]   dimension" << std::endl

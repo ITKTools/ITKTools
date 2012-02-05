@@ -45,7 +45,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "This program generates a deformation field (from fixed" << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+    << "This program generates a deformation field (from fixed" << std::endl
     << "to moving image) based on some corresponding points." << std::endl
     << "Usage:" << std::endl
     << "pxdeformationfieldgenerator" << std::endl

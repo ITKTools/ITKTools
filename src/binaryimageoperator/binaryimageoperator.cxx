@@ -37,7 +37,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream  ss;
-  ss << "Performs binary operations on two images." << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+    << "Performs binary operations on two images." << std::endl
     << "Usage:\npxbinaryimageoperator\n"
     << "  -in      inputFilenames\n"
     << "  [-out]   outputFilename, default in1 + ops + arg + in2 + .mhd\n"

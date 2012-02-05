@@ -40,7 +40,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "Usage:" << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+    << "Usage:" << std::endl
     << "pxresizeimage\n"
     << "  -in      inputFilename\n"
     << "  [-out]   outputFilename, default in + RESIZED.mhd\n"

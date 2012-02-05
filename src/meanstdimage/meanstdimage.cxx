@@ -32,7 +32,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "This program creates a mean and standard deviation image of a set of images." << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+    << "This program creates a mean and standard deviation image of a set of images." << std::endl
     << "Usage:" << std::endl
     << "pxmeanstdimage" << std::endl
     << "  -in        list of inputFilenames" << std::endl

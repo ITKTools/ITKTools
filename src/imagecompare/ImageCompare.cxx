@@ -42,7 +42,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "Usage:" << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+    << "Usage:" << std::endl
     << "pximagecompare" << std::endl
     << "  -test      image filename to test against baseline" << std::endl
     << "  -base      baseline image filename";

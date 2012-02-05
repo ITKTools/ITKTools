@@ -34,7 +34,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "Logical operations on one or two images.\n"
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+    << "Logical operations on one or two images.\n"
     << "NOTE: The output of this filter is an image with pixels of values 0 and 1.\n"
     << "An appropriate scaling must be performed either manually (with pxrescaleintensityimagefilter)\n"
     << "or with the application used to view the image.\n"

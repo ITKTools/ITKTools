@@ -40,7 +40,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "Usage:" << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+  << "Usage:" << std::endl
   << "pxpca" << std::endl
   << "  -in      inputFilenames" << std::endl
   << "  [-out]   outputDirectory, default equal to the inputFilename directory" << std::endl
