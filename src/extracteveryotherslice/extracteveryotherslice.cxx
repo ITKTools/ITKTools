@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Extract every other slice of an image.
- 
+
  \verbinclude extracteveryotherslice.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -39,14 +39,14 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-  << "Usage:" << std::endl
-  << "pxextracteveryotherslice" << std::endl
-  << "  -in      inputFilename" << std::endl
-  << "  [-out]   outputFilename, default in + EveryOtherKExtracted.mhd" << std::endl
-  << "  [-K]     every other slice K, default 2" << std::endl
-  << "  [-of]    offset, default 0" << std::endl
-  << "  [-d]     direction, default is z-axes" << std::endl
-  << "Supported: 3D, (unsigned) char, (unsigned) short, float, double.";
+    << "Usage:" << std::endl
+    << "pxextracteveryotherslice" << std::endl
+    << "  -in      inputFilename" << std::endl
+    << "  [-out]   outputFilename, default in + EveryOtherKExtracted.mhd" << std::endl
+    << "  [-K]     every other slice K, default 2" << std::endl
+    << "  [-of]    offset, default 0" << std::endl
+    << "  [-d]     direction, default is z-axes" << std::endl
+    << "Supported: 3D, (unsigned) char, (unsigned) short, float, double.";
   return ss.str();
 
 } // end GetHelpString()
@@ -55,7 +55,7 @@ std::string GetHelpString( void )
 /** ExtractEveryOtherSlice */
 
 class ITKToolsExtractEveryOtherSliceBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   ITKToolsExtractEveryOtherSliceBase()
   {
@@ -73,7 +73,7 @@ public:
   unsigned int m_EveryOther;
   unsigned int m_Offset;
   unsigned int m_Direction;
-    
+
 }; // end ExtractEveryOtherSliceBase
 
 
@@ -173,14 +173,14 @@ public:
     {
       while( !itOut.IsAtEndOfSlice() )
       {
-	while( !itOut.IsAtEndOfLine() )
-	{
-	  itOut.Set( itIn.Get() );
-	  ++itIn;
-	  ++itOut;
-	}
-	itIn.NextLine();
-	itOut.NextLine();
+        while( !itOut.IsAtEndOfLine() )
+        {
+          itOut.Set( itIn.Get() );
+          ++itIn;
+          ++itOut;
+        }
+        itIn.NextLine();
+        itOut.NextLine();
       }
       itIn.NextSlice();
       itOut.NextSlice();
@@ -189,19 +189,21 @@ public:
       index = itIn.GetIndex();
       for ( unsigned int i = 1; i < this->m_EveryOther; i++ )
       {
-	index[ this->m_Direction ]++;
+        index[ this->m_Direction ]++;
       }
       itIn.SetIndex( index );
-    }
+    } // end while
 
     /** Write the output image. */
     typename WriterType::Pointer writer = WriterType::New();
     writer->SetFileName( this->m_OutputFileName.c_str() );
     writer->SetInput( outputImage );
     writer->Update();
-  }
+
+  } // end Run()
 
 }; // end ExtractEveryOtherSlice
+
 
 //-------------------------------------------------------------------------------------
 
@@ -224,7 +226,7 @@ int main( int argc, char **argv )
   {
     return EXIT_SUCCESS;
   }
-  
+
   /** Get arguments. */
   std::string inputFileName = "";
   parser->GetCommandLineArgument( "-in", inputFileName );
@@ -298,25 +300,26 @@ int main( int argc, char **argv )
   ITKToolsExtractEveryOtherSliceBase * extractEveryOtherSlice = NULL;
 
   /** Short alias */
-  unsigned int dim = Dimension;
+  const unsigned int dim = Dimension;
 
-  itktools::ComponentType componentType = itk::ImageIOBase::GetComponentTypeFromString( PixelType );
-   
+  itktools::ComponentType componentType
+    = itk::ImageIOBase::GetComponentTypeFromString( ComponentTypeIn );
+
   try
-  {    
+  {
     // now call all possible template combinations.
-    if (!extractEveryOtherSlice) extractEveryOtherSlice = ITKToolsExtractEveryOtherSlice< unsigned char, 2 >::New( componentType, dim );
-    if (!extractEveryOtherSlice) extractEveryOtherSlice = ITKToolsExtractEveryOtherSlice< char, 2 >::New( componentType, dim );
-    if (!extractEveryOtherSlice) extractEveryOtherSlice = ITKToolsExtractEveryOtherSlice< unsigned short, 2 >::New( componentType, dim );
-    if (!extractEveryOtherSlice) extractEveryOtherSlice = ITKToolsExtractEveryOtherSlice< short, 2 >::New( componentType, dim );
-    if (!extractEveryOtherSlice) extractEveryOtherSlice = ITKToolsExtractEveryOtherSlice< float, 2 >::New( componentType, dim );
-    if (!extractEveryOtherSlice) extractEveryOtherSlice = ITKToolsExtractEveryOtherSlice< double, 2 >::New( componentType, dim );
+    if( !extractEveryOtherSlice ) extractEveryOtherSlice = ITKToolsExtractEveryOtherSlice< unsigned char, 3 >::New( componentType, dim );
+    if( !extractEveryOtherSlice ) extractEveryOtherSlice = ITKToolsExtractEveryOtherSlice< char, 3 >::New( componentType, dim );
+    if( !extractEveryOtherSlice ) extractEveryOtherSlice = ITKToolsExtractEveryOtherSlice< unsigned short, 3 >::New( componentType, dim );
+    if( !extractEveryOtherSlice ) extractEveryOtherSlice = ITKToolsExtractEveryOtherSlice< short, 3 >::New( componentType, dim );
+    if( !extractEveryOtherSlice ) extractEveryOtherSlice = ITKToolsExtractEveryOtherSlice< float, 3 >::New( componentType, dim );
+    if( !extractEveryOtherSlice ) extractEveryOtherSlice = ITKToolsExtractEveryOtherSlice< double, 3 >::New( componentType, dim );
 
-    if (!extractEveryOtherSlice) 
+    if( !extractEveryOtherSlice )
     {
       std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
       std::cerr
-        << "pixel (component) type = " << componentType
+        << "pixel (component) type = " << ComponentTypeIn
         << " ; dimension = " << Dimension
         << std::endl;
       return 1;
@@ -327,18 +330,17 @@ int main( int argc, char **argv )
     extractEveryOtherSlice->m_EveryOther = everyOther;
     extractEveryOtherSlice->m_Offset = offset;
     extractEveryOtherSlice->m_Direction = direction;
-  
+
     extractEveryOtherSlice->Run();
-    
+
     delete extractEveryOtherSlice;
   }
-  catch( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
     delete extractEveryOtherSlice;
     return 1;
   }
-  
 
   /** End program. */
   return 0;
