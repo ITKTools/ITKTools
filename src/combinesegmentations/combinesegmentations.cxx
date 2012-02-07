@@ -286,7 +286,7 @@ int main( int argc, char **argv )
     maximumNumberOfThreads );
 
   /** Determine image properties. */
-  std::string ComponentType = "unsigned char";
+  std::string ComponentType = "unsigned_char";
   std::string PixelType; //we don't use this
   unsigned int Dimension = 3;
   unsigned int NumberOfComponents = 1;
