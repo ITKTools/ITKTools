@@ -327,7 +327,7 @@ int main( int argc, char **argv )
    * valid range 0 - 127. Leads to crashes in case of short input with high
    * values otherwise.
    */
-  if ( ComponentType != "unsigned char" )
+  if ( ComponentType != "unsigned_char" )
   {
     std::cerr << "ERROR: only \"unsigned char\" images are supported." << std::endl;
     return 1;
