@@ -101,6 +101,7 @@ std::string GetHelpString( void )
      << "[-ov]    outputlabels for relabeling. Each input label is replaced by the corresponding" << std::endl
      << "        output label, before the combinationMethod is invoked. NumberOfClasses should be" << std::endl
      << "        valid for the situation after relabeling!" << std::endl
+     << "[-threads] maximum number of threads to use." << std::endl
      << "Supported: 2D/3D.";
 
   return ss.str();
@@ -171,7 +172,7 @@ int main( int argc, char **argv )
   /** Get the number of classes to segment (not mandatory) */
   unsigned char numberOfClasses = 2;
   parser->GetCommandLineArgument( "-n", numberOfClasses );
-
+  
   /** Get the prior probability images (not mandatory) */
   std::vector< std::string >  priorProbImageFileNames;
   bool retP = parser->GetCommandLineArgument( "-P", priorProbImageFileNames );

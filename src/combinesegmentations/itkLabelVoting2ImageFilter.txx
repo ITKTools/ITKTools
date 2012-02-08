@@ -105,7 +105,7 @@ namespace itk
     ::BeforeThreadedGenerateData ()
   {
     this->Superclass::BeforeThreadedGenerateData();
-
+      
     const bool generateProbSeg =
       this->GetGenerateProbabilisticSegmentations();
     const unsigned int numberOfInputs = this->GetNumberOfInputs();
@@ -331,7 +331,7 @@ namespace itk
     ::AfterThreadedGenerateData ()
   {
     this->Superclass::AfterThreadedGenerateData();
-
+   
     const unsigned int numberOfInputs = this->GetNumberOfInputs();
 
     if ( this->GetGenerateConfusionMatrix() )

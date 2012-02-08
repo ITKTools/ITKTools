@@ -2,6 +2,7 @@
 #define __itkUnaryFunctors_h
 
 #include "vnl/vnl_math.h"
+#include "itkNumericTraits.h"
 
 enum UnaryFunctorEnum { PLUS, RMINUS, LMINUS, TIMES, LDIVIDE, RDIVIDE,
   RMODINT, RMODDOUBLE, LMODINT, LMODDOUBLE, NLOG, RPOWER, LPOWER, NEG,
@@ -550,9 +551,14 @@ struct UnaryFunctorFactory
     typedef typename TOutputImage::PixelType  OutputPixelType;
 
     // Convert the argument to the correct type
+    // NB: ">>" gives wrong results for (unsigned)char. Use the accumulate type
+    // as intermediate type to avoid this. (then short will be used, and the 
+    // result is casted to char again).
     std::stringstream ssArgument( strArgument );
     TArgument argument;
-    ssArgument >> argument;
+    itk::NumericTraits<TArgument>::AccumulateType tempArgument;
+    ssArgument >> tempArgument;
+    argument = static_cast<TArgument>( tempArgument );
 
     if( filterType == PLUS )
     {
