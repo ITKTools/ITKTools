@@ -556,7 +556,7 @@ struct UnaryFunctorFactory
     // result is casted to char again).
     std::stringstream ssArgument( strArgument );
     TArgument argument;
-    itk::NumericTraits<TArgument>::AccumulateType tempArgument;
+    typename itk::NumericTraits<TArgument>::AccumulateType tempArgument;
     ssArgument >> tempArgument;
     argument = static_cast<TArgument>( tempArgument );
 
