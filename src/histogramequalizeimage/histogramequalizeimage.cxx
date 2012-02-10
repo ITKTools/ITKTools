@@ -199,8 +199,8 @@ int main(int argc, char** argv)
   /** Class that does the work */
   ITKToolsHistogramEqualizeImageBase * histogramEqualizeImage = NULL;
 
-  std::cout << "Detected component type: " <<
-    componentType << std::endl;
+  std::cout << "Internal image component type: " <<
+    itk::ImageIOBase::GetComponentTypeAsString( componentType ) << std::endl;
 
   try
   {

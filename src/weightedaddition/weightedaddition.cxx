@@ -215,8 +215,8 @@ int main( int argc, char **argv )
  
   itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileNames[0]);
   
-  std::cout << "Detected component type: " << 
-    componentType << std::endl;
+  std::cout << "Internal image component type: " << 
+    itk::ImageIOBase::GetComponentTypeAsString( componentType )  << std::endl;
 
   try
   {    

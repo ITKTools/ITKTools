@@ -144,8 +144,8 @@ int main( int argc, char ** argv )
   unsigned int numberOfComponents = 0;
   itktools::GetImageNumberOfComponents( inputFileName, numberOfComponents );
   
-  std::cout << "Detected component type: " << 
-    componentType << std::endl;
+  std::cout << "Internal image component type: " << 
+    itk::ImageIOBase::GetComponentTypeAsString( componentType ) << std::endl;
     
   try
   {    
