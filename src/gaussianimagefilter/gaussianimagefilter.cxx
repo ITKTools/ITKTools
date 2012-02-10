@@ -168,7 +168,7 @@ int main( int argc, char ** argv )
   if ( NumberOfComponents > 1 )
   {
     std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
-    std::cerr << "Cannot make vector of vector images." << std::endl;
+    std::cerr << "Vector images not supported yet by this tool." << std::endl;
     return 1;
   }
 

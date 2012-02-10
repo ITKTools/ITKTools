@@ -183,12 +183,12 @@ int main( int argc, char ** argv )
   
   /** Check for vector images. */
   unsigned int numberOfComponents = 0;
-  itktools::GetImageDimension(inputFileName, numberOfComponents);
+  itktools::GetImageNumberOfComponents(inputFileName, numberOfComponents);
   
   if ( numberOfComponents > 1 )
   {
     std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
-    std::cerr << "Cannot make vector of vector images." << std::endl;
+    std::cerr << "Vector images not supported yet by this tool." << std::endl;
     return 1;
   }
 
