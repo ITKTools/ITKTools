@@ -44,7 +44,8 @@ ITKToolsThresholdImage< TComponentType, VDimension >
   const double & inside,
   const double & outside,
   const double & threshold1,
-  const double & threshold2 )
+  const double & threshold2,
+  const bool & useCompression )
 {
   /** Typedef's. */
   typedef typename InputImageType::PixelType          InputPixelType;
@@ -77,6 +78,7 @@ ITKToolsThresholdImage< TComponentType, VDimension >
   /** Write the output image. */
   writer->SetInput( thresholder->GetOutput() );
   writer->SetFileName( outputFileName.c_str() );
+  writer->SetUseCompression( useCompression );
   writer->Update();
 
 } // end ThresholdImage()
@@ -95,7 +97,8 @@ ITKToolsThresholdImage< TComponentType, VDimension >
   const std::string & maskFileName,
   const double & inside,
   const double & outside,
-  const unsigned int & bins )
+  const unsigned int & bins,
+  const bool & useCompression )
 {
   /** Typedef's. */
   const unsigned int ImageDimension = InputImageType::ImageDimension;
@@ -134,6 +137,7 @@ ITKToolsThresholdImage< TComponentType, VDimension >
   /** Write the output image. */
   writer->SetInput( thresholder->GetOutput() );
   writer->SetFileName( outputFileName.c_str() );
+  writer->SetUseCompression( useCompression );
   writer->Update();
 
 } // end OtsuThresholdImage()
@@ -153,7 +157,8 @@ ITKToolsThresholdImage< TComponentType, VDimension >
   const double & inside,
   const double & outside,
   const unsigned int & bins,
-  const unsigned int & numThresholds )
+  const unsigned int & numThresholds,
+  const bool & useCompression )
 {
   /** Typedef's. */
   const unsigned int ImageDimension = InputImageType::ImageDimension;
@@ -193,6 +198,7 @@ ITKToolsThresholdImage< TComponentType, VDimension >
   /** Write the output image. */
   writer->SetInput( thresholder->GetOutput() );
   writer->SetFileName( outputFileName.c_str() );
+  writer->SetUseCompression( useCompression );
   writer->Update();
 
 } // end OtsuMultipleThresholdImage()
@@ -266,7 +272,8 @@ ITKToolsThresholdImage< TComponentType, VDimension >
   const std::string & outputFileName,
   const double & inside,
   const double & outside,
-  const double & pow )
+  const double & pow,
+  const bool & useCompression )
 {
   /** Typedef's. */
   const unsigned int ImageDimension = InputImageType::ImageDimension;
@@ -307,6 +314,7 @@ ITKToolsThresholdImage< TComponentType, VDimension >
   /** Write the output image. */
   writer->SetInput( thresholder->GetOutput() );
   writer->SetFileName( outputFileName.c_str() );
+  writer->SetUseCompression( useCompression );
   writer->Update();
 
 } // end RobustAutomaticThresholdImage()
@@ -327,7 +335,8 @@ ITKToolsThresholdImage< TComponentType, VDimension >
   const double & outside,
   const unsigned int & maskValue,
   const double & sigma,
-  const unsigned int & iterations )
+  const unsigned int & iterations,
+  const bool & useCompression )
 {
   /** Typedef's. */
   const unsigned int ImageDimension = InputImageType::ImageDimension;
@@ -365,6 +374,7 @@ ITKToolsThresholdImage< TComponentType, VDimension >
   /** Write the output image. */
   writer->SetInput( thresholder->GetOutput() );
   writer->SetFileName( outputFileName.c_str() );
+  writer->SetUseCompression( useCompression );
   writer->Update();
 
 } // end KappaSigmaThresholdImage()
@@ -383,7 +393,8 @@ ITKToolsThresholdImage< TComponentType, VDimension >
   const double & inside,
   const double & outside,
   const unsigned int & bins,
-  const unsigned int & mixtureType )
+  const unsigned int & mixtureType,
+  const bool & useCompression )
 {
   /** Typedef's. */
   const unsigned int ImageDimension = InputImageType::ImageDimension;
@@ -415,6 +426,7 @@ ITKToolsThresholdImage< TComponentType, VDimension >
   /** Write the output image. */
   writer->SetInput( thresholder->GetOutput() );
   writer->SetFileName( outputFileName.c_str() );
+  writer->SetUseCompression( useCompression );
   writer->Update();
 
 } // end MinErrorThresholdImage()

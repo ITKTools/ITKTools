@@ -45,6 +45,7 @@ public:
     this->m_Supported = false;
     this->m_Threshold1 = 0.0f;
     this->m_Threshold2 = 0.0f;
+    this->m_UseCompression = false;
   };
   ~ITKToolsThresholdImageBase(){};
 
@@ -69,6 +70,7 @@ public:
   double        m_Pow;
   double        m_Sigma;
   bool          m_Supported;
+  bool          m_UseCompression;
 
 }; // end class ThresholdImageBase
 
@@ -102,42 +104,48 @@ public:
       this->ThresholdImage(
         this->m_InputFileName, this->m_OutputFileName,
         this->m_Inside, this->m_Outside,
-        this->m_Threshold1, this->m_Threshold2 );
+        this->m_Threshold1, this->m_Threshold2,
+        this->m_UseCompression );
     }
     else if ( this->m_Method == "OtsuThreshold" )
     {
       this->OtsuThresholdImage(
         this->m_InputFileName, this->m_OutputFileName, this->m_MaskFileName,
         this->m_Inside, this->m_Outside,
-        this->m_Bins );
+        this->m_Bins,
+        this->m_UseCompression );
     }
     else if ( this->m_Method == "OtsuMultipleThreshold" )
     {
       this->OtsuMultipleThresholdImage(
         this->m_InputFileName, this->m_OutputFileName, this->m_MaskFileName,
         this->m_Inside, this->m_Outside,
-        this->m_Bins, this->m_NumThresholds );
+        this->m_Bins, this->m_NumThresholds,
+        this->m_UseCompression );
     }
     else if ( this->m_Method == "RobustAutomaticThreshold" )
     {
       this->RobustAutomaticThresholdImage(
         this->m_InputFileName, this->m_OutputFileName,
         this->m_Inside, this->m_Outside,
-        this->m_Pow );
+        this->m_Pow,
+        this->m_UseCompression );
     }
     else if ( this->m_Method == "KappaSigmaThreshold" )
     {
       this->KappaSigmaThresholdImage(
         this->m_InputFileName, this->m_OutputFileName, this->m_MaskFileName,
         this->m_Inside, this->m_Outside,
-        this->m_MaskValue, this->m_Sigma, this->m_Iterations );
+        this->m_MaskValue, this->m_Sigma, this->m_Iterations,
+        this->m_UseCompression );
     }
     else if ( this->m_Method == "MinErrorThreshold" )
     {
       this->MinErrorThresholdImage(
         this->m_InputFileName, this->m_OutputFileName,
         this->m_Inside, this->m_Outside,
-        this->m_Bins, this->m_MixtureType );
+        this->m_Bins, this->m_MixtureType,
+        this->m_UseCompression );
     }
     else
     {
@@ -151,21 +159,24 @@ public:
   void ThresholdImage(
     const std::string & inputFileName, const std::string & outputFileName,
     const double & inside, const double & outside,
-    const double & threshold1, const double & threshold2 );
+    const double & threshold1, const double & threshold2,
+    const bool & useCompression );
 
   /** Function to perform Otsu thresholding. */
   void OtsuThresholdImage(
     const std::string & inputFileName, const std::string & outputFileName,
     const std::string & maskFileName,
     const double & inside, const double & outside,
-    const unsigned int & bins );
+    const unsigned int & bins,
+    const bool & useCompression );
 
   /** Function to perform Otsu thresholding with multiple thresholds. */
   void OtsuMultipleThresholdImage(
     const std::string & inputFileName, const std::string & outputFileName,
     const std::string & itkNotUsed( maskFileName ),
     const double & inside, const double & outside,
-    const unsigned int & bins, const unsigned int & numThresholds );
+    const unsigned int & bins, const unsigned int & numThresholds,
+    const bool & useCompression );
 
   /** Function to perform Otsu thresholding with an adaptive threshold. */
 //   void AdaptiveOtsuThresholdImage(
@@ -178,20 +189,22 @@ public:
   void RobustAutomaticThresholdImage(
     const std::string & inputFileName, const std::string & outputFileName,
     const double & inside, const double & outside,
-    const double & pow );
+    const double & pow, const bool & useCompression );
 
   /** Function to perform thresholding using ... . */
   void KappaSigmaThresholdImage(
     const std::string & inputFileName, const std::string & outputFileName,
     const std::string & maskFileName,
     const double & inside, const double & outside, const unsigned int & maskValue,
-    const double & sigma, const unsigned int & iterations );
+    const double & sigma, const unsigned int & iterations,
+    const bool & useCompression );
 
   /** Function to perform thresholding using .. . */
   void MinErrorThresholdImage(
     const std::string & inputFileName, const std::string & outputFileName,
     const double & inside, const double & outside,
-    const unsigned int & bins, const unsigned int & mixtureType );
+    const unsigned int & bins, const unsigned int & mixtureType,
+    const bool & useCompression );
 
 }; // end class ThresholdImage
 

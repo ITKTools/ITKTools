@@ -239,7 +239,6 @@ int main( int argc, char **argv )
 #ifdef ITKTOOLS_4D_SUPPORT
       if ( !castConvert ) ITKToolsCastConvert4D( componentType, dim, castConvert );
 #endif
-
     }
     else
     {

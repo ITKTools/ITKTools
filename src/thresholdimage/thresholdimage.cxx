@@ -33,34 +33,35 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-    << "This program thresholds an image." << std::endl
-    << "Usage:" << std::endl
-    << "pxthresholdimage" << std::endl
-    << "  -in        inputFilename" << std::endl
-    << "  [-out]     outputFilename; default in + THRESHOLDED.mhd" << std::endl
-    << "  [-mask]    maskFilename, optional for \"OtsuThreshold\"," << std::endl
-    << "required for \"KappaSigmaThreshold\"" << std::endl
-    << "  [-m]       method, choose one of { Threshold, OtsuThreshold," << std::endl
-    << "OtsuMultipleThreshold, AdaptiveOtsuThreshold, RobustAutomaticThreshold," << std::endl
-    << "KappaSigmaThreshold, MinErrorThreshold }" << std::endl
-    << "             default \"Threshold\"" << std::endl
-    << "  [-t1]      lower threshold, for \"Threshold\", default -infinity" << std::endl
-    << "  [-t2]      upper threshold, for \"Threshold\", default 1.0" << std::endl
-    << "  [-inside]  inside value, default 1" << std::endl
-    << "  [-outside] outside value, default 0" << std::endl
-    << "  [-t]       number of thresholds, for \"OtsuMultipleThreshold\", default 1" << std::endl
-    << "  [-b]       number of histogram bins, for \"OtsuThreshold\", \"MinErrorThreshold\"" << std::endl
-    << "and \"AdaptiveOtsuThreshold\", default 128" << std::endl
-    << "  [-r]       radius, for \"AdaptiveOtsuThreshold\", default 8" << std::endl
-    << "  [-cp]      number of control points, for \"AdaptiveOtsuThreshold\", default 50" << std::endl
-    << "  [-l]       number of levels, for \"AdaptiveOtsuThreshold\", default 3" << std::endl
-    << "  [-s]       number of samples, for \"AdaptiveOtsuThreshold\", default 5000" << std::endl
-    << "  [-o]       spline order, for \"AdaptiveOtsuThreshold\", default 3" << std::endl
-    << "  [-p]       power, for \"RobustAutomaticThreshold\", default 1" << std::endl
-    << "  [-sigma]   sigma factor, for \"KappaSigmaThreshold\", default 2" << std::endl
-    << "  [-iter]    number of iterations, for \"KappaSigmaThreshold\", default 2" << std::endl
-    << "  [-mv]      mask value, for \"KappaSigmaThreshold\", default 1" << std::endl
-    << "  [-mt]      mixture type (1 - Gaussians, 2 - Poissons), for \"MinErrorThreshold\", default 1" << std::endl
+    << "This program thresholds an image.\n"
+    << "Usage:\n"
+    << "pxthresholdimage\n"
+    << "  -in        inputFilename\n"
+    << "  [-out]     outputFilename; default in + THRESHOLDED.mhd\n"
+    << "  [-mask]    maskFilename, optional for \"OtsuThreshold\", required for \"KappaSigmaThreshold\"\n"
+    << "  [-m]       method, choose one of \n"
+    << "               {Threshold, OtsuThreshold, OtsuMultipleThreshold,\n"
+    << "               AdaptiveOtsuThreshold, RobustAutomaticThreshold,\n"
+    << "               KappaSigmaThreshold, MinErrorThreshold }\n"
+    << "             default \"Threshold\"\n"
+    << "  [-t1]      lower threshold, for \"Threshold\", default -infinity\n"
+    << "  [-t2]      upper threshold, for \"Threshold\", default 1.0\n"
+    << "  [-inside]  inside value, default 1\n"
+    << "  [-outside] outside value, default 0\n"
+    << "  [-t]       number of thresholds, for \"OtsuMultipleThreshold\", default 1\n"
+    << "  [-b]       number of histogram bins, for \"OtsuThreshold\", \"MinErrorThreshold\"\n"
+    << "               and \"AdaptiveOtsuThreshold\", default 128\n"
+    << "  [-r]       radius, for \"AdaptiveOtsuThreshold\", default 8\n"
+    << "  [-cp]      number of control points, for \"AdaptiveOtsuThreshold\", default 50\n"
+    << "  [-l]       number of levels, for \"AdaptiveOtsuThreshold\", default 3\n"
+    << "  [-s]       number of samples, for \"AdaptiveOtsuThreshold\", default 5000\n"
+    << "  [-o]       spline order, for \"AdaptiveOtsuThreshold\", default 3\n"
+    << "  [-p]       power, for \"RobustAutomaticThreshold\", default 1\n"
+    << "  [-sigma]   sigma factor, for \"KappaSigmaThreshold\", default 2\n"
+    << "  [-iter]    number of iterations, for \"KappaSigmaThreshold\", default 2\n"
+    << "  [-mv]      mask value, for \"KappaSigmaThreshold\", default 1\n"
+    << "  [-mt]      mixture type (1 - Gaussians, 2 - Poissons), for \"MinErrorThreshold\", default 1\n"
+    << "  [-z]       compression flag; if provided, the output image is compressed\n\n"
     << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
 
   return ss.str();
@@ -152,6 +153,8 @@ int main( int argc, char **argv )
   unsigned int mixtureType = 1;
   parser->GetCommandLineArgument( "-mt", mixtureType );
 
+  bool useCompression = parser->ArgumentExists( "-z" );
+
   /** Checks. */
   if ( method != "Threshold"
     && method != "OtsuThreshold"
@@ -197,7 +200,6 @@ int main( int argc, char **argv )
     std::cerr << "Vector images are not supported." << std::endl;
     return 1;
   }
-
 
   /** Class that does the work */
   ITKToolsThresholdImageBase * thresholdImage = 0; 
@@ -252,6 +254,7 @@ int main( int argc, char **argv )
     thresholdImage->m_Sigma = sigma;
     thresholdImage->m_Threshold1 = threshold1;
     thresholdImage->m_Threshold2 = threshold2;
+    thresholdImage->m_UseCompression = useCompression;
 
     thresholdImage->Run();
     
