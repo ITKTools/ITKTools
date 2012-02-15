@@ -1,3 +1,20 @@
+/*=========================================================================
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
 #ifndef __itkHistogramEqualizationImageFilter_h
 #define __itkHistogramEqualizationImageFilter_h
 
@@ -24,16 +41,16 @@ class HistogramEqualizationImageFilter:
 {
 public:
   /** Standard class typedefs. */
-  typedef HistogramEqualizationImageFilter         Self;
-  typedef ImageToImageFilter<TImage,TImage>  Superclass;
-  typedef SmartPointer<Self>  Pointer;
-  typedef SmartPointer<const Self>  ConstPointer;
+  typedef HistogramEqualizationImageFilter    Self;
+  typedef ImageToImageFilter<TImage,TImage>   Superclass;
+  typedef SmartPointer<Self>                  Pointer;
+  typedef SmartPointer<const Self>            ConstPointer;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self);
+  itkNewMacro( Self );
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(HistogramEqualizationImageFilter, ImageToImageFilter);
+  itkTypeMacro( HistogramEqualizationImageFilter, ImageToImageFilter );
 
     /** Image related typedefs. */
   itkStaticConstMacro(ImageDimension, unsigned int,
@@ -65,45 +82,47 @@ public:
 
   /** Typedefs for mask support */
   typedef unsigned char                           MaskPixelType;
-  typedef Image< MaskPixelType, ImageDimension>   MaskImageType;
+  typedef Image<MaskPixelType, ImageDimension>    MaskImageType;
   typedef typename MaskImageType::Pointer         MaskImagePointer;
 
   /** Set/Get mask */
   itkSetObjectMacro( Mask, MaskImageType );
   itkGetObjectMacro( Mask, MaskImageType );
 
+  //itkSetMacro( NumberOfBins, unsigned int );
+  //itkGetConstReferenceMacro( NumberOfBins, unsigned int );
+
 protected:
   HistogramEqualizationImageFilter();
   ~HistogramEqualizationImageFilter();
   void PrintSelf(std::ostream& os, Indent indent) const;
 
-
-
   typedef itk::Array<OutputImagePixelType> LUTType;
   LUTType m_LUT;
 
-  unsigned int m_NumberOfBins;
+  unsigned int        m_NumberOfBins;
   InputImagePixelType m_Min;
   InputImagePixelType m_Max;
-  double m_MeanFrequency;
-  MaskImagePointer m_Mask;
+  double              m_MeanFrequency;
+  MaskImagePointer    m_Mask;
 
   /** Initialize some accumulators before the threads run.
    * Create a LUT */
-  void BeforeThreadedGenerateData ();
+  virtual void BeforeThreadedGenerateData( void );
 
   /** Tally accumulated in threads. */
-  void AfterThreadedGenerateData ();
+  virtual void AfterThreadedGenerateData( void );
 
   /** Multi-thread version GenerateData. Applies the LUT on the image. */
-  void  ThreadedGenerateData (const OutputImageRegionType&
-                              outputRegionForThread,
-                              ThreadIdType threadId) ;
+  virtual void ThreadedGenerateData(
+    const OutputImageRegionType & outputRegionForThread,
+    ThreadIdType threadId );
+
 private:
   HistogramEqualizationImageFilter(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
 
-};
+}; // end class HistogramEqualizationImageFilter
 
 
 } // end namespace itk
@@ -113,4 +132,3 @@ private:
 #endif
 
 #endif
-

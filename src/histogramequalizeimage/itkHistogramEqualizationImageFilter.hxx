@@ -1,5 +1,22 @@
-#ifndef _itkHistogramEqualizationImageFilter_txx
-#define _itkHistogramEqualizationImageFilter_txx
+/*=========================================================================
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
+#ifndef _itkHistogramEqualizationImageFilter_hxx
+#define _itkHistogramEqualizationImageFilter_hxx
 
 #include "itkHistogramEqualizationImageFilter.h"
 
@@ -15,8 +32,8 @@ template<class TImage>
 HistogramEqualizationImageFilter<TImage>
 ::HistogramEqualizationImageFilter()
 {
-  this->m_Min = itk::NumericTraits<InputImagePixelType>::Zero;
-  this->m_Max = itk::NumericTraits<InputImagePixelType>::One;
+  this->m_Min = itk::NumericTraits<InputImagePixelType>::max();
+  this->m_Max = itk::NumericTraits<InputImagePixelType>::NonpositiveMin();
   this->m_MeanFrequency = 1.0;
   this->m_NumberOfBins = 1;
 }
@@ -30,7 +47,7 @@ HistogramEqualizationImageFilter<TImage>
 template<class TImage>
 void
 HistogramEqualizationImageFilter<TImage>
-::BeforeThreadedGenerateData ()
+::BeforeThreadedGenerateData( void )
 {
   typedef ImageRegionConstIterator<InputImageType>   ImageIteratorType;
   typedef ImageRegionConstIterator<MaskImageType>    MaskIteratorType;
@@ -110,58 +127,57 @@ HistogramEqualizationImageFilter<TImage>
     }
     if ( validPixel )
     {
-      ( hist[ static_cast<unsigned int>( it.Value() - tempmin ) ] )++;
+      // assuming integer pixel type of binsize 1
+      hist[ static_cast<unsigned int>( it.Value() - tempmin ) ]++;
     }
     ++it;
   }
 
   /** convert it to a cumulative histogram */
-  for (unsigned int i = 1; i< this->m_NumberOfBins; i++)
+  for( unsigned int i = 1; i < this->m_NumberOfBins; i++ )
   {
     hist[i] += hist[i-1];
   }
 
   /** Compute LUT */
   this->m_LUT.SetSize(this->m_NumberOfBins);
-  for (unsigned int i = 0; i< this->m_NumberOfBins; i++)
+  for( unsigned int i = 0; i < this->m_NumberOfBins; i++ )
   {
-    this->m_LUT[i] = static_cast<OutputImagePixelType>( vnl_math_max(
-      static_cast<double>(tempmin),
-      -1.0 + tempmin + vcl_floor( static_cast<double>(hist[i]) / this->m_MeanFrequency + 0.5 ) ) );
+    this->m_LUT[ i ] = static_cast<OutputImagePixelType>(
+      vnl_math_max(
+      static_cast<double>( tempmin ),
+      -1.0 + tempmin + vcl_floor( static_cast<double>( hist[i] ) / this->m_MeanFrequency + 0.5 ) ) );
   }
 
+} // end BeforeThreadedGenerateData()
 
-}
 
 template<class TImage>
 void
 HistogramEqualizationImageFilter<TImage>
-::AfterThreadedGenerateData ()
+::AfterThreadedGenerateData( void )
 {
   //nothing
+} // end AfterThreadedGenerateData()
 
-}
 
 template<class TImage>
 void
 HistogramEqualizationImageFilter<TImage>
-::ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread,
-                       ThreadIdType threadId)
+::ThreadedGenerateData(
+  const OutputImageRegionType & outputRegionForThread,
+  ThreadIdType threadId )
 {
-
   typedef ImageRegionConstIterator<InputImageType>   InputImageIteratorType;
   typedef ImageRegionIterator<OutputImageType>       OutputImageIteratorType;
   typedef ImageRegionConstIterator<MaskImageType>    MaskIteratorType;
 
   /** Use a mask or not */
   bool useMask = false;
-  if ( this->GetMask() )
-  {
-    useMask = true;
-  }
+  if ( this->GetMask() ) useMask = true;
 
-  InputImageIteratorType  it (this->GetInput(), outputRegionForThread);
-  OutputImageIteratorType ot (this->GetOutput(), outputRegionForThread);
+  InputImageIteratorType  it( this->GetInput(), outputRegionForThread );
+  OutputImageIteratorType ot( this->GetOutput(), outputRegionForThread );
   MaskIteratorType maskIt;
   if ( useMask )
   {
@@ -170,38 +186,39 @@ HistogramEqualizationImageFilter<TImage>
   }
 
   // support progress methods/callbacks
-  ProgressReporter progress(this, threadId, outputRegionForThread.GetNumberOfPixels());
+  ProgressReporter progress( this, threadId, outputRegionForThread.GetNumberOfPixels() );
 
   LUTType & lut = this->m_LUT;
   InputImagePixelType & tempmin = this->m_Min;
 
   // shift and scale the input pixels
-  while (!it.IsAtEnd())
+  while( !it.IsAtEnd() )
   {
     bool validPixel = true;
-    if ( useMask )
+    if( useMask )
     {
       validPixel = static_cast<bool>( maskIt.Value() );
       ++maskIt;
     }
-    if ( validPixel )
+    if( validPixel )
     {
       ot.Set( lut[ static_cast<unsigned int>( it.Value() - tempmin ) ] );
     }
     else
     {
-      ot.Set( it.Value() );
+      ot.Set( it.Value() ); // original?
     }
     ++it;
     ++ot;
     progress.CompletedPixel();
   }
-}
+} // end ThreadedGenerateData()
+
 
 template <class TImage>
 void
 HistogramEqualizationImageFilter<TImage>
-::PrintSelf(std::ostream& os, Indent indent) const
+::PrintSelf( std::ostream& os, Indent indent ) const
 {
   Superclass::PrintSelf(os,indent);
 
@@ -209,8 +226,9 @@ HistogramEqualizationImageFilter<TImage>
   os << indent << "Minimum intensity: "  << this->m_Min << std::endl;
   os << indent << "Maximum intensity: "  << this->m_Max << std::endl;
 
-}
+} // end PrintSelf()
 
 
 }// end namespace itk
+
 #endif

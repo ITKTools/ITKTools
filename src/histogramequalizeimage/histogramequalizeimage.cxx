@@ -15,19 +15,16 @@
 * limitations under the License.
 *
 *=========================================================================*/
+
 /** \file
  \brief Equalize the histogram of an image.
  
  \verbinclude histogramequalizeimage.help
  */
-#ifndef __histogramequalizeimage_cxx
-#define __histogramequalizeimage_cxx
-
-#include "histogramequalizeimage.h"
 
 #include "itkCommandLineArgumentParser.h"
-#include "ITKToolsBase.h"
 #include "ITKToolsHelpers.h"
+#include "histogramequalizeimage.h"
 
 
 /**
@@ -38,115 +35,20 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-    << "This program applies histogram equalization to an image." << std::endl
-    << "Works as described by Maintz, Introduction to Image Processing." << std::endl
-    << "Usage:" << std::endl
-    << "pxhistogramequalizeimage" << std::endl
-    << "-in    \tInputImageFileName" << std::endl
-    << "-out   \tOutputImageFileName" << std::endl
-    << "-pt    \tPixelType <FLOAT, SHORT, USHORT, INT, UINT, CHAR, UCHAR>" << std::endl
-    << "Currently only char, uchar, short, and ushort are supported." << std::endl
-    << "-id    \tImageDimension <2,3>" << std::endl;
+    << "This program applies histogram equalization to an image.\n"
+    << "Works as described by Maintz, Introduction to Image Processing.\n"
+    << "Usage:\n"
+    << "pxhistogramequalizeimage\n"
+    << "  -in      inputFileName\n"
+    << "  -out     outputFileName\n"
+    << "  -[mask]  maskFileName\n"
+    << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int";
 
   return ss.str();
 
 } // end GetHelpString()
 
-
-/** HistogramEqualizeImage */
-
-class ITKToolsHistogramEqualizeImageBase : public itktools::ITKToolsBase
-{
-public:
-  ITKToolsHistogramEqualizeImageBase()
-  {
-    this->m_InputFileName = "";
-    this->m_OutputFileName = "";
-  };
-  ~ITKToolsHistogramEqualizeImageBase(){};
-
-  /** Input parameters */
-  std::string m_InputFileName;
-  std::string m_OutputFileName;
-
-}; // end ReplaceVoxelBase
-
-
-template< class TComponentType, unsigned int VDimension >
-class ITKToolsHistogramEqualizeImage : public ITKToolsHistogramEqualizeImageBase
-{
-public:
-  typedef ITKToolsHistogramEqualizeImage Self;
-
-  ITKToolsHistogramEqualizeImage(){};
-  ~ITKToolsHistogramEqualizeImage(){};
-
-  static Self * New( itktools::ComponentType componentType, unsigned int dim )
-  {
-    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
-  void Run( void )
-  {
-    typedef itk::Image<TComponentType, VDimension> ImageType;
-    typedef typename ImageType::Pointer           ImagePointer;
-    typedef typename ImageType::IndexType         IndexType;
-    typedef typename ImageType::SizeType          SizeType;
-    typedef typename ImageType::RegionType        RegionType;
-    typedef typename ImageType::PointType         PointType;
-    typedef itk::ImageFileReader<ImageType>       ReaderType;
-    typedef itk::ImageFileWriter<ImageType>       WriterType;
-    typedef typename ReaderType::Pointer          ReaderPointer;
-    typedef typename WriterType::Pointer          WriterPointer;
-    typedef itk::HistogramEqualizationImageFilter<
-      ImageType>                                  EnhancerType;
-    typedef typename EnhancerType::Pointer        EnhancerPointer;
-
-    WriterPointer writer = WriterType::New();
-    EnhancerPointer enhancer = EnhancerType::New();
-
-    /** Try to read input image */
-    ReaderPointer reader = ReaderType::New();
-    reader->SetFileName( this->m_InputFileName.c_str() );
-    try
-    {
-      reader->Update();
-    }
-    catch (itk::ExceptionObject & err)
-    {
-      std::cerr << "Error while reading input image." << std::endl;
-      std::cerr << err << std::endl;
-      return;
-    }
-
-    /** Setup pipeline and configure its components */
-
-    enhancer->SetInput( reader->GetOutput() );
-    writer->SetInput( enhancer->GetOutput() );
-    writer->SetFileName( this->m_OutputFileName.c_str());
-
-    /** do it. */
-    std::cout
-      << "Saving image to disk as \""
-      << this->m_OutputFileName
-      << "\""
-      << std::endl;
-    try
-    {
-      writer->Update();
-    }
-    catch (itk::ExceptionObject & err)
-    {
-      std::cerr << err << std::endl;
-      return;
-    }
-  }
-
-}; // end HistogramEqualizeImage
+//-------------------------------------------------------------------------------------
 
 int main(int argc, char** argv)
 {
@@ -157,7 +59,6 @@ int main(int argc, char** argv)
   
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
   parser->MarkArgumentAsRequired( "-out", "The output filename." );
-  parser->MarkArgumentAsRequired( "-pt", "Pixel type." );
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
@@ -170,77 +71,91 @@ int main(int argc, char** argv)
     return EXIT_SUCCESS;
   }
 
-  /** Read the dimension. */
-  unsigned int imageDimension = 0;
-  parser->GetCommandLineArgument( "-id", imageDimension );
+  /** Get arguments. */
+  std::string inputFileName = "";
+  parser->GetCommandLineArgument( "-in", inputFileName );
 
-  if (imageDimension == 0)
+  std::string outputFileName = "";
+  parser->GetCommandLineArgument( "-out", outputFileName );
+
+  std::string maskFileName = "";
+  parser->GetCommandLineArgument( "-mask", maskFileName );
+
+  /** Determine image properties. */
+  std::string componentTypeIn = "short";
+  std::string PixelType; //we don't use this
+  unsigned int Dimension = 2;
+  unsigned int numberOfComponents = 1;
+  std::vector<unsigned int> imagesize( Dimension, 0 );
+  int retgip = itktools::GetImageProperties(
+    inputFileName,
+    PixelType,
+    componentTypeIn,
+    Dimension,
+    numberOfComponents,
+    imagesize );
+  if ( retgip != 0 )
   {
-    std::cerr << "ERROR: Image dimension cannot be 0" <<std::endl;
     return 1;
   }
 
-  std::string inputFileName("");
-  parser->GetCommandLineArgument("-in", inputFileName);
+  itk::ImageIOBase::IOComponentType componentType
+    = itk::ImageIOBase::GetComponentTypeFromString( componentTypeIn );
 
-  std::string outputFileName("");
-  parser->GetCommandLineArgument("-out", outputFileName);
-  
-  std::string pixelTypeString("");
-  bool retpt = parser->GetCommandLineArgument("-pt", pixelTypeString);
-  itktools::ComponentType componentType = itktools::GetImageComponentType( inputFileName );
-  if(retpt)
+  /** Check for vector images. */
+  if ( numberOfComponents > 1 )
   {
-    componentType = itk::ImageIOBase::GetComponentTypeFromString( pixelTypeString );
+    std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
+    std::cerr << "Vector images are not supported." << std::endl;
+    return 1;
   }
 
-
-
   /** Class that does the work */
-  ITKToolsHistogramEqualizeImageBase * histogramEqualizeImage = NULL;
-
-  std::cout << "Internal image component type: " <<
-    itk::ImageIOBase::GetComponentTypeAsString( componentType ) << std::endl;
+  ITKToolsHistogramEqualizeImageBase * equalizer = NULL;
 
   try
   {
-    if (!histogramEqualizeImage) histogramEqualizeImage = ITKToolsHistogramEqualizeImage< short, 2 >::New( componentType, imageDimension );
-    if (!histogramEqualizeImage) histogramEqualizeImage = ITKToolsHistogramEqualizeImage< unsigned short, 2 >::New( componentType, imageDimension );
-    if (!histogramEqualizeImage) histogramEqualizeImage = ITKToolsHistogramEqualizeImage< char, 2 >::New( componentType, imageDimension );
-    if (!histogramEqualizeImage) histogramEqualizeImage = ITKToolsHistogramEqualizeImage< unsigned char, 2 >::New( componentType, imageDimension );
+    if( !equalizer ) equalizer = ITKToolsHistogramEqualizeImage< char, 2 >::New( componentType, Dimension );
+    if( !equalizer ) equalizer = ITKToolsHistogramEqualizeImage< unsigned char, 2 >::New( componentType, Dimension );
+    if( !equalizer ) equalizer = ITKToolsHistogramEqualizeImage< short, 2 >::New( componentType, Dimension );
+    if( !equalizer ) equalizer = ITKToolsHistogramEqualizeImage< unsigned short, 2 >::New( componentType, Dimension );
+    if( !equalizer ) equalizer = ITKToolsHistogramEqualizeImage< int, 2 >::New( componentType, Dimension );
+    if( !equalizer ) equalizer = ITKToolsHistogramEqualizeImage< unsigned int, 2 >::New( componentType, Dimension );
 
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!histogramEqualizeImage) histogramEqualizeImage = ITKToolsHistogramEqualizeImage< short, 2 >::New( componentType, imageDimension );
-    if (!histogramEqualizeImage) histogramEqualizeImage = ITKToolsHistogramEqualizeImage< unsigned short, 2 >::New( componentType, imageDimension );
-    if (!histogramEqualizeImage) histogramEqualizeImage = ITKToolsHistogramEqualizeImage< char, 2 >::New( componentType, imageDimension );
-    if (!histogramEqualizeImage) histogramEqualizeImage = ITKToolsHistogramEqualizeImage< unsigned char, 2 >::New( componentType, imageDimension );
+    if( !equalizer ) equalizer = ITKToolsHistogramEqualizeImage< char, 3 >::New( componentType, Dimension );
+    if( !equalizer ) equalizer = ITKToolsHistogramEqualizeImage< unsigned char, 3 >::New( componentType, Dimension );
+    if( !equalizer ) equalizer = ITKToolsHistogramEqualizeImage< short, 3 >::New( componentType, Dimension );
+    if( !equalizer ) equalizer = ITKToolsHistogramEqualizeImage< unsigned short, 3 >::New( componentType, Dimension );
+    if( !equalizer ) equalizer = ITKToolsHistogramEqualizeImage< int, 3 >::New( componentType, Dimension );
+    if( !equalizer ) equalizer = ITKToolsHistogramEqualizeImage< unsigned int, 3 >::New( componentType, Dimension );
 #endif
-    if (!histogramEqualizeImage)
+    if( !equalizer )
     {
       std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
       std::cerr
-        << "pixel (component) type = " << componentType
-        << " ; dimension = " << imageDimension
+        << "pixel (component) type = " << componentTypeIn
+        << " ; dimension = " << Dimension
         << std::endl;
       return 1;
     }
 
-    histogramEqualizeImage->m_InputFileName = inputFileName;
-    histogramEqualizeImage->m_OutputFileName = outputFileName;
+    equalizer->m_InputFileName = inputFileName;
+    equalizer->m_OutputFileName = outputFileName;
+    equalizer->m_MaskFileName = maskFileName;
 
-    histogramEqualizeImage->Run();
+    equalizer->Run();
 
-    delete histogramEqualizeImage;
+    delete equalizer;
   }
-  catch( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    delete histogramEqualizeImage;
+    std::cerr << "Caught ITK exception: " << excp << std::endl;
+    delete equalizer;
     return 1;
   }
+
+  /** End program. */
   return EXIT_SUCCESS;
 
 } // end function main
-
-#endif // #ifndef __histogramequalizeimage_cxx
-

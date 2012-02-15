@@ -44,17 +44,17 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-  << "Usage:" << std::endl
-  << "pxrescaleintensityimagefilter" << std::endl
-  << "  -in      inputFilename" << std::endl
-  << "  [-out]   outputFilename, default in + INTENSITYRESCALED.mhd" << std::endl
-  << "  [-mm]    minimum maximum, default: range of pixeltype" << std::endl
-  << "  [-mv]    mean variance, default: 0.0 1.0" << std::endl
-  << "  [-pt]    pixel type of input and output images;" << std::endl
-  << "           default: automatically determined from the first input image." << std::endl
-  << "Either \"-mm\" or \"-mv\" need to be specified." << std::endl
-  << "Supported: 2D, 3D, (unsigned) short, (unsigned) char, float." << std::endl
-  << "When applied to vector images, this program performs the operation on each channel separately.";
+    << "Usage:\n"
+    << "pxrescaleintensityimagefilter\n"
+    << "  -in      inputFilename\n"
+    << "  [-out]   outputFilename, default in + INTENSITYRESCALED.mhd\n"
+    << "  [-mm]    minimum maximum, default: range of pixeltype\n"
+    << "  [-mv]    mean variance, default: 0.0 1.0\n"
+    << "  [-pt]    pixel type of input and output images;\n"
+    << "           default: automatically determined from the first input image.\n"
+    << "Either \"-mm\" or \"-mv\" need to be specified.\n"
+    << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, float.\n"
+    << "When applied to vector images, this program performs the operation on each channel separately.";
 
   return ss.str();
 
@@ -80,7 +80,6 @@ public:
   std::string m_OutputFileName;
   std::vector<double> m_Values;
   bool m_ValuesAreExtrema;
-
     
 }; // end RescaleIntensityImageFilterBase
 
@@ -109,13 +108,13 @@ public:
     typedef itk::Image<TComponentType, VDimension>        ScalarImageType;
     typedef itk::VectorImage<TComponentType, VDimension>  VectorImageType;
 
-    typedef itk::ImageFileReader< VectorImageType >        ReaderType;
+    typedef itk::ImageFileReader< VectorImageType >       ReaderType;
     typedef itk::RescaleIntensityImageFilter<
       ScalarImageType, ScalarImageType >                  RescalerType;
     typedef itk::StatisticsImageFilter< ScalarImageType > StatisticsType;
     typedef itk::ShiftScaleImageFilter<
       ScalarImageType, ScalarImageType >                  ShiftScalerType;
-    typedef itk::ImageFileWriter< VectorImageType >        WriterType;
+    typedef itk::ImageFileWriter< VectorImageType >       WriterType;
     typedef typename ScalarImageType::PixelType           PixelType;
     typedef typename StatisticsType::RealType             RealType;
 
@@ -145,59 +144,59 @@ public:
       indexSelectionFilter->Update();
       
       /** If the input values are extrema (minimum and maximum),
-      * then an IntensityRescaler is used. Otherwise, the values represent
-      * the desired mean and variance and a ShiftScaler is used.
-      */
+       * then an IntensityRescaler is used. Otherwise, the values represent
+       * the desired mean and variance and a ShiftScaler is used.
+       */
       if ( this->m_ValuesAreExtrema )
       {
-	/** Create instance. */
-	rescaler = RescalerType::New();
+        /** Create instance. */
+        rescaler = RescalerType::New();
 
-	/** Define the extrema. */
-	PixelType min, max;
-	if ( this->m_Values[ 0 ] == 0.0 && this->m_Values[ 1 ] == 0.0 )
-	{
-	  min = itk::NumericTraits<PixelType>::NonpositiveMin();
-	  max = itk::NumericTraits<PixelType>::max();
-	}
-	else
-	{
-	  min = static_cast<PixelType>( this->m_Values[ 0 ] );
-	  max = static_cast<PixelType>( this->m_Values[ 1 ] );
-	}
+        /** Define the extrema. */
+        PixelType min, max;
+        if ( this->m_Values[ 0 ] == 0.0 && this->m_Values[ 1 ] == 0.0 )
+        {
+          min = itk::NumericTraits<PixelType>::NonpositiveMin();
+          max = itk::NumericTraits<PixelType>::max();
+        }
+        else
+        {
+          min = static_cast<PixelType>( this->m_Values[ 0 ] );
+          max = static_cast<PixelType>( this->m_Values[ 1 ] );
+        }
 
-	/** Setup the rescaler. */
-	rescaler->SetInput( indexSelectionFilter->GetOutput() );
-	rescaler->SetOutputMinimum( min );
-	rescaler->SetOutputMaximum( max );
-	rescaler->Update();
+        /** Setup the rescaler. */
+        rescaler->SetInput( indexSelectionFilter->GetOutput() );
+        rescaler->SetOutputMinimum( min );
+        rescaler->SetOutputMaximum( max );
+        rescaler->Update();
 
-	/** Setup the recombining. */
-	imageToVectorImageFilter->SetNthInput(component, rescaler->GetOutput());
+        /** Setup the recombining. */
+        imageToVectorImageFilter->SetNthInput(component, rescaler->GetOutput());
 
       } // end if values are extrema
       else
       {
-	/** Create instances. */
-	statistics = StatisticsType::New();
-	shiftscaler = ShiftScalerType::New();
+        /** Create instances. */
+        statistics = StatisticsType::New();
+        shiftscaler = ShiftScalerType::New();
 
-	/** Calculate image statistics. */
-	statistics->SetInput( indexSelectionFilter->GetOutput() );
-	statistics->Update();
+        /** Calculate image statistics. */
+        statistics->SetInput( indexSelectionFilter->GetOutput() );
+        statistics->Update();
 
-	/** Get mean and variance of input image. */
-	RealType mean = statistics->GetMean();
-	RealType sigma = statistics->GetSigma();
+        /** Get mean and variance of input image. */
+        RealType mean = statistics->GetMean();
+        RealType sigma = statistics->GetSigma();
 
-	/** Setup the shiftscaler. */
-	shiftscaler->SetInput( indexSelectionFilter->GetOutput() );
-	shiftscaler->SetShift( this->m_Values[ 0 ] * sigma / vcl_sqrt( this->m_Values[ 1 ] ) - mean );
-	shiftscaler->SetScale( vcl_sqrt( this->m_Values[ 1 ] ) / sigma );
-	shiftscaler->Update();
+        /** Setup the shiftscaler. */
+        shiftscaler->SetInput( indexSelectionFilter->GetOutput() );
+        shiftscaler->SetShift( this->m_Values[ 0 ] * sigma / vcl_sqrt( this->m_Values[ 1 ] ) - mean );
+        shiftscaler->SetScale( vcl_sqrt( this->m_Values[ 1 ] ) / sigma );
+        shiftscaler->Update();
 
-	/** Setup the recombining. */
-	imageToVectorImageFilter->SetNthInput(component, shiftscaler->GetOutput());
+        /** Setup the recombining. */
+        imageToVectorImageFilter->SetNthInput(component, shiftscaler->GetOutput());
 
       } // end if values are mean and variance
     }// end component loop
@@ -208,7 +207,7 @@ public:
     /** Write the output image. */
     writer->SetFileName( this->m_OutputFileName.c_str() );
     writer->Update();
-  }
+  } // end Run()
 
 }; // end RescaleIntensityImageFilter
 
@@ -234,8 +233,8 @@ int main( int argc, char **argv )
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
 
   std::vector<std::string> exactlyOneArguments;
-  exactlyOneArguments.push_back("-mm");
-  exactlyOneArguments.push_back("-mv");
+  exactlyOneArguments.push_back( "-mm" );
+  exactlyOneArguments.push_back( "-mv" );
   parser->MarkExactlyOneOfArgumentsAsRequired( exactlyOneArguments );
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
@@ -300,7 +299,7 @@ int main( int argc, char **argv )
   if ( retmv ) valuesAreExtrema = false;
 
   /** Determine input image properties. */
-  std::string ComponentType = "short";
+  std::string componentTypeAsString = "short";
   std::string PixelType; //we don't use this
   unsigned int Dimension = 3;
   unsigned int NumberOfComponents = 1;
@@ -308,7 +307,7 @@ int main( int argc, char **argv )
   int retgip = itktools::GetImageProperties(
     inputFileName,
     PixelType,
-    ComponentType,
+    componentTypeAsString,
     Dimension,
     NumberOfComponents,
     imagesize );
@@ -317,15 +316,15 @@ int main( int argc, char **argv )
     return 1;
   }
 
+  itk::ImageIOBase::IOComponentType componentType
+    = itk::ImageIOBase::GetComponentTypeFromString( componentTypeAsString );
+
   /** Let the user overrule this. */
   if ( retmv )
   {
-    ComponentType = "float";
+    componentTypeAsString = "float";
   }
-  parser->GetCommandLineArgument( "-pt", ComponentType );
-
-  /** Get rid of the possible "_" in ComponentType. */
-  itktools::ReplaceUnderscoreWithSpace( ComponentType );
+  parser->GetCommandLineArgument( "-pt", componentTypeAsString );
 
   /** Get the values. */
   std::vector<double> values;
@@ -338,63 +337,56 @@ int main( int argc, char **argv )
     values = meanvariance;
   }
 
-
   /** Class that does the work */
-  ITKToolsRescaleIntensityImageFilterBase * rescaleIntensityImageFilter = 0; 
-
-  /** Short alias */
-  unsigned int imageDimension = Dimension;
- 
-  /** \todo some progs allow user to override the pixel type, 
-   * so we need a method to convert string to EnumComponentType */
-  itktools::ComponentType componentType = itktools::GetImageComponentType( inputFileName );
-  
-  std::cout << "Internal image component type: " << 
-    itk::ImageIOBase::GetComponentTypeAsString( componentType ) << std::endl;
+  ITKToolsRescaleIntensityImageFilterBase * rescaler = 0;
 
   try
   {    
-    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = ITKToolsRescaleIntensityImageFilter< unsigned char, 2 >::New( componentType, imageDimension );
-    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = ITKToolsRescaleIntensityImageFilter< char, 2 >::New( componentType, imageDimension );
-    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = ITKToolsRescaleIntensityImageFilter< unsigned short, 2 >::New( componentType, imageDimension );
-    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = ITKToolsRescaleIntensityImageFilter< short, 2 >::New( componentType, imageDimension );
-    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = ITKToolsRescaleIntensityImageFilter< float, 2 >::New( componentType, imageDimension );
+    if (!rescaler) rescaler = ITKToolsRescaleIntensityImageFilter< char, 2 >::New( componentType, Dimension );
+    if (!rescaler) rescaler = ITKToolsRescaleIntensityImageFilter< unsigned char, 2 >::New( componentType, Dimension );
+    if (!rescaler) rescaler = ITKToolsRescaleIntensityImageFilter< short, 2 >::New( componentType, Dimension );
+    if (!rescaler) rescaler = ITKToolsRescaleIntensityImageFilter< unsigned short, 2 >::New( componentType, Dimension );
+    if (!rescaler) rescaler = ITKToolsRescaleIntensityImageFilter< int, 2 >::New( componentType, Dimension );
+    if (!rescaler) rescaler = ITKToolsRescaleIntensityImageFilter< unsigned int, 2 >::New( componentType, Dimension );
+    if (!rescaler) rescaler = ITKToolsRescaleIntensityImageFilter< float, 2 >::New( componentType, Dimension );
+
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = ITKToolsRescaleIntensityImageFilter< unsigned char, 3 >::New( componentType, imageDimension );
-    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = ITKToolsRescaleIntensityImageFilter< char, 3 >::New( componentType, imageDimension );
-    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = ITKToolsRescaleIntensityImageFilter< unsigned short, 3 >::New( componentType, imageDimension );
-    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = ITKToolsRescaleIntensityImageFilter< short, 3 >::New( componentType, imageDimension );
-    if (!rescaleIntensityImageFilter) rescaleIntensityImageFilter = ITKToolsRescaleIntensityImageFilter< float, 3 >::New( componentType, imageDimension );
+    if (!rescaler) rescaler = ITKToolsRescaleIntensityImageFilter< char, 3 >::New( componentType, Dimension );
+    if (!rescaler) rescaler = ITKToolsRescaleIntensityImageFilter< unsigned char, 3 >::New( componentType, Dimension );
+    if (!rescaler) rescaler = ITKToolsRescaleIntensityImageFilter< short, 3 >::New( componentType, Dimension );
+    if (!rescaler) rescaler = ITKToolsRescaleIntensityImageFilter< unsigned short, 3 >::New( componentType, Dimension );
+    if (!rescaler) rescaler = ITKToolsRescaleIntensityImageFilter< int, 3 >::New( componentType, Dimension );
+    if (!rescaler) rescaler = ITKToolsRescaleIntensityImageFilter< unsigned int, 3 >::New( componentType, Dimension );
+    if (!rescaler) rescaler = ITKToolsRescaleIntensityImageFilter< float, 3 >::New( componentType, Dimension );
 #endif
-    if (!rescaleIntensityImageFilter) 
+
+    if( !rescaler )
     {
       std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
       std::cerr
-        << "pixel (component) type = " << componentType
+        << "pixel (component) type = " << componentTypeAsString
         << " ; dimension = " << Dimension
         << std::endl;
       return 1;
     }
 
-    rescaleIntensityImageFilter->m_InputFileName = inputFileName;
-    rescaleIntensityImageFilter->m_OutputFileName = outputFileName;
-    rescaleIntensityImageFilter->m_Values = values;
-    rescaleIntensityImageFilter->m_ValuesAreExtrema = valuesAreExtrema;
+    rescaler->m_InputFileName = inputFileName;
+    rescaler->m_OutputFileName = outputFileName;
+    rescaler->m_Values = values;
+    rescaler->m_ValuesAreExtrema = valuesAreExtrema;
 
-    rescaleIntensityImageFilter->Run();
+    rescaler->Run();
     
-    delete rescaleIntensityImageFilter;  
+    delete rescaler;  
   }
   catch( itk::ExceptionObject &e )
   {
     std::cerr << "Caught ITK exception: " << e << std::endl;
-    delete rescaleIntensityImageFilter;
+    delete rescaler;
     return 1;
   }
   
-
   /** End program. */
   return 0;
 
 } // end main()
-

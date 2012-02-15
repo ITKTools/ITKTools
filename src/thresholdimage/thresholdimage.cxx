@@ -176,7 +176,7 @@ int main( int argc, char **argv )
   }
 
   /** Determine image properties. */
-  std::string ComponentTypeIn = "short";
+  std::string componentTypeAsString = "short";
   std::string PixelType; //we don't use this
   unsigned int Dimension = 2;
   unsigned int NumberOfComponents = 1;
@@ -184,7 +184,7 @@ int main( int argc, char **argv )
   int retgip = itktools::GetImageProperties(
     inputFileName,
     PixelType,
-    ComponentTypeIn,
+    componentTypeAsString,
     Dimension,
     NumberOfComponents,
     imagesize );
@@ -192,6 +192,9 @@ int main( int argc, char **argv )
   {
     return 1;
   }
+
+  itk::ImageIOBase::IOComponentType componentType
+    = itk::ImageIOBase::GetComponentTypeFromString( componentTypeAsString );
 
   /** Check for vector images. */
   if ( NumberOfComponents > 1 )
@@ -202,68 +205,64 @@ int main( int argc, char **argv )
   }
 
   /** Class that does the work */
-  ITKToolsThresholdImageBase * thresholdImage = 0; 
+  ITKToolsThresholdImageBase * thresholder = 0; 
 
   /** Short alias */
   unsigned int dim = Dimension;
- 
-  /** \todo some progs allow user to override the pixel type, 
-   * so we need a method to convert string to EnumComponentType */
-  itktools::ComponentType componentType = itktools::GetImageComponentType( inputFileName );
 
   try
   {    
     // now call all possible template combinations.
-    if (!thresholdImage) thresholdImage = ITKToolsThresholdImage< char, 2 >::New( componentType, dim );
-    if (!thresholdImage) thresholdImage = ITKToolsThresholdImage< unsigned char, 2 >::New( componentType, dim );
-    if (!thresholdImage) thresholdImage = ITKToolsThresholdImage< short, 2 >::New( componentType, dim );
-    if (!thresholdImage) thresholdImage = ITKToolsThresholdImage< unsigned short, 2 >::New( componentType, dim );
-    if (!thresholdImage) thresholdImage = ITKToolsThresholdImage< float, 2 >::New( componentType, dim );
-    if (!thresholdImage) thresholdImage = ITKToolsThresholdImage< double, 2 >::New( componentType, dim );
+    if (!thresholder) thresholder = ITKToolsThresholdImage< char, 2 >::New( componentType, dim );
+    if (!thresholder) thresholder = ITKToolsThresholdImage< unsigned char, 2 >::New( componentType, dim );
+    if (!thresholder) thresholder = ITKToolsThresholdImage< short, 2 >::New( componentType, dim );
+    if (!thresholder) thresholder = ITKToolsThresholdImage< unsigned short, 2 >::New( componentType, dim );
+    if (!thresholder) thresholder = ITKToolsThresholdImage< float, 2 >::New( componentType, dim );
+    if (!thresholder) thresholder = ITKToolsThresholdImage< double, 2 >::New( componentType, dim );
 
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!thresholdImage) thresholdImage = ITKToolsThresholdImage< char, 3 >::New( componentType, dim );
-    if (!thresholdImage) thresholdImage = ITKToolsThresholdImage< unsigned char, 3 >::New( componentType, dim );
-    if (!thresholdImage) thresholdImage = ITKToolsThresholdImage< short, 3 >::New( componentType, dim );
-    if (!thresholdImage) thresholdImage = ITKToolsThresholdImage< unsigned short, 3 >::New( componentType, dim );
-    if (!thresholdImage) thresholdImage = ITKToolsThresholdImage< float, 3 >::New( componentType, dim );
-    if (!thresholdImage) thresholdImage = ITKToolsThresholdImage< double, 3 >::New( componentType, dim );
+    if (!thresholder) thresholder = ITKToolsThresholdImage< char, 3 >::New( componentType, dim );
+    if (!thresholder) thresholder = ITKToolsThresholdImage< unsigned char, 3 >::New( componentType, dim );
+    if (!thresholder) thresholder = ITKToolsThresholdImage< short, 3 >::New( componentType, dim );
+    if (!thresholder) thresholder = ITKToolsThresholdImage< unsigned short, 3 >::New( componentType, dim );
+    if (!thresholder) thresholder = ITKToolsThresholdImage< float, 3 >::New( componentType, dim );
+    if (!thresholder) thresholder = ITKToolsThresholdImage< double, 3 >::New( componentType, dim );
 #endif
-    if (!thresholdImage) 
+    if (!thresholder) 
     {
       std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
       std::cerr
-        << "pixel (component) type = " << ComponentTypeIn // so here we also need a string - we don't need to convert to a string here right? just output the string that was input.
+        << "pixel (component) type = " << componentTypeAsString
         << " ; dimension = " << Dimension
         << std::endl;
       return 1;
     }
 
-    thresholdImage->m_Bins = bins;
-    thresholdImage->m_InputFileName = inputFileName;
-    thresholdImage->m_Inside = inside;
-    thresholdImage->m_Iterations = iterations;
-    thresholdImage->m_MaskFileName = maskFileName;
-    thresholdImage->m_MaskValue = maskValue;
-    thresholdImage->m_Method = method;
-    thresholdImage->m_MixtureType = mixtureType;
-    thresholdImage->m_NumThresholds = numThresholds;
-    thresholdImage->m_OutputFileName = outputFileName;
-    thresholdImage->m_Outside = outside;
-    thresholdImage->m_Pow = pow;
-    thresholdImage->m_Sigma = sigma;
-    thresholdImage->m_Threshold1 = threshold1;
-    thresholdImage->m_Threshold2 = threshold2;
-    thresholdImage->m_UseCompression = useCompression;
+    thresholder->m_Bins = bins;
+    thresholder->m_InputFileName = inputFileName;
+    thresholder->m_Inside = inside;
+    thresholder->m_Iterations = iterations;
+    thresholder->m_MaskFileName = maskFileName;
+    thresholder->m_MaskValue = maskValue;
+    thresholder->m_Method = method;
+    thresholder->m_MixtureType = mixtureType;
+    thresholder->m_NumThresholds = numThresholds;
+    thresholder->m_OutputFileName = outputFileName;
+    thresholder->m_Outside = outside;
+    thresholder->m_Pow = pow;
+    thresholder->m_Sigma = sigma;
+    thresholder->m_Threshold1 = threshold1;
+    thresholder->m_Threshold2 = threshold2;
+    thresholder->m_UseCompression = useCompression;
 
-    thresholdImage->Run();
+    thresholder->Run();
     
-    delete thresholdImage;  
+    delete thresholder;  
   }
-  catch( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    delete thresholdImage;
+    std::cerr << "Caught ITK exception: " << excp << std::endl;
+    delete thresholder;
     return 1;
   }
 
