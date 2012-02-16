@@ -39,19 +39,18 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-  << "Usage:" << std::endl
-  << "pxintensitywindowing" << std::endl
-  << "  -in      inputFilename" << std::endl
-  << "  [-out]   outputFilename, default in + WINDOWED.mhd" << std::endl
-  << "  -w       windowMinimum windowMaximum" << std::endl
-  << "  [-pt]    pixel type of input and output images;" << std::endl
-  << "           default: automatically determined from the first input image." << std::endl
-  << "Supported: 2D, 3D, (unsigned) short, (unsigned) char, float.";
+    << "Usage:\n"
+    << "pxintensitywindowing\n"
+    << "  -in      inputFilename\n"
+    << "  [-out]   outputFilename, default in + WINDOWED.mhd\n"
+    << "  -w       windowMinimum windowMaximum\n"
+    << "  [-pt]    pixel type of input and output images\n"
+    << "           default: automatically determined from the first input image.\n"
+    << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, float.";
 
   return ss.str();
 
 } // end GetHelpString()
-
 
 
 /** IntensityWindowing */
@@ -63,7 +62,6 @@ public:
   {
     this->m_InputFileName = "";
     this->m_OutputFileName = "";
-    //std::vector<double> this->m_Window;
   };
   ~ITKToolsIntensityWindowingBase(){};
 
@@ -72,7 +70,6 @@ public:
   std::string m_OutputFileName;
   std::vector<double> m_Window;
 
-    
 }; // end IntensityWindowingBase
 
 
@@ -123,7 +120,7 @@ public:
     windowfilter->SetInput( reader->GetOutput() );
     writer->SetInput( windowfilter->GetOutput() );
     writer->Update();
-  }
+  } // end Run()
 
 }; // end IntensityWindowing
 
@@ -153,35 +150,6 @@ int main( int argc, char **argv )
   std::string inputFileName = "";
   parser->GetCommandLineArgument( "-in", inputFileName );
 
-  /** Determine input image properties. */
-  std::string ComponentType = "short";
-  std::string PixelType; //we don't use this
-  unsigned int Dimension = 3;
-  unsigned int NumberOfComponents = 1;
-  std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = itktools::GetImageProperties(
-    inputFileName,
-    PixelType,
-    ComponentType,
-    Dimension,
-    NumberOfComponents,
-    imagesize );
-  if ( retgip != 0 )
-  {
-    return 1;
-  }
-
-  /** Let the user overrule this. */
-  parser->GetCommandLineArgument( "-pt", ComponentType );
-
-  /** Error checking. */
-  if ( NumberOfComponents > 1 )
-  {
-    std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
-    std::cerr << "Vector images are not supported!" << std::endl;
-    return 1;
-  }
-
   /** Get the output file name. */
   std::string outputFileName = inputFileName.substr( 0, inputFileName.rfind( "." ) );
   outputFileName += "WINDOWED.mhd";
@@ -190,9 +158,6 @@ int main( int argc, char **argv )
   /** Get the window. */
   std::vector<double> window;
   bool retw = parser->GetCommandLineArgument( "-w", window );
-
-  //unsigned int Dimension = 3;
-  //bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
 
   /** Check if the required arguments are given. */
   if ( !retw )
@@ -219,53 +184,80 @@ int main( int argc, char **argv )
     return 1;
   }
 
+  /** Determine input image properties. */
+  std::string componentTypeAsString = "short";
+  std::string PixelType; //we don't use this
+  unsigned int Dimension = 3;
+  unsigned int NumberOfComponents = 1;
+  std::vector<unsigned int> imagesize( Dimension, 0 );
+  int retgip = itktools::GetImageProperties(
+    inputFileName,
+    PixelType,
+    componentTypeAsString,
+    Dimension,
+    NumberOfComponents,
+    imagesize );
+  if ( retgip != 0 )
+  {
+    return 1;
+  }
+
+  itk::ImageIOBase::IOComponentType componentType
+    = itk::ImageIOBase::GetComponentTypeFromString( componentTypeAsString );
+
+  /** Error checking. */
+  if ( NumberOfComponents > 1 )
+  {
+    std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
+    std::cerr << "Vector images are not supported!" << std::endl;
+    return 1;
+  }
 
   /** Class that does the work */
-  ITKToolsIntensityWindowingBase * intensityWindowing = NULL; 
+  ITKToolsIntensityWindowingBase * windower = NULL; 
 
-  unsigned int imageDimension = 0;
-  itktools::GetImageDimension(inputFileName, imageDimension);
-
-  itktools::ComponentType componentType = itktools::GetImageComponentType( inputFileName );
-  
   try
   {    
     // now call all possible template combinations.
-    if (!intensityWindowing) intensityWindowing = ITKToolsIntensityWindowing< 2, unsigned char >::New( imageDimension, componentType );
-    if (!intensityWindowing) intensityWindowing = ITKToolsIntensityWindowing< 2, char >::New( imageDimension, componentType );
-    if (!intensityWindowing) intensityWindowing = ITKToolsIntensityWindowing< 2, unsigned short >::New( imageDimension, componentType );
-    if (!intensityWindowing) intensityWindowing = ITKToolsIntensityWindowing< 2, short >::New( imageDimension, componentType );
-    if (!intensityWindowing) intensityWindowing = ITKToolsIntensityWindowing< 2, float >::New( imageDimension, componentType );
+    if( !windower ) windower = ITKToolsIntensityWindowing< 2, char >::New( Dimension, componentType );
+    if( !windower ) windower = ITKToolsIntensityWindowing< 2, unsigned char >::New( Dimension, componentType );
+    if( !windower ) windower = ITKToolsIntensityWindowing< 2, short >::New( Dimension, componentType );
+    if( !windower ) windower = ITKToolsIntensityWindowing< 2, unsigned short >::New( Dimension, componentType );
+    if( !windower ) windower = ITKToolsIntensityWindowing< 2, int >::New( Dimension, componentType );
+    if( !windower ) windower = ITKToolsIntensityWindowing< 2, unsigned int >::New( Dimension, componentType );
+    if( !windower ) windower = ITKToolsIntensityWindowing< 2, float >::New( Dimension, componentType );
     
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!intensityWindowing) intensityWindowing = ITKToolsIntensityWindowing< 3, unsigned char >::New( imageDimension, componentType );
-    if (!intensityWindowing) intensityWindowing = ITKToolsIntensityWindowing< 3, char >::New( imageDimension, componentType );
-    if (!intensityWindowing) intensityWindowing = ITKToolsIntensityWindowing< 3, unsigned short >::New( imageDimension, componentType );
-    if (!intensityWindowing) intensityWindowing = ITKToolsIntensityWindowing< 3, short >::New( imageDimension, componentType );
-    if (!intensityWindowing) intensityWindowing = ITKToolsIntensityWindowing< 3, float >::New( imageDimension, componentType );
+    if( !windower ) windower = ITKToolsIntensityWindowing< 3, char >::New( Dimension, componentType );
+    if( !windower ) windower = ITKToolsIntensityWindowing< 3, unsigned char >::New( Dimension, componentType );
+    if( !windower ) windower = ITKToolsIntensityWindowing< 3, short >::New( Dimension, componentType );
+    if( !windower ) windower = ITKToolsIntensityWindowing< 3, unsigned short >::New( Dimension, componentType );
+    if( !windower ) windower = ITKToolsIntensityWindowing< 3, int >::New( Dimension, componentType );
+    if( !windower ) windower = ITKToolsIntensityWindowing< 3, unsigned int >::New( Dimension, componentType );
+    if( !windower ) windower = ITKToolsIntensityWindowing< 3, float >::New( Dimension, componentType );
 #endif
-    if (!intensityWindowing) 
+    if( !windower ) 
     {
-      std::cerr << "ERROR: this combination of pixeltype, image dimension, and space dimension is not supported!" << std::endl;
+      std::cerr << "ERROR: this combination of pixeltype and image dimension is not supported!" << std::endl;
       std::cerr
-        << " image dimension = " << imageDimension << std::endl
-        << " pixel type = " << componentType << std::endl
+        << " image dimension = " << Dimension << std::endl
+        << " pixel type = " << componentTypeAsString << std::endl
         << std::endl;
       return 1;
     }
 
-    intensityWindowing->m_OutputFileName = outputFileName;
-    intensityWindowing->m_InputFileName = inputFileName;
-    intensityWindowing->m_Window = window;
+    windower->m_OutputFileName = outputFileName;
+    windower->m_InputFileName = inputFileName;
+    windower->m_Window = window;
     
-    intensityWindowing->Run();
+    windower->Run();
     
-    delete intensityWindowing;
+    delete windower;
   }
-  catch( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    delete intensityWindowing;
+    std::cerr << "Caught ITK exception: " << excp << std::endl;
+    delete windower;
     return 1;
   }
 
