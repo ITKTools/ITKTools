@@ -12,17 +12,17 @@
 # NOTE that Model should directly follow the comma: no space allowed!
 #
 # Setup: linux 64bit
-# gcc 4.1.2 20061115 (prerelease) (SUSE Linux),
-# Release mode, ITK 3.20.0
-# PC: linux cluster at BIGR (SK).
+# gcc 4.4.6 (RedHat Linux),
+# Release mode, ITK 4.1rc01
+# PC: linux cluster2 at BIGR (SK).
 
 # Client maintainer: s.klein@erasmusmc.nl
 set( CTEST_SITE "BIGR.cluster" )
-set( CTEST_BUILD_NAME "Linux-64bit-gcc4.1.2" )
-#set( CTEST_BUILD_FLAGS "-j2" ) # parallel build for makefiles
+set( CTEST_BUILD_NAME "Linux-64bit-gcc4.4.6" )
+set( CTEST_BUILD_FLAGS "-j3" ) # parallel build for makefiles
 set( CTEST_BUILD_CONFIGURATION Release )
 set( CTEST_CMAKE_GENERATOR "Unix Makefiles" )
-set( CTEST_DASHBOARD_ROOT "/home/sklein/tk/mydash/${CTEST_SCRIPT_NAME}" )
+set( CTEST_DASHBOARD_ROOT "/cm/shared/apps/itktools/nightly" )
 
 # default: automatically determined
 #set(CTEST_UPDATE_COMMAND /path/to/svn)
@@ -41,7 +41,7 @@ ENDIF()
 
 SET( dashboard_cache "
 // Which ITK to use
-ITK_DIR:PATH=/home/sklein/tk/itk/4.0.0/release
+ITK_DIR:PATH=/cm/shared/apps/itk/4.1rc01/release
 
 // Some ITKTools settings, defining the configuration
 ITKTOOLS_BUILD_TESTING:BOOL=ON
