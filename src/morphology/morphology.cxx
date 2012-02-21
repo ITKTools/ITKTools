@@ -78,6 +78,7 @@ extern bool Morphology2D(
   const std::vector<std::string> & bin,
   const int & algorithm,
   const bool useCompression );
+
 extern bool Morphology3D(
   const std::string & componentType,
   const unsigned int & Dimension,
