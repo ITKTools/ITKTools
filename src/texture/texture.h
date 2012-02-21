@@ -35,7 +35,7 @@
  */
 
 class ITKToolsTextureBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   /** Constructor. */
   ITKToolsTextureBase()
@@ -56,7 +56,7 @@ public:
   std::vector< unsigned int > m_OffsetScales;
   unsigned int m_NumberOfBins;
   unsigned int m_NumberOfOutputs;
-    
+
 }; // end class ITKToolsTextureBase
 
 
@@ -119,10 +119,10 @@ public:
 
     /** Create and attach a progress observer. */
     ShowProgressObject progressWatch( textureFilter );
-    itk::SimpleMemberCommand<ShowProgressObject>::Pointer command
+    typename itk::SimpleMemberCommand<ShowProgressObject>::Pointer progressCommand
       = itk::SimpleMemberCommand<ShowProgressObject>::New();
-    command->SetCallbackFunction( &progressWatch, &ShowProgressObject::ShowProgress );
-    textureFilter->AddObserver( itk::ProgressEvent(), command );
+    progressCommand->SetCallbackFunction( &progressWatch, &ShowProgressObject::ShowProgress );
+    textureFilter->AddObserver( itk::ProgressEvent(), progressCommand );
 
     /** Create the output file names. */
     std::vector< std::string > outputFileNames( 8, "" );
@@ -149,3 +149,4 @@ public:
 
 
 #endif // end #ifndef __texture_h
+

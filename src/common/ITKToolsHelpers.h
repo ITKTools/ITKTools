@@ -19,7 +19,7 @@
 #define __ITKToolsHelpers_h_
 
 #include "itkImageIOBase.h"
-#include "itkToolsBase.h"
+#include "ITKToolsBase.h"
 
 // functions from this header are not used here, but we always
 // want to also include this when we include Helpers

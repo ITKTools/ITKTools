@@ -28,7 +28,7 @@ namespace itktools
 
   // add macro for only component type
   // add macro for only dimension
-  
+
 #define itktoolsOneTypeNewMacro( object )                                       \
 static object * New( unsigned int dim,                                          \
   itk::ImageIOBase::IOComponentType componentType )                             \
@@ -44,7 +44,7 @@ static object * New( unsigned int dim,                                          
 #define itktoolsTwoTypeNewMacro( object )                                       \
 static object * New( unsigned int dim,                                          \
   itk::ImageIOBase::IOComponentType inputComponentType,                         \
-  itk::ImageIOBase::IOComponentType outputComponentType = inputComponentType )  \
+  itk::ImageIOBase::IOComponentType outputComponentType )                       \
 {                                                                               \
   if( VDimension == dim                                                         \
     && itktools::IsType<TInputComponentType>( inputComponentType )              \
@@ -59,7 +59,7 @@ static object * New( unsigned int dim,                                          
 static object * New( unsigned int dim,                                          \
   itk::ImageIOBase::IOComponentType inputComponentType1,                        \
   itk::ImageIOBase::IOComponentType inputComponentType2,                        \
-  itk::ImageIOBase::IOComponentType outputComponentType = inputComponentType1 ) \
+  itk::ImageIOBase::IOComponentType outputComponentType )                       \
 {                                                                               \
   if( VDimension == dim                                                         \
     && itktools::IsType<TInputComponentType1>( inputComponentType1 )            \

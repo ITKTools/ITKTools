@@ -306,7 +306,6 @@ ITKToolsGaussian< VDimension, TComponentType >
 ::GaussianImageFilterLaplacian( void )
 {
   /** Typedef's. */
-  const unsigned int VDimension = OutputImageType::ImageDimension;
   typedef typename OutputImageType::PixelType             OutputPixelType;
   typedef float                                           InputPixelType;
   typedef itk::Image< InputPixelType, VDimension >         InputImageType;
@@ -397,7 +396,6 @@ ITKToolsGaussian< VDimension, TComponentType >
 ::GaussianImageFilterInvariants( void )
 {
   /** Typedef's. */
-  const unsigned int VDimension = OutputImageType::ImageDimension;
   typedef typename OutputImageType::PixelType             OutputPixelType;
   typedef float                                           InputPixelType;
   typedef itk::Image< InputPixelType, VDimension >         InputImageType;
@@ -438,3 +436,4 @@ ITKToolsGaussian< VDimension, TComponentType >
 
 
 #endif // end #ifndef __gaussianimagefilter_h_
+

@@ -85,7 +85,7 @@ bool GetInputData( const std::string & fileName,
   {
     std::cerr << "ERROR: Something went wrong reading \""
       << fileName << "\"." << std::endl;
-    return EXIT_FAILURE;
+    return false;
   }
 
   /** Check if there are at least two columns. */
