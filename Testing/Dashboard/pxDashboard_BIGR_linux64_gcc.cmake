@@ -47,6 +47,9 @@ ITK_DIR:PATH=/cm/shared/apps/itk/4.1rc01/release
 ITKTOOLS_BUILD_TESTING:BOOL=ON
 ITKTOOLS_3D_SUPPORT:BOOL=ON
 ITKTOOLS_4D_SUPPORT:BOOL=ON
+
+// Install dir
+CMAKE_INSTALL_PREFIX:PATH=/cm/shared/apps/itktools/nightly/install
 ")
 
 
