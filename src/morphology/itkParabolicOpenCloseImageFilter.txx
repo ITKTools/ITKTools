@@ -26,7 +26,7 @@ ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage>
   this->SetNumberOfRequiredOutputs( 1 );
   this->SetNumberOfRequiredInputs( 1 );
 // needs to be selected according to erosion/dilation
-  if (doOpen)
+  if(doOpen)
     {
     // erosion then dilation
     this->m_Extreme1 = NumericTraits<PixelType>::max();
@@ -73,7 +73,7 @@ ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage>
   while (requestedRegionSize[splitAxis] == 1 || splitAxis == (int)m_CurrentDimension)
     {
     --splitAxis;
-    if (splitAxis < 0)
+    if(splitAxis < 0)
       { // cannot split
       itkDebugMacro("  Cannot Split");
       return 1;
@@ -86,12 +86,12 @@ ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage>
   int maxThreadIdUsed = (int)::ceil(range/(double)valuesPerThread) - 1;
 
   // Split the region
-  if (i < maxThreadIdUsed)
+  if(i < maxThreadIdUsed)
     {
     splitIndex[splitAxis] += i*valuesPerThread;
     splitSize[splitAxis] = valuesPerThread;
     }
-  if (i == maxThreadIdUsed)
+  if(i == maxThreadIdUsed)
     {
     splitIndex[splitAxis] += i*valuesPerThread;
     // last thread needs to process the "rest" dimension being split
@@ -145,7 +145,7 @@ ParabolicOpenCloseImageFilter<TInputImage,doOpen, TOutputImage>
 {
   TOutputImage *out = dynamic_cast<TOutputImage*>(output);
 
-  if (out)
+  if(out)
     {
     out->SetRequestedRegion( out->GetLargestPossibleRegion() );
     }
@@ -218,14 +218,14 @@ ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage >
   typename std::vector< unsigned int > NumberOfRows;
   InputSizeType   size   = outputRegionForThread.GetSize();
 
-  for (unsigned int i = 0; i < InputImageDimension; i++)
+  for( unsigned int i = 0; i < InputImageDimension; i++ )
     {
     NumberOfRows.push_back( 1 );
-    for (unsigned int d = 0; d < InputImageDimension; d++)
+    for( unsigned int d = 0; d < InputImageDimension; d++)
       {
       if( d != i )
         {
-        NumberOfRows[i] *= size[ d ];
+        NumberOfRows[ i ] *= size[ d ];
         }
       }
     }
@@ -258,13 +258,13 @@ ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage >
   OutputIteratorType      outputIterator( outputImage, region );
   OutputConstIteratorType inputIteratorStage2( outputImage, region );
 
-  if ( this->m_Stage == 1)
+  if( this->m_Stage == 1)
     {
     // deal with the first dimension - this should be copied to the
     // output if the scale is 0
-    if ( this->m_CurrentDimension == 0)
+    if( this->m_CurrentDimension == 0)
       {
-      if ( this->m_Scale[0] > 0)
+      if( this->m_Scale[0] > 0)
 	{
 	// Perform as normal
 //     RealType magnitude = 1.0/(2.0 * this->m_Scale[0]);
@@ -317,7 +317,7 @@ ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage >
   else
     {
     // deal with the other dimensions for second stage
-    if ( this->m_Scale[m_CurrentDimension] > 0)
+    if( this->m_Scale[m_CurrentDimension] > 0)
       {
       //RealType magnitude = 1.0/(2.0 * this->m_Scale[dd]);
       unsigned long LineLength = region.GetSize()[m_CurrentDimension];
@@ -342,7 +342,7 @@ ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage>
 ::PrintSelf(std::ostream& os, Indent indent) const
 {
   Superclass::PrintSelf(os,indent);
-  if ( this->m_UseImageSpacing)
+  if( this->m_UseImageSpacing)
     {
     os << "Scale in world units: " << this->m_Scale << std::endl;
     }

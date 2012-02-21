@@ -34,14 +34,12 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-    << "This program computes the bounding box of an image." << std::endl
-    << "Every pixel > 0 is considered to be within the bounding box." << std::endl
-    << "Returns the minimum and maximum indices/points that lie within the bounding box." << std::endl
-    << "Usage:" << std::endl
-    << "pxcomputeboundingbox" << std::endl
-    << "-in      inputFilename" << std::endl
-    << "[-dim]   dimension, default 3" << std::endl
-    << "[-pt]    pixelType, default short" << std::endl
+    << "This program computes the bounding box of an image.\n"
+    << "Every pixel > 0 is considered to be within the bounding box.\n"
+    << "Returns the minimum and maximum indices/points that lie within the bounding box.\n"
+    << "Usage:\n"
+    << "pxcomputeboundingbox\n"
+    << "-in      inputFilename\n"
     << "Supported: 2D, 3D, short. Images with PixelType other than short are automatically converted.";
 
   return ss.str();
@@ -76,98 +74,53 @@ int main( int argc, char **argv )
   parser->GetCommandLineArgument( "-in", inputFileName );
 
   /** Determine image properties. */
-  std::string ComponentType = "short";
-  std::string PixelType; //we don't use this
-  unsigned int Dimension = 2;
-  unsigned int NumberOfComponents = 1;
-  std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = itktools::GetImageProperties(
-    inputFileName,
-    PixelType,
-    ComponentType,
-    Dimension,
-    NumberOfComponents,
-    imagesize );
-  if ( retgip !=0 )
-  {
-    return 1;
-  }
-  std::cout << "The input image has the following properties:" << std::endl;
-  /** Do not bother the user with the difference between pixeltype and componenttype:*/
-  //std::cout << "\tPixelType:          " << PixelType << std::endl;
-  std::cout << "\tPixelType:          " << ComponentType << std::endl;
-  std::cout << "\tDimension:          " << Dimension << std::endl;
-  std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
+  itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
+  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  unsigned int dim = 0;
+  unsigned int numberOfComponents = 0;
+  bool retgip = itktools::GetImageProperties(
+    inputFileName, pixelType, componentType, dim, numberOfComponents );
+  if( !retgip ) return EXIT_FAILURE;
 
-  /** Let the user overrule this */
-  bool retdim = parser->GetCommandLineArgument( "-dim", Dimension );
-  bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
-  if ( retdim | retpt )
-  {
-    std::cout << "The user has overruled this by specifying -pt and/or -dim:" << std::endl;
-    std::cout << "\tPixelType:          " << ComponentType << std::endl;
-    std::cout << "\tDimension:          " << Dimension << std::endl;
-    std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
-  }
+  /** Check for vector images. */
+  bool retNOCCheck = itktools::NumberOfComponentsCheck( numberOfComponents );
+  if( !retNOCCheck ) return EXIT_FAILURE;
 
-  if ( NumberOfComponents > 1 )
-  {
-    std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
-    std::cerr << "Vector images are not supported!" << std::endl;
-    return 1;
-  }
+  /** Overrule component type, since only short will do something,
+   * and it is not relevant in this case.
+   */
+  componentType = itk::ImageIOBase::SHORT;
 
-  /** Get rid of the possible "_" in ComponentType. */
-  itktools::ReplaceUnderscoreWithSpace( ComponentType );
-
-  /** Overrule it, since only short will do something */
-  if ( ComponentType != "short" )
-  {
-    /** Try short anyway, but warn user */
-    ComponentType = "short";
-    std::cout << "WARNING: the image will be converted to short!" << std::endl;
-  }
-
-  /** Class that does the work */
-  ITKToolsComputeBoundingBoxBase * computeBoundingBox = 0; 
-
-  /** Short alias */
-  unsigned int dim = Dimension;
-  itktools::ComponentType componentType
-    = itk::ImageIOBase::GetComponentTypeFromString( "short" );
+  /** Class that does the work. */
+  ITKToolsComputeBoundingBoxBase * filter = 0; 
 
   try
   {    
     // now call all possible template combinations.
-    if (!computeBoundingBox) computeBoundingBox = ITKToolsComputeBoundingBox< short, 2 >::New( componentType, dim );
+    if( !filter ) filter = ITKToolsComputeBoundingBox< 2, short >::New( dim, componentType );
     
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!computeBoundingBox) computeBoundingBox = ITKToolsComputeBoundingBox< short, 3 >::New( componentType, dim );    
+    if( !filter ) filter = ITKToolsComputeBoundingBox< 3, short >::New( dim, componentType );    
 #endif
-    if (!computeBoundingBox) 
-    {
-      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-      std::cerr
-        << "pixel (component) type = " << componentType
-        << " ; dimension = " << Dimension
-        << std::endl;
-      return 1;
-    }
+    /** Check if filter was instantiated. */
+    bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
+    if( !supported ) return EXIT_FAILURE;
 
-    computeBoundingBox->m_InputFileName = inputFileName;
+    /** Set the filter arguments. */
+    filter->m_InputFileName = inputFileName;
 
-    computeBoundingBox->Run();
+    filter->Run();
     
-    delete computeBoundingBox;  
+    delete filter;  
   }
-  catch( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    delete computeBoundingBox;
-    return 1;
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+    delete filter;
+    return EXIT_FAILURE;
   }
 
   /** End program. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main

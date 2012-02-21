@@ -22,15 +22,9 @@
  \verbinclude averagevectormagnitude.help
  */
 
-#include "ITKToolsHelpers.h"
-#include "ITKToolsImageProperties.h"
 #include "itkCommandLineArgumentParser.h"
-
+#include "ITKToolsHelpers.h"
 #include "averagevectormagnitude.h"
-#include "itkExceptionObject.h"
-
-#include <iostream>
-#include <string>
 
 
 /**
@@ -41,13 +35,11 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-     << "Calculate the average magnitude of the vectors in a vector image." << std::endl
-     << "Usage:" << std::endl
-     << "AverageVectorMagnitude" << std::endl
-     << "-in InputVectorImageFileName" << std::endl
-     << "[-out OutputImageFileName]" << std::endl
-     << "-id ImageDimension" << std::endl
-     << "-sd SpaceDimension (the dimension of the vectors)" << std::endl;
+    << "Calculate the average magnitude of the vectors in a vector image.\n"
+    << "Usage:\n"
+    << "AverageVectorMagnitude\n"
+    << "  -in      InputVectorImageFileName\n"
+    << "  [-out]   OutputImageFileName]\n";
 
   return ss.str();
 
@@ -57,23 +49,14 @@ std::string GetHelpString( void )
 
 int main( int argc, char** argv )
 {
+  /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
   parser->SetProgramHelpText( GetHelpString() );
 
-  std::string inputFileName("");
-  std::string outputFileName(inputFileName + "AverageVectorMagnitude.mhd");
-  unsigned int imageDimension = 2;
-  unsigned int spaceDimension = 1;
-
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
   parser->MarkArgumentAsRequired( "-id", "Image dimension." );
   parser->MarkArgumentAsRequired( "-sd", "Space dimension." );
-
-  parser->GetCommandLineArgument( "-in", inputFileName );
-  parser->GetCommandLineArgument( "-out", outputFileName );
-  parser->GetCommandLineArgument( "-sd", spaceDimension );
-  parser->GetCommandLineArgument( "-id", imageDimension );
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
@@ -86,51 +69,54 @@ int main( int argc, char** argv )
     return EXIT_SUCCESS;
   }
 
+  /** Get arguments. */
+  std::string inputFileName = "";
+  parser->GetCommandLineArgument( "-in", inputFileName );
+
+  std::string outputFileName( inputFileName + "AverageVectorMagnitude.mhd" );
+  parser->GetCommandLineArgument( "-out", outputFileName );
+
   /** Determine image properties. */
+  itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
+  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  unsigned int dim = 0;
   unsigned int numberOfComponents = 0;
-  itktools::GetImageNumberOfComponents( inputFileName, numberOfComponents );
+  bool retgip = itktools::GetImageProperties(
+    inputFileName, pixelType, componentType, dim, numberOfComponents );
+  if( !retgip ) return EXIT_FAILURE;
 
-  unsigned int dimension = 0;
-  itktools::GetImageDimension( inputFileName, dimension );
+  /** Class that does the work. */
+  ITKToolsAverageVectorMagnitudeBase * filter = 0;
 
-  ITKToolsAverageVectorMagnitudeBase * averageVectorMagnitude = 0;
-
-  float averageMagnitude = 0.0f; // Initialize output to zero
   try
   {
     // 2D
-    if (!averageVectorMagnitude) averageVectorMagnitude = ITKToolsAverageVectorMagnitude< 2, 2 >::New( numberOfComponents, dimension );
-    if (!averageVectorMagnitude) averageVectorMagnitude = ITKToolsAverageVectorMagnitude< 3, 2 >::New( numberOfComponents, dimension );
+    if( !filter ) filter = ITKToolsAverageVectorMagnitude< 2, float, 2 >::New( dim, componentType, numberOfComponents );
+    if( !filter ) filter = ITKToolsAverageVectorMagnitude< 2, float, 3 >::New( dim, componentType, numberOfComponents );
     
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!averageVectorMagnitude) averageVectorMagnitude = ITKToolsAverageVectorMagnitude< 2, 3 >::New( numberOfComponents, dimension );
-    if (!averageVectorMagnitude) averageVectorMagnitude = ITKToolsAverageVectorMagnitude< 3, 3 >::New( numberOfComponents, dimension );
+    if( !filter ) filter = ITKToolsAverageVectorMagnitude< 3, float, 2 >::New( dim, componentType, numberOfComponents );
+    if( !filter ) filter = ITKToolsAverageVectorMagnitude< 3, float, 3 >::New( dim, componentType, numberOfComponents );
 #endif
-    if (!averageVectorMagnitude)
-    {
-      std::cerr << "ERROR: this combination of numberOfComponents and dimension is not supported!" << std::endl;
-      std::cerr
-        << "numberOfComponents = " << numberOfComponents
-        << " ; dimension = " << dimension
-        << std::endl;
-      return 1;
-    }
+    /** Check if filter was instantiated. */
+    bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
+    if( !supported ) return EXIT_FAILURE;
 
-    averageVectorMagnitude->m_InputFileName = inputFileName;
-    averageVectorMagnitude->m_OutputFileName = outputFileName;
+    /** Set the filter arguments. */
+    filter->m_InputFileName = inputFileName;
+    filter->m_OutputFileName = outputFileName;
 
-    averageVectorMagnitude->Run();
+    filter->Run();
 
-    averageMagnitude = averageVectorMagnitude->m_AverageMagnitude;
-    delete averageVectorMagnitude;
+    delete filter;
   }
-  catch( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    delete averageVectorMagnitude;
-    return 1;
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+    delete filter;
+    return EXIT_FAILURE;
   }
 
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end function main

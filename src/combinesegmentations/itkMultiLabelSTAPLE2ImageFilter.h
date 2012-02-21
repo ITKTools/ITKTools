@@ -1,5 +1,22 @@
-#ifndef __itkMultiLabelSTAPLE2ImageFilter_h
-#define __itkMultiLabelSTAPLE2ImageFilter_h
+/*=========================================================================
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
+#ifndef __itkMultiLabelSTAPLE2ImageFilter_h_
+#define __itkMultiLabelSTAPLE2ImageFilter_h_
 
 #include "itkImage.h"
 #include "itkImageToImageFilter.h"
@@ -179,7 +196,7 @@ namespace itk
 
     virtual void UnsetMaximumNumberOfIterations()
     {
-      if ( this->m_HasMaximumNumberOfIterations )
+      if( this->m_HasMaximumNumberOfIterations )
       {
         this->m_HasMaximumNumberOfIterations = false;
         this->Modified();
@@ -207,7 +224,7 @@ namespace itk
 
     virtual void UnsetPriorPreference( void )
     {
-      if ( this->m_HasPriorPreference )
+      if( this->m_HasPriorPreference )
       {
         this->m_HasPriorPreference = false;
         this->Modified();
@@ -229,7 +246,7 @@ namespace itk
 
     virtual void UnsetPriorProbabilityImageArray( void )
     {
-      if ( this->m_HasPriorProbabilityImageArray )
+      if( this->m_HasPriorProbabilityImageArray )
       {
         this->m_HasPriorProbabilityImageArray = false;
         this->Modified();
@@ -248,7 +265,7 @@ namespace itk
 
     virtual void UnsetPriorProbabilities( void )
     {
-      if ( this->m_HasPriorProbabilities )
+      if( this->m_HasPriorProbabilities )
       {
         this->m_HasPriorProbabilities = false;
         this->Modified();
@@ -267,7 +284,7 @@ namespace itk
 
     virtual void UnsetObserverTrust( void )
     {
-      if ( this->m_HasObserverTrust )
+      if( this->m_HasObserverTrust )
       {
         this->m_HasObserverTrust = false;
         this->Modified();
@@ -285,7 +302,7 @@ namespace itk
 
     virtual void UnsetNumberOfClasses( void )
     {
-      if ( this->m_HasNumberOfClasses )
+      if( this->m_HasNumberOfClasses )
       {
         this->m_HasNumberOfClasses = false;
         this->Modified();
@@ -324,7 +341,7 @@ namespace itk
      * of those float images sitting in your memory, call this function */
     virtual void CleanProbabilisticSegmentations( void )
     {
-      if ( this->m_ProbabilisticSegmentationArray.size() > 0 )
+      if( this->m_ProbabilisticSegmentationArray.size() > 0 )
       {
         this->m_ProbabilisticSegmentationArray =
           ProbabilisticSegmentationArrayType(0);
@@ -338,7 +355,7 @@ namespace itk
     /** Get confusion matrix for the i-th input segmentation. */
     virtual const ConfusionMatrixType & GetConfusionMatrix( const unsigned int i ) const
     {
-      return this->m_ConfusionMatrixArray[i];
+      return this->m_ConfusionMatrixArray[ i ];
     }
 
     /** Get the number of elapsed iterations */
@@ -414,4 +431,4 @@ namespace itk
 #include "itkMultiLabelSTAPLE2ImageFilter.txx"
 #endif
 
-#endif
+#endif // end #ifndef __itkMultiLabelSTAPLE2ImageFilter_h_

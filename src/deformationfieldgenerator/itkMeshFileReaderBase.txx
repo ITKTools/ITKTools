@@ -1,5 +1,22 @@
-#ifndef __itkMeshFileReaderBase_txx
-#define __itkMeshFileReaderBase_txx
+/*=========================================================================
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
+#ifndef __itkMeshFileReaderBase_txx_
+#define __itkMeshFileReaderBase_txx_
 
 #include "itkMeshFileReaderBase.h"
 
@@ -34,7 +51,7 @@ namespace itk
     itkDebugMacro(<<"Reading file for GenerateOutputInformation()" << this->m_FileName);
 
     /** Check to see if we can read the file given the name or prefix */
-    if ( this->m_FileName == "" )
+    if( this->m_FileName == "" )
     {
       throw MeshFileReaderException(__FILE__, __LINE__, "FileName must be specified", ITK_LOCATION);
     }
@@ -107,7 +124,7 @@ namespace itk
   {
     OutputMeshPointer out = dynamic_cast<OutputMeshType *>(output);
 
-    if (out)
+    if(out)
     {
       out->SetRequestedRegionToLargestPossibleRegion();
     }
@@ -124,5 +141,4 @@ namespace itk
 } // end namespace itk
 
 
-
-#endif
+#endif // #ifndef __itkMeshFileReaderBase_txx_

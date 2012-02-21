@@ -2,11 +2,10 @@
 PROJECT( common )
 
 ADD_LIBRARY( ITKTools-Common
-  itkCommandLineArgumentParser.cxx
   itkCommandLineArgumentParser.h
-  CommandLineArgumentHelper.cxx
-  CommandLineArgumentHelper.txx
+  itkCommandLineArgumentParser.cxx
   CommandLineArgumentHelper.h
+  CommandLineArgumentHelper.hxx
   ITKToolsHelpers.h
   ITKToolsHelpers.cxx
   ITKToolsImageProperties.h

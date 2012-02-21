@@ -26,7 +26,7 @@ void KappaStatisticBase
 ::SetObservations( const SamplesType observations )
 {
   bool check = this->CheckObservations( observations );
-  if ( check )
+  if( check )
   {
     this->Modified();
     this->m_Observations = observations;
@@ -80,7 +80,7 @@ void KappaStatisticBase
 void KappaStatisticBase
 ::ComputeNumberOfObservations( void )
 {
-  if ( this->m_Observations.size() )
+  if( this->m_Observations.size() )
   {
     this->m_NumberOfObservations = this->m_Observations[ 0 ].size();
   }
@@ -104,9 +104,9 @@ void KappaStatisticBase
    * list should contain only the different values, each value once.
    */
   std::list<CategoryType> categories( 0 );
-  for ( unsigned int i = 0; i < this->m_Observations.size(); ++i )
+  for( unsigned int i = 0; i < this->m_Observations.size(); ++i )
   {
-    for ( unsigned int j = 0; j < this->m_Observations[ 0 ].size(); ++j )
+    for( unsigned int j = 0; j < this->m_Observations[ 0 ].size(); ++j )
     {
       categories.push_back( this->m_Observations[ i ][ j ] );
     }
@@ -135,10 +135,10 @@ bool KappaStatisticBase
 ::CheckObservations( const SamplesType & observations ) const
 {
   /** Check that at least two observers are compared. */
-  if ( observations.size() < 2 ) return false;
+  if( observations.size() < 2 ) return false;
 
   /** Check that at least one observation is made. */
-  if ( observations[ 0 ].size() < 1 ) return false;
+  if( observations[ 0 ].size() < 1 ) return false;
 
   /** Check that all observers have an equal amount of
    *  observations. The kappa statistic is a paired statistic,
@@ -146,9 +146,9 @@ bool KappaStatisticBase
    *  be equal.
    */
   unsigned int obs = observations[ 0 ].size();
-  for ( unsigned int i = 1; i < observations.size(); ++i )
+  for( unsigned int i = 1; i < observations.size(); ++i )
   {
-    if ( obs != observations[ i ].size() ) return false;
+    if( obs != observations[ i ].size() ) return false;
   }
 
   /** Return a value. */

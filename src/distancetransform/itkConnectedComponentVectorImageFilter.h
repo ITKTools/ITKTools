@@ -2,10 +2,8 @@
  * author: Bryn Lloyd
  * date: September 2005
  */
-
-
-#ifndef __itkConnectedComponentVectorImageFilter_h
-#define __itkConnectedComponentVectorImageFilter_h
+#ifndef __itkConnectedComponentVectorImageFilter_h_
+#define __itkConnectedComponentVectorImageFilter_h_
 
 #include "itkImageToImageFilter.h"
 #include "itkImage.h"
@@ -147,4 +145,4 @@ private:
 #include "itkConnectedComponentVectorImageFilter.txx"
 #endif
 
-#endif
+#endif // end #ifndef __itkConnectedComponentVectorImageFilter_h_

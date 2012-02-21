@@ -86,75 +86,63 @@ int main( int argc, char *argv[] )
   double radius = 0.0f;;
   parser->GetCommandLineArgument( "-r", radius );
 
-  unsigned int Dimension = 3;
-  parser->GetCommandLineArgument( "-dim", Dimension );
+  unsigned int dim = 3;
+  parser->GetCommandLineArgument( "-dim", dim );
 
-  std::string PixelType = "short";
-  parser->GetCommandLineArgument( "-pt", PixelType );
+  std::string componentTypeAsString = "short";
+  parser->GetCommandLineArgument( "-opct", componentTypeAsString );
 
-  std::vector<double> spacing( Dimension, 1.0 );
+  std::vector<double> spacing( dim, 1.0 );
   parser->GetCommandLineArgument( "-sp", spacing );
 
-  /** Get rid of the possible "_" in PixelType. */
-  itktools::ReplaceUnderscoreWithSpace( PixelType );
+  /** String to component type. */
+  itk::ImageIOBase::IOComponentType componentType
+    = itk::ImageIOBase::GetComponentTypeFromString( componentTypeAsString );
 
-  /** Run the program. */
-  
-  /** Class that does the work */
-  ITKToolsCreateSphereBase * createSphere = 0; 
-
-  /** Short alias */
-  unsigned int dim = Dimension;
-
-  itktools::ComponentType componentType = itk::ImageIOBase::GetComponentTypeFromString( PixelType );
+  /** Class that does the work. */
+  ITKToolsCreateSphereBase * filter = 0;
 
   try
   {    
     // now call all possible template combinations.
-    if (!createSphere) createSphere = ITKToolsCreateSphere< unsigned char, 2 >::New( componentType, dim );
-    if (!createSphere) createSphere = ITKToolsCreateSphere< char, 2 >::New( componentType, dim );
-    if (!createSphere) createSphere = ITKToolsCreateSphere< unsigned short, 2 >::New( componentType, dim );
-    if (!createSphere) createSphere = ITKToolsCreateSphere< short, 2 >::New( componentType, dim );
-    if (!createSphere) createSphere = ITKToolsCreateSphere< float, 2 >::New( componentType, dim );
-    if (!createSphere) createSphere = ITKToolsCreateSphere< double, 2 >::New( componentType, dim );
+    if( !filter ) filter = ITKToolsCreateSphere< 2, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCreateSphere< 2, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCreateSphere< 2, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCreateSphere< 2, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCreateSphere< 2, float >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCreateSphere< 2, double >::New( dim, componentType );
     
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!createSphere) createSphere = ITKToolsCreateSphere< unsigned char, 3 >::New( componentType, dim );
-    if (!createSphere) createSphere = ITKToolsCreateSphere< char, 3 >::New( componentType, dim );
-    if (!createSphere) createSphere = ITKToolsCreateSphere< unsigned short, 3 >::New( componentType, dim );
-    if (!createSphere) createSphere = ITKToolsCreateSphere< short, 3 >::New( componentType, dim );
-    if (!createSphere) createSphere = ITKToolsCreateSphere< float, 3 >::New( componentType, dim );
-    if (!createSphere) createSphere = ITKToolsCreateSphere< double, 3 >::New( componentType, dim );
+    if( !filter ) filter = ITKToolsCreateSphere< 3, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCreateSphere< 3, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCreateSphere< 3, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCreateSphere< 3, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCreateSphere< 3, float >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCreateSphere< 3, double >::New( dim, componentType );
 #endif
-    if (!createSphere) 
-    {
-      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-      std::cerr
-        << "pixel (component) type = " << componentType
-        << " ; dimension = " << Dimension
-        << std::endl;
-      return 1;
-    }
+    /** Check if filter was instantiated. */
+    bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
+    if( !supported ) return EXIT_FAILURE;
 
-    createSphere->m_OutputFileName = outputFileName;
-    createSphere->m_Size = size;
-    createSphere->m_Spacing = spacing;
-    createSphere->m_Center = center;
-    createSphere->m_Radius = radius;
-    
+    /** Set the filter arguments. */
+    filter->m_OutputFileName = outputFileName;
+    filter->m_Size = size;
+    filter->m_Spacing = spacing;
+    filter->m_Center = center;
+    filter->m_Radius = radius;
 
-    createSphere->Run();
-    
-    delete createSphere;
+    filter->Run();
+
+    delete filter;
   }
-  catch( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    delete createSphere;
-    return 1;
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+    delete filter;
+    return EXIT_FAILURE;
   }
  
   /** End program. Return a value. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main

@@ -1,4 +1,21 @@
 /*=========================================================================
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
+/*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: itkScalarImageToGrayLevelCooccurrenceMatrixGenerator.txx,v $
@@ -14,8 +31,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef _itkScalarImageToGrayLevelCooccurrenceMatrixGenerator_txx
-#define _itkScalarImageToGrayLevelCooccurrenceMatrixGenerator_txx
+#ifndef _itkScalarImageToGrayLevelCooccurrenceMatrixGenerator_txx_
+#define _itkScalarImageToGrayLevelCooccurrenceMatrixGenerator_txx_
 
 #include "itkScalarImageToGrayLevelCooccurrenceMatrixGenerator.h"
 
@@ -61,7 +78,7 @@ ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
 {
   // First, create an appropriate histogram with the right number of bins
   // and mins and maxes correct for the image type.
-  if ( this->m_Output.IsNull() )
+  if( this->m_Output.IsNull() )
   {
     this->m_Output = HistogramType::New();
     this->m_Output->SetMeasurementVectorSize( 2 );
@@ -78,10 +95,10 @@ ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
   typename OffsetVector::ConstIterator offsets;
   for ( offsets = this->m_Offsets->Begin(); offsets != this->m_Offsets->End(); offsets++ )
   {
-    for ( unsigned int i = 0; i < offsets.Value().GetOffsetDimension(); i++ )
+    for( unsigned int i = 0; i < offsets.Value().GetOffsetDimension(); i++ )
     {
       unsigned int distance = vnl_math_abs( offsets.Value()[ i ] );
-      if ( distance > minRadius )
+      if( distance > minRadius )
       {
         minRadius = distance;
       }
@@ -93,7 +110,7 @@ ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
 
   // Region
   RegionType region = this->m_Input->GetRequestedRegion();
-  if ( this->m_ComputeRegion.GetNumberOfPixels() != 0 )
+  if( this->m_ComputeRegion.GetNumberOfPixels() != 0 )
   {
     region = this->m_ComputeRegion;
   }
@@ -102,7 +119,7 @@ ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
   this->FillHistogram( radius, region );
 
   // Normalize the histogram if requested
-  if ( this->m_Normalize )
+  if( this->m_Normalize )
   {
     this->NormalizeHistogram();
   }
@@ -134,7 +151,7 @@ ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
   {
     const PixelType centerPixelIntensity = neighborIt.GetCenterPixel();
     // Don't put a pixel in the histogram if the value is out-of-bounds.
-    if ( centerPixelIntensity < this->m_Min || centerPixelIntensity > this->m_Max )
+    if( centerPixelIntensity < this->m_Min || centerPixelIntensity > this->m_Max )
     {
       continue;
     }
@@ -147,13 +164,13 @@ ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
         = neighborIt.GetPixel( offsets.Value(), pixelInBounds );
 
       // Don't put a pixel in the histogram if it's out-of-bounds.
-      if ( !pixelInBounds )
+      if( !pixelInBounds )
       {
         continue;
       }
 
       // don't put a pixel in the histogram if it's value is out-of-bounds.
-      if ( pixelIntensity < this->m_Min || pixelIntensity > this->m_Max )
+      if( pixelIntensity < this->m_Min || pixelIntensity > this->m_Max )
       {
         continue;
       }
@@ -246,7 +263,7 @@ ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
     << this->m_Normalize << std::endl;
 
   os << indent << "Offsets: ";
-  for ( unsigned int i = 0; i < this->m_Offsets->Size(); ++i )
+  for( unsigned int i = 0; i < this->m_Offsets->Size(); ++i )
   {
     os << this->m_Offsets->GetElement( i ) << " ";
   }

@@ -1,5 +1,22 @@
-#ifndef _itkLabelVoting2ImageFilter_txx
-#define _itkLabelVoting2ImageFilter_txx
+/*=========================================================================
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
+#ifndef _itkLabelVoting2ImageFilter_txx_
+#define _itkLabelVoting2ImageFilter_txx_
 
 #include "itkLabelVoting2ImageFilter.h"
 
@@ -43,7 +60,7 @@ namespace itk
     InputPixelType maxLabel = 0;
     const unsigned int numberOfInputs = this->GetNumberOfInputs();
 
-    for ( unsigned int k = 0; k < numberOfInputs; ++k )
+    for( unsigned int k = 0; k < numberOfInputs; ++k )
     {
       InputConstIteratorType it
         ( this->GetInput( k ), this->GetInput( k )->GetBufferedRegion() );
@@ -68,7 +85,7 @@ namespace itk
 
     /** create the confusion matrix and space for updated confusion matrix for
      * each of the input images */
-    for ( unsigned int k = 0; k < numberOfInputs; ++k )
+    for( unsigned int k = 0; k < numberOfInputs; ++k )
     {
       /** the confusion matrix has as many row/columns as there are input labels,
        * The column nrs correspond to the 'real' class, as estimated by the
@@ -84,10 +101,10 @@ namespace itk
     /** For multithreading: */
     unsigned int numberOfThreads = this->GetNumberOfThreads();
     this->m_ConfusionMatrixArrays.resize( numberOfThreads );
-    for ( unsigned int t = 0; t < numberOfThreads; ++t)
+    for( unsigned int t = 0; t < numberOfThreads; ++t)
     {
       this->m_ConfusionMatrixArrays[t].clear();
-      for ( unsigned int k = 0; k < numberOfInputs; ++k )
+      for( unsigned int k = 0; k < numberOfInputs; ++k )
       {
         this->m_ConfusionMatrixArrays[t].push_back(
           ConfusionMatrixType( this->m_NumberOfClasses, this->m_NumberOfClasses ) );
@@ -111,19 +128,19 @@ namespace itk
     const unsigned int numberOfInputs = this->GetNumberOfInputs();
 
     /** Set some default values if necessary */
-    if ( this->m_HasNumberOfClasses == false )
+    if( this->m_HasNumberOfClasses == false )
     {
       this->m_NumberOfClasses = this->ComputeMaximumInputValue() + 1;
     }
-    if ( ! this->m_HasPriorPreference )
+    if( ! this->m_HasPriorPreference )
     {
       this->m_PriorPreference.SetSize( this->m_NumberOfClasses );
-      for ( unsigned int i = 0; i < this->m_NumberOfClasses; ++i )
+      for( unsigned int i = 0; i < this->m_NumberOfClasses; ++i )
       {
-        this->m_PriorPreference[i] = i;
+        this->m_PriorPreference[ i ] = i;
       }
     }
-    if ( !this->m_HasObserverTrust )
+    if( !this->m_HasObserverTrust )
     {
       this->m_ObserverTrust.SetSize( numberOfInputs );
       this->m_ObserverTrust.Fill(1.0);
@@ -131,9 +148,9 @@ namespace itk
 
     /** Determine the least preferred label */
     this->m_LeastPreferredLabel = 0;
-    for (unsigned int i= 0; i< this->m_NumberOfClasses; ++i)
+    for( unsigned int i= 0; i< this->m_NumberOfClasses; ++i )
     {
-      if ( this->m_PriorPreference[i] == (this->m_NumberOfClasses-1) )
+      if( this->m_PriorPreference[ i ] == (this->m_NumberOfClasses-1) )
       {
         this->m_LeastPreferredLabel = i;
       }
@@ -144,11 +161,11 @@ namespace itk
     typename TOutputImage::Pointer output = this->GetOutput();
 
     /** If probabilistic segmentations are desired, allocate them */
-    if ( generateProbSeg )
+    if( generateProbSeg )
     {
       this->m_ProbabilisticSegmentationArray =
         ProbabilisticSegmentationArrayType( this->m_NumberOfClasses );
-      for ( unsigned int k = 0; k < this->m_NumberOfClasses; ++k )
+      for( unsigned int k = 0; k < this->m_NumberOfClasses; ++k )
       {
         this->m_ProbabilisticSegmentationArray[k] =
           ProbabilityImageType::New();
@@ -160,7 +177,7 @@ namespace itk
     }
 
     /** Allocate the confusion matrix arrays */
-    if ( this->GetGenerateConfusionMatrix() )
+    if( this->GetGenerateConfusionMatrix() )
     {
       this->AllocateConfusionMatrixArray();
     }
@@ -189,7 +206,7 @@ namespace itk
 
     /** create and initialize all input image iterators */
     InputConstIteratorArrayType it(numberOfInputs);
-    for ( unsigned int k = 0; k < numberOfInputs; ++k )
+    for( unsigned int k = 0; k < numberOfInputs; ++k )
     {
       it[k] = InputConstIteratorType
         ( this->GetInput( k ), outputRegionForThread );
@@ -197,10 +214,10 @@ namespace itk
 
     /** Create and initialize the output probabilistic segmentation image iterators */
     ProbIteratorArrayType psit;
-    if ( generateProbSeg )
+    if( generateProbSeg )
     {
       psit = ProbIteratorArrayType( this->m_NumberOfClasses );
-      for ( unsigned int k = 0; k < this->m_NumberOfClasses; ++k )
+      for( unsigned int k = 0; k < this->m_NumberOfClasses; ++k )
       {
         psit[k] = ProbIteratorType(
           this->m_ProbabilisticSegmentationArray[k], outputRegionForThread );
@@ -210,7 +227,7 @@ namespace itk
     /** Create and initialize the mask iterator */
     MaskConstIteratorType mit;
     const MaskPixelType zeroMaskPixel = itk::NumericTraits<MaskPixelType>::Zero;
-    if ( useMask )
+    if( useMask )
     {
       mit = MaskConstIteratorType(
         this->m_MaskImage, outputRegionForThread );
@@ -227,11 +244,11 @@ namespace itk
       OutputPixelType winningLabel = this->m_LeastPreferredLabel;
 
       bool insideMask = true;
-      if (useMask)
+      if(useMask)
       {
         /** For pixels outside the mask use the decision
          * of the first observer */
-        if ( mit.Get() == zeroMaskPixel )
+        if( mit.Get() == zeroMaskPixel )
         {
           insideMask = false;
           winningLabel = it[0].Get();
@@ -239,7 +256,7 @@ namespace itk
           /** Set the winning label to the output pixel */
           out.Set( winningLabel );
           /** move the it iterators */
-          for ( unsigned int k = 0; k < numberOfInputs; ++k )
+          for( unsigned int k = 0; k < numberOfInputs; ++k )
           {
             ++(it[k]);
           }
@@ -247,19 +264,19 @@ namespace itk
         ++mit;
       } // end if useMask
 
-      if (insideMask)
+      if(insideMask)
       {
 
         // count number of votes for the labels
-        for( unsigned int i = 0; i < numberOfInputs; ++i)
+        for( unsigned int i = 0; i < numberOfInputs; ++i )
         {
-          const InputPixelType label = it[i].Get();
+          const InputPixelType label = it[ i ].Get();
           W[label] += this->m_ObserverTrust( i );
         }
 
         /** normalize: */
         WeightsType sumW = W.sum();
-        if ( sumW )
+        if( sumW )
         {
           W /= sumW;
         }
@@ -269,16 +286,16 @@ namespace itk
         WeightsType winningLabelW = 0.0;
         for ( OutputPixelType ci = 0; ci < this->m_NumberOfClasses; ++ci )
         {
-          if ( W[ci] > winningLabelW )
+          if( W[ci] > winningLabelW )
           {
             winningLabelW = W[ci];
             winningLabel = ci;
           }
           else
           {
-            if ( ! (W[ci] < winningLabelW ) )
+            if( ! (W[ci] < winningLabelW ) )
             {
-              if ( this->m_PriorPreference[ci] < this->m_PriorPreference[winningLabel] )
+              if( this->m_PriorPreference[ci] < this->m_PriorPreference[winningLabel] )
               {
                 winningLabel = ci;
               }
@@ -290,28 +307,28 @@ namespace itk
         out.Set( winningLabel );
 
         /** Update the confusion matrix */
-        if ( generateConfusionMatrix )
+        if( generateConfusionMatrix )
         {
-          for ( unsigned int i = 0; i < numberOfInputs; ++i )
+          for( unsigned int i = 0; i < numberOfInputs; ++i )
           {
-            const InputPixelType label = it[i].Get();
+            const InputPixelType label = it[ i ].Get();
             for ( OutputPixelType ci = 0; ci < this->m_NumberOfClasses; ++ci )
             {
-              this->m_ConfusionMatrixArrays[threadId][i][label][ci] += W[ci];
+              this->m_ConfusionMatrixArrays[threadId][ i ][label][ci] += W[ci];
             }
           }
         } // end if generateConfusionMatrix
 
         /** Next input pixel */
-        for( unsigned int i = 0; i < numberOfInputs; ++i)
+        for( unsigned int i = 0; i < numberOfInputs; ++i )
         {
-          ++(it[i]);
+          ++(it[ i ]);
         }
       } // end if insideMask
 
       /** copy the W values into the probabilistic segmentation images
        * and move the psit iterators */
-      if ( generateProbSeg )
+      if( generateProbSeg )
       {
         for ( OutputPixelType ci = 0; ci < this->m_NumberOfClasses; ++ci )
         {
@@ -334,35 +351,35 @@ namespace itk
    
     const unsigned int numberOfInputs = this->GetNumberOfInputs();
 
-    if ( this->GetGenerateConfusionMatrix() )
+    if( this->GetGenerateConfusionMatrix() )
     {
 
       /** Add the confusion matrix arrays of all threads */
-      for ( unsigned int t = 0; t < this->GetNumberOfThreads(); ++t )
+      for( unsigned int t = 0; t < this->GetNumberOfThreads(); ++t )
       {
-        for ( unsigned int i = 0; i < numberOfInputs; ++i )
+        for( unsigned int i = 0; i < numberOfInputs; ++i )
         {
-          this->m_ConfusionMatrixArray[i] +=
-            this->m_ConfusionMatrixArrays[t][i];
+          this->m_ConfusionMatrixArray[ i ] +=
+            this->m_ConfusionMatrixArrays[t][ i ];
         }
       } // end for t
 
       /** Normalize each column of each confusion matrix */
-      for ( unsigned int i = 0; i < numberOfInputs; ++i)
+      for( unsigned int i = 0; i < numberOfInputs; ++i )
       {
         // compute sum over all output classifications
         for ( OutputPixelType ci = 0; ci < this->m_NumberOfClasses; ++ci )
         {
-          WeightsType sumW = this->m_ConfusionMatrixArray[i][0][ci];
+          WeightsType sumW = this->m_ConfusionMatrixArray[ i ][0][ci];
           for ( InputPixelType j = 1; j < this->m_NumberOfClasses; ++j )
           {
-            sumW += this->m_ConfusionMatrixArray[i][j][ci];
+            sumW += this->m_ConfusionMatrixArray[ i ][j][ci];
           }
 
           // normalize with sumW for each class ci
-          if ( sumW )
+          if( sumW )
           {
-            this->m_ConfusionMatrixArray[i].scale_column(ci, 1.0/sumW);
+            this->m_ConfusionMatrixArray[ i ].scale_column(ci, 1.0/sumW);
           }
         } // end for ci
       } // end for i
@@ -373,4 +390,4 @@ namespace itk
 
 } // end namespace itk
 
-#endif
+#endif // end #ifndef _itkLabelVoting2ImageFilter_txx_

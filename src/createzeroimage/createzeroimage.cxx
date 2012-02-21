@@ -22,10 +22,7 @@
  */
 #include "itkCommandLineArgumentParser.h"
 #include "ITKToolsHelpers.h"
-#include "ITKToolsBase.h"
-
-#include "itkImage.h"
-#include "itkImageFileWriter.h"
+#include "createzeroimage.h"
 
 
 /**
@@ -36,98 +33,20 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-  << "Usage:" << std::endl
-  << "pxcreatezeroimage" << std::endl
-    << "[-in]    inputFilename" << std::endl
-    << "-out     outputFilename" << std::endl
-    << "-sz      size" << std::endl
-    << "[-sp]    spacing" << std::endl
-    << "[-o]     origin" << std::endl
-    << "[-dim]   dimension, default 3" << std::endl
-    << "[-pt]    pixelType, default short" << std::endl
-  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
+    << "Usage:\n"
+    << "pxcreatezeroimage\n"
+    << "  [-in]    inputFilename\n"
+    << "  -out     outputFilename\n"
+    << "  -sz      size\n"
+    << "  [-sp]    spacing\n"
+    << "  [-o]     origin\n"
+    << "  [-dim]   dimension, default 3\n"
+    << "  [-opct]  pixelType, default short\n"
+    << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
+
   return ss.str();
+
 } // end GetHelpString()
-
-
-/** CreateZeroImage */
-
-class ITKToolsCreateZeroImageBase : public itktools::ITKToolsBase
-{ 
-public:
-  ITKToolsCreateZeroImageBase()
-  {
-    this->m_OutputFileName = "";
-    //std::vector<unsigned int> this->m_Size;
-    //std::vector<double> this->m_Spacing;
-    //std::vector<double> this->m_Origin;
-  };
-  ~ITKToolsCreateZeroImageBase(){};
-
-  /** Input parameters */
-  std::string m_OutputFileName;
-  std::vector<unsigned int> m_Size;
-  std::vector<double> m_Spacing;
-  std::vector<double> m_Origin;
-    
-}; // end CreateZeroImageBase
-
-
-template< class TComponentType, unsigned int VDimension >
-class ITKToolsCreateZeroImage : public ITKToolsCreateZeroImageBase
-{
-public:
-  typedef ITKToolsCreateZeroImage Self;
-
-  ITKToolsCreateZeroImage(){};
-  ~ITKToolsCreateZeroImage(){};
-
-  static Self * New( itktools::ComponentType componentType, unsigned int dim )
-  {
-    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
-  void Run( void )
-  {
-    /** Typedefs. */
-    typedef itk::Image<TComponentType, VDimension>ImageType;
-    typedef itk::ImageFileWriter< ImageType >     WriterType;
-    typedef typename ImageType::PixelType         PixelType;
-    typedef typename ImageType::SizeType          SizeType;
-    typedef typename ImageType::SpacingType       SpacingType;
-    typedef typename ImageType::PointType         OriginType;
-
-    /** Prepare stuff. */
-    SizeType    imSize;
-    SpacingType imSpacing;
-    OriginType  imOrigin;
-    for ( unsigned int i = 0; i < VDimension; i++ )
-    {
-      imSize[ i ] = this->m_Size[ i ];
-      imSpacing[ i ] = this->m_Spacing[ i ];
-      imOrigin[ i ] = this->m_Origin[ i ];
-    }
-
-    /** Create image. */
-    typename ImageType::Pointer image = ImageType::New();
-    image->SetRegions( imSize );
-    image->SetOrigin( imOrigin );
-    image->SetSpacing( imSpacing );
-    image->Allocate();
-    image->FillBuffer( itk::NumericTraits<PixelType>::Zero );
-
-    /** Write the image. */
-    typename WriterType::Pointer writer = WriterType::New();
-    writer->SetFileName( this->m_OutputFileName.c_str() );
-    writer->SetInput( image );
-    writer->Update();
-  }
-
-}; // end CreateZeroImage
 
 //-------------------------------------------------------------------------------------
 
@@ -141,8 +60,8 @@ int main( int argc, char **argv )
   parser->MarkArgumentAsRequired( "-out", "The output filename." );
   
   std::vector<std::string> exactlyOneArguments;
-  exactlyOneArguments.push_back("-sz");
-  exactlyOneArguments.push_back("-in");
+  exactlyOneArguments.push_back( "-sz" );
+  exactlyOneArguments.push_back( "-in" );
   
   parser->MarkExactlyOneOfArgumentsAsRequired( exactlyOneArguments );
 
@@ -158,150 +77,137 @@ int main( int argc, char **argv )
   }
   
   /** Get arguments. */
-  std::string fileNameIn = "";
-  bool retin = parser->GetCommandLineArgument( "-in", fileNameIn );
+  std::string inputFileName = "";
+  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
 
-  std::string fileName = "";
-  parser->GetCommandLineArgument( "-out", fileName );
+  std::string outputFileName = "";
+  parser->GetCommandLineArgument( "-out", outputFileName );
 
-  unsigned int Dimension = 3;
-  parser->GetCommandLineArgument( "-dim", Dimension );
+  unsigned int dim = 3;
+  parser->GetCommandLineArgument( "-dim", dim );
 
-  std::string PixelType = "short";
-  parser->GetCommandLineArgument( "-pt", PixelType );
+  std::string componentTypeAsString = "short";
+  bool retopct = parser->GetCommandLineArgument( "-opct", componentTypeAsString );
 
-  std::vector<unsigned int> size( Dimension, 0 );
+  std::vector<unsigned int> size( dim, 0 );
   bool retsz = parser->GetCommandLineArgument( "-sz", size );
 
-  std::vector<double> spacing( Dimension, 1.0 );
+  std::vector<double> spacing( dim, 1.0 );
   bool retsp = parser->GetCommandLineArgument( "-sp", spacing );
 
-  std::vector<double> origin( Dimension, 0.0 );
+  std::vector<double> origin( dim, 0.0 );
   bool reto = parser->GetCommandLineArgument( "-o", origin );
 
-  std::vector<double> direction( Dimension * Dimension, 0.0 );
-  for ( unsigned int i = 0; i < Dimension; i++ )
+  std::vector<double> direction( dim * dim, 0.0 );
+  for( unsigned int i = 0; i < dim; i++ )
   {
-    direction[ i * ( Dimension + 1 ) ] = 1.0;
+    direction[ i * ( dim + 1 ) ] = 1.0;
   }
-
   parser->GetCommandLineArgument( "-d", direction );
 
-  if ( retin )
+  /** Determine image properties. */
+  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  if( retin )
   {
-    /** Determine image properties. */
-    std::string dummyPixelType; //we don't use this
-    unsigned int NumberOfComponents = 1;
-    int retgip = itktools::GetImageProperties(
-      fileNameIn,
-      dummyPixelType, PixelType, Dimension, NumberOfComponents,
+    itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
+    unsigned int dim = 0;
+    unsigned int numberOfComponents = 0;
+    bool retgip = itktools::GetImageProperties(
+      inputFileName, pixelType, componentType, dim, numberOfComponents,
       size, spacing, origin, direction );
-    if ( retgip != 0 )
-    {
-      return 1;
-    }
+    if( !retgip ) return EXIT_FAILURE;
   }
 
-  /** Get rid of the possible "_" in PixelType. */
-  itktools::ReplaceUnderscoreWithSpace( PixelType );
+  /** Let the user overrule the component type. */
+  if( retopct )
+  {
+    componentType = itk::ImageIOBase::GetComponentTypeFromString( componentTypeAsString );
+  }
 
   /** Check size, spacing and origin. */
-  if ( retsz )
+  if( retsz )
   {
-    if( size.size() != Dimension && size.size() != 1 )
+    if( size.size() != dim && size.size() != 1 )
     {
       std::cout << "ERROR: The number of sizes should be 1 or Dimension." << std::endl;
-      return 1;
+      return EXIT_FAILURE;
     }
   }
-  if ( retsp )
+  if( retsp )
   {
-    if( spacing.size() != Dimension && spacing.size() != 1 )
+    if( spacing.size() != dim && spacing.size() != 1 )
     {
       std::cout << "ERROR: The number of spacings should be 1 or Dimension." << std::endl;
-      return 1;
+      return EXIT_FAILURE;
     }
   }
-  if ( reto )
+  if( reto )
   {
-    if( origin.size() != Dimension && origin.size() != 1 )
+    if( origin.size() != dim && origin.size() != 1 )
     {
       std::cout << "ERROR: The number of origins should be 1 or Dimension." << std::endl;
-      return 1;
+      return EXIT_FAILURE;
     }
   }
 
   /** Check size and spacing for nonpositive numbers. */
-  for ( unsigned int i = 0; i < Dimension; i++ )
+  for( unsigned int i = 0; i < dim; i++ )
   {
-    if ( size[ i ] < 1 )
+    if( size[ i ] < 1 )
     {
       std::cerr << "ERROR: For each dimension the size should be at least 1." << std::endl;
-      return 1;
+      return EXIT_FAILURE;
     }
-    if ( spacing[ i ] < 0.00001 )
+    if( spacing[ i ] < 0.00001 )
     {
       std::cerr << "ERROR: No negative numbers are allowed in the spacing." << std::endl;
-      return 1;
+      return EXIT_FAILURE;
     }
   }
 
-
-  /** Class that does the work */
-  ITKToolsCreateZeroImageBase * createZeroImage = 0; 
-
-  /** Short alias */
-  unsigned int dim = Dimension;
-
-  itktools::ComponentType componentType = itk::ImageIOBase::GetComponentTypeFromString( PixelType );
+  /** Class that does the work. */
+  ITKToolsCreateZeroImageBase * filter = 0; 
 
   try
   {    
     // now call all possible template combinations.
-    if (!createZeroImage) createZeroImage = ITKToolsCreateZeroImage< unsigned char, 2 >::New( componentType, dim );
-    if (!createZeroImage) createZeroImage = ITKToolsCreateZeroImage< char, 2 >::New( componentType, dim );
-    if (!createZeroImage) createZeroImage = ITKToolsCreateZeroImage< unsigned short, 2 >::New( componentType, dim );
-    if (!createZeroImage) createZeroImage = ITKToolsCreateZeroImage< short, 2 >::New( componentType, dim );
-    if (!createZeroImage) createZeroImage = ITKToolsCreateZeroImage< float, 2 >::New( componentType, dim );
-    if (!createZeroImage) createZeroImage = ITKToolsCreateZeroImage< double, 2 >::New( componentType, dim );
+    if( !filter ) filter = ITKToolsCreateZeroImage< 2, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCreateZeroImage< 2, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCreateZeroImage< 2, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCreateZeroImage< 2, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCreateZeroImage< 2, float >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCreateZeroImage< 2, double >::New( dim, componentType );
     
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!createZeroImage) createZeroImage = ITKToolsCreateZeroImage< unsigned char, 3 >::New( componentType, dim );
-    if (!createZeroImage) createZeroImage = ITKToolsCreateZeroImage< char, 3 >::New( componentType, dim );
-    if (!createZeroImage) createZeroImage = ITKToolsCreateZeroImage< unsigned short, 3 >::New( componentType, dim );
-    if (!createZeroImage) createZeroImage = ITKToolsCreateZeroImage< short, 3 >::New( componentType, dim );
-    if (!createZeroImage) createZeroImage = ITKToolsCreateZeroImage< float, 3 >::New( componentType, dim );
-    if (!createZeroImage) createZeroImage = ITKToolsCreateZeroImage< double, 3 >::New( componentType, dim );
+    if( !filter ) filter = ITKToolsCreateZeroImage< 3, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCreateZeroImage< 3, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCreateZeroImage< 3, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCreateZeroImage< 3, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCreateZeroImage< 3, float >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCreateZeroImage< 3, double >::New( dim, componentType );
 #endif
-    if (!createZeroImage) 
-    {
-      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-      std::cerr
-        << "pixel (component) type = " << componentType
-        << " ; dimension = " << Dimension
-        << std::endl;
-      return 1;
-    }
+    /** Check if filter was instantiated. */
+    bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
+    if( !supported ) return EXIT_FAILURE;
 
-    createZeroImage->m_OutputFileName = fileName;
-    createZeroImage->m_Size = size;
-    createZeroImage->m_Spacing = spacing;
-    createZeroImage->m_Origin = origin;
+    /** Set the filter arguments. */
+    filter->m_OutputFileName = inputFileName;
+    filter->m_Size = size;
+    filter->m_Spacing = spacing;
+    filter->m_Origin = origin;
 
-    createZeroImage->Run();
+    filter->Run();
     
-    delete createZeroImage;
+    delete filter;
   }
-  catch( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    delete createZeroImage;
-    return 1;
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+    delete filter;
+    return EXIT_FAILURE;
   }
-  
 
   /** End program. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main
-

@@ -41,7 +41,7 @@ void openingGrayscale(
 
   /** Create the structuring element. */
   RadiusType  radiusarray;
-  for ( unsigned int i = 0; i < Dimension; i++ )
+  for( unsigned int i = 0; i < Dimension; i++ )
   {
     radiusarray.SetElement( i, radius[ i ] );
   }
@@ -97,11 +97,11 @@ void openingBinary(
   std::vector<PixelType> values( 2 );
   values[ 0 ] = itk::NumericTraits<PixelType>::One;
   values[ 1 ] = itk::NumericTraits<PixelType>::Zero;
-  if ( bin.size() == 2 )
+  if( bin.size() == 2 )
   {
-    for ( unsigned int i = 0; i < 2; ++i )
+    for( unsigned int i = 0; i < 2; ++i )
     {
-      if ( itk::NumericTraits<PixelType>::is_integer )
+      if( itk::NumericTraits<PixelType>::is_integer )
       {
         values[ i ] = static_cast<PixelType>( atoi( bin[ i ].c_str() ) );
       }
@@ -114,7 +114,7 @@ void openingBinary(
 
   /** Create the structuring element. */
   RadiusType  radiusarray;
-  for ( unsigned int i = 0; i < Dimension; i++ )
+  for( unsigned int i = 0; i < Dimension; i++ )
   {
     radiusarray.SetElement( i, radius[ i ] );
   }
@@ -169,7 +169,7 @@ void openingParabolic(
   /** Get the correct radius. */
   RadiusType      radiusArray;
   ScalarRealType  radius1D = 0.0;
-  for ( unsigned int i = 0; i < Dimension; ++i )
+  for( unsigned int i = 0; i < Dimension; ++i )
   {
     // Very specific computation for the parabolic filter:
     radius1D = static_cast<ScalarRealType>( radius[ i ] ) ;//+ 1.0;

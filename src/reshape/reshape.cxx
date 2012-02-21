@@ -18,15 +18,11 @@
 /** \file
  \brief Reshape an image.
  
- \verbinclude reshape.help
+ \verbinclude filter.help
  */
 #include "itkCommandLineArgumentParser.h"
 #include "ITKToolsHelpers.h"
-#include "ITKToolsBase.h"
-
-#include "itkImageFileReader.h"
-#include "itkReshapeImageToImageFilter.h"
-#include "itkImageFileWriter.h"
+#include "reshape.h"
 #include <itksys/SystemTools.hxx>
 
 
@@ -38,92 +34,16 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-  << "Usage:" << std::endl
-  << "pxpca" << std::endl
-  << "  -in      inputFilename" << std::endl
-  << "  [-out]   outputFileName, default inputFileName_reshaped" << std::endl
-  << "  -s       size of the output image" << std::endl
-  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
+    << "Usage:\n"
+    << "pxpca\n"
+    << "  -in      inputFilename\n"
+    << "  [-out]   outputFileName, default inputFileName_reshaped\n"
+    << "  -s       size of the output image\n"
+    << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
 
   return ss.str();
 
 } // end GetHelpString()
-
-
-
-class ITKToolsReshapeBase : public itktools::ITKToolsBase
-{ 
-public:
-  ITKToolsReshapeBase()
-  {
-    this->m_InputFileName = "";
-    this->m_OutputFileName = "";
-    //std::vector<unsigned long> this->m_OutputSize;
-  };
-  ~ITKToolsReshapeBase(){};
-
-  /** Input parameters */
-  std::string m_InputFileName;
-  std::string m_OutputFileName;
-  std::vector<unsigned long> m_OutputSize;
-
-    
-}; // end ReshapeBase
-
-
-template< class TComponentType, unsigned int VDimension >
-class ITKToolsReshape : public ITKToolsReshapeBase
-{
-public:
-  typedef ITKToolsReshape Self;
-
-  ITKToolsReshape(){};
-  ~ITKToolsReshape(){};
-
-  static Self * New( itktools::ComponentType componentType, unsigned int dim )
-  {
-    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
-  void Run( void )
-  {
-    /** Typedefs. */
-    typedef itk::Image<TComponentType, VDimension>      ImageType;
-    typedef itk::ImageFileReader< ImageType >           ReaderType;
-    typedef itk::ReshapeImageToImageFilter< ImageType > ReshapeFilterType;
-    typedef itk::ImageFileWriter< ImageType >           WriterType;
-    typedef typename ReshapeFilterType::SizeType        SizeType;
-
-    /** Translate vector to SizeType. */
-    SizeType size;
-    for ( unsigned int i = 0; i < this->m_OutputSize.size(); ++i )
-    {
-      size[ i ] = this->m_OutputSize[ i ];
-    }
-
-
-    /** Reader. */
-    typename ReaderType::Pointer reader = ReaderType::New();
-    reader->SetFileName( this->m_InputFileName.c_str() );
-
-    /** Reshaper. */
-    typename ReshapeFilterType::Pointer reshaper = ReshapeFilterType::New();
-    reshaper->SetInput( reader->GetOutput() );
-    reshaper->SetOutputSize( size );
-    reshaper->Update();
-
-    /** Writer. */
-    typename WriterType::Pointer writer = WriterType::New();
-    writer->SetFileName( this->m_OutputFileName.c_str() );
-    writer->SetInput( reshaper->GetOutput() );
-    writer->Update();
-  }
-
-}; // end Reshape
 
 //-------------------------------------------------------------------------------------
 
@@ -149,121 +69,90 @@ int main( int argc, char **argv )
   }
 
   /** Get arguments. */
-  std::string inputFilename = "";
-  parser->GetCommandLineArgument( "-in", inputFilename );
+  std::string inputFileName = "";
+  parser->GetCommandLineArgument( "-in", inputFileName );
 
   std::string base = itksys::SystemTools::GetFilenameWithoutLastExtension(
-    inputFilename );
+    inputFileName );
   std::string ext  = itksys::SystemTools::GetFilenameLastExtension(
-    inputFilename );
-  std::string outputFilename = base + "_reshaped" + ext;
-  parser->GetCommandLineArgument( "-out", outputFilename );
+    inputFileName );
+  std::string outputFileName = base + "_reshaped" + ext;
+  parser->GetCommandLineArgument( "-out", outputFileName );
 
   std::vector<unsigned long> outputSize;
   parser->GetCommandLineArgument( "-s", outputSize );
 
   /** Determine image properties. */
-  std::string ComponentTypeIn = "short";
-  std::string PixelType; //we don't use this
-  unsigned int Dimension = 3;
-  unsigned int NumberOfComponents = 1;
-  std::vector<unsigned int> inputSize( Dimension, 0 );
-  int retgip = itktools::GetImageProperties(
-    inputFilename,
-    PixelType,
-    ComponentTypeIn,
-    Dimension,
-    NumberOfComponents,
-    inputSize );
-  if ( retgip != 0 )
-  {
-    return 1;
-  }
+  itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
+  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  unsigned int dim = 0;
+  unsigned int numberOfComponents = 0;
+  bool retgip = itktools::GetImageProperties(
+    inputFileName, pixelType, componentType, dim, numberOfComponents );
+  if( !retgip ) return EXIT_FAILURE;
 
   /** Check for vector images. */
-  if ( NumberOfComponents > 1 )
-  {
-    std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
-    std::cerr << "  Vector images are not supported." << std::endl;
-    return 1;
-  }
-
-  /** Get rid of the possible "_" in ComponentType. */
-  itktools::ReplaceUnderscoreWithSpace( ComponentTypeIn );
+  bool retNOCCheck = itktools::NumberOfComponentsCheck( numberOfComponents );
+  if( !retNOCCheck ) return EXIT_FAILURE;
 
   /** Check dimensions. */
-  if ( inputSize.size() != outputSize.size() )
+  if( dim != outputSize.size() )
   {
     std::cerr << "ERROR: input and output dimension should be the same.\n";
-    std::cerr << "  Please, specify only " << Dimension
+    std::cerr << "  Please, specify only " << dim
       << "numbers with \"-s\"." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
-
-  /** Class that does the work */
-  ITKToolsReshapeBase * reshape = 0; 
-
-  /** Short alias */
-  unsigned int imageDimension = Dimension;
- 
-  /** \todo some progs allow user to override the pixel type, 
-   * so we need a method to convert string to EnumComponentType */
-  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFilename);
-  
-  std::cout << "Internal image component type: " << 
-    itk::ImageIOBase::GetComponentTypeAsString( componentType ) << std::endl;
+  /** Class that does the work. */
+  ITKToolsReshapeBase * filter = 0; 
     
   try
   {    
-    if (!reshape) reshape = ITKToolsReshape< unsigned char, 2 >::New( componentType, imageDimension );
-    if (!reshape) reshape = ITKToolsReshape< char, 2 >::New( componentType, imageDimension );
-    if (!reshape) reshape = ITKToolsReshape< unsigned short, 2 >::New( componentType, imageDimension );
-    if (!reshape) reshape = ITKToolsReshape< short, 2 >::New( componentType, imageDimension );
-    if (!reshape) reshape = ITKToolsReshape< unsigned int, 2 >::New( componentType, imageDimension );
-    if (!reshape) reshape = ITKToolsReshape< int, 2 >::New( componentType, imageDimension );
-    if (!reshape) reshape = ITKToolsReshape< unsigned long, 2 >::New( componentType, imageDimension );
-    if (!reshape) reshape = ITKToolsReshape< long, 2 >::New( componentType, imageDimension );
-    if (!reshape) reshape = ITKToolsReshape< float, 2 >::New( componentType, imageDimension );
-    if (!reshape) reshape = ITKToolsReshape< double, 2 >::New( componentType, imageDimension );
+    if( !filter ) filter = ITKToolsReshape< 2, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsReshape< 2, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsReshape< 2, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsReshape< 2, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsReshape< 2, unsigned int >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsReshape< 2, int >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsReshape< 2, unsigned long >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsReshape< 2, long >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsReshape< 2, float >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsReshape< 2, double >::New( dim, componentType );
+
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!reshape) reshape = ITKToolsReshape< unsigned char, 3 >::New( componentType, imageDimension );
-    if (!reshape) reshape = ITKToolsReshape< char, 3 >::New( componentType, imageDimension );
-    if (!reshape) reshape = ITKToolsReshape< unsigned short, 3 >::New( componentType, imageDimension );
-    if (!reshape) reshape = ITKToolsReshape< short, 3 >::New( componentType, imageDimension );
-    if (!reshape) reshape = ITKToolsReshape< unsigned int, 3 >::New( componentType, imageDimension );
-    if (!reshape) reshape = ITKToolsReshape< int, 3 >::New( componentType, imageDimension );
-    if (!reshape) reshape = ITKToolsReshape< unsigned long, 3 >::New( componentType, imageDimension );
-    if (!reshape) reshape = ITKToolsReshape< long, 3 >::New( componentType, imageDimension );
-    if (!reshape) reshape = ITKToolsReshape< float, 3 >::New( componentType, imageDimension );
-    if (!reshape) reshape = ITKToolsReshape< double, 3 >::New( componentType, imageDimension );
+    if( !filter ) filter = ITKToolsReshape< 3, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsReshape< 3, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsReshape< 3, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsReshape< 3, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsReshape< 3, unsigned int >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsReshape< 3, int >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsReshape< 3, unsigned long >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsReshape< 3, long >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsReshape< 3, float >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsReshape< 3, double >::New( dim, componentType );
 #endif
-    if (!reshape) 
-    {
-      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-      std::cerr
-        << "pixel (component) type = " << componentType
-        << " ; dimension = " << Dimension
-        << std::endl;
-      return 1;
-    }
+    /** Check if filter was instantiated. */
+    bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
+    if( !supported ) return EXIT_FAILURE;
 
-    reshape->m_InputFileName = inputFilename;
-    reshape->m_OutputFileName = outputFilename;
-    reshape->m_OutputSize = outputSize;
+    /** Set the filter arguments. */
+    filter->m_InputFileName = inputFileName;
+    filter->m_OutputFileName = outputFileName;
+    filter->m_OutputSize = outputSize;
 
-    reshape->Run();
+    filter->Run();
     
-    delete reshape;  
+    delete filter;  
   }
-  catch( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    delete reshape;
-    return 1;
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+    delete filter;
+    return EXIT_FAILURE;
   }
   
   /** End program. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main()

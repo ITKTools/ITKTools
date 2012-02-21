@@ -15,22 +15,23 @@
 * limitations under the License.
 *
 *=========================================================================*/
-#include "castconverthelpers.h"
+#include "castconvert.h"
 
 
 void ITKToolsCastConvertDICOM3D(
-  itktools::ComponentType outputComponentType, unsigned int dim,
-  ITKToolsCastConvertBase * & castConvert )
+  unsigned int dim,
+  itk::ImageIOBase::IOComponentType componentType,
+  ITKToolsCastConvertBase * & filter )
 {
-  if (!castConvert) castConvert = ITKToolsCastConvertDICOM< short, 3 >::New( outputComponentType, dim );
-  if (!castConvert) castConvert = ITKToolsCastConvertDICOM< unsigned short, 3 >::New( outputComponentType, dim );
-  if (!castConvert) castConvert = ITKToolsCastConvertDICOM< char, 3 >::New( outputComponentType, dim );
-  if (!castConvert) castConvert = ITKToolsCastConvertDICOM< unsigned char, 3 >::New( outputComponentType, dim );
-  if (!castConvert) castConvert = ITKToolsCastConvertDICOM< int, 3 >::New( outputComponentType, dim );
-  if (!castConvert) castConvert = ITKToolsCastConvertDICOM< unsigned int, 3 >::New( outputComponentType, dim );
-  if (!castConvert) castConvert = ITKToolsCastConvertDICOM< long, 3 >::New( outputComponentType, dim );
-  if (!castConvert) castConvert = ITKToolsCastConvertDICOM< unsigned long, 3 >::New( outputComponentType, dim );
-  if (!castConvert) castConvert = ITKToolsCastConvertDICOM< float, 3 >::New( outputComponentType, dim );
-  if (!castConvert) castConvert = ITKToolsCastConvertDICOM< double, 3 >::New( outputComponentType, dim );
+  if( !filter ) filter = ITKToolsCastConvertDICOM< 3, short >::New( dim, componentType );
+  if( !filter ) filter = ITKToolsCastConvertDICOM< 3, unsigned short >::New( dim, componentType );
+  if( !filter ) filter = ITKToolsCastConvertDICOM< 3, char >::New( dim, componentType );
+  if( !filter ) filter = ITKToolsCastConvertDICOM< 3, unsigned char >::New( dim, componentType );
+  if( !filter ) filter = ITKToolsCastConvertDICOM< 3, int >::New( dim, componentType );
+  if( !filter ) filter = ITKToolsCastConvertDICOM< 3, unsigned int >::New( dim, componentType );
+  if( !filter ) filter = ITKToolsCastConvertDICOM< 3, long >::New( dim, componentType );
+  if( !filter ) filter = ITKToolsCastConvertDICOM< 3, unsigned long >::New( dim, componentType );
+  if( !filter ) filter = ITKToolsCastConvertDICOM< 3, float >::New( dim, componentType );
+  if( !filter ) filter = ITKToolsCastConvertDICOM< 3, double >::New( dim, componentType );
 
 } // end ITKToolsCastConvertDICOM()

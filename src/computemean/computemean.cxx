@@ -16,12 +16,12 @@
 *
 *=========================================================================*/
 /** \file
- \brief Compute the mean of an image.
+ \brief Compute the mean of a text file.
  
  \verbinclude computemean.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
 
 #include <string>
 #include <iostream>
@@ -41,18 +41,19 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-     << "Usage:" << std::endl
-     << "pxcomputemean" << std::endl
-     << "-in      input text file" << std::endl
-     << "[-m]     what kind of mean" << std::endl
-     << "[-c]     column of which the mean is taken" << std::endl
-     << "[-s]     skip: how many rows are skipped" << std::endl
-     << "[-p]     output precision" << std::endl
-     << "-m should be \"arithmetic\", \"geometric\" or \"median\", the default is \"arithmetic\"." << std::endl
-     << "The default output precision is 6." << std::endl
-     << "The output for median is: minimum, first quartile, median, third quartile, maximum.";
+    << "Usage:" << std::endl
+    << "pxcomputemean" << std::endl
+    << "-in      input text file\n"
+    << "[-m]     what kind of mean\n"
+    << "[-c]     column of which the mean is taken\n"
+    << "[-s]     skip: how many rows are skipped\n"
+    << "[-p]     output precision\n"
+    << "-m should be \"arithmetic\", \"geometric\" or \"median\", the default is \"arithmetic\".\n"
+    << "The default output precision is 6.\n"
+    << "The output for median is: minimum, first quartile, median, third quartile, maximum.";
 
   return ss.str();
+
 } // end GetHelpString()
 
 
@@ -97,10 +98,10 @@ int main( int argc, char *argv[] )
   unsigned int precision = 6;
   parser->GetCommandLineArgument( "-p", precision );
 
-  if ( whichMean != "arithmetic" && whichMean != "geometric" && whichMean != "median" )
+  if( whichMean != "arithmetic" && whichMean != "geometric" && whichMean != "median" )
   {
     std::cerr << "ERROR: \"-m\" should be one of { arithmetic, geometric }." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   /** Create file stream. */
@@ -111,11 +112,11 @@ int main( int argc, char *argv[] )
   std::string tmpString, line;
 
   /** Read the values. */
-  if ( fileIn.is_open() )
+  if( fileIn.is_open() )
   {
 
     /** Skip some lines. */
-    for ( unsigned int i = 0; i < skiprow; i++ )
+    for( unsigned int i = 0; i < skiprow; i++ )
     {
       std::getline( fileIn, line );
     }
@@ -126,7 +127,7 @@ int main( int argc, char *argv[] )
       std::vector<double> tmp;
       std::getline( fileIn, line );
       std::istringstream lineSS( line.c_str() );
-      for ( unsigned int i = 0; i < skipcolumn; i++ )
+      for( unsigned int i = 0; i < skipcolumn; i++ )
       {
         lineSS >> tmpString;
       }
@@ -135,25 +136,25 @@ int main( int argc, char *argv[] )
       {
         double tmpd = -1.0;
         lineSS >> tmpd;
-        if ( tmpd == -1.0 ) endOfLine = true;
+        if( tmpd == -1.0 ) endOfLine = true;
         else tmp.push_back( tmpd );
       }
       /** Fill values. */
-      if ( column < tmp.size() && tmp.size() != 0 )
+      if( column < tmp.size() && tmp.size() != 0 )
       {
         values.push_back( tmp[ column ] );
       }
-      else if ( column >= tmp.size() && tmp.size() != 0 )
+      else if( column >= tmp.size() && tmp.size() != 0 )
       {
         std::cerr << "ERROR: There is no column nr. " << column << "." << std::endl;
-        return 1;
+        return EXIT_FAILURE;
       }
     } // end while over file
   } // end if
   else
   {
     std::cerr << "ERROR: The file \"" << inputTextFile << "\" could not be opened." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   /** Close the file stream. */
@@ -164,43 +165,43 @@ int main( int argc, char *argv[] )
     firstquartile = 0.0, thirdquartile = 0.0,
     minimum = 0.0, maximum = 0.0;
   std::string meanString = "", stdString = "";
-  if ( whichMean == "arithmetic" )
+  if( whichMean == "arithmetic" )
   {
     /** The arithmetic version. */
     meanString = "Arithmetic mean: ";
     stdString  = "Arithmetic std : ";
-    for ( unsigned int i = 0; i < values.size(); i++ )
+    for( unsigned int i = 0; i < values.size(); i++ )
     {
       mean += values[ i ];
     }
     mean /= values.size();
-    for ( unsigned int i = 0; i < values.size(); i++ )
+    for( unsigned int i = 0; i < values.size(); i++ )
     {
       std += ( values[ i ] - mean ) * ( values[ i ] - mean );
     }
     std = sqrt( std / ( values.size() - 1.0 ) );
   } // end if arithmetic
-  else if ( whichMean == "geometric" )
+  else if( whichMean == "geometric" )
   {
     /** The geometic version. */
     meanString = "Geometric mean: ";
     stdString  = "Geometric std : ";
-    for ( unsigned int i = 0; i < values.size(); i++ )
+    for( unsigned int i = 0; i < values.size(); i++ )
     {
       mean += log( values[ i ] );
     }
     mean /= values.size();
-    for ( unsigned int i = 0; i < values.size(); i++ )
+    for( unsigned int i = 0; i < values.size(); i++ )
     {
       std += ( log( values[ i ] ) - mean ) * ( log( values[ i ] ) - mean );
     }
     mean = exp( mean );
     std = exp( sqrt( std / values.size() ) );
   } // end if geometric
-  else if ( whichMean == "median" )
+  else if( whichMean == "median" )
   {
     sort( values.begin(), values.end() );
-    if ( values.size() % 2 )
+    if( values.size() % 2 )
     {
       /** size() is odd. */
       median = values[ ( values.size() + 1 ) / 2 - 1 ];
@@ -229,12 +230,12 @@ int main( int argc, char *argv[] )
   std::cout << std::setprecision( precision );
 
   /** Print output to screen. */
-  if ( whichMean == "arithmetic" || whichMean == "geometric" )
+  if( whichMean == "arithmetic" || whichMean == "geometric" )
   {
     std::cout << meanString << mean << std::endl;
     std::cout << stdString  << std  << std::endl;
   }
-  else if ( whichMean == "median" )
+  else if( whichMean == "median" )
   {
     std::cout << minimum << " "
       << firstquartile << " "
@@ -244,6 +245,6 @@ int main( int argc, char *argv[] )
   }
 
   /** Return a value. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main

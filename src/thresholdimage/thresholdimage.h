@@ -15,18 +15,24 @@
 * limitations under the License.
 *
 *=========================================================================*/
-#ifndef __thresholdimage_h
-#define __thresholdimage_h
+#ifndef __thresholdimage_h_
+#define __thresholdimage_h_
 
 #include "ITKToolsBase.h"
 #include "itkImage.h"
 #include <string>
 
-/** ThresholdImage */
+
+/** \class ITKToolsThresholdImageBase
+ *
+ * Untemplated pure virtual base class that holds
+ * the Run() function and all required parameters.
+ */
 
 class ITKToolsThresholdImageBase : public itktools::ITKToolsBase
 { 
 public:
+  /** Constructor. */
   ITKToolsThresholdImageBase()
   {
     this->m_Bins = 0;
@@ -47,9 +53,10 @@ public:
     this->m_Threshold2 = 0.0f;
     this->m_UseCompression = false;
   };
+  /** Destructor. */
   ~ITKToolsThresholdImageBase(){};
 
-  /** Input parameters */
+  /** Input member parameters. */
   std::string   m_InputFileName;
   std::string   m_OutputFileName;
   std::string   m_MaskFileName;
@@ -72,34 +79,33 @@ public:
   bool          m_Supported;
   bool          m_UseCompression;
 
-}; // end class ThresholdImageBase
+}; // end class ITKToolsThresholdImageBase
 
 
-template< class TComponentType, unsigned int VDimension >
+/** \class ITKToolsThresholdImage
+ *
+ * Templated class that implements the Run() function
+ * and the New() function for its creation.
+ */
+
+template< unsigned int VDimension, class TComponentType >
 class ITKToolsThresholdImage : public ITKToolsThresholdImageBase
 {
 public:
+  /** Standard ITKTools stuff. */
   typedef ITKToolsThresholdImage Self;
+  itktoolsOneTypeNewMacro( Self );
 
   ITKToolsThresholdImage(){};
   ~ITKToolsThresholdImage(){};
 
-  static Self * New( itktools::ComponentType componentType, unsigned int dim )
-  {
-    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
   /** Typedef. */
   typedef itk::Image< TComponentType, VDimension > InputImageType;
 
-  /** Main function Run(). */
+  /** Run function. */
   void Run( void )
   {
-    if ( this->m_Method == "Threshold" )
+    if( this->m_Method == "Threshold" )
     {
       this->ThresholdImage(
         this->m_InputFileName, this->m_OutputFileName,
@@ -107,7 +113,7 @@ public:
         this->m_Threshold1, this->m_Threshold2,
         this->m_UseCompression );
     }
-    else if ( this->m_Method == "OtsuThreshold" )
+    else if( this->m_Method == "OtsuThreshold" )
     {
       this->OtsuThresholdImage(
         this->m_InputFileName, this->m_OutputFileName, this->m_MaskFileName,
@@ -115,7 +121,7 @@ public:
         this->m_Bins,
         this->m_UseCompression );
     }
-    else if ( this->m_Method == "OtsuMultipleThreshold" )
+    else if( this->m_Method == "OtsuMultipleThreshold" )
     {
       this->OtsuMultipleThresholdImage(
         this->m_InputFileName, this->m_OutputFileName, this->m_MaskFileName,
@@ -123,7 +129,7 @@ public:
         this->m_Bins, this->m_NumThresholds,
         this->m_UseCompression );
     }
-    else if ( this->m_Method == "RobustAutomaticThreshold" )
+    else if( this->m_Method == "RobustAutomaticThreshold" )
     {
       this->RobustAutomaticThresholdImage(
         this->m_InputFileName, this->m_OutputFileName,
@@ -131,7 +137,7 @@ public:
         this->m_Pow,
         this->m_UseCompression );
     }
-    else if ( this->m_Method == "KappaSigmaThreshold" )
+    else if( this->m_Method == "KappaSigmaThreshold" )
     {
       this->KappaSigmaThresholdImage(
         this->m_InputFileName, this->m_OutputFileName, this->m_MaskFileName,
@@ -139,7 +145,7 @@ public:
         this->m_MaskValue, this->m_Sigma, this->m_Iterations,
         this->m_UseCompression );
     }
-    else if ( this->m_Method == "MinErrorThreshold" )
+    else if( this->m_Method == "MinErrorThreshold" )
     {
       this->MinErrorThresholdImage(
         this->m_InputFileName, this->m_OutputFileName,
@@ -153,7 +159,6 @@ public:
       return;
     }
   } // end Run()
-
 
   /** Function to perform normal thresholding. */
   void ThresholdImage(
@@ -206,7 +211,7 @@ public:
     const unsigned int & bins, const unsigned int & mixtureType,
     const bool & useCompression );
 
-}; // end class ThresholdImage
+}; // end class ITKToolsThresholdImage
 
 #include "thresholdimage.hxx"
 

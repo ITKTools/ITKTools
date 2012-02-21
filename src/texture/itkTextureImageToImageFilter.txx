@@ -1,5 +1,22 @@
-#ifndef _itkTextureImageToImageFilter_txx
-#define _itkTextureImageToImageFilter_txx
+/*=========================================================================
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
+#ifndef _itkTextureImageToImageFilter_txx_
+#define _itkTextureImageToImageFilter_txx_
 
 #include "itkTextureImageToImageFilter.h"
 
@@ -36,7 +53,7 @@ TextureImageToImageFilter< TInputImage, TOutputImage >
   this->m_HistogramMaximumSetManually = false;
 
   this->ProcessObject::SetNumberOfRequiredOutputs( 8 );
-  for ( unsigned int i = 0; i < 8; i++ )
+  for( unsigned int i = 0; i < 8; i++ )
   {
     this->SetNthOutput( i, this->MakeOutput( i ) );
   }
@@ -53,7 +70,7 @@ void
 TextureImageToImageFilter< TInputImage, TOutputImage >
 ::SetHistogramMinimum( InputImagePixelType min )
 {
-  if ( this->m_HistogramMinimum != min )
+  if( this->m_HistogramMinimum != min )
   {
     this->m_HistogramMinimum = min;
     this->m_HistogramMinimumSetManually = true;
@@ -72,7 +89,7 @@ void
 TextureImageToImageFilter< TInputImage, TOutputImage >
 ::SetHistogramMaximum( InputImagePixelType min )
 {
-  if ( this->m_HistogramMaximum != min )
+  if( this->m_HistogramMaximum != min )
   {
     this->m_HistogramMaximum = min;
     this->m_HistogramMaximumSetManually = true;
@@ -91,7 +108,7 @@ void
 TextureImageToImageFilter< TInputImage, TOutputImage >
 ::SetOffsets( OffsetVector * vec )
 {
-  if ( this->m_Offsets != vec )
+  if( this->m_Offsets != vec )
   {
     this->Modified();
     this->m_Offsets = vec;
@@ -110,7 +127,7 @@ void
 TextureImageToImageFilter< TInputImage, TOutputImage >
 ::SetOffsetScales( const std::vector<unsigned int> & offsetScales )
 {
-  if ( offsetScales.size() != this->m_OffsetScales.size() )
+  if( offsetScales.size() != this->m_OffsetScales.size() )
   {
     this->Modified();
     this->m_OffsetScales = offsetScales;
@@ -118,9 +135,9 @@ TextureImageToImageFilter< TInputImage, TOutputImage >
   }
   else
   {
-    for ( unsigned int i = 0; i < offsetScales.size(); ++i )
+    for( unsigned int i = 0; i < offsetScales.size(); ++i )
     {
-      if ( offsetScales[ i ] != this->m_OffsetScales[ i ] )
+      if( offsetScales[ i ] != this->m_OffsetScales[ i ] )
       {
         this->Modified();
         this->m_OffsetScales = offsetScales;
@@ -155,9 +172,9 @@ TextureImageToImageFilter< TInputImage, TOutputImage >
 ::EnlargeOutputRequestedRegion( DataObject * itkNotUsed(output) )
 {
   /** This filter requires the all of the output images to be in the buffer. */
-  for ( unsigned int i = 0; i < this->GetNumberOfOutputs(); ++i )
+  for( unsigned int i = 0; i < this->GetNumberOfOutputs(); ++i )
   {
-    if ( this->GetOutput( i ) )
+    if( this->GetOutput( i ) )
     {
       this->GetOutput( i )->SetRequestedRegionToLargestPossibleRegion();
     }
@@ -177,7 +194,7 @@ TextureImageToImageFilter< TInputImage, TOutputImage >
 {
   /** Make sure that the input image is completely up-to-date. */
   InputImagePointer inputPtr = const_cast< InputImageType * > ( this->GetInput() );
-  if ( !inputPtr ) return;
+  if( !inputPtr ) return;
   inputPtr->SetRegions( inputPtr->GetLargestPossibleRegion() );
   inputPtr->Update();
 
@@ -232,7 +249,7 @@ TextureImageToImageFilter< TInputImage, TOutputImage >
   /** Setup iterators over the output images. */
   const unsigned int noo = this->GetNumberOfOutputs();
   std::vector< OutputIteratorType > outputIterators( noo );
-  for ( unsigned int i = 0; i < noo; ++i )
+  for( unsigned int i = 0; i < noo; ++i )
   {
     outputIterators[ i ] = OutputIteratorType( this->GetOutput( i ), regionForThread );
     outputIterators[ i ].GoToBegin();
@@ -260,7 +277,7 @@ TextureImageToImageFilter< TInputImage, TOutputImage >
     cmCalculator->Compute();
 
     /** Copy the requested texture features to the outputs and update iterators. */
-    for ( unsigned int ii = 0; ii < noo; ++ii )
+    for( unsigned int ii = 0; ii < noo; ++ii )
     {
       outputIterators[ ii ].Set( cmCalculator->GetFeature( ii ) );
       ++outputIterators[ ii ];
@@ -288,17 +305,17 @@ TextureImageToImageFilter< TInputImage, TOutputImage >
 
   /** Add or remove outputs. */
   unsigned int noo = this->GetNumberOfOutputs();
-  if ( noo < n )
+  if( noo < n )
   {
-    for ( unsigned int i = noo; i < n; ++i )
+    for( unsigned int i = noo; i < n; ++i )
     {
       typename DataObject::Pointer output = this->MakeOutput( i );
       this->SetNthOutput( i, output.GetPointer() );
     }
   }
-  else if ( noo > n )
+  else if( noo > n )
   {
-    for ( unsigned int i = noo - 1; i >= n; --i )
+    for( unsigned int i = noo - 1; i >= n; --i )
     {
       typename DataObject::Pointer output = this->GetOutputs()[ i ];
       this->RemoveOutput( output );
@@ -308,7 +325,7 @@ TextureImageToImageFilter< TInputImage, TOutputImage >
   /** Allocate memory for each output. */
   unsigned int numberOfOutputs =
     static_cast<unsigned int>( this->GetNumberOfOutputs() );
-  for ( unsigned int i = 0; i < numberOfOutputs; ++i )
+  for( unsigned int i = 0; i < numberOfOutputs; ++i )
   {
     OutputImagePointer output = this->GetOutput( i );
     output->SetRegions( this->GetInput()->GetLargestPossibleRegion() );
@@ -334,7 +351,7 @@ TextureImageToImageFilter< TInputImage, TOutputImage >
   InputImagePixelType max = NumericTraits<InputImagePixelType>::NonpositiveMin();
 
   /** Compute, but only if necessary. */
-  if ( !this->m_HistogramMinimumSetManually || !this->m_HistogramMaximumSetManually )
+  if( !this->m_HistogramMinimumSetManually || !this->m_HistogramMaximumSetManually )
   {
     stats->SetInput( this->GetInput() );
     stats->Update();
@@ -343,13 +360,13 @@ TextureImageToImageFilter< TInputImage, TOutputImage >
   }
 
   /** Update the minimum. */
-  if ( !this->m_HistogramMinimumSetManually )
+  if( !this->m_HistogramMinimumSetManually )
   {
     this->m_HistogramMinimum = min;
   }
 
   /** Update the maximum. */
-  if ( !this->m_HistogramMaximumSetManually )
+  if( !this->m_HistogramMaximumSetManually )
   {
     this->m_HistogramMaximum = max;
   }
@@ -373,14 +390,14 @@ TextureImageToImageFilter< TInputImage, TOutputImage >
    * - scales = (1,2,4): (1,0); (0,1); (2,0); (0,2); (4,0); (0,4)
    * etcetera. The scales are by default just 1.
    */
-  if ( !this->m_OffsetsSetManually )
+  if( !this->m_OffsetsSetManually )
   {
     this->m_Offsets->Reserve( scales.size() * InputImageDimension );
     unsigned int k = 0;
     OffsetType offset;
-    for ( unsigned int i = 0; i < scales.size(); ++i )
+    for( unsigned int i = 0; i < scales.size(); ++i )
     {
-      for ( unsigned int j = 0; j < InputImageDimension; ++j )
+      for( unsigned int j = 0; j < InputImageDimension; ++j )
       {
         offset.Fill( 0 );
         offset[ j ] = scales[ i ];
@@ -420,7 +437,7 @@ TextureImageToImageFilter< TInputImage, TOutputImage >
   }
   os << std::endl;
   os << indent << "Offsets: ";
-  for ( unsigned int i = 0; i < this->m_Offsets->Size(); ++i )
+  for( unsigned int i = 0; i < this->m_Offsets->Size(); ++i )
   {
     os << this->m_Offsets->GetElement( i ) << " ";
   }

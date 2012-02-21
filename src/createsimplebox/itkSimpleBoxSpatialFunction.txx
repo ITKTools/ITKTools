@@ -1,5 +1,22 @@
-#ifndef __itkSimpleBoxSpatialFunction_txx
-#define __itkSimpleBoxSpatialFunction_txx
+/*=========================================================================
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
+#ifndef __itkSimpleBoxSpatialFunction_txx_
+#define __itkSimpleBoxSpatialFunction_txx_
 
 #include "itkSimpleBoxSpatialFunction.h"
 
@@ -28,14 +45,14 @@ SimpleBoxSpatialFunction<VImageDimension,TInput>
 {
   bool acc = true;
 
-  for(unsigned int i = 0; i < VImageDimension; i++)
+  for( unsigned int i = 0; i < VImageDimension; i++ )
   {
     /** Check if the i'th coordinate of position lies within the two points. */
-    acc &= (   ( (position[i] > this->m_PointA[i]) && (position[i] < this->m_PointB[i]) )
-      || ( (position[i] > this->m_PointB[i]) && (position[i] < this->m_PointA[i]) )   );
+    acc &= (   ( (position[ i ] > this->m_PointA[ i ]) && (position[ i ] < this->m_PointB[ i ]) )
+      || ( (position[ i ] > this->m_PointB[ i ]) && (position[ i ] < this->m_PointA[ i ]) )   );
   }
 
-  if (acc)
+  if(acc)
   {
     return 1;
   }
@@ -54,16 +71,16 @@ SimpleBoxSpatialFunction<VImageDimension,TInput>
 
   unsigned int i;
   os << indent << "PointA: [";
-  for (i=0; i < VImageDimension - 1; i++)
+  for (i=0; i < VImageDimension - 1; i++ )
     {
-    os << this->m_PointA[i] << ", ";
+    os << this->m_PointA[ i ] << ", ";
     }
   os << "]" << std::endl;
 
   os << indent << "PointB: [";
-  for (i=0; i < VImageDimension - 1; i++)
+  for (i=0; i < VImageDimension - 1; i++ )
     {
-    os << this->m_PointB[i] << ", ";
+    os << this->m_PointB[ i ] << ", ";
     }
   os << "]" << std::endl;
 
@@ -71,4 +88,4 @@ SimpleBoxSpatialFunction<VImageDimension,TInput>
 
 } // end namespace itk
 
-#endif
+#endif // end #ifndef __itkSimpleBoxSpatialFunction_txx_

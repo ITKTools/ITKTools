@@ -151,7 +151,7 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
   typename TInputImage::SizeType size = region.GetSize();
   typename TInputImage::SpacingType spacing = inputImage->GetSpacing();
   double maxLength = 0;
-  if ( this->m_InputIsBinary)
+  if( this->m_InputIsBinary)
     {
     for( unsigned int dim=0; dim < TInputImage::ImageDimension; dim++)
       {
@@ -227,7 +227,7 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
 
   it.GoToBegin();
   int npt = 1;
-  if ( this->m_InputIsBinary)
+  if( this->m_InputIsBinary)
   {
     while( !it.IsAtEnd() )
       {
@@ -274,7 +274,7 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
       ++it;
       }
      std::sort( indices.begin(), indices.end() );
-     for (unsigned int kk=0; kk<indices.size(); kk++)    {
+     for( unsigned int kk=0; kk<indices.size(); kk++)    {
         this->m_IndexLookUpTable.push_back( indices[kk].index );
         }
     } // End If: Input is binary
@@ -323,10 +323,10 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
   typename KIDImageType::PixelType       kid_here = this->m_KIDImage->GetPixel(here);
   typename KIDImageType::PixelType       kid_there = this->m_KIDImage->GetPixel(there);
 
-  for (unsigned int j=0; j<m_K; j++)
+  for( unsigned int j=0; j<m_K; j++)
     {
     // instead of this (using distance components), use ID image and this->m_IndexLookUpTable
-    if (kid_there[j]>-1)
+    if(kid_there[j]>-1)
       {
       IndexType objectIndex = this->m_IndexLookUpTable[kid_there[j]-1];
       OffsetType offsetToObject = objectIndex - here;
@@ -336,18 +336,18 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
       double sqdist = 0.0;
       for( unsigned int i=0; i<InputImageDimension; i++ )
         {
-        double v1 = static_cast< double >(  offsetToObject[i]  );
+        double v1 = static_cast< double >(  offsetToObject[ i ]  );
 
-        if ( this->m_UseImageSpacing)
+        if( this->m_UseImageSpacing)
           {
-          double spacingComponent = static_cast< double >(spacing[i]);
+          double spacingComponent = static_cast< double >(spacing[ i ]);
           v1 *= spacingComponent;
           }
 
         sqdist +=  v1 * v1;
         }
 
-      if ( !m_SquaredDistance ) {
+      if( !m_SquaredDistance ) {
         InsertSorted(std::sqrt(sqdist), kid_there[j], kd, kid_here );
         }
       else {
@@ -371,19 +371,19 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
 {
 
   // Test if distance is larger than largest distance
-  if (dist >= distances[distances.GetSize()-1])
+  if(dist >= distances[distances.GetSize()-1])
     return false; // did not insert an element
 
 
   // Test if id is already in list, must replace it and re-sort the list.
   bool isalreadyinlist = false;
   int posinlist;
-  for (unsigned int k=0; k<m_K; k++)
+  for( unsigned int k=0; k<m_K; k++)
   {
-    if (index==indices[k])
+    if(index==indices[k])
       {
       // Test if the distance is actually smaller, if not do not add to list
-      if (dist<distances[k])
+      if(dist<distances[k])
         {
         isalreadyinlist = true;
         posinlist = k;
@@ -396,7 +396,7 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
       }
   }
 
-  if (isalreadyinlist)
+  if(isalreadyinlist)
   {
     std::cout << "ID is already in list. This is an incorrect behaviour." <<std::endl;
     exit(1);
@@ -404,14 +404,14 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
   else
   {
     int insertpos = distances.GetSize();
-    for (int i=0; i<distances.GetSize(); i++) {
-      if (dist < distances[i]) {
+    for (int i=0; i<distances.GetSize(); i++ ) {
+      if(dist < distances[ i ]) {
         insertpos = i;
         break;
       }
     }
-    if (insertpos<distances.GetSize()) {
-      for (unsigned int k = distances.GetSize()-1; k>insertpos; k--) {
+    if(insertpos<distances.GetSize()) {
+      for( unsigned int k = distances.GetSize()-1; k>insertpos; k--) {
         distances[k] = distances[k-1];
         indices[k] = indices[k-1];
       }
@@ -463,7 +463,7 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
   unsigned long visitsPerPixel = (1 << InputImageDimension);
   unsigned long updateVisits, i=0;
   updateVisits = region.GetNumberOfPixels() * visitsPerPixel / 10;
-  if ( updateVisits < 1 )
+  if( updateVisits < 1 )
     {
     updateVisits = 1;
     }
@@ -478,13 +478,13 @@ std::cerr << "to here inside 3";
   itkDebugMacro(<< "GenerateData: Computing distance transform");
   while( !it.IsAtEnd() )
     {
-    if ( !(i % updateVisits ) )
+    if( !(i % updateVisits ) )
       {
       this->UpdateProgress( (float) i / updatePeriod );
       }
 
     IndexType here = it.GetIndex();
-    for(unsigned int dim=0; dim <OutputImageType::ImageDimension; dim++)
+    for( unsigned int dim=0; dim <OutputImageType::ImageDimension; dim++)
       {
       if( it.IsReflected(dim) )
         {
@@ -519,7 +519,7 @@ OrderKDistanceTransformImageFilter<TInputImage, TOutputImage, TKDistanceImage, T
   // call the superclass's implementation of this method
   Superclass::GenerateInputRequestedRegion();
 
-  if ( !this->GetInput() )
+  if( !this->GetInput() )
     {
     return;
     }

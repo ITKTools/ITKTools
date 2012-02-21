@@ -1,13 +1,32 @@
-#ifndef __itkUnaryFunctors_h
-#define __itkUnaryFunctors_h
+/*=========================================================================
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
+#ifndef __itkUnaryFunctors_h_
+#define __itkUnaryFunctors_h_
 
 #include "vnl/vnl_math.h"
 #include "itkNumericTraits.h"
 
-enum UnaryFunctorEnum { PLUS, RMINUS, LMINUS, TIMES, LDIVIDE, RDIVIDE,
+/** All available unary operators. */
+enum UnaryFunctorEnum{ PLUS, RMINUS, LMINUS, TIMES, LDIVIDE, RDIVIDE,
   RMODINT, RMODDOUBLE, LMODINT, LMODDOUBLE, NLOG, RPOWER, LPOWER, NEG,
   SIGNINT, SIGNDOUBLE, ABSINT, ABSDOUBLE, FLOOR, CEIL, ROUND,
-  LN, LOG10, EXP, SIN, COS, TAN, ARCSIN, ARCCOS, ARCTAN };
+  LN, LOG10, EXP, SIN, COS, TAN, ARCSIN, ARCCOS, ARCTAN,
+  LINEAR };
 
 namespace itk {
 
@@ -229,7 +248,6 @@ private:
 };
 
 /** Funtions that don't use m_Argument. */
-
 
 template< class TInput, class TArgument=TInput, class TOutput=TInput >
 class NEG
@@ -533,6 +551,25 @@ private:
 
 };
 
+/** More complicated functors. */
+
+template< class TInput, class TArgument=TInput, class TOutput=TInput >
+class LINEAR
+{
+public:
+  LINEAR() {};
+  ~LINEAR() {};
+  inline TOutput operator()( const TInput & A )
+  {
+    return static_cast<TOutput>( this->m_Argument1 * A + this->m_Argument2 );
+  }
+  void SetArgument1( TArgument arg ){ this->m_Argument1 = arg; };
+  void SetArgument2( TArgument arg ){ this->m_Argument2 = arg; };
+private:
+  TArgument m_Argument1;
+  TArgument m_Argument2;
+};
+
 } // end namespace Functor
 
 
@@ -544,7 +581,7 @@ template< class TInputImage, class TOutputImage = TInputImage, class TArgument =
 struct UnaryFunctorFactory
 {
   typename itk::InPlaceImageFilter<TInputImage, TOutputImage>::Pointer
-    GetFilter( const UnaryFunctorEnum filterType, const std::string & strArgument )
+    GetFilter( const UnaryFunctorEnum filterType, const std::vector<std::string> & strArguments )
   {
     //
     typedef typename TInputImage::PixelType   InputPixelType;
@@ -552,14 +589,27 @@ struct UnaryFunctorFactory
 
     // Convert the argument to the correct type
     // NB: ">>" gives wrong results for (unsigned)char. Use the accumulate type
-    // as intermediate type to avoid this. (then short will be used, and the 
+    // as intermediate type to avoid this. (then short will be used, and the
     // result is casted to char again).
-    std::stringstream ssArgument( strArgument );
+    std::stringstream ssArgument( strArguments[ 0 ] );
     TArgument argument;
     typename itk::NumericTraits<TArgument>::AccumulateType tempArgument;
     ssArgument >> tempArgument;
     argument = static_cast<TArgument>( tempArgument );
 
+    /** Support for second argument. */
+    TArgument argument1, argument2;
+    if( strArguments.size() == 2 )
+    {
+      argument1 = argument;
+
+      std::stringstream ssArgument2( strArguments[ 1 ] );
+      typename itk::NumericTraits<TArgument>::AccumulateType tempArgument2;
+      ssArgument2 >> tempArgument2;
+      argument2 = static_cast<TArgument>( tempArgument2 );
+    }
+
+    /** Create UnaryFunctorImageFilter with requested functor and set arguments. */
     if( filterType == PLUS )
     {
       typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
@@ -785,6 +835,15 @@ struct UnaryFunctorFactory
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
+    else if( filterType == LINEAR )
+    {
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::LINEAR< InputPixelType, double, OutputPixelType > >  FilterType;
+      typename FilterType::Pointer filter = FilterType::New();
+      filter->GetFunctor().SetArgument1( argument1 );
+      filter->GetFunctor().SetArgument2( argument2 );
+      return filter.GetPointer();
+    }
     else
     {
       std::cerr << "Selected functor is not valid!" << std::endl;
@@ -793,4 +852,4 @@ struct UnaryFunctorFactory
   }
 };
 
-#endif //#ifndef __itklogicalFunctors_h
+#endif //#ifndef __itkUnaryFunctors_h

@@ -15,14 +15,8 @@
 * limitations under the License.
 *
 *=========================================================================*/
-/** \file
- \brief Create a sphere image.
- 
- \verbinclude createsphere.help
- */
-
-#ifndef __createsphere_h
-#define __createsphere_h
+#ifndef __createsphere_h_
+#define __createsphere_h_
 
 #include "ITKToolsBase.h"
 
@@ -31,70 +25,73 @@
 #include "itkImageFileWriter.h"
 
 
-/** CreateSphere */
+/** \class ITKToolsCreateSphereBase
+ *
+ * Untemplated pure virtual base class that holds
+ * the Run() function and all required parameters.
+ */
 
 class ITKToolsCreateSphereBase : public itktools::ITKToolsBase
 { 
 public:
+  /** Constructor. */
   ITKToolsCreateSphereBase()
   {
     this->m_OutputFileName = "";
-    //this->m_Size;
-    //this->m_Spacing;
-    //this->m_Center;
     this->m_Radius = 0.0f;
   };
+  /** Destructor. */
   ~ITKToolsCreateSphereBase(){};
 
-  /** Input parameters */
+  /** Input member parameters. */
   std::string m_OutputFileName;
   std::vector<unsigned int> m_Size;
   std::vector<double> m_Spacing;
   std::vector<double> m_Center;
   double m_Radius;
     
-}; // end CreateSphereBase
+}; // end class ITKToolsCreateSphereBase
 
 
-template< class TComponentType, unsigned int VDimension >
+/** \class ITKToolsCreateSphere
+ *
+ * Templated class that implements the Run() function
+ * and the New() function for its creation.
+ */
+
+template< unsigned int VDimension, class TComponentType >
 class ITKToolsCreateSphere : public ITKToolsCreateSphereBase
 {
 public:
+  /** Standard ITKTools stuff. */
   typedef ITKToolsCreateSphere Self;
+  itktoolsOneTypeNewMacro( Self );
 
   ITKToolsCreateSphere(){};
   ~ITKToolsCreateSphere(){};
 
-  static Self * New( itktools::ComponentType componentType, unsigned int dim )
-  {
-    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
+  /** Run function. */
   void Run( void )
   {
     /** Typedefs. */
-    typedef itk::Image<TComponentType, VDimension>  ImageType;
-    typedef itk::ImageRegionIterator< ImageType >   IteratorType;
-    typedef itk::SphereSpatialFunction< VDimension > SphereSpatialFunctionType;
-    typedef typename SphereSpatialFunctionType::InputType    InputType;
-    typedef itk::ImageFileWriter< ImageType >       ImageWriterType;
+    typedef itk::Image<TComponentType, VDimension>        ImageType;
+    typedef itk::ImageRegionIterator< ImageType >         IteratorType;
+    typedef itk::SphereSpatialFunction< VDimension >      SphereSpatialFunctionType;
+    typedef typename SphereSpatialFunctionType::InputType InputType;
+    typedef itk::ImageFileWriter< ImageType >             ImageWriterType;
 
-    typedef typename ImageType::RegionType      RegionType;
-    typedef typename RegionType::SizeType     SizeType;
-    typedef typename RegionType::SizeValueType  SizeValueType;
-    typedef typename ImageType::PointType     PointType;
-    typedef typename ImageType::IndexType     IndexType;
-    typedef typename ImageType::SpacingType   SpacingType;
+    typedef typename ImageType::RegionType                RegionType;
+    typedef typename RegionType::SizeType                 SizeType;
+    typedef typename RegionType::SizeValueType            SizeValueType;
+    typedef typename ImageType::PointType                 PointType;
+    typedef typename ImageType::IndexType                 IndexType;
+    typedef typename ImageType::SpacingType               SpacingType;
 
     /** Parse the arguments. */
     SizeType    Size;
     SpacingType Spacing;
     InputType   Center;
-    for ( unsigned int i = 0; i < VDimension; i++ )
+    for( unsigned int i = 0; i < VDimension; i++ )
     {
       Size[ i ] = static_cast<SizeValueType>( this->m_Size[ i ] );
       Spacing[ i ] = this->m_Spacing[ i ];
@@ -134,8 +131,9 @@ public:
     writer->SetFileName( this->m_OutputFileName.c_str() );
     writer->SetInput( image );
     writer->Update();
-  }
 
-}; // end CreateSphere
+  } // end Run()
 
-#endif // end #ifndef __createsphere_h
+}; // end class ITKToolsCreateSphere
+
+#endif // end #ifndef __createsphere_h_

@@ -15,14 +15,14 @@
 * limitations under the License.
 *
 *=========================================================================*/
-#ifndef __BinaryImageOperatorMainHelper_h
-#define __BinaryImageOperatorMainHelper_h
+#ifndef __BinaryImageOperatorMainHelper_h_
+#define __BinaryImageOperatorMainHelper_h_
 
 #include <map>
 #include <utility> // for pair
 #include <string>
 #include <itksys/SystemTools.hxx>
-#include "CommandLineArgumentHelper.h"
+
 #include "itkImageIOBase.h"
 
 
@@ -32,9 +32,9 @@
 
 int DetermineComponentTypes(
   const std::vector<std::string> & inputFileNames,
-  itktools::ComponentType & componentType1,
-  itktools::ComponentType & componentType2,
-  itktools::ComponentType & componentTypeOut )
+  itk::ImageIOBase::IOComponentType & componentType1,
+  itk::ImageIOBase::IOComponentType & componentType2,
+  itk::ImageIOBase::IOComponentType & componentTypeOut )
 {
   // Note: a bit of an ugly combination between itktools
   // and itk::ImageIOBase functionality.
@@ -72,7 +72,7 @@ int DetermineComponentTypes(
   unsigned int inputDimension = 0;
 
   /** Check the input. */
-  if ( pixelType1AsString != pixelType2AsString )
+  if( pixelType1AsString != pixelType2AsString )
   {
     std::cerr << "ERROR: the two input images are of different pixel type (SCALAR, VECTOR, etc)."
       << "\n  Image " << inputFileNames[ 0 ] << " is of type " << pixelType1AsString
@@ -81,7 +81,7 @@ int DetermineComponentTypes(
     return 1;
   }
 
-  if ( numberOfComponents1 != numberOfComponents2 )
+  if( numberOfComponents1 != numberOfComponents2 )
   {
     std::cerr << "ERROR: the two input images have a different number of components."
       << "\n  Image " << inputFileNames[ 0 ] << " has " << numberOfComponents1
@@ -90,7 +90,7 @@ int DetermineComponentTypes(
     return 1;
   }
 
-  if ( inputDimension1 != inputDimension2 )
+  if( inputDimension1 != inputDimension2 )
   {
     std::cerr << "ERROR: the two input images are of different dimension."
       << "\n  Image " << inputFileNames[ 0 ] << " has dimension " << inputDimension1
@@ -103,19 +103,19 @@ int DetermineComponentTypes(
     inputDimension = inputDimension1;
   }
 
-  for ( unsigned int i = 0; i < inputDimension; ++i )
+  for( unsigned int i = 0; i < inputDimension; ++i )
   {
-    if ( imagesize1[ i ] != imagesize2[ i ] )
+    if( imagesize1[ i ] != imagesize2[ i ] )
     {
       std::cerr << "ERROR: the two input images have different sizes."
         << "\n  Image " << inputFileNames[ 0 ] << " has size [ ";
-      for ( unsigned int j = 0; j < inputDimension; ++j )
+      for( unsigned int j = 0; j < inputDimension; ++j )
       {
         std::cerr << imagesize1[ j ] << " ";
       }
       std::cerr << "]"
         << "\n  Image " << inputFileNames[ 1 ] << " has size [ ";
-      for ( unsigned int j = 0; j < inputDimension; ++j )
+      for( unsigned int j = 0; j < inputDimension; ++j )
       {
         std::cerr << imagesize2[ j ] << " ";
       }
@@ -129,7 +129,7 @@ int DetermineComponentTypes(
    */
   componentTypeOut = itktools::GetLargestComponentType( componentType1, componentType2 );
   bool outIsInteger = itktools::ComponentTypeIsInteger( componentTypeOut );
-  if ( outIsInteger )
+  if( outIsInteger )
   {
     componentType1 = componentType2 = itk::ImageIOBase::LONG;
   }
@@ -150,81 +150,81 @@ int DetermineComponentTypes(
 
 int CheckOperator( std::string & operatoR )
 {
-  if ( operatoR == "ADDITION" || operatoR == "ADD" || operatoR == "PLUS" )
+  if( operatoR == "ADDITION" || operatoR == "ADD" || operatoR == "PLUS" )
   {
     operatoR = "ADDITION";
     return 0;
   }
-  else if ( operatoR == "WEIGHTEDADDITION" || operatoR == "WEIGHTEDADD"
+  else if( operatoR == "WEIGHTEDADDITION" || operatoR == "WEIGHTEDADD"
     || operatoR == "WEIGHTEDPLUS" )
   {
     operatoR = "WEIGHTEDADDITION";
     return 0;
   }
-  else if ( operatoR == "MINUS" || operatoR == "DIFF" )
+  else if( operatoR == "MINUS" || operatoR == "DIFF" )
   {
     operatoR = "MINUS";
     return 0;
   }
-  else if ( operatoR == "TIMES" || operatoR == "MULTIPLY" )
+  else if( operatoR == "TIMES" || operatoR == "MULTIPLY" )
   {
     operatoR = "TIMES";
     return 0;
   }
-  else if ( operatoR == "DIVIDE" )
+  else if( operatoR == "DIVIDE" )
   {
     return 0;
   }
-  else if ( operatoR == "POWER" )
+  else if( operatoR == "POWER" )
   {
     return 0;
   }
-  else if ( operatoR == "MAXIMUM" || operatoR == "MAX" )
+  else if( operatoR == "MAXIMUM" || operatoR == "MAX" )
   {
     operatoR = "MAXIMUM";
     return 0;
   }
-  else if ( operatoR == "MINIMUM" || operatoR == "MIN" )
+  else if( operatoR == "MINIMUM" || operatoR == "MIN" )
   {
     operatoR = "MINIMUM";
     return 0;
   }
-  else if ( operatoR == "ABSOLUTEDIFFERENCE" || operatoR == "ABSDIFFERENCE"
+  else if( operatoR == "ABSOLUTEDIFFERENCE" || operatoR == "ABSDIFFERENCE"
     || operatoR == "ABSOLUTEDIFF" || operatoR == "ABSDIFF"
     || operatoR == "ABSOLUTEMINUS" || operatoR == "ABSMINUS" )
   {
     operatoR = "ABSOLUTEDIFFERENCE";
     return 0;
   }
-  else if ( operatoR == "SQUAREDDIFFERENCE" || operatoR == "SQUAREDDIFF"
+  else if( operatoR == "SQUAREDDIFFERENCE" || operatoR == "SQUAREDDIFF"
     || operatoR == "SQUAREDMINUS" )
   {
     operatoR = "SQUAREDDIFFERENCE";
     return 0;
   }
-  else if ( operatoR == "BINARYMAGNITUDE" || operatoR == "BINARYMAG"
+  else if( operatoR == "BINARYMAGNITUDE" || operatoR == "BINARYMAG"
     || operatoR == "BINMAGNITUDE" || operatoR == "BINMAG"
     || operatoR == "MAGNITUDE" || operatoR == "MAG" )
   {
     operatoR = "BINARYMAGNITUDE";
     return 0;
   }
-  else if ( operatoR == "MASK" )
+  else if( operatoR == "MASK" )
   {
     operatoR = "MASK";
     return 0;
   }
-  else if ( operatoR == "MASKNEGATED" || operatoR == "MASKNEG" )
+  else if( operatoR == "MASKNEGATED" || operatoR == "MASKNEG" )
   {
     operatoR = "MASKNEGATED";
     return 0;
   }
-  else if ( operatoR == "MODULO" || operatoR == "MOD" )
+  else if( operatoR == "MODULO" || operatoR == "MOD" )
   {
     operatoR = "MODULO";
     return 0;
   }
-  else if ( operatoR == "LOG" || operatoR == "LOGN" )
+  else if( operatoR == "LOG" || operatoR == "LOGN" )
   {
     operatoR = "LOG";
     return 0;
@@ -268,7 +268,7 @@ bool OperatorNeedsArgument( const std::string & operatoR )
   operatorMap["LOG"]                = false;
 
   /** Return true or false. */
-  if ( operatorMap.count( operatoR ) ) return operatorMap[ operatoR ];
+  if( operatorMap.count( operatoR ) ) return operatorMap[ operatoR ];
   return false;
 
 } // end OperatorNeedsArgument()
@@ -298,12 +298,12 @@ void CreateOutputFileName( const std::vector<std::string> & inputFileNames,
   /** Compose outputFileName. */
   outputFileName = path + name1 + ops + name2 + ext;
 /*
-  if ( operatorMap[ops].first && !operatorMap[ops].second.first )
+  if( operatorMap[ops].first && !operatorMap[ops].second.first )
   {
     // Example: /path/SINimage.mhd *
     outputFileName = path + ops + name + ext;
   }
-  else if ( operatorMap[ops].first && operatorMap[ops].second.first )
+  else if( operatorMap[ops].first && operatorMap[ops].second.first )
   {
     // Example: /path/3LPOWERimage.mhd *
     outputFileName = path + arg + ops + name + ext;
@@ -329,7 +329,7 @@ bool CheckOperatorAndArgument( const std::string & operatoR,
   double arg = atof( argument.c_str() );
 
   /** If no argument is needed. */
-  if ( !operatorNeedsArgument && retarg )
+  if( !operatorNeedsArgument && retarg )
   {
     std::cerr << "WARNING: operator " << operatoR << " does not need an argument." << std::endl;
     std::cerr << "The argument (" << argument << ") is ignored." << std::endl;
@@ -337,7 +337,7 @@ bool CheckOperatorAndArgument( const std::string & operatoR,
   }
 
   /** If an argument is needed, but not provided. */
-  if ( operatorNeedsArgument && !retarg )
+  if( operatorNeedsArgument && !retarg )
   {
     std::cerr << "ERROR: operator " << operatoR << " needs an argument." << std::endl;
     std::cerr << "Specify the argument with \"-arg\"." << std::endl;
@@ -345,11 +345,11 @@ bool CheckOperatorAndArgument( const std::string & operatoR,
   }
 
   /** If an argument is needed and provided. */
-  if ( operatorNeedsArgument )
+  if( operatorNeedsArgument )
   {
-    if ( operatoR == "WEIGHTEDADDITION" )
+    if( operatoR == "WEIGHTEDADDITION" )
     {
-      if ( arg < 0.0 || arg > 1.0 )
+      if( arg < 0.0 || arg > 1.0 )
       {
         std::cerr << "ERROR: the weight should be between 0.0 and 1.0." << std::endl;
         return false;
@@ -362,4 +362,4 @@ bool CheckOperatorAndArgument( const std::string & operatoR,
 } // end CheckOperatorAndArgument()
 
 
-#endif //#ifndef __BinaryImageOperatorMainHelper_h
+#endif //#ifndef __BinaryImageOperatorMainHelper_h_

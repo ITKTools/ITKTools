@@ -1,4 +1,21 @@
 /*=========================================================================
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
+/*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: itkGrayLevelCooccurrenceMatrixTextureCoefficientsCalculator.txx,v $
@@ -14,8 +31,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef _itkGrayLevelCooccurrenceMatrixTextureCoefficientsCalculator_txx
-#define _itkGrayLevelCooccurrenceMatrixTextureCoefficientsCalculator_txx
+#ifndef _itkGrayLevelCooccurrenceMatrixTextureCoefficientsCalculator_txx_
+#define _itkGrayLevelCooccurrenceMatrixTextureCoefficientsCalculator_txx_
 
 #include "itkGrayLevelCooccurrenceMatrixTextureCoefficientsCalculator.h"
 
@@ -96,7 +113,7 @@ GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator< THistogram >
     AbsoluteFrequencyType frequencyCount = hit.GetFrequency();
 
     /** No use doing these calculations if we're just multiplying by zero. */
-    if ( frequencyCount == 0 ) continue;
+    if( frequencyCount == 0 ) continue;
 
     /** Normalize frequency and get the index of this histogram entry. */
     double frequency = static_cast<double>(frequencyCount) / totalFrequency;
@@ -140,7 +157,7 @@ GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator< THistogram >
   /** Compute marginal mean and variance needed for the HaralickCorrelation. */
   double marginalMean = 0.0;
   double marginalSquareMean = 0.0;
-  for ( unsigned int i = 0; i < binsPerAxis; ++i )
+  for( unsigned int i = 0; i < binsPerAxis; ++i )
   {
     marginalMean += marginalSums[ i ];
     marginalSquareMean += marginalSums[ i ] * marginalSums[ i ];
@@ -228,14 +245,14 @@ double
 GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator< THistogram >
 ::GetFeature( unsigned int feature )
 {
-  if ( feature == 0 ) return this->GetEnergy();
-  else if ( feature == 1 ) return this->GetEntropy();
-  else if ( feature == 2 ) return this->GetCorrelation();
-  else if ( feature == 3 ) return this->GetInverseDifferenceMoment();
-  else if ( feature == 4 ) return this->GetInertia();
-  else if ( feature == 5 ) return this->GetClusterShade();
-  else if ( feature == 6 ) return this->GetClusterProminence();
-  else if ( feature == 7 ) return this->GetHaralickCorrelation();
+  if( feature == 0 ) return this->GetEnergy();
+  else if( feature == 1 ) return this->GetEntropy();
+  else if( feature == 2 ) return this->GetCorrelation();
+  else if( feature == 3 ) return this->GetInverseDifferenceMoment();
+  else if( feature == 4 ) return this->GetInertia();
+  else if( feature == 5 ) return this->GetClusterShade();
+  else if( feature == 6 ) return this->GetClusterProminence();
+  else if( feature == 7 ) return this->GetHaralickCorrelation();
   else return 0.0;
 
 } // end GetFeature()

@@ -1,5 +1,22 @@
-#ifndef __statisticsprinters_h
-#define __statisticsprinters_h
+/*=========================================================================
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
+#ifndef __statisticsprinters_h_
+#define __statisticsprinters_h_
 
 
 #include <fstream>
@@ -73,13 +90,13 @@ void PrintHistogramStatistics( const THistogram * histogram,
   std::cout << "\t15th percentile: \t" << fifteenthpercentile << std::endl;
 
   /** Print histogram to output file */
-  if ( histogramOutputFileName != "" )
+  if( histogramOutputFileName != "" )
   {
     std::cout << "Histogram is written to file: " <<
       histogramOutputFileName << " ..." << std::endl;
     std::ofstream histogramOutputFile;
     histogramOutputFile.open( histogramOutputFileName.c_str() );
-    if ( !histogramOutputFile.is_open() )
+    if( !histogramOutputFile.is_open() )
     {
       itkGenericExceptionMacro(<< "ERROR: Output file for histogram cannot be opened!");
     }
@@ -97,7 +114,7 @@ void PrintHistogramStatistics( const THistogram * histogram,
       << "\t"
       << "prob"
       << std::endl;
-    for (unsigned long i = 0; i < histogram->GetSize(0); ++i)
+    for (unsigned long i = 0; i < histogram->GetSize(0); ++i )
     {
       AbsoluteFrequencyType freq = histogram->GetFrequency(i,0);
       double prob = static_cast<double>(freq) / static_cast<double>(nrOfPixels);
@@ -121,4 +138,3 @@ void PrintHistogramStatistics( const THistogram * histogram,
 
 
 #endif // #ifndef __statisticsprinters_h
-

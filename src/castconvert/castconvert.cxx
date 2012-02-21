@@ -32,7 +32,7 @@
  */
 
 #include "itkCommandLineArgumentParser.h"
-#include "castconverthelpers.h"
+#include "castconvert.h"
 #include "castconverthelpers2.h"
 
 // Some non-standard IO Factories
@@ -52,46 +52,46 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-     << "Description:\n"
-     << "This program converts between many image formats.\n"
-     << "This is done by reading in an image, possibly casting of the image,\n"
-     << "and subsequently writing the image to the user-specified format.\n"
-     << "\nDefinitions:\n"
-     << "- converting: changing the extension of the image, e.g. bmp, mhd, etc.\n"
-     << "- casting: changing the component type of a voxel, e.g. short, float,\n"
-     << "           unsigned long, etc.\n"
-     << "\nNotes:\n"
-     << "- Casting of scalar images is done by the itk::ShiftScaleImageFilter,\n"
-     << "  where values are mapped to itself, leaving the intensity range\n"
-     << "  the same. NB: When casting to a component type with smaller dynamic\n"
-     << "  range, information might get lost.\n"
-     << "- Casting of multi-component images, such as vector or RGB images, is\n"
-     << "  done using the itk::VectorCastImageFilter.\n"
-     << "- Input images can be in all file formats ITK supports and for which\n"
-     << "  the itk::ImageFileReader works, and additionally 3D dicom series.\n"
-     << "  It is also possible to extract a specific DICOM series from a directory\n"
-     << "  by supplying the seriesUID.\n"
-     << "- Output images can be in all file formats ITK supports and for which\n"
-     << "  the itk::ImageFileWriter works. Dicom output is not supported yet.\n"
-     << "\n" << std::endl
-     << "Usage:\n"
-     << "pxcastconvert\n"
-     << "  -in      inputfilename\n"
-     << "  -out     outputfilename\n"
-     << "  [-opct]  outputPixelComponentType, default equal to input\n"
-     << "  [-z]     compression flag; if provided, the output image is compressed\n"
-     << "OR pxcastconvert\n"
-     << "  -in      dicomDirectory\n"
-     << "  -out     outputfilename\n"
-     << "  [-opct]  outputPixelComponentType, default equal to input\n"
-     << "  [-s]     seriesUID, default the first UID found\n"
-     << "  [-r]     add restrictions to generate a unique seriesUID\n"
-     << "           e.g. \"0020|0012\" to add a check for acquisition number.\n"
-     << "  [-z]     compression flag; if provided, the output image is compressed\n\n"
-     << "OutputPixelComponentType should be one of {[unsigned_]char, [unsigned_]short,\n"
-     << "  [unsigned_]int, [unsigned_]long, float, double}.\n"
-     << "NB: Not every image format supports all OutputPixelComponentTypes.\n"
-     << "NB2: Not every image format supports the compression flag \"-z\"." << std::endl;
+    << "Description:\n"
+    << "This program converts between many image formats.\n"
+    << "This is done by reading in an image, possibly casting of the image,\n"
+    << "and subsequently writing the image to the user-specified format.\n"
+    << "\nDefinitions:\n"
+    << "- converting: changing the extension of the image, e.g. bmp, mhd, etc.\n"
+    << "- casting: changing the component type of a voxel, e.g. short, float,\n"
+    << "           unsigned long, etc.\n"
+    << "\nNotes:\n"
+    << "- Casting of scalar images is done by the itk::ShiftScaleImageFilter,\n"
+    << "  where values are mapped to itself, leaving the intensity range\n"
+    << "  the same. NB: When casting to a component type with smaller dynamic\n"
+    << "  range, information might get lost.\n"
+    << "- Casting of multi-component images, such as vector or RGB images, is\n"
+    << "  done using the itk::VectorCastImageFilter.\n"
+    << "- Input images can be in all file formats ITK supports and for which\n"
+    << "  the itk::ImageFileReader works, and additionally 3D dicom series.\n"
+    << "  It is also possible to extract a specific DICOM series from a directory\n"
+    << "  by supplying the seriesUID.\n"
+    << "- Output images can be in all file formats ITK supports and for which\n"
+    << "  the itk::ImageFileWriter works. Dicom output is not supported yet.\n"
+    << "\n" << std::endl
+    << "Usage:\n"
+    << "pxcastconvert\n"
+    << "  -in      inputfilename\n"
+    << "  -out     outputfilename\n"
+    << "  [-opct]  outputPixelComponentType, default equal to input\n"
+    << "  [-z]     compression flag; if provided, the output image is compressed\n"
+    << "OR pxcastconvert\n"
+    << "  -in      dicomDirectory\n"
+    << "  -out     outputfilename\n"
+    << "  [-opct]  outputPixelComponentType, default equal to input\n"
+    << "  [-s]     seriesUID, default the first UID found\n"
+    << "  [-r]     add restrictions to generate a unique seriesUID\n"
+    << "           e.g. \"0020|0012\" to add a check for acquisition number.\n"
+    << "  [-z]     compression flag; if provided, the output image is compressed\n\n"
+    << "OutputPixelComponentType should be one of {[unsigned_]char, [unsigned_]short,\n"
+    << "  [unsigned_]int, [unsigned_]long, float, double}.\n"
+    << "NB: Not every image format supports all OutputPixelComponentTypes.\n"
+    << "NB2: Not every image format supports the compression flag \"-z\".";
 
   return ss.str();
 
@@ -100,16 +100,20 @@ std::string GetHelpString( void )
 
 /** Break the program into smaller compilation units. */
 extern void ITKToolsCastConvert2D(
-  itktools::ComponentType outputComponentType, unsigned int dim,
+  unsigned int dim,
+  itk::ImageIOBase::IOComponentType outputComponentType, 
   ITKToolsCastConvertBase * & castConvert );
 extern void ITKToolsCastConvert3D(
-  itktools::ComponentType outputComponentType, unsigned int dim,
+  unsigned int dim,
+  itk::ImageIOBase::IOComponentType outputComponentType,
   ITKToolsCastConvertBase * & castConvert );
 extern void ITKToolsCastConvert4D(
-  itktools::ComponentType outputComponentType, unsigned int dim,
+  unsigned int dim,
+  itk::ImageIOBase::IOComponentType outputComponentType,
   ITKToolsCastConvertBase * & castConvert );
 extern void ITKToolsCastConvertDICOM3D(
-  itktools::ComponentType outputComponentType, unsigned int dim,
+  unsigned int dim,
+  itk::ImageIOBase::IOComponentType outputComponentType,
   ITKToolsCastConvertBase * & castConvert );
 
 //-------------------------------------------------------------------------------------
@@ -137,11 +141,11 @@ int main( int argc, char **argv )
   /** Validate the command line arguments. */
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if ( validateArguments == itk::CommandLineArgumentParser::FAILED )
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if ( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }
@@ -165,9 +169,9 @@ int main( int argc, char **argv )
   bool useCompression = parser->ArgumentExists( "-z" );
 
   /** Check -opct. */
-  if ( retopct )
+  if( retopct )
   {
-    if ( !itktools::ComponentTypeIsValid(
+    if( !itktools::ComponentTypeIsValid(
       itk::ImageIOBase::GetComponentTypeFromString( outputPixelComponentType ) ) )
     {
       std::cerr << "The user-provided \"-opct\" is "
@@ -180,20 +184,17 @@ int main( int argc, char **argv )
   /** Are we dealing with an image or a DICOM series? */
   bool isDICOM = false;
   bool allOK = IsDICOM( input, isDICOM );
-  if ( !allOK )
+  if( !allOK )
   {
     std::cout << "ERROR: " << input << " does not exist." << std::endl;
     return EXIT_FAILURE;
   }
 
-  /** Class that does the work */
-  ITKToolsCastConvertBase * castConvert = NULL;
-
   /** Get image information. */
   std::string inputFileName = "";
   std::string inputDirectoryName = "";
   unsigned int dim = 0;
-  if ( !isDICOM )
+  if( !isDICOM )
   {
     inputFileName = input;
   }
@@ -207,7 +208,7 @@ int main( int argc, char **argv )
     bool allOK = GetFileNameFromDICOMDirectory(
       inputDirectoryName, fileNameOfFirstDICOMImage,
       seriesUID, restrictions, errorMessage );
-    if ( !allOK )
+    if( !allOK )
     {
       std::cerr << errorMessage << std::endl;
       return EXIT_FAILURE;
@@ -218,47 +219,41 @@ int main( int argc, char **argv )
 
   /** Get dimension and component type. */
   itktools::GetImageDimension( inputFileName, dim );
-  itktools::ComponentType componentType
+  itk::ImageIOBase::IOComponentType componentType
     = itktools::GetImageComponentType( inputFileName );
-  if ( retopct )
+  if( retopct )
   {
     componentType = itk::ImageIOBase::GetComponentTypeFromString( outputPixelComponentType );
   }
 
-  /** Construct a castconvert class of the correct type. */
+  /** Class that does the work. */
+  ITKToolsCastConvertBase * castConvert = NULL;
+
   try
   {
-    if ( !isDICOM )
+    if( !isDICOM )
     {
-      if ( !castConvert ) ITKToolsCastConvert2D( componentType, dim, castConvert );
+      if( !castConvert ) ITKToolsCastConvert2D( dim, componentType, castConvert );
 
 #ifdef ITKTOOLS_3D_SUPPORT
-      if ( !castConvert ) ITKToolsCastConvert3D( componentType, dim, castConvert );
+      if( !castConvert ) ITKToolsCastConvert3D( dim, componentType, castConvert );
 #endif
 
 #ifdef ITKTOOLS_4D_SUPPORT
-      if ( !castConvert ) ITKToolsCastConvert4D( componentType, dim, castConvert );
+      if( !castConvert ) ITKToolsCastConvert4D( dim, componentType, castConvert );
 #endif
     }
     else
     {
 #ifdef ITKTOOLS_3D_SUPPORT
-      if ( !castConvert ) ITKToolsCastConvertDICOM3D( componentType, dim, castConvert );
+      if( !castConvert ) ITKToolsCastConvertDICOM3D( dim, componentType, castConvert );
 #endif
     }
+    /** Check if filter was instantiated. */
+    bool supported = itktools::IsFilterSupportedCheck( castConvert, dim, componentType );
+    if( !supported ) return EXIT_FAILURE;
 
-    if ( !castConvert )
-    {
-      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-      std::cerr
-        << "  pixel (component type = "
-        << itk::ImageIOBase::GetComponentTypeAsString( componentType )
-        << "\n  dimension = " << dim
-        << std::endl;
-      return EXIT_FAILURE;
-    }
-
-    /** Set the arguments. */
+    /** Set the filter arguments. */
     castConvert->m_InputFileName = inputFileName;
     castConvert->m_OutputFileName = outputFileName;
     castConvert->m_UseCompression = useCompression;
@@ -271,14 +266,12 @@ int main( int argc, char **argv )
 
     delete castConvert;
   }
-  catch( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
     delete castConvert;
     return EXIT_FAILURE;
   }
-
-  std::cout << "Successful conversion!" << std::endl;
 
   /** End  program. Return success. */
   return EXIT_SUCCESS;

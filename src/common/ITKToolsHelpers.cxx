@@ -10,49 +10,10 @@ namespace itktools
  * ***************** GetITKToolsVersion ************************
  */
 
-std::string GetITKToolsVersion(void)
+std::string GetITKToolsVersion( void )
 {
-  return "0.2.1";
-}
-
-/**
- * ***************** GetImageComponentType ************************
- */
-
-itktools::ComponentType GetImageComponentType( const std::string & filename )
-{
-  itk::ImageIOBase::Pointer imageIO = itk::ImageIOFactory::CreateImageIO(
-    filename.c_str(), itk::ImageIOFactory::ReadMode);
-  if ( imageIO.IsNull() )
-  {
-    return itk::ImageIOBase::UNKNOWNCOMPONENTTYPE; // complain
-  }
-  imageIO->SetFileName( filename.c_str() );
-  imageIO->ReadImageInformation();
-  itktools::ComponentType componentType = imageIO->GetComponentType();
-
-  return componentType;
-} // end GetImageComponentType()
-
-
-/**
- * ******************* ComponentTypeIsInteger *******************
- */
-
-bool ComponentTypeIsInteger( const itktools::ComponentType & componentType )
-{
-  /** Check if the input image is of integer type. */
-  bool componentIsInteger = false;
-  if ( componentType == itk::ImageIOBase::UCHAR  || componentType == itk::ImageIOBase::CHAR
-    || componentType == itk::ImageIOBase::USHORT || componentType == itk::ImageIOBase::SHORT
-    || componentType == itk::ImageIOBase::UINT   || componentType == itk::ImageIOBase::INT
-    || componentType == itk::ImageIOBase::ULONG  || componentType == itk::ImageIOBase::LONG )
-  {
-    componentIsInteger = true;
-  }
-
-  return componentIsInteger;
-} // end ComponentTypeIsInteger()
+  return "0.2.2";
+} // end GetITKToolsVersion()
 
 
 /**
@@ -66,7 +27,7 @@ bool StringIsInteger( const std::string & argument )
    */
   std::basic_string<char>::size_type pos = argument.find( "." );
   const std::basic_string<char>::size_type npos = std::basic_string<char>::npos;
-  if ( pos == npos )
+  if( pos == npos )
   {
     return true;
   }
@@ -85,7 +46,7 @@ void ReplaceUnderscoreWithSpace( std::string & arg )
   /** Get rid of the possible "_" in arg. */
   std::basic_string<char>::size_type pos = arg.find( "_" );
   const std::basic_string<char>::size_type npos = std::basic_string<char>::npos;
-  if ( pos != npos )
+  if( pos != npos )
   {
     arg.replace( pos, 1, " " );
   }
@@ -102,7 +63,7 @@ void ReplaceSpaceWithUnderscore( std::string & arg )
   /** Get rid of the possible " " in arg. */
   std::basic_string<char>::size_type pos = arg.find( " " );
   const std::basic_string<char>::size_type npos = std::basic_string<char>::npos;
-  if ( pos != npos )
+  if( pos != npos )
   {
     arg.replace( pos, 1, "_" );
   }
@@ -118,21 +79,42 @@ void RemoveUnsignedFromString( std::string & arg )
 {
   const std::basic_string<char>::size_type npos = std::basic_string<char>::npos;
   std::basic_string<char>::size_type pos = arg.find( "unsigned " );
-  if ( pos != npos ) arg = arg.substr( pos + 9 );
+  if( pos != npos ) arg = arg.substr( pos + 9 );
   pos = arg.find( "unsigned_" );
-  if ( pos != npos ) arg = arg.substr( pos + 9 );
+  if( pos != npos ) arg = arg.substr( pos + 9 );
 
 } // end RemoveUnsignedFromString()
+
+
+/**
+ * ******************* ComponentTypeIsInteger *******************
+ */
+
+bool ComponentTypeIsInteger( const itk::ImageIOBase::IOComponentType & componentType )
+{
+  /** Check if the input image is of integer type. */
+  bool componentIsInteger = false;
+  if( componentType == itk::ImageIOBase::UCHAR  || componentType == itk::ImageIOBase::CHAR
+    || componentType == itk::ImageIOBase::USHORT || componentType == itk::ImageIOBase::SHORT
+    || componentType == itk::ImageIOBase::UINT   || componentType == itk::ImageIOBase::INT
+    || componentType == itk::ImageIOBase::ULONG  || componentType == itk::ImageIOBase::LONG )
+  {
+    componentIsInteger = true;
+  }
+
+  return componentIsInteger;
+
+} // end ComponentTypeIsInteger()
 
 
 /**
  * *************** ComponentTypeIsValid ***********************
  */
 
-bool ComponentTypeIsValid( const ComponentType & componentType )
+bool ComponentTypeIsValid( const itk::ImageIOBase::IOComponentType & componentType )
 {
   /** Check argument. */
-  if ( componentType == itk::ImageIOBase::UCHAR
+  if( componentType == itk::ImageIOBase::UCHAR
     || componentType == itk::ImageIOBase::CHAR
     || componentType == itk::ImageIOBase::USHORT
     || componentType == itk::ImageIOBase::SHORT
@@ -155,7 +137,8 @@ bool ComponentTypeIsValid( const ComponentType & componentType )
  * *************** RemoveUnsignedFromComponentType ***********************
  */
 
-ComponentType RemoveUnsignedFromComponentType( const ComponentType & componentType )
+itk::ImageIOBase::IOComponentType RemoveUnsignedFromComponentType(
+  const itk::ImageIOBase::IOComponentType & componentType )
 {
   if( componentType == itk::ImageIOBase::UCHAR )
   {
@@ -173,10 +156,9 @@ ComponentType RemoveUnsignedFromComponentType( const ComponentType & componentTy
   {
     return itk::ImageIOBase::LONG;
   }
-  else
-  {
-    return componentType;
-  }
+
+  return componentType;
+
 } // end RemoveUnsignedFromComponentType()
 
 
@@ -184,11 +166,12 @@ ComponentType RemoveUnsignedFromComponentType( const ComponentType & componentTy
  * *************** GetLargestComponentType ***********************
  */
 
-ComponentType GetLargestComponentType(
-  const ComponentType & type1, const ComponentType & type2 )
+itk::ImageIOBase::IOComponentType GetLargestComponentType(
+  const itk::ImageIOBase::IOComponentType & type1,
+  const itk::ImageIOBase::IOComponentType & type2 )
 {
   /** Typedef's. */
-  typedef std::map< ComponentType, unsigned int > RankingType;
+  typedef std::map< itk::ImageIOBase::IOComponentType, unsigned int > RankingType;
   typedef RankingType::value_type               EntryType;
 
   /** Define the ranking. */
@@ -201,12 +184,12 @@ ComponentType GetLargestComponentType(
   ranking.insert( EntryType( itk::ImageIOBase::DOUBLE, 6 ) );
 
   /** Remove unsigned. */
-  ComponentType type1Cleaned = RemoveUnsignedFromComponentType( type1 );
-  ComponentType type2Cleaned = RemoveUnsignedFromComponentType( type2 );
+  itk::ImageIOBase::IOComponentType type1Cleaned = RemoveUnsignedFromComponentType( type1 );
+  itk::ImageIOBase::IOComponentType type2Cleaned = RemoveUnsignedFromComponentType( type2 );
 
   /** Determine which one is the largest. */
-  ComponentType outputComponentType;
-  if ( type1Cleaned == type2Cleaned )
+  itk::ImageIOBase::IOComponentType outputComponentType;
+  if( type1Cleaned == type2Cleaned )
   {
     outputComponentType = type1;
   }
@@ -219,6 +202,99 @@ ComponentType GetLargestComponentType(
   return outputComponentType;
 
 } // end GetLargestComponentType()
+
+
+/**
+ * *************** IsFilterSupportedCheck ***********************
+ */
+
+bool IsFilterSupportedCheck(
+  const ITKToolsBase * filter,
+  const unsigned int & dim,
+  const itk::ImageIOBase::IOComponentType & inputType )
+{
+  if( !filter )
+  {
+    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!\n"
+      << "  dimension =              " << dim << "\n"
+      << "  pixel (component) type = " << itk::ImageIOBase::GetComponentTypeAsString( inputType )
+      << std::endl;
+    return false;
+  }
+
+  return true;
+
+} // end IsFilterSupportedCheck()
+
+
+/**
+ * *************** IsFilterSupportedCheck ***********************
+ */
+
+bool IsFilterSupportedCheck(
+  const ITKToolsBase * filter,
+  const unsigned int & dim,
+  const itk::ImageIOBase::IOComponentType & inputType,
+  const itk::ImageIOBase::IOComponentType & outputType )
+{
+  if( !filter )
+  {
+    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!\n"
+      << "  dimension =                     " << dim << "\n"
+      << "  input  pixel (component) type = " << itk::ImageIOBase::GetComponentTypeAsString( inputType ) << "\n"
+      << "  output pixel (component) type = " << itk::ImageIOBase::GetComponentTypeAsString( outputType )
+      << std::endl;
+    return false;
+  }
+
+  return true;
+
+} // end IsFilterSupportedCheck()
+
+
+/**
+ * *************** IsFilterSupportedCheck ***********************
+ */
+
+bool IsFilterSupportedCheck(
+  const ITKToolsBase * filter,
+  const unsigned int & dim,
+  const itk::ImageIOBase::IOComponentType & inputType1,
+  const itk::ImageIOBase::IOComponentType & inputType2,
+  const itk::ImageIOBase::IOComponentType & outputType )
+{
+  if( !filter )
+  {
+    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!\n"
+      << "  dimension =                     " << dim << "\n"
+      << "  input  pixel (component) type 1 = " << itk::ImageIOBase::GetComponentTypeAsString( inputType1 ) << "\n"
+      << "  input  pixel (component) type 2 = " << itk::ImageIOBase::GetComponentTypeAsString( inputType2 ) << "\n"
+      << "  output pixel (component) type   = " << itk::ImageIOBase::GetComponentTypeAsString( outputType )
+      << std::endl;
+    return false;
+  }
+
+  return true;
+
+} // end IsFilterSupportedCheck()
+
+
+/**
+ * *************** NumberOfComponentsCheck ***********************
+ */
+
+bool NumberOfComponentsCheck( const unsigned int & numberOfComponents )
+{
+  if( numberOfComponents > 1 )
+  {
+    std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
+    std::cerr << "  Vector images are not supported for this filter." << std::endl;
+    return false;
+  }
+
+  return true;
+
+} // end NumberOfComponentsCheck()
 
 
 } // end itktools namespace

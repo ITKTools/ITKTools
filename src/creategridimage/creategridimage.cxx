@@ -69,7 +69,7 @@ public:
   };
   ~ITKToolsCreateGridImageBase(){};
 
-  /** Input parameters */
+  /** Input member parameters. */
   std::string m_InputFileName;
   std::string m_OutputFileName;
 
@@ -93,13 +93,14 @@ public:
 
   static Self * New( unsigned int dim )
   {
-    if ( VDimension == dim )
+    if( VDimension == dim )
     {
       return new Self;
     }
     return 0;
   }
 
+  /** Run function. */
   void Run( void )
   {
     /** Typedef's. */
@@ -119,7 +120,7 @@ public:
     typename WriterType::Pointer writer = WriterType::New();
 
     /** Get and set grid image information. */
-    if ( this->m_InputFileName != "" )
+    if( this->m_InputFileName != "" )
     {
       reader->SetFileName( this->m_InputFileName.c_str() );
       reader->GenerateOutputInformation();
@@ -134,7 +135,7 @@ public:
     {
       SizeType    size;
       SpacingType spacing;
-      for ( unsigned int i = 0; i < VDimension; ++i )
+      for( unsigned int i = 0; i < VDimension; ++i )
       {
 	size[ i ] = this->m_ImageSize[ i ];
 	spacing[ i ] = this->m_ImageSpacing[ i ];
@@ -157,16 +158,16 @@ public:
       bool onGrid = false;
       onGrid |= ind[ 0 ] % this->m_Distance[ 0 ] == 0;
       onGrid |= ind[ 1 ] % this->m_Distance[ 1 ] == 0;
-      if ( VDimension == 3 && !m_Is2DStack )
+      if( VDimension == 3 && !m_Is2DStack )
       {
-	if ( ind[ 2 ] % this->m_Distance[ 2 ] != 0 )
+	if( ind[ 2 ] % this->m_Distance[ 2 ] != 0 )
 	{
 	  onGrid = ind[ 0 ] % this->m_Distance[ 0 ] == 0;
 	  onGrid &= ind[ 1 ] % this->m_Distance[ 1 ] == 0;
 	}
       }
       /** Set the value and continue. */
-      if ( onGrid ) it.Set( 1 );
+      if( onGrid ) it.Set( 1 );
       else it.Set( 0 );
       ++it;
     } // end while
@@ -214,28 +215,28 @@ int main( int argc, char *argv[] )
   const bool is2DStack = parser->ArgumentExists( "-stack" );
 
   /** Check if the required arguments are given. */
-  if ( ( !retin && !retsz ) || ( retin && retsz ) )
+  if( ( !retin && !retsz ) || ( retin && retsz ) )
   {
     std::cerr << "ERROR: You should specify \"-in\" or \"-sz\"." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   /** Check arguments: size. */
-  if ( retsz )
+  if( retsz )
   {
-    for ( unsigned int i = 0; i < imageSize.size(); ++i )
+    for( unsigned int i = 0; i < imageSize.size(); ++i )
     {
-      if ( imageSize[ i ] == 0 )
+      if( imageSize[ i ] == 0 )
       {
         std::cerr << "ERROR: image size[" << i << "] = 0." << std::endl;
-        return 1;
+        return EXIT_FAILURE;
       }
     }
   }
 
   /** Get desired grid image dimension. */
   unsigned int imageDimension = 3;
-  if ( retsz )
+  if( retsz )
   {
     imageDimension = imageSize.size();
   }
@@ -253,14 +254,14 @@ int main( int argc, char *argv[] )
       imageDimension,
       NumberOfComponents,
       imagesize );
-    if ( retgip != 0 ) return 1;
+    if( retgip != 0 ) return 1;
   }
 
   /** Check arguments: dimensionality. */
-  if ( imageDimension < 2 || imageDimension > 3 )
+  if( imageDimension < 2 || imageDimension > 3 )
   {
     std::cerr << "ERROR: Only image dimensions of 2 or 3 are supported." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   /** Get more arguments. */
@@ -271,19 +272,19 @@ int main( int argc, char *argv[] )
   bool retd = parser->GetCommandLineArgument( "-d", distance );
 
   /** Check arguments: distance. */
-  if ( !retd )
+  if( !retd )
   {
     std::cerr << "ERROR: You should specify \"-d\"." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
-  for ( unsigned int i = 0; i < distance.size(); ++i )
+  for( unsigned int i = 0; i < distance.size(); ++i )
   {
-    if ( distance[ i ] == 0 ) distance[ i ] = 1;
+    if( distance[ i ] == 0 ) distance[ i ] = 1;
   }
 
 
-  /** Class that does the work */
-  ITKToolsCreateGridImageBase * createGridImage = NULL; 
+  /** Class that does the work. */
+  ITKToolsCreateGridImageBase * filter = NULL; 
 
   /** Short alias */
   unsigned int dim = imageDimension;
@@ -291,11 +292,11 @@ int main( int argc, char *argv[] )
   try
   {    
     // now call all possible template combinations.
-    if (!createGridImage) createGridImage = ITKToolsCreateGridImage< 2 >::New( dim );
+    if( !filter ) filter = ITKToolsCreateGridImage< 2 >::New( dim );
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!createGridImage) createGridImage = ITKToolsCreateGridImage< 3 >::New( dim );    
+    if( !filter ) filter = ITKToolsCreateGridImage< 3 >::New( dim );    
 #endif
-    if (!createGridImage) 
+    if( !filter) 
     {
       std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
       std::cerr
@@ -304,25 +305,25 @@ int main( int argc, char *argv[] )
       return 1;
     }
 
-    createGridImage->m_InputFileName = inputFileName;
-    createGridImage->m_OutputFileName = outputFileName;
-    createGridImage->m_ImageSize = imageSize;
-    createGridImage->m_ImageSpacing = imageSpacing;
-    createGridImage->m_Distance = distance;
-    createGridImage->m_Is2DStack = is2DStack;
+    filter->m_InputFileName = inputFileName;
+    filter->m_OutputFileName = outputFileName;
+    filter->m_ImageSize = imageSize;
+    filter->m_ImageSpacing = imageSpacing;
+    filter->m_Distance = distance;
+    filter->m_Is2DStack = is2DStack;
 
-    createGridImage->Run();
+    filter->Run();
     
-    delete createGridImage;  
+    delete filter;  
   }
-  catch( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    delete createGridImage;
-    return 1;
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+    delete filter;
+    return EXIT_FAILURE;
   }
   
   /** End program. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main

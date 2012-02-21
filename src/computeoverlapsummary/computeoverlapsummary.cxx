@@ -33,23 +33,21 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-    << "Computes overlap measures between the set same set of labels of pixels of two images."<< std::endl
-    << "Usage:" << std::endl
-    << "pxcomputeoverlap summary" << std::endl
-    
-    << "  -in1		Filename of first input image (Source Image)" << std::endl
-    << "  -in2		Filename of second input image (Target Image)" << std::endl
-    << "  -out		Filename to write the results to" << std::endl
-    << "  -seperator    Seperator to use in csv file; default '\\t'" << std::endl
-    << "The results file contains:" << std::endl
-    << "  Union Overlap or Jaccard coefficient; Mean Overlap or Dice coefficient;" << std::endl
-    << "Background is assumed to be 0. " << std::endl
+    << "Computes overlap measures between the set same set of labels of pixels of two images.\n"
+    << "Usage:\n"
+    << "pxcomputeoverlap summary\n"
+    << "  -in1		Filename of first input image (Source Image)\n"
+    << "  -in2		Filename of second input image (Target Image)\n"
+    << "  -out		Filename to write the results to\n"
+    << "  -seperator    Seperator to use in csv file; default '\\t'\n"
+    << "The results file contains:\n"
+    << "  Union Overlap or Jaccard coefficient; Mean Overlap or Dice coefficient;\n"
+    << "Background is assumed to be 0. \n"
     << "Supported: 2D, 3D, (unsigned) char, (unsigned) short.";
 
   return ss.str();
 
 } // end GetHelpString()
-
 
 //-------------------------------------------------------------------------------------
 
@@ -76,102 +74,75 @@ int main( int argc, char **argv )
   }
   
   /** Get arguments. */
-  std::string inputImage1("");
-  parser->GetCommandLineArgument( "-in1", inputImage1 );
+  std::string inputFileName1 = "";
+  parser->GetCommandLineArgument( "-in1", inputFileName1 );
 
-  std::string inputImage2("");
-  parser->GetCommandLineArgument( "-in2", inputImage2 );
+  std::string inputFileName2 = "";
+  parser->GetCommandLineArgument( "-in2", inputFileName2 );
 
-  std::string outputFileName("");
+  std::string outputFileName = "";
   parser->GetCommandLineArgument( "-out", outputFileName );
 
   std::string seperator("\t");
   parser->GetCommandLineArgument( "-seperator", seperator );
 
-  if ( seperator.compare("\\t") == 0 )
+  if( seperator.compare("\\t") == 0 )
   {
     seperator = "\t";
   }
 
   /** Determine image properties. */
-  std::string ComponentTypeIn = "char";
-  std::string PixelType; //we don't use this
-  unsigned int Dimension = 3;
-  unsigned int NumberOfComponents = 1;
-  std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = itktools::GetImageProperties(
-    inputImage1,
-    PixelType,
-    ComponentTypeIn,
-    Dimension,
-    NumberOfComponents,
-    imagesize );
-
-  if ( retgip != 0 )
-  {
-    return 1;
-  }
+  itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
+  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  unsigned int dim = 0;
+  unsigned int numberOfComponents = 0;
+  bool retgip = itktools::GetImageProperties(
+    inputFileName1, pixelType, componentType, dim, numberOfComponents );
+  if( !retgip ) return EXIT_FAILURE;
 
   /** Check for vector images. */
-  if ( NumberOfComponents > 1 )
-  {
-    std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
-    std::cerr << "Vector images are not supported." << std::endl;
-    return 1;
-  }
+  bool retNOCCheck = itktools::NumberOfComponentsCheck( numberOfComponents );
+  if( !retNOCCheck ) return EXIT_FAILURE;
 
-
-  /** Class that does the work */
-  ITKToolsComputeOverlapSummaryBase * computeOverlapSummary = 0; 
-
-  /** Short alias */
-  unsigned int dim = Dimension;
- 
-  /** \todo some progs allow user to override the pixel type, 
-   * so we need a method to convert string to EnumComponentType */
-  itktools::ComponentType componentType = itktools::GetImageComponentType( inputImage1 );
+  /** Class that does the work. */
+  ITKToolsComputeOverlapSummaryBase * filter = 0; 
 
   try
   {    
     // now call all possible template combinations.
-    if (!computeOverlapSummary) computeOverlapSummary = ITKToolsComputeOverlapSummary< char, 2 >::New( componentType, dim );
-    if (!computeOverlapSummary) computeOverlapSummary = ITKToolsComputeOverlapSummary< unsigned char, 2 >::New( componentType, dim );
-    if (!computeOverlapSummary) computeOverlapSummary = ITKToolsComputeOverlapSummary< short, 2 >::New( componentType, dim );
-    if (!computeOverlapSummary) computeOverlapSummary = ITKToolsComputeOverlapSummary< unsigned short, 2 >::New( componentType, dim );
+    if( !filter ) filter = ITKToolsComputeOverlapSummary< 2, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsComputeOverlapSummary< 2, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsComputeOverlapSummary< 2, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsComputeOverlapSummary< 2, unsigned short >::New( dim, componentType );
 
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!computeOverlapSummary) computeOverlapSummary = ITKToolsComputeOverlapSummary< char, 3 >::New( componentType, dim );
-    if (!computeOverlapSummary) computeOverlapSummary = ITKToolsComputeOverlapSummary< unsigned char, 3 >::New( componentType, dim );
-    if (!computeOverlapSummary) computeOverlapSummary = ITKToolsComputeOverlapSummary< short, 3 >::New( componentType, dim );
-    if (!computeOverlapSummary) computeOverlapSummary = ITKToolsComputeOverlapSummary< unsigned short, 3 >::New( componentType, dim );
+    if( !filter ) filter = ITKToolsComputeOverlapSummary< 3, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsComputeOverlapSummary< 3, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsComputeOverlapSummary< 3, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsComputeOverlapSummary< 3, unsigned short >::New( dim, componentType );
 #endif
-    if (!computeOverlapSummary) 
-    {
-      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-      std::cerr
-        << "pixel (component) type = " << ComponentTypeIn // so here we also need a string - we don't need to convert to a string here right? just output the string that was input.
-        << " ; dimension = " << Dimension
-        << std::endl;
-      return 1;
-    }
+    /** Check if filter was instantiated. */
+    bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
+    if( !supported ) return EXIT_FAILURE;
 
-    computeOverlapSummary->m_InputFileName1 = inputImage1;
-    computeOverlapSummary->m_InputFileName2 = inputImage2;
-    computeOverlapSummary->m_OutputFileName = outputFileName;
-    computeOverlapSummary->m_Seperator      = seperator;
+    /** Set the filter arguments. */
+    filter->m_InputFileName1 = inputFileName1;
+    filter->m_InputFileName2 = inputFileName2;
+    filter->m_OutputFileName = outputFileName;
+    filter->m_Seperator      = seperator;
 
-    computeOverlapSummary->Run();
+    filter->Run();
     
-    delete computeOverlapSummary;  
+    delete filter;  
   }
-  catch( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    delete computeOverlapSummary;
-    return 1;
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+    delete filter;
+    return EXIT_FAILURE;
   }
 
   /** End program. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main

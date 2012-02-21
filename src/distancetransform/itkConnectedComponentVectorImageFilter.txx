@@ -1,8 +1,6 @@
 /// author: Bryn Lloyd
-
-
-#ifndef _itkConnectedComponentVectorImageFilter_txx
-#define _itkConnectedComponentVectorImageFilter_txx
+#ifndef _itkConnectedComponentVectorImageFilter_txx_
+#define _itkConnectedComponentVectorImageFilter_txx_
 
 #include "itkConnectedComponentVectorImageFilter.h"
 #include "itkImageRegionIterator.h"
@@ -45,7 +43,7 @@ ConnectedComponentVectorImageFilter<TInputImage, TOutputImage>
    /*
    int this->m_K = this->GetInput()->GetVectorLength();
    Array<int> sortedVec( this->m_K);
-   for (unsigned int k=0; k<m_K; k++)
+   for( unsigned int k=0; k<m_K; k++)
      sortedVec[k] = vec[k];
 
    /// Shell sort: "Numerical Recipes in C", Second Edition, page 332
@@ -58,13 +56,13 @@ ConnectedComponentVectorImageFilter<TInputImage, TOutputImage>
    } while (inc<=m_K);
    do {
      inc /= 3;
-     for (i=inc+1; i<=m_K; i++) {
-       v=sortedVec[i];
+     for (i=inc+1; i<=m_K; i++ ) {
+       v=sortedVec[ i ];
        j=i;
        while (sortedVec[j-inc] > v) {
          sortedVec[j] = sortedVec[j-inc];
          j -= inc;
-         if (j <= inc) break;
+         if(j <= inc) break;
        }
        sortedVec[j]=v;
      }
@@ -75,10 +73,10 @@ ConnectedComponentVectorImageFilter<TInputImage, TOutputImage>
    InputPixelType sortedVec( this->m_K);
    std::vector<int> stdvec;
    stdvec.resize( this->m_K);
-   for (unsigned int k=0; k<m_K; k++)
+   for( unsigned int k=0; k<m_K; k++)
      stdvec[k] = vec[k];
    std::sort(stdvec.begin(), stdvec.end());
-   for (unsigned int k=0; k<m_K; k++)
+   for( unsigned int k=0; k<m_K; k++)
      sortedVec[k] = stdvec[k];
 
    return sortedVec;
@@ -142,7 +140,7 @@ ConnectedComponentVectorImageFilter< TInputImage, TOutputImage >
   unsigned int d;
   typename NeighborhoodVoronoiImageIteratorType::OffsetType offset;
 
-  if (!m_FullyConnected)
+  if( !m_FullyConnected)
     {
     // only activate the "previous" neighbors that are face connected
     // to the current pixel. do not include the center pixel
@@ -214,20 +212,20 @@ ConnectedComponentVectorImageFilter< TInputImage, TOutputImage >
         // if the previous pixel has a label, verify equivalence or
         // establish a new equivalence
         bool IDsarethesame = true;
-        if (neighborLabel != NumericTraits<OutputPixelType>::Zero) {
+        if(neighborLabel != NumericTraits<OutputPixelType>::Zero) {
           typename InputImageType::PixelType ids_there;
-          if (input->GetRequestedRegion().IsInside(index_there) ) {
+          if(input->GetRequestedRegion().IsInside(index_there) ) {
             ids_there= input->GetPixel(index_there);
           }
           typename InputImageType::PixelType sorted_here = SortArray(ids_here);
           typename InputImageType::PixelType sorted_there = SortArray(ids_there);
-/*          for (unsigned int ii=0; ii<input->GetVectorLength(); ii++)
+/*          for( unsigned int ii=0; ii<input->GetVectorLength(); ii++)
             std::cout << sorted_here[ii] << " " << sorted_there[ii] <<"\t";
             std::cout <<std::endl;*/
 
 
-          for (unsigned int ii=0; ii<input->GetVectorLength(); ii++)  {
-            if (sorted_here[ii]!=sorted_there[ii]) {
+          for( unsigned int ii=0; ii<input->GetVectorLength(); ii++)  {
+            if(sorted_here[ii]!=sorted_there[ii]) {
               IDsarethesame=false;
 //              std::cout << "No match" << std::endl;
               break;
@@ -237,10 +235,10 @@ ConnectedComponentVectorImageFilter< TInputImage, TOutputImage >
         else {
           IDsarethesame=false;
           }
-        if (IDsarethesame) //&& neighborLabel != NumericTraits<OutputPixelType>::Zero)
+        if(IDsarethesame) //&& neighborLabel != NumericTraits<OutputPixelType>::Zero)
           {
           // if current pixel is unlabeled, copy the label from neighbor
-          if (label == maxPossibleLabel)  /// && vec here == vec there?
+          if(label == maxPossibleLabel)  /// && vec here == vec there?
             {
             // copy the label from the previous pixel
             label = neighborLabel;
@@ -248,7 +246,7 @@ ConnectedComponentVectorImageFilter< TInputImage, TOutputImage >
           // else if current pixel has a label that is not already
           // equivalent to the label of the previous pixel, then setup
           // a new equivalence.
-          else if ((label != neighborLabel) /// && vec here == vec there?
+          else if((label != neighborLabel) /// && vec here == vec there?
                    && (eqTable->RecursiveLookup(label)
                        != eqTable->RecursiveLookup(neighborLabel)))
             {
@@ -258,10 +256,10 @@ ConnectedComponentVectorImageFilter< TInputImage, TOutputImage >
 
         }
       // if none of the "previous" neighbors were set, then make a new label
-      if (originalLabel == label)
+      if(originalLabel == label)
         {
         // create a new entry label
-        if (maxLabel == maxPossibleLabel)
+        if(maxLabel == maxPossibleLabel)
           {
           itkWarningMacro(<< "ConnectedComponentVectorImageFilter::GenerateData: Number of labels exceeds number of available labels for the output type." );
           }
@@ -275,7 +273,7 @@ ConnectedComponentVectorImageFilter< TInputImage, TOutputImage >
         }
 
       // Finally, set the output pixel to whatever label we have
-      if (label != originalLabel)
+      if(label != originalLabel)
         {
         oit.Set( label );
         }
@@ -296,7 +294,7 @@ ConnectedComponentVectorImageFilter< TInputImage, TOutputImage >
     {
     label = oit.Get();
     // if pixel has a label, write out the final equivalence
-    if (1) /// label != NumericTraits<OutputPixelType>::Zero)
+    if(1) /// label != NumericTraits<OutputPixelType>::Zero)
       {
       oit.Set( eqTable->Lookup( label ) );
 //      std::cout << label << " eq table label: " << eqTable->Lookup( label ) << std::endl;
@@ -318,4 +316,4 @@ ConnectedComponentVectorImageFilter< TInputImage, TOutputImage >
 
 } // end namespace itk
 
-#endif
+#endif // end #ifndef _itkConnectedComponentVectorImageFilter_txx_

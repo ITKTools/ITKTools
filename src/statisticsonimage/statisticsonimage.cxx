@@ -24,7 +24,7 @@
  */
 
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
 #include "statisticsonimage.h"
 
 
@@ -98,100 +98,74 @@ int main( int argc, char ** argv )
   bool rets = parser->GetCommandLineArgument( "-s", select );
 
   /** Check selection. */
-  if ( rets && ( select != "arithmetic" && select != "geometric"
+  if( rets && ( select != "arithmetic" && select != "geometric"
     && select != "histogram" ) )
   {
     std::cerr << "ERROR: -s should be one of {arithmetic, geometric, histogram}"
       << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   /** Determine image properties. */
-  std::string ComponentType = "float";
-  std::string PixelType; //we don't use this
-  unsigned int Dimension = 2;
-  unsigned int NumberOfComponents = 1;
-  std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = itktools::GetImageProperties(
-    inputFileName,
-    PixelType,
-    ComponentType,
-    Dimension,
-    NumberOfComponents,
-    imagesize );
-  if ( retgip !=0 )
-  {
-    return 1;
-  }
-  std::cout << "The input image has the following properties:" << std::endl;
-  std::cout << "\tPixelType:          " << PixelType << std::endl;
-  std::cout << "\tComponentType:      " << ComponentType << std::endl;
-  std::cout << "\tDimension:          " << Dimension << std::endl;
-  std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
-
-  /** force images to sneaky be converted to doubles */
-  
-  
-  /** Class that does the work */
-  ITKToolsStatisticsOnImageBase * statisticsOnImage = NULL; 
-
-  /** Short alias */
-  unsigned int dim = Dimension;
- 
-  //itktools::EnumComponentType componentType = itktools::GetImageComponentType( inputFileName );
-  itktools::ComponentType componentType = itk::ImageIOBase::FLOAT;
-  
+  itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
+  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  unsigned int dim = 0;
   unsigned int numberOfComponents = 0;
-  itktools::GetImageNumberOfComponents( inputFileName, numberOfComponents );
-  
-  std::cout << "Internal image component type: " << 
-    itk::ImageIOBase::GetComponentTypeAsString( componentType ) << std::endl;
-    
+  bool retgip = itktools::GetImageProperties(
+    inputFileName, pixelType, componentType, dim, numberOfComponents );
+  if( !retgip ) return EXIT_FAILURE;
+
+  std::cout << "The input image has the following properties:" << std::endl;
+  std::cout << "\tPixelType:          " << itk::ImageIOBase::GetPixelTypeAsString( pixelType ) << std::endl;
+  std::cout << "\tComponentType:      " << itk::ImageIOBase::GetComponentTypeAsString( componentType ) << std::endl;
+  std::cout << "\tDimension:          " << dim << std::endl;
+  std::cout << "\tNumberOfComponents: " << numberOfComponents << std::endl;
+
+  /** Force images to sneaky be converted to float. */
+  componentType = itk::ImageIOBase::FLOAT;
+
+  /** Class that does the work. */
+  ITKToolsStatisticsOnImageBase * filter = NULL; 
+
   try
   {    
     // now call all possible template combinations.
-    if (!statisticsOnImage) statisticsOnImage = ITKToolsStatisticsOnImage< float, 2, 1 >::New( componentType, dim, numberOfComponents );
-    if (!statisticsOnImage) statisticsOnImage = ITKToolsStatisticsOnImage< float, 2, 2 >::New( componentType, dim, numberOfComponents );
-    if (!statisticsOnImage) statisticsOnImage = ITKToolsStatisticsOnImage< float, 2, 3 >::New( componentType, dim, numberOfComponents );
+    if( !filter ) filter = ITKToolsStatisticsOnImage< 2, 1, float >::New( dim, numberOfComponents, componentType );
+    if( !filter ) filter = ITKToolsStatisticsOnImage< 2, 2, float >::New( dim, numberOfComponents, componentType );
+    if( !filter ) filter = ITKToolsStatisticsOnImage< 2, 3, float >::New( dim, numberOfComponents, componentType );
     
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!statisticsOnImage) statisticsOnImage = ITKToolsStatisticsOnImage< float, 3, 1 >::New( componentType, dim, numberOfComponents );
-    if (!statisticsOnImage) statisticsOnImage = ITKToolsStatisticsOnImage< float, 3, 2 >::New( componentType, dim, numberOfComponents );
-    if (!statisticsOnImage) statisticsOnImage = ITKToolsStatisticsOnImage< float, 3, 3 >::New( componentType, dim, numberOfComponents );
+    if( !filter ) filter = ITKToolsStatisticsOnImage< 3, 1, float >::New( dim, numberOfComponents, componentType );
+    if( !filter ) filter = ITKToolsStatisticsOnImage< 3, 2, float >::New( dim, numberOfComponents, componentType );
+    if( !filter ) filter = ITKToolsStatisticsOnImage< 3, 3, float >::New( dim, numberOfComponents, componentType );
 #endif
 #ifdef ITKTOOLS_4D_SUPPORT
-    if (!statisticsOnImage) statisticsOnImage = ITKToolsStatisticsOnImage< float, 4, 1 >::New( componentType, dim, numberOfComponents );
-    if (!statisticsOnImage) statisticsOnImage = ITKToolsStatisticsOnImage< float, 4, 4 >::New( componentType, dim, numberOfComponents );
+    if( !filter ) filter = ITKToolsStatisticsOnImage< 4, 1, float >::New( dim, numberOfComponents, componentType );
+    if( !filter ) filter = ITKToolsStatisticsOnImage< 4, 4, float >::New( dim, numberOfComponents, componentType );
 #endif
-    if (!statisticsOnImage) 
-    {
-      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-      std::cerr
-        << "pixel (component) type = " << componentType
-        << " ; dimension = " << Dimension
-        << std::endl;
-      return 1;
-    }
+    /** Check if filter was instantiated. */
+    bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
+    if( !supported ) return EXIT_FAILURE;
 
-    statisticsOnImage->m_InputFileName = inputFileName;
-    statisticsOnImage->m_MaskFileName = maskFileName;
-    statisticsOnImage->m_HistogramOutputFileName = histogramOutputFileName;
-    statisticsOnImage->m_NumberOfBins = numberOfBins;
-    statisticsOnImage->m_Select = select;
+    /** Set the filter arguments. */
+    filter->m_InputFileName = inputFileName;
+    filter->m_MaskFileName = maskFileName;
+    filter->m_HistogramOutputFileName = histogramOutputFileName;
+    filter->m_NumberOfBins = numberOfBins;
+    filter->m_Select = select;
   
-    statisticsOnImage->Run();
+    filter->Run();
     
-    delete statisticsOnImage;  
+    delete filter;  
   }
-  catch( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    delete statisticsOnImage;
-    return 1;
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+    delete filter;
+    return EXIT_FAILURE;
   }
-
 
   /** End program. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main

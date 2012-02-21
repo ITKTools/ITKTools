@@ -38,22 +38,22 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-  << "Usage:" << std::endl
-  << "pxttest" << std::endl
-  << "  -in      inputFilename" << std::endl
-  << "  [-out]   output, choose one of {p,all}, default p" << std::endl
-  << "             p: only print the p-value" << std::endl
-  << "             all: print all" << std::endl
-  << "  -c       the two data sample columns" << std::endl
-  << "  [-tail]  one or two tailed, defauls = 2" << std::endl
-  << "  [-type]  the type of the t-test, default = 1:" << std::endl
-  << "             1: paired" << std::endl
-  << "             2: two-sample equal variance" << std::endl
-  << "             3: two-sample unequal variance" << std::endl
-  << "  [-p]     the output precision, default = 8:" << std::endl
-  << "The input file should be in a certain format. No text is allowed." << std::endl
-  << "No headers are allowed. The data samples should be displayed in columns." << std::endl
-  << "Columns should be separated by a single space or tab.";
+    << "Usage:\n"
+    << "pxttest\n"
+    << "  -in      inputFilename\n"
+    << "  [-out]   output, choose one of {p,all}, default p\n"
+    << "             p: only print the p-value\n"
+    << "             all: print all\n"
+    << "  -c       the two data sample columns\n"
+    << "  [-tail]  one or two tailed, defauls = 2\n"
+    << "  [-type]  the type of the t-test, default = 1:\n"
+    << "             1: paired\n"
+    << "             2: two-sample equal variance\n"
+    << "             3: two-sample unequal variance\n"
+    << "  [-p]     the output precision, default = 8:\n"
+    << "The input file should be in a certain format. No text is allowed.\n"
+    << "No headers are allowed. The data samples should be displayed in columns.\n"
+    << "Columns should be separated by a single space or tab.";
 
   return ss.str();
 
@@ -119,51 +119,51 @@ int main( int argc, char **argv )
   parser->GetCommandLineArgument( "-p", precision );
 
   /** Check command line arguments. */
-  if ( columns.size() != 2 )
+  if( columns.size() != 2 )
   {
     std::cerr << "ERROR: You should specify two different columns with \"-c\"." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
-  if ( columns[ 0 ] == columns[ 1 ] )
+  if( columns[ 0 ] == columns[ 1 ] )
   {
     std::cerr << "ERROR: You should specify two different columns with \"-c\"." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
-  if ( output != "p" && output != "all" )
+  if( output != "p" && output != "all" )
   {
     std::cerr << "ERROR: output should be one of \"p\" or \"all\"." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   /** Read the input file. */
   std::vector< std::vector<double> > matrix;
   bool readSuccess = ReadInputData( inputFileName, matrix );
-  if ( !readSuccess)
+  if( !readSuccess)
   {
     std::cerr << "ERROR: Something went wrong reading \""
       << inputFileName << "\"." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   /** Check if there are at least two data points. */
-  if ( matrix.size() < 2 )
+  if( matrix.size() < 2 )
   {
     std::cerr << "ERROR: Each column should contain at least two samples." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   /** Check if the requested columns exists. */
-  if ( matrix[ 0 ].size() - 1 < columns[ 0 ] ||
+  if( matrix[ 0 ].size() - 1 < columns[ 0 ] ||
     matrix[ 0 ].size() - 1 < columns[ 1 ] )
   {
     std::cerr << "ERROR: Requesting an unexisting column. There are only "
       << matrix[ 0 ].size() << " columns." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   /** Extract the two requested columns. */
   std::vector<double> samples1( matrix.size() ), samples2( matrix.size() );
-  for ( unsigned int i = 0; i < matrix.size(); ++i )
+  for( unsigned int i = 0; i < matrix.size(); ++i )
   {
     samples1[ i ] = matrix[ i ][ columns[ 0 ] ];
     samples2[ i ] = matrix[ i ][ columns[ 1 ] ];
@@ -176,7 +176,7 @@ int main( int argc, char **argv )
   mean1 = mean2 = meandiff = std1 = std2 = stddiff = 0.0;
   bool retctv = ComputeTValue( samples1, samples2, type, tValue,
     mean1, mean2, meandiff, std1, std2, stddiff );
-  if ( !retctv ) return 1;
+  if( !retctv ) return EXIT_FAILURE;
   //std::cout << "t: " << tValue << std::endl;
 
   /** Compute the p-value. */
@@ -187,15 +187,15 @@ int main( int argc, char **argv )
   double pValue = distributionFunction->EvaluateCDF( -vcl_abs( tValue ) );
 
   /** For a 2-tailed t-test, multiply with 2. */
-  if ( tail == 2 ) pValue *= 2.0;
+  if( tail == 2 ) pValue *= 2.0;
 
   /** Print the p-value to screen. */
   std::cout << std::fixed << std::showpoint << std::setprecision( precision );
-  if ( output == "p" )
+  if( output == "p" )
   {
     std::cout << pValue << std::endl;
   }
-  else if ( output == "all" )
+  else if( output == "all" )
   {
     std::cout << "            mean +/- std" << std::endl;
     std::cout << "samples 1:  " << mean1 << " " << std1 << std::endl;
@@ -207,20 +207,20 @@ int main( int argc, char **argv )
   }
 
   /** End program. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main
 
 
-  /*
-   * ******************* ReadInputData *******************
-   *
-   * This function reads the specified input text file.
-   * No error checking is done. Each line of the file should
-   * consist of an equal amount of elements. Each column should
-   * contain the data samples over which a t-test is performed.
-   * The file should not contain text, and no headers.
-   */
+/*
+ * ******************* ReadInputData *******************
+ *
+ * This function reads the specified input text file.
+ * No error checking is done. Each line of the file should
+ * consist of an equal amount of elements. Each column should
+ * contain the data samples over which a t-test is performed.
+ * The file should not contain text, and no headers.
+ */
 
 bool ReadInputData( const std::string & filename, std::vector<std::vector<double> > & matrix )
 {
@@ -229,7 +229,7 @@ bool ReadInputData( const std::string & filename, std::vector<std::vector<double
   std::string line;
 
   /** Read the file line by line. */
-  if ( file.is_open() )
+  if( file.is_open() )
   {
     /** Read the first line to find out how long it is. */
     std::getline( file, line );
@@ -248,7 +248,7 @@ bool ReadInputData( const std::string & filename, std::vector<std::vector<double
     /** Read and convert the first line. */
     std::istringstream lineSS1( line.c_str() );
     std::vector<double> linevec( linelength );
-    for ( unsigned int i = 0; i < linelength; i++ )
+    for( unsigned int i = 0; i < linelength; i++ )
     {
       lineSS1 >> linevec[ i ];
     }
@@ -259,7 +259,7 @@ bool ReadInputData( const std::string & filename, std::vector<std::vector<double
     {
       std::getline( file, line );
       std::istringstream lineSS( line.c_str() );
-      for ( unsigned int i = 0; i < linelength; i++ )
+      for( unsigned int i = 0; i < linelength; i++ )
       {
         lineSS >> linevec[ i ];
       }
@@ -280,9 +280,9 @@ bool ReadInputData( const std::string & filename, std::vector<std::vector<double
 } // end ReadInputData()
 
 
-  /*
-   * ******************* ComputeTValue *******************
-   */
+/*
+ * ******************* ComputeTValue *******************
+ */
 
 bool ComputeTValue( const std::vector<double> & samples1,
     const std::vector<double> & samples2,
@@ -292,14 +292,14 @@ bool ComputeTValue( const std::vector<double> & samples1,
     double & std1, double & std2, double & stddiff )
 {
   /** Which type of t-test is requested? */
-  if ( type == 1 )
+  if( type == 1 )
   {
     /** This type is a paired t-test.
      *   X = samples1 - samples2, N = X.size()
      *   tValue = mean( X ) * sqrt( N ) / std( X )
      * Check for equal size of samples1 and samples2 (which is in this case always true).
      */
-    if ( samples1.size() != samples2.size() )
+    if( samples1.size() != samples2.size() )
     {
       std::cerr << "ERROR: requested a paired t-test, but the samples have unequal length." << std::endl;
       return false;
@@ -322,12 +322,13 @@ bool ComputeTValue( const std::vector<double> & samples1,
 
   /** Return a vlue. */
   return true;
+
 } // end ComputeTValue()
 
 
-  /*
-   * ******************* ComputeMeanAndStandardDeviation *******************
-   */
+/*
+ * ******************* ComputeMeanAndStandardDeviation *******************
+ */
 
 void ComputeMeanAndStandardDeviation(
   const std::vector<double> & samples1,
@@ -338,12 +339,12 @@ void ComputeMeanAndStandardDeviation(
   /** The slow way: two loops. */
   /*
   mean = std = 0.0;
-  for ( unsigned int i = 0; i < vec.size(); ++i )
+  for( unsigned int i = 0; i < vec.size(); ++i )
   {
     mean += vec[ i ];
   }
   mean /= vec.size();
-  for ( unsigned int i = 0; i < vec.size(); ++i )
+  for( unsigned int i = 0; i < vec.size(); ++i )
   {
     std += ( vec[ i ] - mean ) * ( vec[ i ] - mean );
   }
@@ -356,7 +357,7 @@ void ComputeMeanAndStandardDeviation(
   double s1 = 0.0, ss1 = 0.0;
   double s2 = 0.0, ss2 = 0.0;
   double sd = 0.0, ssd = 0.0;
-  for ( unsigned int i = 0; i < static_cast<unsigned int>( N ); ++i )
+  for( unsigned int i = 0; i < static_cast<unsigned int>( N ); ++i )
   {
     s1  += samples1[ i ];
     ss1 += samples1[ i ] * samples1[ i ];

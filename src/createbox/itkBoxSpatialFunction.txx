@@ -1,5 +1,22 @@
-#ifndef __itkBoxSpatialFunction_txx
-#define __itkBoxSpatialFunction_txx
+/*=========================================================================
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
+#ifndef __itkBoxSpatialFunction_txx_
+#define __itkBoxSpatialFunction_txx_
 
 #include "itkBoxSpatialFunction.h"
 #include "vnl/vnl_math.h"
@@ -33,7 +50,7 @@ BoxSpatialFunction<VImageDimension,TInput>
 {
   /** Apply an inverse rotation / orientation to the position. */
   InputType mappedPosition;
-  if ( ImageDimension == 2 )
+  if( ImageDimension == 2 )
   {
     InputPointType2D point;
     OutputPointType2D outputpoint;
@@ -43,7 +60,7 @@ BoxSpatialFunction<VImageDimension,TInput>
     outputpoint = euler->TransformPoint( point );
     for( unsigned int i = 0; i < ImageDimension; i++ ) mappedPosition[ i ] = outputpoint[ i ];
   }
-  else if ( ImageDimension == 3 )
+  else if( ImageDimension == 3 )
   {
     InputPointType3D point;
     OutputPointType3D outputpoint;
@@ -62,7 +79,7 @@ BoxSpatialFunction<VImageDimension,TInput>
   }
 
   /** Return a value. */
-  if ( acc ) return 1;
+  if( acc ) return 1;
   else return 0;
 
 } // end Evaluate
@@ -73,15 +90,15 @@ void
 BoxSpatialFunction<VImageDimension,TInput>
 ::SetOrientation( const InputType _arg )
 {
-  if ( this->m_Orientation != _arg )
+  if( this->m_Orientation != _arg )
   {
     this->m_Orientation = _arg;
 
-    if ( ImageDimension == 2 )
+    if( ImageDimension == 2 )
     {
       this->m_Euler2DTransform->SetAngle( this->m_Orientation[ 0 ] );
     }
-    else if ( ImageDimension == 3 )
+    else if( ImageDimension == 3 )
     {
       this->m_Euler3DTransform->SetRotation( this->m_Orientation[ 0 ],
         this->m_Orientation[ 1 ], this->m_Orientation[ 2 ] );
@@ -98,17 +115,17 @@ void
 BoxSpatialFunction<VImageDimension,TInput>
 ::SetCenter( const InputType _arg )
 {
-  if ( this->m_Center != _arg )
+  if( this->m_Center != _arg )
   {
     this->m_Center = _arg;
 
-    if ( ImageDimension == 2 )
+    if( ImageDimension == 2 )
     {
       InputPointType2D center;
       for( unsigned int i = 0; i < ImageDimension; i++ ) center[ i ] = this->m_Center[ i ];
       this->m_Euler2DTransform->SetCenter( center );
     }
-    else if ( ImageDimension == 3 )
+    else if( ImageDimension == 3 )
     {
       InputPointType3D center;
       for( unsigned int i = 0; i < ImageDimension; i++ ) center[ i ] = this->m_Center[ i ];
@@ -136,4 +153,4 @@ BoxSpatialFunction<VImageDimension,TInput>
 
 } // end namespace itk
 
-#endif // end #ifndef __itkBoxSpatialFunction_txx
+#endif // end #ifndef __itkBoxSpatialFunction_txx_

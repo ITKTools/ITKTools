@@ -1,5 +1,22 @@
-#ifndef ComputeOverlapOld_H
-#define ComputeOverlapOld_H
+/*=========================================================================
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
+#ifndef __ComputeOverlapOld_h_
+#define __ComputeOverlapOld_h_
 
 #include "itkImageFileReader.h"
 #include "itkImage.h"
@@ -11,11 +28,17 @@
 #include "ITKToolsHelpers.h"
 #include "ITKToolsBase.h"
 
-/** ComputeOverlap */
+
+/** \class ITKToolsComputeOverlapOldBase
+ *
+ * Untemplated pure virtual base class that holds
+ * the Run() function and all required parameters.
+ */
 
 class ITKToolsComputeOverlapOldBase : public itktools::ITKToolsBase
 { 
 public:
+  /** Constructor. */
   ITKToolsComputeOverlapOldBase()
   {
     //std::vector<std::string> m_InputFileNames;
@@ -24,36 +47,37 @@ public:
     this->m_T1 = 0;
     this->m_T2 = 0;
   };
+  /** Destructor. */
   ~ITKToolsComputeOverlapOldBase(){};
 
-  /** Input parameters */
+  /** Input member parameters */
   std::vector<std::string> m_InputFileNames;
   std::string m_MaskFileName1;
   std::string m_MaskFileName2;
   unsigned int m_T1;
   unsigned int m_T2;
     
-}; // end ComputeOverlapBase
+}; // end ITKToolsComputeOverlapOldBase
 
 
-template< class TComponentType, unsigned int VDimension >
+/** \class ITKToolsComputeOverlapOld
+ *
+ * Templated class that implements the Run() function
+ * and the New() function for its creation.
+ */
+
+template< unsigned int VDimension, class TComponentType >
 class ITKToolsComputeOverlapOld : public ITKToolsComputeOverlapOldBase
 {
 public:
+  /** Standard ITKTools stuff. */
   typedef ITKToolsComputeOverlapOld Self;
+  itktoolsOneTypeNewMacro( Self );
 
   ITKToolsComputeOverlapOld(){};
   ~ITKToolsComputeOverlapOld(){};
 
-  static Self * New( itktools::ComponentType componentType, unsigned int dim )
-  {
-    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
+  /** Run function. */
   void Run( void )
   {
     /** Some typedef's. */
@@ -91,7 +115,7 @@ public:
     ThresholdVectorType thresholdVector2( 2 );
 
     /** If there is a threshold given for image1, use it. */
-    if ( this->m_T1 != 0 )
+    if( this->m_T1 != 0 )
     {
       thresholder1 = ThresholdFilterType::New();
       thresholdVector1[ 0 ] = this->m_T1;
@@ -107,7 +131,7 @@ public:
     }
 
     /** If there is a threshold given for image2, use it. */
-    if ( this->m_T2 != 0 )
+    if( this->m_T2 != 0 )
     {
       thresholder2 = ThresholdFilterType::New();
       thresholdVector2[ 0 ] = this->m_T2;
@@ -128,7 +152,7 @@ public:
     AndFilterPointer im1ANDmask2Filter = 0;
 
     /** If there is a mask given for image1, use it on image2. */
-    if ( this->m_MaskFileName1 != "" )
+    if( this->m_MaskFileName1 != "" )
     {
       maskReader1 = ImageReaderType::New();
       maskReader1->SetFileName( this->m_MaskFileName1.c_str() );
@@ -144,7 +168,7 @@ public:
     }
 
     /** If there is a mask given for image2, use it on image1. */
-    if ( this->m_MaskFileName2 != "" )
+    if( this->m_MaskFileName2 != "" )
     {
       maskReader2 = ImageReaderType::New();
       maskReader2->SetFileName( this->m_MaskFileName2.c_str() );
@@ -159,16 +183,12 @@ public:
       finalANDFilter->SetInput2( im1 );
     }
 
-    /** UPDATE!
-    *
-    * Call the update of the final filter, in order to execute the whole pipeline.
-    */
-
+    /** UPDATE! */
     try
     {
       finalANDFilter->Update();
     }
-    catch ( itk::ExceptionObject & excp )
+    catch( itk::ExceptionObject & excp )
     {
       std::cerr << excp << std::endl;
       throw excp;
@@ -190,9 +210,9 @@ public:
     long long sumA = 0;
     for ( iteratorA.GoToBegin(); !iteratorA.IsAtEnd(); ++iteratorA )
     {
-      if ( iteratorA.Value() )
+      if( iteratorA.Value() )
       {
-	++sumA;
+        ++sumA;
       }
     }
     std::cout << "Size of first object: " << sumA << std::endl;
@@ -201,9 +221,9 @@ public:
     long long sumB = 0;
     for ( iteratorB.GoToBegin(); !iteratorB.IsAtEnd(); ++iteratorB )
     {
-      if ( iteratorB.Value() )
+      if( iteratorB.Value() )
       {
-	++sumB;
+        ++sumB;
       }
     }
     std::cout << "Size of second object: " << sumB << std::endl;
@@ -212,16 +232,16 @@ public:
     long long sumC = 0;
     for ( iteratorC.GoToBegin(); !iteratorC.IsAtEnd(); ++iteratorC )
     {
-      if ( iteratorC.Value() )
+      if( iteratorC.Value() )
       {
-	++sumC;
+        ++sumC;
       }
     }
     std::cout << "Size of cross-section of both objects: " << sumC << std::endl;
 
     /** Calculate the overlap. */
     double overlap;
-    if ( ( sumA + sumB ) == 0 )
+    if( ( sumA + sumB ) == 0 )
     {
       overlap = 0;
     }
@@ -234,8 +254,8 @@ public:
     std::cout << std::fixed << std::showpoint;
     std::cout << "Overlap: " << overlap << std::endl;
 
-  }
+  } // end Run()
 
-}; // end ComputeOverlapBase
+}; // end ITKToolsComputeOverlapOld
 
-#endif
+#endif // end #ifndef __ComputeOverlapOld_h_

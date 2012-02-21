@@ -1,5 +1,22 @@
-#ifndef __itkCommandLineArgumentParser_cxx
-#define __itkCommandLineArgumentParser_cxx
+/*=========================================================================
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
+#ifndef __itkCommandLineArgumentParser_cxx_
+#define __itkCommandLineArgumentParser_cxx_
 
 #include "itkCommandLineArgumentParser.h"
 
@@ -50,7 +67,7 @@ CommandLineArgumentParser
 {
   for ( IndexType i = 1; i < this->m_Argv.size(); ++i )
   {
-    if ( this->m_Argv[ i ].substr( 0, 1 ) == "-" )
+    if( this->m_Argv[ i ].substr( 0, 1 ) == "-" )
     {
       /** All key entries are removed, the latest is stored. */
       this->m_ArgumentMap.erase( this->m_Argv[ i ] );
@@ -68,7 +85,7 @@ bool
 CommandLineArgumentParser
 ::ArgumentExists( const std::string & key ) const
 {
-  if ( this->m_ArgumentMap.count( key ) == 0 )
+  if( this->m_ArgumentMap.count( key ) == 0 )
   {
     return false;
   }
@@ -85,11 +102,11 @@ CommandLineArgumentParser
 ::PrintAllArguments() const
 {
   ArgumentMapType::const_iterator iter = this->m_ArgumentMap.begin();
- 
-  for(; iter != this->m_ArgumentMap.end(); ++iter) 
+
+  for(; iter != this->m_ArgumentMap.end(); ++iter)
   {
    std::cout << iter->first << std::endl;
-  } 
+  }
 
 } // end PrintAllArguments()
 
@@ -102,15 +119,15 @@ CommandLineArgumentParser
 ::ExactlyOneExists( const std::vector<std::string> & keys ) const
 {
   unsigned int counter = 0;
-  for ( unsigned int i = 0; i < keys.size(); i++ )
+  for( unsigned int i = 0; i < keys.size(); i++ )
   {
-    if ( this->ArgumentExists( keys[ i ] ) )
+    if( this->ArgumentExists( keys[ i ] ) )
     {
       counter++;
     }
   }
 
-  if ( counter == 1 )
+  if( counter == 1 )
   {
     return true;
   }
@@ -139,15 +156,15 @@ CommandLineArgumentParser
   nextKeyIndex = this->m_Argv.size();
   for ( IndexType i = 0; i < this->m_Argv.size(); i++ )
   {
-    if ( !keyFound && this->m_Argv[ i ] == key )
+    if( !keyFound && this->m_Argv[ i ] == key )
     {
       keyFound = true;
       keyIndex = i;
       continue;
     }
-    if ( keyFound && this->m_Argv[ i ].substr(0,1) == "-" )
+    if( keyFound && this->m_Argv[ i ].substr(0,1) == "-" )
     {
-      if ( !this->IsANumber( this->m_Argv[ i ] ) )
+      if( !this->IsANumber( this->m_Argv[ i ] ) )
       {
         nextKeyIndex = i;
         break;
@@ -156,8 +173,8 @@ CommandLineArgumentParser
   } // end for loop
 
   /** Check if the key was found and if the next argument is not also a key. */
-  if ( !keyFound ) return false;
-  if ( nextKeyIndex - keyIndex == 1 ) return false;
+  if( !keyFound ) return false;
+  if( nextKeyIndex - keyIndex == 1 ) return false;
 
   return true;
 
@@ -175,9 +192,9 @@ IsANumber( const std::string & arg ) const
 {
   std::string number = "0123456789";
   static const std::basic_string<char>::size_type npos = std::basic_string<char>::npos;
-  if ( arg.size() > 1 )
+  if( arg.size() > 1 )
   {
-    if ( npos != number.find( arg.substr( 1, 1 ) ) )
+    if( npos != number.find( arg.substr( 1, 1 ) ) )
     {
       return true;
     }
@@ -245,14 +262,14 @@ CommandLineArgumentParser
 ::CheckForRequiredArguments() const
 {
   // If no arguments were specified at all, display the help text.
-  if ( this->m_Argv.size() == 1 )
+  if( this->m_Argv.size() == 1 )
   {
     std::cerr << this->m_ProgramHelpText << std::endl;
     return HELPREQUESTED;
   }
-    
+
   // Display the help text if the user asked for it.
-  if ( this->ArgumentExists( "--help" )
+  if( this->ArgumentExists( "--help" )
     || this->ArgumentExists( "-help" )
     || this->ArgumentExists( "--h" ) )
   {
@@ -264,7 +281,7 @@ CommandLineArgumentParser
   bool allRequiredArgumentsSpecified = true;
   for ( std::size_t i = 0; i < this->m_RequiredArguments.size(); ++i )
   {
-    if ( !this->ArgumentExists( this->m_RequiredArguments[ i ].first ) )
+    if( !this->ArgumentExists( this->m_RequiredArguments[ i ].first ) )
     {
       std::cerr << "ERROR: Argument "
         << this->m_RequiredArguments[ i ].first
@@ -279,7 +296,7 @@ CommandLineArgumentParser
   {
     std::vector<std::string> exactlyOneOf
       = this->m_RequiredExactlyOneArguments[ i ].first;
-    if ( !this->ExactlyOneExists( exactlyOneOf ) )
+    if( !this->ExactlyOneExists( exactlyOneOf ) )
     {
       std::cerr << "ERROR: Exactly one (1) of the arguments in {";
       for ( std::size_t j = 0; j < exactlyOneOf.size() - 1; j++ )
@@ -293,12 +310,12 @@ CommandLineArgumentParser
       allRequiredArgumentsSpecified = false;
     }
   }
-  
-  if(!allRequiredArgumentsSpecified)
+
+  if( !allRequiredArgumentsSpecified)
   {
     return FAILED;
   }
-  
+
   return PASSED;
 
 } // end CheckForRequiredArguments()
@@ -306,4 +323,4 @@ CommandLineArgumentParser
 
 } // end namespace itk
 
-#endif // end #ifndef __itkCommandLineArgumentParser_h
+#endif // end #ifndef __itkCommandLineArgumentParser_h_

@@ -39,7 +39,7 @@ void gradient(
 
   /** Create the structuring element. */
   RadiusType  radiusarray;
-  for ( unsigned int i = 0; i < Dimension; i++ )
+  for( unsigned int i = 0; i < Dimension; i++ )
   {
     radiusarray.SetElement( i, radius[ i ] );
   }

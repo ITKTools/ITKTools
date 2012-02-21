@@ -26,7 +26,7 @@ ParabolicErodeDilateImageFilter<TInputImage, doDilate, TOutputImage>
   this->SetNumberOfRequiredInputs( 1 );
 // needs to be selected according to erosion/dilation
 
-  if (doDilate)
+  if(doDilate)
     {
     this->m_Extreme = NumericTraits<PixelType>::min();
     this->m_MagnitudeSign = 1;
@@ -64,7 +64,7 @@ ParabolicErodeDilateImageFilter<TInputImage, doDilate, TOutputImage>
   while (requestedRegionSize[splitAxis] == 1 || splitAxis == (int)m_CurrentDimension)
     {
     --splitAxis;
-    if (splitAxis < 0)
+    if(splitAxis < 0)
       { // cannot split
       itkDebugMacro("  Cannot Split");
       return 1;
@@ -77,12 +77,12 @@ ParabolicErodeDilateImageFilter<TInputImage, doDilate, TOutputImage>
   int maxThreadIdUsed = (int)::ceil(range/(double)valuesPerThread) - 1;
 
   // Split the region
-  if (i < maxThreadIdUsed)
+  if(i < maxThreadIdUsed)
     {
     splitIndex[splitAxis] += i*valuesPerThread;
     splitSize[splitAxis] = valuesPerThread;
     }
-  if (i == maxThreadIdUsed)
+  if(i == maxThreadIdUsed)
     {
     splitIndex[splitAxis] += i*valuesPerThread;
     // last thread needs to process the "rest" dimension being split
@@ -135,7 +135,7 @@ ParabolicErodeDilateImageFilter<TInputImage,doDilate, TOutputImage>
 {
   TOutputImage *out = dynamic_cast<TOutputImage*>(output);
 
-  if (out)
+  if(out)
     {
     out->SetRequestedRegion( out->GetLargestPossibleRegion() );
     }
@@ -178,14 +178,14 @@ ParabolicErodeDilateImageFilter<TInputImage, doDilate, TOutputImage>
   typename std::vector< unsigned int > NumberOfRows;
   InputSizeType   size   = outputRegionForThread.GetSize();
 
-  for (unsigned int i = 0; i < InputImageDimension; i++)
+  for( unsigned int i = 0; i < InputImageDimension; i++ )
     {
     NumberOfRows.push_back( 1 );
-    for (unsigned int d = 0; d < InputImageDimension; d++)
+    for( unsigned int d = 0; d < InputImageDimension; d++)
       {
       if( d != i )
         {
-        NumberOfRows[i] *= size[ d ];
+        NumberOfRows[ i ] *= size[ d ];
         }
       }
     }
@@ -228,7 +228,7 @@ ParabolicErodeDilateImageFilter<TInputImage, doDilate, TOutputImage>
   // output if the scale is 0
   if( this->m_CurrentDimension == 0)
     {
-    if ( this->m_Scale[0] > 0)
+    if( this->m_Scale[0] > 0)
       {
       // Perform as normal
       //RealType magnitude = 1.0/(2.0 * this->m_Scale[0]);
@@ -263,7 +263,7 @@ ParabolicErodeDilateImageFilter<TInputImage, doDilate, TOutputImage>
   else
     {
       // other dimensions
-      if ( this->m_Scale[m_CurrentDimension] > 0)
+      if( this->m_Scale[m_CurrentDimension] > 0)
 	{
 	// create a vector to buffer lines
 	unsigned long LineLength = region.GetSize()[m_CurrentDimension];
@@ -289,7 +289,7 @@ ParabolicErodeDilateImageFilter<TInputImage, doDilate, TOutputImage>
 ::PrintSelf(std::ostream& os, Indent indent) const
 {
   Superclass::PrintSelf(os,indent);
-  if ( this->m_UseImageSpacing)
+  if( this->m_UseImageSpacing)
     {
     os << "Scale in world units: " << this->m_Scale << std::endl;
     }

@@ -15,15 +15,8 @@
 * limitations under the License.
 *
 *=========================================================================*/
-
-/** \file
- \brief Calculate the average magnitude of the vectors in a vector image.
- 
- \verbinclude averagevectormagnitude.help
- */
-
-#ifndef __averagevectormagnitude_h
-#define __averagevectormagnitude_h
+#ifndef __averagevectormagnitude_h_
+#define __averagevectormagnitude_h_
 
 #include "ITKToolsBase.h"
 
@@ -31,125 +24,95 @@
 #include "itkImageFileWriter.h"
 #include "itkVector.h"
 #include "itkImage.h"
-#include "itkImageRegionConstIterator.h"
 #include "itkGradientToMagnitudeImageFilter.h"
-#include "itkExceptionObject.h"
 
-// #include <map>
-#include <iostream>
-#include <string>
 
+/** \class ITKToolsAverageVectorMagnitudeBase
+ *
+ * Untemplated pure virtual base class that holds
+ * the Run() function and all required parameters.
+ */
 
 class ITKToolsAverageVectorMagnitudeBase : public itktools::ITKToolsBase
 {
 public:
+  /** Constructor. */
   ITKToolsAverageVectorMagnitudeBase()
   {
-    this->m_AverageMagnitude = 0.0f;
     this->m_InputFileName = "";
     this->m_OutputFileName = "";
   }
-  
+  /** Destructor. */
   ~ITKToolsAverageVectorMagnitudeBase(){};
 
-  /** Input parameters */
+  /** Input member parameters */
   std::string m_InputFileName;
   std::string m_OutputFileName;
-  float m_AverageMagnitude;
 
-  virtual void Run( void ) = 0;
-}; // end AverageVectorMagnitudeBase
+}; // end class ITKToolsAverageVectorMagnitudeBase
 
 
-template< unsigned int VVectorDimension, unsigned int VImageDimension >
+/** \class ITKToolsUnaryImageOperator
+ *
+ * Templated class that implements the Run() function
+ * and the New() function for its creation.
+ */
+
+template< unsigned int VDimension, class TComponentType, unsigned int VVectorDimension >
 class ITKToolsAverageVectorMagnitude : public ITKToolsAverageVectorMagnitudeBase
 {
 public:
+  /** Standard ITKTools stuff. */
   typedef ITKToolsAverageVectorMagnitude Self;
 
   ITKToolsAverageVectorMagnitude(){};
   ~ITKToolsAverageVectorMagnitude(){};
 
-  static Self * New( unsigned int vectorDimension, unsigned int imageDimension )
+  static Self * New( unsigned int imageDimension,
+    itk::ImageIOBase::IOComponentType componentType,
+    unsigned int vectorDimension )
   {
-    if ( VVectorDimension == vectorDimension && VImageDimension == imageDimension )
+    if( VDimension == imageDimension
+      && itktools::IsType<TComponentType>( componentType )
+      && VVectorDimension == vectorDimension )
     {
       return new Self;
     }
     return 0;
   }
 
+  /** Run function. */
   void Run( void )
   {
+    // \todo: support vector images with any number of components
+    // probably by using VariableLebgthVector
+
     /** Typedefs */
-    typedef float     ValueType;
-    typedef itk::Vector<ValueType, VVectorDimension> InputPixelType;
-    typedef ValueType    OutputPixelType;
+    typedef itk::Vector< TComponentType, VVectorDimension >   InputPixelType;
+    typedef TComponentType                                    OutputPixelType;
+    typedef itk::Image< InputPixelType, VDimension >          InputImageType;
+    typedef itk::Image< OutputPixelType, VDimension >         OutputImageType;
 
-    typedef itk::Image<InputPixelType, VImageDimension>  InputImageType;
-    typedef itk::Image<OutputPixelType, VImageDimension>   OutputImageType;
-    typedef typename OutputImageType::Pointer OutputImagePointer;
-    typedef itk::ImageRegionConstIterator<OutputImageType>  IteratorType;
-
-    typedef itk::ImageFileReader<InputImageType>  ReaderType;
-    typedef itk::ImageFileWriter<OutputImageType>   WriterType;
-    typedef typename ReaderType::Pointer ReaderPointer;
-    typedef typename WriterType::Pointer WriterPointer;
-
+    typedef itk::ImageFileReader< InputImageType >            ReaderType;
     typedef itk::GradientToMagnitudeImageFilter<
-      InputImageType, OutputImageType>  FilterType;
-    typedef typename FilterType::Pointer    FilterPointer;
-
-    /** Create variables */
-    ReaderPointer reader = ReaderType::New();
-    WriterPointer writer = 0;
-    FilterPointer filter = FilterType::New();
-    OutputImagePointer magnitudeImage = 0;
+      InputImageType, OutputImageType >                       FilterType;
+    typedef itk::ImageFileWriter< OutputImageType >           WriterType;
 
     /** Setup the pipeline */
+    typename ReaderType::Pointer reader = ReaderType::New();
     reader->SetFileName( this->m_InputFileName );
+
+    typename FilterType::Pointer filter = FilterType::New();
     filter->SetInput( reader->GetOutput() );
-    magnitudeImage = filter->GetOutput();
 
-    /** Only write to disk if an outputFileName is given */
-    if( this->m_OutputFileName.size() > 0 && this->m_OutputFileName.compare("") != 0 )
-    {
-      writer = WriterType::New();
-      writer->SetFileName( this->m_OutputFileName );
-      writer->SetInput( magnitudeImage );
-    }
-
-    try
-    {
-      if ( writer )
-      {
-        writer->Update();
-      }
-      else
-      {
-        magnitudeImage->Update();
-      }
-    }
-    catch( itk::ExceptionObject & err )
-    {
-      std::cerr << err << std::endl;
-      throw err;
-    }
-
-    /** Sum over the resulting image and divide by the number of pixels */
-    IteratorType iterator( magnitudeImage, magnitudeImage->GetLargestPossibleRegion() );
-    double sum = 0.0;
-    unsigned long nrOfPixels = 0;
-
-    for ( iterator = iterator.Begin(); !iterator.IsAtEnd(); ++iterator )
-    {
-      sum += iterator.Value();
-      ++nrOfPixels;
-    }
-    this->m_AverageMagnitude = static_cast<ValueType>( sum / nrOfPixels );
+    typename WriterType::Pointer writer = WriterType::New();
+    writer->SetFileName( this->m_OutputFileName );
+    writer->SetInput( filter->GetOutput() );
+    writer->Update();
 
   } // end Run()
 
-}; // end AverageVectorMagnitude
+}; // end class ITKToolsAverageVectorMagnitude
 
-#endif // end #ifndef __averagevectormagnitude_h
+
+#endif // end #ifndef __averagevectormagnitude_h_

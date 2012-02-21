@@ -22,20 +22,7 @@
  */
 #include "itkCommandLineArgumentParser.h"
 #include "ITKToolsHelpers.h"
-#include "ITKToolsBase.h"
-
-#include "itkImageRegionIteratorWithIndex.h"
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
-#include "itkTransformixInputPointFileReader.h"
-#include "itkVector.h"
-#include "itkImage.h"
-#include "itkThinPlateSplineKernelTransform.h"
-#include "itkThinPlateR2LogRSplineKernelTransform.h"
-#include "itkVolumeSplineKernelTransform.h"
-#include "itkElasticBodySplineKernelTransform.h"
-#include "itkElasticBodyReciprocalSplineKernelTransform.h"
-#include "vnl/vnl_math.h"
+#include "deformationfieldgenerator.h"
 
 
 /**
@@ -46,325 +33,41 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-    << "This program generates a deformation field (from fixed" << std::endl
-    << "to moving image) based on some corresponding points." << std::endl
-    << "Usage:" << std::endl
-    << "pxdeformationfieldgenerator" << std::endl
-    << "-in1     inputFilename1: the fixed image on which the" << std::endl
-    << "          deformaton field must be defined." << std::endl
-    << "[-in2]   inputFilename2: only needed to convert from" << std::endl
-    << "          indices to point if the second input point" << std::endl
-    << "          contains indices." << std::endl
-    << "-ipp1    inputPointFile1: a transformix style input point file" << std::endl
-    << "          with points in the fixed image." << std::endl
-    << "-ipp2    inputPointFile2: a transformix style input point file" << std::endl
-    << "          with the corresponding points in the moving image." << std::endl
-    << "[-s]     stiffness: a number that allows to vary between" << std::endl
-    << "          interpolating and approximating spline." << std::endl
-    << "          0.0 = interpolating = default." << std::endl
-    << "          Stiffness values are usually rather small," << std::endl
-    << "          typically in the range of 0.001 to 0.1." << std::endl
-    << "[-k]     kernelType: the type of kernel transform that's used to" << std::endl
-    << "          generate the deformation field." << std::endl
-    << "          TPS: thin plate spline (default)" << std::endl
-    << "          TPSR2LOGR: thin plate spline R2logR" << std::endl
-    << "          VS: volume spline" << std::endl
-    << "          EBS: elastic body spline" << std::endl
-    << "          EBSR: elastic body reciprocal spline" << std::endl
-    << "          See ITK documentation and the there cited paper" << std::endl
-    << "          for more information on these methods." << std::endl
-    << "-out     outputFilename: the name of the resulting deformation field," << std::endl
-    << "          which is written as a vector<float,dim> image." << std::endl
-    << "Supported: 2D, 3D, any scalar pixeltype.";
+    << "This program generates a deformation field (from fixed\n"
+    << "to moving image) based on some corresponding points.\n"
+    << "Usage:\n"
+    << "pxdeformationfieldgenerator\n"
+    << "  -in1     inputFilename1: the fixed image on which the\n"
+    << "           deformaton field must be defined.\n"
+    << "  [-in2]   inputFilename2: only needed to convert from\n"
+    << "           indices to point if the second input point\n"
+    << "           contains indices.\n"
+    << "  -ipp1    inputPointFile1: a transformix style input point file\n"
+    << "           with points in the fixed image.\n"
+    << "  -ipp2    inputPointFile2: a transformix style input point file\n"
+    << "           with the corresponding points in the moving image.\n"
+    << "  [-s]     stiffness: a number that allows to vary between\n"
+    << "           interpolating and approximating spline.\n"
+    << "           0.0 = interpolating = default.\n"
+    << "           Stiffness values are usually rather small,\n"
+    << "           typically in the range of 0.001 to 0.1.\n"
+    << "  [-k]     kernelType: the type of kernel transform that's used to\n"
+    << "           generate the deformation field.\n"
+    << "           TPS: thin plate spline (default)\n"
+    << "           TPSR2LOGR: thin plate spline R2logR\n"
+    << "           VS: volume spline\n"
+    << "           EBS: elastic body spline\n"
+    << "           EBSR: elastic body reciprocal spline\n"
+    << "           See ITK documentation and the there cited paper\n"
+    << "           for more information on these methods.\n"
+    << "  -out     outputFilename: the name of the resulting deformation field,\n"
+    << "           which is written as a vector<float/double,dim> image.\n"
+    << "  [-opct]  output pixel component type, choose one of {float, double}, default float.\n"
+    << "Supported: 2D, 3D, any scalar input pixeltype.";
+
   return ss.str();
 
 } // end GetHelpString()
-
-
-/** DeformationFieldGenerator */
-
-class ITKToolsDeformationFieldGeneratorBase : public itktools::ITKToolsBase
-{
-public:
-  ITKToolsDeformationFieldGeneratorBase()
-  {
-    this->m_InputImage1FileName = "";
-    this->m_InputImage2FileName = "";
-    this->m_InputPoints1FileName = "";
-    this->m_InputPoints2FileName = "";
-    this->m_OutputImageFileName = "";
-    this->m_KernelName = "";
-    this->m_Stiffness = 0.0f;
-  };
-  ~ITKToolsDeformationFieldGeneratorBase(){};
-
-  /** Input parameters */
-  std::string m_InputImage1FileName;
-  std::string m_InputImage2FileName;
-  std::string m_InputPoints1FileName;
-  std::string m_InputPoints2FileName;
-  std::string m_OutputImageFileName;
-  std::string m_KernelName;
-  double m_Stiffness;
-
-}; // end class ITKToolsDeformationFieldGeneratorBase
-
-
-template< unsigned int VDimension >
-class ITKToolsDeformationFieldGenerator : public ITKToolsDeformationFieldGeneratorBase
-{
-public:
-  typedef ITKToolsDeformationFieldGenerator Self;
-
-  ITKToolsDeformationFieldGenerator(){};
-  ~ITKToolsDeformationFieldGenerator(){};
-
-  static Self * New( unsigned int dimension )
-  {
-    if ( VDimension == dimension )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
-  void Run( void )
-  {
-    /** Typedefs. */
-    typedef short InputPixelType;
-    typedef float DeformationVectorValueType;
-    typedef double CoordRepType;
-
-    typedef itk::Image<InputPixelType, VDimension>       InputImageType;
-    typedef itk::ImageFileReader< InputImageType >      InputImageReaderType;
-
-    typedef itk::Vector<
-      DeformationVectorValueType, VDimension>            DeformationVectorType;
-    typedef itk::Image<DeformationVectorType, VDimension> DeformationFieldType;
-    typedef itk::ImageRegionIteratorWithIndex<
-      DeformationFieldType>                             DeformationFieldIteratorType;
-    typedef itk::ImageFileWriter<DeformationFieldType>  DeformationFieldWriterType;
-    typedef typename DeformationFieldType::IndexType    IndexType;
-    typedef typename DeformationFieldType::PointType    PointType;
-
-    typedef typename DeformationFieldType::RegionType   RegionType;
-    typedef typename DeformationFieldType::PointType    OriginType;
-    typedef typename DeformationFieldType::SpacingType  SpacingType;
-    typedef typename DeformationFieldType::IndexType    IndexType;
-    typedef typename IndexType::IndexValueType          IndexValueType;
-
-    typedef itk::KernelTransform<
-      CoordRepType, VDimension>                     KernelTransformType;
-    typedef itk::ThinPlateSplineKernelTransform<
-      CoordRepType, VDimension>                     TPSTransformType;
-    typedef itk::ThinPlateR2LogRSplineKernelTransform<
-      CoordRepType, VDimension>                     TPSR2LOGRTransformType;
-    typedef itk::VolumeSplineKernelTransform<
-      CoordRepType, VDimension>                     VSTransformType;
-    typedef itk::ElasticBodySplineKernelTransform<
-      CoordRepType, VDimension>                     EBSTransformType;
-    typedef itk::ElasticBodyReciprocalSplineKernelTransform<
-      CoordRepType, VDimension>                     EBSRTransformType;
-
-    typedef typename KernelTransformType::PointSetType  PointSetType;
-    typedef itk::TransformixInputPointFileReader<
-      PointSetType >                                    IPPReaderType;
-
-    /** Declarations */
-    typename InputImageReaderType::Pointer reader1 = InputImageReaderType::New();
-    typename InputImageReaderType::Pointer reader2 = InputImageReaderType::New();
-    typename IPPReaderType::Pointer ipp1Reader = IPPReaderType::New();
-    typename IPPReaderType::Pointer ipp2Reader = IPPReaderType::New();
-    typename PointSetType::Pointer inputPointSet1 = 0;
-    typename PointSetType::Pointer inputPointSet2 = 0;
-    typename KernelTransformType::Pointer kernelTransform = 0;
-    typename DeformationFieldType::Pointer deformationField = DeformationFieldType::New();
-    typename DeformationFieldWriterType::Pointer writer = DeformationFieldWriterType::New();
-
-    ipp1Reader->SetFileName( this->m_InputPoints1FileName.c_str() );
-    std::cout << "Reading input point file 1: "
-      << this->m_InputPoints1FileName << std::endl;
-    try
-    {
-      ipp1Reader->Update();
-    }
-    catch (itk::ExceptionObject & err)
-    {
-      std::cerr << "Error while opening input point file 1." << std::endl;
-      std::cerr << err << std::endl;
-    }
-
-    if ( ipp1Reader->GetPointsAreIndices() )
-    {
-      std::cout << "  Input points are specified as image indices." << std::endl;
-    }
-    else
-    {
-      std::cout << "  Input points are specified in world coordinates." << std::endl;
-    }
-    unsigned int nrofpoints1 = ipp1Reader->GetNumberOfPoints();
-    std::cout << "  Number of specified input points: " << nrofpoints1 << std::endl;
-    inputPointSet1 = ipp1Reader->GetOutput();
-
-    ipp2Reader->SetFileName( this->m_InputPoints2FileName.c_str() );
-    std::cout << "Reading input point file 2: " << this->m_InputPoints2FileName << std::endl;
-    try
-    {
-      ipp2Reader->Update();
-    }
-    catch (itk::ExceptionObject & err)
-    {
-      std::cerr << "Error while opening input point file 2." << std::endl;
-      std::cerr << err << std::endl;
-    }
-
-    if ( ipp2Reader->GetPointsAreIndices() )
-    {
-      std::cout << "  Input points are specified as image indices." << std::endl;
-    }
-    else
-    {
-      std::cout << "  Input points are specified in world coordinates." << std::endl;
-    }
-    unsigned int nrofpoints2 = ipp2Reader->GetNumberOfPoints();
-    std::cout << "  Number of specified input points: " << nrofpoints2 << std::endl;
-    inputPointSet2 = ipp2Reader->GetOutput();
-
-    if ( nrofpoints2 != nrofpoints1 )
-    {
-      itkGenericExceptionMacro( << "Number of input points does not equal number of output points!" );
-    }
-    const unsigned int nrofpoints = nrofpoints1;
-
-
-    /** Read input images */
-    std::cout << "Reading Input image(s)." << std::endl;
-    reader1->SetFileName( this->m_InputImage1FileName.c_str() );
-    reader1->UpdateOutputInformation();
-    if ( ipp2Reader->GetPointsAreIndices() )
-    {
-      if ( this->m_InputImage2FileName!=""  )
-      {
-        reader2->SetFileName( this->m_InputImage2FileName.c_str() );
-        reader2->UpdateOutputInformation();
-      }
-      else
-      {
-        std::cerr << "The input points in " << this->m_InputImage2FileName
-          << " are given as indices, but no accompanying image is provided." << std::endl;
-        itkGenericExceptionMacro( << "Second input image is needed!" );
-      }
-    }
-
-
-    /** Convert from index to point, if necessary */
-    if ( ipp1Reader->GetPointsAreIndices() )
-    {
-      typename DeformationFieldType::Pointer dummyImage = DeformationFieldType::New();
-      dummyImage->SetSpacing( reader1->GetOutput()->GetSpacing() );
-      dummyImage->SetOrigin( reader1->GetOutput()->GetOrigin() );
-      dummyImage->SetRegions( reader1->GetOutput()->GetLargestPossibleRegion() );
-      typename PointSetType::Pointer tempPointSet = PointSetType::New();
-
-      PointType point; point.Fill( 0.0 );
-      IndexType index;
-      for ( unsigned int j = 0; j < nrofpoints; j++ )
-      {
-        inputPointSet1->GetPoint( j, &point );
-        for ( unsigned int i = 0; i < VDimension; i++ )
-        {
-          index[i] = static_cast< IndexValueType >( vnl_math_rnd( point[i] ) );
-        }
-        dummyImage->TransformIndexToPhysicalPoint( index, point );
-        tempPointSet->SetPoint( j, point );
-      }
-      inputPointSet1 = tempPointSet;
-    }
-
-    /** Convert from index to point, if necessary */
-    if ( ipp2Reader->GetPointsAreIndices() )
-    {
-      typename DeformationFieldType::Pointer dummyImage = DeformationFieldType::New();
-      dummyImage->SetSpacing( reader2->GetOutput()->GetSpacing() );
-      dummyImage->SetOrigin( reader2->GetOutput()->GetOrigin() );
-      dummyImage->SetRegions( reader2->GetOutput()->GetLargestPossibleRegion() );
-      typename PointSetType::Pointer tempPointSet = PointSetType::New();
-
-      PointType point; point.Fill( 0.0 );
-      IndexType index;
-      for ( unsigned int j = 0; j < nrofpoints; j++ )
-      {
-        inputPointSet2->GetPoint(j, &point);
-        for ( unsigned int i = 0; i < VDimension; i++ )
-        {
-          index[i] = static_cast< IndexValueType >( vnl_math_rnd( point[i] ) );
-        }
-        dummyImage->TransformIndexToPhysicalPoint( index, point );
-        tempPointSet->SetPoint(j, point);
-      }
-      inputPointSet2 = tempPointSet;
-    }
-
-    if ( this->m_KernelName == "TPS" )
-    {
-      kernelTransform = TPSTransformType::New();
-    }
-    else if ( this->m_KernelName == "TPSR2LOGR" )
-    {
-      kernelTransform = TPSR2LOGRTransformType::New();
-    }
-    else if ( this->m_KernelName == "VS" )
-    {
-      kernelTransform = VSTransformType::New();
-    }
-    else if ( this->m_KernelName == "EBS" )
-    {
-      kernelTransform = EBSTransformType::New();
-    }
-    else if ( this->m_KernelName == "EBSR" )
-    {
-      kernelTransform = EBSRTransformType::New();
-    }
-    else
-    {
-      std::cerr << "Invalid kernel transform type: " << this->m_KernelName << std::endl;
-      itkGenericExceptionMacro( << "Unknown kernel transform!." );
-    }
-
-    kernelTransform->SetStiffness( this->m_Stiffness );
-    kernelTransform->SetSourceLandmarks( inputPointSet1 );
-    kernelTransform->SetTargetLandmarks( inputPointSet2 );
-    kernelTransform->ComputeWMatrix();
-
-    /** Define the deformation field and an iterator on it */
-    deformationField->SetSpacing( reader1->GetOutput()->GetSpacing() );
-    deformationField->SetOrigin( reader1->GetOutput()->GetOrigin() );
-    deformationField->SetRegions( reader1->GetOutput()->GetLargestPossibleRegion() );
-    deformationField->Allocate();
-    DeformationFieldIteratorType iterator(
-      deformationField, deformationField->GetLargestPossibleRegion() );
-    iterator.GoToBegin();
-
-    std::cout << "Generating deformation field. " << std::endl;
-
-    while ( !iterator.IsAtEnd() )
-    {
-      PointType pointin;
-      const IndexType & index = iterator.GetIndex();
-      deformationField->TransformIndexToPhysicalPoint( index, pointin);
-      PointType pointout = kernelTransform->TransformPoint( pointin );
-      DeformationVectorType vec = pointout - pointin;
-      iterator.Set( vec );
-      ++iterator;
-    }
-
-    std::cout << "Saving deformation field to disk as " << this->m_OutputImageFileName << std::endl;
-    writer->SetFileName( this->m_OutputImageFileName.c_str() );
-    writer->SetInput( deformationField );
-    writer->Update();
-  }
-
-}; // end DeformationFieldGenerator
 
 //-------------------------------------------------------------------------------------
 
@@ -391,100 +94,84 @@ int main( int argc, char **argv )
     return EXIT_SUCCESS;
   }
 
-  std::string inputImage1FileName = "";
-  std::string inputImage2FileName = "";
-  std::string inputPoints1FileName = "";
-  std::string inputPoints2FileName = "";
-  std::string outputImageFileName = "";
-  std::string kernelName = "TPS";
-  double stiffness = 0.0;
-
   /** Get arguments. */
-
+  std::string inputImage1FileName = "";
   parser->GetCommandLineArgument( "-in1", inputImage1FileName );
+
+  std::string inputImage2FileName = "";
   parser->GetCommandLineArgument( "-in2", inputImage2FileName );
+
+  std::string inputPoints1FileName = "";
   parser->GetCommandLineArgument( "-ipp1", inputPoints1FileName );
+
+  std::string inputPoints2FileName = "";
   parser->GetCommandLineArgument( "-ipp2", inputPoints2FileName );
+
+  std::string outputImageFileName = "";
   parser->GetCommandLineArgument( "-out", outputImageFileName );
+
+  std::string kernelName = "TPS";
   parser->GetCommandLineArgument( "-k", kernelName );
+
+  double stiffness = 0.0;
   parser->GetCommandLineArgument( "-s", stiffness );
 
   /** Determine image properties. */
-  std::string ComponentType = "short";
-  std::string PixelType; //we don't use this
-  unsigned int Dimension = 2;
-  unsigned int NumberOfComponents = 1;
-  std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = itktools::GetImageProperties(
-    inputImage1FileName,
-    PixelType,
-    ComponentType,
-    Dimension,
-    NumberOfComponents,
-    imagesize );
-  if ( retgip !=0 )
-  {
-    return 1;
-  }
-  std::cout << "The input image has the following properties:" << std::endl;
-  /** Do not bother the user with the difference between pixeltype and componenttype:*/
-  //std::cout << "\tPixelType:          " << PixelType << std::endl;
-  std::cout << "\tPixelType:          " << ComponentType << std::endl;
-  std::cout << "\tDimension:          " << Dimension << std::endl;
-  std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
+  itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
+  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  unsigned int dim = 0;
+  unsigned int numberOfComponents = 0;
+  bool retgip = itktools::GetImageProperties(
+    inputImage1FileName, pixelType, componentType, dim, numberOfComponents );
+  if( !retgip ) return EXIT_FAILURE;
 
-  if (NumberOfComponents > 1)
-  {
-    std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
-    std::cerr << "Vector images are not supported!" << std::endl;
-    return 1;
-  }
+  /** Check for vector images. */
+  //bool retNOCCheck = itktools::NumberOfComponentsCheck( numberOfComponents );
+  //if( !retNOCCheck ) return EXIT_FAILURE;
 
+  /** Output vector type is float or double. */
+  std::string componentTypeAsString = "float";
+  bool retopct = parser->GetCommandLineArgument( "-opct", componentTypeAsString );
+  componentType = itk::ImageIOBase::GetComponentTypeFromString( componentTypeAsString );
 
-  /** Class that does the work */
-  ITKToolsDeformationFieldGeneratorBase * deformationFieldGenerator = NULL;
-
-  /** Short alias */
-  unsigned int dim = Dimension;
+  /** Class that does the work. */
+  ITKToolsDeformationFieldGeneratorBase * filter = NULL;
 
   try
   {
     // now call all possible template combinations.
-    if (!deformationFieldGenerator) deformationFieldGenerator = ITKToolsDeformationFieldGenerator< 2 >::New( dim );
+    if( !filter ) filter = ITKToolsDeformationFieldGenerator< 2, float >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsDeformationFieldGenerator< 2, double >::New( dim, componentType );
 
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!deformationFieldGenerator) deformationFieldGenerator = ITKToolsDeformationFieldGenerator< 3 >::New( dim );
+    if( !filter ) filter = ITKToolsDeformationFieldGenerator< 3, float >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsDeformationFieldGenerator< 3, double >::New( dim, componentType );
 #endif
-    if (!deformationFieldGenerator)
-    {
-      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!"
-        << std::endl;
-      std::cerr << " dimension = " << Dimension
-        << std::endl;
-      return 1;
-    }
+    /** Check if filter was instantiated. */
+    bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
+    if( !supported ) return EXIT_FAILURE;
 
-    deformationFieldGenerator->m_InputImage1FileName = inputImage1FileName;
-    deformationFieldGenerator->m_InputImage2FileName = inputImage2FileName;
-    deformationFieldGenerator->m_InputPoints1FileName = inputPoints1FileName;
-    deformationFieldGenerator->m_InputPoints2FileName = inputPoints2FileName;
-    deformationFieldGenerator->m_OutputImageFileName = outputImageFileName;
-    deformationFieldGenerator->m_KernelName = kernelName;
-    deformationFieldGenerator->m_Stiffness = stiffness;
+    /** Set the filter arguments. */
+    filter->m_InputImage1FileName = inputImage1FileName;
+    filter->m_InputImage2FileName = inputImage2FileName;
+    filter->m_InputPoints1FileName = inputPoints1FileName;
+    filter->m_InputPoints2FileName = inputPoints2FileName;
+    filter->m_OutputImageFileName = outputImageFileName;
+    filter->m_KernelName = kernelName;
+    filter->m_Stiffness = stiffness;
 
-    deformationFieldGenerator->Run();
+    filter->Run();
 
-    delete deformationFieldGenerator;
+    delete filter;
   }
-  catch( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    delete deformationFieldGenerator;
-    return 1;
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+    delete filter;
+    return EXIT_FAILURE;
   }
 
   /** End program. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main
-

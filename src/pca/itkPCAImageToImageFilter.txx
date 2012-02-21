@@ -1,5 +1,22 @@
-#ifndef _itkPCAImageToImageFilter_txx
-#define _itkPCAImageToImageFilter_txx
+/*=========================================================================
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
+#ifndef _itkPCAImageToImageFilter_txx_
+#define _itkPCAImageToImageFilter_txx_
 
 #include "itkPCAImageToImageFilter.h"
 
@@ -44,9 +61,9 @@ namespace itk
     ::EnlargeOutputRequestedRegion( DataObject * itkNotUsed(output) )
   {
     /** This filter requires the all of the output images to be in the buffer. */
-    for ( unsigned int i = 0; i < this->GetNumberOfOutputs(); ++i )
+    for( unsigned int i = 0; i < this->GetNumberOfOutputs(); ++i )
     {
-      if ( this->GetOutput( i ) )
+      if( this->GetOutput( i ) )
       {
         this->GetOutput( i )->SetRequestedRegionToLargestPossibleRegion();
       }
@@ -66,7 +83,7 @@ namespace itk
   {
     Superclass::GenerateInputRequestedRegion();
 
-    if ( this->GetInput( 0 ) )
+    if( this->GetInput( 0 ) )
     {
       /** Set the requested region of the first input to largest possible region. */
       InputImagePointer input = const_cast< TInputImage *>( this->GetInput( 0 ) );
@@ -76,9 +93,9 @@ namespace itk
       /** Set the requested region of the remaining input to the
        * largest possible region of the first input.
        */
-      for ( unsigned int i = 1; i < this->GetNumberOfInputs(); ++i )
+      for( unsigned int i = 1; i < this->GetNumberOfInputs(); ++i )
       {
-        if ( this->GetInput( i ) )
+        if( this->GetInput( i ) )
         {
           typename TInputImage::RegionType requestedRegion =
             this->GetInput( 0 )->GetLargestPossibleRegion();
@@ -86,7 +103,7 @@ namespace itk
           typename TInputImage::RegionType largestRegion =
             this->GetInput( i )->GetLargestPossibleRegion();
 
-          if ( !largestRegion.IsInside( requestedRegion ) )
+          if( !largestRegion.IsInside( requestedRegion ) )
           {
             itkExceptionMacro( << "LargestPossibleRegion of input " << i
               << " is not a superset of the LargestPossibleRegion of input 0" );
@@ -112,7 +129,7 @@ namespace itk
     PCAImageToImageFilter< TInputImage, TOutputImage >
     ::SetNumberOfPrincipalComponentsRequired( unsigned int n )
   {
-    if ( this->m_NumberOfPrincipalComponentsRequired != n )
+    if( this->m_NumberOfPrincipalComponentsRequired != n )
     {
       this->m_NumberOfPrincipalComponentsRequired = n;
       this->Modified();
@@ -138,17 +155,17 @@ namespace itk
 
     /** Add or remove outputs. */
     unsigned int noo = this->GetNumberOfOutputs();
-    if ( noo < n )
+    if( noo < n )
     {
-      for ( unsigned int i = noo; i < n; ++i )
+      for( unsigned int i = noo; i < n; ++i )
       {
         typename DataObject::Pointer output = this->MakeOutput( i );
         this->SetNthOutput( i, output.GetPointer() );
       }
     }
-    else if ( noo > n )
+    else if( noo > n )
     {
-      for ( unsigned int i = noo - 1; i >= n; --i )
+      for( unsigned int i = noo - 1; i >= n; --i )
       {
         typename DataObject::Pointer output = this->GetOutputs()[ i ];
         this->RemoveOutput( output );
@@ -167,7 +184,7 @@ namespace itk
     PCAImageToImageFilter< TInputImage, TOutputImage >
     ::SetNumberOfFeatureImages( unsigned int n )
   {
-    if ( this->m_NumberOfFeatureImages != n )
+    if( this->m_NumberOfFeatureImages != n )
     {
       this->m_NumberOfFeatureImages = n;
       this->Modified();
@@ -195,7 +212,7 @@ namespace itk
     unsigned int numberOfOutputs =
       static_cast<unsigned int>( this->GetNumberOfOutputs() );
 
-    for ( unsigned int i = 0; i < numberOfOutputs; ++i )
+    for( unsigned int i = 0; i < numberOfOutputs; ++i )
     {
       OutputImagePointer output = this->GetOutput( i );
       output->SetBufferedRegion( output->GetRequestedRegion() );
@@ -205,7 +222,7 @@ namespace itk
     /** Create the output images. This is a matter of converting
      * the vnl_matrix of principal components to images.
      */
-    for ( unsigned int i = 0; i < numberOfOutputs; ++i )
+    for( unsigned int i = 0; i < numberOfOutputs; ++i )
     {
       /** Extract one column vector at a time. This is faster
        * than extracting the column every time, but comes at
@@ -262,7 +279,7 @@ namespace itk
     PCAImageToImageFilter< TInputImage, TOutputImage >
     ::CheckNumberOfOutputs( void )
   {
-    if ( this->m_NumberOfPrincipalComponentsRequired == 0 )
+    if( this->m_NumberOfPrincipalComponentsRequired == 0 )
     {
       /** In this case the number of required PC's have not been
        * specified (or illegally specified to 0). We let this
@@ -297,7 +314,7 @@ namespace itk
     std::vector< InputImageConstPointer >   inputImages( this->m_NumberOfFeatureImages );
     std::vector< InputImageConstIterator >  iterators( this->m_NumberOfFeatureImages );
 
-    for ( unsigned int i = 0; i < this->m_NumberOfFeatureImages; i++ )
+    for( unsigned int i = 0; i < this->m_NumberOfFeatureImages; i++ )
     {
       inputImages[ i ] = this->GetInput( i );
 
@@ -310,9 +327,9 @@ namespace itk
     this->m_MeanOfFeatureImages.set_size( this->m_NumberOfFeatureImages );
     this->m_MeanOfFeatureImages.fill( 0.0 );
 
-    for ( unsigned int im = 0; im < this->m_NumberOfFeatureImages; ++im )
+    for( unsigned int im = 0; im < this->m_NumberOfFeatureImages; ++im )
     {
-      for ( unsigned int pix = 0; pix < this->m_NumberOfPixels; pix++ )
+      for( unsigned int pix = 0; pix < this->m_NumberOfPixels; pix++ )
       {
         this->m_MeanOfFeatureImages[ im ] += iterators[ im ].Get();
         ++iterators[ im ];
@@ -335,7 +352,7 @@ namespace itk
     /** Get pointers to the input and setup iterators. */
     std::vector< InputImageConstIterator >  iterators( this->m_NumberOfFeatureImages );
 
-    for ( unsigned int i = 0; i < this->m_NumberOfFeatureImages; i++ )
+    for( unsigned int i = 0; i < this->m_NumberOfFeatureImages; i++ )
     {
       iterators[ i ] = InputImageConstIterator(
         this->GetInput( i ), this->GetInput( i )->GetBufferedRegion() );
@@ -347,9 +364,9 @@ namespace itk
       this->m_NumberOfPixels, this->m_NumberOfFeatureImages );
 
     /** Center the training images by subtracting the mean. */
-    for ( unsigned int i = 0; i < this->m_NumberOfFeatureImages; ++i )
+    for( unsigned int i = 0; i < this->m_NumberOfFeatureImages; ++i )
     {
-      for ( unsigned int pix = 0; pix < this->m_NumberOfPixels; pix++ )
+      for( unsigned int pix = 0; pix < this->m_NumberOfPixels; pix++ )
       {
 
         this->m_CenteredFeatureImages[ pix ][ i ] =
@@ -385,7 +402,7 @@ namespace itk
     vnl_fastops::AtA( this->m_CovarianceMatrix, this->m_CenteredFeatureImages );
 
     /** Divide. */
-    if ( this->m_NumberOfPixels != 1 )
+    if( this->m_NumberOfPixels != 1 )
     {
       this->m_CovarianceMatrix /= ( this->m_NumberOfPixels - 1 );
     }
@@ -475,4 +492,4 @@ namespace itk
 
 } // namespace itk
 
-#endif // end #ifndef _itkPCAImageToImageFilter_txx
+#endif // end #ifndef _itkPCAImageToImageFilter_txx_

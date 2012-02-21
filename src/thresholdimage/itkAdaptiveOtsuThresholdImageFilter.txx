@@ -200,7 +200,7 @@ AdaptiveOtsuThresholdImageFilter<TInputImage, TOutputImage>
   while( !Itt.IsAtEnd() )
     {
     p = Itt.Get();
-    if ( p < iIt.Get() )
+    if( p < iIt.Get() )
       {
       oIt.Set( this->m_InsideValue  );
       }

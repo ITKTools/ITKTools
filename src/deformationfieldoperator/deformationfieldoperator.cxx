@@ -22,10 +22,8 @@
  */
 #include "itkCommandLineArgumentParser.h"
 #include "ITKToolsHelpers.h"
-#include "ITKToolsBase.h"
-
 #include "deformationfieldoperator.h"
-#include "itkExceptionObject.h"
+
 #include <itksys/SystemTools.hxx>
 
 
@@ -58,122 +56,6 @@ std::string GetHelpString( void )
 
 //-------------------------------------------------------------------------------------
 
-/** DeformationFieldOperator */
-
-class ITKToolsDeformationFieldOperatorBase : public itktools::ITKToolsBase
-{ 
-public:
-  ITKToolsDeformationFieldOperatorBase()
-  {
-    this->m_InputFileName = "";
-    this->m_OutputFileName = "";
-    this->m_Ops = "";
-    this->m_NumberOfStreams = 0;
-    this->m_NumberOfIterations = 0;
-    this->m_StopValue = 0.0f;
-  };
-  ~ITKToolsDeformationFieldOperatorBase(){};
-
-  /** Input parameters */
-  std::string m_InputFileName;
-  std::string m_OutputFileName;
-  std::string m_Ops;
-  unsigned int m_NumberOfStreams;
-  unsigned int m_NumberOfIterations;
-  double m_StopValue;
-    
-}; // end DeformationFieldOperatorBase
-
-/**
- * **************** DeformationFieldOperator *******************
- *
- * converts between deformation fields and transformation 'fields',
- * and compute magnitudes/Jacobians.
- */
-
-template< class TComponentType, unsigned int VDimension >
-class ITKToolsDeformationFieldOperator : public ITKToolsDeformationFieldOperatorBase
-{
-public:
-  typedef ITKToolsDeformationFieldOperator Self;
-
-  ITKToolsDeformationFieldOperator(){};
-  ~ITKToolsDeformationFieldOperator(){};
-
-  static Self * New( itktools::ComponentType componentType, unsigned int dim )
-  {
-    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
-  void Run( void )
-  {
-    /** TYPEDEF's. */
-    typedef TComponentType                               ComponentType;
-    typedef ComponentType                                ScalarPixelType;
-    typedef itk::Vector< ComponentType, VDimension >     VectorPixelType;
-
-    typedef itk::Image< ScalarPixelType, VDimension >    ScalarImageType;
-    typedef itk::Image< VectorPixelType, VDimension >    VectorImageType;
-    typedef itk::ImageFileReader< VectorImageType >     ReaderType;
-
-    /** DECLARATION'S. */
-    typename VectorImageType::Pointer workingImage;
-    typename ReaderType::Pointer reader = ReaderType::New();
-
-    /** Read in the inputImage. */
-    reader->SetFileName( this->m_InputFileName.c_str() );
-    // temporarily: only streaming support for Jacobian case needed for EMPIRE10 challenge.
-    if ( this->m_Ops != "DEF2JAC" && this->m_Ops != "JACOBIAN" )
-    {
-      std::cout << "Reading input image: " << this->m_InputFileName << std::endl;
-      reader->Update();
-      std::cout << "Input image read." << std::endl;
-    }
-
-    /** Change to Transformation or Deformation by adding/subtracting pixel coordinates */
-    workingImage = reader->GetOutput();
-
-    /** Do something with this image and save the result */
-    if ( this->m_Ops == "DEF2TRANS" )
-    {
-      Deformation2Transformation<VectorImageType>(
-        workingImage, this->m_OutputFileName, true );
-    }
-    else if ( this->m_Ops == "TRANS2DEF" )
-    {
-      Deformation2Transformation<VectorImageType>(
-        workingImage, this->m_OutputFileName, false );
-    }
-    else if ( this->m_Ops == "MAGNITUDE" )
-    {
-      ComputeMagnitude<VectorImageType, ScalarImageType>(
-        workingImage, this->m_OutputFileName );
-    }
-    else if ( this->m_Ops == "DEF2JAC" )
-    {
-      ComputeJacobian<VectorImageType, ScalarImageType>(
-        this->m_InputFileName, this->m_OutputFileName, this->m_NumberOfStreams );
-    }
-    else if ( this->m_Ops == "INVERSE" )
-    {
-      ComputeInverse<VectorImageType>(
-        this->m_InputFileName, this->m_OutputFileName, this->m_NumberOfStreams,
-        this->m_NumberOfIterations, this->m_StopValue );
-    }
-    else
-    {
-      itkGenericExceptionMacro( << "<< invalid operator: " << this->m_Ops );
-    }
-  }
-
-}; // end DeformationFieldOperator
-
-//-------------------------------------------------------------------------------------
-
 int main( int argc, char **argv )
 {
   /** Create a command line argument parser. */
@@ -203,7 +85,7 @@ int main( int argc, char **argv )
 
   std::string outputFileName = "";
   parser->GetCommandLineArgument( "-out", outputFileName );
-  if ( outputFileName == "" )
+  if( outputFileName == "" )
   {
     std::string part1 =
       itksys::SystemTools::GetFilenameWithoutLastExtension(inputFileName);
@@ -224,86 +106,63 @@ int main( int argc, char **argv )
   parser->GetCommandLineArgument( "-stop", stopValue );
 
   /** Determine image properties. */
-  std::string ComponentType = "float";
-  std::string PixelType = "VECTOR";
-  unsigned int Dimension = 2;
-  unsigned int NumberOfComponents = Dimension;
-  std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = itktools::GetImageProperties(
-    inputFileName,
-    PixelType,
-    ComponentType,
-    Dimension,
-    NumberOfComponents,
-    imagesize );
-  if ( retgip != 0 )
-  {
-    return 1;
-  }
+  itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
+  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  unsigned int dim = 0;
+  unsigned int numberOfComponents = 0;
+  bool retgip = itktools::GetImageProperties(
+    inputFileName, pixelType, componentType, dim, numberOfComponents );
+  if( !retgip ) return EXIT_FAILURE;
 
   /** Checks. */
-  if ( NumberOfComponents != Dimension )
+  if( numberOfComponents != dim )
   {
     std::cerr << "ERROR: The NumberOfComponents must equal the Dimension!" << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
-  if ( NumberOfComponents == 1 )
+  if( numberOfComponents == 1 )
   {
     std::cerr << "Scalar images are not supported!" << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
-  /** Get rid of the possible "_" in ComponentType. */
-  itktools::ReplaceUnderscoreWithSpace( ComponentType );
+  /** Class that does the work. */
+  ITKToolsDeformationFieldOperatorBase * filter = 0; 
 
-  /** Run the program. */
-  
-  /** Class that does the work */
-  ITKToolsDeformationFieldOperatorBase * deformationFieldOperator = 0; 
-
-  /** Short alias */
-  unsigned int dim = Dimension;
-
-  itktools::ComponentType componentType = itk::ImageIOBase::GetComponentTypeFromString( PixelType );
-   
   try
   {    
     // now call all possible template combinations.
-    if (!deformationFieldOperator) deformationFieldOperator = ITKToolsDeformationFieldOperator< float, 2 >::New( componentType, dim );
-    if (!deformationFieldOperator) deformationFieldOperator = ITKToolsDeformationFieldOperator< double, 2 >::New( componentType, dim );
-#ifdef ITKTOOLS_3D_SUPPORT
-    if (!deformationFieldOperator) deformationFieldOperator = ITKToolsDeformationFieldOperator< float, 3 >::New( componentType, dim );
-    if (!deformationFieldOperator) deformationFieldOperator = ITKToolsDeformationFieldOperator< double, 3 >::New( componentType, dim );
-#endif
-    if (!deformationFieldOperator) 
-    {
-      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-      std::cerr
-        << "pixel (component) type = " << componentType
-        << " ; dimension = " << Dimension
-        << std::endl;
-      return 1;
-    }
+    if( !filter ) filter = ITKToolsDeformationFieldOperator< 2, float >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsDeformationFieldOperator< 2, double >::New( dim, componentType );
 
-    deformationFieldOperator->m_InputFileName = inputFileName;
-    deformationFieldOperator->m_OutputFileName = outputFileName;
-    deformationFieldOperator->m_Ops = ops;
-    deformationFieldOperator->m_NumberOfStreams = numberOfStreams;
-    deformationFieldOperator->m_NumberOfIterations = numberOfIterations;
-    deformationFieldOperator->m_StopValue = stopValue;
+#ifdef ITKTOOLS_3D_SUPPORT
+    if( !filter ) filter = ITKToolsDeformationFieldOperator< 3, float >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsDeformationFieldOperator< 3, double >::New( dim, componentType );
+#endif
+    /** Check if filter was instantiated. */
+    bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
+    if( !supported ) return EXIT_FAILURE;
+
+    /** Set the filter arguments. */
+    filter->m_InputFileName = inputFileName;
+    filter->m_OutputFileName = outputFileName;
+    filter->m_Ops = ops;
+    filter->m_NumberOfStreams = numberOfStreams;
+    filter->m_NumberOfIterations = numberOfIterations;
+    filter->m_StopValue = stopValue;
   
-    deformationFieldOperator->Run();
+    filter->Run();
     
-    delete deformationFieldOperator;
+    delete filter;
   }
-  catch( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    delete deformationFieldOperator;
-    return 1;
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+    delete filter;
+    return EXIT_FAILURE;
   }
 
   /** End program. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main

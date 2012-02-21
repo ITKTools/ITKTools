@@ -1,5 +1,22 @@
-#ifndef _itkReshapeImageToImageFilter_txx
-#define _itkReshapeImageToImageFilter_txx
+/*=========================================================================
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
+#ifndef _itkReshapeImageToImageFilter_txx_
+#define _itkReshapeImageToImageFilter_txx_
 
 #include "itkReshapeImageToImageFilter.h"
 
@@ -42,20 +59,20 @@ ReshapeImageToImageFilter< TInputImage >
   }
 
   unsigned long numVoxelsOutput = 1;
-  for ( unsigned int i = 0; i < ImageDimension; i++ )
+  for( unsigned int i = 0; i < ImageDimension; i++ )
   {
     numVoxelsOutput *= this->m_OutputSize[ i ];
   }
 
   // Check if the output region was set
-  if ( numVoxelsOutput == 0 )
+  if( numVoxelsOutput == 0 )
   {
     itkExceptionMacro( << "ERROR: You have to specify the output size." );
   }
 //
 //   // Check if reshaping is possible
 //   // \todo: Could be less strict append with 0's or just take a part
-//   if ( numPixelsInput != numPixelsOutput )
+//   if( numPixelsInput != numPixelsOutput )
 //   {
 //     itkExceptionMacro( << "ERROR: input region and output region should have "
 //       << "the same number of voxels." );
@@ -98,7 +115,7 @@ ReshapeImageToImageFilter< TInputImage >
   /** Get the number of pixels. */
   unsigned long numVoxelsInput = input->GetLargestPossibleRegion().GetNumberOfPixels();
   unsigned long numVoxelsOutput = 1;
-  for ( unsigned int i = 0; i < ImageDimension; i++ )
+  for( unsigned int i = 0; i < ImageDimension; i++ )
   {
     numVoxelsOutput *= this->m_OutputSize[ i ];
   }

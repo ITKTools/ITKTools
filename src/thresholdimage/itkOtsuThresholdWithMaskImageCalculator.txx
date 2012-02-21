@@ -52,14 +52,14 @@ OtsuThresholdWithMaskImageCalculator<TInputImage>
 {
   unsigned int j;
 
-  if ( !m_Image ) { return; }
+  if( !m_Image ) { return; }
   if( !m_RegionSetByUser )
   {
     this->m_Region = this->m_Image->GetRequestedRegion();
   }
 
   double totalPixels = (double) this->m_Region.GetNumberOfPixels();
-  if ( totalPixels == 0 ) { return; }
+  if( totalPixels == 0 ) { return; }
   totalPixels = 0.0;
 
   typedef ImageRegionConstIteratorWithIndex<ImageType> IteratorType;
@@ -68,7 +68,7 @@ OtsuThresholdWithMaskImageCalculator<TInputImage>
 
   typedef ImageRegionConstIterator<MaskImageType> MaskIteratorType;
   MaskIteratorType itMask;
-  if ( this->m_MaskImage )
+  if( this->m_MaskImage )
   {
     itMask = MaskIteratorType( this->m_MaskImage, this->m_Region );
     itMask.GoToBegin();
@@ -79,7 +79,7 @@ OtsuThresholdWithMaskImageCalculator<TInputImage>
   PixelType imageMax = NumericTraits<PixelType>::NonpositiveMin();
   while ( !iter.IsAtEnd() )
   {
-    if ( this->m_MaskImage && itMask.Value() == 0 )
+    if( this->m_MaskImage && itMask.Value() == 0 )
     {
       ++iter; ++itMask;
       continue;
@@ -90,10 +90,10 @@ OtsuThresholdWithMaskImageCalculator<TInputImage>
     imageMax = imageMax < current ? current : imageMax;
 
     ++iter;
-    if ( this->m_MaskImage ) ++itMask;
+    if( this->m_MaskImage ) ++itMask;
   }
 
-  if ( imageMin >= imageMax )
+  if( imageMin >= imageMax )
   {
     this->m_Threshold = imageMin;
     return;
@@ -111,10 +111,10 @@ OtsuThresholdWithMaskImageCalculator<TInputImage>
     (double) ( imageMax - imageMin );
 
   iter.GoToBegin();
-  if ( this->m_MaskImage ) itMask.GoToBegin();
+  if( this->m_MaskImage ) itMask.GoToBegin();
   while ( !iter.IsAtEnd() )
   {
-    if ( this->m_MaskImage && itMask.Value() == 0 )
+    if( this->m_MaskImage && itMask.Value() == 0 )
     {
       ++iter; ++itMask;
       continue;
@@ -123,14 +123,14 @@ OtsuThresholdWithMaskImageCalculator<TInputImage>
     unsigned int binNumber;
     PixelType value = iter.Get();
 
-    if ( value == imageMin )
+    if( value == imageMin )
       {
       binNumber = 0;
       }
     else
       {
       binNumber = (unsigned int) vcl_ceil((value - imageMin) * binMultiplier ) - 1;
-      if ( binNumber == this->m_NumberOfHistogramBins ) // in case of rounding errors
+      if( binNumber == this->m_NumberOfHistogramBins ) // in case of rounding errors
         {
         binNumber -= 1;
         }
@@ -140,7 +140,7 @@ OtsuThresholdWithMaskImageCalculator<TInputImage>
     totalPixels += 1.0;
 
     ++iter;
-    if ( this->m_MaskImage ) ++itMask;
+    if( this->m_MaskImage ) ++itMask;
   }
 
   // normalize the frequencies
@@ -170,7 +170,7 @@ OtsuThresholdWithMaskImageCalculator<TInputImage>
     freqLeft += relativeFrequency[j];
     meanLeft = ( meanLeftOld * freqLeftOld +
                  (j+1) * relativeFrequency[j] ) / freqLeft;
-    if (freqLeft == 1.0)
+    if(freqLeft == 1.0)
       {
       meanRight = 0.0;
       }
@@ -182,7 +182,7 @@ OtsuThresholdWithMaskImageCalculator<TInputImage>
     double varBetween = freqLeft * ( 1.0 - freqLeft ) *
       vnl_math_sqr( meanLeft - meanRight );
 
-    if ( varBetween > maxVarBetween )
+    if( varBetween > maxVarBetween )
       {
       maxVarBetween = varBetween;
       maxBinNumber = j;

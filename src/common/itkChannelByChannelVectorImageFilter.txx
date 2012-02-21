@@ -73,7 +73,7 @@ ChannelByChannelVectorImageFilter<TInputImage, TOutputImage>
   // One of two conditions must be true:
   // 1) The number of channels in the input matches the size of the m_Filters vector
   // 2) m_SingleFilter is set
-  
+
   // Case 1 - the number of channels in the input matches the size of m_Filters
   bool valid = false;
   if(m_Filters.size() == this->GetInput()->GetNumberOfComponentsPerPixel())
@@ -85,12 +85,12 @@ ChannelByChannelVectorImageFilter<TInputImage, TOutputImage>
     for(unsigned int channel = 0; channel < numberOfChannels; ++channel)
       {
       if(!m_Filters[channel])
-	{
-	valid = false;
-	}
+  {
+  valid = false;
+  }
       }
   }
-  
+
   // Case 2 - m_SingleFilter is set
   if(m_SingleFilter)
     {
@@ -106,7 +106,7 @@ ChannelByChannelVectorImageFilter<TInputImage, TOutputImage>
       }
     valid = true;
     }
-  
+
   if(!valid)
     {
     std::cerr << "Neither method was specified!" << std::endl;
@@ -148,7 +148,7 @@ ChannelByChannelVectorImageFilter<TInputImage, TOutputImage>
       outputs.push_back(filters[channel]->GetOutput());
       filters[channel]->DisconnectPipeline();
       }
-    
+
     // Add the 'channel'th output to the output vector image
     reasassembler->SetNthInput(channel, outputs[channel]);
     }

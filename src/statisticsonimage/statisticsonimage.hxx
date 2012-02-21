@@ -15,8 +15,8 @@
 * limitations under the License.
 *
 *=========================================================================*/
-#ifndef __statisticsonimage_hxx
-#define __statisticsonimage_hxx
+#ifndef __statisticsonimage_hxx_
+#define __statisticsonimage_hxx_
 
 #include "itkImageFileReader.h"
 #include "itkCastImageFilter.h"
@@ -31,9 +31,9 @@
  * ************************ Run **************************
  */
 
-template< class TComponentType, unsigned int VDimension, unsigned int VNumberOfComponents >
+template< unsigned int VDimension, unsigned int VNumberOfComponents, class TComponentType >
 void
-ITKToolsStatisticsOnImage< TComponentType, VDimension, VNumberOfComponents >
+ITKToolsStatisticsOnImage< VDimension, VNumberOfComponents, TComponentType >
 ::Run( void )
 {
   /** Typedefs. */
@@ -67,7 +67,7 @@ ITKToolsStatisticsOnImage< TComponentType, VDimension, VNumberOfComponents >
   typename MaskReaderType::Pointer maskReader;
   typename BaseFilterType::Pointer maskerOrCopier
     = (CopierType::New()).GetPointer();
-  if ( this->m_MaskFileName != "" )
+  if( this->m_MaskFileName != "" )
   {
     /** Read mask */
     maskReader = MaskReaderType::New();
@@ -93,7 +93,7 @@ ITKToolsStatisticsOnImage< TComponentType, VDimension, VNumberOfComponents >
     = HistogramGeneratorType::New();
 
   /** For scalar images. */
-  if ( VNumberOfComponents == 1 )
+  if( VNumberOfComponents == 1 )
   {
     std::cout << "Statistics are computed on the gray values." << std::endl;
 
@@ -154,9 +154,9 @@ ITKToolsStatisticsOnImage< TComponentType, VDimension, VNumberOfComponents >
  * duplication of code.
  */
 
-template< class TComponentType, unsigned int VDimension, unsigned int VNumberOfComponents >
+template< unsigned int VDimension, unsigned int VNumberOfComponents, class TComponentType >
 void
-ITKToolsStatisticsOnImage< TComponentType, VDimension, VNumberOfComponents >
+ITKToolsStatisticsOnImage< VDimension, VNumberOfComponents, TComponentType >
 ::ComputeStatistics(
   InternalImageType * inputImage,
   BaseFilterType * maskerOrCopier,
@@ -177,7 +177,7 @@ ITKToolsStatisticsOnImage< TComponentType, VDimension, VNumberOfComponents >
   /** Arithmetic mean */
   PixelType maxPixelValue = 1;
 	PixelType minPixelValue = 0;
-  if ( select == "arithmetic" || select == "" || select == "histogram" )
+  if( select == "arithmetic" || select == "" || select == "histogram" )
   {
     std::cout << "Computing arithmetic statistics ..." << std::endl;
 
@@ -185,11 +185,11 @@ ITKToolsStatisticsOnImage< TComponentType, VDimension, VNumberOfComponents >
     statistics->Update();
 
     /** Only print if not histogram selected. */
-    if ( select != "histogram" )
+    if( select != "histogram" )
     {
       PrintStatistics<StatisticsFilterType>( statistics );
     }
-    if ( select == "arithmetic" ) return;
+    if( select == "arithmetic" ) return;
 
     /** Save for later use for the histogram bin size. */
     maxPixelValue = statistics->GetMaximum();
@@ -197,7 +197,7 @@ ITKToolsStatisticsOnImage< TComponentType, VDimension, VNumberOfComponents >
   }
 
   /** Geometric mean/std: */
-  if ( select == "geometric" || select == "" )
+  if( select == "geometric" || select == "" )
   {
     std::cout << "Computing geometric statistics ..." << std::endl;
 
@@ -208,16 +208,16 @@ ITKToolsStatisticsOnImage< TComponentType, VDimension, VNumberOfComponents >
 
     PrintGeometricStatistics<StatisticsFilterType>( statistics );
 
-    if ( select == "geometric" ) return;
+    if( select == "geometric" ) return;
   }
 
   /** Histogram statistics. */
-  if ( select == "histogram" || select == "" )
+  if( select == "histogram" || select == "" )
   {
     /** Prepare for the histogram. */
     maskerOrCopier->SetInput( inputImage );
     std::string maskerOrCopierName = maskerOrCopier->GetNameOfClass();
-    if ( maskerOrCopierName == "MaskImageFilter" )
+    if( maskerOrCopierName == "MaskImageFilter" )
     {
       std::cout << "Replacing all pixels outside the mask by -infinity,\n  ";
       std::cout << "to make sure they are not included in the histogram ..."
@@ -226,7 +226,7 @@ ITKToolsStatisticsOnImage< TComponentType, VDimension, VNumberOfComponents >
     maskerOrCopier->Update();
 
     /** If the user specified 0, the number of bins is equal to the intensity range. */
-    if ( numberOfBins == 0 )
+    if( numberOfBins == 0 )
     {
       numberOfBins = static_cast<unsigned int>( maxPixelValue - minPixelValue );
     }
@@ -256,9 +256,9 @@ ITKToolsStatisticsOnImage< TComponentType, VDimension, VNumberOfComponents >
  * ******************* DetermineHistogramMaximum *******************
  */
 
-template< class TComponentType, unsigned int VDimension, unsigned int VNumberOfComponents >
+template< unsigned int VDimension, unsigned int VNumberOfComponents, class TComponentType >
 void
-ITKToolsStatisticsOnImage< TComponentType, VDimension, VNumberOfComponents >
+ITKToolsStatisticsOnImage< VDimension, VNumberOfComponents, TComponentType >
 ::DetermineHistogramMaximum(
   const InternalPixelType & maxPixelValue,
   const InternalPixelType & minPixelValue,
@@ -272,7 +272,7 @@ ITKToolsStatisticsOnImage< TComponentType, VDimension, VNumberOfComponents >
    */
 
   /** Floating pixeltype. */
-  if ( !itk::NumericTraits<InternalPixelType>::is_integer )
+  if( !itk::NumericTraits<InternalPixelType>::is_integer )
   {
     /** If the maximum (almost) equals the minimum, we have to make sure that
      * everything still works.
@@ -306,7 +306,7 @@ ITKToolsStatisticsOnImage< TComponentType, VDimension, VNumberOfComponents >
   }
 
   /** Check. */
-  if ( histogramMax <= maxPixelValue )
+  if( histogramMax <= maxPixelValue )
   {
     /** Overflow occurred; maximum was already maximum of pixeltype;
      * We could solve this somehow (by adding a ClipBinsAtUpperBound(bool)
@@ -325,4 +325,4 @@ ITKToolsStatisticsOnImage< TComponentType, VDimension, VNumberOfComponents >
 } // end DetermineHistogramMaximum()
 
 
-#endif // #ifndef __statisticsonimage_hxx
+#endif // #ifndef __statisticsonimage_hxx_

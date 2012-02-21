@@ -22,15 +22,7 @@
  */
 #include "itkCommandLineArgumentParser.h"
 #include "ITKToolsHelpers.h"
-#include "ITKToolsBase.h"
-
-#include "itkImage.h"
-#include "itkResampleImageFilter.h"
-#include "itkNearestNeighborInterpolateImageFunction.h"
-#include "itkBSplineInterpolateImageFunction.h"
-
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
+#include "resizeimage.h"
 
 
 /**
@@ -41,7 +33,7 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-    << "Usage:" << std::endl
+    << "Usage:\n"
     << "pxresizeimage\n"
     << "  -in      inputFilename\n"
     << "  [-out]   outputFilename, default in + RESIZED.mhd\n"
@@ -55,133 +47,6 @@ std::string GetHelpString( void )
   return ss.str();
 
 } // end GetHelpString()
-
-
-class ITKToolsResizeImageBase : public itktools::ITKToolsBase
-{ 
-public:
-  ITKToolsResizeImageBase()
-  {
-    this->m_InputFileName = "";
-    this->m_OutputFileName = "";
-    //std::vector<double> this->m_FactorOrSpacing;
-    this->m_IsFactor = false;
-    this->m_InterpolationOrder = 0;
-  };
-  ~ITKToolsResizeImageBase(){};
-
-  /** Input parameters */
-  std::string m_InputFileName;
-  std::string m_OutputFileName;
-  std::vector<double> m_FactorOrSpacing;
-  bool m_IsFactor;
-  unsigned int m_InterpolationOrder;
-
-    
-}; // end ResizeImageBase
-
-
-template< class TComponentType, unsigned int VDimension >
-class ITKToolsResizeImage : public ITKToolsResizeImageBase
-{
-public:
-  typedef ITKToolsResizeImage Self;
-
-  ITKToolsResizeImage(){};
-  ~ITKToolsResizeImage(){};
-
-  static Self * New( itktools::ComponentType componentType, unsigned int dim )
-  {
-    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
-  void Run( void )
-  {
-    /** Typedefs. */
-    typedef itk::Image<TComponentType, VDimension>      InputImageType;
-    typedef itk::ResampleImageFilter< InputImageType, InputImageType >  ResamplerType;
-    typedef itk::ImageFileReader< InputImageType >      ReaderType;
-    typedef itk::ImageFileWriter< InputImageType >      WriterType;
-    typedef itk::NearestNeighborInterpolateImageFunction<
-      InputImageType, double >                          NNInterpolatorType;
-    typedef itk::BSplineInterpolateImageFunction<
-      InputImageType >                                  BSplineInterpolatorType;
-
-    typedef typename InputImageType::SizeType         SizeType;
-    typedef typename InputImageType::SpacingType      SpacingType;
-
-    const unsigned int Dimension = InputImageType::ImageDimension;
-
-    /** Declarations. */
-    typename InputImageType::Pointer inputImage;
-    typename ResamplerType::Pointer resampler = ResamplerType::New();
-    typename ReaderType::Pointer reader = ReaderType::New();
-    typename WriterType::Pointer writer = WriterType::New();
-    typename NNInterpolatorType::Pointer nnInterpolator
-      = NNInterpolatorType::New();
-    typename BSplineInterpolatorType::Pointer bsInterpolator
-      = BSplineInterpolatorType::New();
-
-    /** Read in the inputImage. */
-    reader->SetFileName( this->m_InputFileName.c_str() );
-    inputImage = reader->GetOutput();
-    inputImage->Update();
-
-    /** Prepare stuff. */
-    SpacingType inputSpacing  = inputImage->GetSpacing();
-    SizeType    inputSize     = inputImage->GetLargestPossibleRegion().GetSize();
-    SpacingType outputSpacing = inputSpacing;
-    SizeType    outputSize    = inputSize;
-    if ( this->m_IsFactor )
-    {
-      for ( unsigned int i = 0; i < Dimension; i++ )
-      {
-        outputSpacing[ i ] /= this->m_FactorOrSpacing[ i ];
-        outputSize[ i ] = static_cast<unsigned int>( outputSize[ i ] * this->m_FactorOrSpacing[ i ] );
-      }
-    }
-    else
-    {
-      for ( unsigned int i = 0; i < Dimension; i++ )
-      {
-        outputSpacing[ i ] = this->m_FactorOrSpacing[ i ];
-        outputSize[ i ] = static_cast<unsigned int>(
-          inputSpacing[ i ] * inputSize[ i ] / this->m_FactorOrSpacing[ i ] );
-      }
-    }
-
-    /** Setup the pipeline. */
-    resampler->SetInput( inputImage );
-    resampler->SetSize( outputSize );
-    resampler->SetDefaultPixelValue( 0 );
-    resampler->SetOutputStartIndex( inputImage->GetLargestPossibleRegion().GetIndex() );
-    resampler->SetOutputSpacing( outputSpacing );
-    resampler->SetOutputOrigin( inputImage->GetOrigin() );
-
-    /* The interpolator: the resampler has by default a
-     * LinearInterpolateImageFunction as interpolator.
-     */
-    if ( this->m_InterpolationOrder == 0 )
-    {
-      resampler->SetInterpolator( nnInterpolator );
-    }
-    else if ( this->m_InterpolationOrder > 1 )
-    {
-      bsInterpolator->SetSplineOrder( this->m_InterpolationOrder );
-      resampler->SetInterpolator( bsInterpolator );
-    }
-
-    /** Write the output image. */
-    writer->SetFileName( this->m_OutputFileName.c_str() );
-    writer->SetInput( resampler->GetOutput() );
-    writer->Update();
-  } // end Run()
-
-}; // end class ResizeImage
 
 //-------------------------------------------------------------------------------------
 
@@ -232,115 +97,111 @@ int main( int argc, char **argv )
   parser->GetCommandLineArgument( "-io", interpolationOrder );
 
   /** Check factor and spacing. */
-  if ( retf )
+  if( retf )
   {
     if( factor.size() != Dimension && factor.size() != 1 )
     {
       std::cout << "ERROR: The number of factors should be 1 or Dimension." << std::endl;
-      return 1;
+      return EXIT_FAILURE;
     }
   }
-  if ( retsp )
+  if( retsp )
   {
     if( spacing.size() != Dimension && spacing.size() != 1 )
     {
       std::cout << "ERROR: The number of spacings should be 1 or Dimension." << std::endl;
-      return 1;
+      return EXIT_FAILURE;
     }
   }
 
   /** Get the factor or spacing. */
   double vector0 = ( retf ? factor[ 0 ] : spacing[ 0 ] );
   std::vector<double> factorOrSpacing( Dimension, vector0 );
-  if ( retf && factor.size() == Dimension )
+  if( retf && factor.size() == Dimension )
   {
-    for ( unsigned int i = 1; i < Dimension; i++ )
+    for( unsigned int i = 1; i < Dimension; i++ )
     {
       factorOrSpacing[ i ] = factor[ i ];
     }
   }
-  if ( retsp && spacing.size() == Dimension )
+  if( retsp && spacing.size() == Dimension )
   {
-    for ( unsigned int i = 1; i < Dimension; i++ )
+    for( unsigned int i = 1; i < Dimension; i++ )
     {
       factorOrSpacing[ i ] = spacing[ i ];
     }
   }
 
   /** Check factorOrSpacing for nonpositive numbers. */
-  for ( unsigned int i = 0; i < Dimension; i++ )
+  for( unsigned int i = 0; i < Dimension; i++ )
   {
-    if ( factorOrSpacing[ i ] < 0.00001 )
+    if( factorOrSpacing[ i ] < 0.00001 )
     {
       std::cout << "ERROR: No negative numbers are allowed in factor or spacing." << std::endl;
-      return 1;
+      return EXIT_FAILURE;
     }
   }
 
-  /** Class that does the work */
-  ITKToolsResizeImageBase * resizeImage = 0; 
+  /** Determine image properties. */
+  itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
+  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  unsigned int dim = 0;
+  unsigned int numberOfComponents = 0;
+  bool retgip = itktools::GetImageProperties(
+    inputFileName, pixelType, componentType, dim, numberOfComponents );
+  if( !retgip ) return EXIT_FAILURE;
 
-  /** Short alias */
-  unsigned int imageDimension = Dimension;
- 
-  /** \todo some progs allow user to override the pixel type, 
-   * so we need a method to convert string to EnumComponentType */
-  itktools::ComponentType componentType = itktools::GetImageComponentType( inputFileName );
-  
-  std::cout << "Internal image component type: " << 
-    itk::ImageIOBase::GetComponentTypeAsString( componentType ) << std::endl;
+  /** Class that does the work. */
+  ITKToolsResizeImageBase * filter = 0; 
+
   try
   {    
-    if (!resizeImage) resizeImage = ITKToolsResizeImage< unsigned char, 2 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ITKToolsResizeImage< char, 2 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ITKToolsResizeImage< unsigned short, 2 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ITKToolsResizeImage< short, 2 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ITKToolsResizeImage< unsigned int, 2 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ITKToolsResizeImage< int, 2 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ITKToolsResizeImage< unsigned long, 2 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ITKToolsResizeImage< long, 2 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ITKToolsResizeImage< float, 2 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ITKToolsResizeImage< double, 2 >::New( componentType, imageDimension );
+    if( !filter ) filter = ITKToolsResizeImage< 2, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsResizeImage< 2, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsResizeImage< 2, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsResizeImage< 2, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsResizeImage< 2, unsigned int >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsResizeImage< 2, int >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsResizeImage< 2, unsigned long >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsResizeImage< 2, long >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsResizeImage< 2, float >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsResizeImage< 2, double >::New( dim, componentType );
+
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!resizeImage) resizeImage = ITKToolsResizeImage< unsigned char, 3 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ITKToolsResizeImage< char, 3 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ITKToolsResizeImage< unsigned short, 3 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ITKToolsResizeImage< short, 3 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ITKToolsResizeImage< unsigned int, 3 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ITKToolsResizeImage< int, 3 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ITKToolsResizeImage< unsigned long, 3 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ITKToolsResizeImage< long, 3 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ITKToolsResizeImage< float, 3 >::New( componentType, imageDimension );
-    if (!resizeImage) resizeImage = ITKToolsResizeImage< double, 3 >::New( componentType, imageDimension );
+    if( !filter ) filter = ITKToolsResizeImage< 3, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsResizeImage< 3, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsResizeImage< 3, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsResizeImage< 3, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsResizeImage< 3, unsigned int >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsResizeImage< 3, int >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsResizeImage< 3, unsigned long >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsResizeImage< 3, long >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsResizeImage< 3, float >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsResizeImage< 3, double >::New( dim, componentType );
 #endif
-    if (!resizeImage) 
-    {
-      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-      std::cerr
-        << "pixel (component) type = " << itk::ImageIOBase::GetComponentTypeAsString( componentType )
-        << " ; dimension = " << Dimension
-        << std::endl;
-      return 1;
-    }
+    /** Check if filter was instantiated. */
+    bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
+    if( !supported ) return EXIT_FAILURE;
 
-    resizeImage->m_InputFileName = inputFileName;
-    resizeImage->m_OutputFileName = outputFileName;
-    resizeImage->m_FactorOrSpacing = factorOrSpacing;
-    resizeImage->m_IsFactor = isFactor;
-    resizeImage->m_InterpolationOrder = interpolationOrder;
+    /** Set the filter arguments. */
+    filter->m_InputFileName = inputFileName;
+    filter->m_OutputFileName = outputFileName;
+    filter->m_FactorOrSpacing = factorOrSpacing;
+    filter->m_IsFactor = isFactor;
+    filter->m_InterpolationOrder = interpolationOrder;
 
-    resizeImage->Run();
+    filter->Run();
     
-    delete resizeImage;  
+    delete filter;  
   }
-  catch( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    delete resizeImage;
-    return 1;
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+    delete filter;
+    return EXIT_FAILURE;
   }
   
   /** End program. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main

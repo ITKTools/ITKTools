@@ -1,21 +1,22 @@
 /*=========================================================================
-
-Program:   Insight Segmentation & Registration Toolkit
-Module:    $RCSfile: itkMultiLabelSTAPLEImageFilter.txx,v $
-Language:  C++
-Date:      $Date: 2007-05-18 14:22:52 $
-Version:   $Revision: 1.1 $
-
-Copyright (c) 2002 Insight Consortium. All rights reserved.
-See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
-
-This software is distributed WITHOUT ANY WARRANTY; without even
-the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-PURPOSE.  See the above copyright notices for more information.
-
-=========================================================================*/
-#ifndef _itkMultiLabelSTAPLEImageFilter_txx
-#define _itkMultiLabelSTAPLEImageFilter_txx
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
+#ifndef _itkMultiLabelSTAPLEImageFilter_txx_
+#define _itkMultiLabelSTAPLEImageFilter_txx_
 
 #include "itkMultiLabelSTAPLEImageFilter.h"
 
@@ -48,7 +49,7 @@ namespace itk
     // Record the number of input files.
     const unsigned int numberOfInputs = this->GetNumberOfInputs();
 
-    for ( unsigned int k = 0; k < numberOfInputs; ++k )
+    for( unsigned int k = 0; k < numberOfInputs; ++k )
     {
       InputConstIteratorType it
         ( this->GetInput( k ), this->GetInput( k )->GetBufferedRegion() );
@@ -73,7 +74,7 @@ namespace itk
 
     // create the confusion matrix and space for updated confusion matrix for
     // each of the input images
-    for ( unsigned int k = 0; k < numberOfInputs; ++k )
+    for( unsigned int k = 0; k < numberOfInputs; ++k )
     {
       // the confusion matrix has as many rows as there are input labels, and
       // one more column to accomodate "reject" classifications by the combined
@@ -100,7 +101,7 @@ namespace itk
       LabelVotingFilterPointer votingFilter = LabelVotingFilterType::New();
       votingFilter->SetLabelForUndecidedPixels( this->m_LabelForUndecidedPixels );
 
-      for ( unsigned int k = 0; k < numberOfInputs; ++k )
+      for( unsigned int k = 0; k < numberOfInputs; ++k )
       {
         votingFilter->SetInput( k, this->GetInput( k ) );
       }
@@ -111,7 +112,7 @@ namespace itk
     OutputIteratorType out =
       OutputIteratorType( votingOutput, votingOutput->GetRequestedRegion() );
 
-    for ( unsigned int k = 0; k < numberOfInputs; ++k )
+    for( unsigned int k = 0; k < numberOfInputs; ++k )
     {
       this->m_ConfusionMatrixArray[k].Fill( 0.0 );
 
@@ -125,7 +126,7 @@ namespace itk
     }
 
     // normalize matrix rows to unit probability sum
-    for ( unsigned int k = 0; k < numberOfInputs; ++k )
+    for( unsigned int k = 0; k < numberOfInputs; ++k )
     {
       for ( InputPixelType inLabel = 0; inLabel < this->m_TotalLabelCount+1; ++inLabel )
       {
@@ -137,7 +138,7 @@ namespace itk
         }
 
         // make sure that this input label did in fact show up in the input!!
-        if ( sum > 0 )
+        if( sum > 0 )
         {
           // normalize
           for ( OutputPixelType outLabel = 0; outLabel < this->m_TotalLabelCount; ++outLabel )
@@ -156,9 +157,9 @@ namespace itk
   {
     // test for user-defined prior probabilities and create an estimated one if
     // none exists
-    if ( this->m_HasPriorProbabilities )
+    if( this->m_HasPriorProbabilities )
     {
-      if ( this->m_PriorProbabilities.GetSize() < this->m_TotalLabelCount )
+      if( this->m_PriorProbabilities.GetSize() < this->m_TotalLabelCount )
       {
         itkExceptionMacro ("m_PriorProbabilities array has wrong size " << this->m_PriorProbabilities << "; should be at least " << 1+this->m_TotalLabelCount );
       }
@@ -169,7 +170,7 @@ namespace itk
       this->m_PriorProbabilities.Fill( 0.0 );
 
       const unsigned int numberOfInputs = this->GetNumberOfInputs();
-      for ( unsigned int k = 0; k < numberOfInputs; ++k )
+      for( unsigned int k = 0; k < numberOfInputs; ++k )
       {
         InputConstIteratorType in = InputConstIteratorType
           ( this->GetInput( k ), this->GetOutput()->GetRequestedRegion() );
@@ -196,7 +197,7 @@ namespace itk
     // determine the maximum label in all input images
     this->m_TotalLabelCount = this->ComputeMaximumInputValue() + 1;
 
-    if ( ! this->m_HasLabelForUndecidedPixels )
+    if( ! this->m_HasLabelForUndecidedPixels )
     {
       this->m_LabelForUndecidedPixels = this->m_TotalLabelCount;
     }
@@ -219,7 +220,7 @@ namespace itk
 
     // create and initialize all input image iterators
     InputConstIteratorType *it = new InputConstIteratorType[numberOfInputs];
-    for ( unsigned int k = 0; k < numberOfInputs; ++k )
+    for( unsigned int k = 0; k < numberOfInputs; ++k )
     {
       it[k] = InputConstIteratorType
         ( this->GetInput( k ), output->GetRequestedRegion() );
@@ -228,19 +229,19 @@ namespace itk
     // allocate array for pixel class weights
     WeightsType* W = new WeightsType[ this->m_TotalLabelCount ];
 
-    for ( unsigned int iteration = 0;
+    for( unsigned int iteration = 0;
       (!this->m_HasMaximumNumberOfIterations) ||
       (iteration < this->m_MaximumNumberOfIterations);
     ++iteration )
     {
       // reset updated confusion matrix
-      for ( unsigned int k = 0; k < numberOfInputs; ++k )
+      for( unsigned int k = 0; k < numberOfInputs; ++k )
       {
         this->m_UpdatedConfusionMatrixArray[k].Fill( 0.0 );
       }
 
       // reset all input iterators to start
-      for ( unsigned int k = 0; k < numberOfInputs; ++k )
+      for( unsigned int k = 0; k < numberOfInputs; ++k )
         it[k].GoToBegin();
 
       // use it[0] as indicator for image pixel count
@@ -250,7 +251,7 @@ namespace itk
         for ( OutputPixelType ci = 0; ci < this->m_TotalLabelCount; ++ci )
           W[ci] = this->m_PriorProbabilities[ci];
 
-        for ( unsigned int k = 0; k < numberOfInputs; ++k )
+        for( unsigned int k = 0; k < numberOfInputs; ++k )
         {
           const InputPixelType j = it[k].Get();
           for ( OutputPixelType ci = 0; ci < this->m_TotalLabelCount; ++ci )
@@ -264,13 +265,13 @@ namespace itk
         for ( OutputPixelType ci = 1; ci < this->m_TotalLabelCount; ++ci )
           sumW += W[ci];
 
-        if ( sumW )
+        if( sumW )
         {
           for ( OutputPixelType ci = 0; ci < this->m_TotalLabelCount; ++ci )
             W[ci] /= sumW;
         }
 
-        for ( unsigned int k = 0; k < numberOfInputs; ++k )
+        for( unsigned int k = 0; k < numberOfInputs; ++k )
         {
           const InputPixelType j = it[k].Get();
           for ( OutputPixelType ci = 0; ci < this->m_TotalLabelCount; ++ci )
@@ -283,7 +284,7 @@ namespace itk
 
       // Normalize matrix elements of each of the updated confusion matrices
       // with sum over all expert decisions.
-      for ( unsigned int k = 0; k < numberOfInputs; ++k )
+      for( unsigned int k = 0; k < numberOfInputs; ++k )
       {
         // compute sum over all output classifications
         for ( OutputPixelType ci = 0; ci < this->m_TotalLabelCount; ++ci )
@@ -293,7 +294,7 @@ namespace itk
             sumW += this->m_UpdatedConfusionMatrixArray[k][j][ci];
 
           // normalize with for each class ci
-          if ( sumW )
+          if( sumW )
           {
             for ( InputPixelType j = 0; j < 1+this->m_TotalLabelCount; ++j )
               this->m_UpdatedConfusionMatrixArray[k][j][ci] /= sumW;
@@ -304,7 +305,7 @@ namespace itk
       // now we're applying the update to the confusion matrices and compute the
       // maximum parameter change in the process.
       WeightsType maximumUpdate = 0;
-      for ( unsigned int k = 0; k < numberOfInputs; ++k )
+      for( unsigned int k = 0; k < numberOfInputs; ++k )
         for ( InputPixelType j = 0; j < 1+this->m_TotalLabelCount; ++j )
           for ( OutputPixelType ci = 0; ci < this->m_TotalLabelCount; ++ci )
           {
@@ -328,7 +329,7 @@ namespace itk
 
           // if all confusion matrix parameters changes by less than the defined
           // threshold, we're done.
-          if ( maximumUpdate < this->m_TerminationUpdateThreshold )
+          if( maximumUpdate < this->m_TerminationUpdateThreshold )
             break;
 
     } // end for ( iteration )
@@ -337,7 +338,7 @@ namespace itk
     // confusion matrices
 
     // reset all input iterators to start
-    for ( unsigned int k = 0; k < numberOfInputs; ++k )
+    for( unsigned int k = 0; k < numberOfInputs; ++k )
       it[k].GoToBegin();
 
     // reset output iterator to start
@@ -348,7 +349,7 @@ namespace itk
       for ( OutputPixelType ci = 0; ci < this->m_TotalLabelCount; ++ci )
         W[ci] = this->m_PriorProbabilities[ci];
 
-      for ( unsigned int k = 0; k < numberOfInputs; ++k )
+      for( unsigned int k = 0; k < numberOfInputs; ++k )
       {
         const InputPixelType j = it[k].Get();
         for ( OutputPixelType ci = 0; ci < this->m_TotalLabelCount; ++ci )
@@ -363,13 +364,13 @@ namespace itk
       WeightsType winningLabelW = 0;
       for ( OutputPixelType ci = 0; ci < this->m_TotalLabelCount; ++ci )
       {
-        if ( W[ci] > winningLabelW )
+        if( W[ci] > winningLabelW )
         {
           winningLabelW = W[ci];
           winningLabel = ci;
         }
         else
-          if ( ! (W[ci] < winningLabelW ) )
+          if( ! (W[ci] < winningLabelW ) )
           {
             winningLabel = this->m_LabelForUndecidedPixels;
           }
@@ -384,4 +385,4 @@ namespace itk
 
 } // end namespace itk
 
-#endif
+#endif // end #ifndef _itkMultiLabelSTAPLEImageFilter_txx_

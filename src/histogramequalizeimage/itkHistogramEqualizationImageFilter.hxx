@@ -15,8 +15,8 @@
 * limitations under the License.
 *
 *=========================================================================*/
-#ifndef _itkHistogramEqualizationImageFilter_hxx
-#define _itkHistogramEqualizationImageFilter_hxx
+#ifndef _itkHistogramEqualizationImageFilter_hxx_
+#define _itkHistogramEqualizationImageFilter_hxx_
 
 #include "itkHistogramEqualizationImageFilter.h"
 
@@ -54,7 +54,7 @@ HistogramEqualizationImageFilter<TImage>
 
   /** Use a mask or not */
   bool useMask = false;
-  if ( this->GetMask() )
+  if( this->GetMask() )
   {
     useMask = true;
   }
@@ -62,7 +62,7 @@ HistogramEqualizationImageFilter<TImage>
   /** Compute minimum and maximum of the input image */
   ImageIteratorType it( this->GetInput(), this->GetOutput()->GetRequestedRegion() );
   MaskIteratorType maskIt;
-  if ( useMask )
+  if( useMask )
   {
     maskIt = MaskIteratorType( this->GetMask(), this->GetOutput()->GetRequestedRegion() );
     maskIt.GoToBegin();
@@ -77,20 +77,20 @@ HistogramEqualizationImageFilter<TImage>
   while ( !it.IsAtEnd() )
   {
     bool validPixel = true;
-    if ( useMask )
+    if( useMask )
     {
       validPixel = static_cast<bool>( maskIt.Value() );
       ++maskIt;
     }
-    if ( validPixel )
+    if( validPixel )
     {
       ++numberOfValidPixels;
       const InputImagePixelType & current = it.Value();
-      if ( current < tempmin )
+      if( current < tempmin )
       {
         tempmin = current;
       }
-      if ( current > tempmax )
+      if( current > tempmax )
       {
         tempmax = current;
       }
@@ -113,19 +113,19 @@ HistogramEqualizationImageFilter<TImage>
   HistogramType hist( this->m_NumberOfBins );
   hist.Fill( 0 );
   it.GoToBegin();
-  if ( useMask )
+  if( useMask )
   {
     maskIt.GoToBegin();
   }
   while ( !it.IsAtEnd() )
   {
     bool validPixel = true;
-    if ( useMask )
+    if( useMask )
     {
       validPixel = static_cast<bool>( maskIt.Value() );
       ++maskIt;
     }
-    if ( validPixel )
+    if( validPixel )
     {
       // assuming integer pixel type of binsize 1
       hist[ static_cast<unsigned int>( it.Value() - tempmin ) ]++;
@@ -136,7 +136,7 @@ HistogramEqualizationImageFilter<TImage>
   /** convert it to a cumulative histogram */
   for( unsigned int i = 1; i < this->m_NumberOfBins; i++ )
   {
-    hist[i] += hist[i-1];
+    hist[ i ] += hist[i-1];
   }
 
   /** Compute LUT */
@@ -146,7 +146,7 @@ HistogramEqualizationImageFilter<TImage>
     this->m_LUT[ i ] = static_cast<OutputImagePixelType>(
       vnl_math_max(
       static_cast<double>( tempmin ),
-      -1.0 + tempmin + vcl_floor( static_cast<double>( hist[i] ) / this->m_MeanFrequency + 0.5 ) ) );
+      -1.0 + tempmin + vcl_floor( static_cast<double>( hist[ i ] ) / this->m_MeanFrequency + 0.5 ) ) );
   }
 
 } // end BeforeThreadedGenerateData()
@@ -174,12 +174,12 @@ HistogramEqualizationImageFilter<TImage>
 
   /** Use a mask or not */
   bool useMask = false;
-  if ( this->GetMask() ) useMask = true;
+  if( this->GetMask() ) useMask = true;
 
   InputImageIteratorType  it( this->GetInput(), outputRegionForThread );
   OutputImageIteratorType ot( this->GetOutput(), outputRegionForThread );
   MaskIteratorType maskIt;
-  if ( useMask )
+  if( useMask )
   {
     maskIt = MaskIteratorType( this->GetMask(), outputRegionForThread );
     maskIt.GoToBegin();

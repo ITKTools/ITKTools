@@ -15,8 +15,8 @@
 * limitations under the License.
 *
 *=========================================================================*/
-#ifndef __itkBinaryFunctors_h
-#define __itkBinaryFunctors_h
+#ifndef __itkBinaryFunctors_h_
+#define __itkBinaryFunctors_h_
 
 #include "itkNumericTraits.h"
 
@@ -420,4 +420,4 @@ public:
 } // end namespace Functor
 } // end namespace itk
 
-#endif // end #ifndef __itkBinaryFunctors_h
+#endif // end #ifndef __itkBinaryFunctors_h_

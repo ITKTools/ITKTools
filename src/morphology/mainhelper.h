@@ -31,22 +31,22 @@ void PrintHelp( void )
 
 /** run: A macro to call a function. */
 #define run( function, ctype, dim ) \
-if ( operation == #function ) \
+if( operation == #function ) \
 { \
-  if ( ComponentType == #ctype && Dimension == dim ) \
+  if( ComponentType == #ctype && Dimension == dim ) \
   { \
     typedef itk::Image< ctype, dim > ImageType; \
-    if ( type == "grayscale" ) \
+    if( type == "grayscale" ) \
     { \
       function##Grayscale< ImageType >( inputFileName, outputFileName, Radius, boundaryCondition ); \
       supported = true; \
     } \
-    else if ( type == "binary" ) \
+    else if( type == "binary" ) \
     { \
       function##Binary< ImageType >( inputFileName, outputFileName, Radius, bin ); \
       supported = true; \
     } \
-    else if ( type == "parabolic" ) \
+    else if( type == "parabolic" ) \
     { \
       function##Parabolic< ImageType >( inputFileName, outputFileName, Radius ); \
       supported = true; \

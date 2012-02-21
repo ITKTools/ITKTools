@@ -80,14 +80,14 @@ MinErrorThresholdImageCalculator<TInputImage>
 
   unsigned int j, i;
 
-  if ( !m_Image ) { return; }
+  if( !m_Image ) { return; }
   if( !m_RegionSetByUser )
     {
     this->m_Region = this->m_Image->GetRequestedRegion();
     }
 
   double totalPixels = (double) this->m_Region.GetNumberOfPixels();
-  if ( totalPixels == 0 ) { return; }
+  if( totalPixels == 0 ) { return; }
 
 
   // compute image max and min
@@ -99,7 +99,7 @@ MinErrorThresholdImageCalculator<TInputImage>
   PixelType imageMin = rangeCalculator->GetMinimum();
   PixelType imageMax = rangeCalculator->GetMaximum();
 
-  if ( imageMin >= imageMax )
+  if( imageMin >= imageMax )
     {
     this->m_Threshold = imageMin;
     return;
@@ -129,14 +129,14 @@ MinErrorThresholdImageCalculator<TInputImage>
     unsigned int binNumber;
     PixelType value = iter.Get();
 
-    if ( value == imageMin )
+    if( value == imageMin )
       {
       binNumber = 0;
       }
     else
       {
       binNumber = (unsigned int) vcl_ceil((value - imageMin) * binMultiplier ) - 1;
-      if ( binNumber == this->m_NumberOfHistogramBins ) // in case of rounding errors
+      if( binNumber == this->m_NumberOfHistogramBins ) // in case of rounding errors
         {
         binNumber -= 1;
         }
@@ -173,15 +173,15 @@ MinErrorThresholdImageCalculator<TInputImage>
     priorLeft = 0.0; //Prior Probability
     meanLeft = 0.0; //mean
     varLeft = 0.0; //variance
-    for ( i=0; i<=j; i++)
+    for ( i=0; i<=j; i++ )
       {
-      priorLeft+=relativeFrequency[i];
-      meanLeft+=(i*relativeFrequency[i]);
+      priorLeft+=relativeFrequency[ i ];
+      meanLeft+=(i*relativeFrequency[ i ]);
       }
     meanLeft/=priorLeft;
-    for ( i=0; i<=j; i++)
+    for ( i=0; i<=j; i++ )
       {
-      varLeft+=(vnl_math_sqr(i-meanLeft)*relativeFrequency[i]);
+      varLeft+=(vnl_math_sqr(i-meanLeft)*relativeFrequency[ i ]);
       }
     varLeft/=priorLeft;
     stdLeft = vcl_sqrt(varLeft); //standard deviation
@@ -190,15 +190,15 @@ MinErrorThresholdImageCalculator<TInputImage>
     priorRight = 0.0; //Prior Probability
     meanRight = 0.0; //mean
     varRight = 0.0; //variance
-    for ( i=j+1; i<m_NumberOfHistogramBins; i++)
+    for ( i=j+1; i<m_NumberOfHistogramBins; i++ )
       {
-      priorRight+=relativeFrequency[i];
-      meanRight+=(i*relativeFrequency[i]);
+      priorRight+=relativeFrequency[ i ];
+      meanRight+=(i*relativeFrequency[ i ]);
       }
     meanRight/=priorRight;
-    for ( i=j+1; i<m_NumberOfHistogramBins; i++)
+    for ( i=j+1; i<m_NumberOfHistogramBins; i++ )
       {
-      varRight+=(vnl_math_sqr(i-meanRight)*relativeFrequency[i]);
+      varRight+=(vnl_math_sqr(i-meanRight)*relativeFrequency[ i ]);
       }
     varRight/=priorRight;
     stdRight = vcl_sqrt(varRight); //standard deviation
@@ -219,7 +219,7 @@ MinErrorThresholdImageCalculator<TInputImage>
     {
     for ( j = 2; j < this->m_NumberOfHistogramBins-1; j++ )
       {
-      if(errorFunctionGaus[j]<errorFunctionGaus[i])
+      if(errorFunctionGaus[j]<errorFunctionGaus[ i ])
          i = j;
       }
     }
@@ -227,7 +227,7 @@ MinErrorThresholdImageCalculator<TInputImage>
     {
     for ( j = 2; j < this->m_NumberOfHistogramBins-1; j++ )
       {
-      if(errorFunctionPois[j]<errorFunctionPois[i])
+      if(errorFunctionPois[j]<errorFunctionPois[ i ])
          i = j;
       }
     }

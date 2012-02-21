@@ -21,8 +21,7 @@
  \verbinclude morphology.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
-
+#include "ITKToolsHelpers.h"
 #include "mainhelper1.h"
 #include <itksys/SystemTools.hxx>
 
@@ -35,33 +34,33 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-     << "Usage:" << std::endl
-     << "pxmorphology" << std::endl
-     << "  -in      inputFilename" << std::endl
-     << "  -op      operation, choose one of {erosion, dilation, opening, closing, gradient}" << std::endl
-     << "  [-type]  type, choose one of {grayscale, binary, parabolic}, default grayscale" << std::endl
-     << "  [-out]   outputFilename, default in_operation_type.extension" << std::endl
-     << "  [-z]     compression flag; if provided, the output image is compressed" << std::endl
-     << "  -r       radius" << std::endl
-     << "  [-bc]    boundaryCondition (grayscale): the gray value outside the image" << std::endl
-     << "  [-bin]   foreground and background values" << std::endl
-     << "  [-a]     algorithm type for op=gradient" << std::endl
-     << "           BASIC = 0, HISTO = 1, ANCHOR = 2, VHGW = 3, default 0" << std::endl
-     << "           BASIC and HISTO have radius dependent performance, ANCHOR and VHGW not" << std::endl
-     << "  [-opct]  pixelType, default: automatically determined from input image" << std::endl
-     << "For grayscale filters, supply the boundary condition." << std::endl
-     << "  This value defaults to the maximum pixel value." << std::endl
-     << "For binary filters, supply the foreground and background value." << std::endl
-     << "  The foreground value refers to the value of the object of interest (default 1)," << std::endl
-     << "  the background value is by default 0," << std::endl
-     << "  It is not only intended for binary images, but also for grayscale images." << std::endl
-     << "  In this case the foreground value selects which value to do the operation on." << std::endl
-     << "Examples:" << std::endl
-     << "  1) Dilate a binary image (1 = foreground, 0 = background)" << std::endl
-     << "    pxmorphology -in input.mhd -op dilation -type binary -out output.mhd -r 1" << std::endl
-     << "  2) Dilate a binary image (255 = foreground, 0 = background)" << std::endl
-     << "    pxmorphology -in input.mhd -op dilation -type binary -out output.mhd -r 1 -bin 255 0" << std::endl
-     << "Supported: 2D, 3D, (unsigned) char, (unsigned) short." << std::endl;
+    << "Usage:\n"
+    << "pxmorphology\n"
+    << "  -in      inputFilename\n"
+    << "  -op      operation, choose one of {erosion, dilation, opening, closing, gradient}\n"
+    << "  [-type]  type, choose one of {grayscale, binary, parabolic}, default grayscale\n"
+    << "  [-out]   outputFilename, default in_operation_type.extension\n"
+    << "  [-z]     compression flag; if provided, the output image is compressed\n"
+    << "  -r       radius\n"
+    << "  [-bc]    boundaryCondition (grayscale): the gray value outside the image\n"
+    << "  [-bin]   foreground and background values\n"
+    << "  [-a]     algorithm type for op=gradient\n"
+    << "           BASIC = 0, HISTO = 1, ANCHOR = 2, VHGW = 3, default 0\n"
+    << "           BASIC and HISTO have radius dependent performance, ANCHOR and VHGW not\n"
+    << "  [-opct]  pixelType, default: automatically determined from input image\n"
+    << "For grayscale filters, supply the boundary condition.\n"
+    << "  This value defaults to the maximum pixel value.\n"
+    << "For binary filters, supply the foreground and background value.\n"
+    << "  The foreground value refers to the value of the object of interest (default 1),\n"
+    << "  the background value is by default 0,\n"
+    << "  It is not only intended for binary images, but also for grayscale images.\n"
+    << "  In this case the foreground value selects which value to do the operation on.\n"
+    << "Examples:\n"
+    << "  1) Dilate a binary image (1 = foreground, 0 = background)\n"
+    << "    pxmorphology -in input.mhd -op dilation -type binary -out output.mhd -r 1\n"
+    << "  2) Dilate a binary image (255 = foreground, 0 = background)\n"
+    << "    pxmorphology -in input.mhd -op dilation -type binary -out output.mhd -r 1 -bin 255 0\n"
+    << "Supported: 2D, 3D, (unsigned) char, (unsigned) short.";
 
   return ss.str();
 
@@ -151,29 +150,29 @@ int main( int argc, char *argv[] )
 
 
   /** Check for valid input options. */
-  if ( operation != "erosion"
+  if( operation != "erosion"
     && operation != "dilation"
     && operation != "opening"
     && operation != "closing"
     && operation != "gradient" )
   {
     std::cerr << "ERROR: \"-op\" should be one of {erosion, dilation, opening, closing, gradient}." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
-  if ( type != "grayscale" && type != "binary" && type != "parabolic" )
+  if( type != "grayscale" && type != "binary" && type != "parabolic" )
   {
     std::cerr << "ERROR: \"-type\" should be one of {grayscale, binary, parabolic}." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
-  if ( retbin && bin.size() != 2 )
+  if( retbin && bin.size() != 2 )
   {
     std::cerr << "ERROR: \"-bin\" should contain two values: foreground and background." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
-  if ( reta && ( algorithm < 0 || algorithm > 3 ) )
+  if( reta && ( algorithm < 0 || algorithm > 3 ) )
   {
     std::cerr << "ERROR: \"-a\" should have a value 0, 1, 2 or 3." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   /** Determine image properties. */
@@ -189,7 +188,7 @@ int main( int argc, char *argv[] )
     Dimension,
     numberOfComponents,
     imagesize );
-  if ( retgip !=0 )
+  if( retgip !=0 )
   {
     return 1;
   }
@@ -197,37 +196,34 @@ int main( int argc, char *argv[] )
   /** Let the user overrule this */
   parser->GetCommandLineArgument( "-opct", componentType );
 
-  if ( numberOfComponents > 1 )
-  {
-    std::cerr << "ERROR: The number of components is larger than 1!" << std::endl;
-    std::cerr << "Vector images are not supported!" << std::endl;
-    return 1;
-  }
+  /** Check for vector images. */
+  bool retNOCCheck = itktools::NumberOfComponentsCheck( numberOfComponents );
+  if( !retNOCCheck ) return EXIT_FAILURE;
 
   /** Get rid of the possible "_" in ComponentType. */
   itktools::ReplaceUnderscoreWithSpace( componentType );
 
   /** Check radius. */
-  if ( retr )
+  if( retr )
   {
-    if ( radius.size() != Dimension && radius.size() != 1 )
+    if( radius.size() != Dimension && radius.size() != 1 )
     {
       std::cout << "ERROR: The number of radii should be 1 or Dimension." << std::endl;
-      return 1;
+      return EXIT_FAILURE;
     }
   }
 
   /** Get the radius. */
   std::vector<unsigned int> Radius( Dimension, radius[ 0 ] );
-  if ( retr && radius.size() == Dimension )
+  if( retr && radius.size() == Dimension )
   {
-    for ( unsigned int i = 1; i < Dimension; i++ )
+    for( unsigned int i = 1; i < Dimension; i++ )
     {
       Radius[ i ] = radius[ i ];
-      if ( Radius[ i ] < 1 )
+      if( Radius[ i ] < 1 )
       {
         std::cout << "ERROR: No nonpositive numbers are allowed in radius." << std::endl;
-        return 1;
+        return EXIT_FAILURE;
       }
     }
   }
@@ -236,27 +232,27 @@ int main( int argc, char *argv[] )
   bool supported = false;
   try
   {
-    if ( Dimension == 2 )
+    if( Dimension == 2 )
     {
       supported = Morphology2D( componentType, Dimension,
         inputFileName, outputFileName, operation, type,
         boundaryCondition, Radius, bin, algorithm, useCompression );
     }
-    else if ( Dimension == 3 )
+    else if( Dimension == 3 )
     {
       supported = Morphology3D( componentType, Dimension,
         inputFileName, outputFileName, operation, type,
         boundaryCondition, Radius, bin, algorithm, useCompression );
     }
   }
-  catch( itk::ExceptionObject & e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    return 1;
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+    return EXIT_FAILURE;
   }
 
   /** Check if this image type was supported. */
-  if ( !supported )
+  if( !supported )
   {
     std::cerr << "ERROR: this combination of pixel type and dimension is not supported!" << std::endl;
     std::cerr
@@ -267,6 +263,6 @@ int main( int argc, char *argv[] )
   }
 
   /** End program. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main

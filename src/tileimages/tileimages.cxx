@@ -24,17 +24,9 @@
  */
 
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
-#include "itkImageSeriesReader.h"
-#include "itkImageFileReader.h"
-#include "itkTileImageFilter.h"
-#include "itkImageFileWriter.h"
-
+#include "ITKToolsHelpers.h"
 #include "TileImages.h"
 #include "TileImages2D3D.h"
-
-#include <vector>
-#include <string>
 
 
 /**
@@ -100,10 +92,10 @@ int main( int argc, char ** argv )
   std::vector< std::string >  inputFileNames;
   parser->GetCommandLineArgument( "-in", inputFileNames );
 
-  if ( inputFileNames.size() < 2 )
+  if( inputFileNames.size() < 2 )
   {
     std::cout << "ERROR: You should specify at least two input images." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   /** Get the outputFileName. */
@@ -123,151 +115,105 @@ int main( int argc, char ** argv )
   parser->GetCommandLineArgument( "-d", defaultvalue );
 
   /** Determine image properties. */
-  std::string ComponentType = "short";
-  std::string PixelType; //we don't use this
-  unsigned int Dimension = 3;
-  unsigned int NumberOfComponents = 1;
-  std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = itktools::GetImageProperties(
-    inputFileNames[ 0 ],
-    PixelType,
-    ComponentType,
-    Dimension,
-    NumberOfComponents,
-    imagesize );
+  itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
+  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  unsigned int dim = 0;
+  unsigned int numberOfComponents = 0;
+  bool retgip = itktools::GetImageProperties(
+    inputFileNames[ 0 ], pixelType, componentType, dim, numberOfComponents );
+  if( !retgip ) return EXIT_FAILURE;
 
-  if ( retgip != 0 )
-  {
-    return 1;
-  }
-
-  std::cout << "The first input image has the following properties:" << std::endl;
-  /** Do not bother the user with the difference between pixeltype and componenttype:*/
-  //std::cout << "\tPixelType:          " << PixelType << std::endl;
-  std::cout << "\tPixelType:          " << ComponentType << std::endl;
-  std::cout << "\tDimension:          " << Dimension << std::endl;
-  std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
+  /** Check for vector images. */
+  bool retNOCCheck = itktools::NumberOfComponentsCheck( numberOfComponents );
+  if( !retNOCCheck ) return EXIT_FAILURE;
 
   /** Let the user overrule this. */
-  bool retpt = parser->GetCommandLineArgument( "-pt", ComponentType );
-  if ( retpt )
+  std::string componentTypeAsString = "";
+  bool retopct = parser->GetCommandLineArgument( "-opct", componentTypeAsString );
+  if( retopct )
   {
-    std::cout << "The user has overruled this by specifying -pt:" << std::endl;
-    std::cout << "\tPixelType:          " << ComponentType << std::endl;
-    std::cout << "\tDimension:          " << Dimension << std::endl;
-    std::cout << "\tNumberOfComponents: " << NumberOfComponents << std::endl;
-  }
-
-  if ( NumberOfComponents > 1 )
-  {
-    std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
-    std::cerr << "Vector images are not supported!" << std::endl;
-    return 1;
+    componentType = itk::ImageIOBase::GetComponentTypeFromString( componentTypeAsString );
   }
 
   /** Run the program. */
-  if ( !retly )
+  if( !retly )
   {
-    /** Class that does the work */
-    TileImages2D3DBase * tileImages2D3D = NULL;
-
-    itktools::ComponentType componentType = itktools::GetImageComponentType( inputFileNames[ 0 ] );
-
-    std::cout << "Internal image component type: " <<
-      itk::ImageIOBase::GetComponentTypeAsString( componentType ) << std::endl;
+    /** Class that does the work. */
+    ITKToolsTileImages2D3DBase * filterTile2D3D = NULL;
 
     try
     {
       // now call all possible template combinations.
-      if (!tileImages2D3D) tileImages2D3D = TileImages2D3D< unsigned char >::New( componentType );
-      if (!tileImages2D3D) tileImages2D3D = TileImages2D3D< char >::New( componentType );
-      if (!tileImages2D3D) tileImages2D3D = TileImages2D3D< unsigned short >::New( componentType );
-      if (!tileImages2D3D) tileImages2D3D = TileImages2D3D< short >::New( componentType );
-      if (!tileImages2D3D) tileImages2D3D = TileImages2D3D< float >::New( componentType );
+      if( !filterTile2D3D ) filterTile2D3D = ITKToolsTileImages2D3D< unsigned char >::New( componentType );
+      if( !filterTile2D3D ) filterTile2D3D = ITKToolsTileImages2D3D< char >::New( componentType );
+      if( !filterTile2D3D ) filterTile2D3D = ITKToolsTileImages2D3D< unsigned short >::New( componentType );
+      if( !filterTile2D3D ) filterTile2D3D = ITKToolsTileImages2D3D< short >::New( componentType );
+      if( !filterTile2D3D ) filterTile2D3D = ITKToolsTileImages2D3D< float >::New( componentType );
 
-      if (!tileImages2D3D)
-      {
-        std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-        std::cerr << "pixel (component) type = " << componentType << std::endl;
-        return 1;
-      }
+      /** Check if filter was instantiated. */
+      bool supported = itktools::IsFilterSupportedCheck( filterTile2D3D, dim, componentType );
+      if( !supported ) return EXIT_FAILURE;
 
-      tileImages2D3D->m_InputFileNames = inputFileNames;
-      tileImages2D3D->m_OutputFileName = outputFileName;
-      tileImages2D3D->m_Zspacing = zspacing;
+      /** Set the filter arguments. */
+      filterTile2D3D->m_InputFileNames = inputFileNames;
+      filterTile2D3D->m_OutputFileName = outputFileName;
+      filterTile2D3D->m_Zspacing = zspacing;
 
-      tileImages2D3D->Run();
+      filterTile2D3D->Run();
 
-      delete tileImages2D3D;
+      delete filterTile2D3D;
     }
-    catch( itk::ExceptionObject &e )
+    catch( itk::ExceptionObject & excp )
     {
-      std::cerr << "Caught ITK exception: " << e << std::endl;
-      delete tileImages2D3D;
-      return 1;
+      std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+      delete filterTile2D3D;
+      return EXIT_FAILURE;
     }
   }
   else
   {
-
-    /** Class that does the work */
-    TileImagesBase * tileImages = NULL;
-
-    /** Short alias */
-    unsigned int dim = Dimension;
-
-    /** \todo some progs allow user to override the pixel type,
-     * so we need a method to convert string to EnumComponentType.
-     */
-    itktools::ComponentType componentType = itktools::GetImageComponentType( inputFileNames[0] );
-
-    std::cout << "Internal image component type: "
-      << itk::ImageIOBase::GetComponentTypeAsString( componentType ) << std::endl;
+    /** Class that does the work. */
+    ITKToolsTileImagesBase * filter = NULL;
 
     try
     {
       // now call all possible template combinations.
-      if (!tileImages) tileImages = TileImages< unsigned char, 2 >::New( componentType, dim );
-      if (!tileImages) tileImages = TileImages< char, 2 >::New( componentType, dim );
-      if (!tileImages) tileImages = TileImages< unsigned short, 2 >::New( componentType, dim );
-      if (!tileImages) tileImages = TileImages< short, 2 >::New( componentType, dim );
-      if (!tileImages) tileImages = TileImages< float, 2 >::New( componentType, dim );
+      if( !filter ) filter = ITKToolsTileImages< 2, unsigned char >::New( dim, componentType );
+      if( !filter ) filter = ITKToolsTileImages< 2, char >::New( dim, componentType );
+      if( !filter ) filter = ITKToolsTileImages< 2, unsigned short >::New( dim, componentType );
+      if( !filter ) filter = ITKToolsTileImages< 2, short >::New( dim, componentType );
+      if( !filter ) filter = ITKToolsTileImages< 2, float >::New( dim, componentType );
 
-  #ifdef ITKTOOLS_3D_SUPPORT
-      if (!tileImages) tileImages = TileImages< unsigned char, 3 >::New( componentType, dim );
-      if (!tileImages) tileImages = TileImages< char, 3 >::New( componentType, dim );
-      if (!tileImages) tileImages = TileImages< unsigned short, 3 >::New( componentType, dim );
-      if (!tileImages) tileImages = TileImages< short, 3 >::New( componentType, dim );
-      if (!tileImages) tileImages = TileImages< float, 3 >::New( componentType, dim );
-  #endif
-      if( !tileImages )
-      {
-        std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-        std::cerr << "pixel (component) type = " << componentType
-          << " ; dimension = " << Dimension << std::endl;
-        return 1;
-      }
+#ifdef ITKTOOLS_3D_SUPPORT
+      if( !filter ) filter = ITKToolsTileImages< 3, unsigned char >::New( dim, componentType );
+      if( !filter ) filter = ITKToolsTileImages< 3, char >::New( dim, componentType );
+      if( !filter ) filter = ITKToolsTileImages< 3, unsigned short >::New( dim, componentType );
+      if( !filter ) filter = ITKToolsTileImages< 3, short >::New( dim, componentType );
+      if( !filter ) filter = ITKToolsTileImages< 3, float >::New( dim, componentType );
+#endif
+      /** Check if filter was instantiated. */
+      bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
+      if( !supported ) return EXIT_FAILURE;
 
-      tileImages->m_InputFileNames = inputFileNames;
-      tileImages->m_OutputFileName = outputFileName;
-      tileImages->m_Layout = layout;
-      tileImages->m_Defaultvalue = defaultvalue;
+      /** Set the filter arguments. */
+      filter->m_InputFileNames = inputFileNames;
+      filter->m_OutputFileName = outputFileName;
+      filter->m_Layout = layout;
+      filter->m_Defaultvalue = defaultvalue;
 
-      tileImages->Run();
+      filter->Run();
 
-      delete tileImages;
+      delete filter;
     }
-    catch( itk::ExceptionObject &e )
+    catch( itk::ExceptionObject & excp )
     {
-      std::cerr << "Caught ITK exception: " << e << std::endl;
-      delete tileImages;
-      return 1;
+      std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+      delete filter;
+      return EXIT_FAILURE;
     }
-
   }
 
   /** Return a value. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main
-

@@ -15,8 +15,8 @@
 * limitations under the License.
 *
 *=========================================================================*/
-#ifndef __UnaryImageOperatorMainHelper_h
-#define __UnaryImageOperatorMainHelper_h
+#ifndef __UnaryImageOperatorMainHelper_h_
+#define __UnaryImageOperatorMainHelper_h_
 
 #include <map>
 #include <utility> // for pair
@@ -62,13 +62,14 @@ int CheckOps( std::string & ops, bool isInteger )
   operatorMap["ARCCOS"]   = false;
   operatorMap["ARCTAN"]   = false;
   operatorMap["EQUAL"]    = false;
+  operatorMap["LINEAR"]   = false;
 
   /** Append with INT or DOUBLE if necessary. */
-  if ( operatorMap.count( ops ) ) // the operator exists
+  if( operatorMap.count( ops ) ) // the operator exists
   {
-    if ( operatorMap[ops] ) // it has an int and a double version
+    if( operatorMap[ops] ) // it has an int and a double version
     {
-      if ( isInteger ) ops += "INT"; // it is int
+      if( isInteger ) ops += "INT"; // it is int
       else ops += "DOUBLE";          // it is double
     }
   }
@@ -79,7 +80,7 @@ int CheckOps( std::string & ops, bool isInteger )
   }
 
   /** Return a value. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end CheckOps()
 
@@ -121,6 +122,7 @@ bool OperatorNeedsArgument( const std::string & ops )
   operatorMap["ARCCOS"]  = false;
   operatorMap["ARCTAN"]  = false;
   operatorMap["EQUAL"]   = true;
+  operatorMap["LINEAR"]  = true;
 
   return operatorMap[ ops ];
 
@@ -168,6 +170,7 @@ void CreateOutputFileName( const std::string & inputFileName,
   operatorMap["ARCCOS"] = PairPairType( true, PairType( false, true ) );
   operatorMap["ARCTAN"] = PairPairType( true, PairType( false, true ) );
   operatorMap["EQUAL"]  = PairPairType( false, PairType( true, false ) );
+  operatorMap["LINEAR"] = PairPairType( false, PairType( true, false ) );
 
   /** Get parts of file name. */
   std::string path =
@@ -179,12 +182,12 @@ void CreateOutputFileName( const std::string & inputFileName,
     itksys::SystemTools::GetFilenameLastExtension( inputFileName );
 
   /** Compose outputFileName. */
-  if ( operatorMap[ops].first && !operatorMap[ops].second.first )
+  if( operatorMap[ops].first && !operatorMap[ops].second.first )
   {
     /** Example: /path/SINimage.mhd */
     outputFileName = path + ops + name + ext;
   }
-  else if ( operatorMap[ops].first && operatorMap[ops].second.first )
+  else if( operatorMap[ops].first && operatorMap[ops].second.first )
   {
     /** Example: /path/3LPOWERimage.mhd */
     outputFileName = path + arg + ops + name + ext;

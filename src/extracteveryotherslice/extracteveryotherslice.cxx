@@ -22,13 +22,7 @@
  */
 #include "itkCommandLineArgumentParser.h"
 #include "ITKToolsHelpers.h"
-#include "ITKToolsBase.h"
-
-#include "itkImageSliceConstIteratorWithIndex.h"
-#include "itkImageSliceIteratorWithIndex.h"
-
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
+#include "extracteveryotherslice.h"
 
 
 /**
@@ -39,171 +33,17 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-    << "Usage:" << std::endl
-    << "pxextracteveryotherslice" << std::endl
-    << "  -in      inputFilename" << std::endl
-    << "  [-out]   outputFilename, default in + EveryOtherKExtracted.mhd" << std::endl
-    << "  [-K]     every other slice K, default 2" << std::endl
-    << "  [-of]    offset, default 0" << std::endl
-    << "  [-d]     direction, default is z-axes" << std::endl
+    << "Usage:\n"
+    << "pxextracteveryotherslice\n"
+    << "  -in      inputFilename\n"
+    << "  [-out]   outputFilename, default in + EveryOtherKExtracted.mhd\n"
+    << "  [-K]     every other slice K, default 2\n"
+    << "  [-of]    offset, default 0\n"
+    << "  [-d]     direction, default is z-axes\n"
     << "Supported: 3D, (unsigned) char, (unsigned) short, float, double.";
   return ss.str();
 
 } // end GetHelpString()
-
-
-/** ExtractEveryOtherSlice */
-
-class ITKToolsExtractEveryOtherSliceBase : public itktools::ITKToolsBase
-{
-public:
-  ITKToolsExtractEveryOtherSliceBase()
-  {
-    this->m_InputFileName = "";
-    this->m_OutputFileName = "";
-    this->m_EveryOther = 0;
-    this->m_Offset = 0;
-    this->m_Direction = 0;
-  };
-  ~ITKToolsExtractEveryOtherSliceBase(){};
-
-  /** Input parameters */
-  std::string m_InputFileName;
-  std::string m_OutputFileName;
-  unsigned int m_EveryOther;
-  unsigned int m_Offset;
-  unsigned int m_Direction;
-
-}; // end ExtractEveryOtherSliceBase
-
-
-template< class TComponentType, unsigned int VDimension >
-class ITKToolsExtractEveryOtherSlice : public ITKToolsExtractEveryOtherSliceBase
-{
-public:
-  typedef ITKToolsExtractEveryOtherSlice Self;
-
-  ITKToolsExtractEveryOtherSlice(){};
-  ~ITKToolsExtractEveryOtherSlice(){};
-
-  static Self * New( itktools::ComponentType componentType, unsigned int dim )
-  {
-    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
-  void Run( void )
-  {
-    /** Typedefs. */
-    typedef itk::Image<TComponentType, VDimension>      InputImageType;
-    typedef itk::ImageSliceConstIteratorWithIndex<
-      InputImageType >                                  SliceConstIteratorType;
-    typedef itk::ImageSliceIteratorWithIndex<
-      InputImageType >                                  SliceIteratorType;
-    typedef itk::ImageFileReader< InputImageType >      ReaderType;
-    typedef itk::ImageFileWriter< InputImageType >      WriterType;
-    typedef typename InputImageType::RegionType         RegionType;
-    typedef typename RegionType::IndexType              IndexType;
-    typedef typename InputImageType::SizeType           SizeType;
-
-    /** Read in the inputImage. */
-    typename ReaderType::Pointer reader = ReaderType::New();
-    reader->SetFileName( this->m_InputFileName.c_str() );
-    reader->Update();
-
-    /** Define size of output image. */
-    SizeType sizeIn = reader->GetOutput()->GetLargestPossibleRegion().GetSize();
-    SizeType sizeOut = sizeIn;
-    float newSize = vcl_ceil(
-      ( static_cast<float>( sizeOut[ this->m_Direction ] - this->m_Offset ) )
-      / static_cast<float>( this->m_EveryOther ) );
-    sizeOut[ this->m_Direction ] = static_cast<unsigned int>( newSize );
-
-    /** Define region of output image. */
-    RegionType region;
-    region.SetIndex( reader->GetOutput()->GetLargestPossibleRegion().GetIndex() );
-    region.SetSize( sizeOut );
-
-    /** Create output image. */
-    typename InputImageType::Pointer outputImage = InputImageType::New();
-    outputImage->SetSpacing( reader->GetOutput()->GetSpacing() );
-    outputImage->SetOrigin( reader->GetOutput()->GetOrigin() );
-    outputImage->SetRegions( region );
-    outputImage->Allocate();
-
-    /** Create iterators. */
-    SliceConstIteratorType itIn( reader->GetOutput(), reader->GetOutput()->GetLargestPossibleRegion() );
-    SliceIteratorType itOut( outputImage, outputImage->GetLargestPossibleRegion() );
-
-    /** Set direction, default slice = z. */
-    if ( this->m_Direction == 0 )
-    {
-      itIn.SetFirstDirection(1);
-      itIn.SetSecondDirection(2);
-      itOut.SetFirstDirection(1);
-      itOut.SetSecondDirection(2);
-    }
-    else if ( this->m_Direction == 1 )
-    {
-      itIn.SetFirstDirection(0);
-      itIn.SetSecondDirection(2);
-      itOut.SetFirstDirection(0);
-      itOut.SetSecondDirection(2);
-    }
-    else if ( this->m_Direction == 2 )
-    {
-      itIn.SetFirstDirection(0);
-      itIn.SetSecondDirection(1);
-      itOut.SetFirstDirection(0);
-      itOut.SetSecondDirection(1);
-    }
-
-    /** Initialize iterators. */
-    itIn.GoToBegin();
-    itOut.GoToBegin();
-    IndexType index= itIn.GetIndex();
-    index[ this->m_Direction ] += this->m_Offset;
-    itIn.SetIndex( index );
-
-    /** Loop over images. */
-    while( !itOut.IsAtEnd() )
-    {
-      while( !itOut.IsAtEndOfSlice() )
-      {
-        while( !itOut.IsAtEndOfLine() )
-        {
-          itOut.Set( itIn.Get() );
-          ++itIn;
-          ++itOut;
-        }
-        itIn.NextLine();
-        itOut.NextLine();
-      }
-      itIn.NextSlice();
-      itOut.NextSlice();
-
-      /** Skip some slices in inputImage. */
-      index = itIn.GetIndex();
-      for ( unsigned int i = 1; i < this->m_EveryOther; i++ )
-      {
-        index[ this->m_Direction ]++;
-      }
-      itIn.SetIndex( index );
-    } // end while
-
-    /** Write the output image. */
-    typename WriterType::Pointer writer = WriterType::New();
-    writer->SetFileName( this->m_OutputFileName.c_str() );
-    writer->SetInput( outputImage );
-    writer->Update();
-
-  } // end Run()
-
-}; // end ExtractEveryOtherSlice
-
 
 //-------------------------------------------------------------------------------------
 
@@ -246,103 +86,78 @@ int main( int argc, char **argv )
   parser->GetCommandLineArgument( "-d", direction );
 
   /** Check everyOther. */
-  if ( everyOther < 2 )
+  if( everyOther < 2 )
   {
     std::cout << "ERROR: K should be larger than 1." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   /** Determine image properties. */
-  std::string ComponentTypeIn = "short";
-  std::string PixelType; //we don't use this
-  unsigned int Dimension = 3;
-  unsigned int NumberOfComponents = 1;
-  std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = itktools::GetImageProperties(
-    inputFileName,
-    PixelType,
-    ComponentTypeIn,
-    Dimension,
-    NumberOfComponents,
-    imagesize );
-  if ( retgip != 0 )
-  {
-    return 1;
-  }
+  itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
+  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  unsigned int dim = 0;
+  unsigned int numberOfComponents = 0;
+  bool retgip = itktools::GetImageProperties(
+    inputFileName, pixelType, componentType, dim, numberOfComponents );
+  if( !retgip ) return EXIT_FAILURE;
 
   /** Check for vector images. */
-  if ( NumberOfComponents > 1 )
-  {
-    std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
-    std::cerr << "Vector images are not supported." << std::endl;
-    return 1;
-  }
+  bool retNOCCheck = itktools::NumberOfComponentsCheck( numberOfComponents );
+  if( !retNOCCheck ) return EXIT_FAILURE;
 
   /** Check for dimension. */
-  if ( Dimension != 3 )
+  if( dim != 3 )
   {
-    std::cerr << "ERROR: The image dimension equals " << Dimension << "." << std::endl;
+    std::cerr << "ERROR: The image dimension equals " << dim << "." << std::endl;
     std::cerr << "Only 3D images are supported." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
-
-  /** Get rid of the possible "_" in ComponentType. */
-  itktools::ReplaceUnderscoreWithSpace( ComponentTypeIn );
 
   /** Check direction. */
-  if ( direction + 1 > Dimension )
+  if( direction + 1 > dim )
   {
     std::cout << "ERROR: direction should be 0, 1 or 2." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
-  /** Class that does the work */
-  ITKToolsExtractEveryOtherSliceBase * extractEveryOtherSlice = NULL;
-
-  /** Short alias */
-  const unsigned int dim = Dimension;
-
-  itktools::ComponentType componentType
-    = itk::ImageIOBase::GetComponentTypeFromString( ComponentTypeIn );
+  /** Class that does the work. */
+  ITKToolsExtractEveryOtherSliceBase * filter = NULL;
 
   try
   {
     // now call all possible template combinations.
-    if( !extractEveryOtherSlice ) extractEveryOtherSlice = ITKToolsExtractEveryOtherSlice< unsigned char, 3 >::New( componentType, dim );
-    if( !extractEveryOtherSlice ) extractEveryOtherSlice = ITKToolsExtractEveryOtherSlice< char, 3 >::New( componentType, dim );
-    if( !extractEveryOtherSlice ) extractEveryOtherSlice = ITKToolsExtractEveryOtherSlice< unsigned short, 3 >::New( componentType, dim );
-    if( !extractEveryOtherSlice ) extractEveryOtherSlice = ITKToolsExtractEveryOtherSlice< short, 3 >::New( componentType, dim );
-    if( !extractEveryOtherSlice ) extractEveryOtherSlice = ITKToolsExtractEveryOtherSlice< float, 3 >::New( componentType, dim );
-    if( !extractEveryOtherSlice ) extractEveryOtherSlice = ITKToolsExtractEveryOtherSlice< double, 3 >::New( componentType, dim );
 
-    if( !extractEveryOtherSlice )
-    {
-      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-      std::cerr
-        << "pixel (component) type = " << ComponentTypeIn
-        << " ; dimension = " << Dimension
-        << std::endl;
-      return 1;
-    }
+#ifdef ITKTOOLS_3D_SUPPORT
+    if( !filter ) filter = ITKToolsExtractEveryOtherSlice< 3, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsExtractEveryOtherSlice< 3, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsExtractEveryOtherSlice< 3, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsExtractEveryOtherSlice< 3, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsExtractEveryOtherSlice< 3, float >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsExtractEveryOtherSlice< 3, double >::New( dim, componentType );
+#endif
+    /** Check if filter was instantiated. */
+    bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
+    if( !supported ) return EXIT_FAILURE;
 
-    extractEveryOtherSlice->m_InputFileName = inputFileName;
-    extractEveryOtherSlice->m_OutputFileName = outputFileName;
-    extractEveryOtherSlice->m_EveryOther = everyOther;
-    extractEveryOtherSlice->m_Offset = offset;
-    extractEveryOtherSlice->m_Direction = direction;
+    /** Set the filter arguments. */
+    filter->m_InputFileName = inputFileName;
+    filter->m_OutputFileName = outputFileName;
+    filter->m_EveryOther = everyOther;
+    filter->m_Offset = offset;
+    filter->m_Direction = direction;
 
-    extractEveryOtherSlice->Run();
+    filter->Run();
 
-    delete extractEveryOtherSlice;
+    delete filter;
   }
-  catch( itk::ExceptionObject & e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    delete extractEveryOtherSlice;
-    return 1;
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+    delete filter;
+    return EXIT_FAILURE;
   }
 
   /** End program. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main

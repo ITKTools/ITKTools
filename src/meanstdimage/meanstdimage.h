@@ -15,19 +15,26 @@
 * limitations under the License.
 *
 *=========================================================================*/
-#ifndef __meanstdimage_h
-#define __meanstdimage_h
+#ifndef __meanstdimage_h_
+#define __meanstdimage_h_
 
 #include "ITKToolsBase.h"
+
 #include "itkImage.h"
 #include <string>
 #include <vector>
 
-/** MeanStdImage */
+
+/** \class ITKToolsMeanStdImageBase
+ *
+ * Untemplated pure virtual base class that holds
+ * the Run() function and all required parameters.
+ */
 
 class ITKToolsMeanStdImageBase : public itktools::ITKToolsBase
 { 
 public:
+  /** Constructor. */
   ITKToolsMeanStdImageBase()
   {
     this->m_InputFileNames = std::vector<std::string>();
@@ -36,41 +43,41 @@ public:
     this->m_CalcMean = false;
     this->m_CalcStd = false;
   };
-
+  /** Destructor. */
   ~ITKToolsMeanStdImageBase(){};
 
-  /** Input parameters */
+  /** Input member parameters. */
   std::vector<std::string> m_InputFileNames;
   std::string              m_OutputFileNameMean;
   std::string              m_OutputFileNameStd;
   bool                     m_CalcMean;
   bool                     m_CalcStd;
-}; // end class MeanStdImageBase
+
+}; // end class ITKToolsMeanStdImageBase
 
 
-template< class TComponentType, unsigned int VDimension >
+/** \class ITKToolsMeanStdImage
+ *
+ * Templated class that implements the Run() function
+ * and the New() function for its creation.
+ */
+
+template< unsigned int VDimension, class TComponentType >
 class ITKToolsMeanStdImage : public ITKToolsMeanStdImageBase
 {
 public:
+  /** Standard ITKTools stuff. */
   typedef ITKToolsMeanStdImage Self;
+  itktoolsOneTypeNewMacro( Self );
 
   ITKToolsMeanStdImage(){};
   ~ITKToolsMeanStdImage(){};
 
-  static Self * New( itktools::ComponentType componentType, unsigned int dim )
-  {
-    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
   /** Typedef. */
-  typedef itk::Image< TComponentType, VDimension > InputImageType;
-  typedef itk::Image< float, VDimension > OutputImageType;
+  typedef itk::Image< TComponentType, VDimension >  InputImageType;
+  typedef itk::Image< float, VDimension >           OutputImageType;
 
-  /** Main function Run(). */
+  /** Run function. */
   void Run( void )
   {
     this->MeanStdImage(
@@ -78,9 +85,9 @@ public:
       this->m_CalcMean,
       this->m_OutputFileNameMean,
       this->m_CalcStd,
-      this->m_OutputFileNameStd);
-  } // end Run()
+      this->m_OutputFileNameStd );
 
+  } // end Run()
 
   /** Function to perform normal thresholding. */
   void MeanStdImage(
@@ -92,5 +99,4 @@ public:
 
 #include "meanstdimage.hxx"
 
-#endif // end #ifndef __meanstdimage_h
-
+#endif // end #ifndef __meanstdimage_h_

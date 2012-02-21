@@ -22,11 +22,7 @@
  */
 #include "itkCommandLineArgumentParser.h"
 #include "ITKToolsHelpers.h"
-#include "ITKToolsBase.h"
-
-#include "itkImageFileReader.h"
-//#include "itkChangeLabelImageFilter.h"
-#include "itkImageFileWriter.h"
+#include "replacevoxel.h"
 
 
 /**
@@ -37,106 +33,19 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-  << "This program replaces the value of a user specified voxel." << std::endl
-  << "Usage:" << std::endl
-  << "pxreplacevoxel" << std::endl
-  << "  -in      inputFilename" << std::endl
-  << "  [-out]   outputFilename, default in + VOXELREPLACED.mhd" << std::endl
-  << "  -vox     input voxel index" << std::endl
-  << "  -val     value that replaces the voxel" << std::endl
-  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int," << std::endl
-  << "(unsigned) long, float, double.";
+    << "This program replaces the value of a user specified voxel.\n"
+    << "Usage:\n"
+    << "pxreplacevoxel\n"
+    << "  -in      inputFilename\n"
+    << "  [-out]   outputFilename, default in + VOXELREPLACED.mhd\n"
+    << "  -vox     input voxel index\n"
+    << "  -val     value that replaces the voxel\n"
+    << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int,\n"
+    << "(unsigned) long, float, double.";
 
   return ss.str();
 
 } // end GetHelpString()
-
-//-------------------------------------------------------------------------------------
-
-/** ReplaceVoxel */
-
-class ITKToolsReplaceVoxelBase : public itktools::ITKToolsBase
-{ 
-public:
-  ITKToolsReplaceVoxelBase()
-  {
-    this->m_InputFileName = "";
-    this->m_OutputFileName = "";
-    //std::vector<unsigned int> this->m_Voxel;
-    this->m_Value = 0.0f;
-  };
-  ~ITKToolsReplaceVoxelBase(){};
-
-  /** Input parameters */
-  std::string m_InputFileName;
-  std::string m_OutputFileName;
-  std::vector<unsigned int> m_Voxel;
-  double m_Value;
-    
-}; // end ReplaceVoxelBase
-
-
-template< class TComponentType, unsigned int VDimension >
-class ITKToolsReplaceVoxel : public ITKToolsReplaceVoxelBase
-{
-public:
-  typedef ITKToolsReplaceVoxel Self;
-
-  ITKToolsReplaceVoxel(){};
-  ~ITKToolsReplaceVoxel(){};
-
-  static Self * New( itktools::ComponentType componentType, unsigned int dim )
-  {
-    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
-  void Run( void )
-  {
-    typedef TComponentType                         PixelType;
-    typedef itk::Image< PixelType, VDimension >    ImageType;
-    typedef typename ImageType::SizeType          SizeType;
-    typedef typename ImageType::IndexType         IndexType;
-    typedef itk::ImageFileReader< ImageType >     ReaderType;
-    typedef itk::ImageFileWriter< ImageType >     WriterType;
-
-    /** Read in the input image. */
-    typename ReaderType::Pointer reader = ReaderType::New();
-    typename WriterType::Pointer writer = WriterType::New();
-
-    /** Read input image. */
-    reader->SetFileName( this->m_InputFileName );
-    reader->Update();
-    typename ImageType::Pointer image = reader->GetOutput();
-
-    /** Check size. */
-    SizeType size = image->GetLargestPossibleRegion().GetSize();
-    for ( unsigned int i = 0; i < VDimension; ++i )
-    {
-      if ( this->m_Voxel[ i ] < 0 || this->m_Voxel[ i ] > size[ i ] - 1 )
-      {
-        itkGenericExceptionMacro( << "ERROR: invalid voxel index." );
-      }
-    }
-
-    /** Set the value to the voxel. */
-    IndexType index;
-    for ( unsigned int i = 0; i < VDimension; ++i )
-    {
-      index[ i ] = this->m_Voxel[ i ];
-    }
-    image->SetPixel( index, static_cast<PixelType>( this->m_Value ) );
-
-    /** Write output image. */
-    writer->SetFileName( this->m_OutputFileName );
-    writer->SetInput( image );
-    writer->Update();
-  }
-
-}; // end ReplaceVoxel
 
 //-------------------------------------------------------------------------------------
 
@@ -177,95 +86,62 @@ int main( int argc, char ** argv )
   parser->GetCommandLineArgument( "-val", value );
 
   /** Determine image properties. */
-  std::string ComponentTypeIn = "short";
-  std::string PixelType; //we don't use this
-  unsigned int Dimension = 3;
-  unsigned int NumberOfComponents = 1;
-  std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = itktools::GetImageProperties(
-    inputFileName,
-    PixelType,
-    ComponentTypeIn,
-    Dimension,
-    NumberOfComponents,
-    imagesize );
-  if ( retgip != 0 )
-  {
-    std::cerr << "ERROR: error while getting image properties of the input image!" << std::endl;
-    return 1;
-  }
+  itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
+  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  unsigned int dim = 0;
+  unsigned int numberOfComponents = 0;
+  bool retgip = itktools::GetImageProperties(
+    inputFileName, pixelType, componentType, dim, numberOfComponents );
+  if( !retgip ) return EXIT_FAILURE;
 
   /** Check for vector images. */
-  if ( NumberOfComponents > 1 )
-  {
-    std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
-    std::cerr << "Vector images not supported yet by this tool." << std::endl;
-    return 1;
-  }
-
-  /** Get rid of the possible "_" in ComponentType. */
-  itktools::ReplaceUnderscoreWithSpace( ComponentTypeIn );
+  bool retNOCCheck = itktools::NumberOfComponentsCheck( numberOfComponents );
+  if( !retNOCCheck ) return EXIT_FAILURE;
 
   /** Check if the specified voxel-size has Dimension number of components. */
-  if ( voxel.size() != Dimension )
+  if( voxel.size() != dim )
   {
     std::cerr << "ERROR: You should specify "
-      << Dimension
+      << dim
       << " numbers with \"-vox\"." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
-  /** Class that does the work */
-  ITKToolsReplaceVoxelBase * replaceVoxel = 0; 
-
-  /** Short alias */
-  unsigned int dim = Dimension;
- 
-  /** \todo some progs allow user to override the pixel type, 
-   * so we need a method to convert string to EnumComponentType */
-  itktools::ComponentType componentType = itktools::GetImageComponentType( inputFileName );
-  
-  std::cout << "Internal image component type: " << 
-    itk::ImageIOBase::GetComponentTypeAsString( componentType ) << std::endl;
+  /** Class that does the work. */
+  ITKToolsReplaceVoxelBase * filter = 0; 
 
   try
   {    
     // now call all possible template combinations.
-    if (!replaceVoxel) replaceVoxel = ITKToolsReplaceVoxel< short, 2 >::New( componentType, dim );
-    if (!replaceVoxel) replaceVoxel = ITKToolsReplaceVoxel< float, 2 >::New( componentType, dim );
+    if( !filter ) filter = ITKToolsReplaceVoxel< 2, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsReplaceVoxel< 2, float >::New( dim, componentType );
     
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!replaceVoxel) replaceVoxel = ITKToolsReplaceVoxel< short, 3 >::New( componentType, dim );    
-    if (!replaceVoxel) replaceVoxel = ITKToolsReplaceVoxel< float, 3 >::New( componentType, dim );
+    if( !filter ) filter = ITKToolsReplaceVoxel< 3, short >::New( dim, componentType );    
+    if( !filter ) filter = ITKToolsReplaceVoxel< 3, float >::New( dim, componentType );
 #endif
-    if (!replaceVoxel) 
-    {
-      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-      std::cerr
-        << "pixel (component) type = " << ComponentTypeIn // so here we also need a string - we don't need to convert to a string here right? just output the string that was input.
-        << " ; dimension = " << Dimension
-        << std::endl;
-      return 1;
-    }
+    /** Check if filter was instantiated. */
+    bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
+    if( !supported ) return EXIT_FAILURE;
 
-    replaceVoxel->m_InputFileName = inputFileName;
-    replaceVoxel->m_OutputFileName = outputFileName;
-    replaceVoxel->m_Voxel = voxel;
-    replaceVoxel->m_Value = value;
+    /** Set the filter arguments. */
+    filter->m_InputFileName = inputFileName;
+    filter->m_OutputFileName = outputFileName;
+    filter->m_Voxel = voxel;
+    filter->m_Value = value;
 
-    replaceVoxel->Run();
+    filter->Run();
     
-    delete replaceVoxel;  
+    delete filter;  
   }
-  catch( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    delete replaceVoxel;
-    return 1;
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+    delete filter;
+    return EXIT_FAILURE;
   }
 
   /** End program. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main
-

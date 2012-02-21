@@ -58,7 +58,7 @@ MorphologicalSignedDistanceTransformImageFilter<TInputImage, TOutputImage>
   typename TOutputImage::SpacingType sp = this->GetOutput()->GetSpacing();
 
   double MaxDist = 0.0;
-  if (this->GetUseImageSpacing()) 
+  if(this->GetUseImageSpacing()) 
     {
     for (unsigned k = 0; k < TOutputImage::ImageDimension; k++)
       {
@@ -77,7 +77,7 @@ MorphologicalSignedDistanceTransformImageFilter<TInputImage, TOutputImage>
 
   this->m_Thresh->SetLowerThreshold( this->m_OutsideValue);
   this->m_Thresh->SetUpperThreshold( this->m_OutsideValue);
-  if (this->GetInsideIsPositive())
+  if(this->GetInsideIsPositive())
     {
     this->m_Thresh->SetOutsideValue(MaxDist);
     this->m_Thresh->SetInsideValue(-MaxDist);

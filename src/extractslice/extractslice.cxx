@@ -22,15 +22,10 @@
  */
 #include "itkCommandLineArgumentParser.h"
 #include "ITKToolsHelpers.h"
-#include "ITKToolsBase.h"
-
-#include "itkImageFileReader.h"
-#include "itkExtractImageFilter.h"
-#include "itkImageFileWriter.h"
+#include "extractslice.h"
 
 #include <string>
 #include <vector>
-
 #include <itksys/SystemTools.hxx>
 
 
@@ -56,99 +51,6 @@ std::string GetHelpString( void )
   return ss.str();
 
 } // end GetHelpString()
-
-
-/** ExtractSlice */
-
-class ITKToolsExtractSliceBase : public itktools::ITKToolsBase
-{ 
-public:
-  ITKToolsExtractSliceBase()
-  {
-    this->m_InputFileName = "";
-    this->m_OutputFileName = "";
-    this->m_Slicenumber = 0;
-    this->m_WhichDimension = 0;
-  };
-  ~ITKToolsExtractSliceBase(){};
-
-  /** Input parameters */
-  std::string m_InputFileName;
-  std::string m_OutputFileName;
-  unsigned int m_Slicenumber;
-  unsigned int m_WhichDimension;
-    
-}; // end ExtractSliceBase
-
-
-template< class TComponentType >
-class ITKToolsExtractSlice : public ITKToolsExtractSliceBase
-{
-public:
-  typedef ITKToolsExtractSlice Self;
-
-  ITKToolsExtractSlice(){};
-  ~ITKToolsExtractSlice(){};
-
-  static Self * New( itktools::ComponentType componentType )
-  {
-    if ( itktools::IsType<TComponentType>( componentType ) )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
-  void Run( void )
-  {
-    /** Some typedef's. */
-    typedef itk::Image<TComponentType, 3>         Image3DType;
-    typedef itk::Image<TComponentType, 2>         Image2DType;
-    typedef itk::ImageFileReader<Image3DType>     ImageReaderType;
-    typedef itk::ExtractImageFilter<
-      Image3DType, Image2DType >                  ExtractFilterType;
-    typedef itk::ImageFileWriter<Image2DType>     ImageWriterType;
-
-    typedef typename Image3DType::RegionType      RegionType;
-    typedef typename Image3DType::SizeType        SizeType;
-    typedef typename Image3DType::IndexType       IndexType;
-
-    /** Create reader. */
-    typename ImageReaderType::Pointer reader = ImageReaderType::New();
-    reader->SetFileName( this->m_InputFileName.c_str() );
-    reader->Update();
-
-    /** Create extractor. */
-    typename ExtractFilterType::Pointer extractor = ExtractFilterType::New();
-    extractor->SetInput( reader->GetOutput() );
-
-    /** Get the size and set which_dimension to zero. */
-    RegionType inputRegion = reader->GetOutput()->GetLargestPossibleRegion();
-    SizeType size = inputRegion.GetSize();
-    size[ this->m_WhichDimension ] = 0;
-
-    /** Get the index and set which_dimension to the correct slice. */
-    IndexType start = inputRegion.GetIndex();
-    start[ this->m_WhichDimension ] = this->m_Slicenumber;
-
-    /** Create a desired extraction region and set it into the extractor. */
-    RegionType desiredRegion;
-    desiredRegion.SetSize(  size  );
-    desiredRegion.SetIndex( start );
-    extractor->SetExtractionRegion( desiredRegion );
-
-    /** The direction cosines of the 2D extracted data is set to
-     * a submatrix of the 3D input image. */
-    extractor->SetDirectionCollapseToSubmatrix();
-
-    /** Write the 2D output image. */
-    typename ImageWriterType::Pointer writer = ImageWriterType::New();
-    writer->SetFileName( this->m_OutputFileName.c_str() );
-    writer->SetInput( extractor->GetOutput() );
-    writer->Update();
-  } // end Run()
-
-}; // end ExtractSlice
 
 //-------------------------------------------------------------------------------------
 
@@ -177,36 +79,6 @@ int main( int argc, char ** argv )
   std::string inputFileName;
   parser->GetCommandLineArgument( "-in", inputFileName );
 
-  /** Determine input image properties. */
-  std::string ComponentType = "short";
-  std::string PixelType; //we don't use this
-  unsigned int Dimension = 3;
-  unsigned int NumberOfComponents = 1;
-  std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = itktools::GetImageProperties(
-    inputFileName,
-    PixelType,
-    ComponentType,
-    Dimension,
-    NumberOfComponents,
-    imagesize );
-
-  if ( retgip != 0 )
-  {
-    return 1;
-  }
-
-  /** Let the user overrule this. */
-  parser->GetCommandLineArgument( "-pt", ComponentType );
-
-  /** Error checking. */
-  if ( NumberOfComponents > 1 )
-  {
-    std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
-    std::cerr << "Vector images are not supported!" << std::endl;
-    return 1;
-  }
-
   /** Get the slicenumber which is to be extracted. */
   unsigned int slicenumber = 0;
   parser->GetCommandLineArgument( "-sn", slicenumber );
@@ -220,33 +92,55 @@ int main( int argc, char ** argv )
   unsigned int which_dimension = 2;
   parser->GetCommandLineArgument( "-d", which_dimension );
 
+  /** Determine image properties. */
+  itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
+  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  unsigned int dim = 0;
+  unsigned int numberOfComponents = 0;
+  std::vector<unsigned int> imageSize;
+  bool retgip = itktools::GetImageProperties(
+    inputFileName, pixelType, componentType, dim, numberOfComponents, imageSize );
+  if( !retgip ) return EXIT_FAILURE;
+
+  /** Check for vector images. */
+  bool retNOCCheck = itktools::NumberOfComponentsCheck( numberOfComponents );
+  if( !retNOCCheck ) return EXIT_FAILURE;
+
+  /** Let the user overrule this. */
+  std::string componentTypeAsString = "";
+  bool retopct = parser->GetCommandLineArgument( "-opct", componentTypeAsString );
+  if ( retopct )
+  {
+    componentType = itk::ImageIOBase::GetComponentTypeFromString( componentTypeAsString );
+  }
+
   /** Sanity check. */
-  if ( slicenumber > imagesize[ which_dimension ] )
+  if( slicenumber > imageSize[ which_dimension ] )
   {
     std::cerr << "ERROR: You selected slice number "
       << slicenumber
       << ", where the input image only has "
-      << imagesize[ which_dimension ]
+      << imageSize[ which_dimension ]
       << " slices in dimension "
       << which_dimension << "." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   /** Sanity check. */
-  if ( which_dimension > Dimension - 1 )
+  if( which_dimension > dim - 1 )
   {
     std::cerr << "ERROR: You selected to extract a slice from dimension "
       << which_dimension + 1
       << ", where the input image is "
-      << Dimension
+      << dim
       << "D." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   /** Get the outputFileName. */
   std::string direction = "z";
-  if ( which_dimension == 0 ) direction = "x";
-  else if ( which_dimension == 1 ) direction = "y";
+  if( which_dimension == 0 ) direction = "x";
+  else if( which_dimension == 1 ) direction = "y";
   std::string part1 =
       itksys::SystemTools::GetFilenameWithoutLastExtension( inputFileName );
   std::string part2 =
@@ -254,48 +148,41 @@ int main( int argc, char ** argv )
   std::string outputFileName = part1 + "_slice_" + direction + "=" + slicenumberstring + part2;
   parser->GetCommandLineArgument( "-out", outputFileName );
   
-  /** Class that does the work */
-  ITKToolsExtractSliceBase * extractSlice = 0; 
-
-  itktools::ComponentType componentType
-    = itk::ImageIOBase::GetComponentTypeFromString( ComponentType );
+  /** Class that does the work. */
+  ITKToolsExtractSliceBase * filter = 0; 
     
   try
   {    
     // now call all possible template combinations.
-    if (!extractSlice) extractSlice = ITKToolsExtractSlice< unsigned char >::New( componentType );
-    if (!extractSlice) extractSlice = ITKToolsExtractSlice< char >::New( componentType );
-    if (!extractSlice) extractSlice = ITKToolsExtractSlice< unsigned short >::New( componentType );
-    if (!extractSlice) extractSlice = ITKToolsExtractSlice< short >::New( componentType );
-    if (!extractSlice) extractSlice = ITKToolsExtractSlice< float >::New( componentType );
+#ifdef ITKTOOLS_3D_SUPPORT
+    if( !filter ) filter = ITKToolsExtractSlice< unsigned char >::New( componentType );
+    if( !filter ) filter = ITKToolsExtractSlice< char >::New( componentType );
+    if( !filter ) filter = ITKToolsExtractSlice< unsigned short >::New( componentType );
+    if( !filter ) filter = ITKToolsExtractSlice< short >::New( componentType );
+    if( !filter ) filter = ITKToolsExtractSlice< float >::New( componentType );
+#endif
+    /** Check if filter was instantiated. */
+    bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
+    if( !supported ) return EXIT_FAILURE;
 
-    if (!extractSlice) 
-    {
-      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-      std::cerr
-        << "pixel (component) type = " << ComponentType
-        << " ; dimension = " << Dimension
-        << std::endl;
-      return 1;
-    }
-
-    extractSlice->m_InputFileName = inputFileName;
-    extractSlice->m_OutputFileName = outputFileName;
-    extractSlice->m_WhichDimension = which_dimension;
-    extractSlice->m_Slicenumber = slicenumber;
+    /** Set the filter arguments. */
+    filter->m_InputFileName = inputFileName;
+    filter->m_OutputFileName = outputFileName;
+    filter->m_WhichDimension = which_dimension;
+    filter->m_Slicenumber = slicenumber;
   
-    extractSlice->Run();
+    filter->Run();
     
-    delete extractSlice;
+    delete filter;
   }
-  catch( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    delete extractSlice;
-    return 1;
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+    delete filter;
+    return EXIT_FAILURE;
   }
   
   /** Return a value. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main

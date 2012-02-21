@@ -15,14 +15,8 @@
 * limitations under the License.
 *
 *=========================================================================*/
-/** \file
- \brief This program creates a signed distance transform.
- 
- \verbinclude distancetransform.help
- */
-
-#ifndef __distancetransform_h
-#define __distancetransform_h
+#ifndef __distancetransform_h_
+#define __distancetransform_h_
 
 #include <string>
 
@@ -148,32 +142,32 @@ void DistanceTransform(
 //   kIDWriter->SetFileName( outputFileNames[ 2 ].c_str() );
 
   /** Run! */
-  if ( method == "Maurer" )
+  if( method == "Maurer" )
   {
     distance_Maurer->Update();
     writer->SetInput( distance_Maurer->GetOutput() );
     writer->Update();
   }
-  else if ( method == "Danielsson" )
+  else if( method == "Danielsson" )
   {
     distance_Danielsson->Update();
     writer->SetInput( distance_Danielsson->GetOutput() );
     writer->Update();
   }
-  else if ( method == "Morphological" )
+  else if( method == "Morphological" )
   {
     distance_Morphological->Update();
     writer->SetInput( distance_Morphological->GetOutput() );
     writer->Update();
   }
-  else if ( method == "MorphologicalSigned" )
+  else if( method == "MorphologicalSigned" )
   {
     distance_MorphologicalSigned->Update();
     writer->SetInput( distance_MorphologicalSigned->GetOutput() );
     writer->Update();
   }
 
-//   else if ( method == "OrderK" )
+//   else if( method == "OrderK" )
 //   {
 //     std::cerr << "to here";
 //     freader->Update();
@@ -191,4 +185,4 @@ void DistanceTransform(
 
 } // end DistanceTransform()
 
-#endif // end #ifndef __distancetransform_h
+#endif // end #ifndef __distancetransform_h_

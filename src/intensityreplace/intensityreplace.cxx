@@ -22,11 +22,7 @@
  */
 #include "itkCommandLineArgumentParser.h"
 #include "ITKToolsHelpers.h"
-#include "ITKToolsBase.h"
-
-#include "itkImageFileReader.h"
-#include "itkChangeLabelImageFilter.h"
-#include "itkImageFileWriter.h"
+#include "intensityreplace.h"
 
 
 /**
@@ -37,131 +33,22 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-    << "This program replaces some user specified intensity values in an image." << std::endl
-    << "Usage:" << std::endl
-    << "pxintensityreplace" << std::endl
-    << "  -in      inputFilename" << std::endl
-    << "  [-out]   outputFilename, default in + LUTAPPLIED.mhd" << std::endl
-    << "  -i       input pixel values that should be replaced" << std::endl
-    << "  -o       output pixel values that replace the corresponding input values" << std::endl
-    << "  [-pt]    output pixel type, default equal to input" << std::endl
-    << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int," << std::endl
-    << "(unsigned) long, float, double." << std::endl
-    << "If \"-pt\" is used, the input is immediately converted to that particular" << std::endl
+    << "This program replaces some user specified intensity values in an image.\n"
+    << "Usage:\n"
+    << "pxintensityreplace\n"
+    << "  -in      inputFilename\n"
+    << "  [-out]   outputFilename, default in + LUTAPPLIED.mhd\n"
+    << "  -i       input pixel values that should be replaced\n"
+    << "  -o       output pixel values that replace the corresponding input values\n"
+    << "  [-pt]    output pixel type, default equal to input\n"
+    << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int,\n"
+    << "(unsigned) long, float, double.\n"
+    << "If \"-pt\" is used, the input is immediately converted to that particular\n"
     << "type, after which the intensity replacement is performed.";
 
   return ss.str();
 
 } // end GetHelpString()
-
-
-/** IntensityReplace */
-
-class ITKToolsIntensityReplaceBase : public itktools::ITKToolsBase
-{ 
-public:
-  ITKToolsIntensityReplaceBase()
-  {
-    this->m_InputFileName = "";
-    this->m_OutputFileName = "";
-    //std::vector<std::string> this->m_InValues;
-    //std::vector<std::string> this->m_OutValues;
-  };
-  ~ITKToolsIntensityReplaceBase(){};
-
-  /** Input parameters */
-  std::string m_InputFileName;
-  std::string m_OutputFileName;
-  std::vector<std::string> m_InValues;
-  std::vector<std::string> m_OutValues;
-
-}; // end IntensityReplaceBase
-
-template< class TComponentType, unsigned int VDimension >
-//template< unsigned int VImageDimension, class TValue >
-class ITKToolsIntensityReplace : public ITKToolsIntensityReplaceBase
-{
-public:
-  typedef ITKToolsIntensityReplace Self;
-
-  ITKToolsIntensityReplace(){};
-  ~ITKToolsIntensityReplace(){};
-
-  static Self * New( itktools::ComponentType componentType, unsigned int dim )
-  {
-    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
-  //static Self * New( unsigned int imageDimension, itktools::ComponentType componentType )
-  //{
-    //if ( VImageDimension == imageDimension && itktools::IsType<TValue>( componentType ) )
-    //{
-      //return new Self;
-    //}
-    //return 0;
-  //}
-
-  void Run( void )
-  {
-    /** Typedefs. */
-    //typedef TValue                                          OutputPixelType;
-    typedef TComponentType                                  OutputPixelType;
-    const unsigned int Dimension = VDimension;
-
-    typedef OutputPixelType                                 InputPixelType;
-
-    typedef itk::Image< InputPixelType, Dimension >         InputImageType;
-    typedef itk::Image< OutputPixelType, Dimension >        OutputImageType;
-
-    typedef itk::ImageFileReader< InputImageType >          ReaderType;
-    typedef itk::ChangeLabelImageFilter<
-      InputImageType, OutputImageType >                     ReplaceFilterType;
-    typedef itk::ImageFileWriter< OutputImageType >         WriterType;
-
-    /** Read in the input image. */
-    typename ReaderType::Pointer reader = ReaderType::New();
-    typename ReplaceFilterType::Pointer replaceFilter = ReplaceFilterType::New();
-    typename WriterType::Pointer writer = WriterType::New();
-
-    /** Set up reader */
-    reader->SetFileName( this->m_InputFileName );
-
-    /** Setup the the input and the 'change map' of the replace filter. */
-    replaceFilter->SetInput( reader->GetOutput() );
-    if ( itk::NumericTraits<OutputPixelType>::is_integer )
-    {
-      for (unsigned int i = 0; i < this->m_InValues.size(); ++i)
-      {
-        const InputPixelType inval = static_cast< InputPixelType >(
-          atoi( this->m_InValues[i].c_str() )   );
-        const OutputPixelType outval = static_cast< OutputPixelType >(
-          atoi( this->m_OutValues[i].c_str() )   );
-        replaceFilter->SetChange( inval, outval );
-      }
-    }
-    else
-    {
-      for (unsigned int i = 0; i < this->m_InValues.size(); ++i)
-      {
-        const InputPixelType inval = static_cast< InputPixelType >(
-          atof( this->m_InValues[i].c_str() )   );
-        const OutputPixelType outval = static_cast< OutputPixelType >(
-          atof( this->m_OutValues[i].c_str() )   );
-        replaceFilter->SetChange( inval, outval );
-      }
-    }
-
-    /** Set up writer. */
-    writer->SetFileName( this->m_OutputFileName );
-    writer->SetInput( replaceFilter->GetOutput() );
-    writer->Update();
-  }
-
-}; // end IntensityReplace
 
 //-------------------------------------------------------------------------------------
 
@@ -206,91 +93,76 @@ int main( int argc, char ** argv )
   bool retpt = parser->GetCommandLineArgument( "-pt", ComponentTypeString );
 
   /** Check if the required arguments are given. */
-  if ( inValues.size() != outValues.size() )
+  if( inValues.size() != outValues.size() )
   {
     std::cerr << "ERROR: \"-i\" and \"-o\" should be followed by an equal number of values!" << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
-  itktools::ComponentType componentType = itktools::GetImageComponentType( inputFileName );
-  /** The default output is equal to the input, but can be overridden by
-   * specifying -pt in the command line.
-   */
-  if ( retpt )
-  {
-    componentType = itk::ImageIOBase::GetComponentTypeFromString( ComponentTypeString );
-  }
-
-  /** Check for vector images. */
-  unsigned int numberOfComponents = 0;
-  itktools::GetImageNumberOfComponents( inputFileName, numberOfComponents );
-  
-  if ( numberOfComponents > 1 )
-  {
-    std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
-    std::cerr << "Vector images not supported yet by this tool." << std::endl;
-    return 1;
-  }
-  
-  /** Class that does the work */
-  ITKToolsIntensityReplaceBase * intensityReplace = NULL; 
-
+  /** Determine image properties. */
+  itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
+  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
   unsigned int dim = 0;
-  itktools::GetImageDimension( inputFileName, dim );
+  unsigned int numberOfComponents = 0;
+  bool retgip = itktools::GetImageProperties(
+    inputFileName, pixelType, componentType, dim, numberOfComponents );
+  if( !retgip ) return EXIT_FAILURE;
+  
+  /** Check for vector images. */
+  bool retNOCCheck = itktools::NumberOfComponentsCheck( numberOfComponents );
+  if( !retNOCCheck ) return EXIT_FAILURE;
+  
+  /** Class that does the work. */
+  ITKToolsIntensityReplaceBase * filter = NULL; 
   
   try
   {    
     // now call all possible template combinations.
-    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< char, 2 >::New( componentType, dim );
-    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< unsigned char, 2 >::New( componentType, dim );
-    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< short, 2 >::New( componentType, dim );
-    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< unsigned short, 2 >::New( componentType, dim );
-    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< int, 2 >::New( componentType, dim );
-    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< unsigned int, 2 >::New( componentType, dim );
-    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< long, 2 >::New( componentType, dim );
-    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< unsigned long, 2 >::New( componentType, dim );
-    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< float, 2 >::New( componentType, dim );
-    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< double, 2 >::New( componentType, dim );
+    if( !filter ) filter = ITKToolsIntensityReplace< 2, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsIntensityReplace< 2, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsIntensityReplace< 2, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsIntensityReplace< 2, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsIntensityReplace< 2, int >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsIntensityReplace< 2, unsigned int >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsIntensityReplace< 2, long >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsIntensityReplace< 2, unsigned long >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsIntensityReplace< 2, float >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsIntensityReplace< 2, double >::New( dim, componentType );
     
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< char, 3 >::New( componentType, dim );
-    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< unsigned char, 3 >::New( componentType, dim );
-    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< short, 3 >::New( componentType, dim );
-    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< unsigned short, 3 >::New( componentType, dim );
-    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< int, 3 >::New( componentType, dim );
-    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< unsigned int, 3 >::New( componentType, dim );
-    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< long, 3 >::New( componentType, dim );
-    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< unsigned long, 3 >::New( componentType, dim );
-    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< float, 3 >::New( componentType, dim );
-    if (!intensityReplace) intensityReplace = ITKToolsIntensityReplace< double, 3 >::New( componentType, dim );
+    if( !filter ) filter = ITKToolsIntensityReplace< 3, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsIntensityReplace< 3, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsIntensityReplace< 3, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsIntensityReplace< 3, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsIntensityReplace< 3, int >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsIntensityReplace< 3, unsigned int >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsIntensityReplace< 3, long >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsIntensityReplace< 3, unsigned long >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsIntensityReplace< 3, float >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsIntensityReplace< 3, double >::New( dim, componentType );
 #endif
-    if (!intensityReplace) 
-    {
-      std::cerr << "ERROR: this combination of pixeltype, image dimension, and space dimension is not supported!" << std::endl;
-      std::cerr
-        << " image dimension = " << dim << std::endl
-        << " pixel type = " << itk::ImageIOBase::GetComponentTypeAsString( componentType ) << std::endl
-        << std::endl;
-      return 1;
-    }
+    /** Check if filter was instantiated. */
+    bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
+    if( !supported ) return EXIT_FAILURE;
 
-    intensityReplace->m_OutputFileName = outputFileName;
-    intensityReplace->m_InputFileName = inputFileName;
-    intensityReplace->m_InValues = inValues;
-    intensityReplace->m_OutValues = outValues;
+    /** Set the filter arguments. */
+    filter->m_OutputFileName = outputFileName;
+    filter->m_InputFileName = inputFileName;
+    filter->m_InValues = inValues;
+    filter->m_OutValues = outValues;
     
-    intensityReplace->Run();
+    filter->Run();
     
-    delete intensityReplace;  
+    delete filter;  
   }
-  catch( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    delete intensityReplace;
-    return 1;
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+    delete filter;
+    return EXIT_FAILURE;
   }
 
   /** End program. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main
