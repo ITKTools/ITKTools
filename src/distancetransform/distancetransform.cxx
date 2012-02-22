@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief This program creates a signed distance transform.
- 
+
  \verbinclude distancetransform.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -73,7 +73,7 @@ int main( int argc, char **argv )
   {
     return EXIT_SUCCESS;
   }
-  
+
   /** Get the input segmentation file name (mandatory). */
   std::string inputFileName;
   parser->GetCommandLineArgument( "-in", inputFileName );

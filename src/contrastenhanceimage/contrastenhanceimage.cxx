@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Enhance the contrast of an image.
- 
+
  \verbinclude contrastenhanceimage.help
  */
 
@@ -84,16 +84,16 @@ int main( int argc, char** argv )
   // Get arguments
   std::string inputFileName;
   parser->GetCommandLineArgument( "-in", inputFileName );
-  
+
   std::string outputFileName;
   parser->GetCommandLineArgument( "-out", outputFileName );
-  
+
   float alpha = 0.0f;
   parser->GetCommandLineArgument( "-alpha", alpha );
-  
+
   float beta = 0.0f;
   parser->GetCommandLineArgument( "-beta", beta );
-    
+
   bool lookUpTable = true;
   parser->GetCommandLineArgument( "-LUT", lookUpTable );
 
@@ -108,17 +108,17 @@ int main( int argc, char** argv )
   bool retgip = itktools::GetImageProperties(
     inputFileName, pixelType, componentType, dim, numberOfComponents );
   if( !retgip ) return EXIT_FAILURE;
-  
+
   /** Class that does the work. */
-  ITKToolsContrastEnhanceImageBase * filter = NULL; 
+  ITKToolsContrastEnhanceImageBase * filter = NULL;
 
   try
-  {    
+  {
     // now call all possible template combinations.
     if( !filter ) filter = ITKToolsContrastEnhanceImage< 2, short >::New( dim, componentType );
     if( !filter ) filter = ITKToolsContrastEnhanceImage< 2, char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsContrastEnhanceImage< 2, unsigned char >::New( dim, componentType );
-    
+
 #ifdef ITKTOOLS_3D_SUPPORT
     if( !filter ) filter = ITKToolsContrastEnhanceImage< 3, short >::New( dim, componentType );
     if( !filter ) filter = ITKToolsContrastEnhanceImage< 3, char >::New( dim, componentType );
@@ -137,8 +137,8 @@ int main( int argc, char** argv )
     filter->m_Radius = radius;
 
     filter->Run();
-    
-    delete filter;  
+
+    delete filter;
   }
   catch( itk::ExceptionObject & excp )
   {
@@ -146,7 +146,7 @@ int main( int argc, char** argv )
     delete filter;
     return EXIT_FAILURE;
   }
-  
+
   return EXIT_SUCCESS;
 
 } // end function main

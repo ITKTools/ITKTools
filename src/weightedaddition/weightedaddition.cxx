@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Add images with weights.
- 
+
  \verbinclude weightedaddition.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -98,12 +98,12 @@ int main( int argc, char **argv )
   ITKToolsWeightedAdditionBase * filter = NULL;
 
   try
-  {    
+  {
     // now call all possible template combinations.
     if( !filter ) filter = ITKToolsWeightedAddition< 2, float >::New( dim, componentType );
 
 #ifdef ITKTOOLS_3D_SUPPORT
-    if( !filter ) filter = ITKToolsWeightedAddition< 3, float >::New( dim, componentType );    
+    if( !filter ) filter = ITKToolsWeightedAddition< 3, float >::New( dim, componentType );
 #endif
     /** Check if filter was instantiated. */
     bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
@@ -113,10 +113,10 @@ int main( int argc, char **argv )
     filter->m_InputFileNames = inputFileNames;
     filter->m_WeightFileNames = weightFileNames;
     filter->m_OutputFileName = outputFileName;
-  
+
     filter->Run();
-    
-    delete filter;  
+
+    delete filter;
   }
   catch( itk::ExceptionObject & excp )
   {

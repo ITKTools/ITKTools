@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Perform a morphological operation on an image.
- 
+
  \verbinclude morphology.help
  */
 #include "itkCommandLineArgumentParser.h"

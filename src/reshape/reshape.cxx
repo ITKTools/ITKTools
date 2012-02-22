@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Reshape an image.
- 
+
  \verbinclude filter.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -105,10 +105,10 @@ int main( int argc, char **argv )
   }
 
   /** Class that does the work. */
-  ITKToolsReshapeBase * filter = 0; 
-    
+  ITKToolsReshapeBase * filter = 0;
+
   try
-  {    
+  {
     if( !filter ) filter = ITKToolsReshape< 2, unsigned char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsReshape< 2, char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsReshape< 2, unsigned short >::New( dim, componentType );
@@ -142,8 +142,8 @@ int main( int argc, char **argv )
     filter->m_OutputSize = outputSize;
 
     filter->Run();
-    
-    delete filter;  
+
+    delete filter;
   }
   catch( itk::ExceptionObject & excp )
   {
@@ -151,7 +151,7 @@ int main( int argc, char **argv )
     delete filter;
     return EXIT_FAILURE;
   }
-  
+
   /** End program. */
   return EXIT_SUCCESS;
 

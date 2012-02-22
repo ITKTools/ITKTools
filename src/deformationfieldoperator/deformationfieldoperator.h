@@ -37,7 +37,7 @@
  */
 
 class ITKToolsDeformationFieldOperatorBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   /** Constructor. */
   ITKToolsDeformationFieldOperatorBase()
@@ -59,7 +59,7 @@ public:
   unsigned int m_NumberOfStreams;
   unsigned int m_NumberOfIterations;
   double m_StopValue;
-    
+
 }; // end class ITKToolsDeformationFieldOperatorBase
 
 

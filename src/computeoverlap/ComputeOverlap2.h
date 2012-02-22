@@ -23,7 +23,7 @@
 // Seems not to be used ???
 
 class ComputeOverlap2Base : public itktools::ITKToolsBase
-{ 
+{
 public:
   ComputeOverlap2Base(){};
   ~ComputeOverlap2Base(){};
@@ -31,7 +31,7 @@ public:
   /** Input member parameters. */
   std::vector<std::string> this->m_InputFileNames;
   std::vector<unsigned int> m_Labels;
-    
+
 }; // end ComputeOverlap2
 
 

@@ -101,7 +101,7 @@ std::string GetHelpString( void )
 /** Break the program into smaller compilation units. */
 extern void ITKToolsCastConvert2D(
   unsigned int dim,
-  itk::ImageIOBase::IOComponentType outputComponentType, 
+  itk::ImageIOBase::IOComponentType outputComponentType,
   ITKToolsCastConvertBase * & castConvert );
 extern void ITKToolsCastConvert3D(
   unsigned int dim,

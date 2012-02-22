@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief This program reflects an image.
- 
+
  \verbinclude filter.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -104,19 +104,19 @@ int main( int argc, char ** argv )
   {
     componentType = itk::ImageIOBase::GetComponentTypeFromString( componentTypeAsString );
   }
-  
+
   /** Check direction. */
   if( direction > dim - 1 )
   {
     std::cerr << "ERROR: invalid direction." << std::endl;
     return EXIT_FAILURE;
   }
- 
+
   /** Class that does the work. */
-  ITKToolsReflectBase * filter = NULL; 
+  ITKToolsReflectBase * filter = NULL;
 
   try
-  {    
+  {
     // now call all possible template combinations.
     if( !filter ) filter = ITKToolsReflect< 2, unsigned char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsReflect< 2, char >::New( dim, componentType );
@@ -149,10 +149,10 @@ int main( int argc, char ** argv )
     filter->m_InputFileName = inputFileName;
     filter->m_OutputFileName = outputFileName;
     filter->m_Direction = direction;
-    
+
     filter->Run();
-    
-    delete filter;  
+
+    delete filter;
   }
   catch( itk::ExceptionObject & excp )
   {
@@ -160,7 +160,7 @@ int main( int argc, char ** argv )
     delete filter;
     return EXIT_FAILURE;
   }
-  
+
   /** End program. */
   return EXIT_SUCCESS;
 

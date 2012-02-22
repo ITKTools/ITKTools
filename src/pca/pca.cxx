@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Perform PCA.
- 
+
  \verbinclude filter.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -113,10 +113,10 @@ int main( int argc, char **argv )
   }
 
   /** Class that does the work. */
-  ITKToolsPCABase * filter = 0; 
+  ITKToolsPCABase * filter = 0;
 
   try
-  {    
+  {
     // now call all possible template combinations.
     if( !filter ) filter = ITKToolsPCA< 2, unsigned char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsPCA< 2, char >::New( dim, componentType );
@@ -149,10 +149,10 @@ int main( int argc, char **argv )
     filter->m_InputFileNames = inputFileNames;
     filter->m_OutputDirectory = outputDirectory;
     filter->m_NumberOfPCs = numberOfPCs;
-    
+
     filter->Run();
-    
-    delete filter;  
+
+    delete filter;
   }
   catch( itk::ExceptionObject & excp )
   {

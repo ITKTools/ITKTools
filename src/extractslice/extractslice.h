@@ -35,7 +35,7 @@
  */
 
 class ITKToolsExtractSliceBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   /** Constructor. */
   ITKToolsExtractSliceBase()
@@ -53,7 +53,7 @@ public:
   std::string m_OutputFileName;
   unsigned int m_Slicenumber;
   unsigned int m_WhichDimension;
-    
+
 }; // end class ITKToolsExtractSliceBase
 
 

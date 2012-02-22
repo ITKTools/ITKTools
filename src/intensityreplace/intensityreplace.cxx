@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief This program replaces some user specified intensity values in an image.
- 
+
  \verbinclude intensityreplace.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -107,16 +107,16 @@ int main( int argc, char ** argv )
   bool retgip = itktools::GetImageProperties(
     inputFileName, pixelType, componentType, dim, numberOfComponents );
   if( !retgip ) return EXIT_FAILURE;
-  
+
   /** Check for vector images. */
   bool retNOCCheck = itktools::NumberOfComponentsCheck( numberOfComponents );
   if( !retNOCCheck ) return EXIT_FAILURE;
-  
+
   /** Class that does the work. */
-  ITKToolsIntensityReplaceBase * filter = NULL; 
-  
+  ITKToolsIntensityReplaceBase * filter = NULL;
+
   try
-  {    
+  {
     // now call all possible template combinations.
     if( !filter ) filter = ITKToolsIntensityReplace< 2, char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsIntensityReplace< 2, unsigned char >::New( dim, componentType );
@@ -128,7 +128,7 @@ int main( int argc, char ** argv )
     if( !filter ) filter = ITKToolsIntensityReplace< 2, unsigned long >::New( dim, componentType );
     if( !filter ) filter = ITKToolsIntensityReplace< 2, float >::New( dim, componentType );
     if( !filter ) filter = ITKToolsIntensityReplace< 2, double >::New( dim, componentType );
-    
+
 #ifdef ITKTOOLS_3D_SUPPORT
     if( !filter ) filter = ITKToolsIntensityReplace< 3, char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsIntensityReplace< 3, unsigned char >::New( dim, componentType );
@@ -150,10 +150,10 @@ int main( int argc, char ** argv )
     filter->m_InputFileName = inputFileName;
     filter->m_InValues = inValues;
     filter->m_OutValues = outValues;
-    
+
     filter->Run();
-    
-    delete filter;  
+
+    delete filter;
   }
   catch( itk::ExceptionObject & excp )
   {

@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Rescale the intensities of an image.
- 
+
  \verbinclude rescaleintensityimagefilter.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -164,7 +164,7 @@ int main( int argc, char **argv )
   ITKToolsRescaleIntensityImageFilterBase * filter = 0;
 
   try
-  {    
+  {
     if( !filter ) filter = ITKToolsRescaleIntensityFilter< 2, char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsRescaleIntensityFilter< 2, unsigned char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsRescaleIntensityFilter< 2, short >::New( dim, componentType );
@@ -193,8 +193,8 @@ int main( int argc, char **argv )
     filter->m_ValuesAreExtrema = valuesAreExtrema;
 
     filter->Run();
-    
-    delete filter;  
+
+    delete filter;
   }
   catch( itk::ExceptionObject & excp )
   {
@@ -202,7 +202,7 @@ int main( int argc, char **argv )
     delete filter;
     return EXIT_FAILURE;
   }
-  
+
   /** End program. */
   return EXIT_SUCCESS;
 

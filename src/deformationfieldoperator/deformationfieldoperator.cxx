@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief This program converts between deformations (displacement fields) and transformations, and computes the magnitude or Jacobian of a deformation field.
- 
+
  \verbinclude deformationfieldoperator.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -75,7 +75,7 @@ int main( int argc, char **argv )
   {
     return EXIT_SUCCESS;
   }
-  
+
   /** Get arguments. */
   std::string inputFileName = "";
   parser->GetCommandLineArgument( "-in", inputFileName );
@@ -127,10 +127,10 @@ int main( int argc, char **argv )
   }
 
   /** Class that does the work. */
-  ITKToolsDeformationFieldOperatorBase * filter = 0; 
+  ITKToolsDeformationFieldOperatorBase * filter = 0;
 
   try
-  {    
+  {
     // now call all possible template combinations.
     if( !filter ) filter = ITKToolsDeformationFieldOperator< 2, float >::New( dim, componentType );
     if( !filter ) filter = ITKToolsDeformationFieldOperator< 2, double >::New( dim, componentType );
@@ -150,9 +150,9 @@ int main( int argc, char **argv )
     filter->m_NumberOfStreams = numberOfStreams;
     filter->m_NumberOfIterations = numberOfIterations;
     filter->m_StopValue = stopValue;
-  
+
     filter->Run();
-    
+
     delete filter;
   }
   catch( itk::ExceptionObject & excp )

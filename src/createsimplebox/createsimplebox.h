@@ -34,7 +34,7 @@
  */
 
 class ITKToolsCreateSimpleBoxBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   /** Constructor. */
   ITKToolsCreateSimpleBoxBase()
@@ -51,7 +51,7 @@ public:
   std::vector<unsigned int> m_BoxSize;
   std::vector<unsigned int> m_IndexA;
   std::vector<unsigned int> m_IndexB;
-    
+
 }; // end class ITKToolsCreateSimpleBoxBase
 
 
@@ -137,11 +137,11 @@ public:
     tempImage->SetRegions( sizes );
     tempImage->SetOrigin( origin );
     tempImage->SetSpacing( spacing );
-    
+
     // Convert the indices to the necessary ITK type
     IndexType indexA;
     IndexType indexB;
-    
+
     for( unsigned int i = 0; i < VDimension; ++i )
     {
       indexA[ i ] = this->m_IndexA[ i ];

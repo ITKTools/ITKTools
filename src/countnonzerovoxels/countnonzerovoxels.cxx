@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Count non-zero voxels in an image.
- 
+
  \verbinclude countnonzerovoxels.help
  */
 #include "itkCommandLineArgumentParser.h"

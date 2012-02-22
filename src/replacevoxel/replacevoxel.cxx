@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief This program replaces the value of a user specified voxel.
- 
+
  \verbinclude replacevoxel.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -108,16 +108,16 @@ int main( int argc, char ** argv )
   }
 
   /** Class that does the work. */
-  ITKToolsReplaceVoxelBase * filter = 0; 
+  ITKToolsReplaceVoxelBase * filter = 0;
 
   try
-  {    
+  {
     // now call all possible template combinations.
     if( !filter ) filter = ITKToolsReplaceVoxel< 2, short >::New( dim, componentType );
     if( !filter ) filter = ITKToolsReplaceVoxel< 2, float >::New( dim, componentType );
-    
+
 #ifdef ITKTOOLS_3D_SUPPORT
-    if( !filter ) filter = ITKToolsReplaceVoxel< 3, short >::New( dim, componentType );    
+    if( !filter ) filter = ITKToolsReplaceVoxel< 3, short >::New( dim, componentType );
     if( !filter ) filter = ITKToolsReplaceVoxel< 3, float >::New( dim, componentType );
 #endif
     /** Check if filter was instantiated. */
@@ -131,8 +131,8 @@ int main( int argc, char ** argv )
     filter->m_Value = value;
 
     filter->Run();
-    
-    delete filter;  
+
+    delete filter;
   }
   catch( itk::ExceptionObject & excp )
   {

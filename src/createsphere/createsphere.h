@@ -32,7 +32,7 @@
  */
 
 class ITKToolsCreateSphereBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   /** Constructor. */
   ITKToolsCreateSphereBase()
@@ -49,7 +49,7 @@ public:
   std::vector<double> m_Spacing;
   std::vector<double> m_Center;
   double m_Radius;
-    
+
 }; // end class ITKToolsCreateSphereBase
 
 

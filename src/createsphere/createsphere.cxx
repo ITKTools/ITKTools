@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Create a sphere image.
- 
+
  \verbinclude createsphere.help
  */
 
@@ -72,7 +72,7 @@ int main( int argc, char *argv[] )
   {
     return EXIT_SUCCESS;
   }
-  
+
   /** Get arguments. */
   std::string outputFileName = "";
   parser->GetCommandLineArgument( "-out", outputFileName );
@@ -103,7 +103,7 @@ int main( int argc, char *argv[] )
   ITKToolsCreateSphereBase * filter = 0;
 
   try
-  {    
+  {
     // now call all possible template combinations.
     if( !filter ) filter = ITKToolsCreateSphere< 2, unsigned char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsCreateSphere< 2, char >::New( dim, componentType );
@@ -111,7 +111,7 @@ int main( int argc, char *argv[] )
     if( !filter ) filter = ITKToolsCreateSphere< 2, short >::New( dim, componentType );
     if( !filter ) filter = ITKToolsCreateSphere< 2, float >::New( dim, componentType );
     if( !filter ) filter = ITKToolsCreateSphere< 2, double >::New( dim, componentType );
-    
+
 #ifdef ITKTOOLS_3D_SUPPORT
     if( !filter ) filter = ITKToolsCreateSphere< 3, unsigned char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsCreateSphere< 3, char >::New( dim, componentType );
@@ -141,7 +141,7 @@ int main( int argc, char *argv[] )
     delete filter;
     return EXIT_FAILURE;
   }
- 
+
   /** End program. Return a value. */
   return EXIT_SUCCESS;
 

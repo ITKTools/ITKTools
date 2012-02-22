@@ -92,7 +92,7 @@ public:
   {
     return this->m_DiceOverlap;
   }
-  
+
   /** Print the Dice overlaps, only the requested ones. */
   void PrintRequestedDiceOverlaps( void );
 

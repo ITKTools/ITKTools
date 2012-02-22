@@ -35,7 +35,7 @@
  */
 
 class ITKToolsCreateBoxBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   /** Constructor. */
   ITKToolsCreateBoxBase()

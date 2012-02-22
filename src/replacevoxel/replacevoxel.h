@@ -31,7 +31,7 @@
  */
 
 class ITKToolsReplaceVoxelBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   /** Constructor. */
   ITKToolsReplaceVoxelBase()
@@ -48,7 +48,7 @@ public:
   std::string m_OutputFileName;
   std::vector<unsigned int> m_Voxel;
   double m_Value;
-    
+
 }; // end class ITKToolsReplaceVoxelBase
 
 

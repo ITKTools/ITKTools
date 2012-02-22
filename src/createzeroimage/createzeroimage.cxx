@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Create a blank image.
- 
+
  \verbinclude createzeroimage.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -58,11 +58,11 @@ int main( int argc, char **argv )
   parser->SetProgramHelpText( GetHelpString() );
 
   parser->MarkArgumentAsRequired( "-out", "The output filename." );
-  
+
   std::vector<std::string> exactlyOneArguments;
   exactlyOneArguments.push_back( "-sz" );
   exactlyOneArguments.push_back( "-in" );
-  
+
   parser->MarkExactlyOneOfArgumentsAsRequired( exactlyOneArguments );
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
@@ -75,7 +75,7 @@ int main( int argc, char **argv )
   {
     return EXIT_SUCCESS;
   }
-  
+
   /** Get arguments. */
   std::string inputFileName = "";
   bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
@@ -166,10 +166,10 @@ int main( int argc, char **argv )
   }
 
   /** Class that does the work. */
-  ITKToolsCreateZeroImageBase * filter = 0; 
+  ITKToolsCreateZeroImageBase * filter = 0;
 
   try
-  {    
+  {
     // now call all possible template combinations.
     if( !filter ) filter = ITKToolsCreateZeroImage< 2, unsigned char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsCreateZeroImage< 2, char >::New( dim, componentType );
@@ -177,7 +177,7 @@ int main( int argc, char **argv )
     if( !filter ) filter = ITKToolsCreateZeroImage< 2, short >::New( dim, componentType );
     if( !filter ) filter = ITKToolsCreateZeroImage< 2, float >::New( dim, componentType );
     if( !filter ) filter = ITKToolsCreateZeroImage< 2, double >::New( dim, componentType );
-    
+
 #ifdef ITKTOOLS_3D_SUPPORT
     if( !filter ) filter = ITKToolsCreateZeroImage< 3, unsigned char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsCreateZeroImage< 3, char >::New( dim, componentType );
@@ -197,7 +197,7 @@ int main( int argc, char **argv )
     filter->m_Origin = origin;
 
     filter->Run();
-    
+
     delete filter;
   }
   catch( itk::ExceptionObject & excp )

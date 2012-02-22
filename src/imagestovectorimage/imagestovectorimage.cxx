@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Stack images into one big vector image.
- 
+
  \verbinclude imagestovectorimage.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -98,7 +98,7 @@ int main( int argc, char ** argv )
   ITKToolsImagesToVectorImageBase * filter = NULL;
 
   try
-  {    
+  {
     // now call all possible template combinations.
     if( !filter ) filter = ITKToolsImagesToVectorImage< 2, char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsImagesToVectorImage< 2, unsigned char >::New( dim, componentType );
@@ -121,7 +121,7 @@ int main( int argc, char ** argv )
     if( !filter ) filter = ITKToolsImagesToVectorImage< 3, long >::New( dim, componentType );
     if( !filter ) filter = ITKToolsImagesToVectorImage< 3, unsigned long >::New( dim, componentType );
     if( !filter ) filter = ITKToolsImagesToVectorImage< 3, float >::New( dim, componentType );
-    if( !filter ) filter = ITKToolsImagesToVectorImage< 3, double >::New( dim, componentType );    
+    if( !filter ) filter = ITKToolsImagesToVectorImage< 3, double >::New( dim, componentType );
 #endif
     /** Check if filter was instantiated. */
     bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
@@ -133,8 +133,8 @@ int main( int argc, char ** argv )
     filter->m_NumberOfStreams = numberOfStreams;
 
     filter->Run();
-    
-    delete filter;  
+
+    delete filter;
   }
   catch( itk::ExceptionObject & excp )
   {

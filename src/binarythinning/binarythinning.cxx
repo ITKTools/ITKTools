@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Compute binary thinning of an image.
- 
+
  \verbinclude binarythinning.help
  */
 #include "itkCommandLineArgumentParser.h"

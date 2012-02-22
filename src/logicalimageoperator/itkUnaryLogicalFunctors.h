@@ -25,8 +25,8 @@ enum UnaryFunctorEnum {EQUAL, NOT};
 namespace itk {
 
 namespace Functor {
-  
-template< class TInput, class TArgument=TInput, class TOutput=TInput > 
+
+template< class TInput, class TArgument=TInput, class TOutput=TInput >
 class EQUAL
 {
 public:
@@ -46,7 +46,7 @@ private:
 } // end itk namespace
 
 
-template< class TImage > 
+template< class TImage >
 struct UnaryLogicalFunctorFactory
 {
   typename itk::InPlaceImageFilter<TImage, TImage>::Pointer
@@ -54,7 +54,7 @@ struct UnaryLogicalFunctorFactory
   {
     if( filterType == EQUAL )
     {
-      typedef itk::UnaryFunctorImageFilter<TImage, TImage, 
+      typedef itk::UnaryFunctorImageFilter<TImage, TImage,
 					  itk::Functor::EQUAL<typename TImage::PixelType> >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       filter->GetFunctor().SetArgument(argument);
@@ -62,7 +62,7 @@ struct UnaryLogicalFunctorFactory
     }
     else if( filterType == NOT )
     {
-      typedef itk::UnaryFunctorImageFilter<TImage, TImage, 
+      typedef itk::UnaryFunctorImageFilter<TImage, TImage,
 					  itk::Functor::NOT<typename TImage::PixelType> >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       // 'argument' not used for this filter

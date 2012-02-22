@@ -116,3 +116,4 @@ public:
 
 
 #endif // end #ifndef __averagevectormagnitude_h_
+

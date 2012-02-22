@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Create a box image.
- 
+
  \verbinclude createbox.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -203,7 +203,7 @@ int main( int argc, char** argv )
 
   itk::ImageIOBase::IOComponentType componentType
     = referenceIOBase->GetComponentTypeFromString( componentTypeAsString );
-    
+
   /** How was the input supplied by the user? */
   std::vector<double> input1, input2;
   std::string boxDefinition = "";
@@ -227,17 +227,17 @@ int main( int argc, char** argv )
   }
 
   /** Class that does the work. */
-  ITKToolsCreateBoxBase * filter = 0; 
+  ITKToolsCreateBoxBase * filter = 0;
 
   try
-  {        
+  {
     if( !filter ) filter = ITKToolsCreateBox< 2, unsigned char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsCreateBox< 2, char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsCreateBox< 2, unsigned short >::New( dim, componentType );
     if( !filter ) filter = ITKToolsCreateBox< 2, short >::New( dim, componentType );
-    
+
 #ifdef ITKTOOLS_3D_SUPPORT
-    if( !filter ) filter = ITKToolsCreateBox< 3, unsigned char >::New( dim, componentType );    
+    if( !filter ) filter = ITKToolsCreateBox< 3, unsigned char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsCreateBox< 3, char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsCreateBox< 3, unsigned short >::New( dim, componentType );
     if( !filter ) filter = ITKToolsCreateBox< 3, short >::New( dim, componentType );
@@ -253,10 +253,10 @@ int main( int argc, char** argv )
     filter->m_Input2 = input2;
     filter->m_OrientationOfBox = orientation;
     filter->m_BoxDefinition = boxDefinition;
-    
+
     filter->Run();
-    
-    delete filter;  
+
+    delete filter;
   }
   catch( itk::ExceptionObject & excp )
   {

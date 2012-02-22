@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Perform T-test.
- 
+
  \verbinclude ttest.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -351,7 +351,7 @@ void ComputeMeanAndStandardDeviation(
   std /= ( vec.size() - 1 );
   std = vcl_sqrt( std );
   */
-  
+
   /** Compute mean and std fast, using one loop. */
   double N = static_cast<double>( samples1.size() );
   double s1 = 0.0, ss1 = 0.0;

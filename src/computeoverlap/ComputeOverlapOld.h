@@ -36,7 +36,7 @@
  */
 
 class ITKToolsComputeOverlapOldBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   /** Constructor. */
   ITKToolsComputeOverlapOldBase()
@@ -56,7 +56,7 @@ public:
   std::string m_MaskFileName2;
   unsigned int m_T1;
   unsigned int m_T2;
-    
+
 }; // end ITKToolsComputeOverlapOldBase
 
 

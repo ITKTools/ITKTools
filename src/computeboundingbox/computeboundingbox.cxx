@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Compute the bounding box of an image.
- 
+
  \verbinclude computeboundingbox.help
  */
 
@@ -92,15 +92,15 @@ int main( int argc, char **argv )
   componentType = itk::ImageIOBase::SHORT;
 
   /** Class that does the work. */
-  ITKToolsComputeBoundingBoxBase * filter = 0; 
+  ITKToolsComputeBoundingBoxBase * filter = 0;
 
   try
-  {    
+  {
     // now call all possible template combinations.
     if( !filter ) filter = ITKToolsComputeBoundingBox< 2, short >::New( dim, componentType );
-    
+
 #ifdef ITKTOOLS_3D_SUPPORT
-    if( !filter ) filter = ITKToolsComputeBoundingBox< 3, short >::New( dim, componentType );    
+    if( !filter ) filter = ITKToolsComputeBoundingBox< 3, short >::New( dim, componentType );
 #endif
     /** Check if filter was instantiated. */
     bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
@@ -110,8 +110,8 @@ int main( int argc, char **argv )
     filter->m_InputFileName = inputFileName;
 
     filter->Run();
-    
-    delete filter;  
+
+    delete filter;
   }
   catch( itk::ExceptionObject & excp )
   {

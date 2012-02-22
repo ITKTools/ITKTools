@@ -48,7 +48,7 @@
  */
 
 class ITKToolsCombineSegmentationsBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   /** Constructor. */
   ITKToolsCombineSegmentationsBase()

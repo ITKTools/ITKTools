@@ -6,15 +6,15 @@
 
 namespace itk
 {
-  
+
 /** \class MorphSDTHelperImageFilter
  * \brief Implements a pixel-wise operator to form a signed distance transform.
  *
  * Numeric conversions (castings) are done by the C++ defaults.
- * 
+ *
  * \ingroup IntensityImageFilters  Multithreaded
  */
-namespace Function {  
+namespace Function {
 
 template< class TInput1, class TInput2=TInput1, class TInput3=TInput1, class TOutput=TInput1>
 class MorphSDTHelper
@@ -32,7 +32,7 @@ public:
     return !(*this != other);
   }
   inline TOutput operator()( const TInput1 & A, const TInput2 & B, const TInput3 & C)
-  { 
+  {
     // A should be the output of the erosion, B the dilation, C the mask
     if( C > 0)
       {
@@ -54,9 +54,9 @@ private:
 template <class TInputImage1, class TInputImage2=TInputImage1, class TInputImage3=TInputImage1, class TOutputImage=TInputImage1>
 class ITK_EXPORT MorphSDTHelperImageFilter :
     public
-TernaryFunctorImageFilter<TInputImage1,TInputImage2,TInputImage3,TOutputImage, 
-                         Function::MorphSDTHelper< 
-  typename TInputImage1::PixelType, 
+TernaryFunctorImageFilter<TInputImage1,TInputImage2,TInputImage3,TOutputImage,
+                         Function::MorphSDTHelper<
+  typename TInputImage1::PixelType,
   typename TInputImage2::PixelType,
   typename TInputImage3::PixelType,
   typename TOutputImage::PixelType>   >
@@ -64,12 +64,12 @@ TernaryFunctorImageFilter<TInputImage1,TInputImage2,TInputImage3,TOutputImage,
 public:
   /** Standard class typedefs. */
   typedef MorphSDTHelperImageFilter  Self;
-  typedef TernaryFunctorImageFilter<TInputImage1,TInputImage2,TInputImage3,TOutputImage, 
-                                   Function::MorphSDTHelper< 
-    typename TInputImage1::PixelType, 
+  typedef TernaryFunctorImageFilter<TInputImage1,TInputImage2,TInputImage3,TOutputImage,
+                                   Function::MorphSDTHelper<
+    typename TInputImage1::PixelType,
     typename TInputImage2::PixelType,
     typename TInputImage3::PixelType,
-    typename TOutputImage::PixelType>   
+    typename TOutputImage::PixelType>
   > Superclass;
   typedef SmartPointer<Self>   Pointer;
   typedef SmartPointer<const Self>  ConstPointer;
@@ -78,7 +78,7 @@ public:
   itkNewMacro(Self);
 
   /** Runtime information support. */
-  itkTypeMacro(MorphSDTHelperImageFilter, 
+  itkTypeMacro(MorphSDTHelperImageFilter,
                TernaryFunctorImageFilter);
 
   void SetVal(double val)

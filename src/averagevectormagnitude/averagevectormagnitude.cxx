@@ -18,7 +18,7 @@
 
 /** \file
  \brief Calculate the average magnitude of the vectors in a vector image.
- 
+
  \verbinclude averagevectormagnitude.help
  */
 
@@ -93,7 +93,7 @@ int main( int argc, char** argv )
     // 2D
     if( !filter ) filter = ITKToolsAverageVectorMagnitude< 2, float, 2 >::New( dim, componentType, numberOfComponents );
     if( !filter ) filter = ITKToolsAverageVectorMagnitude< 2, float, 3 >::New( dim, componentType, numberOfComponents );
-    
+
 #ifdef ITKTOOLS_3D_SUPPORT
     if( !filter ) filter = ITKToolsAverageVectorMagnitude< 3, float, 2 >::New( dim, componentType, numberOfComponents );
     if( !filter ) filter = ITKToolsAverageVectorMagnitude< 3, float, 3 >::New( dim, componentType, numberOfComponents );
@@ -120,3 +120,4 @@ int main( int argc, char** argv )
   return EXIT_SUCCESS;
 
 } // end function main
+

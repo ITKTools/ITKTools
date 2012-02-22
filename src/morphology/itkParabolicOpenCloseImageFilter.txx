@@ -270,7 +270,7 @@ ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage >
 //     RealType magnitude = 1.0/(2.0 * this->m_Scale[0]);
 	unsigned long LineLength = region.GetSize()[0];
 	RealType image_scale = this->GetInput()->GetSpacing()[0];
-	
+
 	doOneDimension<InputConstIteratorType,OutputIteratorType,
 	  RealType, OutputPixelType, !doOpen>(inputIterator, outputIterator,
 					      *progress, LineLength, 0,
@@ -285,7 +285,7 @@ ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage >
 	// copy to output
 	typedef ImageRegionConstIterator<TInputImage> InItType;
 	typedef ImageRegionIterator<TOutputImage> OutItType;
-	
+
 	InItType InIt(inputImage, region);
 	OutItType OutIt(outputImage, region);
 	while (!InIt.IsAtEnd())
@@ -294,7 +294,7 @@ ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage >
 	  ++InIt;
 	  ++OutIt;
 	  }
-	
+
 	}
       }
     else

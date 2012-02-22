@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Perform a Gaussian filtering on an image.
- 
+
  \verbinclude gaussianimagefilter.help
  */
 
@@ -49,7 +49,7 @@ std::string GetHelpString( void )
     << "           {LiLi, LiLijLj, LiLijLjkLk, Lii, LijLji, LijLjkLki}\n"
     << "  [-opct]  output pixel type, default equal to input\n"
     << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
-  
+
   return ss.str();
 
 } // end GetHelpString()
@@ -168,7 +168,7 @@ int main( int argc, char ** argv )
   ITKToolsGaussianBase * filter = NULL;
 
   try
-  {    
+  {
     // now call all possible template combinations.
     if( !filter ) filter = ITKToolsGaussian< 2, char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsGaussian< 2, unsigned char >::New( dim, componentType );
@@ -176,7 +176,7 @@ int main( int argc, char ** argv )
     if( !filter ) filter = ITKToolsGaussian< 2, unsigned short >::New( dim, componentType );
     if( !filter ) filter = ITKToolsGaussian< 2, float >::New( dim, componentType );
     if( !filter ) filter = ITKToolsGaussian< 2, double >::New( dim, componentType );
-    
+
 #ifdef ITKTOOLS_3D_SUPPORT
     if( !filter ) filter = ITKToolsGaussian< 3, char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsGaussian< 3, unsigned char >::New( dim, componentType );
@@ -198,8 +198,8 @@ int main( int argc, char ** argv )
     filter->m_Invariant = invariant;
 
     filter->Run();
-    
-    delete filter;  
+
+    delete filter;
   }
   catch( itk::ExceptionObject & excp )
   {

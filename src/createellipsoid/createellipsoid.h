@@ -32,7 +32,7 @@
  */
 
 class ITKToolsCreateEllipsoidBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   /** Constructor. */
   ITKToolsCreateEllipsoidBase()
@@ -49,7 +49,7 @@ public:
   std::vector<double> m_Center;
   std::vector<double> m_Radius;
   std::vector<double> m_Orientation;
-    
+
 }; // end class ITKToolsCreateEllipsoidBase
 
 

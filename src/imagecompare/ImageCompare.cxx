@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Compare two images.
- 
+
  \verbinclude imagecompare.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -149,7 +149,7 @@ int main( int argc, char **argv )
   if(numberOfDifferentPixels > 0)
   {
     std::cerr << "There are " << numberOfDifferentPixels << " different pixels!" << std::endl;
-        
+
     // Create name for diff image
     std::string diffImageFileName =
       itksys::SystemTools::GetFilenameWithoutLastExtension( testImageFileName );

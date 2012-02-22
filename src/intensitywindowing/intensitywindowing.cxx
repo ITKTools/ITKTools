@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Intensity windowing.
- 
+
  \verbinclude intensitywindowing.help
  */
 
@@ -121,10 +121,10 @@ int main( int argc, char **argv )
   if( !retNOCCheck ) return EXIT_FAILURE;
 
   /** Class that does the work. */
-  ITKToolsIntensityWindowingBase * filter = NULL; 
+  ITKToolsIntensityWindowingBase * filter = NULL;
 
   try
-  {    
+  {
     // now call all possible template combinations.
     if( !filter ) filter = ITKToolsIntensityWindowing< 2, char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsIntensityWindowing< 2, unsigned char >::New( dim, componentType );
@@ -133,7 +133,7 @@ int main( int argc, char **argv )
     if( !filter ) filter = ITKToolsIntensityWindowing< 2, int >::New( dim, componentType );
     if( !filter ) filter = ITKToolsIntensityWindowing< 2, unsigned int >::New( dim, componentType );
     if( !filter ) filter = ITKToolsIntensityWindowing< 2, float >::New( dim, componentType );
-    
+
 #ifdef ITKTOOLS_3D_SUPPORT
     if( !filter ) filter = ITKToolsIntensityWindowing< 3, char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsIntensityWindowing< 3, unsigned char >::New( dim, componentType );

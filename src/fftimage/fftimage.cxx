@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Compute the FFT of an image. Note this documentation may be empty if ITKTools was compiled without USE_FFTIMAGE.
- 
+
  \verbinclude fftimage.help
  */
 #include "itkCommandLineArgumentParser.h"

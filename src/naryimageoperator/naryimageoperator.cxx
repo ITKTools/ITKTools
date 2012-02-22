@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief N-ary image operator.
- 
+
  \verbinclude naryimageoperator.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -134,7 +134,7 @@ int main( int argc, char **argv )
       std::cerr << "ERROR: the you specified an invalid opct." << std::endl;
       return EXIT_FAILURE;
     }
-    
+
     if( !itktools::ComponentTypeIsInteger( componentTypeOut ) )
     {
       componentTypeIn = itk::ImageIOBase::DOUBLE;
@@ -201,7 +201,7 @@ int main( int argc, char **argv )
     delete filter;
     return EXIT_FAILURE;
   }
-  
+
   /** End program. */
   return EXIT_SUCCESS;
 

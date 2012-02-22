@@ -32,7 +32,7 @@
  */
 
 class ITKToolsComputeOverlapSummaryBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   /** Constructor. */
   ITKToolsComputeOverlapSummaryBase()
@@ -90,7 +90,7 @@ public:
     reader1->SetFileName( this->m_InputFileName1.c_str() );
     typename ReaderType::Pointer reader2 = ReaderType::New();
     reader2->SetFileName( this->m_InputFileName2.c_str() );
-   
+
     typename FilterType::Pointer filter = FilterType::New();
     filter->SetSourceImage( reader1->GetOutput() );
     filter->SetTargetImage( reader2->GetOutput() );

@@ -18,7 +18,7 @@
 
 /** \file
  \brief Equalize the histogram of an image.
- 
+
  \verbinclude histogramequalizeimage.help
  */
 
@@ -56,7 +56,7 @@ int main( int argc, char** argv )
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
   parser->SetProgramHelpText( GetHelpString() );
-  
+
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
   parser->MarkArgumentAsRequired( "-out", "The output filename." );
 

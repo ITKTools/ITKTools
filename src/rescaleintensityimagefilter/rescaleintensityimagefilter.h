@@ -39,7 +39,7 @@
  */
 
 class ITKToolsRescaleIntensityImageFilterBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   /** Constructor. */
   ITKToolsRescaleIntensityImageFilterBase()
@@ -56,7 +56,7 @@ public:
   std::string m_OutputFileName;
   std::vector<double> m_Values;
   bool m_ValuesAreExtrema;
-    
+
 }; // end class ITKToolsRescaleIntensityImageFilterBase
 
 
@@ -107,18 +107,18 @@ public:
 
     // Setup type to disassemble the components
     typedef itk::VectorIndexSelectionCastImageFilter<VectorImageType, ScalarImageType> IndexSelectionType;
-    
+
     // Setup the filter to reassemble the components
     typedef itk::ImageToVectorImageFilter<ScalarImageType> ImageToVectorImageFilterType;
     typename ImageToVectorImageFilterType::Pointer imageToVectorImageFilter = ImageToVectorImageFilterType::New();
-      
+
     for( unsigned int component = 0; component < reader->GetOutput()->GetNumberOfComponentsPerPixel(); ++component)
     {
       typename IndexSelectionType::Pointer indexSelectionFilter = IndexSelectionType::New();
       indexSelectionFilter->SetIndex(component);
       indexSelectionFilter->SetInput(reader->GetOutput());
       indexSelectionFilter->Update();
-      
+
       /** If the input values are extrema (minimum and maximum),
        * then an IntensityRescaler is used. Otherwise, the values represent
        * the desired mean and variance and a ShiftScaler is used.
@@ -179,7 +179,7 @@ public:
 
     imageToVectorImageFilter->Update();
     writer->SetInput(imageToVectorImageFilter->GetOutput());
-    
+
     /** Write the output image. */
     writer->SetFileName( this->m_OutputFileName.c_str() );
     writer->Update();

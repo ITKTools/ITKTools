@@ -39,7 +39,7 @@
  */
 
 class ITKToolsInvertIntensityBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   /** Constructor. */
   ITKToolsInvertIntensityBase()
@@ -53,7 +53,7 @@ public:
   /** Input member parameters. */
   std::string m_InputFileName;
   std::string m_OutputFileName;
-    
+
 }; // end class ITKToolsInvertIntensityBase
 
 
@@ -95,7 +95,7 @@ public:
     // In this case, we must manually disassemble the image rather than use a
     // ChannelByChannel filter because the image is not the output,
     // but rather the GetMaximum() function is what we want.
-    
+
     // Create the disassembler
     typedef itk::VectorIndexSelectionCastImageFilter<VectorImageType, ScalarImageType> IndexSelectionType;
     typename IndexSelectionType::Pointer indexSelectionFilter = IndexSelectionType::New();

@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Extracts a 2D slice from a 3D image.
- 
+
  \verbinclude extractslice.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -74,7 +74,7 @@ int main( int argc, char ** argv )
   {
     return EXIT_SUCCESS;
   }
-  
+
   /** Get the input file name. */
   std::string inputFileName;
   parser->GetCommandLineArgument( "-in", inputFileName );
@@ -147,12 +147,12 @@ int main( int argc, char ** argv )
     itksys::SystemTools::GetFilenameLastExtension( inputFileName );
   std::string outputFileName = part1 + "_slice_" + direction + "=" + slicenumberstring + part2;
   parser->GetCommandLineArgument( "-out", outputFileName );
-  
+
   /** Class that does the work. */
-  ITKToolsExtractSliceBase * filter = 0; 
-    
+  ITKToolsExtractSliceBase * filter = 0;
+
   try
-  {    
+  {
     // now call all possible template combinations.
 #ifdef ITKTOOLS_3D_SUPPORT
     if( !filter ) filter = ITKToolsExtractSlice< unsigned char >::New( componentType );
@@ -170,9 +170,9 @@ int main( int argc, char ** argv )
     filter->m_OutputFileName = outputFileName;
     filter->m_WhichDimension = which_dimension;
     filter->m_Slicenumber = slicenumber;
-  
+
     filter->Run();
-    
+
     delete filter;
   }
   catch( itk::ExceptionObject & excp )
@@ -181,7 +181,7 @@ int main( int argc, char ** argv )
     delete filter;
     return EXIT_FAILURE;
   }
-  
+
   /** Return a value. */
   return EXIT_SUCCESS;
 

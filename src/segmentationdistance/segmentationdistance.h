@@ -62,7 +62,7 @@ void SegmentationDistanceHelper(
  */
 
 class ITKToolsSegmentationDistanceBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   /** Constructor. */
   ITKToolsSegmentationDistanceBase()
@@ -87,7 +87,7 @@ public:
   unsigned int m_Thetasize;
   unsigned int m_Phisize;
   bool m_Cartesianonly;
-    
+
 }; // end class ITKToolsSegmentationDistanceBase
 
 

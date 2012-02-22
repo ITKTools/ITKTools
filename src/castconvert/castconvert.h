@@ -126,7 +126,7 @@ public:
 
     typedef itk::CastImageFilter< InputVectorImageType, OutputVectorImageType > CastImageFilterType;
     typename CastImageFilterType::Pointer castImageFilter = CastImageFilterType::New();
-    
+
     castImageFilter->SetInput( reader->GetOutput() );
     castImageFilter->Update();
 

@@ -37,7 +37,7 @@
  */
 
 class ITKToolsContrastEnhanceImageBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   /** Constructor. */
   ITKToolsContrastEnhanceImageBase()

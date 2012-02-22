@@ -34,7 +34,7 @@
  */
 
 class ITKToolsWeightedAdditionBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   /** Constructor. */
   ITKToolsWeightedAdditionBase()

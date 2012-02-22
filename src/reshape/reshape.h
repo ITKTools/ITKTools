@@ -33,7 +33,7 @@
  */
 
 class ITKToolsReshapeBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   /** Constructor. */
   ITKToolsReshapeBase()
@@ -48,7 +48,7 @@ public:
   std::string m_InputFileName;
   std::string m_OutputFileName;
   std::vector<unsigned long> m_OutputSize;
-    
+
 }; // end class ITKToolsReshapeBase
 
 

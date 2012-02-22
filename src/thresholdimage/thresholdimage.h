@@ -30,7 +30,7 @@
  */
 
 class ITKToolsThresholdImageBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   /** Constructor. */
   ITKToolsThresholdImageBase()
@@ -73,7 +73,7 @@ public:
   unsigned int  m_Iterations;
   unsigned int  m_MaskValue;
   unsigned int  m_MixtureType;
-  
+
   double        m_Pow;
   double        m_Sigma;
   bool          m_Supported;

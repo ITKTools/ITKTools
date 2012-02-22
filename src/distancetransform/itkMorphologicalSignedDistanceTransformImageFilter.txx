@@ -4,9 +4,9 @@
 #include "itkMorphologicalSignedDistanceTransformImageFilter.h"
 #include "itkProgressAccumulator.h"
 
-namespace itk 
+namespace itk
 {
-template <typename TInputImage, typename TOutputImage> 
+template <typename TInputImage, typename TOutputImage>
 MorphologicalSignedDistanceTransformImageFilter<TInputImage, TOutputImage>
 ::MorphologicalSignedDistanceTransformImageFilter()
 {
@@ -24,7 +24,7 @@ MorphologicalSignedDistanceTransformImageFilter<TInputImage, TOutputImage>
   this->m_OutsideValue = 0;
 
 }
-template <typename TInputImage, typename TOutputImage> 
+template <typename TInputImage, typename TOutputImage>
 void
 MorphologicalSignedDistanceTransformImageFilter<TInputImage, TOutputImage>
 ::Modified() const
@@ -36,7 +36,7 @@ MorphologicalSignedDistanceTransformImageFilter<TInputImage, TOutputImage>
   this->m_Helper->Modified();
 }
 
-template <typename TInputImage, typename TOutputImage> 
+template <typename TInputImage, typename TOutputImage>
 void
 MorphologicalSignedDistanceTransformImageFilter<TInputImage, TOutputImage>
 ::GenerateData( void )
@@ -58,7 +58,7 @@ MorphologicalSignedDistanceTransformImageFilter<TInputImage, TOutputImage>
   typename TOutputImage::SpacingType sp = this->GetOutput()->GetSpacing();
 
   double MaxDist = 0.0;
-  if(this->GetUseImageSpacing()) 
+  if(this->GetUseImageSpacing())
     {
     for (unsigned k = 0; k < TOutputImage::ImageDimension; k++)
       {
@@ -106,7 +106,7 @@ MorphologicalSignedDistanceTransformImageFilter<TInputImage, TOutputImage>
 #endif
 
 }
-template <typename TInputImage, typename TOutputImage> 
+template <typename TInputImage, typename TOutputImage>
 void
 MorphologicalSignedDistanceTransformImageFilter<TInputImage, TOutputImage>
 ::PrintSelf(std::ostream& os, Indent indent) const

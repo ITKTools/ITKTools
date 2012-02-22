@@ -46,7 +46,7 @@ void erosionGrayscale(
    * This is the value outside the image.
    * By default it is set to max(PixelType).
    */
-  
+
   PixelType boundaryValue = itk::NumericTraits<PixelType>::max();
   if( boundaryCondition != "" )
   {
@@ -58,7 +58,7 @@ void erosionGrayscale(
     {
       boundaryValue = static_cast<PixelType>( atof( boundaryCondition.c_str() ) );
     }
-    
+
     erosion->SetBoundary( boundaryValue );
   }
 

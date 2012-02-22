@@ -14,7 +14,7 @@ namespace itk
  * \class MorphologicalDistanceTransformImageFilter
  * \brief Distance transform of a mask using parabolic morphological
  * methods
- * 
+ *
  * Morphological erosions using a parabolic structuring element can be
  * used to compute a distance transform of a mask by setting the
  * "Outside" value to 0 and the "inside" value to +infinity. The
@@ -25,7 +25,7 @@ namespace itk
  * The output pixel type needs to support values as large as the
  * square of the largest value of the distance - just use float to be
  * safe.
- * 
+ *
  * \author Richard Beare, Monash University, Department of Medicine,
  * Melbourne, Australia. <Richard.Beare@med.monash.edu.au>
  *
@@ -62,7 +62,7 @@ public:
   /** Smart pointer typedef support.  */
   typedef typename TInputImage::Pointer  InputImagePointer;
   typedef typename TInputImage::ConstPointer  InputImageConstPointer;
- 
+
   /** Image related typedefs. */
   itkStaticConstMacro(OutputImageDimension, unsigned int,
                       TOutputImage::ImageDimension);
@@ -81,8 +81,8 @@ public:
   itkSetMacro(OutsideValue, InputPixelType);
   itkGetConstReferenceMacro(OutsideValue, InputPixelType);
 
-  
-  
+
+
   /** Is the transform in world or voxel units - default is world */
   void SetUseImageSpacing(bool uis)
   {
@@ -117,10 +117,10 @@ protected:
   MorphologicalDistanceTransformImageFilter();
   virtual ~MorphologicalDistanceTransformImageFilter() {};
   void PrintSelf(std::ostream& os, Indent indent) const;
-  
+
   /** Generate Data */
   void GenerateData( void );
-  
+
   // do everything in the output image type, which should have high precision
   typedef typename itk::BinaryThresholdImageFilter<InputImageType, OutputImageType> ThreshType;
   typedef typename itk::ParabolicErodeImageFilter<OutputImageType, OutputImageType> ErodeType;

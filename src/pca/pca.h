@@ -34,7 +34,7 @@
  */
 
 class ITKToolsPCABase : public itktools::ITKToolsBase
-{ 
+{
 public:
   /** Constructor. */
   ITKToolsPCABase()

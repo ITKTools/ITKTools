@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief This program computes a spatial segmentation error map.
- 
+
  \verbinclude segmentationdistance.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -73,7 +73,7 @@ int main( int argc, char **argv )
   {
     return EXIT_SUCCESS;
   }
-  
+
   /** Get the input file names. */
   std::vector< std::string >  inputFileNames;
   parser->GetCommandLineArgument( "-in", inputFileNames );
@@ -136,7 +136,7 @@ int main( int argc, char **argv )
   /** Check for vector images. */
   bool retNOCCheck = itktools::NumberOfComponentsCheck( numberOfComponents );
   if( !retNOCCheck ) return EXIT_FAILURE;
- 
+
   /** The input images  are assumed to be short. Input images other
    * than short are supported, but automatically converted to short.
    * The output distance image is always float.
@@ -167,10 +167,10 @@ int main( int argc, char **argv )
     filter->m_Thetasize = thetasize;
     filter->m_Phisize = phisize;
     filter->m_Cartesianonly = cartesianonly;
-  
+
     filter->Run();
-    
-    delete filter;  
+
+    delete filter;
   }
   catch( itk::ExceptionObject & excp )
   {
@@ -178,7 +178,7 @@ int main( int argc, char **argv )
     delete filter;
     return EXIT_FAILURE;
   }
-  
+
   /** End program. */
   return EXIT_SUCCESS;
 

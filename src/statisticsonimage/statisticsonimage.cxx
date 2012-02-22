@@ -80,7 +80,7 @@ int main( int argc, char ** argv )
   {
     return EXIT_SUCCESS;
   }
-  
+
   /** Get arguments. */
   std::string inputFileName = "";
   parser->GetCommandLineArgument( "-in", inputFileName );
@@ -125,15 +125,15 @@ int main( int argc, char ** argv )
   componentType = itk::ImageIOBase::FLOAT;
 
   /** Class that does the work. */
-  ITKToolsStatisticsOnImageBase * filter = NULL; 
+  ITKToolsStatisticsOnImageBase * filter = NULL;
 
   try
-  {    
+  {
     // now call all possible template combinations.
     if( !filter ) filter = ITKToolsStatisticsOnImage< 2, 1, float >::New( dim, numberOfComponents, componentType );
     if( !filter ) filter = ITKToolsStatisticsOnImage< 2, 2, float >::New( dim, numberOfComponents, componentType );
     if( !filter ) filter = ITKToolsStatisticsOnImage< 2, 3, float >::New( dim, numberOfComponents, componentType );
-    
+
 #ifdef ITKTOOLS_3D_SUPPORT
     if( !filter ) filter = ITKToolsStatisticsOnImage< 3, 1, float >::New( dim, numberOfComponents, componentType );
     if( !filter ) filter = ITKToolsStatisticsOnImage< 3, 2, float >::New( dim, numberOfComponents, componentType );
@@ -153,10 +153,10 @@ int main( int argc, char ** argv )
     filter->m_HistogramOutputFileName = histogramOutputFileName;
     filter->m_NumberOfBins = numberOfBins;
     filter->m_Select = select;
-  
+
     filter->Run();
-    
-    delete filter;  
+
+    delete filter;
   }
   catch( itk::ExceptionObject & excp )
   {

@@ -43,7 +43,7 @@
  */
 
 class ITKToolsLogicalImageOperatorBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   /** Constructor. */
   ITKToolsLogicalImageOperatorBase()
@@ -67,7 +67,7 @@ public:
   bool m_UseCompression;
   double m_Argument;
   bool m_Unary; // is the operator to be performed unary? (else it is binary)
-    
+
 }; // end class ITKToolsLogicalImageOperatorBase
 
 
@@ -95,7 +95,7 @@ public:
     else this->RunBinary();
 
   } // end Run()
-  
+
   /** RunUnary function. */
   void RunUnary( void )
   {
@@ -129,7 +129,7 @@ public:
       std::cerr << "Invalid operator: " << this->m_Ops << std::endl;
       return;
     }
-    
+
     UnaryLogicalFunctorFactory<ScalarImageType> unaryFactory;
     typename itk::InPlaceImageFilter<ScalarImageType, ScalarImageType>::Pointer logicalFilter
       =	unaryFactory.GetFilter( unaryOperation, static_cast<TComponentType>( this->m_Argument ) );
@@ -137,15 +137,15 @@ public:
     // Create the filter which will assemble the component into the output image
     typedef itk::ImageToVectorImageFilter<ScalarImageType> ImageToVectorImageFilterType;
     typename ImageToVectorImageFilterType::Pointer imageToVectorImageFilter = ImageToVectorImageFilterType::New();
-    
+
     std::cout
       << "Performing logical operation, "
       << this->m_Ops
       << ", on input image(s)..."
       << std::endl;
-      
+
     typedef itk::VectorIndexSelectionCastImageFilter<VectorImageType, ScalarImageType> ComponentExtractionType;
-    
+
     for( unsigned int component = 0; component < reader1->GetOutput()->GetNumberOfComponentsPerPixel(); component++)
     {
       typename ComponentExtractionType::Pointer componentExtractor1 = ComponentExtractionType::New();
@@ -155,7 +155,7 @@ public:
       logicalFilter->SetInput( componentExtractor1->GetOutput() );
 
       logicalFilter->Update();
-      
+
       imageToVectorImageFilter->SetNthInput( component, logicalFilter->GetOutput() );
     } // end component loop
 
@@ -271,11 +271,11 @@ public:
     BinaryLogicalFunctorFactory<ScalarImageType> binaryFactory;
     typename itk::InPlaceImageFilter<ScalarImageType, ScalarImageType>::Pointer logicalFilter
       = binaryFactory.GetFilter( logicalOperator.first );
-    
+
     // Create the filter which will assemble the component into the output image
     typedef itk::ImageToVectorImageFilter<ScalarImageType> ImageToVectorImageFilterType;
     typename ImageToVectorImageFilterType::Pointer imageToVectorImageFilter = ImageToVectorImageFilterType::New();
-    
+
     std::cout
       << "Performing logical operation, "
       << this->m_Ops
@@ -283,14 +283,14 @@ public:
       << std::endl;
 
     typedef itk::VectorIndexSelectionCastImageFilter<VectorImageType, ScalarImageType> ComponentExtractionType;
-    
+
     for( unsigned int component = 0; component < reader1->GetOutput()->GetNumberOfComponentsPerPixel(); component++)
     {
       typename ComponentExtractionType::Pointer componentExtractor1 = ComponentExtractionType::New();
       componentExtractor1->SetIndex(component);
       componentExtractor1->SetInput(reader1->GetOutput());
       componentExtractor1->Update();
-      
+
       typename ComponentExtractionType::Pointer componentExtractor2 = ComponentExtractionType::New();
       componentExtractor2->SetIndex(component);
       componentExtractor2->SetInput(reader2->GetOutput());
@@ -308,7 +308,7 @@ public:
         logicalFilter->SetInput( 1, componentExtractor2->GetOutput() );
       }
       logicalFilter->Update();
-      
+
       imageToVectorImageFilter->SetNthInput(component, logicalFilter->GetOutput());
     } // end component loop
 

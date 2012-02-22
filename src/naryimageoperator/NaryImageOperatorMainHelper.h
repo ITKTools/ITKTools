@@ -214,7 +214,7 @@ int CheckOperator( std::string & operatoR )
 
   /** Return a value. */
   return 0;
-  
+
 } // end CheckOperator()
 
 

@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Compute a kappa statistic.
- 
+
  \verbinclude kappastatistic.help
  */
 #include "itkCommandLineArgumentParser.h"

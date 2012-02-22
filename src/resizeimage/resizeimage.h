@@ -36,7 +36,7 @@
  */
 
 class ITKToolsResizeImageBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   /** Constructor. */
   ITKToolsResizeImageBase()

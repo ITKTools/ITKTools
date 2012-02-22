@@ -33,7 +33,7 @@
  */
 
 class ITKToolsImagesToVectorImageBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   /** Constructor. */
   ITKToolsImagesToVectorImageBase()
@@ -48,7 +48,7 @@ public:
   std::vector<std::string> m_InputFileNames;
   std::string m_OutputFileName;
   unsigned int m_NumberOfStreams;
-    
+
 }; // end class ITKToolsImagesToVectorImageBase
 
 
@@ -78,7 +78,7 @@ public:
     typedef itk::ImageFileReader< VectorImageType >           ReaderType;
     typedef itk::Image< TComponentType, VDimension >          ScalarImageType;
     typedef itk::ImageFileWriter< VectorImageType >           WriterType;
-    
+
     /** Read in the input images. */
     std::vector<typename ReaderType::Pointer> readers( this->m_InputFileNames.size() );
     for( unsigned int i = 0; i < this->m_InputFileNames.size(); ++i )
@@ -115,9 +115,9 @@ public:
         currentOutputIndex++;
       }
     }
-    
+
     imageToVectorImageFilter->Update();
-    
+
     std::cout << "Output image has "
       << imageToVectorImageFilter->GetOutput()->GetNumberOfComponentsPerPixel()
       << " components." << std::endl;

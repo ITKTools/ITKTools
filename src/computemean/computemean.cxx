@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Compute the mean of a text file.
- 
+
  \verbinclude computemean.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -78,7 +78,7 @@ int main( int argc, char *argv[] )
   {
     return EXIT_SUCCESS;
   }
-  
+
   /** Get arguments. */
   std::string inputTextFile = "";
   parser->GetCommandLineArgument( "-in", inputTextFile );

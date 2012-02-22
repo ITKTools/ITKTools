@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Compute the overlap of two images.
- 
+
  \verbinclude computeoverlap.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -69,7 +69,7 @@ int main( int argc, char ** argv )
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
   parser->SetProgramHelpText( GetHelpString() );
-  
+
   /** Get arguments. */
   std::vector<std::string> inputFileNames;
   bool retin = parser->GetCommandLineArgument( "-in", inputFileNames );
@@ -125,7 +125,7 @@ int main( int argc, char ** argv )
   if( retlabel )
   {
     /** Class that does the work. */
-    ITKToolsComputeOverlap3Base * filter3 = 0; 
+    ITKToolsComputeOverlap3Base * filter3 = 0;
 
     try
     {
@@ -148,8 +148,8 @@ int main( int argc, char ** argv )
       filter3->m_Labels = labels;
 
       filter3->Run();
-      
-      delete filter3;  
+
+      delete filter3;
     }
     catch( itk::ExceptionObject & excp )
     {
@@ -188,8 +188,8 @@ int main( int argc, char ** argv )
       filterOld->m_T2 = t2;
 
       filterOld->Run();
-      
-      delete filterOld;  
+
+      delete filterOld;
     }
     catch( itk::ExceptionObject & excp )
     {

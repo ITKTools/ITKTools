@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Create a random image.
- 
+
  \verbinclude createrandomimage.help
  */
 
@@ -106,7 +106,7 @@ int main( int argc, char** argv )
   parser->GetCommandLineArgument( "-seed", rand_seed );
 
   unsigned int imageDimension = 0;
-  
+
   /** Checks. */
   if( dim == 0 )
   {
@@ -135,7 +135,7 @@ int main( int argc, char** argv )
   parser->GetCommandLineArgument( "-r", resolution );
 
   itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::GetComponentTypeFromString( pixelType );
-  
+
   /** Class that does the work. */
   ITKToolsCreateRandomImageBase * filter = NULL;
 
@@ -149,7 +149,7 @@ int main( int argc, char** argv )
     if( !filter ) filter = ITKToolsCreateRandomImage< 2, unsigned int >::New( dim, componentType );
     if( !filter ) filter = ITKToolsCreateRandomImage< 2, char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsCreateRandomImage< 2, unsigned char >::New( dim, componentType );
-    
+
 #ifdef ITKTOOLS_3D_SUPPORT
     if( !filter ) filter = ITKToolsCreateRandomImage< 3, float >::New( dim, componentType );
     if( !filter ) filter = ITKToolsCreateRandomImage< 3, short >::New( dim, componentType );
@@ -172,10 +172,10 @@ int main( int argc, char** argv )
     filter->m_Sigma = sigma;
     filter->m_Rand_seed = rand_seed;
     filter->m_SpaceDimension = spaceDimension;
-    
+
     filter->Run();
-    
-    delete filter;  
+
+    delete filter;
   }
   catch( itk::ExceptionObject & excp )
   {

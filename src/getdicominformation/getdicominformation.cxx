@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Takes a directory and searches for dicom files, from which patient and study information is extracted.
- 
+
  \verbinclude getdicominformation.help
  */
 

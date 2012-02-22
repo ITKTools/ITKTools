@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Perform a logical operation on an image.
- 
+
  \verbinclude logicalimageoperator.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -120,7 +120,7 @@ int main( int argc, char **argv )
     std::cerr << "ERROR: The operator \"EQUAL\" expects 1 input image and a \"-arg\"." << std::endl;
     return EXIT_FAILURE;
   }
-  
+
   bool unary = false;
   if( ops.compare("EQUAL") == 0 || ops.compare("NOT") == 0 )
   {
@@ -160,20 +160,20 @@ int main( int argc, char **argv )
   if( !retgip ) return EXIT_FAILURE;
 
   /** Class that does the work. */
-  ITKToolsLogicalImageOperatorBase * filter = NULL; 
- 
+  ITKToolsLogicalImageOperatorBase * filter = NULL;
+
   try
   {
     /** NB: do not add floating point support, since logical operators are
      * not defined on those types.
      */
-  
+
     // now call all possible template combinations.
     if( !filter ) filter = ITKToolsLogicalImageOperator< 2, unsigned char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsLogicalImageOperator< 2, char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsLogicalImageOperator< 2, unsigned short >::New( dim, componentType );
     if( !filter ) filter = ITKToolsLogicalImageOperator< 2, short >::New( dim, componentType );
-    
+
 #ifdef ITKTOOLS_3D_SUPPORT
     if( !filter ) filter = ITKToolsLogicalImageOperator< 3, unsigned char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsLogicalImageOperator< 3, char >::New( dim, componentType );
@@ -192,9 +192,9 @@ int main( int argc, char **argv )
     filter->m_UseCompression = useCompression;
     filter->m_Argument = argument;
     filter->m_Unary = unary;
-    
+
     filter->Run();
-    
+
     delete filter;
   }
   catch( itk::ExceptionObject & excp )
@@ -203,7 +203,7 @@ int main( int argc, char **argv )
     delete filter;
     return EXIT_FAILURE;
   }
-  
+
   /** End program. */
   return EXIT_SUCCESS;
 

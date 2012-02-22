@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief This program computes the distance between brains, based on a label mask image of one of the brains and a deformation field.
- 
+
  \verbinclude braindistance.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -97,7 +97,7 @@ int main( int argc, char ** argv )
   {
     return EXIT_SUCCESS;
   }
-  
+
   /** Get arguments (mandatory): input deformation field */
   std::string inputFileName = "";
   parser->GetCommandLineArgument( "-in", inputFileName );

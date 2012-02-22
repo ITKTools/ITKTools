@@ -32,7 +32,7 @@
  */
 
 class ITKToolsMeanStdImageBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   /** Constructor. */
   ITKToolsMeanStdImageBase()

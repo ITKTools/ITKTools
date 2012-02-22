@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Apply a binary operator to a pair of images.
- 
+
  \verbinclude binaryimageoperator.help
  */
 
@@ -86,7 +86,7 @@ int main( int argc, char **argv )
   {
     return EXIT_SUCCESS;
   }
-  
+
   /** Get arguments. */
   std::vector<std::string> inputFileNames;
   parser->GetCommandLineArgument( "-in", inputFileNames );
@@ -97,7 +97,7 @@ int main( int argc, char **argv )
     std::cerr << "ERROR: You should specify two input file names." << std::endl;
     return EXIT_FAILURE;
   }
-  
+
   std::string outputFileName = "";
   parser->GetCommandLineArgument( "-out", outputFileName );
 
@@ -109,7 +109,7 @@ int main( int argc, char **argv )
 
   std::string outputComponentTypeString = "";
   bool retopct = parser->GetCommandLineArgument( "-opct", outputComponentTypeString );
-  
+
   const bool useCompression = parser->ArgumentExists( "-z" );
 
   /** Create outputFileName. */
@@ -196,7 +196,7 @@ int main( int argc, char **argv )
     filter->m_Ops = ops;
     filter->m_UseCompression = useCompression;
     filter->m_Arg = argument;
-  
+
     filter->Run();
 
     delete filter;

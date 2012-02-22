@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Resize an image.
- 
+
  \verbinclude resizeimage.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -152,10 +152,10 @@ int main( int argc, char **argv )
   if( !retgip ) return EXIT_FAILURE;
 
   /** Class that does the work. */
-  ITKToolsResizeImageBase * filter = 0; 
+  ITKToolsResizeImageBase * filter = 0;
 
   try
-  {    
+  {
     if( !filter ) filter = ITKToolsResizeImage< 2, unsigned char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsResizeImage< 2, char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsResizeImage< 2, unsigned short >::New( dim, componentType );
@@ -191,8 +191,8 @@ int main( int argc, char **argv )
     filter->m_InterpolationOrder = interpolationOrder;
 
     filter->Run();
-    
-    delete filter;  
+
+    delete filter;
   }
   catch( itk::ExceptionObject & excp )
   {
@@ -200,7 +200,7 @@ int main( int argc, char **argv )
     delete filter;
     return EXIT_FAILURE;
   }
-  
+
   /** End program. */
   return EXIT_SUCCESS;
 

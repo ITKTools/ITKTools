@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Create a summary of segmentation overlap in two images.
- 
+
  \verbinclude computeoverlapsummary.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -72,7 +72,7 @@ int main( int argc, char **argv )
   {
     return EXIT_SUCCESS;
   }
-  
+
   /** Get arguments. */
   std::string inputFileName1 = "";
   parser->GetCommandLineArgument( "-in1", inputFileName1 );
@@ -105,10 +105,10 @@ int main( int argc, char **argv )
   if( !retNOCCheck ) return EXIT_FAILURE;
 
   /** Class that does the work. */
-  ITKToolsComputeOverlapSummaryBase * filter = 0; 
+  ITKToolsComputeOverlapSummaryBase * filter = 0;
 
   try
-  {    
+  {
     // now call all possible template combinations.
     if( !filter ) filter = ITKToolsComputeOverlapSummary< 2, char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsComputeOverlapSummary< 2, unsigned char >::New( dim, componentType );
@@ -132,8 +132,8 @@ int main( int argc, char **argv )
     filter->m_Seperator      = seperator;
 
     filter->Run();
-    
-    delete filter;  
+
+    delete filter;
   }
   catch( itk::ExceptionObject & excp )
   {

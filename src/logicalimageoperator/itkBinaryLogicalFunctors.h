@@ -45,7 +45,7 @@ namespace itk {
 
 namespace Functor {
 
- 
+
 template< class TInput1, class TInput2=TInput1, class TOutput=TInput1 >
 class ANDNOT
 {
@@ -124,7 +124,7 @@ public:
 
 
 
-template< class TImage > 
+template< class TImage >
 struct BinaryLogicalFunctorFactory
 {
   typename itk::InPlaceImageFilter<TImage, TImage>::Pointer

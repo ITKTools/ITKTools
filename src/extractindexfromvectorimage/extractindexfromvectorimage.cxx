@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief This program extracts a user specified component from a vector image.
- 
+
  \verbinclude extractindexfromvectorimage.help
  */
 #include "itkCommandLineArgumentParser.h"

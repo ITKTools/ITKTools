@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Threshold an image.
- 
+
  \verbinclude thresholdimage.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -67,7 +67,7 @@ int main( int argc, char **argv )
   {
     return EXIT_SUCCESS;
   }
-  
+
   /** Get arguments. */
   std::vector<std::string> inputFileNames;
   parser->GetCommandLineArgument( "-in", inputFileNames );
@@ -94,10 +94,10 @@ int main( int argc, char **argv )
   if( !retNOCCheck ) return EXIT_FAILURE;
 
   /** Class that does the work. */
-  ITKToolsMeanStdImageBase * filter = 0; 
+  ITKToolsMeanStdImageBase * filter = 0;
 
   try
-  {    
+  {
     // now call all possible template combinations.
     if( !filter ) filter = ITKToolsMeanStdImage< 2, char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsMeanStdImage< 2, unsigned char >::New( dim, componentType );
@@ -126,8 +126,8 @@ int main( int argc, char **argv )
     filter->m_CalcStd = retoutstd;
 
     filter->Run();
-    
-    delete filter;  
+
+    delete filter;
   }
   catch( itk::ExceptionObject & excp )
   {

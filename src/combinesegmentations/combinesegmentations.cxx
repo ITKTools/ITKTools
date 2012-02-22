@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief This program combines multiple segmentations into one.
- 
+
  \verbinclude combinesegmentations.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -99,7 +99,7 @@ int main( int argc, char **argv )
   parser->SetProgramHelpText( GetHelpString() );
 
   parser->MarkArgumentAsRequired( "-in", "The input filename." );
-  
+
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
   if( validateArguments == itk::CommandLineArgumentParser::FAILED )
@@ -110,7 +110,7 @@ int main( int argc, char **argv )
   {
     return EXIT_SUCCESS;
   }
-  
+
   /** Get the combination method (mandatory) */
   std::string combinationMethod = "MULTISTAPLE2";
   parser->GetCommandLineArgument( "-m", combinationMethod );
@@ -133,7 +133,7 @@ int main( int argc, char **argv )
   /** Get the number of classes to segment (not mandatory) */
   unsigned char numberOfClasses = 2;
   parser->GetCommandLineArgument( "-n", numberOfClasses );
-  
+
   /** Get the prior probability images (not mandatory) */
   std::vector< std::string >  priorProbImageFileNames;
   bool retP = parser->GetCommandLineArgument( "-P", priorProbImageFileNames );
@@ -268,7 +268,7 @@ int main( int argc, char **argv )
   if( !retNOCCheck ) return EXIT_FAILURE;
 
   /** Class that does the work. */
-  ITKToolsCombineSegmentationsBase * filter = 0; 
+  ITKToolsCombineSegmentationsBase * filter = 0;
 
   try
   {
@@ -302,8 +302,8 @@ int main( int argc, char **argv )
     filter->m_OutValues = outValues;
 
     filter->Run();
-    
-    delete filter;  
+
+    delete filter;
   }
   catch( itk::ExceptionObject & excp )
   {

@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Create a grid image.
- 
+
  \verbinclude creategridimage.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -55,7 +55,7 @@ std::string GetHelpString( void )
 /** CreateGridImage */
 
 class ITKToolsCreateGridImageBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   ITKToolsCreateGridImageBase()
   {
@@ -78,7 +78,7 @@ public:
   std::vector<unsigned int> m_Distance;
   bool m_Is2DStack;
 
-    
+
 }; // end CreateGridImageBase
 
 
@@ -201,7 +201,7 @@ int main( int argc, char *argv[] )
   {
     return EXIT_SUCCESS;
   }
-  
+
   /** Get arguments. */
   std::string inputFileName = "";
   bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
@@ -284,19 +284,19 @@ int main( int argc, char *argv[] )
 
 
   /** Class that does the work. */
-  ITKToolsCreateGridImageBase * filter = NULL; 
+  ITKToolsCreateGridImageBase * filter = NULL;
 
   /** Short alias */
   unsigned int dim = imageDimension;
- 
+
   try
-  {    
+  {
     // now call all possible template combinations.
     if( !filter ) filter = ITKToolsCreateGridImage< 2 >::New( dim );
 #ifdef ITKTOOLS_3D_SUPPORT
-    if( !filter ) filter = ITKToolsCreateGridImage< 3 >::New( dim );    
+    if( !filter ) filter = ITKToolsCreateGridImage< 3 >::New( dim );
 #endif
-    if( !filter) 
+    if( !filter)
     {
       std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
       std::cerr
@@ -313,8 +313,8 @@ int main( int argc, char *argv[] )
     filter->m_Is2DStack = is2DStack;
 
     filter->Run();
-    
-    delete filter;  
+
+    delete filter;
   }
   catch( itk::ExceptionObject & excp )
   {
@@ -322,7 +322,7 @@ int main( int argc, char *argv[] )
     delete filter;
     return EXIT_FAILURE;
   }
-  
+
   /** End program. */
   return EXIT_SUCCESS;
 

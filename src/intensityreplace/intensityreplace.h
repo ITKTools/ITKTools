@@ -32,7 +32,7 @@
  */
 
 class ITKToolsIntensityReplaceBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   /** Constructor. */
   ITKToolsIntensityReplaceBase()

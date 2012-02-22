@@ -32,7 +32,7 @@
  */
 
 class ITKToolsReflectBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   /** Constructor. */
   ITKToolsReflectBase()
@@ -48,7 +48,7 @@ public:
   std::string m_InputFileName;
   std::string m_OutputFileName;
   unsigned int m_Direction;
-    
+
 }; // end ITKToolsReflectBase
 
 
@@ -92,10 +92,10 @@ public:
 
     /** Set up pipeline. */
     reader->SetFileName( this->m_InputFileName );
-    
+
     itk::FixedArray<bool, Dimension> flipAxes(false);
     flipAxes[m_Direction] = true;
-    
+
     reflectFilter->SetFlipAxes( flipAxes );
     writer->SetFileName( this->m_OutputFileName );
 

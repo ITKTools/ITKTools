@@ -50,7 +50,7 @@
  */
 
 class ITKToolsCreateRandomImageBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   /** Constructor. */
   ITKToolsCreateRandomImageBase()
@@ -75,7 +75,7 @@ public:
   double m_Sigma;
   int m_Rand_seed;
   unsigned int m_SpaceDimension;
-    
+
 }; // end class ITKToolsCreateRandomImageBase
 
 
@@ -130,7 +130,7 @@ public:
     typedef itk::SmoothingRecursiveGaussianImageFilter<
       InternalImageType, InternalImageType>               BlurFilterType;
     typedef typename BlurFilterType::Pointer              BlurFilterPointer;
-    
+
     typedef std::vector<BlurFilterPointer>                SetOfBlurrersType;
 
     typedef itk::CastImageFilter<InternalImageType, ImageType> CastFilterType;
@@ -151,7 +151,7 @@ public:
 
     /** Create variables */
     VectorWriterPointer vectorWriter = 0;
-    
+
     SetOfChannelsType setOfChannels( this->m_SpaceDimension );
     SetOfBlurrersType setOfBlurrers( this->m_SpaceDimension );
     SetOfCastersType setOfCasters( this->m_SpaceDimension );
@@ -234,7 +234,7 @@ public:
           = RandomIteratorType( setOfChannels[ i ], setOfChannels[ i ]->GetLargestPossibleRegion() );
         iterator.SetNumberOfSamples( this->m_Resolution );
         iterator.GoToBegin();
-        
+
         while( !iterator.IsAtEnd() )
         {
           /** Set a random value to a random point */

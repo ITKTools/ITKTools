@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Create an ellipsoid image.
- 
+
  \verbinclude createellipsoid.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -64,7 +64,7 @@ int main( int argc, char *argv[] )
   parser->MarkArgumentAsRequired( "-sz", "The size." );
   parser->MarkArgumentAsRequired( "-c", "The center." );
   parser->MarkArgumentAsRequired( "-r", "The radius." );
-  
+
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
   if( validateArguments == itk::CommandLineArgumentParser::FAILED )
@@ -75,7 +75,7 @@ int main( int argc, char *argv[] )
   {
     return EXIT_SUCCESS;
   }
-  
+
   /** Get arguments. */
   std::string outputFileName = "";
   parser->GetCommandLineArgument( "-out", outputFileName );
@@ -112,10 +112,10 @@ int main( int argc, char *argv[] )
   }
 
   /** Class that does the work. */
-  ITKToolsCreateEllipsoidBase * filter = 0; 
+  ITKToolsCreateEllipsoidBase * filter = 0;
 
   try
-  {    
+  {
     // now call all possible template combinations.
     if( !filter ) filter = ITKToolsCreateEllipsoid< 2, unsigned char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsCreateEllipsoid< 2, char >::New( dim, componentType );
@@ -123,7 +123,7 @@ int main( int argc, char *argv[] )
     if( !filter ) filter = ITKToolsCreateEllipsoid< 2, short >::New( dim, componentType );
     if( !filter ) filter = ITKToolsCreateEllipsoid< 2, float >::New( dim, componentType );
     if( !filter ) filter = ITKToolsCreateEllipsoid< 2, double >::New( dim, componentType );
-    
+
 #ifdef ITKTOOLS_3D_SUPPORT
     if( !filter ) filter = ITKToolsCreateEllipsoid< 3, unsigned char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsCreateEllipsoid< 3, char >::New( dim, componentType );
@@ -145,7 +145,7 @@ int main( int argc, char *argv[] )
     filter->m_Orientation = orientation;
 
     filter->Run();
-    
+
     delete filter;
   }
   catch( itk::ExceptionObject & excp )

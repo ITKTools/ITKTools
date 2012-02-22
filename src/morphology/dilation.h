@@ -46,7 +46,7 @@ void dilationGrayscale(
    * This is the value outside the image.
    * By default it is set to min(PixelType).
    */
-  
+
   PixelType boundaryValue = itk::NumericTraits<PixelType>::NonpositiveMin();
   if( boundaryCondition != "")
   {
@@ -58,7 +58,7 @@ void dilationGrayscale(
     {
       boundaryValue = static_cast<PixelType>( atof( boundaryCondition.c_str() ) );
     }
-    
+
     dilation->SetBoundary(boundaryValue);
   }
 

@@ -30,7 +30,7 @@
  */
 
 class ITKToolsCreateZeroImageBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   /** Constructor. */
   ITKToolsCreateZeroImageBase()
@@ -45,7 +45,7 @@ public:
   std::vector<unsigned int> m_Size;
   std::vector<double> m_Spacing;
   std::vector<double> m_Origin;
-    
+
 }; // end class ITKToolsCreateZeroImageBase
 
 

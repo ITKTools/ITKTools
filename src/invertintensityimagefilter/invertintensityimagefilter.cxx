@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief This program inverts the intensities of an image.  new = max - old (where max is the maximum of the image).
- 
+
  \verbinclude invertintensityimagefilter.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -86,10 +86,10 @@ int main( int argc, char ** argv )
   //if( !retNOCCheck ) return EXIT_FAILURE;
 
   /** Class that does the work. */
-  ITKToolsInvertIntensityBase * filter = NULL; 
-    
+  ITKToolsInvertIntensityBase * filter = NULL;
+
   try
-  {    
+  {
     // now call all possible template combinations.
     if( !filter ) filter = ITKToolsInvertIntensity< 2, char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsInvertIntensity< 2, unsigned char >::New( dim, componentType );
@@ -97,7 +97,7 @@ int main( int argc, char ** argv )
     if( !filter ) filter = ITKToolsInvertIntensity< 2, unsigned short >::New( dim, componentType );
     if( !filter ) filter = ITKToolsInvertIntensity< 2, float >::New( dim, componentType );
     if( !filter ) filter = ITKToolsInvertIntensity< 2, double >::New( dim, componentType );
-    
+
 #ifdef ITKTOOLS_3D_SUPPORT
     if( !filter ) filter = ITKToolsInvertIntensity< 3, char >::New( dim, componentType );
     if( !filter ) filter = ITKToolsInvertIntensity< 3, unsigned char >::New( dim, componentType );
@@ -113,9 +113,9 @@ int main( int argc, char ** argv )
     /** Set the filter arguments. */
     filter->m_OutputFileName = outputFileName;
     filter->m_InputFileName = inputFileName;
-    
+
     filter->Run();
-    
+
     delete filter;
   }
   catch( itk::ExceptionObject & excp )
@@ -124,7 +124,7 @@ int main( int argc, char ** argv )
     delete filter;
     return EXIT_FAILURE;
   }
-  
+
   /** End program. */
   return EXIT_SUCCESS;
 

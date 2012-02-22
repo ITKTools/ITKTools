@@ -33,7 +33,7 @@
  */
 
 class ITKToolsIntensityWindowingBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   /** Constructor. */
   ITKToolsIntensityWindowingBase()

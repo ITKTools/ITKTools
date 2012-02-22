@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Create a cylinder image.
- 
+
  \verbinclude createcylinder.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -53,7 +53,7 @@ std::string GetHelpString( void )
 /** CreateCylinder */
 
 class ITKToolsCreateCylinderBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   ITKToolsCreateCylinderBase()
   {
@@ -69,7 +69,7 @@ public:
   std::string m_OutputFileName;
   std::vector<unsigned int> m_Center;
   double m_Radius;
-    
+
 }; // end CreateCylinderBase
 
 
@@ -184,7 +184,7 @@ int main( int argc, char *argv[] )
   {
     return EXIT_SUCCESS;
   }
-  
+
   /** Get arguments. */
   std::string inputFileName = "";
   parser->GetCommandLineArgument( "-in", inputFileName );
@@ -213,21 +213,21 @@ int main( int argc, char *argv[] )
     imagesize );
   if( retgip != 0 ) return 1;
 
-  
+
   /** Class that does the work. */
-  ITKToolsCreateCylinderBase * createCylinder = NULL; 
+  ITKToolsCreateCylinderBase * createCylinder = NULL;
 
   /** Short alias */
   unsigned int dim = Dimension;
- 
+
   try
-  {    
+  {
     // now call all possible template combinations.
     if( !createCylinder) createCylinder = ITKToolsCreateCylinder< 2 >::New( dim );
 #ifdef ITKTOOLS_3D_SUPPORT
-    if( !createCylinder) createCylinder = ITKToolsCreateCylinder< 3 >::New( dim );    
+    if( !createCylinder) createCylinder = ITKToolsCreateCylinder< 3 >::New( dim );
 #endif
-    if( !createCylinder) 
+    if( !createCylinder)
     {
       std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
       std::cerr
@@ -242,8 +242,8 @@ int main( int argc, char *argv[] )
     createCylinder->m_Radius = radius;
 
     createCylinder->Run();
-    
-    delete createCylinder;  
+
+    delete createCylinder;
   }
   catch( itk::ExceptionObject & excp )
   {
@@ -251,7 +251,7 @@ int main( int argc, char *argv[] )
     delete createCylinder;
     return EXIT_FAILURE;
   }
-  
+
   /** End program. Return a value. */
   return EXIT_SUCCESS;
 

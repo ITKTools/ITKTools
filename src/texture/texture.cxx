@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief This program computes filter features based on the gray-level co-occurrence matrix (GLCM).
- 
+
  \verbinclude filter.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -70,7 +70,7 @@ int main( int argc, char **argv )
   {
     return EXIT_SUCCESS;
   }
-  
+
   /** Get arguments. */
   std::string inputFileName = "";
   parser->GetCommandLineArgument( "-in", inputFileName );
@@ -126,22 +126,22 @@ int main( int argc, char **argv )
 
   /** Class that does the work. */
   ITKToolsTextureBase * filter = NULL;
- 
+
   /** Input images are read in as float, always. The default output is float,
    * but can be overridden by specifying -opct in the command line.
    */
   componentType = itk::ImageIOBase::FLOAT;
   itk::ImageIOBase::IOComponentType outputComponentType
     = itk::ImageIOBase::GetComponentTypeFromString( componentTypeOutString );
-    
+
   try
-  {    
+  {
     // now call all possible template combinations.
     if( !filter ) filter = ITKToolsTexture< 2, float, float >::New( dim, componentType, outputComponentType );
     if( !filter ) filter = ITKToolsTexture< 2, float, double >::New( dim, componentType, outputComponentType );
-    
+
 #ifdef ITKTOOLS_3D_SUPPORT
-    if( !filter ) filter = ITKToolsTexture< 3, float, float >::New( dim, componentType, outputComponentType );    
+    if( !filter ) filter = ITKToolsTexture< 3, float, float >::New( dim, componentType, outputComponentType );
     if( !filter ) filter = ITKToolsTexture< 3, float, double >::New( dim, componentType, outputComponentType );
 #endif
     /** Check if filter was instantiated. */
@@ -155,10 +155,10 @@ int main( int argc, char **argv )
     filter->m_OffsetScales = offsetScales;
     filter->m_NumberOfBins = numberOfBins;
     filter->m_NumberOfOutputs = numberOfOutputs;
-  
+
     filter->Run();
-    
-    delete filter;  
+
+    delete filter;
   }
   catch( itk::ExceptionObject & excp )
   {

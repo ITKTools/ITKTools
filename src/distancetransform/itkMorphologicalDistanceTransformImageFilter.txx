@@ -4,9 +4,9 @@
 #include "itkMorphologicalDistanceTransformImageFilter.h"
 #include "itkProgressAccumulator.h"
 
-namespace itk 
+namespace itk
 {
-template <typename TInputImage, typename TOutputImage> 
+template <typename TInputImage, typename TOutputImage>
 MorphologicalDistanceTransformImageFilter<TInputImage, TOutputImage>
 ::MorphologicalDistanceTransformImageFilter()
 {
@@ -22,7 +22,7 @@ MorphologicalDistanceTransformImageFilter<TInputImage, TOutputImage>
   this->m_SqrDist = false;
 }
 
-template <typename TInputImage, typename TOutputImage> 
+template <typename TInputImage, typename TOutputImage>
 void
 MorphologicalDistanceTransformImageFilter<TInputImage, TOutputImage>
 ::Modified() const
@@ -31,10 +31,10 @@ MorphologicalDistanceTransformImageFilter<TInputImage, TOutputImage>
   this->m_Erode->Modified();
   this->m_Thresh->Modified();
   this->m_Sqrt->Modified();
-  
+
 }
 
-template <typename TInputImage, typename TOutputImage> 
+template <typename TInputImage, typename TOutputImage>
 void
 MorphologicalDistanceTransformImageFilter<TInputImage, TOutputImage>
 ::GenerateData( void )
@@ -53,7 +53,7 @@ MorphologicalDistanceTransformImageFilter<TInputImage, TOutputImage>
   double MaxDist = 0.0;
   typename TOutputImage::SpacingType sp = this->GetOutput()->GetSpacing();
   typename TOutputImage::SizeType sz = this->GetOutput()->GetLargestPossibleRegion().GetSize();
-  if(this->GetUseImageSpacing()) 
+  if(this->GetUseImageSpacing())
     {
     for (unsigned k = 0; k < TOutputImage::ImageDimension; k++)
       {
@@ -71,7 +71,7 @@ MorphologicalDistanceTransformImageFilter<TInputImage, TOutputImage>
     }
 
 //   double Wt = 0.0;
-//   if(this->GetUseImageSpacing()) 
+//   if(this->GetUseImageSpacing())
 //     {
 //     for (unsigned k = 0; k < TOutputImage::ImageDimension; k++)
 //       {
@@ -95,7 +95,7 @@ MorphologicalDistanceTransformImageFilter<TInputImage, TOutputImage>
 
   this->m_Thresh->SetInput(this->GetInput());
   this->m_Erode->SetInput( this->m_Thresh->GetOutput());
-  
+
   if( this->m_SqrDist)
     {
     this->m_Erode->GraftOutput(this->GetOutput());
@@ -109,9 +109,9 @@ MorphologicalDistanceTransformImageFilter<TInputImage, TOutputImage>
     this->m_Sqrt->Update();
     this->GraftOutput( this->m_Sqrt->GetOutput());
     }
-  
+
 }
-template <typename TInputImage, typename TOutputImage> 
+template <typename TInputImage, typename TOutputImage>
 void
 MorphologicalDistanceTransformImageFilter<TInputImage, TOutputImage>
 ::PrintSelf(std::ostream& os, Indent indent) const

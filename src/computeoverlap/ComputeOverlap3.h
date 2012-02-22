@@ -32,7 +32,7 @@
  */
 
 class ITKToolsComputeOverlap3Base : public itktools::ITKToolsBase
-{ 
+{
 public:
   /** Constructor. */
   ITKToolsComputeOverlap3Base(){};
@@ -42,7 +42,7 @@ public:
   /** Input member parameters */
   std::vector<std::string> m_InputFileNames;
   std::vector<unsigned int> m_Labels;
-    
+
 }; // end ITKToolsComputeOverlap3Base
 
 

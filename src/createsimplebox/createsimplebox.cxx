@@ -17,7 +17,7 @@
 *=========================================================================*/
 /** \file
  \brief Create a simple box image.
- 
+
  \verbinclude createsimplebox.help
  */
 #include "itkCommandLineArgumentParser.h"
@@ -89,26 +89,26 @@ int main( int argc, char** argv )
     std::cerr << "ERROR: Image dimension cannot be 0" << std::endl;
     return EXIT_FAILURE;
   }
-  
+
   std::string componentTypeAsString = "";
   bool retopct = parser->GetCommandLineArgument( "-opct", componentTypeAsString );
-  
+
   std::string outputFileName;
   parser->GetCommandLineArgument( "-out", outputFileName );
-  
+
   std::string inputFileName = "";
   bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
 
   /** read point A and B from the commandline.*/
   std::vector<unsigned int> indexA;
   parser->GetCommandLineArgument( "-pA", indexA );
-  
+
   std::vector<unsigned int> indexB;
   parser->GetCommandLineArgument( "-pB", indexB );
-  
+
   std::vector<unsigned int> boxSize;
   parser->GetCommandLineArgument( "-d", boxSize );
-  
+
   itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
   if( retin ) // if an input file was specified
   {
@@ -126,14 +126,14 @@ int main( int argc, char** argv )
   ITKToolsCreateSimpleBoxBase * filter = NULL;
 
   try
-  {    
+  {
     // now call all possible template combinations.
     if( !filter) filter = ITKToolsCreateSimpleBox< 2, short >::New( dim, componentType );
     if( !filter) filter = ITKToolsCreateSimpleBox< 2, char >::New( dim, componentType );
     if( !filter) filter = ITKToolsCreateSimpleBox< 2, unsigned char >::New( dim, componentType );
-    
+
 #ifdef ITKTOOLS_3D_SUPPORT
-    if( !filter) filter = ITKToolsCreateSimpleBox< 3, short >::New( dim, componentType );    
+    if( !filter) filter = ITKToolsCreateSimpleBox< 3, short >::New( dim, componentType );
     if( !filter) filter = ITKToolsCreateSimpleBox< 3, char >::New( dim, componentType );
     if( !filter) filter = ITKToolsCreateSimpleBox< 3, unsigned char >::New( dim, componentType );
 #endif
@@ -149,8 +149,8 @@ int main( int argc, char** argv )
     filter->m_IndexB = indexB;
 
     filter->Run();
-    
-    delete filter;  
+
+    delete filter;
   }
   catch( itk::ExceptionObject & excp )
   {

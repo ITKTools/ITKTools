@@ -35,7 +35,7 @@
  */
 
 class ITKToolsCropImageBase : public itktools::ITKToolsBase
-{ 
+{
 public:
   /** Constructor. */
   ITKToolsCropImageBase()
@@ -54,7 +54,7 @@ public:
   std::vector<int> m_Input2;
   unsigned int m_Option;
   bool m_Force;
-    
+
 }; // end class ITKToolsCropImageBase
 
 
