@@ -159,10 +159,6 @@ int main( int argc, char **argv )
     inputFileName1, pixelType, componentType, dim, numberOfComponents );
   if( !retgip ) return EXIT_FAILURE;
 
-  /** Check for vector images. */
-  bool retNOCCheck = itktools::NumberOfComponentsCheck( numberOfComponents );
-  if( !retNOCCheck ) return EXIT_FAILURE;
-
   /** Class that does the work. */
   ITKToolsLogicalImageOperatorBase * filter = NULL; 
  
