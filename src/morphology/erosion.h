@@ -79,7 +79,7 @@ void erosionGrayscale(
   /** Write the output image. */
   writer->SetFileName( outputFileName.c_str() );
   writer->SetInput( erosion->GetOutput() );
-	writer->SetUseCompression( useCompression );
+  writer->SetUseCompression( useCompression );
   writer->Update();
 
 } // end erosionGrayscale()
@@ -157,7 +157,7 @@ void erosionBinary(
   /** Write the output image. */
   writer->SetFileName( outputFileName.c_str() );
   writer->SetInput( erosion->GetOutput() );
-	writer->SetUseCompression( useCompression );
+  writer->SetUseCompression( useCompression );
   writer->Update();
 
 } // end erosionBinary()
@@ -294,7 +294,7 @@ void erosionParabolic(
   /** Write the output image. */
   writer->SetFileName( outputFileName.c_str() );
   writer->SetInput( erosion->GetOutput() );
-	writer->SetUseCompression( useCompression );
+  writer->SetUseCompression( useCompression );
   writer->Update();
 
 } // end erosionParabolic()

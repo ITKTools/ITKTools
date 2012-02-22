@@ -176,7 +176,7 @@ ITKToolsStatisticsOnImage< VDimension, VNumberOfComponents, TComponentType >
 
   /** Arithmetic mean */
   PixelType maxPixelValue = 1;
-	PixelType minPixelValue = 0;
+  PixelType minPixelValue = 0;
   if( select == "arithmetic" || select == "" || select == "histogram" )
   {
     std::cout << "Computing arithmetic statistics ..." << std::endl;
@@ -326,3 +326,4 @@ ITKToolsStatisticsOnImage< VDimension, VNumberOfComponents, TComponentType >
 
 
 #endif // #ifndef __statisticsonimage_hxx_
+

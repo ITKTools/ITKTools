@@ -137,8 +137,8 @@ public:
       SpacingType spacing;
       for( unsigned int i = 0; i < VDimension; ++i )
       {
-	size[ i ] = this->m_ImageSize[ i ];
-	spacing[ i ] = this->m_ImageSpacing[ i ];
+        size[ i ] = this->m_ImageSize[ i ];
+        spacing[ i ] = this->m_ImageSpacing[ i ];
       }
       image->SetRegions( size );
       image->SetSpacing( spacing );
@@ -160,11 +160,11 @@ public:
       onGrid |= ind[ 1 ] % this->m_Distance[ 1 ] == 0;
       if( VDimension == 3 && !m_Is2DStack )
       {
-	if( ind[ 2 ] % this->m_Distance[ 2 ] != 0 )
-	{
-	  onGrid = ind[ 0 ] % this->m_Distance[ 0 ] == 0;
-	  onGrid &= ind[ 1 ] % this->m_Distance[ 1 ] == 0;
-	}
+        if( ind[ 2 ] % this->m_Distance[ 2 ] != 0 )
+        {
+          onGrid = ind[ 0 ] % this->m_Distance[ 0 ] == 0;
+          onGrid &= ind[ 1 ] % this->m_Distance[ 1 ] == 0;
+        }
       }
       /** Set the value and continue. */
       if( onGrid ) it.Set( 1 );
@@ -327,3 +327,4 @@ int main( int argc, char *argv[] )
   return EXIT_SUCCESS;
 
 } // end main
+

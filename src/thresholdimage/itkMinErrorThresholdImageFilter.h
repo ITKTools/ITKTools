@@ -134,13 +134,13 @@ private:
   OutputPixelType     m_InsideValue;
   OutputPixelType     m_OutsideValue;
   unsigned long       m_NumberOfHistogramBins;
-  double			  m_AlphaLeft;
-  double			  m_AlphaRight;
-  double			  m_PriorLeft;
-  double			  m_PriorRight;
-  double			  m_StdLeft;
-  double			  m_StdRight;
-  unsigned int		  m_MixtureType;
+  double        m_AlphaLeft;
+  double        m_AlphaRight;
+  double        m_PriorLeft;
+  double        m_PriorRight;
+  double        m_StdLeft;
+  double        m_StdRight;
+  unsigned int      m_MixtureType;
 } ; // end of class
 
 } // end namespace itk

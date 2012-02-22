@@ -31,123 +31,124 @@ ITKToolsMeanStdImage< VDimension, TComponentType >
   const bool calc_std,
   const std::string & outputFileNameStd )
 {
-	/** TYPEDEF's. */
-	typedef typename InputImageType::Pointer		          ImagePointer;
-	typedef typename OutputImageType::Pointer		          OutImagePointer;
-	typedef itk::ImageFileReader< InputImageType >        ReaderType;
-	typedef itk::ImageFileWriter< OutputImageType >       WriterType;
-	typedef typename InputImageType::PixelType            PixelType;
-	typedef typename ReaderType::Pointer                  ReaderPointer;
-	typedef typename WriterType::Pointer                  WriterPointer;
+  /** TYPEDEF's. */
+  typedef typename InputImageType::Pointer              ImagePointer;
+  typedef typename OutputImageType::Pointer             OutImagePointer;
+  typedef itk::ImageFileReader< InputImageType >        ReaderType;
+  typedef itk::ImageFileWriter< OutputImageType >       WriterType;
+  typedef typename InputImageType::PixelType            PixelType;
+  typedef typename ReaderType::Pointer                  ReaderPointer;
+  typedef typename WriterType::Pointer                  WriterPointer;
 
-	/** DECLARATION'S. */
-	unsigned int nrInputs = inputFileNames.size();
-	ReaderPointer inReader;
-	WriterPointer writer_mean = WriterType::New();
-	WriterPointer writer_std = WriterType::New();
+  /** DECLARATION'S. */
+  unsigned int nrInputs = inputFileNames.size();
+  ReaderPointer inReader;
+  WriterPointer writer_mean = WriterType::New();
+  WriterPointer writer_std = WriterType::New();
 
-	OutImagePointer mean = OutputImageType::New();
-	OutImagePointer sq_mean = OutputImageType::New();
-	OutImagePointer std = OutputImageType::New();
+  OutImagePointer mean = OutputImageType::New();
+  OutImagePointer sq_mean = OutputImageType::New();
+  OutImagePointer std = OutputImageType::New();
 
-	itk::ImageRegionConstIterator<InputImageType> input_iterator;
-	itk::ImageRegionIterator<OutputImageType> mean_iterator;
-	itk::ImageRegionIterator<OutputImageType> sq_mean_iterator;
-	itk::ImageRegionIterator<OutputImageType> std_iterator;
+  itk::ImageRegionConstIterator<InputImageType> input_iterator;
+  itk::ImageRegionIterator<OutputImageType> mean_iterator;
+  itk::ImageRegionIterator<OutputImageType> sq_mean_iterator;
+  itk::ImageRegionIterator<OutputImageType> std_iterator;
 
-	/** Create temporary & output images */
-	inReader = ReaderType::New();
-	inReader->SetFileName( inputFileNames[0].c_str() );
-	inReader->Update();
+  /** Create temporary & output images */
+  inReader = ReaderType::New();
+  inReader->SetFileName( inputFileNames[0].c_str() );
+  inReader->Update();
 
-	mean->CopyInformation( inReader->GetOutput() );
-	sq_mean->CopyInformation( inReader->GetOutput() );
-	std->CopyInformation( inReader->GetOutput() );
+  mean->CopyInformation( inReader->GetOutput() );
+  sq_mean->CopyInformation( inReader->GetOutput() );
+  std->CopyInformation( inReader->GetOutput() );
 
-	mean->SetRegions( inReader->GetOutput()->GetLargestPossibleRegion().GetSize() );
-	sq_mean->SetRegions( inReader->GetOutput()->GetLargestPossibleRegion().GetSize() );
-	std->SetRegions( inReader->GetOutput()->GetLargestPossibleRegion().GetSize() );
+  mean->SetRegions( inReader->GetOutput()->GetLargestPossibleRegion().GetSize() );
+  sq_mean->SetRegions( inReader->GetOutput()->GetLargestPossibleRegion().GetSize() );
+  std->SetRegions( inReader->GetOutput()->GetLargestPossibleRegion().GetSize() );
 
-	mean->Allocate();
-	sq_mean->Allocate();
-	std->Allocate();
+  mean->Allocate();
+  sq_mean->Allocate();
+  std->Allocate();
 
-	mean->FillBuffer( 0.0 );
-	sq_mean->FillBuffer( 0.0 );
-	std->FillBuffer( 0.0 );
+  mean->FillBuffer( 0.0 );
+  sq_mean->FillBuffer( 0.0 );
+  std->FillBuffer( 0.0 );
 
-	mean_iterator = itk::ImageRegionIterator<OutputImageType>( mean, mean->GetRequestedRegion() );
-	sq_mean_iterator = itk::ImageRegionIterator<OutputImageType>( sq_mean, sq_mean->GetRequestedRegion() );
-	std_iterator = itk::ImageRegionIterator<OutputImageType>( std, std->GetRequestedRegion() );
+  mean_iterator = itk::ImageRegionIterator<OutputImageType>( mean, mean->GetRequestedRegion() );
+  sq_mean_iterator = itk::ImageRegionIterator<OutputImageType>( sq_mean, sq_mean->GetRequestedRegion() );
+  std_iterator = itk::ImageRegionIterator<OutputImageType>( std, std->GetRequestedRegion() );
 
-	/** Loop over all images and create sum(X) and sum(X^2) which is required for E(X) and E(X^2) */
-	for( unsigned int i = 0; i < nrInputs; ++i )
-	{
-		std::cout << "Reading image " << inputFileNames[ i ].c_str() << std::endl;
-		inReader = ReaderType::New();
-		inReader->SetFileName( inputFileNames[ i ].c_str() );
-		inReader->Update();
+  /** Loop over all images and create sum(X) and sum(X^2) which is required for E(X) and E(X^2) */
+  for( unsigned int i = 0; i < nrInputs; ++i )
+  {
+    std::cout << "Reading image " << inputFileNames[ i ].c_str() << std::endl;
+    inReader = ReaderType::New();
+    inReader->SetFileName( inputFileNames[ i ].c_str() );
+    inReader->Update();
 
-		input_iterator = itk::ImageRegionConstIterator<InputImageType>(
+    input_iterator = itk::ImageRegionConstIterator<InputImageType>(
       inReader->GetOutput(), inReader->GetOutput()->GetRequestedRegion() );
 
-		input_iterator.GoToBegin();
-		mean_iterator.GoToBegin();
-		sq_mean_iterator.GoToBegin();
-		for (; !mean_iterator.IsAtEnd(); ++mean_iterator, ++sq_mean_iterator,  ++input_iterator )
-		{
-			mean_iterator.Set( mean_iterator.Get() + input_iterator.Get() );
-			if( calc_std )
-      {
-				sq_mean_iterator.Set( sq_mean_iterator.Get() + (input_iterator.Get() * input_iterator.Get()) );
-      }
-		}
-	}
-
-	/** Divide images by N to get E(X) and E(X^2)*/
-	mean_iterator.GoToBegin();
-	sq_mean_iterator.GoToBegin();
-	float denominator( 1.0f / nrInputs );
-	for (; !mean_iterator.IsAtEnd(); ++mean_iterator, ++sq_mean_iterator )
-	{
-		mean_iterator.Set( mean_iterator.Get() * denominator );
-		if( calc_std )
+    input_iterator.GoToBegin();
+    mean_iterator.GoToBegin();
+    sq_mean_iterator.GoToBegin();
+    for (; !mean_iterator.IsAtEnd(); ++mean_iterator, ++sq_mean_iterator,  ++input_iterator )
     {
-			sq_mean_iterator.Set( sq_mean_iterator.Get() * denominator );
+      mean_iterator.Set( mean_iterator.Get() + input_iterator.Get() );
+      if( calc_std )
+      {
+        sq_mean_iterator.Set( sq_mean_iterator.Get() + (input_iterator.Get() * input_iterator.Get()) );
+      }
+    }
+  }
+
+  /** Divide images by N to get E(X) and E(X^2)*/
+  mean_iterator.GoToBegin();
+  sq_mean_iterator.GoToBegin();
+  float denominator( 1.0f / nrInputs );
+  for (; !mean_iterator.IsAtEnd(); ++mean_iterator, ++sq_mean_iterator )
+  {
+    mean_iterator.Set( mean_iterator.Get() * denominator );
+    if( calc_std )
+    {
+      sq_mean_iterator.Set( sq_mean_iterator.Get() * denominator );
     }
 
-		bool nothing = false;
-	}
+    bool nothing = false;
+  }
 
-	/** Calculate standard deviation: sqrt( E(X^2) - (E(X))^2 ) */
-	if(calc_std)
-	{
-		mean_iterator.GoToBegin();
-		sq_mean_iterator.GoToBegin();
-		std_iterator.GoToBegin();
+  /** Calculate standard deviation: sqrt( E(X^2) - (E(X))^2 ) */
+  if(calc_std)
+  {
+    mean_iterator.GoToBegin();
+    sq_mean_iterator.GoToBegin();
+    std_iterator.GoToBegin();
 
-		for (; !mean_iterator.IsAtEnd(); ++mean_iterator, ++sq_mean_iterator, ++std_iterator )
-		{
-			std_iterator.Set( std::sqrt(
+    for (; !mean_iterator.IsAtEnd(); ++mean_iterator, ++sq_mean_iterator, ++std_iterator )
+    {
+      std_iterator.Set( std::sqrt(
         (float) std::abs( sq_mean_iterator.Get() - (mean_iterator.Get() * mean_iterator.Get() ) ) ) );
-		}
-	}
+    }
+  }
 
-	/** Write the output images */
-	if( calc_mean )
-	{
-		writer_mean->SetFileName( outputFileNameMean.c_str() );
-		writer_mean->SetInput( mean );
-		writer_mean->Update();
-	}
+  /** Write the output images */
+  if( calc_mean )
+  {
+    writer_mean->SetFileName( outputFileNameMean.c_str() );
+    writer_mean->SetInput( mean );
+    writer_mean->Update();
+  }
 
-	if( calc_std )
-	{
-		writer_std->SetFileName( outputFileNameStd.c_str() );
-		writer_std->SetInput( std );
-		writer_std->Update();
-	}
+  if( calc_std )
+  {
+    writer_std->SetFileName( outputFileNameStd.c_str() );
+    writer_std->SetInput( std );
+    writer_std->Update();
+  }
 
 } // end MeanStdImage()
 
 #endif // end #ifndef __meanstdimage_hxx_
+

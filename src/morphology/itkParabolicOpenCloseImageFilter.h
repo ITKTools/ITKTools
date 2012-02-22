@@ -25,7 +25,7 @@ namespace itk
  *
 **/
 template <typename TInputImage,
-	  bool doOpen,
+    bool doOpen,
           typename TOutputImage= TInputImage >
 class ITK_EXPORT ParabolicOpenCloseImageFilter:
     public ImageToImageFilter<TInputImage,TOutputImage>
@@ -98,7 +98,7 @@ public:
                   (Concept::SameDimension<itkGetStaticConstMacro(InputImageDimension),itkGetStaticConstMacro(OutputImageDimension)>));
 
   itkConceptMacro(Comparable,
-		  (Concept::Comparable<PixelType>));
+      (Concept::Comparable<PixelType>));
 
   /** End concept checking */
 #endif

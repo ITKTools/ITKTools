@@ -147,7 +147,7 @@ int main( int argc, char *argv[] )
   int algorithm = 0;
   bool reta = parser->GetCommandLineArgument( "-a", algorithm );
 
-	const bool useCompression = parser->ArgumentExists( "-z" );
+  const bool useCompression = parser->ArgumentExists( "-z" );
 
 
   /** Check for valid input options. */

@@ -13,11 +13,11 @@
 namespace itk
 {
 template <typename TInputImage,
-	  bool doOpen,
+    bool doOpen,
           typename TOutputImage= TInputImage >
 class ITK_EXPORT ParabolicOpenCloseSafeBorderImageFilter:
     public ImageToImageFilter<TInputImage,
-			      TOutputImage>
+            TOutputImage>
 {
 
 public:

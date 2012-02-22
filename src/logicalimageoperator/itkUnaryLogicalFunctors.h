@@ -55,7 +55,7 @@ struct UnaryLogicalFunctorFactory
     if( filterType == EQUAL )
     {
       typedef itk::UnaryFunctorImageFilter<TImage, TImage,
-					  itk::Functor::EQUAL<typename TImage::PixelType> >  FilterType;
+        itk::Functor::EQUAL<typename TImage::PixelType> >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       filter->GetFunctor().SetArgument(argument);
       return filter.GetPointer();
@@ -63,7 +63,7 @@ struct UnaryLogicalFunctorFactory
     else if( filterType == NOT )
     {
       typedef itk::UnaryFunctorImageFilter<TImage, TImage,
-					  itk::Functor::NOT<typename TImage::PixelType> >  FilterType;
+        itk::Functor::NOT<typename TImage::PixelType> >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       // 'argument' not used for this filter
       return filter.GetPointer();
@@ -76,3 +76,4 @@ struct UnaryLogicalFunctorFactory
 }; // end struct UnaryLogicalFunctorFactory
 
 #endif
+

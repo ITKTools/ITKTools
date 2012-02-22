@@ -132,7 +132,7 @@ public:
 
     UnaryLogicalFunctorFactory<ScalarImageType> unaryFactory;
     typename itk::InPlaceImageFilter<ScalarImageType, ScalarImageType>::Pointer logicalFilter
-      =	unaryFactory.GetFilter( unaryOperation, static_cast<TComponentType>( this->m_Argument ) );
+      = unaryFactory.GetFilter( unaryOperation, static_cast<TComponentType>( this->m_Argument ) );
 
     // Create the filter which will assemble the component into the output image
     typedef itk::ImageToVectorImageFilter<ScalarImageType> ImageToVectorImageFilterType;
@@ -324,3 +324,4 @@ public:
 
 
 #endif // end #ifndef __logicalimageoperator_h_
+

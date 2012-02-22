@@ -112,14 +112,14 @@ private:
   ImageConstPointer    m_Image;
   RegionType           m_Region;
   bool                 m_RegionSetByUser;
-  double			   m_AlphaLeft;
-  double			   m_AlphaRight;
-  double			   m_PriorLeft;
-  double			   m_PriorRight;
-  double			   m_StdLeft;
-  double		       m_StdRight;
-  unsigned int		   m_UseGaussian;
-  unsigned int		   m_usePoisson;
+  double         m_AlphaLeft;
+  double         m_AlphaRight;
+  double         m_PriorLeft;
+  double         m_PriorRight;
+  double         m_StdLeft;
+  double           m_StdRight;
+  unsigned int       m_UseGaussian;
+  unsigned int       m_usePoisson;
 };
 
 } // end namespace itk

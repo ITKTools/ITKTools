@@ -31,63 +31,63 @@ public:
     if(filterType == ADDITION)
     {
       typedef itk::NaryFunctorImageFilter<TInputImage, TOutputImage,
-					  itk::Functor::NaryADDITION<typename TInputImage::PixelType, typename TOutputImage::PixelType> >  FilterType;
+        itk::Functor::NaryADDITION<typename TInputImage::PixelType, typename TOutputImage::PixelType> >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
     else if(filterType == MEAN)
     {
       typedef itk::NaryFunctorImageFilter<TInputImage, TOutputImage,
-					  itk::Functor::NaryMEAN<typename TInputImage::PixelType, typename TOutputImage::PixelType> >  FilterType;
+        itk::Functor::NaryMEAN<typename TInputImage::PixelType, typename TOutputImage::PixelType> >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
     else if(filterType == MINUS)
     {
       typedef itk::NaryFunctorImageFilter<TInputImage, TOutputImage,
-					  itk::Functor::NaryMINUS<typename TInputImage::PixelType, typename TOutputImage::PixelType> >  FilterType;
+        itk::Functor::NaryMINUS<typename TInputImage::PixelType, typename TOutputImage::PixelType> >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
     else if(filterType == TIMES)
     {
       typedef itk::NaryFunctorImageFilter<TInputImage, TOutputImage,
-					  itk::Functor::NaryTIMES<typename TInputImage::PixelType, typename TOutputImage::PixelType> >  FilterType;
+        itk::Functor::NaryTIMES<typename TInputImage::PixelType, typename TOutputImage::PixelType> >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
     else if(filterType == DIVIDE)
     {
       typedef itk::NaryFunctorImageFilter<TInputImage, TOutputImage,
-					  itk::Functor::NaryDIVIDE<typename TInputImage::PixelType, typename TOutputImage::PixelType> >  FilterType;
+        itk::Functor::NaryDIVIDE<typename TInputImage::PixelType, typename TOutputImage::PixelType> >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
     else if(filterType == MAXIMUM)
     {
       typedef itk::NaryFunctorImageFilter<TInputImage, TOutputImage,
-					  itk::Functor::NaryMAXIMUM<typename TInputImage::PixelType, typename TOutputImage::PixelType> >  FilterType;
+        itk::Functor::NaryMAXIMUM<typename TInputImage::PixelType, typename TOutputImage::PixelType> >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
     else if(filterType == MINIMUM)
     {
       typedef itk::NaryFunctorImageFilter<TInputImage, TOutputImage,
-					  itk::Functor::NaryMINIMUM<typename TInputImage::PixelType, typename TOutputImage::PixelType> >  FilterType;
+        itk::Functor::NaryMINIMUM<typename TInputImage::PixelType, typename TOutputImage::PixelType> >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
     else if(filterType == ABSOLUTEDIFFERENCE)
     {
       typedef itk::NaryFunctorImageFilter<TInputImage, TOutputImage,
-					  itk::Functor::NaryABSOLUTEDIFFERENCE<typename TInputImage::PixelType, typename TOutputImage::PixelType> >  FilterType;
+        itk::Functor::NaryABSOLUTEDIFFERENCE<typename TInputImage::PixelType, typename TOutputImage::PixelType> >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
     else if(filterType == NARYMAGNITUDE)
     {
       typedef itk::NaryFunctorImageFilter<TInputImage, TOutputImage,
-					  itk::Functor::NaryNARYMAGNITUDE<typename TInputImage::PixelType, typename TOutputImage::PixelType> >  FilterType;
+        itk::Functor::NaryNARYMAGNITUDE<typename TInputImage::PixelType, typename TOutputImage::PixelType> >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
@@ -120,3 +120,4 @@ public:
   }
 
 #endif
+

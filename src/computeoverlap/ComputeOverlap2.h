@@ -113,8 +113,8 @@ public:
     {
       if( sumA.count( *itL ) == 0 && sumB.count( *itL ) == 0 )
       {
-	itkGenericExceptionMacro( << "The selected label "
-	  << static_cast<std::size_t>( *itL ) << " does not exist in both input images." );
+        itkGenericExceptionMacro( << "The selected label "
+          << static_cast<std::size_t>( *itL ) << " does not exist in both input images." );
       }
     }
 
@@ -131,31 +131,32 @@ public:
       */
       if( labels.size() != 0 && labels.count( currentLabel ) == 0 )
       {
-	continue;
+        continue;
       }
 
       /** Compute overlap. */
       const std::size_t sumAB = sumA[ currentLabel ] + sumB[ currentLabel ];
       if( sumAB == 0 )
       {
-	overlap[ currentLabel ] = 0.0;
+        overlap[ currentLabel ] = 0.0;
       }
       else
       {
-	overlap[ currentLabel ]
-	  = static_cast<double>( 2 * sumC[ currentLabel ] )
-	  / static_cast<double>( sumAB );
+        overlap[ currentLabel ]
+          = static_cast<double>( 2 * sumC[ currentLabel ] )
+          / static_cast<double>( sumAB );
       }
 
       /** Print information. */
       std::cout << static_cast<std::size_t>( currentLabel ) << " => "
-	<< sumA[ currentLabel ]
-	<< "\t, " << sumB[ currentLabel ]
-	<< "\t, " << sumC[ currentLabel ]
-	<< "\t, " << overlap[ currentLabel ] << std::endl;
+        << sumA[ currentLabel ]
+        << "\t, " << sumB[ currentLabel ]
+        << "\t, " << sumC[ currentLabel ]
+        << "\t, " << overlap[ currentLabel ] << std::endl;
     }
   }
 
 }; // end ComputeOverlap2
 
 #endif // end #ifndef __ComputeOverlap2_h_
+

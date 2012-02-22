@@ -32,16 +32,16 @@ ParabolicOpenCloseSafeBorderImageFilter<TInputImage, doOpen, TOutputImage>
     for (unsigned s = 0; s < ImageDimension;s++)
       {
       if( this->m_MorphFilt->GetUseImageSpacing())
-	{
-	RealType image_scale =spcing[s];
-	Bounds[s] = (unsigned long)ceil(sqrt(2*(Sigma[s]/(image_scale*image_scale))*range));
-	BoundsSize[s] = Bounds[s];
-	}
+      {
+        RealType image_scale =spcing[s];
+        Bounds[s] = (unsigned long)ceil(sqrt(2*(Sigma[s]/(image_scale*image_scale))*range));
+        BoundsSize[s] = Bounds[s];
+      }
       else
-	{
-	Bounds[s] = (unsigned long)ceil(sqrt(2*Sigma[s]*range));
-	BoundsSize[s] = Bounds[s];
-	}
+      {
+        Bounds[s] = (unsigned long)ceil(sqrt(2*Sigma[s]*range));
+        BoundsSize[s] = Bounds[s];
+      }
       }
 
     this->m_PadFilt->SetPadLowerBound(Bounds);

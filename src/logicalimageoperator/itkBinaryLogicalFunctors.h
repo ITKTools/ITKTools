@@ -133,63 +133,63 @@ struct BinaryLogicalFunctorFactory
     if( filterType == AND )
     {
       typedef itk::BinaryFunctorImageFilter<TImage, TImage, TImage,
-					  itk::Functor::AND<typename TImage::PixelType> >  FilterType;
+        itk::Functor::AND<typename TImage::PixelType> >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
     else if( filterType == OR )
     {
       typedef itk::BinaryFunctorImageFilter<TImage, TImage, TImage,
-					  itk::Functor::OR<typename TImage::PixelType> >  FilterType;
+        itk::Functor::OR<typename TImage::PixelType> >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
     else if( filterType == XOR )
     {
       typedef itk::BinaryFunctorImageFilter<TImage, TImage, TImage,
-					  itk::Functor::XOR<typename TImage::PixelType> >  FilterType;
+        itk::Functor::XOR<typename TImage::PixelType> >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
     else if( filterType == ANDNOT )
     {
       typedef itk::BinaryFunctorImageFilter<TImage, TImage, TImage,
-					  itk::Functor::ANDNOT<typename TImage::PixelType> >  FilterType;
+        itk::Functor::ANDNOT<typename TImage::PixelType> >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
     else if( filterType == ORNOT )
     {
       typedef itk::BinaryFunctorImageFilter<TImage, TImage, TImage,
-					  itk::Functor::ORNOT<typename TImage::PixelType> >  FilterType;
+        itk::Functor::ORNOT<typename TImage::PixelType> >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
     else if( filterType == NOT_XOR )
     {
       typedef itk::BinaryFunctorImageFilter<TImage, TImage, TImage,
-					  itk::Functor::NOT_XOR<typename TImage::PixelType> >  FilterType;
+        itk::Functor::NOT_XOR<typename TImage::PixelType> >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
     else if( filterType == NOT_OR )
     {
       typedef itk::BinaryFunctorImageFilter<TImage, TImage, TImage,
-					  itk::Functor::NOT_OR<typename TImage::PixelType> >  FilterType;
+        itk::Functor::NOT_OR<typename TImage::PixelType> >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
     else if( filterType == NOT_AND )
     {
       typedef itk::BinaryFunctorImageFilter<TImage, TImage, TImage,
-					  itk::Functor::NOT_AND<typename TImage::PixelType> >  FilterType;
+        itk::Functor::NOT_AND<typename TImage::PixelType> >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
     else if( filterType == DUMMY )
     {
       typedef itk::BinaryFunctorImageFilter<TImage, TImage, TImage,
-					  itk::Functor::DUMMY<typename TImage::PixelType> >  FilterType;
+        itk::Functor::DUMMY<typename TImage::PixelType> >  FilterType;
       typename FilterType::Pointer filter = FilterType::New();
       return filter.GetPointer();
     }
@@ -202,3 +202,4 @@ struct BinaryLogicalFunctorFactory
 
 
 #endif
+

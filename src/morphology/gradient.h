@@ -55,7 +55,7 @@ void gradient(
   /** Write the output image. */
   writer->SetFileName( outputFileName.c_str() );
   writer->SetInput( filter->GetOutput() );
-	writer->SetUseCompression( useCompression );
+  writer->SetUseCompression( useCompression );
   writer->Update();
 
 } // end gradient()

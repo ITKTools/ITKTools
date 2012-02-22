@@ -53,9 +53,9 @@ MinErrorThresholdImageFilter<TInputImage, TOutputImage>
   MinError->SetImage (this->GetInput());
   MinError->SetNumberOfHistogramBins ( this->m_NumberOfHistogramBins);
   if( this->m_MixtureType == 1)
-	MinError->UseGaussianMixture(false);
+  MinError->UseGaussianMixture(false);
   else
-  	MinError->UseGaussianMixture(true);
+    MinError->UseGaussianMixture(true);
   MinError->Compute();
 
   //Get the threshold and the estimated mixture parameters

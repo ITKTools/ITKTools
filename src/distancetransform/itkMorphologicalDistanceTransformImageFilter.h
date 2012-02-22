@@ -34,8 +34,7 @@ namespace itk
 
 template <typename TInputImage, typename TOutputImage= TInputImage>
 class ITK_EXPORT MorphologicalDistanceTransformImageFilter:
-    public ImageToImageFilter<TInputImage,
-			      TOutputImage>
+    public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
   /** Standard class typedefs. */
@@ -106,7 +105,7 @@ public:
                   (Concept::SameDimension<itkGetStaticConstMacro(InputImageDimension),itkGetStaticConstMacro(OutputImageDimension)>));
 
   itkConceptMacro(Comparable,
-		  (Concept::Comparable<InputPixelType>));
+      (Concept::Comparable<InputPixelType>));
 
   /** End concept checking */
 #endif
@@ -144,3 +143,4 @@ private:
 
 
 #endif
+

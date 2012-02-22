@@ -36,9 +36,9 @@ std::string GetHelpString( void )
     << "Computes overlap measures between the set same set of labels of pixels of two images.\n"
     << "Usage:\n"
     << "pxcomputeoverlap summary\n"
-    << "  -in1		Filename of first input image (Source Image)\n"
-    << "  -in2		Filename of second input image (Target Image)\n"
-    << "  -out		Filename to write the results to\n"
+    << "  -in1    Filename of first input image (Source Image)\n"
+    << "  -in2    Filename of second input image (Target Image)\n"
+    << "  -out    Filename to write the results to\n"
     << "  -seperator    Seperator to use in csv file; default '\\t'\n"
     << "The results file contains:\n"
     << "  Union Overlap or Jaccard coefficient; Mean Overlap or Dice coefficient;\n"
@@ -146,3 +146,4 @@ int main( int argc, char **argv )
   return EXIT_SUCCESS;
 
 } // end main
+

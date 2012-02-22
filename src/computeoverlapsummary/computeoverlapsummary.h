@@ -55,10 +55,10 @@ public:
 
 class invalidfilexception: public std::exception
 {
-	virtual const char* what() const throw()
-	{
-		return "Could not open output file stream for writing!";
-	}
+  virtual const char* what() const throw()
+  {
+    return "Could not open output file stream for writing!";
+  }
 };
 
 
@@ -144,3 +144,4 @@ public:
 }; // end class ITKToolsComputeOverlapSummary
 
 #endif // end #ifndef __computeoverlapsummary_h_
+

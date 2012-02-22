@@ -25,7 +25,8 @@ ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage>
 {
   this->SetNumberOfRequiredOutputs( 1 );
   this->SetNumberOfRequiredInputs( 1 );
-// needs to be selected according to erosion/dilation
+
+  // needs to be selected according to erosion/dilation
   if(doOpen)
     {
     // erosion then dilation
@@ -265,37 +266,37 @@ ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage >
     if( this->m_CurrentDimension == 0)
       {
       if( this->m_Scale[0] > 0)
-	{
-	// Perform as normal
+  {
+  // Perform as normal
 //     RealType magnitude = 1.0/(2.0 * this->m_Scale[0]);
-	unsigned long LineLength = region.GetSize()[0];
-	RealType image_scale = this->GetInput()->GetSpacing()[0];
+  unsigned long LineLength = region.GetSize()[0];
+  RealType image_scale = this->GetInput()->GetSpacing()[0];
 
-	doOneDimension<InputConstIteratorType,OutputIteratorType,
-	  RealType, OutputPixelType, !doOpen>(inputIterator, outputIterator,
-					      *progress, LineLength, 0,
-					      this->m_MagnitudeSign,
-					      this->m_UseImageSpacing,
-					      this->m_Extreme,
-					      image_scale,
-					      this->m_Scale[0]);
-	}
+  doOneDimension<InputConstIteratorType,OutputIteratorType,
+    RealType, OutputPixelType, !doOpen>(inputIterator, outputIterator,
+                *progress, LineLength, 0,
+                this->m_MagnitudeSign,
+                this->m_UseImageSpacing,
+                this->m_Extreme,
+                image_scale,
+                this->m_Scale[0]);
+  }
       else
-	{
-	// copy to output
-	typedef ImageRegionConstIterator<TInputImage> InItType;
-	typedef ImageRegionIterator<TOutputImage> OutItType;
+  {
+  // copy to output
+  typedef ImageRegionConstIterator<TInputImage> InItType;
+  typedef ImageRegionIterator<TOutputImage> OutItType;
 
-	InItType InIt(inputImage, region);
-	OutItType OutIt(outputImage, region);
-	while (!InIt.IsAtEnd())
-	  {
-	  OutIt.Set(static_cast<OutputPixelType>(InIt.Get()));
-	  ++InIt;
-	  ++OutIt;
-	  }
+  InItType InIt(inputImage, region);
+  OutItType OutIt(outputImage, region);
+  while (!InIt.IsAtEnd())
+    {
+    OutIt.Set(static_cast<OutputPixelType>(InIt.Get()));
+    ++InIt;
+    ++OutIt;
+    }
 
-	}
+  }
       }
     else
       {
@@ -304,13 +305,13 @@ ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage >
       RealType image_scale = this->GetInput()->GetSpacing()[m_CurrentDimension];
 
       doOneDimension<OutputConstIteratorType,OutputIteratorType,
-	RealType, OutputPixelType, !doOpen>(inputIteratorStage2, outputIterator,
-					    *progress, LineLength, this->m_CurrentDimension,
-					    this->m_MagnitudeSign,
-					    this->m_UseImageSpacing,
-					    this->m_Extreme,
-					    image_scale,
-					    this->m_Scale[m_CurrentDimension]);
+  RealType, OutputPixelType, !doOpen>(inputIteratorStage2, outputIterator,
+              *progress, LineLength, this->m_CurrentDimension,
+              this->m_MagnitudeSign,
+              this->m_UseImageSpacing,
+              this->m_Extreme,
+              image_scale,
+              this->m_Scale[m_CurrentDimension]);
 
       }
     }
@@ -324,13 +325,13 @@ ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage >
       RealType image_scale = this->GetInput()->GetSpacing()[m_CurrentDimension];
 
       doOneDimension<OutputConstIteratorType,OutputIteratorType,
- 	RealType, OutputPixelType, doOpen>(inputIteratorStage2, outputIterator,
-					   *progress, LineLength, this->m_CurrentDimension,
-					   this->m_MagnitudeSign,
-					   this->m_UseImageSpacing,
-					   this->m_Extreme,
-					   image_scale,
-					   this->m_Scale[m_CurrentDimension]);
+  RealType, OutputPixelType, doOpen>(inputIteratorStage2, outputIterator,
+             *progress, LineLength, this->m_CurrentDimension,
+             this->m_MagnitudeSign,
+             this->m_UseImageSpacing,
+             this->m_Extreme,
+             image_scale,
+             this->m_Scale[m_CurrentDimension]);
       }
     }
 }
