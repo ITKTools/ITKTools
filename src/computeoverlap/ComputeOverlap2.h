@@ -1,5 +1,22 @@
-#ifndef ComputeOverlap2_H
-#define ComputeOverlap2_H
+/*=========================================================================
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
+#ifndef __ComputeOverlap2_h_
+#define __ComputeOverlap2_h_
 
 /** ComputeOverlap2 */
 
@@ -11,14 +28,14 @@ public:
   ComputeOverlap2Base(){};
   ~ComputeOverlap2Base(){};
 
-  /** Input parameters */
+  /** Input member parameters. */
   std::vector<std::string> this->m_InputFileNames;
   std::vector<unsigned int> m_Labels;
     
 }; // end ComputeOverlap2
 
 
-template< class ComponentType, unsigned int Dimension >
+template< unsigned int VDimension, class TComponentType >
 class ComputeOverlap2 : public ComputeOverlap2Base
 {
 public:
@@ -29,13 +46,14 @@ public:
 
   static Self * New( itktools::EnumComponentType componentType, unsigned int dim )
   {
-    if ( itktools::IsType<ComponentType>( componentType ) && Dimension == dim )
+    if( itktools::IsType<ComponentType>( componentType ) && Dimension == dim )
     {
       return new Self;
     }
     return 0;
   }
 
+  /** Run function. */
   void Run( void )
   {
     /** Some typedef's. */
@@ -85,7 +103,7 @@ public:
 
       sumA[ A ]++;
       sumB[ B ]++;
-      if ( A == B  ) ++sumC[ A ];
+      if( A == B  ) ++sumC[ A ];
 
       ++itA; ++itB;
     }
@@ -93,7 +111,7 @@ public:
     /** Check if all requested labels exist. */
     for ( typename LabelsType::const_iterator itL = labels.begin(); itL != labels.end(); itL++ )
     {
-      if ( sumA.count( *itL ) == 0 && sumB.count( *itL ) == 0 )
+      if( sumA.count( *itL ) == 0 && sumB.count( *itL ) == 0 )
       {
 	itkGenericExceptionMacro( << "The selected label "
 	  << static_cast<std::size_t>( *itL ) << " does not exist in both input images." );
@@ -111,14 +129,14 @@ public:
       /** Skip the current label if not selected by user.
       * Print all labels if nothing is selected.
       */
-      if ( labels.size() != 0 && labels.count( currentLabel ) == 0 )
+      if( labels.size() != 0 && labels.count( currentLabel ) == 0 )
       {
 	continue;
       }
 
       /** Compute overlap. */
       const std::size_t sumAB = sumA[ currentLabel ] + sumB[ currentLabel ];
-      if ( sumAB == 0 )
+      if( sumAB == 0 )
       {
 	overlap[ currentLabel ] = 0.0;
       }
@@ -140,4 +158,4 @@ public:
 
 }; // end ComputeOverlap2
 
-#endif
+#endif // end #ifndef __ComputeOverlap2_h_

@@ -33,12 +33,12 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-    << "This program creates a mean and standard deviation image of a set of images." << std::endl
-    << "Usage:" << std::endl
-    << "pxmeanstdimage" << std::endl
-    << "  -in        list of inputFilenames" << std::endl
-    << "  [-outmean] outputFilename for mean image; always written as float" << std::endl
-    << "  [-outstd]  outputFilename for standard deviation image; always written as float," << std::endl
+    << "This program creates a mean and standard deviation image of a set of images.\n"
+    << "Usage:\n"
+    << "pxmeanstdimage\n"
+    << "  -in        list of inputFilenames\n"
+    << "  [-outmean] outputFilename for mean image; always written as float\n"
+    << "  [-outstd]  outputFilename for standard deviation image; always written as float,\n"
     << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
 
   return ss.str();
@@ -72,97 +72,71 @@ int main( int argc, char **argv )
   std::vector<std::string> inputFileNames;
   parser->GetCommandLineArgument( "-in", inputFileNames );
 
-  std::string outputFileNameMean("");
-  parser->GetCommandLineArgument( "-out", outputFileNameMean );
+  std::string outputFileNameMean = "";
+  parser->GetCommandLineArgument( "-outmean", outputFileNameMean );
   bool retoutmean = parser->GetCommandLineArgument( "-outmean", outputFileNameMean );
 
-  std::string outputFileNameStd("");
-  parser->GetCommandLineArgument( "-mask", outputFileNameStd );
+  std::string outputFileNameStd = "";
+  parser->GetCommandLineArgument( "-outstd", outputFileNameStd );
   bool retoutstd  = parser->GetCommandLineArgument( "-outstd", outputFileNameStd );
 
   /** Determine image properties. */
-  std::string ComponentTypeIn = "float";
-  std::string PixelType; //we don't use this
-  unsigned int Dimension = 3;
-  unsigned int NumberOfComponents = 1;
-  std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = itktools::GetImageProperties(
-    inputFileNames[0],
-    PixelType,
-    ComponentTypeIn,
-    Dimension,
-    NumberOfComponents,
-    imagesize );
-  if ( retgip != 0 )
-  {
-    return 1;
-  }
+  itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
+  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  unsigned int dim = 0;
+  unsigned int numberOfComponents = 0;
+  bool retgip = itktools::GetImageProperties(
+    inputFileNames[ 0 ], pixelType, componentType, dim, numberOfComponents );
+  if( !retgip ) return EXIT_FAILURE;
 
   /** Check for vector images. */
-  if ( NumberOfComponents > 1 )
-  {
-    std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
-    std::cerr << "Vector images are not supported." << std::endl;
-    return 1;
-  }
+  bool retNOCCheck = itktools::NumberOfComponentsCheck( numberOfComponents );
+  if( !retNOCCheck ) return EXIT_FAILURE;
 
-
-  /** Class that does the work */
-  ITKToolsMeanStdImageBase * meanStdImage = 0; 
-
-  /** Short alias */
-  unsigned int dim = Dimension;
- 
-  /** \todo some progs allow user to override the pixel type, 
-   * so we need a method to convert string to EnumComponentType */
-  itktools::ComponentType componentType = itktools::GetImageComponentType( inputFileNames[0] );
+  /** Class that does the work. */
+  ITKToolsMeanStdImageBase * filter = 0; 
 
   try
   {    
     // now call all possible template combinations.
-    if (!meanStdImage) meanStdImage = ITKToolsMeanStdImage< char, 2 >::New( componentType, dim );
-    if (!meanStdImage) meanStdImage = ITKToolsMeanStdImage< unsigned char, 2 >::New( componentType, dim );
-    if (!meanStdImage) meanStdImage = ITKToolsMeanStdImage< short, 2 >::New( componentType, dim );
-    if (!meanStdImage) meanStdImage = ITKToolsMeanStdImage< unsigned short, 2 >::New( componentType, dim );
-    if (!meanStdImage) meanStdImage = ITKToolsMeanStdImage< float, 2 >::New( componentType, dim );
-    if (!meanStdImage) meanStdImage = ITKToolsMeanStdImage< double, 2 >::New( componentType, dim );
+    if( !filter ) filter = ITKToolsMeanStdImage< 2, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsMeanStdImage< 2, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsMeanStdImage< 2, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsMeanStdImage< 2, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsMeanStdImage< 2, float >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsMeanStdImage< 2, double >::New( dim, componentType );
 
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!meanStdImage) meanStdImage = ITKToolsMeanStdImage< char, 3 >::New( componentType, dim );
-    if (!meanStdImage) meanStdImage = ITKToolsMeanStdImage< unsigned char, 3 >::New( componentType, dim );
-    if (!meanStdImage) meanStdImage = ITKToolsMeanStdImage< short, 3 >::New( componentType, dim );
-    if (!meanStdImage) meanStdImage = ITKToolsMeanStdImage< unsigned short, 3 >::New( componentType, dim );
-    if (!meanStdImage) meanStdImage = ITKToolsMeanStdImage< float, 3 >::New( componentType, dim );
-    if (!meanStdImage) meanStdImage = ITKToolsMeanStdImage< double, 3 >::New( componentType, dim );
+    if( !filter ) filter = ITKToolsMeanStdImage< 3, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsMeanStdImage< 3, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsMeanStdImage< 3, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsMeanStdImage< 3, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsMeanStdImage< 3, float >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsMeanStdImage< 3, double >::New( dim, componentType );
 #endif
-    if (!meanStdImage) 
-    {
-      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-      std::cerr
-        << "pixel (component) type = " << ComponentTypeIn // so here we also need a string - we don't need to convert to a string here right? just output the string that was input.
-        << " ; dimension = " << Dimension
-        << std::endl;
-      return 1;
-    }
+    /** Check if filter was instantiated. */
+    bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
+    if( !supported ) return EXIT_FAILURE;
 
-    meanStdImage->m_InputFileNames = inputFileNames;
-    meanStdImage->m_OutputFileNameMean= outputFileNameMean;
-    meanStdImage->m_OutputFileNameStd = outputFileNameStd;
-    meanStdImage->m_CalcMean = retoutmean;
-    meanStdImage->m_CalcStd = retoutstd;
+    /** Set the filter arguments. */
+    filter->m_InputFileNames = inputFileNames;
+    filter->m_OutputFileNameMean= outputFileNameMean;
+    filter->m_OutputFileNameStd = outputFileNameStd;
+    filter->m_CalcMean = retoutmean;
+    filter->m_CalcStd = retoutstd;
 
-    meanStdImage->Run();
+    filter->Run();
     
-    delete meanStdImage;  
+    delete filter;  
   }
-  catch( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    delete meanStdImage;
-    return 1;
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+    delete filter;
+    return EXIT_FAILURE;
   }
 
   /** End program. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main

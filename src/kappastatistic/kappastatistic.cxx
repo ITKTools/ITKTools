@@ -113,31 +113,31 @@ int main( int argc, char **argv )
 
   /** Check command line arguments. */
   type = itksys::SystemTools::LowerCase( type );
-  if ( type != "fleiss" && type != "cohen" )
+  if( type != "fleiss" && type != "cohen" )
   {
     std::cerr << "ERROR: type should be one of {fleiss,cohen}." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
-  if ( columns.size() < 2 )
+  if( columns.size() < 2 )
   {
     std::cerr << "ERROR: You should specify at least two columns with \"-c\"." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   std::string smallOut = itksys::SystemTools::LowerCase( output );
-  if ( smallOut != "kappa" && smallOut != "all" )
+  if( smallOut != "kappa" && smallOut != "all" )
   {
     std::cerr << "ERROR: output should be one of \"kappa\" or \"all\"." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
-  if ( retcmp ) exstd = true;
+  if( retcmp ) exstd = true;
 
   /** Read the input file. */
   std::vector< std::vector<unsigned int> > matrix;
   retin = GetInputData( inputFileName, columns, matrix );
-  if ( !retin ) return 1;
+  if( !retin ) return EXIT_FAILURE;
 
   /** Typedefs. */
   typedef itk::Statistics::FleissKappaStatistic         FleissType;
@@ -153,7 +153,7 @@ int main( int argc, char **argv )
   /** Compute kappa. */
   try
   {
-    if ( type == "fleiss" )
+    if( type == "fleiss" )
     {
       fleiss->SetObservations( matrix );
 
@@ -161,7 +161,7 @@ int main( int argc, char **argv )
       N = fleiss->GetNumberOfObservations();
       k = fleiss->GetNumberOfCategories();
 
-      if ( exstd )
+      if( exstd )
       {
         fleiss->ComputeKappaStatisticValueAndStandardDeviation( Po, Pe, kappa, std, retcmp );
       }
@@ -170,7 +170,7 @@ int main( int argc, char **argv )
         fleiss->ComputeKappaStatisticValue( Po, Pe, kappa );
       }
     }
-    else if ( type == "cohen" )
+    else if( type == "cohen" )
     {
       cohen->SetObservations( matrix );
 
@@ -179,7 +179,7 @@ int main( int argc, char **argv )
       k = cohen->GetNumberOfCategories();
 
       cohen->SetWeights( weights );
-      if ( exstd )
+      if( exstd )
       {
         cohen->ComputeKappaStatisticValueAndStandardDeviation( Po, Pe, kappa, std, retcmp );
       }
@@ -189,24 +189,24 @@ int main( int argc, char **argv )
       }
     }
   }
-  catch( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    return 1;
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+    return EXIT_FAILURE;
   }
 
   /** Print the output. */
   std::cout << std::fixed << std::showpoint << std::setprecision( precision );
-  if ( smallOut == "kappa" )
+  if( smallOut == "kappa" )
   {
     std::cout << kappa << std::endl;
   }
-  else if ( smallOut == "all" )
+  else if( smallOut == "all" )
   {
     std::cout << "# observers:    " << n << std::endl;
     std::cout << "# observations: " << N << std::endl;
     std::cout << "# categories:   " << k << std::endl;
-    if ( type == "cohen" )
+    if( type == "cohen" )
     {
       std::cout << "WeightsName:    " << cohen->GetWeightsName() << std::endl;
     }
@@ -214,19 +214,19 @@ int main( int argc, char **argv )
     std::cout << "Expected agreement Pe: " << Pe << std::endl;
     std::cout << "kappa:                 " << kappa << std::endl;
 
-    if ( exstd )
+    if( exstd )
     {
       std::cout << "standard deviation:    " << std << std::endl;
     }
 
-    if ( output == "ALL" )
+    if( output == "ALL" )
     {
-      if ( type == "fleiss" ) fleiss->Print( std::cout );
-      else if ( type == "cohen" ) cohen->Print( std::cout );
+      if( type == "fleiss" ) fleiss->Print( std::cout );
+      else if( type == "cohen" ) cohen->Print( std::cout );
     }
   }
 
   /** End program. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main

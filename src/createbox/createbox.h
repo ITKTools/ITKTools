@@ -1,7 +1,25 @@
-#ifndef __CreateBoxHelper_h
-#define __CreateBoxHelper_h
+/*=========================================================================
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
+#ifndef __createbox_h_
+#define __createbox_h_
 
-#include <iostream>
+#include "ITKToolsBase.h"
+#include "ITKToolsHelpers.h"
 #include "CommandLineArgumentHelper.h"
 
 #include "itkBoxSpatialFunction.h"
@@ -10,22 +28,26 @@
 #include "vnl/vnl_math.h"
 
 
-/** CreateBox */
+/** \class ITKToolsCreateBoxBase
+ *
+ * Untemplated pure virtual base class that holds
+ * the Run() function and all required parameters.
+ */
 
 class ITKToolsCreateBoxBase : public itktools::ITKToolsBase
 { 
 public:
+  /** Constructor. */
   ITKToolsCreateBoxBase()
   {
-    //m_InputFileName = "";
     this->m_ReferenceImageIOBase = NULL;
     this->m_OutputFileName = "";
     this->m_BoxDefinition = "";
   }
-
+  /** Destructor. */
   ~ITKToolsCreateBoxBase(){};
 
-  /** Input parameters */
+  /** Input member parameters. */
   itk::ImageIOBase::Pointer m_ReferenceImageIOBase;
   std::string m_OutputFileName;
   std::vector<double> m_Input1;
@@ -33,33 +55,33 @@ public:
   std::vector<double> m_OrientationOfBox;
   std::string m_BoxDefinition;
 
-}; // end CreateBoxBase
+}; // end class ITKToolsCreateBoxBase
 
 
-template< class TComponentType, unsigned int VDimension >
+/** \class ITKToolsCreateBox
+ *
+ * Templated class that implements the Run() function
+ * and the New() function for its creation.
+ */
+
+template< unsigned int VDimension, class TComponentType >
 class ITKToolsCreateBox : public ITKToolsCreateBoxBase
 {
 public:
+  /** Standard ITKTools stuff. */
   typedef ITKToolsCreateBox Self;
+  itktoolsOneTypeNewMacro( Self );
 
   ITKToolsCreateBox(){};
   ~ITKToolsCreateBox(){};
 
-  static Self * New( itktools::ComponentType componentType, unsigned int dim )
-  {
-    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
+  /** Run function. */
   void Run( void )
   {
     /** Typedefs. */
-    typedef itk::Image<TComponentType, VDimension>      ImageType;
+    typedef itk::Image< TComponentType, VDimension >    ImageType;
     typedef itk::ImageFileWriter< ImageType >           ImageWriterType;
-    typedef itk::BoxSpatialFunction< VDimension >        BoxSpatialFunctionType;
+    typedef itk::BoxSpatialFunction< VDimension >       BoxSpatialFunctionType;
     typedef typename BoxSpatialFunctionType::InputType  InputType;
     typedef itk::ImageRegionIterator< ImageType >       IteratorType;
 
@@ -108,19 +130,19 @@ public:
     InputType Center, Radius;
     PointType point1, point2;
     IndexType index1, index2;
-    if ( this->m_BoxDefinition == "CornersAsPoints" )
+    if( this->m_BoxDefinition == "CornersAsPoints" )
     {
       /** The input is points, copy it. */
-      for ( unsigned int i = 0; i < VDimension; i++ )
+      for( unsigned int i = 0; i < VDimension; i++ )
       {
         point1[ i ] = this->m_Input1[ i ];
         point2[ i ] = this->m_Input2[ i ];
       }
     }
-    else if ( this->m_BoxDefinition == "CornersAsIndices" )
+    else if( this->m_BoxDefinition == "CornersAsIndices" )
     {
       /** The input is indices, copy and transform to the point. */
-      for ( unsigned int i = 0; i < VDimension; i++ )
+      for( unsigned int i = 0; i < VDimension; i++ )
       {
         index1[ i ] = static_cast<unsigned int>( this->m_Input1[ i ] );
         index2[ i ] = static_cast<unsigned int>( this->m_Input2[ i ] );
@@ -130,9 +152,9 @@ public:
     }
 
     /** Compute the center and radius. */
-    if ( this->m_BoxDefinition != "CenterRadius" )
+    if( this->m_BoxDefinition != "CenterRadius" )
     {
-      for ( unsigned int i = 0; i < VDimension; i++ )
+      for( unsigned int i = 0; i < VDimension; i++ )
       {
         Center[ i ] = ( point1[ i ] + point2[ i ] ) / 2.0;
         Radius[ i ] = spacingITK[ i ] + vcl_abs( point1[ i ] - Center[ i ] );
@@ -140,7 +162,7 @@ public:
     }
     else
     {
-      for ( unsigned int i = 0; i < VDimension; i++ )
+      for( unsigned int i = 0; i < VDimension; i++ )
       {
         Center[ i ] = point1[ i ];
         Radius[ i ] = point2[ i ];
@@ -149,7 +171,7 @@ public:
 
     /** Convert box orientation to ITK type. */
     InputType   orientationOfBoxITK;
-    for ( unsigned int i = 0; i < VDimension; i++ )
+    for( unsigned int i = 0; i < VDimension; i++ )
     {
       orientationOfBoxITK[ i ] = this->m_OrientationOfBox[ i ];
     }
@@ -183,7 +205,7 @@ public:
 
   } // end Run()
 
-}; // end CreateBox
+}; // end class ITKToolsCreateBox
 
 
-#endif // end #ifndef __CreateBoxHelper_h
+#endif // end #ifndef __createbox_h_

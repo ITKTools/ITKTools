@@ -20,25 +20,10 @@
  
  \verbinclude contrastenhanceimage.help
  */
-#ifndef __contrastenhanceimage_cxx
-#define __contrastenhanceimage_cxx
-
-#include "contrastenhanceimage.h"
 
 #include "itkCommandLineArgumentParser.h"
 #include "ITKToolsHelpers.h"
-#include "ITKToolsBase.h"
-
-#include <iostream>
-#include <string>
-#include <map>
-
-#include "itkImage.h"
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
-#include "itkAdaptiveHistogramEqualizationImageFilter.h"
-
-#include "itkCommandLineArgumentParser.h"
+#include "contrastenhanceimage.h"
 
 
 /**
@@ -49,148 +34,31 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-    << "This program enhances an image." << std::endl
-    << "alpha and beta control the exact behaviour of the filter. See the" << std::endl
-    << "ITK documentation of the AdaptiveHistogramEqualizationImageFilter" << std::endl
-    << "Usage:" << std::endl
-    << "pxcontrastenhanceimage" << std::endl
-    << "-in    \tInputImageFileName" << std::endl
-    << "-out   \tOutputImageFileName" << std::endl
-    << "-pt    \tPixelType <FLOAT, SHORT, USHORT, INT, UINT, CHAR, UCHAR>" << std::endl
-    << "Currently only char, uchar and short are supported." << std::endl
-    << "-id    \tImageDimension <2,3>" << std::endl
-    << "-alpha \t0.0 < alpha < 1.0" << std::endl
-    << "-beta  \t0.0 < beta < 1.0" << std::endl
-    << "-r0    \tInteger radius of window, dimension 0" << std::endl
-    << "-r1    \tInteger radius of window, dimension 1" << std::endl
-    << "[-r2]  \tInteger radius of window, dimension 2" << std::endl
-    << "[-LUT] \tUse Lookup-table <true, false>;" << std::endl
+    << "This program enhances an image.\n"
+    << "alpha and beta control the exact behaviour of the filter. See the\n"
+    << "ITK documentation of the AdaptiveHistogramEqualizationImageFilter\n"
+    << "Usage:\n"
+    << "pxcontrastenhanceimage\n"
+    << "-in    \tInputImageFileName\n"
+    << "-out   \tOutputImageFileName\n"
+    << "-pt    \tPixelType <FLOAT, SHORT, USHORT, INT, UINT, CHAR, UCHAR>\n"
+    << "Currently only char, uchar and short are supported.\n"
+    << "-id    \tImageDimension <2,3>\n"
+    << "-alpha \t0.0 < alpha < 1.0\n"
+    << "-beta  \t0.0 < beta < 1.0\n"
+    << "-r0    \tInteger radius of window, dimension 0\n"
+    << "-r1    \tInteger radius of window, dimension 1\n"
+    << "[-r2]  \tInteger radius of window, dimension 2\n"
+    << "[-LUT] \tUse Lookup-table <true, false>;\n"
     << "default = true; Faster, but requires more memory.";
+
   return ss.str();
+
 } // end GetHelpString()
 
+//-------------------------------------------------------------------------------------
 
-/** ContrastEnhanceImage */
-
-class ITKToolsContrastEnhanceImageBase : public itktools::ITKToolsBase
-{ 
-public:
-  ITKToolsContrastEnhanceImageBase()
-  {
-    this->m_Alpha = 0.0f;
-    this->m_Beta = 0.0f;
-    this->m_InputFileName = "";
-    this->m_OutputFileName = "";
-    this->m_LookUpTable = false;
-    //m_Radius; // does this need to be initialized?
-  };
-  
-  ~ITKToolsContrastEnhanceImageBase(){};
-
-  /** Input parameters */
-  std::string m_InputFileName;
-  std::string m_OutputFileName;
-  float m_Alpha;
-  float m_Beta;
-  bool m_LookUpTable;
-  std::vector<unsigned int> m_Radius;
-}; // end ContrastEnhanceImageBase
-
-
-template< class TComponentType, unsigned int VImageDimension >
-class ITKToolsContrastEnhanceImage : public ITKToolsContrastEnhanceImageBase
-{
-public:
-  typedef ITKToolsContrastEnhanceImage Self;
-
-  ITKToolsContrastEnhanceImage(){};
-  ~ITKToolsContrastEnhanceImage(){};
-
-  static Self * New( itktools::ComponentType componentType, unsigned int dim )
-  {
-    if ( itktools::IsType<TComponentType>( componentType ) && VImageDimension == dim )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
-  void Run( void )
-  {
-    const unsigned int ImageDimension =           VImageDimension;
-    typedef itk::Image<TComponentType, ImageDimension> ImageType;
-    typedef typename ImageType::Pointer           ImagePointer;
-    typedef typename ImageType::IndexType         IndexType;
-    typedef typename ImageType::SizeType          SizeType;
-    typedef typename ImageType::RegionType        RegionType;
-    typedef typename ImageType::PointType         PointType;
-    typedef itk::ImageFileReader<ImageType>       ReaderType;
-    typedef itk::ImageFileWriter<ImageType>       WriterType;
-    typedef typename ReaderType::Pointer          ReaderPointer;
-    typedef typename WriterType::Pointer          WriterPointer;
-    typedef itk::AdaptiveHistogramEqualizationImageFilter<
-      ImageType>                                  EnhancerType;
-    typedef typename EnhancerType::Pointer        EnhancerPointer;
-    typedef typename EnhancerType::ImageSizeType  RadiusType;
-
-    /** vars */
-    WriterPointer writer = WriterType::New();
-    EnhancerPointer enhancer = EnhancerType::New();
-
-
-    std::string inputImageFileName = "";
-    std::string outputImageFileName = "";
-
-    /** Try to read input image */
-    ReaderPointer reader = ReaderType::New();
-    reader->SetFileName( this->m_InputFileName.c_str() );
-    try
-    {
-      reader->Update();
-    }
-    catch (itk::ExceptionObject & err)
-    {
-      std::cerr << "Error while reading input image." << std::endl;
-      std::cerr << err << std::endl;
-      return;
-    }
-
-    /** Setup pipeline and configure its components */
-
-    enhancer->SetUseLookupTable( this->m_LookUpTable);
-    enhancer->SetAlpha( this->m_Alpha);
-    enhancer->SetBeta( this->m_Beta);
-    
-    itk::Size<VImageDimension> radiusSize;
-    for(unsigned int i = 0; i < VImageDimension; ++i)
-      {
-      radiusSize[i] = this->m_Radius[i];
-      }
-    enhancer->SetRadius(radiusSize);
-    enhancer->SetInput( reader->GetOutput() );
-    writer->SetInput( enhancer->GetOutput() );
-    writer->SetFileName( this->m_OutputFileName.c_str());
-
-    /** do it. */
-    std::cout
-      << "Saving image to disk as \""
-      << this->m_OutputFileName
-      << "\""
-      << std::endl;
-    try
-    {
-      writer->Update();
-    }
-    catch (itk::ExceptionObject & err)
-    {
-      std::cerr << err << std::endl;
-    }
-
-  }
-
-}; // end ContrastEnhanceImage
-
-int main(int argc, char** argv)
+int main( int argc, char** argv )
 {
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
@@ -213,78 +81,72 @@ int main(int argc, char** argv)
     return EXIT_SUCCESS;
   }
 
-  // Get image properties
-  
+  // Get arguments
   std::string inputFileName;
   parser->GetCommandLineArgument( "-in", inputFileName );
   
-  unsigned int imageDimension;
-  itktools::GetImageDimension(inputFileName, imageDimension);
- 
-  itktools::ComponentType componentType;
-  itktools::GetImageComponentType(inputFileName, componentType);
-  
-  // Parse other arguments
   std::string outputFileName;
-  parser->GetCommandLineArgument( "-out", outputFileName);
+  parser->GetCommandLineArgument( "-out", outputFileName );
   
   float alpha = 0.0f;
-  parser->GetCommandLineArgument( "-alpha", alpha);
+  parser->GetCommandLineArgument( "-alpha", alpha );
   
   float beta = 0.0f;
-  parser->GetCommandLineArgument( "-beta", beta);
+  parser->GetCommandLineArgument( "-beta", beta );
     
   bool lookUpTable = true;
-  parser->GetCommandLineArgument( "-LUT", lookUpTable);
+  parser->GetCommandLineArgument( "-LUT", lookUpTable );
 
   std::vector<unsigned int> radius;
-  parser->GetCommandLineArgument( "-r", radius);
+  parser->GetCommandLineArgument( "-r", radius );
+
+  /** Determine image properties. */
+  itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
+  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  unsigned int dim = 0;
+  unsigned int numberOfComponents = 0;
+  bool retgip = itktools::GetImageProperties(
+    inputFileName, pixelType, componentType, dim, numberOfComponents );
+  if( !retgip ) return EXIT_FAILURE;
   
-  /** Class that does the work */
-  ITKToolsContrastEnhanceImageBase * contrastEnhanceImage = NULL; 
+  /** Class that does the work. */
+  ITKToolsContrastEnhanceImageBase * filter = NULL; 
 
   try
   {    
     // now call all possible template combinations.
-    if (!contrastEnhanceImage) contrastEnhanceImage = ITKToolsContrastEnhanceImage< short, 2 >::New( componentType, imageDimension );
-    if (!contrastEnhanceImage) contrastEnhanceImage = ITKToolsContrastEnhanceImage< char, 2 >::New( componentType, imageDimension );
-    if (!contrastEnhanceImage) contrastEnhanceImage = ITKToolsContrastEnhanceImage< unsigned char, 2 >::New( componentType, imageDimension );
+    if( !filter ) filter = ITKToolsContrastEnhanceImage< 2, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsContrastEnhanceImage< 2, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsContrastEnhanceImage< 2, unsigned char >::New( dim, componentType );
     
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!contrastEnhanceImage) contrastEnhanceImage = ITKToolsContrastEnhanceImage< short, 3 >::New( componentType, imageDimension );
-    if (!contrastEnhanceImage) contrastEnhanceImage = ITKToolsContrastEnhanceImage< char, 3 >::New( componentType, imageDimension );
-    if (!contrastEnhanceImage) contrastEnhanceImage = ITKToolsContrastEnhanceImage< unsigned char, 3 >::New( componentType, imageDimension );
+    if( !filter ) filter = ITKToolsContrastEnhanceImage< 3, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsContrastEnhanceImage< 3, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsContrastEnhanceImage< 3, unsigned char >::New( dim, componentType );
 #endif
-    if (!contrastEnhanceImage) 
-    {
-      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-      std::cerr
-        << "pixel (component) type = " << componentType
-        << " ; dimension = " << imageDimension
-        << std::endl;
-      return 1;
-    }
+    /** Check if filter was instantiated. */
+    bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
+    if( !supported ) return EXIT_FAILURE;
 
-    contrastEnhanceImage->m_InputFileName = inputFileName;
-    contrastEnhanceImage->m_OutputFileName = outputFileName;
-    contrastEnhanceImage->m_Alpha = alpha;
-    contrastEnhanceImage->m_Beta = beta;
-    contrastEnhanceImage->m_LookUpTable = lookUpTable;
-    contrastEnhanceImage->m_Radius = radius;
+    /** Set the filter arguments. */
+    filter->m_InputFileName = inputFileName;
+    filter->m_OutputFileName = outputFileName;
+    filter->m_Alpha = alpha;
+    filter->m_Beta = beta;
+    filter->m_LookUpTable = lookUpTable;
+    filter->m_Radius = radius;
 
-    contrastEnhanceImage->Run();
+    filter->Run();
     
-    delete contrastEnhanceImage;  
+    delete filter;  
   }
-  catch( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    delete contrastEnhanceImage;
-    return 1;
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+    delete filter;
+    return EXIT_FAILURE;
   }
   
   return EXIT_SUCCESS;
 
 } // end function main
-
-#endif // #ifndef __contrastenhanceimage_cxx

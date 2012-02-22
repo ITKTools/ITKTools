@@ -22,9 +22,7 @@
  */
 #include "itkCommandLineArgumentParser.h"
 #include "ITKToolsHelpers.h"
-#include "ITKToolsBase.h"
-
-#include "LogicalImageOperatorHelper.h"
+#include "logicalimageoperator.h"
 
 
 /**
@@ -71,7 +69,6 @@ std::string GetHelpString( void )
 
 //-------------------------------------------------------------------------------------
 
-
 int main( int argc, char **argv )
 {
   /** Create a command line argument parser. */
@@ -106,26 +103,26 @@ int main( int argc, char **argv )
   const bool useCompression = parser->ArgumentExists( "-z" );
 
   /** Check if the required arguments are given. */
-  if ( inputFileNames.size() != 2 && ops != "NOT" && ops != "NOT_NOT" && ops != "EQUAL" )
+  if( inputFileNames.size() != 2 && ops != "NOT" && ops != "NOT_NOT" && ops != "EQUAL" )
   {
     std::cerr << "ERROR: You should specify two input images." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   std::string inputFileName1 = inputFileNames[ 0 ];
   std::string inputFileName2 = "";
-  if ( ( inputFileNames.size() == 2 ) & (ops != "NOT") )
+  if( ( inputFileNames.size() == 2 ) & (ops != "NOT") )
   {
     inputFileName2 = inputFileNames[ 1 ];
   }
-  if ( ops == "EQUAL" && inputFileNames.size() > 1 && !retarg )
+  if( ops == "EQUAL" && inputFileNames.size() > 1 && !retarg )
   {
     std::cerr << "ERROR: The operator \"EQUAL\" expects 1 input image and a \"-arg\"." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
   
   bool unary = false;
-  if ( ops.compare("EQUAL") == 0 || ops.compare("NOT") == 0 )
+  if( ops.compare("EQUAL") == 0 || ops.compare("NOT") == 0 )
   {
     unary = true;
   }
@@ -133,14 +130,14 @@ int main( int argc, char **argv )
   /** outputFileName */
   std::string outputFileName = "";
   parser->GetCommandLineArgument( "-out", outputFileName );
-  if ( outputFileName == "" )
+  if( outputFileName == "" )
   {
     /** get file name without its last (shortest) extension  */
     std::string part1
       = itksys::SystemTools::GetFilenameWithoutLastExtension(inputFileName1);
     /** get file name of a full filename (i.e. file name without path) */
     std::string part2;
-    if ( inputFileName2 != "" )
+    if( inputFileName2 != "" )
     {
       part2 = itksys::SystemTools::GetFilenameName(inputFileName2);
     }
@@ -153,61 +150,61 @@ int main( int argc, char **argv )
     outputFileName = part1 + ops + part2;
   }
 
-  /** Class that does the work */
-  ITKToolsLogicalImageOperatorBase * logicalImageOperator = NULL; 
+  /** Determine image properties. */
+  itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
+  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  unsigned int dim = 0;
+  unsigned int numberOfComponents = 0;
+  bool retgip = itktools::GetImageProperties(
+    inputFileName1, pixelType, componentType, dim, numberOfComponents );
+  if( !retgip ) return EXIT_FAILURE;
 
-  unsigned int imageDimension = 0;
-  itktools::GetImageDimension( inputFileName1, imageDimension );
-
-  itktools::ComponentType componentType = itktools::GetImageComponentType( inputFileName1 );
-    
-  /** NB: do not add floating point support, since logical operators are
-   * not defined on those types */
-    
+  /** Class that does the work. */
+  ITKToolsLogicalImageOperatorBase * filter = NULL; 
+ 
   try
   {
+    /** NB: do not add floating point support, since logical operators are
+     * not defined on those types.
+     */
+  
     // now call all possible template combinations.
-    if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 2, unsigned char >::New( imageDimension, componentType );
-    if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 2, char >::New( imageDimension, componentType );
-    if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 2, unsigned short >::New( imageDimension, componentType );
-    if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 2, short >::New( imageDimension, componentType );
+    if( !filter ) filter = ITKToolsLogicalImageOperator< 2, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsLogicalImageOperator< 2, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsLogicalImageOperator< 2, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsLogicalImageOperator< 2, short >::New( dim, componentType );
     
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 3, unsigned char >::New( imageDimension, componentType );
-    if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 3, char >::New( imageDimension, componentType );
-    if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 3, unsigned short >::New( imageDimension, componentType );
-    if (!logicalImageOperator) logicalImageOperator = ITKToolsLogicalImageOperator< 3, short >::New( imageDimension, componentType );
+    if( !filter ) filter = ITKToolsLogicalImageOperator< 3, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsLogicalImageOperator< 3, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsLogicalImageOperator< 3, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsLogicalImageOperator< 3, short >::New( dim, componentType );
 #endif
-    if (!logicalImageOperator) 
-    {
-      std::cerr << "ERROR: this combination of pixeltype, image dimension, and space dimension is not supported!" << std::endl;
-      std::cerr
-        << " image dimension = " << imageDimension << std::endl
-        << "pixel (component) type = " << itk::ImageIOBase::GetComponentTypeAsString( componentType )
-        << std::endl;
-      return 1;
-    }
+     /** Check if filter was instantiated. */
+    bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
+    if( !supported ) return EXIT_FAILURE;
 
-    logicalImageOperator->m_OutputFileName = outputFileName;
-    logicalImageOperator->m_InputFileName1 = inputFileName1;
-    logicalImageOperator->m_InputFileName2 = inputFileName2;
-    logicalImageOperator->m_Ops = ops;
-    logicalImageOperator->m_UseCompression = useCompression;
-    logicalImageOperator->m_Argument = argument;
-    logicalImageOperator->m_Unary = unary;
+    /** Set the filter arguments. */
+    filter->m_OutputFileName = outputFileName;
+    filter->m_InputFileName1 = inputFileName1;
+    filter->m_InputFileName2 = inputFileName2;
+    filter->m_Ops = ops;
+    filter->m_UseCompression = useCompression;
+    filter->m_Argument = argument;
+    filter->m_Unary = unary;
     
-    logicalImageOperator->Run();
+    filter->Run();
     
-    delete logicalImageOperator;
+    delete filter;
   }
-  catch( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    delete logicalImageOperator;
-    return 1;
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+    delete filter;
+    return EXIT_FAILURE;
   }
   
   /** End program. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main

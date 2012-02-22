@@ -15,8 +15,8 @@
 * limitations under the License.
 *
 *=========================================================================*/
-#ifndef __castconverthelpers2_h__
-#define __castconverthelpers2_h__
+#ifndef __castconverthelpers2_h_
+#define __castconverthelpers2_h_
 
 #include <itksys/SystemTools.hxx>
 #include "itkGDCMSeriesFileNames.h"
@@ -35,7 +35,7 @@ bool IsDICOM( std::string & input, bool & isDICOM )
   /** Make sure last character of input != "/".
    * Otherwise FileIsDirectory() won't work.
    */
-  if ( input.rfind( "/" ) == input.size() - 1 )
+  if( input.rfind( "/" ) == input.size() - 1 )
   {
     input.erase( input.size() - 1, 1 );
   }
@@ -44,8 +44,8 @@ bool IsDICOM( std::string & input, bool & isDICOM )
   bool exists = itksys::SystemTools::FileExists( input.c_str() );
   bool isDir = itksys::SystemTools::FileIsDirectory( input.c_str() );
 
-  if ( exists && !isDir ) isDICOM = false;
-  else if ( exists && isDir ) isDICOM = true;
+  if( exists && !isDir ) isDICOM = false;
+  else if( exists && isDir ) isDICOM = true;
   /** Something is wrong. */
   else return false;
 
@@ -72,7 +72,7 @@ bool GetFileNameFromDICOMDirectory(
   /** Create vector of filenames from the DICOM directory. */
   GDCMNamesGeneratorType::Pointer nameGenerator = GDCMNamesGeneratorType::New();
   nameGenerator->SetUseSeriesDetails( true );
-  for ( unsigned int i = 0; i < restrictions.size(); ++i )
+  for( unsigned int i = 0; i < restrictions.size(); ++i )
   {
     nameGenerator->AddSeriesRestriction( restrictions[ i ] );
   }
@@ -80,10 +80,10 @@ bool GetFileNameFromDICOMDirectory(
 
   /** The short and fast way. */
   FileNamesContainerType fileNames;
-  if ( seriesUID == "" )
+  if( seriesUID == "" )
   {
     fileNames = nameGenerator->GetInputFileNames();
-    if ( fileNames.size() != 0 )
+    if( fileNames.size() != 0 )
     {
       fileName = fileNames[ 0 ];
       return true;
@@ -97,7 +97,7 @@ bool GetFileNameFromDICOMDirectory(
 
   /** Get all series in this directory. */
   FileNamesContainerType seriesNames = nameGenerator->GetSeriesUIDs();
-  if ( !seriesNames.size() )
+  if( !seriesNames.size() )
   {
     errorMessage = "ERROR: no DICOM series in directory " + inputDirectoryName + ".";
     return false;
@@ -105,7 +105,7 @@ bool GetFileNameFromDICOMDirectory(
 
   /** Get a list of files in series. */
   fileNames = nameGenerator->GetFileNames( seriesUID );
-  if ( !fileNames.size() )
+  if( !fileNames.size() )
   {
     errorMessage = "ERROR: no DICOM series " + seriesUID
       + " in directory " + inputDirectoryName + ".";
@@ -121,4 +121,4 @@ bool GetFileNameFromDICOMDirectory(
 } // end GetFileNameFromDICOMDirectory()
 
 
-#endif //__castconverthelpers2_h__
+#endif //__castconverthelpers2_h_

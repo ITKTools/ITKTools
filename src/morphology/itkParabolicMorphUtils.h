@@ -23,7 +23,7 @@ void DoLine(LineBufferType &LineBuf, LineBufferType &tmpLineBuf,
       // difference needs to be paramaterised
       RealType T = LineBuf[pos + krange] - magnitude * krange * krange;
       // switch on template parameter - hopefully gets optimized away.
-      if (doDilate ? (T >= BaseVal) : (T <= BaseVal) )
+      if(doDilate ? (T >= BaseVal) : (T <= BaseVal) )
 	{
 	BaseVal = T;
 	newcontact = krange;
@@ -40,7 +40,7 @@ void DoLine(LineBufferType &LineBuf, LineBufferType &tmpLineBuf,
     for (long krange = koffset; krange >= 0; krange--)
       {
       RealType T = tmpLineBuf[pos + krange] - magnitude * krange * krange;
-      if (doDilate ? (T >= BaseVal) : (T <= BaseVal))
+      if(doDilate ? (T >= BaseVal) : (T <= BaseVal))
 	{
 	BaseVal = T;
 	newcontact = krange;
@@ -69,7 +69,7 @@ void doOneDimension(TInIter &inputIterator, TOutIter &outputIterator,
   // instead of std::vector.
   typedef typename itk::Array<RealType> LineBufferType;
   RealType iscale = 1.0;
-  if ( m_UseImageSpacing)
+  if( m_UseImageSpacing)
     {
     iscale = image_scale;
     }

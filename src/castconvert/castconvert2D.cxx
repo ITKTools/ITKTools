@@ -15,22 +15,23 @@
 * limitations under the License.
 *
 *=========================================================================*/
-#include "castconverthelpers.h"
+#include "castconvert.h"
 
 
 void ITKToolsCastConvert2D(
-  itktools::ComponentType outputComponentType, unsigned int dim,
-  ITKToolsCastConvertBase * & castConvert )
+  unsigned int dim,
+  itk::ImageIOBase::IOComponentType componentType,
+  ITKToolsCastConvertBase * & filter )
 {
-  if (!castConvert) castConvert = ITKToolsCastConvert< short, 2 >::New( outputComponentType, dim );
-  if (!castConvert) castConvert = ITKToolsCastConvert< unsigned short, 2 >::New( outputComponentType, dim );
-  if (!castConvert) castConvert = ITKToolsCastConvert< char, 2 >::New( outputComponentType, dim );
-  if (!castConvert) castConvert = ITKToolsCastConvert< unsigned char, 2 >::New( outputComponentType, dim );
-  if (!castConvert) castConvert = ITKToolsCastConvert< int, 2 >::New( outputComponentType, dim );
-  if (!castConvert) castConvert = ITKToolsCastConvert< unsigned int, 2 >::New( outputComponentType, dim );
-  if (!castConvert) castConvert = ITKToolsCastConvert< long, 2 >::New( outputComponentType, dim );
-  if (!castConvert) castConvert = ITKToolsCastConvert< unsigned long, 2 >::New( outputComponentType, dim );
-  if (!castConvert) castConvert = ITKToolsCastConvert< float, 2 >::New( outputComponentType, dim );
-  if (!castConvert) castConvert = ITKToolsCastConvert< double, 2 >::New( outputComponentType, dim );
+  if( !filter ) filter = ITKToolsCastConvert< 2, short >::New( dim, componentType );
+  if( !filter ) filter = ITKToolsCastConvert< 2, unsigned short >::New( dim, componentType );
+  if( !filter ) filter = ITKToolsCastConvert< 2, char >::New( dim, componentType );
+  if( !filter ) filter = ITKToolsCastConvert< 2, unsigned char >::New( dim, componentType );
+  if( !filter ) filter = ITKToolsCastConvert< 2, int >::New( dim, componentType );
+  if( !filter ) filter = ITKToolsCastConvert< 2, unsigned int >::New( dim, componentType );
+  if( !filter ) filter = ITKToolsCastConvert< 2, long >::New( dim, componentType );
+  if( !filter ) filter = ITKToolsCastConvert< 2, unsigned long >::New( dim, componentType );
+  if( !filter ) filter = ITKToolsCastConvert< 2, float >::New( dim, componentType );
+  if( !filter ) filter = ITKToolsCastConvert< 2, double >::New( dim, componentType );
 
 } // end ITKToolsCastConvert2D()

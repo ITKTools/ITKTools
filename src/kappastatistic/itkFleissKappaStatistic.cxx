@@ -38,15 +38,15 @@ void FleissKappaStatistic
   /** Construct the observation matrix. */
   this->m_ObservationMatrix.resize( 0 );
   this->m_ObservationMatrix.resize( N );
-  for ( unsigned int i = 0; i < N; ++i )
+  for( unsigned int i = 0; i < N; ++i )
   {
     this->m_ObservationMatrix[ i ].resize( k, 0 );
   }
 
   /** We loop over the observations, and increase the correct bin. */
-  for ( unsigned int l = 0; l < n; ++l )
+  for( unsigned int l = 0; l < n; ++l )
   {
-    for ( unsigned int i = 0; i < N; ++i )
+    for( unsigned int i = 0; i < N; ++i )
     {
       unsigned int ind = this->m_Indices[ this->m_Observations[ l ][ i ] ];
       this->m_ObservationMatrix[ i ][ ind ]++;
@@ -82,9 +82,9 @@ void FleissKappaStatistic
   std::vector< double > p( k, 0.0 );
   std::vector< double > P( N, 0.0 );
   Po = Pe = kappa = 0.0;
-  for ( unsigned int j = 0; j < k; ++j )
+  for( unsigned int j = 0; j < k; ++j )
   {
-    for ( unsigned int i = 0; i < N; ++i )
+    for( unsigned int i = 0; i < N; ++i )
     {
       p[ j ] += static_cast<double>( this->m_ObservationMatrix[ i ][ j ] );
     }
@@ -92,9 +92,9 @@ void FleissKappaStatistic
     Pe += p[ j ] * p[ j ];
   }
 
-  for ( unsigned int i = 0; i < N; ++i )
+  for( unsigned int i = 0; i < N; ++i )
   {
-    for ( unsigned int j = 0; j < k; ++j )
+    for( unsigned int j = 0; j < k; ++j )
     {
       double nij = static_cast<double>( this->m_ObservationMatrix[ i ][ j ] );
       P[ i ] += nij * nij - nij;
@@ -141,9 +141,9 @@ void FleissKappaStatistic
   std::vector< double > P( N, 0.0 );
   double p3 = 0.0;
   Po = Pe = kappa = std = 0.0;
-  for ( unsigned int j = 0; j < k; ++j )
+  for( unsigned int j = 0; j < k; ++j )
   {
-    for ( unsigned int i = 0; i < N; ++i )
+    for( unsigned int i = 0; i < N; ++i )
     {
       p[ j ] += static_cast<double>( this->m_ObservationMatrix[ i ][ j ] );
     }
@@ -152,9 +152,9 @@ void FleissKappaStatistic
     p3 += p[ j ] * p[ j ] * p[ j ];
   }
 
-  for ( unsigned int i = 0; i < N; ++i )
+  for( unsigned int i = 0; i < N; ++i )
   {
-    for ( unsigned int j = 0; j < k; ++j )
+    for( unsigned int j = 0; j < k; ++j )
     {
       double nij = static_cast<double>( this->m_ObservationMatrix[ i ][ j ] );
       P[ i ] += nij * nij - nij;
@@ -192,14 +192,14 @@ FleissKappaStatistic
   /** Print the observation matrix. */
   unsigned int N = this->m_ObservationMatrix.size();
   unsigned int k = 0;
-  if ( N > 0 ) k = this->m_ObservationMatrix[ 0 ].size();
-  if ( N > 0 && k > 0 )
+  if( N > 0 ) k = this->m_ObservationMatrix[ 0 ].size();
+  if( N > 0 && k > 0 )
   {
     os << indent << "Observation matrix:" << std::endl;
-    for ( unsigned int i = 0; i < N; ++i )
+    for( unsigned int i = 0; i < N; ++i )
     {
       os << indent;
-      for ( unsigned int j = 0; j < k; ++j )
+      for( unsigned int j = 0; j < k; ++j )
       {
         os << this->m_ObservationMatrix[ i ][ j ] << " ";
       }

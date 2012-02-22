@@ -22,9 +22,7 @@
  */
 #include "itkCommandLineArgumentParser.h"
 #include "ITKToolsHelpers.h"
-#include "ITKToolsBase.h"
-
-#include "CreateBoxHelper.h"
+#include "createbox.h"
 
 
 /**
@@ -35,36 +33,35 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-    << "Usage:" << std::endl
-    << "pxcreatebox" << std::endl
-    << "  -out     outputFilename" << std::endl
-    << "  Arguments to specify the output image:" << std::endl
-    << "  [-in]    inputFilename, to copy image information from" << std::endl
-    << "  [-sz]    image size (voxels)" << std::endl
-    << "  [-sp]    image spacing (mm), default 1.0" << std::endl
-    << "  [-io]    image origin, default 0.0" << std::endl
-    << "  [-d]     image direction, default identity" << std::endl
-    << "  [-dim]   dimension, default 3" << std::endl
-    << "  [-pt]    pixelType, default short" << std::endl
-    << "  Arguments to specify the box:" << std::endl
-    << "  [-c]     center (mm)" << std::endl
-    << "  [-r]     radii (mm)" << std::endl
-    << "  [-cp1]   cornerpoint 1 (mm)" << std::endl
-    << "  [-cp2]   cornerpoint 2 (mm)" << std::endl
-    << "  [-ci1]   cornerindex 1" << std::endl
-    << "  [-ci2]   cornerindex 2" << std::endl
-    << "  [-o]     orientation of the box, default xyz" << std::endl
-    << "- The user should EITHER specify the input filename OR the output image size." << std::endl
-    << "- The user should EITHER specify the center and the radius," << std::endl
-    << "    OR the positions of two opposite corner points." << std::endl
-    << "    OR the positions of two opposite corner indices." << std::endl
-    << "- The orientation is a vector with Euler angles (rad)." << std::endl
-    << "- Supported: 2D, 3D, (unsigned) char, (unsigned) short." << std::endl;
+    << "Usage:\n"
+    << "pxcreatebox\n"
+    << "  -out     outputFilename\n"
+    << "  Arguments to specify the output image:\n"
+    << "  [-in]    inputFilename, to copy image information from\n"
+    << "  [-sz]    image size (voxels)\n"
+    << "  [-sp]    image spacing (mm), default 1.0\n"
+    << "  [-io]    image origin, default 0.0\n"
+    << "  [-d]     image direction, default identity\n"
+    << "  [-dim]   dimension, default 3\n"
+    << "  [-opct]  pixelType, default short\n"
+    << "  Arguments to specify the box:\n"
+    << "  [-c]     center (mm)\n"
+    << "  [-r]     radii (mm)\n"
+    << "  [-cp1]   cornerpoint 1 (mm)\n"
+    << "  [-cp2]   cornerpoint 2 (mm)\n"
+    << "  [-ci1]   cornerindex 1\n"
+    << "  [-ci2]   cornerindex 2\n"
+    << "  [-o]     orientation of the box, default xyz\n"
+    << "- The user should EITHER specify the input filename OR the output image size.\n"
+    << "- The user should EITHER specify the center and the radius,\n"
+    << "    OR the positions of two opposite corner points.\n"
+    << "    OR the positions of two opposite corner indices.\n"
+    << "- The orientation is a vector with Euler angles (rad).\n"
+    << "- Supported: 2D, 3D, (unsigned) char, (unsigned) short.\n";
 
   return ss.str();
 
 } // end GetHelpString()
-
 
 //-------------------------------------------------------------------------------------
 
@@ -81,14 +78,16 @@ int main( int argc, char** argv )
 
   itk::CommandLineArgumentParser::ReturnValue validateArguments = parser->CheckForRequiredArguments();
 
-  if ( validateArguments == itk::CommandLineArgumentParser::FAILED )
+  if( validateArguments == itk::CommandLineArgumentParser::FAILED )
   {
     return EXIT_FAILURE;
   }
-  else if ( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
+  else if( validateArguments == itk::CommandLineArgumentParser::HELPREQUESTED )
   {
     return EXIT_SUCCESS;
   }
+
+  /** Get arguments. */
 
   /** Output image information is specified using either a reference
    * input image, or by -sz.
@@ -122,50 +121,50 @@ int main( int argc, char** argv )
   std::string inputFileName = "";
   bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
 
-  unsigned int Dimension = 3;
-  parser->GetCommandLineArgument( "-dim", Dimension );
+  unsigned int dim = 3;
+  parser->GetCommandLineArgument( "-dim", dim );
 
-  std::vector<unsigned int> size( Dimension );
+  std::vector<unsigned int> size( dim );
 
   parser->GetCommandLineArgument( "-sz", size );
 
-  std::vector<double> spacing( Dimension, 1.0 );
+  std::vector<double> spacing( dim, 1.0 );
   parser->GetCommandLineArgument( "-sp", spacing );
 
-  std::vector<double> origin( Dimension, 0.0 );
+  std::vector<double> origin( dim, 0.0 );
   parser->GetCommandLineArgument( "-io", origin );
 
-  std::vector<double> direction( Dimension * Dimension, 0.0 );
-  for ( unsigned int i = 0; i < Dimension; i++ )
+  std::vector<double> direction( dim * dim, 0.0 );
+  for( unsigned int i = 0; i < dim; i++ )
   {
-    direction[ i * ( Dimension + 1 ) ] = 1.0;
+    direction[ i * ( dim + 1 ) ] = 1.0;
   }
   parser->GetCommandLineArgument( "-d", direction );
 
   /** Get arguments: box position, size and orientation. */
-  std::vector<double> center( Dimension );
+  std::vector<double> center( dim );
   bool retc = parser->GetCommandLineArgument( "-c", center );
 
-  std::vector<double> radius( Dimension );
+  std::vector<double> radius( dim );
   bool retr = parser->GetCommandLineArgument( "-r", radius );
 
-  std::vector<double> corner1( Dimension );
+  std::vector<double> corner1( dim );
   bool retcp1 = parser->GetCommandLineArgument( "-cp1", corner1 );
 
-  std::vector<double> corner2( Dimension );
+  std::vector<double> corner2( dim );
   bool retcp2 = parser->GetCommandLineArgument( "-cp2", corner2 );
 
-  std::vector<double> cornerindex1( Dimension );
+  std::vector<double> cornerindex1( dim );
   bool retci1 = parser->GetCommandLineArgument( "-ci1", cornerindex1 );
 
-  std::vector<double> cornerindex2( Dimension );
+  std::vector<double> cornerindex2( dim );
   bool retci2 = parser->GetCommandLineArgument( "-ci2", cornerindex2 );
 
-  std::vector<double> orientation( Dimension, 0.0 );
+  std::vector<double> orientation( dim, 0.0 );
   parser->GetCommandLineArgument( "-o", orientation );
 
   /** Additional check. */
-  if ( ( !retc | !retr | retcp1 | retcp2 | retci1 | retci2 )
+  if( ( !retc | !retr | retcp1 | retcp2 | retci1 | retci2 )
     && ( retc | retr | !retcp1 | !retcp2 | retci1 | retci2 )
     && ( retc | retr | retcp1 | retcp2 | !retci1 | !retci2 ) )
   {
@@ -176,17 +175,17 @@ int main( int argc, char** argv )
   }
 
   /** Determine output image properties. */
-  std::string componentType = "short";
+  std::string componentTypeAsString = "short";
   itk::ImageIOBase::Pointer referenceIOBase;
-  if ( retin )
+  if( retin )
   {
     /** Get the properties of the reference image. */
     bool retgip = itktools::GetImageIOBase( inputFileName, referenceIOBase );
-    if ( !retgip ) return EXIT_FAILURE;
+    if( !retgip ) return EXIT_FAILURE;
 
     /** Extract dimension and component type for template selection. */
-    Dimension = referenceIOBase->GetNumberOfDimensions();
-    componentType = referenceIOBase->GetComponentTypeAsString(
+    dim = referenceIOBase->GetNumberOfDimensions();
+    componentTypeAsString = referenceIOBase->GetComponentTypeAsString(
       referenceIOBase->GetComponentType() );
 
     /** Fix the output to be scalar. */
@@ -195,86 +194,78 @@ int main( int argc, char** argv )
   else
   {
     itktools::FillImageIOBase( referenceIOBase,
-      "scalar", componentType, Dimension, 1,
+      "scalar", componentTypeAsString, dim, 1,
       size, spacing, origin, direction );
   }
 
   /** Let the user overrule this. */
-  parser->GetCommandLineArgument( "-pt", componentType );
+  bool retopct = parser->GetCommandLineArgument( "-opct", componentTypeAsString );
 
-  /** Get rid of the possible "_" in ComponentType. */
-  itktools::ReplaceUnderscoreWithSpace( componentType );
-
-  itktools::ComponentType componentTypeAsEnum
-    = referenceIOBase->GetComponentTypeFromString( componentType );
+  itk::ImageIOBase::IOComponentType componentType
+    = referenceIOBase->GetComponentTypeFromString( componentTypeAsString );
     
   /** How was the input supplied by the user? */
   std::vector<double> input1, input2;
   std::string boxDefinition = "";
-  if ( retc )
+  if( retc )
   {
     boxDefinition = "CenterRadius";
     input1 = center;
     input2 = radius;
   }
-  else if ( retcp1 )
+  else if( retcp1 )
   {
     boxDefinition = "CornersAsPoints";
     input1 = corner1;
     input2 = corner2;
   }
-  else if ( retci1 )
+  else if( retci1 )
   {
     boxDefinition = "CornersAsIndices";
     input1 = cornerindex1;
     input2 = cornerindex2;
   }
 
-  /** Class that does the work */
-  ITKToolsCreateBoxBase * createBox = 0; 
+  /** Class that does the work. */
+  ITKToolsCreateBoxBase * filter = 0; 
 
   try
   {        
-    if (!createBox) createBox = ITKToolsCreateBox< unsigned char, 2 >::New( componentTypeAsEnum, Dimension );
-    if (!createBox) createBox = ITKToolsCreateBox< char, 2 >::New( componentTypeAsEnum, Dimension );
-    if (!createBox) createBox = ITKToolsCreateBox< unsigned short, 2 >::New( componentTypeAsEnum, Dimension );
-    if (!createBox) createBox = ITKToolsCreateBox< short, 2 >::New( componentTypeAsEnum, Dimension );
+    if( !filter ) filter = ITKToolsCreateBox< 2, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCreateBox< 2, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCreateBox< 2, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCreateBox< 2, short >::New( dim, componentType );
     
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!createBox) createBox = ITKToolsCreateBox< unsigned char, 3 >::New( componentTypeAsEnum, Dimension );    
-    if (!createBox) createBox = ITKToolsCreateBox< char, 3 >::New( componentTypeAsEnum, Dimension );
-    if (!createBox) createBox = ITKToolsCreateBox< unsigned short, 3 >::New( componentTypeAsEnum, Dimension );
-    if (!createBox) createBox = ITKToolsCreateBox< short, 3 >::New( componentTypeAsEnum, Dimension );
+    if( !filter ) filter = ITKToolsCreateBox< 3, unsigned char >::New( dim, componentType );    
+    if( !filter ) filter = ITKToolsCreateBox< 3, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCreateBox< 3, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCreateBox< 3, short >::New( dim, componentType );
 #endif
-    if (!createBox) 
-    {
-      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-      std::cerr
-        << "pixel (component) type = " << componentType
-        << " ; dimension = " << Dimension
-        << std::endl;
-      return 1;
-    }
+    /** Check if filter was instantiated. */
+    bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
+    if( !supported ) return EXIT_FAILURE;
 
-    createBox->m_ReferenceImageIOBase = referenceIOBase;
-    createBox->m_OutputFileName = outputFileName;
-    createBox->m_Input1 = input1;
-    createBox->m_Input2 = input2;
-    createBox->m_OrientationOfBox = orientation;
-    createBox->m_BoxDefinition = boxDefinition;
+    /** Set the filter arguments. */
+    filter->m_ReferenceImageIOBase = referenceIOBase;
+    filter->m_OutputFileName = outputFileName;
+    filter->m_Input1 = input1;
+    filter->m_Input2 = input2;
+    filter->m_OrientationOfBox = orientation;
+    filter->m_BoxDefinition = boxDefinition;
     
-    createBox->Run();
+    filter->Run();
     
-    delete createBox;  
+    delete filter;  
   }
-  catch ( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    delete createBox;
-    return 1;
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+    delete filter;
+    return EXIT_FAILURE;
   }
 
   /** End program. Return a value. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main

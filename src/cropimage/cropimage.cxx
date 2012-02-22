@@ -17,12 +17,13 @@
 *=========================================================================*/
 /** \file
  \brief Crop an image.
- 
+
  \verbinclude cropimage.help
  */
 #include "itkCommandLineArgumentParser.h"
 #include "ITKToolsHelpers.h"
 #include "cropimage.h"
+#include "cropimageMainHelper.h"
 
 
 /**
@@ -76,7 +77,7 @@ int main( int argc, char **argv )
   {
     return EXIT_SUCCESS;
   }
-  
+
   /** Get arguments. */
   std::string inputFileName = "";
   parser->GetCommandLineArgument( "-in", inputFileName );
@@ -103,30 +104,17 @@ int main( int argc, char **argv )
   bool force = parser->ArgumentExists( "-force" );
 
   /** Determine image properties. */
-  std::string ComponentTypeIn = "short";
-  std::string PixelType; //we don't use this
-  unsigned int Dimension = 3;
-  unsigned int NumberOfComponents = 1;
-  std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = itktools::GetImageProperties(
-    inputFileName,
-    PixelType,
-    ComponentTypeIn,
-    Dimension,
-    NumberOfComponents,
-    imagesize );
-  if ( retgip != 0 )
-  {
-    return 1;
-  }
+  itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
+  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  unsigned int dim = 0;
+  unsigned int numberOfComponents = 0;
+  bool retgip = itktools::GetImageProperties(
+    inputFileName, pixelType, componentType, dim, numberOfComponents );
+  if( !retgip ) return EXIT_FAILURE;
 
   /** Check for vector images. */
-  if ( NumberOfComponents > 1 )
-  {
-    std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
-    std::cerr << "Vector images are not supported." << std::endl;
-    return 1;
-  }
+  bool retNOCCheck = itktools::NumberOfComponentsCheck( numberOfComponents );
+  if( !retNOCCheck ) return EXIT_FAILURE;
 
   /** Check which input option is used:
    * 1: supply two points with -pA and -pB
@@ -134,150 +122,134 @@ int main( int argc, char **argv )
    * 3: supply a lower and an upper bound with -lb and -ub
    */
   unsigned int option = 0;
-  if ( !CheckWhichInputOption( retpA, retpB, retsz, retlb, retub, option ) )
+  if( !CheckWhichInputOption( retpA, retpB, retsz, retlb, retub, option ) )
   {
     std::cerr << "ERROR: Check your commandline arguments." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   /** Check argument pA. Point A should only be positive if not force. */
-  if ( retpA )
+  if( retpA )
   {
-    if ( !ProcessArgument( pA, Dimension, force ) )
+    if( !ProcessArgument( pA, dim, force ) )
     {
       std::cout << "ERROR: Point A should consist of 1 or Dimension positive values." << std::endl;
-      return 1;
+      return EXIT_FAILURE;
     }
   }
 
   /** Check argument pB. Point B should always be positive. */
-  if ( retpB )
+  if( retpB )
   {
-    if ( !ProcessArgument( pB, Dimension, false ) )
+    if( !ProcessArgument( pB, dim, false ) )
     {
       std::cout << "ERROR: Point B should consist of 1 or Dimension positive values." << std::endl;
-      return 1;
+      return EXIT_FAILURE;
     }
   }
 
   /** Check argument sz. Size should always be positive. */
-  if ( retsz )
+  if( retsz )
   {
-    if ( !ProcessArgument( sz, Dimension, false ) )
+    if( !ProcessArgument( sz, dim, false ) )
     {
       std::cout << "ERROR: The size sz should consist of 1 or Dimension positive values." << std::endl;
-      return 1;
+      return EXIT_FAILURE;
     }
   }
 
   /** Check argument lb. */
-  if ( retlb )
+  if( retlb )
   {
-    if ( !ProcessArgument( lowBound, Dimension, force ) )
+    if( !ProcessArgument( lowBound, dim, force ) )
     {
       std::cout << "ERROR: The lowerbound lb should consist of 1 or Dimension positive values." << std::endl;
-      return 1;
+      return EXIT_FAILURE;
     }
   }
 
   /** Check argument ub. */
-  if ( retub )
+  if( retub )
   {
-    if ( !ProcessArgument( upBound, Dimension, force ) )
+    if( !ProcessArgument( upBound, dim, force ) )
     {
       std::cout << "ERROR: The upperbound ub should consist of 1 or Dimension positive values." << std::endl;
-      return 1;
+      return EXIT_FAILURE;
     }
   }
 
   /** Get inputs. */
   std::vector<int> input1, input2;
-  if ( option == 1 )
+  if( option == 1 )
   {
-    GetBox( pA, pB, Dimension );
+    GetBox( pA, pB, dim );
     input1 = pA;
     input2 = pB;
   }
-  else if ( option == 2 )
+  else if( option == 2 )
   {
     input1 = pA;
     input2 = sz;
   }
-  else if ( option == 3 )
+  else if( option == 3 )
   {
     input1 = lowBound;
     input2 = upBound;
   }
 
-  /** Run the program. */
-  
-  /** Class that does the work */
-  CropImageBase * cropImage = 0; 
+  /** Class that does the work. */
+  ITKToolsCropImageBase * filter = 0;
 
-  /** Short alias */
-  unsigned int dim = Dimension;
-
-  /** Add "_" in ComponentType and convert. */
-  itktools::ReplaceSpaceWithUnderscore( ComponentTypeIn );
-  itktools::ComponentType componentType
-    = itk::ImageIOBase::GetComponentTypeFromString( ComponentTypeIn );
-   
   try
-  {    
+  {
     // now call all possible template combinations.
-    if (!cropImage) cropImage = CropImage< unsigned char, 2 >::New( componentType, dim );
-    if (!cropImage) cropImage = CropImage< char, 2 >::New( componentType, dim );
-    if (!cropImage) cropImage = CropImage< unsigned short, 2 >::New( componentType, dim );
-    if (!cropImage) cropImage = CropImage< short, 2 >::New( componentType, dim );
-    if (!cropImage) cropImage = CropImage< unsigned int, 2 >::New( componentType, dim );
-    if (!cropImage) cropImage = CropImage< int, 2 >::New( componentType, dim );
-    if (!cropImage) cropImage = CropImage< unsigned long, 2 >::New( componentType, dim );
-    if (!cropImage) cropImage = CropImage< long, 2 >::New( componentType, dim );
-    if (!cropImage) cropImage = CropImage< float, 2 >::New( componentType, dim );
-    if (!cropImage) cropImage = CropImage< double, 2 >::New( componentType, dim );
+    if( !filter ) filter = ITKToolsCropImage< 2, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCropImage< 2, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCropImage< 2, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCropImage< 2, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCropImage< 2, unsigned int >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCropImage< 2, int >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCropImage< 2, unsigned long >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCropImage< 2, long >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCropImage< 2, float >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCropImage< 2, double >::New( dim, componentType );
 
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!cropImage) cropImage = CropImage< unsigned char, 3 >::New( componentType, dim );
-    if (!cropImage) cropImage = CropImage< char, 3 >::New( componentType, dim );
-    if (!cropImage) cropImage = CropImage< unsigned short, 3 >::New( componentType, dim );
-    if (!cropImage) cropImage = CropImage< short, 3 >::New( componentType, dim );
-    if (!cropImage) cropImage = CropImage< unsigned int, 3 >::New( componentType, dim );
-    if (!cropImage) cropImage = CropImage< int, 3 >::New( componentType, dim );
-    if (!cropImage) cropImage = CropImage< unsigned long, 3 >::New( componentType, dim );
-    if (!cropImage) cropImage = CropImage< long, 3 >::New( componentType, dim );
-    if (!cropImage) cropImage = CropImage< float, 3 >::New( componentType, dim );
-    if (!cropImage) cropImage = CropImage< double, 3 >::New( componentType, dim );
+    if( !filter ) filter = ITKToolsCropImage< 3, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCropImage< 3, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCropImage< 3, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCropImage< 3, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCropImage< 3, unsigned int >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCropImage< 3, int >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCropImage< 3, unsigned long >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCropImage< 3, long >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCropImage< 3, float >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCropImage< 3, double >::New( dim, componentType );
 #endif
-    if (!cropImage)
-    {
-      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-      std::cerr
-        << "pixel (component) type = " << itk::ImageIOBase::GetComponentTypeAsString( componentType )
-        << " ; dimension = " << Dimension
-        << std::endl;
-      return 1;
-    }
+    /** Check if filter was instantiated. */
+    bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
+    if( !supported ) return EXIT_FAILURE;
 
-    cropImage->m_InputFileName = inputFileName;
-    cropImage->m_OutputFileName = outputFileName;
-    cropImage->m_Input1 = input1;
-    cropImage->m_Input2 = input2;
-    cropImage->m_Option = option;
-    cropImage->m_Force = force;
-  
-    cropImage->Run();
-    
-    delete cropImage;
+    /** Set the filter arguments. */
+    filter->m_InputFileName = inputFileName;
+    filter->m_OutputFileName = outputFileName;
+    filter->m_Input1 = input1;
+    filter->m_Input2 = input2;
+    filter->m_Option = option;
+    filter->m_Force = force;
+
+    filter->Run();
+
+    delete filter;
   }
-  catch( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    delete cropImage;
-    return 1;
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+    delete filter;
+    return EXIT_FAILURE;
   }
-  
 
   /** End program. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main()

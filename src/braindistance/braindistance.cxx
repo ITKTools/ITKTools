@@ -71,10 +71,9 @@ void ComputeBrainDistance(
   const std::string & inputFileName,
   const std::string & maskFileName,
   const std::vector<std::string> & outputFileNames,
-  unsigned int method);
+  unsigned int method );
 
 //-------------------------------------------------------------------------------------
-
 
 int main( int argc, char ** argv )
 {
@@ -114,43 +113,34 @@ int main( int argc, char ** argv )
   /** Get arguments (mandatory): Output filenames */
   std::vector< std::string > outputFileNames;
   parser->GetCommandLineArgument( "-out", outputFileNames );
-  if ( outputFileNames.size() != 2 )
+  if( outputFileNames.size() != 2 )
   {
     std::cerr << "ERROR: You should specify \"-out\", followed by 2 filenames." << std::endl;
   }
 
   /** Determine image properties. */
-  std::string ComponentTypeIn = "float";
-  std::string PixelType; //we don't use this
-  unsigned int Dimension = 3;
-  unsigned int NumberOfComponents = Dimension;
-  std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = itktools::GetImageProperties(
-    inputFileName,
-    PixelType,
-    ComponentTypeIn,
-    Dimension,
-    NumberOfComponents,
-    imagesize );
-  if ( retgip != 0 )
-  {
-    std::cerr << "ERROR: error while getting image properties of the input image!"
-      << std::endl;
-    return 1;
-  }
-  if ( (Dimension != 3) || (NumberOfComponents != Dimension) )
+  itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
+  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  unsigned int dim = 0;
+  unsigned int numberOfComponents = 0;
+  std::vector<unsigned int> imageSize;
+  bool retgip = itktools::GetImageProperties(
+    inputFileName, pixelType, componentType, dim, numberOfComponents, imageSize );
+  if( !retgip ) return EXIT_FAILURE;
+
+  if( (dim != 3) || (numberOfComponents != dim) )
   {
     std::cerr << "ERROR: the input image is not of the right format: 3D, "
       << "vectors of length 3 it should be!" << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
-  for ( unsigned int i = 0; i < Dimension; ++i )
+  for( unsigned int i = 0; i < dim; ++i )
   {
-    if ( imagesize[i] < 3 )
+    if( imageSize[ i ] < 3 )
     {
       std::cerr << "ERROR: the image is too small in one of the dimensions. "
         << "Minimum size is 3 for each dimension." << std::endl;
-      return 1;
+      return EXIT_FAILURE;
     }
   }
 
@@ -159,14 +149,14 @@ int main( int argc, char ** argv )
   {
     ComputeBrainDistance( inputFileName, maskFileName, outputFileNames, method );
   }
-  catch( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    return 1;
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+    return EXIT_FAILURE;
   }
 
   /** End program. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main
 
@@ -227,9 +217,9 @@ namespace itk
 /* write a vector of doubles to an ostream */
 std::ostream& operator<<(std::ostream& os, std::vector<double>& vec)
 {
-  for ( unsigned int i =0; i< (vec.size()-1); ++i)
+  for( unsigned int i =0; i< (vec.size()-1); ++i )
   {
-    os << vec[i] << "\t";
+    os << vec[ i ] << "\t";
   }
   os << vec[ vec.size()-1 ];
   return os;
@@ -312,7 +302,7 @@ void ComputeBrainDistance(
 
   /** method 0 or 1 */
   JacobianFilterType::Pointer jacobianFilter = 0;
-  if ( method==0 || method ==2 )
+  if( method==0 || method ==2 )
   {
     jacobianFilter = JacobianFilterType::New();
   }
@@ -338,7 +328,7 @@ void ComputeBrainDistance(
   RegionType newregion;
   SizeType newsize;
   IndexType newindex;
-  for (unsigned int d = 0; d < Dimension; ++d)
+  for( unsigned int d = 0; d < Dimension; ++d)
   {
     newsize[d] = oldsize[d] - 2;
     newindex[d] = oldindex[d] + 1;
@@ -350,7 +340,7 @@ void ComputeBrainDistance(
   jacobianCropFilter->Update();
 
   const double maxJac = 3.0;
-  if ( method ==2 )
+  if( method ==2 )
   {
     /** Clamp and take log */
     windowFilter->SetInput( jacobianCropFilter->GetOutput() );
@@ -395,7 +385,7 @@ void ComputeBrainDistance(
   statFilterBrainMask->Update();
   double mu_tot = 0.0;
   double sigma_tot = 0.0;
-  if ( statFilterBrainMask->HasLabel( 1 ) )
+  if( statFilterBrainMask->HasLabel( 1 ) )
   {
     mu_tot = statFilterBrainMask->GetMean(1);
     sigma_tot = statFilterBrainMask->GetSigma(1);
@@ -423,7 +413,7 @@ void ComputeBrainDistance(
   std::vector<double> sigma_i( maxLabelNr + 1, 0.0);
   for ( MaskPixelType i = 0; i <= maxLabelNr; ++i )
   {
-    if ( statFilterLabels->HasLabel( i ) )
+    if( statFilterLabels->HasLabel( i ) )
     {
       mu_i[ i ] = statFilterLabels->GetMean( i );
       sigma_i[ i ] = statFilterLabels->GetSigma( i );
@@ -452,7 +442,7 @@ void ComputeBrainDistance(
   std::vector<double> sigma_itot( maxLabelNr + 1, 0.0);
   for ( MaskPixelType i = 0; i <= maxLabelNr; ++i )
   {
-    if ( statFilterLabelsSpecial->HasLabel( i ) )
+    if( statFilterLabelsSpecial->HasLabel( i ) )
     {
       sigma_itot[ i ] = vcl_sqrt( statFilterLabelsSpecial->GetMean( i ) );
     }
@@ -466,7 +456,7 @@ void ComputeBrainDistance(
   /** Write results to files */
   std::cout << "Write results to files" << std::endl;
   std::ofstream mutotsigmatot( outputFileNames[0].c_str() );
-  if ( ! mutotsigmatot.is_open() )
+  if( ! mutotsigmatot.is_open() )
   {
     itkGenericExceptionMacro( << "The output file " << outputFileNames[0]
     << " cannot be opened!" )
@@ -474,7 +464,7 @@ void ComputeBrainDistance(
   mutotsigmatot << mu_tot << "\t" << sigma_tot << std::endl;
   mutotsigmatot.close();
   std::ofstream musigmaperlabel( outputFileNames[1].c_str() );
-  if ( ! musigmaperlabel.is_open() )
+  if( ! musigmaperlabel.is_open() )
   {
     itkGenericExceptionMacro( << "The output file " << outputFileNames[1]
     << " cannot be opened!" )

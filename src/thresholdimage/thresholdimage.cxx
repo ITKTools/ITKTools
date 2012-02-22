@@ -68,7 +68,6 @@ std::string GetHelpString( void )
 
 } // end GetHelpString()
 
-
 //-------------------------------------------------------------------------------------
 
 int main( int argc, char **argv )
@@ -156,7 +155,7 @@ int main( int argc, char **argv )
   bool useCompression = parser->ArgumentExists( "-z" );
 
   /** Checks. */
-  if ( method != "Threshold"
+  if( method != "Threshold"
     && method != "OtsuThreshold"
     && method != "OtsuMultipleThreshold"
     && method != "AdaptiveOtsuThreshold"
@@ -167,106 +166,82 @@ int main( int argc, char **argv )
     std::cerr << "ERROR: method \"-m\" should be one of { Threshold, "
       << "OtsuThreshold, OtsuMultipleThreshold, AdaptiveOtsuThreshold, "
       << "RobustAutomaticThreshold, KappaSigmaThreshold, MinErrorThreshold }." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
-  if ( method == "KappaSigmaThreshold" && maskFileName == "" )
+  if( method == "KappaSigmaThreshold" && maskFileName == "" )
   {
     std::cerr << "ERROR: the method \"KappaSigmaThreshold\" requires setting a mask using \"-mask\"." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   /** Determine image properties. */
-  std::string componentTypeAsString = "short";
-  std::string PixelType; //we don't use this
-  unsigned int Dimension = 2;
-  unsigned int NumberOfComponents = 1;
-  std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = itktools::GetImageProperties(
-    inputFileName,
-    PixelType,
-    componentTypeAsString,
-    Dimension,
-    NumberOfComponents,
-    imagesize );
-  if ( retgip != 0 )
-  {
-    return 1;
-  }
-
-  itk::ImageIOBase::IOComponentType componentType
-    = itk::ImageIOBase::GetComponentTypeFromString( componentTypeAsString );
+  itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
+  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  unsigned int dim = 0;
+  unsigned int numberOfComponents = 0;
+  bool retgip = itktools::GetImageProperties(
+    inputFileName, pixelType, componentType, dim, numberOfComponents );
+  if( !retgip ) return EXIT_FAILURE;
 
   /** Check for vector images. */
-  if ( NumberOfComponents > 1 )
-  {
-    std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
-    std::cerr << "Vector images are not supported." << std::endl;
-    return 1;
-  }
+  bool retNOCCheck = itktools::NumberOfComponentsCheck( numberOfComponents );
+  if( !retNOCCheck ) return EXIT_FAILURE;
 
-  /** Class that does the work */
-  ITKToolsThresholdImageBase * thresholder = 0; 
-
-  /** Short alias */
-  unsigned int dim = Dimension;
+  /** Class that does the work. */
+  ITKToolsThresholdImageBase * filter = 0; 
 
   try
   {    
     // now call all possible template combinations.
-    if (!thresholder) thresholder = ITKToolsThresholdImage< char, 2 >::New( componentType, dim );
-    if (!thresholder) thresholder = ITKToolsThresholdImage< unsigned char, 2 >::New( componentType, dim );
-    if (!thresholder) thresholder = ITKToolsThresholdImage< short, 2 >::New( componentType, dim );
-    if (!thresholder) thresholder = ITKToolsThresholdImage< unsigned short, 2 >::New( componentType, dim );
-    if (!thresholder) thresholder = ITKToolsThresholdImage< float, 2 >::New( componentType, dim );
-    if (!thresholder) thresholder = ITKToolsThresholdImage< double, 2 >::New( componentType, dim );
+    if( !filter ) filter = ITKToolsThresholdImage< 2, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsThresholdImage< 2, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsThresholdImage< 2, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsThresholdImage< 2, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsThresholdImage< 2, float >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsThresholdImage< 2, double >::New( dim, componentType );
 
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!thresholder) thresholder = ITKToolsThresholdImage< char, 3 >::New( componentType, dim );
-    if (!thresholder) thresholder = ITKToolsThresholdImage< unsigned char, 3 >::New( componentType, dim );
-    if (!thresholder) thresholder = ITKToolsThresholdImage< short, 3 >::New( componentType, dim );
-    if (!thresholder) thresholder = ITKToolsThresholdImage< unsigned short, 3 >::New( componentType, dim );
-    if (!thresholder) thresholder = ITKToolsThresholdImage< float, 3 >::New( componentType, dim );
-    if (!thresholder) thresholder = ITKToolsThresholdImage< double, 3 >::New( componentType, dim );
+    if( !filter ) filter = ITKToolsThresholdImage< 3, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsThresholdImage< 3, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsThresholdImage< 3, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsThresholdImage< 3, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsThresholdImage< 3, float >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsThresholdImage< 3, double >::New( dim, componentType );
 #endif
-    if (!thresholder) 
-    {
-      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-      std::cerr
-        << "pixel (component) type = " << componentTypeAsString
-        << " ; dimension = " << Dimension
-        << std::endl;
-      return 1;
-    }
+    /** Check if filter was instantiated. */
+    bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
+    if( !supported ) return EXIT_FAILURE;
 
-    thresholder->m_Bins = bins;
-    thresholder->m_InputFileName = inputFileName;
-    thresholder->m_Inside = inside;
-    thresholder->m_Iterations = iterations;
-    thresholder->m_MaskFileName = maskFileName;
-    thresholder->m_MaskValue = maskValue;
-    thresholder->m_Method = method;
-    thresholder->m_MixtureType = mixtureType;
-    thresholder->m_NumThresholds = numThresholds;
-    thresholder->m_OutputFileName = outputFileName;
-    thresholder->m_Outside = outside;
-    thresholder->m_Pow = pow;
-    thresholder->m_Sigma = sigma;
-    thresholder->m_Threshold1 = threshold1;
-    thresholder->m_Threshold2 = threshold2;
-    thresholder->m_UseCompression = useCompression;
+    /** Set the filter arguments. */
+    filter->m_Bins = bins;
+    filter->m_InputFileName = inputFileName;
+    filter->m_Inside = inside;
+    filter->m_Iterations = iterations;
+    filter->m_MaskFileName = maskFileName;
+    filter->m_MaskValue = maskValue;
+    filter->m_Method = method;
+    filter->m_MixtureType = mixtureType;
+    filter->m_NumThresholds = numThresholds;
+    filter->m_OutputFileName = outputFileName;
+    filter->m_Outside = outside;
+    filter->m_Pow = pow;
+    filter->m_Sigma = sigma;
+    filter->m_Threshold1 = threshold1;
+    filter->m_Threshold2 = threshold2;
+    filter->m_UseCompression = useCompression;
 
-    thresholder->Run();
+    filter->Run();
     
-    delete thresholder;  
+    delete filter;
   }
   catch( itk::ExceptionObject & excp )
   {
     std::cerr << "Caught ITK exception: " << excp << std::endl;
-    delete thresholder;
-    return 1;
+    delete filter;
+    return EXIT_FAILURE;
   }
 
   /** End program. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main

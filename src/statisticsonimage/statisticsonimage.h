@@ -15,8 +15,8 @@
 * limitations under the License.
 *
 *=========================================================================*/
-#ifndef __statisticsonimage_h
-#define __statisticsonimage_h
+#ifndef __statisticsonimage_h_
+#define __statisticsonimage_h_
 
 #include "ITKToolsBase.h"
 
@@ -25,16 +25,16 @@
 #include "itkScalarImageToHistogramGenerator2.h"
 
 
-/**
- * ******************* StatisticsOnImage *******************
+/** \class ITKToolsStatisticsOnImageBase
  *
- * The real functionality of pxstatisticsonimage,
- * templated over image properties.
+ * Untemplated pure virtual base class that holds
+ * the Run() function and all required parameters.
  */
 
 class ITKToolsStatisticsOnImageBase : public itktools::ITKToolsBase
 {
 public:
+  /** Constructor. */
   ITKToolsStatisticsOnImageBase()
   {
     this->m_InputFileName = "";
@@ -43,30 +43,39 @@ public:
     this->m_NumberOfBins = 0;
     this->m_Select = "";
   };
+  /** Destructor. */
   ~ITKToolsStatisticsOnImageBase(){};
 
-  /** Input parameters */
+  /** Input member parameters. */
   std::string m_InputFileName;
   std::string m_MaskFileName;
   std::string m_HistogramOutputFileName;
   unsigned int m_NumberOfBins;
   std::string m_Select;
 
-}; // end StatisticsOnImageBase
+}; // end class StatisticsOnImageBase
 
 
-template< class TComponentType, unsigned int VDimension, unsigned int VNumberOfComponents >
+/** \class ITKToolsStatisticsOnImage
+ *
+ * Templated class that implements the Run() function
+ * and the New() function for its creation.
+ */
+
+template< unsigned int VDimension, unsigned int VNumberOfComponents, class TComponentType >
 class ITKToolsStatisticsOnImage : public ITKToolsStatisticsOnImageBase
 {
 public:
+  /** Standard ITKTools stuff. */
   typedef ITKToolsStatisticsOnImage Self;
 
   ITKToolsStatisticsOnImage(){};
   ~ITKToolsStatisticsOnImage(){};
 
-  static Self * New( itktools::ComponentType componentType, unsigned int dim, unsigned int numberOfComponents )
+  static Self * New( unsigned int dim, unsigned int numberOfComponents, itk::ImageIOBase::IOComponentType componentType )
   {
-    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim && VNumberOfComponents == numberOfComponents )
+    if( itktools::IsType<TComponentType>( componentType )
+      && VDimension == dim && VNumberOfComponents == numberOfComponents )
     {
       return new Self;
     }
@@ -83,7 +92,7 @@ public:
   typedef itk::Statistics::ScalarImageToHistogramGenerator2<
     InternalImageType >                               HistogramGeneratorType;
 
-  // Main function Run();
+  /** Run function. */
   void Run( void );
 
   /** Helper function. */
@@ -107,5 +116,4 @@ public:
 
 #include "statisticsonimage.hxx"
 
-#endif // #ifndef __statisticsonimage_h
-
+#endif // #ifndef __statisticsonimage_h_

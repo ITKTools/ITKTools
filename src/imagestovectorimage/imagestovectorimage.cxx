@@ -22,12 +22,7 @@
  */
 #include "itkCommandLineArgumentParser.h"
 #include "ITKToolsHelpers.h"
-#include "ITKToolsBase.h"
-
-#include "itkImageFileReader.h"
-#include "itkImageToVectorImageFilter.h"
-#include "itkImageFileWriter.h"
-#include "itkVectorIndexSelectionCastImageFilter.h"
+#include "imagestovectorimage.h"
 
 
 /**
@@ -38,125 +33,18 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-    << "Usage:" << std::endl
-    << "pximagetovectorimage" << std::endl
-    << "  -in      inputFilenames, at least 2" << std::endl
-    << "  [-out]   outputFilename, default VECTOR.mhd" << std::endl
-    << "  [-s]     number of streams, default 1." << std::endl
-    << "Supported: 2D, 3D, (unsigned) char, (unsigned) short," << std::endl
-    << "(unsigned) int, (unsigned) long, float, double." << std::endl
+    << "Usage:\n"
+    << "pximagetovectorimage\n"
+    << "  -in      inputFilenames, at least 2\n"
+    << "  [-out]   outputFilename, default VECTOR.mhd\n"
+    << "  [-s]     number of streams, default 1.\n"
+    << "Supported: 2D, 3D, (unsigned) char, (unsigned) short,\n"
+    << "(unsigned) int, (unsigned) long, float, double.\n"
     << "Note: make sure that the input images are of the same type, size, etc.";
 
   return ss.str();
 
 } // end GetHelpString()
-
-/** ImagesToVectorImage */
-
-class ITKToolsImagesToVectorImageBase : public itktools::ITKToolsBase
-{ 
-public:
-  ITKToolsImagesToVectorImageBase()
-  {
-    //std::vector<std::string> this->m_InputFileNames;
-    this->m_OutputFileName = "";
-    this->m_NumberOfStreams = 0;
-  };
-  ~ITKToolsImagesToVectorImageBase(){};
-
-  /** Input parameters */
-  std::vector<std::string> m_InputFileNames;
-  std::string m_OutputFileName;
-  unsigned int m_NumberOfStreams;
-    
-}; // end ImagesToVectorImageBase
-
-
-template< class TComponentType, unsigned int VDimension >
-class ITKToolsImagesToVectorImage : public ITKToolsImagesToVectorImageBase
-{
-public:
-  typedef ITKToolsImagesToVectorImage Self;
-
-  ITKToolsImagesToVectorImage(){};
-  ~ITKToolsImagesToVectorImage(){};
-
-  static Self * New( itktools::ComponentType componentType, unsigned int dim )
-  {
-    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
-    {
-      return new Self;
-    }
-    return NULL;
-  }
-
-  void Run( void )
-  {
-    /** Typedef's. */
-    typedef itk::VectorImage<TComponentType, VDimension>    VectorImageType;
-    typedef VectorImageType                                  OutputImageType;
-    typedef itk::ImageFileReader< VectorImageType >          ReaderType;
-    typedef itk::Image<TComponentType, VDimension> ScalarImageType;
-    typedef itk::ImageFileWriter< VectorImageType >         WriterType;
-    
-    /** Read in the input images. */
-    std::vector<typename ReaderType::Pointer> readers( m_InputFileNames.size() );
-    for ( unsigned int i = 0; i < this->m_InputFileNames.size(); ++i )
-    {
-      readers[ i ] = ReaderType::New();
-      readers[ i ]->SetFileName( this->m_InputFileNames[ i ] );
-      readers[ i ]->Update();
-    }
-
-    /** Create assembler. */
-    typedef itk::ImageToVectorImageFilter< ScalarImageType > ImageToVectorImageFilterType;
-    typename ImageToVectorImageFilterType::Pointer imageToVectorImageFilter = ImageToVectorImageFilterType::New();
-
-    // For each input image
-    std::cout << "There are " << this->m_InputFileNames.size() << " input images." << std::endl;
-    unsigned int currentOutputIndex = 0;
-    for ( unsigned int inputImageIndex = 0; inputImageIndex < this->m_InputFileNames.size(); ++inputImageIndex )
-    {
-      typedef itk::VectorIndexSelectionCastImageFilter<VectorImageType, ScalarImageType> ComponentExtractionType;
-
-      // For each component of the current image
-      std::cout << "There are " << readers[inputImageIndex]->GetOutput()->GetNumberOfComponentsPerPixel() << " components in image " 
-		<< inputImageIndex << std::endl;
-      for ( unsigned int component = 0; component < readers[inputImageIndex]->GetOutput()->GetNumberOfComponentsPerPixel(); ++component )
-      {
-	typename ComponentExtractionType::Pointer componentExtractionFilter = ComponentExtractionType::New();
-	componentExtractionFilter->SetIndex(component);
-	componentExtractionFilter->SetInput(readers[inputImageIndex]->GetOutput());
-	componentExtractionFilter->Update();
-	
-	imageToVectorImageFilter->SetNthInput( currentOutputIndex, componentExtractionFilter->GetOutput());
-	currentOutputIndex++;
-      }
-    }
-    
-    imageToVectorImageFilter->Update();
-    
-    std::cout << "Output image has " << imageToVectorImageFilter->GetOutput()->GetNumberOfComponentsPerPixel() << " components." << std::endl;
-
-    /** Write vector image. */
-    typename WriterType::Pointer writer = WriterType::New();
-    writer->SetFileName( this->m_OutputFileName );
-    writer->SetInput( imageToVectorImageFilter->GetOutput() );
-    writer->SetNumberOfStreamDivisions( this->m_NumberOfStreams );
-    writer->Update();
-
-  }
-
-}; // end ImagesToVectorImage
-
-//-------------------------------------------------------------------------------------
-
-/* Declare ComposeVectorImage. */
-template< class InputImageType, class OutputImageType >
-void ComposeVectorImage(
-  const std::vector<std::string> & inputFileNames,
-  const std::string & outputFileName,
-  const unsigned int & numberOfStreams );
 
 //-------------------------------------------------------------------------------------
 
@@ -187,82 +75,75 @@ int main( int argc, char ** argv )
   std::string outputFileName = "VECTOR.mhd";
   parser->GetCommandLineArgument( "-out", outputFileName );
 
-  /** Support for streaming. */
   unsigned int numberOfStreams = 1;
   parser->GetCommandLineArgument( "-s", numberOfStreams );
 
   /** Check if the required arguments are given. */
-  if ( inputFileNames.size() < 2 )
+  if( inputFileNames.size() < 2 )
   {
     std::cerr << "ERROR: You should specify at least two (2) input files." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
-  /** Class that does the work */
-  ITKToolsImagesToVectorImageBase * imagesToVectorImage = NULL;
-
+  /** Determine image properties. */
+  itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
+  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
   unsigned int dim = 0;
-  itktools::GetImageDimension(inputFileNames[0], dim);
- 
-  /** \todo some progs allow user to override the pixel type, 
-   * so we need a method to convert string to EnumComponentType */
-  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileNames[0]);
-  
-  std::cout << "Internal image component type: " << 
-    itk::ImageIOBase::GetComponentTypeAsString( componentType ) << std::endl;
+  unsigned int numberOfComponents = 0;
+  bool retgip = itktools::GetImageProperties(
+    inputFileNames[ 0 ], pixelType, componentType, dim, numberOfComponents );
+  if( !retgip ) return EXIT_FAILURE;
+
+  /** Class that does the work. */
+  ITKToolsImagesToVectorImageBase * filter = NULL;
 
   try
   {    
     // now call all possible template combinations.
-    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< char, 2 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< unsigned char, 2 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< short, 2 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< unsigned short, 2 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< int, 2 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< unsigned int, 2 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< long, 2 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< unsigned long, 2 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< float, 2 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< double, 2 >::New( componentType, dim );
+    if( !filter ) filter = ITKToolsImagesToVectorImage< 2, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsImagesToVectorImage< 2, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsImagesToVectorImage< 2, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsImagesToVectorImage< 2, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsImagesToVectorImage< 2, int >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsImagesToVectorImage< 2, unsigned int >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsImagesToVectorImage< 2, long >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsImagesToVectorImage< 2, unsigned long >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsImagesToVectorImage< 2, float >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsImagesToVectorImage< 2, double >::New( dim, componentType );
+
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< char, 3 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< unsigned char, 3 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< short, 3 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< unsigned short, 3 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< int, 3 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< unsigned int, 3 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< long, 3 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< unsigned long, 3 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< float, 3 >::New( componentType, dim );
-    if (!imagesToVectorImage) imagesToVectorImage = ITKToolsImagesToVectorImage< double, 3 >::New( componentType, dim );    
+    if( !filter ) filter = ITKToolsImagesToVectorImage< 3, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsImagesToVectorImage< 3, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsImagesToVectorImage< 3, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsImagesToVectorImage< 3, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsImagesToVectorImage< 3, int >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsImagesToVectorImage< 3, unsigned int >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsImagesToVectorImage< 3, long >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsImagesToVectorImage< 3, unsigned long >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsImagesToVectorImage< 3, float >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsImagesToVectorImage< 3, double >::New( dim, componentType );    
 #endif
-    if (!imagesToVectorImage) 
-    {
-      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-      std::cerr
-        << "pixel (component) type = " << componentType
-        << " ; dimension = " << dim
-        << std::endl;
-      return 1;
-    }
+    /** Check if filter was instantiated. */
+    bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
+    if( !supported ) return EXIT_FAILURE;
 
-    imagesToVectorImage->m_InputFileNames = inputFileNames;
-    imagesToVectorImage->m_OutputFileName = outputFileName;
-    imagesToVectorImage->m_NumberOfStreams = numberOfStreams;
+    /** Set the filter arguments. */
+    filter->m_InputFileNames = inputFileNames;
+    filter->m_OutputFileName = outputFileName;
+    filter->m_NumberOfStreams = numberOfStreams;
 
-    imagesToVectorImage->Run();
+    filter->Run();
     
-    delete imagesToVectorImage;  
+    delete filter;  
   }
-  catch( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    delete imagesToVectorImage;
-    return 1;
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+    delete filter;
+    return EXIT_FAILURE;
   }
-
 
   /** End program. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main

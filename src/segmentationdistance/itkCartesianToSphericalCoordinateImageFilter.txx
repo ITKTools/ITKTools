@@ -70,7 +70,7 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
   // call the superclass's implementation of this method
   Superclass::GenerateInputRequestedRegion();
 
-  if ( !this->GetInput() )
+  if( !this->GetInput() )
   {
     return;
   }
@@ -104,21 +104,21 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
   // get pointers to the input and output
   InputImageConstPointer inputPtr = this->GetInput();
   OutputImagePointer outputPtr = this->GetOutput();
-  if ( !outputPtr )
+  if( !outputPtr )
   {
     return;
   }
 
   /** Check if the output size is valid. */
-  if ( this->m_OutputSize[0] < 2 )
+  if( this->m_OutputSize[0] < 2 )
   {
     itkExceptionMacro( << "Invalid OutputSize! OutputSize[0] must be greater than 1.");
   }
-  if ( this->m_OutputSize[1] < 2 )
+  if( this->m_OutputSize[1] < 2 )
   {
     itkExceptionMacro( << "Invalid OutputSize! OutputSize[1] must be greater than 1.");
   }
-  if ( this->m_OutputSize[2] < 2 )
+  if( this->m_OutputSize[2] < 2 )
   {
     itkExceptionMacro( << "Invalid OutputSize! OutputSize[2] must be greater than 1.");
   }
@@ -146,13 +146,13 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
   PointType cor = this->GetCenterOfRotation();
   double maxR = 0.0;
   IndexType cornerIndex = inputIndex;
-  for (unsigned int i = 0; i < 2; ++i)
+  for( unsigned int i = 0; i < 2; ++i )
   {
     cornerIndex[0] = inputIndex[0] + i * (inputSize[0] -1);
-    for (unsigned int j = 0; j < 2; ++j)
+    for( unsigned int j = 0; j < 2; ++j )
     {
       cornerIndex[1] = inputIndex[1] + j * (inputSize[1] -1);
-      for (unsigned int k = 0; k < 2; ++k)
+      for( unsigned int k = 0; k < 2; ++k)
       {
         cornerIndex[2] = inputIndex[2] + k * (inputSize[2] -1 );
         PointType cornerPoint;
@@ -199,7 +199,7 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
   typename InternalImageType::Pointer countsImage = InternalImageType::New();
 
   bool useInterpolator = false;
-  if ( this->m_Interpolator.IsNotNull() )
+  if( this->m_Interpolator.IsNotNull() )
   {
     this->m_Interpolator->SetInputImage( inputImage );
     useInterpolator = true;
@@ -239,10 +239,10 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
    */
   double dVrtp = itk::NumericTraits<double>::max();
   double dVxyz = 0.0;
-  for (unsigned int i = 0; i < ImageDimension; ++i)
+  for( unsigned int i = 0; i < ImageDimension; ++i )
   {
-    dVrtp = vnl_math_min( this->m_OutputSpacing[i], dVrtp);
-    dVxyz = vnl_math_max( this->m_InputSpacing[i], dVxyz);
+    dVrtp = vnl_math_min( this->m_OutputSpacing[ i ], dVrtp);
+    dVxyz = vnl_math_max( this->m_InputSpacing[ i ], dVxyz);
   }
   double deltaVolumeRatioFactor =
     ( dVrtp / dVxyz ) * ( dVrtp / dVxyz ) * ( dVrtp / dVxyz );
@@ -258,7 +258,7 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
   typedef ImageRegionConstIteratorWithIndex< MaskImageType > MaskIteratorType;
   MaskIteratorType maskIt;
   bool useMask = false;
-  if ( this->m_MaskImage.IsNotNull() )
+  if( this->m_MaskImage.IsNotNull() )
   {
     useMask = true;
     maskIt = MaskIteratorType( this->m_MaskImage, inputImage->GetRequestedRegion() );
@@ -271,15 +271,15 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
   {
     /** Compute vector to cor */
     bool validPixel = true;
-    if (useMask)
+    if(useMask)
     {
-      if ( maskIt.Value() == 0 )
+      if( maskIt.Value() == 0 )
       {
         validPixel = false;
       }
     }
 
-    if ( validPixel )
+    if( validPixel )
     {
       const IndexType & inIndex = inIt.GetIndex();
       double inValue = inIt.Value();
@@ -295,7 +295,7 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
       /** Compute the number of samples needed */
       const double deltaVolumeRatio = deltaVolumeRatioFactor * r2 * sinphi;
       unsigned int numberOfSamplesPerVoxel = 1;
-      if ( deltaVolumeRatio <= invMaximumNumberOfSamplesPerVoxel )
+      if( deltaVolumeRatio <= invMaximumNumberOfSamplesPerVoxel )
       {
         numberOfSamplesPerVoxel = this->m_MaximumNumberOfSamplesPerVoxel;
       }
@@ -310,15 +310,15 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
       * if only one point is used, that point is the indexPoint */
       PointType randomPoint = inPoint;
 
-      for ( unsigned int i = 0; i < numberOfSamplesPerVoxel; ++i)
+      for( unsigned int i = 0; i < numberOfSamplesPerVoxel; ++i )
       {
         /** if an interpolator is used, and if the randomPoint is a valid point
         * then use it.
         * if no interpolator is used, we simply use the voxel value itself:
         * nearest neighbor interpolatorion  */
-        if ( useInterpolator )
+        if( useInterpolator )
         {
-          if ( this->m_Interpolator->IsInsideBuffer( randomPoint ) )
+          if( this->m_Interpolator->IsInsideBuffer( randomPoint ) )
           {
             inValue = this->m_Interpolator->Evaluate( randomPoint);
           }
@@ -337,7 +337,7 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
         /** compute r, theta and phi */
         const double r = vec.GetNorm() ;
         double theta = vcl_atan2( y, x);
-        if ( theta<0 )
+        if( theta<0 )
         {
           theta += 2.0* vnl_math::pi;
         }
@@ -354,23 +354,23 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
         rtpPoint[1] = theta;
         rtpPoint[2] = phi;
         sumImage->TransformPhysicalPointToContinuousIndex( rtpPoint, rtpCIndex);
-        for ( unsigned int i=0 ; i < ImageDimension; ++i)
+        for( unsigned int i=0 ; i < ImageDimension; ++i )
         {
-          rtpIndex0[i] = static_cast<int>( vcl_floor( rtpCIndex[i] ) );
+          rtpIndex0[ i ] = static_cast<int>( vcl_floor( rtpCIndex[ i ] ) );
           parzenWeight(i,0) = kernel->Evaluate(
-            static_cast<double>(rtpIndex0[i]) - rtpCIndex[i] );
+            static_cast<double>(rtpIndex0[ i ]) - rtpCIndex[ i ] );
           parzenWeight(i,1) = kernel->Evaluate(
-            static_cast<double>(rtpIndex0[i]+1) - rtpCIndex[i] );
+            static_cast<double>(rtpIndex0[ i ]+1) - rtpCIndex[ i ] );
         }
 
         /** Update the sumImage and countsImage */
-        for (unsigned int i = 0; i < 2; ++i)
+        for( unsigned int i = 0; i < 2; ++i )
         {
           rtpIndex[0] = rtpIndex0[0] + i;
-          for (unsigned int j = 0; j < 2; ++j)
+          for( unsigned int j = 0; j < 2; ++j )
           {
             rtpIndex[1] = rtpIndex0[1] + j;
-            for (unsigned int k = 0; k < 2; ++k)
+            for( unsigned int k = 0; k < 2; ++k)
             {
               rtpIndex[2] = rtpIndex0[2] + k;
               const double parzenValue =
@@ -391,7 +391,7 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
 
     /** inc image iterators */
     ++inIt;
-    if ( useMask )
+    if( useMask )
     {
       ++maskIt;
     }
@@ -469,13 +469,13 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
   OutputIteratorType outIt( outputImage, outputImage->GetLargestPossibleRegion() );
   outIt.GoToBegin();
 
-  if ( NumericTraits<OutputPixelType>::is_integer )
+  if( NumericTraits<OutputPixelType>::is_integer )
   {
     /** use a round operation */
     while ( !outIt.IsAtEnd() )
     {
       const double counts = countsIt.Value();
-      if ( counts > 1e-14 )
+      if( counts > 1e-14 )
       {
         outIt.Value() = static_cast<OutputPixelType>(
           vnl_math_rnd( sumIt.Value() / counts ) );
@@ -491,7 +491,7 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
     while ( !outIt.IsAtEnd() )
     {
       const double counts = countsIt.Value();
-      if ( counts > 1e-14 )
+      if( counts > 1e-14 )
       {
         outIt.Value() = static_cast<OutputPixelType>( sumIt.Value() / counts );
       }
@@ -515,12 +515,12 @@ GenerateRandomCoordinate(
 const PointType & inputPoint,
 PointType &       randomPoint)
 {
-  for ( unsigned int i = 0; i < InputImageDimension; ++i)
+  for( unsigned int i = 0; i < InputImageDimension; ++i )
   {
     randomPoint[ i ] = static_cast<CoordRepType>(
       this->m_RandomGenerator->GetUniformVariate(
-      inputPoint[ i ] - 0.5* this->m_InputSpacing[i],
-      inputPoint[ i ] + 0.5* this->m_InputSpacing[i] ) );
+      inputPoint[ i ] - 0.5* this->m_InputSpacing[ i ],
+      inputPoint[ i ] + 0.5* this->m_InputSpacing[ i ] ) );
   }
 } // end GenerateRandomCoordinate
 

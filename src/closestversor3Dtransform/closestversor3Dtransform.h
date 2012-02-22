@@ -15,14 +15,8 @@
 * limitations under the License.
 *
 *=========================================================================*/
-/** \file
- \brief Calculates the closest rigid transform (VersorRigid3D) between two sets of landmarks. The two sets should be of equal size.
- 
- \verbinclude closestversor3Dtransform.help
- */
-
-#ifndef __closestversor3Dtransform_h
-#define __closestversor3Dtransform_h
+#ifndef __closestversor3Dtransform_h_
+#define __closestversor3Dtransform_h_
 
 #include "itkImage.h"
 #include "itkPoint.h"
@@ -56,12 +50,12 @@ void ReadLandmarks(
 
   /** Open file for reading and read landmarks. */
   std::ifstream landmarkFile( landmarkFileName.c_str() );
-  if ( landmarkFile.is_open() )
+  if( landmarkFile.is_open() )
   {
     LandmarkType landmark;
     while ( !landmarkFile.eof() )
     {
-      for ( unsigned int i = 0; i < Dimension; i++ )
+      for( unsigned int i = 0; i < Dimension; i++ )
       {
         landmarkFile >> landmark[ i ];
       }
@@ -107,7 +101,7 @@ void ComputeClosestVersor(
   ReadLandmarks( movingLandmarkFileName, movingLandmarkContainer );
 
   /** Check the sizes. */
-  if ( fixedLandmarkContainer.size() != movingLandmarkContainer.size() )
+  if( fixedLandmarkContainer.size() != movingLandmarkContainer.size() )
   {
     std::cerr << "ERROR: the two sets of landmarks are not of the same size." << std::endl;
     return;
@@ -130,7 +124,7 @@ void ComputeClosestVersor(
   ParametersType params = transform->GetParameters();
   unsigned int nop = transform->GetNumberOfParameters();
   parameters.resize( nop, 0.0 );
-  for ( unsigned int i = 0; i < nop; ++i )
+  for( unsigned int i = 0; i < nop; ++i )
   {
     parameters[ i ] = params[ i ];
   }
@@ -138,7 +132,7 @@ void ComputeClosestVersor(
   /** Get the estimated center of rotation. */
   CenterType center = transform->GetCenter();
   centerOfRotation.resize( Dimension, 0.0 );
-  for ( unsigned int i = 0; i < Dimension; ++i )
+  for( unsigned int i = 0; i < Dimension; ++i )
   {
     centerOfRotation[ i ] = center[ i ];
   }
@@ -156,7 +150,7 @@ void ConvertVersorToEuler(
 {
   /** Create an Euler parameter vector. */
   unsigned int nop = parVersor.size();
-  if ( nop != 6 ) return;
+  if( nop != 6 ) return;
   parEuler.resize( nop, 0.0 );
 
   /** Easy notation. */
@@ -176,4 +170,4 @@ void ConvertVersorToEuler(
 
 } // end ConvertVersorToEuler()
 
-#endif // end #ifndef __closestversor3Dtransform_h
+#endif // end #ifndef __closestversor3Dtransform_h_

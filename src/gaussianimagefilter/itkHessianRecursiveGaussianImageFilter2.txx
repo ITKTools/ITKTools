@@ -1,4 +1,21 @@
 /*=========================================================================
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
+/*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: itkHessianRecursiveGaussianImageFilter2.txx,v $
@@ -14,8 +31,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef _itkHessianRecursiveGaussianImageFilter2_txx
-#define _itkHessianRecursiveGaussianImageFilter2_txx
+#ifndef _itkHessianRecursiveGaussianImageFilter2_txx_
+#define _itkHessianRecursiveGaussianImageFilter2_txx_
 
 #include "itkHessianRecursiveGaussianImageFilter2.h"
 #include "itkImageRegionIteratorWithIndex.h"
@@ -36,7 +53,7 @@ HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
   this->m_NormalizeAcrossScale = false;
 
   /** Setup the smoothing filters. */
-  for ( unsigned int i = 0; i < NumberOfSmoothingFilters; i++ )
+  for( unsigned int i = 0; i < NumberOfSmoothingFilters; i++ )
   {
     GaussianFilterPointer filter = GaussianFilterType::New();
     filter->SetOrder( GaussianFilterType::ZeroOrder );
@@ -59,12 +76,12 @@ HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
   this->m_DerivativeFilterB->SetInput( this->m_DerivativeFilterA->GetOutput() );
 
   // Deal with the 2D case.
-  if ( NumberOfSmoothingFilters > 0 )
+  if( NumberOfSmoothingFilters > 0 )
   {
     this->m_SmoothingFilters[ 0 ]->SetInput( this->m_DerivativeFilterB->GetOutput() );
   }
 
-  for ( unsigned int i = 1; i < NumberOfSmoothingFilters; i++ )
+  for( unsigned int i = 1; i < NumberOfSmoothingFilters; i++ )
   {
     this->m_SmoothingFilters[ i ]->SetInput(
       this->m_SmoothingFilters[ i - 1 ]->GetOutput() );
@@ -101,12 +118,12 @@ HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
 ::SetSigma( const SigmaType sigma )
 {
   // for now only sigma[0] is used
-  if ( this->m_Sigma != sigma )
+  if( this->m_Sigma != sigma )
   {
     this->m_Sigma = sigma;
     this->Modified();
 
-    for ( unsigned int i = 0; i < NumberOfSmoothingFilters; i++ )
+    for( unsigned int i = 0; i < NumberOfSmoothingFilters; i++ )
     {
       this->m_SmoothingFilters[ i ]->SetSigma( sigma[ 0 ] );
     }
@@ -129,7 +146,7 @@ HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
 ::SetNormalizeAcrossScale( const bool arg )
 {
 
-  if ( this->m_NormalizeAcrossScale != arg )
+  if( this->m_NormalizeAcrossScale != arg )
   {
     this->m_NormalizeAcrossScale = arg;
     this->Modified();
@@ -176,7 +193,7 @@ HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
 {
   TOutputImage *out = dynamic_cast<TOutputImage*>(output);
 
-  if (out)
+  if(out)
     {
     out->SetRequestedRegion( out->GetLargestPossibleRegion() );
     }
@@ -202,9 +219,9 @@ HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage >
   const double weight =
      1.0 / ( ImageDimension * ( ImageDimension * ( ImageDimension + 1 ) / 2 ) );
 
-  for ( unsigned int i = 0; i < NumberOfSmoothingFilters; i++ )
+  for( unsigned int i = 0; i < NumberOfSmoothingFilters; i++ )
   {
-    progress->RegisterInternalFilter( this->m_SmoothingFilters[i], weight );
+    progress->RegisterInternalFilter( this->m_SmoothingFilters[ i ], weight );
   }
   progress->RegisterInternalFilter( this->m_DerivativeFilterA, weight );
   progress->RegisterInternalFilter( this->m_DerivativeFilterB, weight );
@@ -223,14 +240,14 @@ HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage >
   this->m_DerivativeFilterB->SetInput( this->m_DerivativeFilterA->GetOutput() );
 
   unsigned int element = 0;
-  for ( unsigned int dima = 0; dima < ImageDimension; dima++ )
+  for( unsigned int dima = 0; dima < ImageDimension; dima++ )
   {
-    for ( unsigned int dimb = dima; dimb < ImageDimension; dimb++ )
+    for( unsigned int dimb = dima; dimb < ImageDimension; dimb++ )
     {
       // Manage the diagonal in a different way in order to avoid
       // applying a double smoothing to this direction, and missing
       // to smooth one of the other directions.
-      if ( dimb == dima )
+      if( dimb == dima )
       {
         this->m_DerivativeFilterA->SetOrder( DerivativeFilterAType::SecondOrder );
         this->m_DerivativeFilterB->SetOrder( DerivativeFilterBType::ZeroOrder );
@@ -240,7 +257,7 @@ HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage >
         // find the direction for the first filter.
         while ( j < ImageDimension )
         {
-          if ( j != dima )
+          if( j != dima )
           {
             this->m_DerivativeFilterB->SetDirection( j );
             j++;
@@ -253,7 +270,7 @@ HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage >
         {
           while ( j < ImageDimension )
           {
-            if ( j != dima )
+            if( j != dima )
             {
               this->m_SmoothingFilters[ i ]->SetDirection( j );
               j++;
@@ -277,7 +294,7 @@ HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage >
         {
           while ( j < ImageDimension )
           {
-            if ( j != dima && j != dimb )
+            if( j != dima && j != dimb )
             {
               this->m_SmoothingFilters[ i ]->SetDirection( j );
               j++;
@@ -295,7 +312,7 @@ HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage >
       typename RealImageType::Pointer derivativeImage;
 
       // Deal with the 2D case.
-      if ( NumberOfSmoothingFilters > 0 )
+      if( NumberOfSmoothingFilters > 0 )
       {
         GaussianFilterPointer lastFilter = this->m_SmoothingFilters[ ImageDimension - 3 ];
         lastFilter->Update();

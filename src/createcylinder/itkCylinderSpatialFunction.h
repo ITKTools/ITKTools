@@ -1,21 +1,22 @@
 /*=========================================================================
-
-  Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkCylinderSpatialFunction.h,v $
-  Language:  C++
-  Date:      $Date: 2009-04-25 12:24:12 $
-  Version:   $Revision: 1.18 $
-
-  Copyright (c) Insight Software Consortium. All rights reserved.
-  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
-
-=========================================================================*/
-#ifndef __itkCylinderSpatialFunction_h
-#define __itkCylinderSpatialFunction_h
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
+#ifndef __itkCylinderSpatialFunction_h_
+#define __itkCylinderSpatialFunction_h_
 
 #include "itkInteriorExteriorSpatialFunction.h"
 
@@ -98,4 +99,4 @@ private:
 # include "itkCylinderSpatialFunction.txx"
 #endif
 
-#endif
+#endif // end #ifndef __itkCylinderSpatialFunction_h_

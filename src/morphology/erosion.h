@@ -48,9 +48,9 @@ void erosionGrayscale(
    */
   
   PixelType boundaryValue = itk::NumericTraits<PixelType>::max();
-  if ( boundaryCondition != "" )
+  if( boundaryCondition != "" )
   {
-    if ( itk::NumericTraits<PixelType>::is_integer )
+    if( itk::NumericTraits<PixelType>::is_integer )
     {
       boundaryValue = static_cast<PixelType>( atoi( boundaryCondition.c_str() ) );
     }
@@ -64,7 +64,7 @@ void erosionGrayscale(
 
   /** Create the structuring element. */
   RadiusType  radiusarray;
-  for ( unsigned int i = 0; i < Dimension; i++ )
+  for( unsigned int i = 0; i < Dimension; i++ )
   {
     radiusarray.SetElement( i, radius[ i ] );
   }
@@ -121,11 +121,11 @@ void erosionBinary(
   values[ 0 ] = itk::NumericTraits<PixelType>::One;
   values[ 1 ] = itk::NumericTraits<PixelType>::Zero;
   values[ 2 ] = itk::NumericTraits<PixelType>::One;
-  if ( bin.size() == 3 )
+  if( bin.size() == 3 )
   {
-    for ( unsigned int i = 0; i < 3; ++i )
+    for( unsigned int i = 0; i < 3; ++i )
     {
-      if ( itk::NumericTraits<PixelType>::is_integer )
+      if( itk::NumericTraits<PixelType>::is_integer )
       {
         values[ i ] = static_cast<PixelType>( atoi( bin[ i ].c_str() ) );
       }
@@ -138,7 +138,7 @@ void erosionBinary(
 
   /** Create the structuring element. */
   RadiusType  radiusarray;
-  for ( unsigned int i = 0; i < Dimension; i++ )
+  for( unsigned int i = 0; i < Dimension; i++ )
   {
     radiusarray.SetElement( i, radius[ i ] );
   }
@@ -200,7 +200,7 @@ void erosionBinaryObject(
   /** Create and fill the radius. */
   RadiusType  radiusarray;
   //radiusarray.Fill( 1 );
-  for ( unsigned int i = 0; i < Dimension; i++ )
+  for( unsigned int i = 0; i < Dimension; i++ )
   {
     radiusarray.SetElement( i, radius[ i ] );
   }
@@ -217,9 +217,9 @@ void erosionBinaryObject(
    */
   BoundaryConditionType bc;
   PixelType bcValue = itk::NumericTraits<PixelType>::max();
-  if ( boundaryCondition != "" )
+  if( boundaryCondition != "" )
   {
-    if ( itk::NumericTraits<PixelType>::is_integer )
+    if( itk::NumericTraits<PixelType>::is_integer )
     {
       bcValue = static_cast<PixelType>( atoi( boundaryCondition.c_str() ) );
     }
@@ -278,7 +278,7 @@ void erosionParabolic(
   /** Get the correct radius. */
   RadiusType      radiusArray;
   ScalarRealType  radius1D = 0.0;
-  for ( unsigned int i = 0; i < Dimension; ++i )
+  for( unsigned int i = 0; i < Dimension; ++i )
   {
     // Very specific computation for the parabolic filter:
     radius1D = static_cast<ScalarRealType>( radius[ i ] ) ;//+ 1.0;

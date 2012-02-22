@@ -15,14 +15,8 @@
 * limitations under the License.
 *
 *=========================================================================*/
-/** \file
- \brief Compute binary thinning of an image.
- 
- \verbinclude binarythinning.help
- */
-
-#ifndef __binarythinning_h
-#define __binarythinning_h
+#ifndef __binarythinning_h_
+#define __binarythinning_h_
 
 #include "ITKToolsBase.h"
 
@@ -31,52 +25,57 @@
 #include "itkImageFileWriter.h"
 
 
+/** \class ITKToolsBinaryThinningBase
+ *
+ * Untemplated pure virtual base class that holds
+ * the Run() function and all required parameters.
+ */
+
 class ITKToolsBinaryThinningBase : public itktools::ITKToolsBase
 {
 public:
+  /** Constructor. */
   ITKToolsBinaryThinningBase()
   {
     this->m_InputFileName = "";
     this->m_OutputFileName = "";
   }
-
+  /** Destructor. */
   ~ITKToolsBinaryThinningBase(){};
 
-  /** Input parameters */
+  /** Input member parameters. */
   std::string m_InputFileName;
   std::string m_OutputFileName;
 
-  virtual void Run( void ) = 0;
-
-}; // end BinaryThinningBase
+}; // end class ITKToolsBinaryThinningBase
 
 
-template< class TComponentType, unsigned int VImageDimension >
+/** \class ITKToolsBinaryThinning
+ *
+ * Templated class that implements the Run() function
+ * and the New() function for its creation.
+ */
+
+template< unsigned int VDimension, class TComponentType >
 class ITKToolsBinaryThinning : public ITKToolsBinaryThinningBase
 {
 public:
+  /** Standard ITKTools stuff. */
   typedef ITKToolsBinaryThinning Self;
+  itktoolsOneTypeNewMacro( Self );
 
   ITKToolsBinaryThinning(){};
   ~ITKToolsBinaryThinning(){};
 
-  static Self * New( itktools::ComponentType componentType, unsigned int imageDimension )
-  {
-    if ( itktools::IsType<TComponentType>(componentType) && VImageDimension == imageDimension )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
+  /** Run function. */
   void Run( void )
   {
     /** Typedef's. */
-    typedef itk::Image<TComponentType, VImageDimension>     InputImageType;
-    typedef itk::ImageFileReader< InputImageType >          ReaderType;
+    typedef itk::Image<TComponentType, VDimension>        InputImageType;
+    typedef itk::ImageFileReader< InputImageType >        ReaderType;
     typedef itk::BinaryThinningImageFilter<
-      InputImageType, InputImageType >                      FilterType;
-    typedef itk::ImageFileWriter< InputImageType >          WriterType;
+      InputImageType, InputImageType >                    FilterType;
+    typedef itk::ImageFileWriter< InputImageType >        WriterType;
 
     /** Read in the input images. */
     typename ReaderType::Pointer reader = ReaderType::New();
@@ -91,8 +90,9 @@ public:
     writer->SetFileName( this->m_OutputFileName );
     writer->SetInput( filter->GetOutput() );
     writer->Update();
+
   } // end Run()
 
-}; // end BinaryThinning
+}; // end class ITKToolsBinaryThinning
 
-#endif // end __binarythinning_h
+#endif // end __binarythinning_h_

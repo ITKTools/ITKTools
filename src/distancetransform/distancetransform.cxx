@@ -21,7 +21,7 @@
  \verbinclude distancetransform.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
 #include "distancetransform.h"
 
 
@@ -94,20 +94,20 @@ int main( int argc, char **argv )
   parser->GetCommandLineArgument( "-k", K );
 
   /** Checks. */
-  if ( method != "Maurer" && method != "Danielsson"
+  if( method != "Maurer" && method != "Danielsson"
     && method != "Morphological" && method != "MorphologicalSigned" )
   {
     std::cerr << "ERROR: the method should be one of { Maurer, Danielsson, Morphological, MorphologicalSigned }!"
       << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
-  if ( method == "OrderK" && outputFileNames.size() != 3 )
+  if( method == "OrderK" && outputFileNames.size() != 3 )
   {
     std::cerr << "ERROR: the method OrderK requires three output file names!\n";
     std::cerr << "  You only specified " << outputFileNames.size() << "."
       << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   /** Determine image properties. */
@@ -123,33 +123,33 @@ int main( int argc, char **argv )
     Dimension,
     NumberOfComponents,
     imagesize );
-  if ( retgip != 0 )
+  if( retgip != 0 )
   {
     return 1;
   }
 
   /** Check for scalar image. */
-  if ( NumberOfComponents > 1 )
+  if( NumberOfComponents > 1 )
   {
     std::cerr << "ERROR: vector images are not supported." << std::endl;
     return 1;
   }
 
   /** Check for dimension. */
-  if ( Dimension != 2 && Dimension != 3 )
+  if( Dimension != 2 && Dimension != 3 )
   {
     std::cerr
       << "ERROR: images of dimension "
       << Dimension
       << " are not supported!"
       << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   /** Run the program. */
   try
   {
-    if ( Dimension == 2 )
+    if( Dimension == 2 )
     {
       DistanceTransform<2>(
         inputFileName,
@@ -157,7 +157,7 @@ int main( int argc, char **argv )
         outputSquaredDistance,
         method, K );
     }
-    if ( Dimension == 3 )
+    if( Dimension == 3 )
     {
       DistanceTransform<3>(
         inputFileName,
@@ -167,23 +167,23 @@ int main( int argc, char **argv )
     }
 
   }
-  catch( itk::ExceptionObject & e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    return 1;
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+    return EXIT_FAILURE;
   }
   catch( std::exception & e )
   {
     std::cerr << "Caught std::exception: " << e.what() << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
-  catch ( ... )
+  catch( ... )
   {
     std::cerr << "Caught unknown exception" << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   /** End program. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main

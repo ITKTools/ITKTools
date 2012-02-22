@@ -64,7 +64,7 @@ public:
   };
   ~ITKToolsCreateCylinderBase(){};
 
-  /** Input parameters */
+  /** Input member parameters. */
   std::string m_InputFileName;
   std::string m_OutputFileName;
   std::vector<unsigned int> m_Center;
@@ -84,13 +84,14 @@ public:
 
   static Self * New( unsigned int dim )
   {
-    if ( VDimension == dim )
+    if( VDimension == dim )
     {
       return new Self;
     }
     return 0;
   }
 
+  /** Run function. */
   void Run( void )
   {
     /** Typedefs. */
@@ -121,12 +122,12 @@ public:
     InputType   Center;
     PointType point;
     IndexType index;
-    for ( unsigned int i = 0; i < VDimension; i++ )
+    for( unsigned int i = 0; i < VDimension; i++ )
     {
       index[ i ] = this->m_Center[ i ];
     }
     outputImage->TransformIndexToPhysicalPoint( index, point );
-    for ( unsigned int i = 0; i < VDimension; i++ )
+    for( unsigned int i = 0; i < VDimension; i++ )
     {
       Center[ i ] = point[ i ];
     }
@@ -210,10 +211,10 @@ int main( int argc, char *argv[] )
     Dimension,
     NumberOfComponents,
     imagesize );
-  if ( retgip != 0 ) return 1;
+  if( retgip != 0 ) return 1;
 
   
-  /** Class that does the work */
+  /** Class that does the work. */
   ITKToolsCreateCylinderBase * createCylinder = NULL; 
 
   /** Short alias */
@@ -222,11 +223,11 @@ int main( int argc, char *argv[] )
   try
   {    
     // now call all possible template combinations.
-    if (!createCylinder) createCylinder = ITKToolsCreateCylinder< 2 >::New( dim );
+    if( !createCylinder) createCylinder = ITKToolsCreateCylinder< 2 >::New( dim );
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!createCylinder) createCylinder = ITKToolsCreateCylinder< 3 >::New( dim );    
+    if( !createCylinder) createCylinder = ITKToolsCreateCylinder< 3 >::New( dim );    
 #endif
-    if (!createCylinder) 
+    if( !createCylinder) 
     {
       std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
       std::cerr
@@ -244,14 +245,14 @@ int main( int argc, char *argv[] )
     
     delete createCylinder;  
   }
-  catch( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
     delete createCylinder;
-    return 1;
+    return EXIT_FAILURE;
   }
   
   /** End program. Return a value. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main

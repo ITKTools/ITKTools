@@ -79,7 +79,7 @@ int main( int argc, char **argv )
   /** Make sure last character of inputDirectoryName != "/".
    * Otherwise FileIsDirectory() won't work.
    */
-  if ( inputDirectoryName.rfind( "/" ) == inputDirectoryName.size() - 1 )
+  if( inputDirectoryName.rfind( "/" ) == inputDirectoryName.size() - 1 )
   {
     inputDirectoryName.erase( inputDirectoryName.size() - 1, 1 );
   }
@@ -88,11 +88,11 @@ int main( int argc, char **argv )
   bool exists = itksys::SystemTools::FileExists( inputDirectoryName.c_str() );
   bool isDir = itksys::SystemTools::FileIsDirectory( inputDirectoryName.c_str() );
   isDir &= exists;
-  if ( !isDir )
+  if( !isDir )
   {
     std::cerr << "ERROR: " << inputDirectoryName
       << " does not exist or is no directory." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   typedef itk::GDCMSeriesFileNames                GDCMNamesGeneratorType;
@@ -101,7 +101,7 @@ int main( int argc, char **argv )
   /** Get the seriesUIDs from the DICOM directory. */
   GDCMNamesGeneratorType::Pointer nameGenerator = GDCMNamesGeneratorType::New();
   nameGenerator->SetUseSeriesDetails( true );
-  for ( unsigned int i = 0; i < restrictions.size(); ++i )
+  for( unsigned int i = 0; i < restrictions.size(); ++i )
   {
     nameGenerator->AddSeriesRestriction( restrictions[ i ] );
   }
@@ -109,20 +109,20 @@ int main( int argc, char **argv )
   FileNamesContainerType seriesNames = nameGenerator->GetSeriesUIDs();
 
   /** Check. */
-  if ( !seriesNames.size() )
+  if( !seriesNames.size() )
   {
     std::cerr << "ERROR: no DICOM series in directory "
       << inputDirectoryName << "." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   /** Print series. */
-  for ( unsigned int i = 0; i < seriesNames.size(); i++ )
+  for( unsigned int i = 0; i < seriesNames.size(); i++ )
   {
     std::cout << seriesNames[ i ] << std::endl;
   }
 
   /** End  program. Return success. */
-  return 0;
+  return EXIT_SUCCESS;
 
 }  // end main

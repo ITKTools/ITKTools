@@ -1,5 +1,22 @@
-#ifndef _itkDiceOverlapImageFilter_txx
-#define _itkDiceOverlapImageFilter_txx
+/*=========================================================================
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
+#ifndef _itkDiceOverlapImageFilter_txx_
+#define _itkDiceOverlapImageFilter_txx_
 
 #include "itkDiceOverlapImageFilter.h"
 
@@ -76,7 +93,7 @@ DiceOverlapImageFilter<TInputImage>
 
     sumA[ A ]++;
     sumB[ B ]++;
-    if ( A == B  ) ++sumC[ A ];
+    if( A == B  ) ++sumC[ A ];
 
     /** Increase iterators. */
     ++itA; ++itB;
@@ -106,11 +123,11 @@ DiceOverlapImageFilter<TInputImage>
   OverlapMapType sumB = this->m_SumB[ 0 ];
   OverlapMapType sumC = this->m_SumC[ 0 ];
   typename OverlapMapType::const_iterator  it;
-  for ( unsigned int threadId = 1; threadId < this->GetNumberOfThreads(); threadId++ )
+  for( unsigned int threadId = 1; threadId < this->GetNumberOfThreads(); threadId++ )
   {
     for ( it = this->m_SumA[ threadId ].begin(); it != this->m_SumA[ threadId ].end(); it++ )
     {
-      if ( sumA.count( (*it).first ) == 0 )
+      if( sumA.count( (*it).first ) == 0 )
       {
         sumA[ (*it).first ] = (*it).second;
       }
@@ -122,7 +139,7 @@ DiceOverlapImageFilter<TInputImage>
 
     for ( it = this->m_SumB[ threadId ].begin(); it != this->m_SumB[ threadId ].end(); it++ )
     {
-      if ( sumB.count( (*it).first ) == 0 )
+      if( sumB.count( (*it).first ) == 0 )
       {
         sumB[ (*it).first ] = (*it).second;
       }
@@ -134,7 +151,7 @@ DiceOverlapImageFilter<TInputImage>
 
     for ( it = this->m_SumC[ threadId ].begin(); it != this->m_SumC[ threadId ].end(); it++ )
     {
-      if ( sumC.count( (*it).first ) == 0 )
+      if( sumC.count( (*it).first ) == 0 )
       {
         sumC[ (*it).first ] = (*it).second;
       }
@@ -153,7 +170,7 @@ DiceOverlapImageFilter<TInputImage>
 
     /** Compute overlap. */
     const std::size_t sumAB = sumA[ currentLabel ] + sumB[ currentLabel ];
-    if ( sumAB == 0 )
+    if( sumAB == 0 )
     {
       this->m_DiceOverlap[ currentLabel ] = 0.0;
     }
@@ -182,8 +199,8 @@ DiceOverlapImageFilter<TInputImage>
   for ( typename LabelsType::const_iterator itL = this->m_RequestedLabels.begin();
     itL != this->m_RequestedLabels.end(); itL++ )
   {
-    //if ( sumA.count( *itL ) == 0 && sumB.count( *itL ) == 0 )
-    if ( this->m_DiceOverlap.count( *itL ) == 0 )
+    //if( sumA.count( *itL ) == 0 && sumB.count( *itL ) == 0 )
+    if( this->m_DiceOverlap.count( *itL ) == 0 )
     {
       itkExceptionMacro( << "The selected label "
         << static_cast<std::size_t>( *itL )
@@ -202,7 +219,7 @@ DiceOverlapImageFilter<TInputImage>
     /** Skip the current label if not selected by user.
      * Print all labels if nothing is selected.
      */
-    if ( this->m_RequestedLabels.size() != 0
+    if( this->m_RequestedLabels.size() != 0
       && this->m_RequestedLabels.count( currentLabel ) == 0 )
     {
       continue;
@@ -241,4 +258,4 @@ DiceOverlapImageFilter<TInputImage>
 } // end namespace itk
 
 
-#endif // end #ifndef _itkDiceOverlapImageFilter_txx
+#endif // end #ifndef _itkDiceOverlapImageFilter_txx_

@@ -34,16 +34,15 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-     << "Calculates the closest rigid transform (VersorRigid3D) between" << std::endl
-     << "two sets of landmarks. The two sets should be of equal size." << std::endl
-     << "Usage:" << std::endl
-     << "pxclosestversor3Dtransform" << std::endl
-     << "-f       the file containing the fixed landmarks" << std::endl
-     << "-m       the file containing the moving landmarks";
+    << "Calculates the closest rigid transform (VersorRigid3D) between\n"
+    << "two sets of landmarks. The two sets should be of equal size.\n"
+    << "Usage:\n"
+    << "pxclosestversor3Dtransform\n"
+    << "-f       the file containing the fixed landmarks\n"
+    << "-m       the file containing the moving landmarks";
   return ss.str();
 
 } // end GetHelpString()
-
 
 //-------------------------------------------------------------------------------------
 
@@ -86,7 +85,7 @@ int main( int argc, char *argv[] )
   catch( itk::ExceptionObject &excp )
   {
     std::cerr << "Caught ITK exception: " << excp << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   /** Convert from versor to Euler angles. */
@@ -100,27 +99,27 @@ int main( int argc, char *argv[] )
   unsigned int nop = parVersor.size();
 
   std::cout << "versor: ";
-  for ( unsigned int i = 0; i < nop - 1; i++ )
+  for( unsigned int i = 0; i < nop - 1; i++ )
   {
     std::cout << parVersor[ i ] << " ";
   }
   std::cout << parVersor[ nop - 1 ] << std::endl;
 
   std::cout << "Euler: ";
-  for ( unsigned int i = 0; i < nop - 1; i++ )
+  for( unsigned int i = 0; i < nop - 1; i++ )
   {
     std::cout << parEuler[ i ] << " ";
   }
   std::cout << parEuler[ nop - 1 ] << std::endl;
 
   std::cout << "center of rotation: ";
-  for ( unsigned int i = 0; i < 2; i++ )
+  for( unsigned int i = 0; i < 2; i++ )
   {
     std::cout << centerOfRotation[ i ] << " ";
   }
   std::cout << centerOfRotation[ 2 ] << std::endl;
 
   /** End program. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main

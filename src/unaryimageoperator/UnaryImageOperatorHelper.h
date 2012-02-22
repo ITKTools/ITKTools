@@ -15,8 +15,8 @@
 * limitations under the License.
 *
 *=========================================================================*/
-#ifndef __UnaryImageOperatorHelper_h
-#define __UnaryImageOperatorHelper_h
+#ifndef __UnaryImageOperatorHelper_h_
+#define __UnaryImageOperatorHelper_h_
 
 #include "ITKToolsHelpers.h"
 #include "ITKToolsBase.h"
@@ -31,61 +31,65 @@
 #include <vector>
 
 
-/** UnaryImageOperator */
+/** \class ITKToolsUnaryImageOperatorBase
+ *
+ * Untemplated pure virtual base class that holds
+ * the Run() function and all required parameters.
+ */
+
 class ITKToolsUnaryImageOperatorBase : public itktools::ITKToolsBase
 {
 public:
+  /** Constructor. */
   ITKToolsUnaryImageOperatorBase()
   {
     this->m_InputFileName = "";
     this->m_OutputFileName = "";
     this->m_UnaryOperatorName = "";
-    this->m_Argument = "";
+    this->m_Arguments.resize( 1, "" );
     this->m_UseCompression = false;
   };
+  /** Destructor. */
   ~ITKToolsUnaryImageOperatorBase(){};
 
-  /** Input parameters */
+  /** Input member parameters. */
   std::string m_InputFileName;
   std::string m_OutputFileName;
   std::string m_UnaryOperatorName;
-  std::string m_Argument;
+  std::vector<std::string> m_Arguments;
   bool m_UseCompression;
 
-}; // end UnaryImageOperatorBase
+}; // end class ITKToolsUnaryImageOperatorBase
 
 
-template< class TInputComponentType, class TOutputComponentType, unsigned int VDimension >
+/** \class ITKToolsUnaryImageOperator
+ *
+ * Templated class that implements the Run() function
+ * and the New() function for its creation.
+ */
+
+template< unsigned int VDimension, class TInputComponentType,
+  class TOutputComponentType = TInputComponentType>
 class ITKToolsUnaryImageOperator : public ITKToolsUnaryImageOperatorBase
 {
 public:
+  /** Standard ITKTools stuff. */
   typedef ITKToolsUnaryImageOperator Self;
+  itktoolsTwoTypeNewMacro( Self );
 
   ITKToolsUnaryImageOperator(){};
   ~ITKToolsUnaryImageOperator(){};
 
-  static Self * New( itktools::ComponentType inputComponentType,
-    itktools::ComponentType outputComponentType, unsigned int dim )
-  {
-    if ( itktools::IsType<TInputComponentType>( inputComponentType )
-      && itktools::IsType<TOutputComponentType>( outputComponentType )
-      && VDimension == dim )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
+  /** Run function. */
   void Run( void )
   {
     /** Typedefs. */
-    typedef itk::Image<TInputComponentType, VDimension>       InputImageType;
-    typedef itk::Image<TOutputComponentType, VDimension>      OutputImageType;
-    typedef typename InputImageType::PixelType          InputPixelType;
-    typedef typename OutputImageType::PixelType         OutputPixelType;
-
-    typedef itk::ImageFileReader< InputImageType >      ReaderType;
-    typedef itk::ImageFileWriter< OutputImageType >     WriterType;
+    typedef itk::Image<TInputComponentType, VDimension>   InputImageType;
+    typedef itk::Image<TOutputComponentType, VDimension>  OutputImageType;
+    typedef typename InputImageType::PixelType            InputPixelType;
+    typedef typename OutputImageType::PixelType           OutputPixelType;
+    typedef itk::ImageFileReader< InputImageType >        ReaderType;
+    typedef itk::ImageFileWriter< OutputImageType >       WriterType;
 
     /** Read the image. */
     typename ReaderType::Pointer reader = ReaderType::New();
@@ -123,11 +127,12 @@ public:
     stringToEnumMap["ARCSIN"] = ARCSIN;
     stringToEnumMap["ARCCOS"] = ARCCOS;
     stringToEnumMap["ARCTAN"] = ARCTAN;
+    stringToEnumMap["LINEAR"] = LINEAR;
 
     /** Construct the unary filter. */
-    UnaryFunctorFactory<InputImageType, OutputImageType> unaryFunctorFactory;
+    UnaryFunctorFactory<InputImageType, OutputImageType, double> unaryFunctorFactory;
     typename itk::InPlaceImageFilter<InputImageType, OutputImageType>::Pointer unaryFilter
-      = unaryFunctorFactory.GetFilter( stringToEnumMap[ this->m_UnaryOperatorName ], this->m_Argument );
+      = unaryFunctorFactory.GetFilter( stringToEnumMap[ this->m_UnaryOperatorName ], this->m_Arguments );
 
     /** Connect the pipeline. */
     unaryFilter->SetInput( reader->GetOutput() );

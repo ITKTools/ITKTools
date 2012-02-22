@@ -15,8 +15,8 @@
 * limitations under the License.
 *
 *=========================================================================*/
-#ifndef __itkHistogramEqualizationImageFilter_h
-#define __itkHistogramEqualizationImageFilter_h
+#ifndef __itkHistogramEqualizationImageFilter_h_
+#define __itkHistogramEqualizationImageFilter_h_
 
 #include "itkImageToImageFilter.h"
 #include "itkArray.h"

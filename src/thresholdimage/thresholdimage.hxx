@@ -15,8 +15,8 @@
 * limitations under the License.
 *
 *=========================================================================*/
-#ifndef __thresholdimage_hxx
-#define __thresholdimage_hxx
+#ifndef __thresholdimage_hxx_
+#define __thresholdimage_hxx_
 
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
@@ -35,9 +35,9 @@
  * ******************* ThresholdImage *******************
  */
 
-template< class TComponentType, unsigned int VDimension >
+template< unsigned int VDimension, class TComponentType >
 void
-ITKToolsThresholdImage< TComponentType, VDimension >
+ITKToolsThresholdImage< VDimension, TComponentType >
 ::ThresholdImage(
   const std::string & inputFileName,
   const std::string & outputFileName,
@@ -88,9 +88,9 @@ ITKToolsThresholdImage< TComponentType, VDimension >
  * ******************* OtsuThresholdImage *******************
  */
 
-template< class TComponentType, unsigned int VDimension >
+template< unsigned int VDimension, class TComponentType >
 void
-ITKToolsThresholdImage< TComponentType, VDimension >
+ITKToolsThresholdImage< VDimension, TComponentType >
 ::OtsuThresholdImage(
   const std::string & inputFileName,
   const std::string & outputFileName,
@@ -128,7 +128,7 @@ ITKToolsThresholdImage< TComponentType, VDimension >
   thresholder->SetInsideValue( static_cast<OutputPixelType>( inside ) );
   thresholder->SetOutsideValue( static_cast<OutputPixelType>( outside ) );
   thresholder->SetInput( reader1->GetOutput() );
-  if ( maskFileName != "" )
+  if( maskFileName != "" )
   {
     reader2->SetFileName( maskFileName.c_str() );
     thresholder->SetMaskImage( reader2->GetOutput() );
@@ -147,9 +147,9 @@ ITKToolsThresholdImage< TComponentType, VDimension >
  * ******************* OtsuMultipleThresholdImage *******************
  */
 
-template< class TComponentType, unsigned int VDimension >
+template< unsigned int VDimension, class TComponentType >
 void
-ITKToolsThresholdImage< TComponentType, VDimension >
+ITKToolsThresholdImage< VDimension, TComponentType >
 ::OtsuMultipleThresholdImage(
   const std::string & inputFileName,
   const std::string & outputFileName,
@@ -189,7 +189,7 @@ ITKToolsThresholdImage< TComponentType, VDimension >
   //thresholder->SetInsideValue( static_cast<InputPixelType>( inside ) );
   //thresholder->SetOutsideValue( static_cast<InputPixelType>( outside ) );
   thresholder->SetNumberOfThresholds( numThresholds );
-//   if ( maskFileName != "" )
+//   if( maskFileName != "" )
 //   {
 //     reader2->SetFileName( maskFileName.c_str() );
 //     thresholder->SetMaskImage( reader2->GetOutput() );
@@ -208,9 +208,9 @@ ITKToolsThresholdImage< TComponentType, VDimension >
 //  * ******************* AdaptiveOtsuThresholdImage *******************
 //  */
 //
-// template< class TComponentType, unsigned int VDimension >
+// template< unsigned int VDimension, class TComponentType >
 // void
-// ITKToolsThresholdImage< TComponentType, VDimension >
+// ITKToolsThresholdImage< VDimension, TComponentType >
 // ::AdaptiveOtsuThresholdImage(
 //   const std::string & inputFileName,
 //   const std::string & outputFileName,
@@ -264,9 +264,9 @@ ITKToolsThresholdImage< TComponentType, VDimension >
  * ******************* RobustAutomaticThresholdImage *******************
  */
 
-template< class TComponentType, unsigned int VDimension >
+template< unsigned int VDimension, class TComponentType >
 void
-ITKToolsThresholdImage< TComponentType, VDimension >
+ITKToolsThresholdImage< VDimension, TComponentType >
 ::RobustAutomaticThresholdImage(
   const std::string & inputFileName,
   const std::string & outputFileName,
@@ -324,9 +324,9 @@ ITKToolsThresholdImage< TComponentType, VDimension >
  * ******************* KappaSigmaThresholdImage *******************
  */
 
-template< class TComponentType, unsigned int VDimension >
+template< unsigned int VDimension, class TComponentType >
 void
-ITKToolsThresholdImage< TComponentType, VDimension >
+ITKToolsThresholdImage< VDimension, TComponentType >
 ::KappaSigmaThresholdImage(
   const std::string & inputFileName,
   const std::string & outputFileName,
@@ -384,9 +384,9 @@ ITKToolsThresholdImage< TComponentType, VDimension >
  * ******************* MinErrorThresholdImage *******************
  */
 
-template< class TComponentType, unsigned int VDimension >
+template< unsigned int VDimension, class TComponentType >
 void
-ITKToolsThresholdImage< TComponentType, VDimension >
+ITKToolsThresholdImage< VDimension, TComponentType >
 ::MinErrorThresholdImage(
   const std::string & inputFileName,
   const std::string & outputFileName,
@@ -432,4 +432,4 @@ ITKToolsThresholdImage< TComponentType, VDimension >
 } // end MinErrorThresholdImage()
 
 
-#endif // end #ifndef __thresholdimage_hxx
+#endif // end #ifndef __thresholdimage_hxx_

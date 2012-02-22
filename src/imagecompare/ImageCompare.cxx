@@ -21,7 +21,7 @@
  \verbinclude imagecompare.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
 
 #include "itkNumericTraits.h"
 #include "itkImage.h"
@@ -43,9 +43,9 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-    << "Usage:" << std::endl
-    << "pximagecompare" << std::endl
-    << "  -test      image filename to test against baseline" << std::endl
+    << "Usage:\n"
+    << "pximagecompare\n"
+    << "  -test      image filename to test against baseline\n"
     << "  -base      baseline image filename";
   return ss.str();
 
@@ -94,9 +94,9 @@ int main( int argc, char **argv )
   {
     baselineReader->Update();
   }
-  catch ( itk::ExceptionObject & err )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Error during reading baseline image: " << err << std::endl;
+    std::cerr << "Error during reading baseline image: " << excp << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -107,9 +107,9 @@ int main( int argc, char **argv )
   {
     testReader->Update();
   }
-  catch ( itk::ExceptionObject & err )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Error during reading test image: " << err << std::endl;
+    std::cerr << "Error during reading test image: " << excp << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -119,7 +119,7 @@ int main( int argc, char **argv )
   ImageType::SizeType testSize;
   testSize = testReader->GetOutput()->GetLargestPossibleRegion().GetSize();
 
-  if ( baselineSize != testSize )
+  if( baselineSize != testSize )
   {
     std::cerr << "The size of the Baseline image and Test image do not match!" << std::endl;
     std::cerr << "Baseline image: " << baselineImageFileName
@@ -138,9 +138,9 @@ int main( int argc, char **argv )
   {
     comparisonFilter->Update();
   }
-  catch ( itk::ExceptionObject & err )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Error during comparing image: " << err << std::endl;
+    std::cerr << "Error during comparing image: " << excp << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -164,9 +164,9 @@ int main( int argc, char **argv )
     {
       writer->Write();
     }
-    catch ( itk::ExceptionObject & err )
+    catch( itk::ExceptionObject & excp )
     {
-      std::cerr << "Error during writing difference image: " << err << std::endl;
+      std::cerr << "Error during writing difference image: " << excp << std::endl;
       return EXIT_FAILURE;
     }
 

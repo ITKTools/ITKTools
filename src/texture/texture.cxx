@@ -16,20 +16,13 @@
 *
 *=========================================================================*/
 /** \file
- \brief This program computes texture features based on the gray-level co-occurrence matrix (GLCM).
+ \brief This program computes filter features based on the gray-level co-occurrence matrix (GLCM).
  
- \verbinclude texture.help
+ \verbinclude filter.help
  */
 #include "itkCommandLineArgumentParser.h"
 #include "ITKToolsHelpers.h"
-#include "ITKToolsBase.h"
-
-#include <itksys/SystemTools.hxx>
-
-#include "itkTextureImageToImageFilter.h"
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
-#include "itkMultiThreader.h"
+#include "texture.h"
 
 
 /**
@@ -40,153 +33,21 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-  << "Usage:" << std::endl
-  << "pxtexture" << std::endl
-  << "This program computes texture features based on the gray-level co-occurrence matrix (GLCM)." << std::endl
-  << "  -in      inputFilename" << std::endl
-  << "  [-out]   outputDirectory, default equal to the inputFilename directory" << std::endl
-  << "  [-r]     the radius of the neighborhood on which to construct the GLCM, default 3" << std::endl
-  << "  [-os]    the desired offset scales to compute the GLCM, default 1, but can be e.g. 1 2 4" << std::endl
-  << "  [-b]     the number of bins of the GLCM, default 128" << std::endl
-  << "  [-noo]   the number of texture feature outputs, default all 8" << std::endl
-  << "  [-opct]  output pixel component type, default float" << std::endl
-  << "Supported: 2D, 3D, any input image type, float or double output type.";
+    << "Usage:\n"
+    << "pxtexture\n"
+    << "This program computes filter features based on the gray-level co-occurrence matrix (GLCM).\n"
+    << "  -in      inputFilename\n"
+    << "  [-out]   outputDirectory, default equal to the inputFilename directory\n"
+    << "  [-r]     the radius of the neighborhood on which to construct the GLCM, default 3\n"
+    << "  [-os]    the desired offset scales to compute the GLCM, default 1, but can be e.g. 1 2 4\n"
+    << "  [-b]     the number of bins of the GLCM, default 128\n"
+    << "  [-noo]   the number of filter feature outputs, default all 8\n"
+    << "  [-opct]  output pixel component type, default float\n"
+    << "Supported: 2D, 3D, any input image type, float or double output type.";
 
   return ss.str();
 
 } // end GetHelpString()
-
-
-// To print the progress
-class ShowProgressObject
-{
-public:
-  ShowProgressObject( itk::ProcessObject* o )
-  {
-    this->m_Process = o;
-  }
-  void ShowProgress()
-  {
-    std::cout << "\rProgress: "
-      << static_cast<unsigned int>( 100.0 * this->m_Process->GetProgress() ) << "%";
-  }
-  itk::ProcessObject::Pointer m_Process;
-};
-
-//-------------------------------------------------------------------------------------
-
-
-/** Texture */
-
-class ITKToolsTextureBase : public itktools::ITKToolsBase
-{ 
-public:
-  ITKToolsTextureBase()
-  {
-    this->m_InputFileName = "";
-    this->m_OutputDirectory = "";
-    this->m_NeighborhoodRadius = 0;
-    //std::vector< unsigned int > this->m_OffsetScales;
-    this->m_NumberOfBins = 0;
-    this->m_NumberOfOutputs = 0;
-  };
-  ~ITKToolsTextureBase(){};
-
-  /** Input parameters */
-  std::string m_InputFileName;
-  std::string m_OutputDirectory;
-  unsigned int m_NeighborhoodRadius;
-  std::vector< unsigned int > m_OffsetScales;
-  unsigned int m_NumberOfBins;
-  unsigned int m_NumberOfOutputs;
-    
-}; // end TextureBase
-
-
-template< class TInputComponentType, class TOutputComponentType, unsigned int VDimension >
-class ITKToolsTexture : public ITKToolsTextureBase
-{
-public:
-  typedef ITKToolsTexture Self;
-
-  ITKToolsTexture(){};
-  ~ITKToolsTexture(){};
-
-  static Self * New( itktools::ComponentType inputComponentType,
-		     itktools::ComponentType outputComponentType, unsigned int dim )
-  {
-    if ( itktools::IsType<TInputComponentType>( inputComponentType ) &&
-	 itktools::IsType<TOutputComponentType>( outputComponentType ) && VDimension == dim )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
-  void Run( void )
-  {
-    /** Typedefs. */
-    typedef itk::Image<TInputComponentType, VDimension>   InputImageType;
-    typedef itk::Image<TOutputComponentType, VDimension>  OutputImageType;
-    typedef itk::TextureImageToImageFilter<
-      InputImageType, OutputImageType >                   TextureFilterType;
-    typedef itk::ImageFileReader< InputImageType >        ReaderType;
-    typedef itk::ImageFileWriter< OutputImageType >       WriterType;
-
-    /** Read the input. */
-    typename ReaderType::Pointer reader = ReaderType::New();
-    reader->SetFileName( this->m_InputFileName.c_str() );
-
-    /** Setup the texture filter. */
-    typename TextureFilterType::Pointer textureFilter = TextureFilterType::New();
-    textureFilter->SetInput( reader->GetOutput() );
-    textureFilter->SetNeighborhoodRadius( this->m_NeighborhoodRadius );
-    textureFilter->SetOffsetScales( this->m_OffsetScales );
-    textureFilter->SetNumberOfHistogramBins( this->m_NumberOfBins );
-    textureFilter->SetNormalizeHistogram( false );
-    textureFilter->SetNumberOfRequestedOutputs( this->m_NumberOfOutputs );
-
-    /** Create and attach a progress observer. */
-    ShowProgressObject progressWatch( textureFilter );
-    itk::SimpleMemberCommand<ShowProgressObject>::Pointer command
-      = itk::SimpleMemberCommand<ShowProgressObject>::New();
-    command->SetCallbackFunction( &progressWatch, &ShowProgressObject::ShowProgress );
-    textureFilter->AddObserver( itk::ProgressEvent(), command );
-
-    /** Create the output file names. */
-    std::vector< std::string > outputFileNames( 8, "" );
-    outputFileNames[ 0 ] = this->m_OutputDirectory + "energy.mhd";
-    outputFileNames[ 1 ] = this->m_OutputDirectory + "entropy.mhd";
-    outputFileNames[ 2 ] = this->m_OutputDirectory + "correlation.mhd";
-    outputFileNames[ 3 ] = this->m_OutputDirectory + "inverseDifferenceMoment.mhd";
-    outputFileNames[ 4 ] = this->m_OutputDirectory + "inertia.mhd";
-    outputFileNames[ 5 ] = this->m_OutputDirectory + "clusterShade.mhd";
-    outputFileNames[ 6 ] = this->m_OutputDirectory + "clusterProminence.mhd";
-    outputFileNames[ 7 ] = this->m_OutputDirectory + "HaralickCorrelation.mhd";
-
-    /** Setup and process the pipeline. */
-    for ( unsigned int i = 0; i < this->m_NumberOfOutputs; ++i )
-    {
-      typename WriterType::Pointer writer = WriterType::New();
-      writer->SetFileName( outputFileNames[ i ].c_str() );
-      writer->SetInput( textureFilter->GetOutput( i ) );
-      writer->Update();
-    }
-  }
-
-}; // end Texture
-
-//-------------------------------------------------------------------------------------
-
-/* Declare PerformTextureAnalysis. */
-template< class InputImageType, class OutputImageType >
-void PerformTextureAnalysis(
-  const std::string & inputFileName,
-  const std::string & outputDirectory,
-  unsigned int neighborhoodRadius,
-  const std::vector< unsigned int > & offsetScales,
-  unsigned int numberOfBins,
-  unsigned int numberOfOutputs );
 
 //-------------------------------------------------------------------------------------
 
@@ -215,11 +76,11 @@ int main( int argc, char **argv )
   parser->GetCommandLineArgument( "-in", inputFileName );
 
   std::string base = itksys::SystemTools::GetFilenamePath( inputFileName );
-  if ( base != "" ) base = base + "/";
+  if( base != "" ) base = base + "/";
   std::string outputDirectory = base;
   parser->GetCommandLineArgument( "-out", outputDirectory );
   bool endslash = itksys::SystemTools::StringEndsWith( outputDirectory.c_str(), "/" );
-  if ( !endslash ) outputDirectory += "/";
+  if( !endslash ) outputDirectory += "/";
 
   unsigned int neighborhoodRadius = 3;
   parser->GetCommandLineArgument( "-r", neighborhoodRadius );
@@ -237,11 +98,11 @@ int main( int argc, char **argv )
   parser->GetCommandLineArgument( "-opct", componentTypeOutString );
 
   /** Check that numberOfOutputs <= 8. */
-  if ( numberOfOutputs > 8 )
+  if( numberOfOutputs > 8 )
   {
     std::cerr << "ERROR: The maximum number of outputs is 8. You requested "
       << numberOfOutputs << "." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   /** Threads. */
@@ -251,86 +112,62 @@ int main( int argc, char **argv )
     maximumNumberOfThreads );
 
   /** Determine image properties. */
-  std::string componentTypeIn = "short";
-  std::string PixelType; //we don't use this
-  unsigned int Dimension = 3;
-  unsigned int NumberOfComponents = 1;
-  std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = itktools::GetImageProperties(
-    inputFileName,
-    PixelType,
-    componentTypeIn,
-    Dimension,
-    NumberOfComponents,
-    imagesize );
-  if ( retgip != 0 )
-  {
-    return 1;
-  }
+  itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
+  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  unsigned int dim = 0;
+  unsigned int numberOfComponents = 0;
+  bool retgip = itktools::GetImageProperties(
+    inputFileName, pixelType, componentType, dim, numberOfComponents );
+  if( !retgip ) return EXIT_FAILURE;
 
   /** Check for vector images. */
-  if ( NumberOfComponents > 1 )
-  {
-    std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
-    std::cerr << "Vector images are not supported." << std::endl;
-    return 1;
-  }
+  bool retNOCCheck = itktools::NumberOfComponentsCheck( numberOfComponents );
+  if( !retNOCCheck ) return EXIT_FAILURE;
 
-  /** Class that does the work */
-  ITKToolsTextureBase * texture = NULL;
-
-  /** Short alias */
-  unsigned int dim = Dimension;
+  /** Class that does the work. */
+  ITKToolsTextureBase * filter = NULL;
  
   /** Input images are read in as float, always. The default output is float,
    * but can be overridden by specifying -opct in the command line.
    */
-  //itktools::EnumComponentType inputComponentType = itktools::GetImageComponentType( inputFileName );
-  itktools::ComponentType inputComponentType = itk::ImageIOBase::FLOAT;
-  
-  itktools::ComponentType outputComponentType = itktools::GetImageComponentType(componentTypeOutString);
-
+  componentType = itk::ImageIOBase::FLOAT;
+  itk::ImageIOBase::IOComponentType outputComponentType
+    = itk::ImageIOBase::GetComponentTypeFromString( componentTypeOutString );
     
   try
   {    
     // now call all possible template combinations.
-    if (!texture) texture = ITKToolsTexture< float, float, 2 >::New( inputComponentType, outputComponentType, dim );
-    if (!texture) texture = ITKToolsTexture< float, double, 2 >::New( inputComponentType, outputComponentType, dim );
+    if( !filter ) filter = ITKToolsTexture< 2, float, float >::New( dim, componentType, outputComponentType );
+    if( !filter ) filter = ITKToolsTexture< 2, float, double >::New( dim, componentType, outputComponentType );
     
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!texture) texture = ITKToolsTexture< float, float, 3 >::New( inputComponentType, outputComponentType, dim );    
-    if (!texture) texture = ITKToolsTexture< float, double, 3 >::New( inputComponentType, outputComponentType, dim );
+    if( !filter ) filter = ITKToolsTexture< 3, float, float >::New( dim, componentType, outputComponentType );    
+    if( !filter ) filter = ITKToolsTexture< 3, float, double >::New( dim, componentType, outputComponentType );
 #endif
-    if (!texture) 
-    {
-      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-      std::cerr
-        << "input pixel (component) type = " << inputComponentType
-        << "output pixel (component) type = " << outputComponentType
-        << " ; dimension = " << Dimension
-        << std::endl;
-      return 1;
-    }
+    /** Check if filter was instantiated. */
+    bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType, outputComponentType );
+    if( !supported ) return EXIT_FAILURE;
 
-    texture->m_InputFileName = inputFileName;
-    texture->m_OutputDirectory = outputDirectory;
-    texture->m_NeighborhoodRadius = neighborhoodRadius;
-    texture->m_OffsetScales = offsetScales;
-    texture->m_NumberOfBins = numberOfBins;
-    texture->m_NumberOfOutputs = numberOfOutputs;
+    /** Set the filter arguments. */
+    filter->m_InputFileName = inputFileName;
+    filter->m_OutputDirectory = outputDirectory;
+    filter->m_NeighborhoodRadius = neighborhoodRadius;
+    filter->m_OffsetScales = offsetScales;
+    filter->m_NumberOfBins = numberOfBins;
+    filter->m_NumberOfOutputs = numberOfOutputs;
   
-    texture->Run();
+    filter->Run();
     
-    delete texture;  
+    delete filter;  
   }
-  catch( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    delete texture;
-    return 1;
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+    delete filter;
+    return EXIT_FAILURE;
   }
 
   /** End program. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main()

@@ -53,7 +53,7 @@ MorphologicalDistanceTransformImageFilter<TInputImage, TOutputImage>
   double MaxDist = 0.0;
   typename TOutputImage::SpacingType sp = this->GetOutput()->GetSpacing();
   typename TOutputImage::SizeType sz = this->GetOutput()->GetLargestPossibleRegion().GetSize();
-  if (this->GetUseImageSpacing()) 
+  if(this->GetUseImageSpacing()) 
     {
     for (unsigned k = 0; k < TOutputImage::ImageDimension; k++)
       {
@@ -71,7 +71,7 @@ MorphologicalDistanceTransformImageFilter<TInputImage, TOutputImage>
     }
 
 //   double Wt = 0.0;
-//   if (this->GetUseImageSpacing()) 
+//   if(this->GetUseImageSpacing()) 
 //     {
 //     for (unsigned k = 0; k < TOutputImage::ImageDimension; k++)
 //       {
@@ -96,7 +96,7 @@ MorphologicalDistanceTransformImageFilter<TInputImage, TOutputImage>
   this->m_Thresh->SetInput(this->GetInput());
   this->m_Erode->SetInput( this->m_Thresh->GetOutput());
   
-  if ( this->m_SqrDist)
+  if( this->m_SqrDist)
     {
     this->m_Erode->GraftOutput(this->GetOutput());
     this->m_Erode->Update();

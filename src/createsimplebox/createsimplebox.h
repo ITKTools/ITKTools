@@ -1,55 +1,78 @@
-#ifndef __createbox_h
-#define __createbox_h
+/*=========================================================================
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
+#ifndef __createsimplebox_h_
+#define __createsimplebox_h_
 
-#include <iostream>
-#include <string>
-#include <map>
-//#include "itkExceptionObject.h"
+#include "ITKToolsBase.h"
+
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "itkSimpleBoxSpatialFunction.h"
 #include "itkSpatialFunctionImageEvaluatorFilter.h"
 
-#include "ITKToolsHelpers.h"
-#include "ITKToolsBase.h"
 
-/** CreateSimpleBox */
+/** \class ITKToolsCreateSimpleBoxBase
+ *
+ * Untemplated pure virtual base class that holds
+ * the Run() function and all required parameters.
+ */
 
-class CreateSimpleBoxBase : public itktools::ITKToolsBase
+class ITKToolsCreateSimpleBoxBase : public itktools::ITKToolsBase
 { 
 public:
-  CreateSimpleBoxBase(){};
-  ~CreateSimpleBoxBase(){};
+  /** Constructor. */
+  ITKToolsCreateSimpleBoxBase()
+  {
+    this->m_InputFileName = "";
+    this->m_OutputFileName = "";
+  };
+  /** Destructor. */
+  ~ITKToolsCreateSimpleBoxBase(){};
 
-  /** Input parameters */
+  /** Input member parameters. */
   std::string m_InputFileName;
   std::string m_OutputFileName;
   std::vector<unsigned int> m_BoxSize;
   std::vector<unsigned int> m_IndexA;
   std::vector<unsigned int> m_IndexB;
     
-}; // end CreateSimpleBoxBase
+}; // end class ITKToolsCreateSimpleBoxBase
 
 
-template< class TComponentType, unsigned int VDimension >
-class CreateSimpleBox : public CreateSimpleBoxBase
+/** \class ITKToolsCreateSimpleBox
+ *
+ * Templated class that implements the Run() function
+ * and the New() function for its creation.
+ */
+
+template< unsigned int VDimension, class TComponentType >
+class ITKToolsCreateSimpleBox : public ITKToolsCreateSimpleBoxBase
 {
 public:
-  typedef CreateSimpleBox Self;
+  /** Standard ITKTools stuff. */
+  typedef ITKToolsCreateSimpleBox Self;
+  itktoolsOneTypeNewMacro( Self );
 
-  CreateSimpleBox(){};
-  ~CreateSimpleBox(){};
+  ITKToolsCreateSimpleBox(){};
+  ~ITKToolsCreateSimpleBox(){};
 
-  static Self * New( itktools::ComponentType componentType, unsigned int dim )
-  {
-    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
+  /** Run function. */
   void Run( void )
   {
     typedef TComponentType                        PixelType;
@@ -71,7 +94,6 @@ public:
       BoxFunctionType, ImageType, ImageType>      FunctionEvaluatorType;
     typedef typename FunctionEvaluatorType::Pointer FunctionEvaluatorPointer;
 
-
     /** vars */
     std::string inputImageFileName("");
     std::string outputImageFileName(inputImageFileName + "Output.mhd");
@@ -86,12 +108,12 @@ public:
     FunctionEvaluatorPointer boxGenerator = FunctionEvaluatorType::New();
 
     /** Determine size, origin and spacing */
-    if (inputImageFileName == "")
+    if( inputImageFileName == "" )
     {
       /** read the dimension from the commandline.*/
-      for (unsigned int i=0; i< VDimension ; i++)
+      for( unsigned int i = 0; i < VDimension ; i++ )
       {
-        sizes[i] = this->m_BoxSize[i];
+        sizes[ i ] = this->m_BoxSize[ i ];
       }
 
       /** make some assumptions */
@@ -103,15 +125,8 @@ public:
       /** Take dimension, origin and spacing from the inputfile.*/
       ReaderPointer reader = ReaderType::New();
       reader->SetFileName( this->m_InputFileName.c_str() );
-      try
-      {
-        reader->Update();
-      }
-      catch (itk::ExceptionObject & err)
-      {
-        std::cerr << "Error while reading input image." << std::endl;
-        std::cerr << err << std::endl;
-      }
+      reader->Update();
+
       ImagePointer inputImage = reader->GetOutput();
       sizes = inputImage->GetLargestPossibleRegion().GetSize();
       origin = inputImage->GetOrigin();
@@ -119,37 +134,36 @@ public:
     }
 
     /** Setup pipeline and configure its components */
-
-    tempImage->SetRegions(sizes);
-    tempImage->SetOrigin(origin);
-    tempImage->SetSpacing(spacing);
+    tempImage->SetRegions( sizes );
+    tempImage->SetOrigin( origin );
+    tempImage->SetSpacing( spacing );
     
     // Convert the indices to the necessary ITK type
     IndexType indexA;
     IndexType indexB;
     
-    for(unsigned int i = 0; i < VDimension; ++i)
+    for( unsigned int i = 0; i < VDimension; ++i )
     {
-      indexA[i] = this->m_IndexA[i];
-      indexB[i] = this->m_IndexB[i];
+      indexA[ i ] = this->m_IndexA[ i ];
+      indexB[ i ] = this->m_IndexB[ i ];
     }
-    tempImage->TransformIndexToPhysicalPoint(indexA, pointA);
-    tempImage->TransformIndexToPhysicalPoint(indexB, pointB);
+    tempImage->TransformIndexToPhysicalPoint( indexA, pointA );
+    tempImage->TransformIndexToPhysicalPoint( indexB, pointB );
 
     /** Enlarge the box a little, to make sure that pointA and B
      * fall within the box. */
     const double small_factor = 0.1;
     const double small_number = 1e-14;
-    for (unsigned int i=0; i< VDimension ; i++)
+    for( unsigned int i = 0; i < VDimension ; i++ )
     {
-      const double distance = pointB[i]-pointA[i];
+      const double distance = pointB[ i ] - pointA[ i ];
       double sign = 1.0;
-      if ( vcl_abs(distance) > small_number )
+      if( vcl_abs(distance) > small_number )
       {
         sign = distance / vcl_abs( distance );
       }
-      pointA[i] -= small_factor * sign * spacing[i];
-      pointB[i] += small_factor * sign * spacing[i];
+      pointA[ i ] -= small_factor * sign * spacing[ i ];
+      pointB[ i ] += small_factor * sign * spacing[ i ];
     }
 
     boxfunc->SetPointA(pointA);
@@ -160,25 +174,11 @@ public:
 
     writer->SetInput( boxGenerator->GetOutput() );
     writer->SetFileName( this->m_OutputFileName.c_str() );
+    writer->Update();
 
-    std::cout
-      << "Saving image to disk as \""
-      << outputImageFileName
-      << "\""
-      << std::endl;
-    try
-    {
-      writer->Update();
-    }
-    catch (itk::ExceptionObject & err)
-    {
-      std::cerr << err << std::endl;
-      return;
-    }
+  } // end Run()
 
-  }
-
-}; // end CreateSimpleBox
+}; // end class ITKToolsCreateSimpleBox
 
 
-#endif // #ifndef __createbox_h
+#endif // #ifndef __createsimplebox_h_

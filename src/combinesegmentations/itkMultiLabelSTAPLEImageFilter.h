@@ -1,21 +1,22 @@
 /*=========================================================================
-
-Program:   Insight Segmentation & Registration Toolkit
-Module:    $RCSfile: itkMultiLabelSTAPLEImageFilter.h,v $
-Language:  C++
-Date:      $Date: 2007-05-18 14:22:52 $
-Version:   $Revision: 1.1 $
-
-Copyright (c) 2002 Insight Consortium. All rights reserved.
-See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
-
-This software is distributed WITHOUT ANY WARRANTY; without even
-the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-PURPOSE.  See the above copyright notices for more information.
-
-=========================================================================*/
-#ifndef __itkMultiLabelSTAPLEImageFilter_h
-#define __itkMultiLabelSTAPLEImageFilter_h
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
+#ifndef __itkMultiLabelSTAPLEImageFilter_h_
+#define __itkMultiLabelSTAPLEImageFilter_h_
 
 #include "itkImage.h"
 #include "itkImageToImageFilter.h"
@@ -169,7 +170,7 @@ namespace itk
     */
     void UnsetMaximumNumberOfIterations()
     {
-      if ( this->m_HasMaximumNumberOfIterations )
+      if( this->m_HasMaximumNumberOfIterations )
       {
         this->m_HasMaximumNumberOfIterations = false;
         this->Modified();
@@ -208,7 +209,7 @@ namespace itk
     */
     void UnsetLabelForUndecidedPixels()
     {
-      if ( this->m_HasLabelForUndecidedPixels )
+      if( this->m_HasLabelForUndecidedPixels )
       {
         this->m_HasLabelForUndecidedPixels = false;
         this->Modified();
@@ -239,7 +240,7 @@ namespace itk
     */
     void UnsetPriorProbabilities()
     {
-      if ( this->m_HasPriorProbabilities )
+      if( this->m_HasPriorProbabilities )
       {
         this->m_HasPriorProbabilities = false;
         this->Modified();
@@ -250,7 +251,7 @@ namespace itk
     */
     ConfusionMatrixType GetConfusionMatrix( const unsigned int i )
     {
-      return this->m_ConfusionMatrixArray[i];
+      return this->m_ConfusionMatrixArray[ i ];
     }
 
   protected:
@@ -302,4 +303,4 @@ namespace itk
 #include "itkMultiLabelSTAPLEImageFilter.txx"
 #endif
 
-#endif
+#endif // end #ifndef __itkMultiLabelSTAPLEImageFilter_h_

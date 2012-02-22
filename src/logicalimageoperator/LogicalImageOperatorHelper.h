@@ -1,5 +1,22 @@
-#ifndef __LogicalImageOperatorHelper_h
-#define __LogicalImageOperatorHelper_h
+/*=========================================================================
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
+#ifndef __logicalimageoperator_h_
+#define __logicalimageoperator_h_
 
 #include "itkUnaryFunctorImageFilter.h"
 #include "itkBinaryFunctorImageFilter.h"
@@ -19,13 +36,16 @@
 #include <itksys/SystemTools.hxx>
 
 
-//-------------------------------------------------------------------------------------
-
-/** LogicalImageOperator */
+/** \class ITKToolsLogicalImageOperatorBase
+ *
+ * Untemplated pure virtual base class that holds
+ * the Run() function and all required parameters.
+ */
 
 class ITKToolsLogicalImageOperatorBase : public itktools::ITKToolsBase
 { 
 public:
+  /** Constructor. */
   ITKToolsLogicalImageOperatorBase()
   {
     this->m_InputFileName1 = "";
@@ -36,9 +56,10 @@ public:
     this->m_Argument = 0.0f;
     this->m_Unary = false;
   };
+  /** Destructor. */
   ~ITKToolsLogicalImageOperatorBase(){};
 
-  /** Input parameters */
+  /** Input member parameters. */
   std::string m_InputFileName1;
   std::string m_InputFileName2;
   std::string m_OutputFileName;
@@ -47,42 +68,42 @@ public:
   double m_Argument;
   bool m_Unary; // is the operator to be performed unary? (else it is binary)
     
-}; // end LogicalImageOperatorBase
+}; // end class ITKToolsLogicalImageOperatorBase
 
 
-template< unsigned int VImageDimension, class TComponentType >
+/** \class ITKToolsLogicalImageOperator
+ *
+ * Templated class that implements the Run() function
+ * and the New() function for its creation.
+ */
+
+template< unsigned int VDimension, class TComponentType >
 class ITKToolsLogicalImageOperator : public ITKToolsLogicalImageOperatorBase
 {
 public:
+  /** Standard ITKTools stuff. */
   typedef ITKToolsLogicalImageOperator Self;
+  itktoolsOneTypeNewMacro( Self );
 
   ITKToolsLogicalImageOperator(){};
   ~ITKToolsLogicalImageOperator(){};
 
-  static Self * New( unsigned int imageDimension, itktools::ComponentType componentType )
-  {
-    if ( VImageDimension == imageDimension && itktools::IsType<TComponentType>( componentType ) )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
+  /** Run function. */
   void Run( void )
   {
-    if ( this->m_Unary ) this->RunUnary();
+    if( this->m_Unary ) this->RunUnary();
     else this->RunBinary();
-  }
+
+  } // end Run()
   
+  /** RunUnary function. */
   void RunUnary( void )
   {
     /** Typedefs. */
-    typedef itk::VectorImage<TComponentType, VImageDimension>         VectorImageType;
-
-    typedef itk::Image<TComponentType, VImageDimension> ScalarImageType;
-
-    typedef itk::ImageFileReader< VectorImageType >      ReaderType;
-    typedef itk::ImageFileWriter< VectorImageType >      WriterType;
+    typedef itk::VectorImage<TComponentType, VDimension>  VectorImageType;
+    typedef itk::Image<TComponentType, VDimension>        ScalarImageType;
+    typedef itk::ImageFileReader< VectorImageType >       ReaderType;
+    typedef itk::ImageFileWriter< VectorImageType >       WriterType;
 
     /** Declarations. */
     typename ReaderType::Pointer reader1 = ReaderType::New();
@@ -95,11 +116,11 @@ public:
     std::cout << "Done reading image1." << std::endl;
 
     UnaryFunctorEnum unaryOperation;
-    if ( this->m_Ops.compare( "EQUAL" ) )
+    if( this->m_Ops.compare( "EQUAL" ) )
     {
       unaryOperation = EQUAL;
     }
-    else if ( this->m_Ops.compare( "NOT" ) )
+    else if( this->m_Ops.compare( "NOT" ) )
     {
       unaryOperation = NOT;
     }
@@ -125,7 +146,7 @@ public:
       
     typedef itk::VectorIndexSelectionCastImageFilter<VectorImageType, ScalarImageType> ComponentExtractionType;
     
-    for(unsigned int component = 0; component < reader1->GetOutput()->GetNumberOfComponentsPerPixel(); component++)
+    for( unsigned int component = 0; component < reader1->GetOutput()->GetNumberOfComponentsPerPixel(); component++)
     {
       typename ComponentExtractionType::Pointer componentExtractor1 = ComponentExtractionType::New();
       componentExtractor1->SetIndex(component);
@@ -136,27 +157,24 @@ public:
       logicalFilter->Update();
       
       imageToVectorImageFilter->SetNthInput( component, logicalFilter->GetOutput() );
-    }//end component loop
-
-    std::cout << "Done performing logical operation." << std::endl;
+    } // end component loop
 
     /** Write the image to disk */
     writer->SetFileName( this->m_OutputFileName.c_str() );
     writer->SetInput( imageToVectorImageFilter->GetOutput() );
     writer->SetUseCompression( this->m_UseCompression );
-    std::cout << "Writing output to disk as: " << this->m_OutputFileName << std::endl;
     writer->Update();
-    std::cout << "Done writing output to disk." << std::endl;
-  }
 
+  } // end RunUnary()
 
+  /** RunBinary. */
   void RunBinary( void )
   {
     /** Typedefs. */
-    typedef itk::VectorImage<TComponentType, VImageDimension>   VectorImageType;
-    typedef itk::Image<TComponentType, VImageDimension> ScalarImageType;
-    typedef itk::ImageFileReader< VectorImageType >      ReaderType;
-    typedef itk::ImageFileWriter< VectorImageType >      WriterType;
+    typedef itk::VectorImage<TComponentType, VDimension>  VectorImageType;
+    typedef itk::Image<TComponentType, VDimension>        ScalarImageType;
+    typedef itk::ImageFileReader< VectorImageType >       ReaderType;
+    typedef itk::ImageFileWriter< VectorImageType >       WriterType;
 
     /** A pair indicating which functor should be used for an operator,
      * and whether the arguments should be swapped.
@@ -226,7 +244,7 @@ public:
     std::cout << "Done reading image2." << std::endl;
 
     /** Set up the logicalFilter */
-    if ( binaryOperatorMap.count( this->m_Ops ) == 0 )
+    if( binaryOperatorMap.count( this->m_Ops ) == 0 )
     {
       std::cerr << "ERROR: The desired operator is unknown: " << this->m_Ops << std::endl;
       return;
@@ -236,7 +254,7 @@ public:
     logicalOperator = binaryOperatorMap[ this->m_Ops ];
     bool swapArguments = logicalOperator.second;
     std::string withswapping = "";
-    if ( swapArguments )
+    if( swapArguments )
     {
       withswapping = " with swapped arguments";
     }
@@ -266,7 +284,7 @@ public:
 
     typedef itk::VectorIndexSelectionCastImageFilter<VectorImageType, ScalarImageType> ComponentExtractionType;
     
-    for(unsigned int component = 0; component < reader1->GetOutput()->GetNumberOfComponentsPerPixel(); component++)
+    for( unsigned int component = 0; component < reader1->GetOutput()->GetNumberOfComponentsPerPixel(); component++)
     {
       typename ComponentExtractionType::Pointer componentExtractor1 = ComponentExtractionType::New();
       componentExtractor1->SetIndex(component);
@@ -278,7 +296,7 @@ public:
       componentExtractor2->SetInput(reader2->GetOutput());
       componentExtractor2->Update();
 
-      if ( swapArguments )
+      if( swapArguments )
       {
         /** swap the input files */
         logicalFilter->SetInput( 1, componentExtractor1->GetOutput() );
@@ -292,20 +310,17 @@ public:
       logicalFilter->Update();
       
       imageToVectorImageFilter->SetNthInput(component, logicalFilter->GetOutput());
-    }//end component loop
-
-    std::cout << "Done performing logical operation." << std::endl;
+    } // end component loop
 
     /** Write the image to disk */
     writer->SetFileName( this->m_OutputFileName.c_str() );
     writer->SetInput( imageToVectorImageFilter->GetOutput() );
     writer->SetUseCompression( this->m_UseCompression );
-    std::cout << "Writing output to disk as: " << this->m_OutputFileName << std::endl;
     writer->Update();
-    std::cout << "Done writing output to disk." << std::endl;
-  }
 
-}; // end LogicalImageOperator
+  } // end RunBinary()
+
+}; // end class LogicalImageOperator
 
 
-#endif // end __LogicalImageOperatorHelper_h
+#endif // end #ifndef __logicalimageoperator_h_

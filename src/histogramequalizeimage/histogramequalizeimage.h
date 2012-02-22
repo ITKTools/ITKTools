@@ -15,8 +15,8 @@
 * limitations under the License.
 *
 *=========================================================================*/
-#ifndef __histogramequalizeimage_h
-#define __histogramequalizeimage_h
+#ifndef __histogramequalizeimage_h_
+#define __histogramequalizeimage_h_
 
 #include "ITKToolsBase.h"
 
@@ -25,49 +25,55 @@
 #include "itkImageFileWriter.h"
 
 
-/** HistogramEqualizeImage */
+/** \class ITKToolsHistogramEqualizeImageBase
+ *
+ * Untemplated pure virtual base class that holds
+ * the Run() function and all required parameters.
+ */
 
 class ITKToolsHistogramEqualizeImageBase : public itktools::ITKToolsBase
 {
 public:
+  /** Constructor. */
   ITKToolsHistogramEqualizeImageBase()
   {
     this->m_InputFileName = "";
     this->m_OutputFileName = "";
     this->m_MaskFileName = "";
   };
+  /** Destructor. */
   ~ITKToolsHistogramEqualizeImageBase(){};
 
-  /** Input parameters */
+  /** Input member parameters. */
   std::string m_InputFileName;
   std::string m_OutputFileName;
   std::string m_MaskFileName;
 
-}; // end ITKToolsHistogramEqualizeImageBase
+}; // end class ITKToolsHistogramEqualizeImageBase
 
 
-template< class TComponentType, unsigned int VDimension >
+/** \class ITKToolsHistogramEqualizeImage
+ *
+ * Templated class that implements the Run() function
+ * and the New() function for its creation.
+ */
+
+template< unsigned int VDimension, class TComponentType >
 class ITKToolsHistogramEqualizeImage : public ITKToolsHistogramEqualizeImageBase
 {
 public:
+  /** Standard ITKTools stuff. */
   typedef ITKToolsHistogramEqualizeImage Self;
+  itktoolsOneTypeNewMacro( Self );
 
   ITKToolsHistogramEqualizeImage(){};
   ~ITKToolsHistogramEqualizeImage(){};
 
-  static Self * New( itktools::ComponentType componentType, unsigned int dim )
-  {
-    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
+  /** Run function. */
   void Run( void )
   {
-    typedef itk::Image<TComponentType, VDimension>  ImageType;
-    typedef itk::Image<unsigned char, VDimension>   MaskImageType;
+    typedef itk::Image< TComponentType, VDimension >  ImageType;
+    typedef itk::Image< unsigned char, VDimension >   MaskImageType;
     typedef typename ImageType::Pointer             ImagePointer;
     typedef typename ImageType::IndexType           IndexType;
     typedef typename ImageType::SizeType            SizeType;
@@ -88,58 +94,30 @@ public:
     /** Try to read input image */
     ReaderPointer reader = ReaderType::New();
     reader->SetFileName( this->m_InputFileName.c_str() );
-    try
-    {
-      reader->Update();
-    }
-    catch ( itk::ExceptionObject & excp )
-    {
-      std::cerr << "Error while reading input image." << std::endl;
-      std::cerr << excp << std::endl;
-      return;
-    }
+    reader->Update();
 
     /** Try to read mask image */
     typename MaskReaderType::Pointer maskReader;
-    if ( this->m_MaskFileName != "" )
+    if( this->m_MaskFileName != "" )
     {
       maskReader = MaskReaderType::New();
       maskReader->SetFileName( this->m_MaskFileName.c_str() );
-      try
-      {
-        maskReader->Update();
-      }
-      catch ( itk::ExceptionObject & excp )
-      {
-        std::cerr << "Error while reading mask image." << std::endl;
-        std::cerr << excp << std::endl;
-        return;
-      }
+      maskReader->Update();
     }
 
     /** Setup pipeline and configure its components */
     enhancer->SetInput( reader->GetOutput() );
-    if ( this->m_MaskFileName != "" )
+    if( this->m_MaskFileName != "" )
     {
       enhancer->SetMask( maskReader->GetOutput() );
     }
     writer->SetInput( enhancer->GetOutput() );
     writer->SetFileName( this->m_OutputFileName.c_str() );
-
-    /** do it. */
-    try
-    {
-      writer->Update();
-    }
-    catch( itk::ExceptionObject & excp )
-    {
-      std::cerr << excp << std::endl;
-      return;
-    }
+    writer->Update();
 
   } // end Run()
 
-}; // end HistogramEqualizeImage
+}; // end class ITKToolsHistogramEqualizeImage
 
 
-#endif // #ifndef __histogramequalizeimage_h
+#endif // #ifndef __histogramequalizeimage_h_

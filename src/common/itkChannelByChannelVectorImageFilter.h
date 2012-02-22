@@ -28,7 +28,7 @@ namespace itk
 {
 /** \class ChannelByChannelVectorImageFilter
  *  \brief This filter applies, independently per channel, a itk::ImageToImageFilter to an itkVectorImage.
- *  
+ *
  *  The user can specify the inputs to this filter in two ways. First, they can specify a single filter to be used
  *  on every channel of the image. Second, they can specify a different filter (of the same class, but with different
  *  parameters) for each channel of the image. Filters with multiple inputs are allowed.
@@ -60,7 +60,7 @@ public:
   typedef typename OutputVectorImageType::Pointer                       OutputVectorImagePointerType;
   typedef typename OutputVectorImageType::InternalPixelType             OutputPixelType;
   typedef Image<OutputPixelType, OutputVectorImageType::ImageDimension> OutputImageType;
-  typedef Image<OutputPixelType, OutputVectorImageType::ImageDimension>	OutputScalarImageType;
+  typedef Image<OutputPixelType, OutputVectorImageType::ImageDimension> OutputScalarImageType;
 
   typedef itk::ImageToImageFilter<InputScalarImageType, OutputScalarImageType> FilterType;
   typedef typename FilterType::Pointer FilterPointerType;
@@ -80,7 +80,7 @@ protected:
 
   /**If the user chooses to specify a filter for each channel separately, they are stored here.*/
   std::vector<FilterPointerType> m_Filters;
-  
+
   /**If the user chooses to only specify a single filter to be used for all channels, it is stored here.*/
   FilterPointerType m_SingleFilter;
 

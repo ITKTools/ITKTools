@@ -15,19 +15,26 @@
 * limitations under the License.
 *
 *=========================================================================*/
-#ifndef __computeoverlapsummary_h
-#define __computeoverlapsummary_h
+#ifndef __computeoverlapsummary_h_
+#define __computeoverlapsummary_h_
 
 #include "ITKToolsBase.h"
-#include "itkImage.h"
+
+#include "itkImageFileReader.h"
+#include "itkLabelOverlapMeasuresImageFilter.h"
 #include <string>
 #include <vector>
 
-/** ComputeOverlapSummary */
+/** \class ITKToolsComputeOverlapSummaryBase
+ *
+ * Untemplated pure virtual base class that holds
+ * the Run() function and all required parameters.
+ */
 
 class ITKToolsComputeOverlapSummaryBase : public itktools::ITKToolsBase
 { 
 public:
+  /** Constructor. */
   ITKToolsComputeOverlapSummaryBase()
   {
     this->m_InputFileName1 = "";
@@ -35,15 +42,16 @@ public:
     this->m_OutputFileName = "";
     this->m_Seperator      = "\t";
   };
-
+  /** Destructor. */
   ~ITKToolsComputeOverlapSummaryBase(){};
 
-  /** Input parameters */
+  /** Input member parameters. */
   std::string m_InputFileName1;
   std::string m_InputFileName2;
   std::string m_OutputFileName;
   std::string m_Seperator;
-}; // end class ComputeOverlapSummaryBase
+
+}; // end class ITKToolsComputeOverlapSummaryBase
 
 class invalidfilexception: public std::exception
 {
@@ -53,48 +61,86 @@ class invalidfilexception: public std::exception
 	}
 };
 
-template< class TComponentType, unsigned int VDimension >
+
+/** \class ITKToolsComputeOverlapSummary
+ *
+ * Templated class that implements the Run() function
+ * and the New() function for its creation.
+ */
+
+template< unsigned int VDimension, class TComponentType >
 class ITKToolsComputeOverlapSummary : public ITKToolsComputeOverlapSummaryBase
 {
 public:
+  /** Standard ITKTools stuff. */
   typedef ITKToolsComputeOverlapSummary Self;
+  itktoolsOneTypeNewMacro( Self );
 
   ITKToolsComputeOverlapSummary(){};
   ~ITKToolsComputeOverlapSummary(){};
 
-  static Self * New( itktools::ComponentType componentType, unsigned int dim )
-  {
-    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
-  /** Typedef. */
-  typedef itk::Image< TComponentType, VDimension > InputImageType;
-
-  /** Main function Run(). */
+  /** Run function. */
   void Run( void )
   {
-    this->ComputeOverlapSummary(
-      this->m_InputFileName1,
-      this->m_InputFileName2,
-      this->m_OutputFileName,
-      this->m_Seperator);
+    typedef itk::Image< TComponentType, VDimension >  InputImageType;
+    typedef itk::ImageFileReader<InputImageType>      ReaderType;
+    typedef itk::LabelOverlapMeasuresImageFilter<InputImageType> FilterType;
+
+    typename ReaderType::Pointer reader1 = ReaderType::New();
+    reader1->SetFileName( this->m_InputFileName1.c_str() );
+    typename ReaderType::Pointer reader2 = ReaderType::New();
+    reader2->SetFileName( this->m_InputFileName2.c_str() );
+   
+    typename FilterType::Pointer filter = FilterType::New();
+    filter->SetSourceImage( reader1->GetOutput() );
+    filter->SetTargetImage( reader2->GetOutput() );
+    filter->Update();
+
+    FILE * pFile;
+    pFile = fopen( this->m_OutputFileName.c_str(), "w" );
+
+    if( pFile == NULL )
+    {
+      throw invalidfilexception();
+    }
+
+    fprintf( pFile, "%s%s%s%s%s%s%s%s%s%s%s\n",
+      "Label", this->m_Seperator.c_str(),
+      "Union (jaccard)", this->m_Seperator.c_str(),
+      "Mean (dice)", this->m_Seperator.c_str(),
+      "Volume sim.", this->m_Seperator.c_str(),
+      "False negative", this->m_Seperator.c_str(),
+      "False positive" );
+    fprintf( pFile, "%s%s%f%s%f%s%f%s%f%s%f\n",
+      "Total", this->m_Seperator.c_str(),
+      filter->GetUnionOverlap(), this->m_Seperator.c_str(),
+      filter->GetMeanOverlap(), this->m_Seperator.c_str(),
+      filter->GetVolumeSimilarity(), this->m_Seperator.c_str(),
+      filter->GetFalseNegativeError(), this->m_Seperator.c_str(),
+      filter->GetFalsePositiveError() );
+
+    typename FilterType::MapType labelMap = filter->GetLabelSetMeasures();
+    typename FilterType::MapType::const_iterator it;
+    for( it = labelMap.begin(); it != labelMap.end(); ++it )
+    {
+      if( (*it).first == 0 )
+      {
+        continue;
+      }
+
+      int label = (*it).first;
+      fprintf( pFile, "%i%s%f%s%f%s%f%s%f%s%f\n",
+        label, this->m_Seperator.c_str(),
+        filter->GetUnionOverlap( label ), this->m_Seperator.c_str(),
+        filter->GetMeanOverlap( label ), this->m_Seperator.c_str(),
+        filter->GetVolumeSimilarity( label ), this->m_Seperator.c_str(),
+        filter->GetFalseNegativeError( label ), this->m_Seperator.c_str(),
+        filter->GetFalsePositiveError( label ) );
+    }
+    fclose ( pFile );
+
   } // end Run()
 
+}; // end class ITKToolsComputeOverlapSummary
 
-  /** Function to perform normal thresholding. */
-  void ComputeOverlapSummary(
-    const std::string & inputImage1,
-    const std::string & inputImage2,
-    const std::string & outputFileName,
-    const std::string & seperator);
-
-}; // end class ComputeOverlapSummary
-
-#include "computeoverlapsummary.hxx"
-
-#endif // end #ifndef __computeoverlapsummary_h
-
+#endif // end #ifndef __computeoverlapsummary_h_

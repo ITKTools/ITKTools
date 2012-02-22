@@ -1,5 +1,22 @@
-#ifndef _itkGaussianInvariantsImageFilter_txx
-#define _itkGaussianInvariantsImageFilter_txx
+/*=========================================================================
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
+#ifndef _itkGaussianInvariantsImageFilter_txx_
+#define _itkGaussianInvariantsImageFilter_txx_
 
 #include "itkGaussianInvariantsImageFilter.h"
 #include "itkImageRegionIterator.h"
@@ -8,6 +25,7 @@
 #include "vnl/vnl_matrix.h"
 #include "vnl/vnl_trace.h"
 #include "itkProgressAccumulator.h"
+
 
 namespace itk
 {
@@ -25,7 +43,7 @@ GaussianInvariantsImageFilter<TInputImage,TOutputImage>
 
   /** Setup the derivative filters. */
   this->m_DerivativeFilters.resize( ImageDimension );
-  for ( unsigned int i = 0; i < ImageDimension; ++i )
+  for( unsigned int i = 0; i < ImageDimension; ++i )
   {
     OrderType order; order.Fill( 0 ); order[ i ] = 1;
     this->m_DerivativeFilters[ i ] = DerivativeFilterType::New();
@@ -67,13 +85,13 @@ void
 GaussianInvariantsImageFilter<TInputImage,TOutputImage>
 ::SetSigma( const SigmaType sigma )
 {
-  if ( this->m_Sigma != sigma )
+  if( this->m_Sigma != sigma )
   {
     this->m_Sigma = sigma;
     this->Modified();
 
     /** Pass on the sigma. */
-    for ( unsigned int i = 0; i < ImageDimension; i++ )
+    for( unsigned int i = 0; i < ImageDimension; i++ )
     {
       this->m_DerivativeFilters[ i ]->SetSigma( sigma );
     }
@@ -91,7 +109,7 @@ void
 GaussianInvariantsImageFilter<TInputImage,TOutputImage>
 ::SetNormalizeAcrossScale( const bool arg )
 {
-  if ( this->m_NormalizeAcrossScale != arg )
+  if( this->m_NormalizeAcrossScale != arg )
   {
     this->m_NormalizeAcrossScale = arg;
     this->Modified();
@@ -116,7 +134,7 @@ void
 GaussianInvariantsImageFilter<TInputImage,TOutputImage>
 ::SetInvariant( std::string arg )
 {
-  if ( this->m_Invariant != arg )
+  if( this->m_Invariant != arg )
   {
     this->m_Invariant = arg;
     this->Modified();
@@ -157,7 +175,7 @@ GaussianInvariantsImageFilter<TInputImage,TOutputImage>
 {
   TOutputImage *out = dynamic_cast<TOutputImage*>(output);
 
-  if (out)
+  if(out)
     {
     out->SetRequestedRegion( out->GetLargestPossibleRegion() );
     }
@@ -181,7 +199,7 @@ GaussianInvariantsImageFilter<TInputImage,TOutputImage >
 
   /** Get a pointer to the input. */
   InputImageConstPointer input( this->GetInput() );
-  //if ( input )
+  //if( input )
 
   /** Allocate output image. */
   OutputImagePointer output = this->GetOutput();
@@ -193,7 +211,7 @@ GaussianInvariantsImageFilter<TInputImage,TOutputImage >
   progress->SetMiniPipelineFilter( this );
 
   /** Register the filters. */
-  for ( unsigned int i = 0; i < ImageDimension; i++ )
+  for( unsigned int i = 0; i < ImageDimension; i++ )
   {
     progress->RegisterInternalFilter(
       this->m_DerivativeFilters[ i ], 1.0 / ( ImageDimension + 1.0 ) );
@@ -202,7 +220,7 @@ GaussianInvariantsImageFilter<TInputImage,TOutputImage >
     this->m_HessianFilter, 1.0 / ( ImageDimension + 1.0 ) );
 
   /** Compute derivatives and Hessian. */
-  for ( unsigned int i = 0; i < ImageDimension; i++ )
+  for( unsigned int i = 0; i < ImageDimension; i++ )
   {
     this->m_DerivativeFilters[ i ]->SetInput( input );
     this->m_DerivativeFilters[ i ]->Update();
@@ -212,7 +230,7 @@ GaussianInvariantsImageFilter<TInputImage,TOutputImage >
 
   /** Setup iterators. */
   std::vector< DerivativeIteratorType > derIt( ImageDimension );
-  for ( unsigned int i = 0; i < ImageDimension; i++ )
+  for( unsigned int i = 0; i < ImageDimension; i++ )
   {
     derIt[ i ] = DerivativeIteratorType(
       this->m_DerivativeFilters[ i ]->GetOutput(),
@@ -234,7 +252,7 @@ GaussianInvariantsImageFilter<TInputImage,TOutputImage >
   while ( !outIt.IsAtEnd() )
   {
     /** Construct gradient. */
-    for ( unsigned int i = 0; i < ImageDimension; i++ )
+    for( unsigned int i = 0; i < ImageDimension; i++ )
     {
       gradient[ i ] = derIt[ i ].Value();
       ++derIt[ i ];
@@ -242,9 +260,9 @@ GaussianInvariantsImageFilter<TInputImage,TOutputImage >
 
     /** Construct Hessian. */
     HessianPixelType hes = hesIt.Value();
-    for ( unsigned int row = 0; row < ImageDimension; row++ )
+    for( unsigned int row = 0; row < ImageDimension; row++ )
     {
-      for ( unsigned int col = 0; col < ImageDimension; col++ )
+      for( unsigned int col = 0; col < ImageDimension; col++ )
       {
         H[ row ][ col ] = hes( row, col );
       }
@@ -252,32 +270,32 @@ GaussianInvariantsImageFilter<TInputImage,TOutputImage >
 
     /** Compute the invariant. */
     ScalarRealType outValue = 0.0;
-    if ( this->m_Invariant == "LiLi" )
+    if( this->m_Invariant == "LiLi" )
     {
       /** LiLi = gradient magnitude */
       outValue = gradient.magnitude();
     }
-    else if ( this->m_Invariant == "LiLijLj" )
+    else if( this->m_Invariant == "LiLijLj" )
     {
       /** LiLijLj = g^T H g */
       outValue = dot_product( gradient * H, gradient );
     }
-    else if ( this->m_Invariant == "LiLijLjkLk" )
+    else if( this->m_Invariant == "LiLijLjkLk" )
     {
       /** LiLijLjkLk = g^T H H g */
       outValue = dot_product( gradient * ( H * H ), gradient );
     }
-    else if ( this->m_Invariant == "Lii" )
+    else if( this->m_Invariant == "Lii" )
     {
       /** Lii = trace( H ) = Laplacian */
       outValue = vnl_trace( H );
     }
-    else if ( this->m_Invariant == "LijLji" )
+    else if( this->m_Invariant == "LijLji" )
     {
       /** LijLji = trace( H H ) */
       outValue = vnl_trace( H * H );
     }
-    else if ( this->m_Invariant == "LijLjkLki" )
+    else if( this->m_Invariant == "LijLjkLki" )
     {
       /** LijLjkLki = trace( H H H ) */
       outValue = vnl_trace( H * H * H );
@@ -311,4 +329,4 @@ GaussianInvariantsImageFilter<TInputImage,TOutputImage>
 
 } // end namespace itk
 
-#endif
+#endif // end #ifndef _itkGaussianInvariantsImageFilter_txx_

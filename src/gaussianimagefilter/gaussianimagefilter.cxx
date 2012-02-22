@@ -20,10 +20,10 @@
  
  \verbinclude gaussianimagefilter.help
  */
-#include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
 
-#include "gaussianImageFilterHelper.h"
+#include "itkCommandLineArgumentParser.h"
+#include "ITKToolsHelpers.h"
+#include "gaussianimagefilter.h"
 
 
 /**
@@ -34,50 +34,25 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-  << "Usage:" << std::endl
-  << "pxgaussianimagefilter" << std::endl
-  << "  -in      inputFilename" << std::endl
-  << "  [-out]   outputFilename, default in + BLURRED.mhd" << std::endl
-  << "  [-std]   sigma, for each dimension, default 1.0" << std::endl
-  << "  [-ord]   order, for each dimension, default zero" << std::endl
-  << "             0: zero order = blurring" << std::endl
-  << "             1: first order = gradient" << std::endl
-  << "             2: second order derivative" << std::endl
-  << "  [-mag]   compute the magnitude of the separate blurrings, default false" << std::endl
-  << "  [-lap]   compute the laplacian, default false" << std::endl
-  << "  [-inv]   compute invariants, choose one of" << std::endl
-  << "           {LiLi, LiLijLj, LiLijLjkLk, Lii, LijLji, LijLjkLki}" << std::endl
-  << "  [-opct]  output pixel type, default equal to input" << std::endl
-  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
-
+    << "Usage:\n"
+    << "pxgaussianimagefilter\n"
+    << "  -in      inputFilename\n"
+    << "  [-out]   outputFilename, default in + BLURRED.mhd\n"
+    << "  [-std]   sigma, for each dimension, default 1.0\n"
+    << "  [-ord]   order, for each dimension, default zero\n"
+    << "             0: zero order = blurring\n"
+    << "             1: first order = gradient\n"
+    << "             2: second order derivative\n"
+    << "  [-mag]   compute the magnitude of the separate blurrings, default false\n"
+    << "  [-lap]   compute the laplacian, default false\n"
+    << "  [-inv]   compute invariants, choose one of\n"
+    << "           {LiLi, LiLijLj, LiLijLjkLk, Lii, LijLji, LijLjkLki}\n"
+    << "  [-opct]  output pixel type, default equal to input\n"
+    << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
+  
   return ss.str();
 
 } // end GetHelpString()
-
-//-------------------------------------------------------------------------------------
-/** run: A macro to call a function. */
-#define run( function, type, dim ) \
-if ( componentType == #type && Dimension == dim ) \
-{ \
-  typedef itk::Image< type, dim >  OutputImageType; \
-  if ( retmag ) \
-  { \
-    function##Magnitude< OutputImageType >( inputFileName, outputFileName, sigma, order ); \
-  } \
-  if ( retlap ) \
-  { \
-    function##Laplacian< OutputImageType >( inputFileName, outputFileName, sigma ); \
-  } \
-  if ( retinv ) \
-  { \
-    function##Invariants< OutputImageType >( inputFileName, outputFileName, sigma, invariant ); \
-  } \
-  if ( !retmag && !retlap && !retinv ) \
-  { \
-    function< OutputImageType >( inputFileName, outputFileName, sigma, order ); \
-  } \
-  supported = true; \
-}
 
 //-------------------------------------------------------------------------------------
 
@@ -123,117 +98,117 @@ int main( int argc, char ** argv )
   std::string invariant = "LiLi";
   bool retinv = parser->GetCommandLineArgument( "-inv", invariant );
 
-  std::string componentType = "";
-  bool retopct = parser->GetCommandLineArgument( "-opct", componentType );
+  std::string componentTypeAsString = "";
+  bool retopct = parser->GetCommandLineArgument( "-opct", componentTypeAsString );
 
   /** Check options. */
-  for ( unsigned int i = 0; i < order.size(); ++i )
+  for( unsigned int i = 0; i < order.size(); ++i )
   {
-    if ( order[ i ] > 2 )
+    if( order[ i ] > 2 )
     {
       std::cerr << "ERROR: The order should not be higher than 2." << std::endl;
       std::cerr << "Only zeroth, first and second order derivatives are supported." << std::endl;
-      return 1;
+      return EXIT_FAILURE;
     }
   }
 
   /** Check that not both mag and lap are given. */
-  if ( retmag && retlap )
+  if( retmag && retlap )
   {
     std::cerr << "ERROR: only one of \"-mag\" and \"-lap\" should be given!" << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
+
+  /** Check which operation is requested. */
+  std::string whichOperation = "Gaussian";
+  if( retmag ) whichOperation = "Magnitude";
+  else if( retlap ) whichOperation = "Laplacian";
+  else if( retinv ) whichOperation = "Invariants";
+  else whichOperation = "Gaussian";
 
   /** Determine image properties. */
-  std::string ComponentTypeIn = "short";
-  std::string PixelType; //we don't use this
-  unsigned int Dimension = 3;
-  unsigned int NumberOfComponents = 1;
-  std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = itktools::GetImageProperties(
-    inputFileName,
-    PixelType,
-    ComponentTypeIn,
-    Dimension,
-    NumberOfComponents,
-    imagesize );
-  if ( retgip != 0 ) return 1;
-
-  /** The default output is equal to the input, but can be overridden by
-   * specifying -pt in the command line.
-   */
-  if ( !retopct ) componentType = ComponentTypeIn;
+  itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
+  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  unsigned int dim = 0;
+  unsigned int numberOfComponents = 0;
+  bool retgip = itktools::GetImageProperties(
+    inputFileName, pixelType, componentType, dim, numberOfComponents );
+  if( !retgip ) return EXIT_FAILURE;
 
   /** Check for vector images. */
-  if ( NumberOfComponents > 1 )
+  bool retNOCCheck = itktools::NumberOfComponentsCheck( numberOfComponents );
+  if( !retNOCCheck ) return EXIT_FAILURE;
+
+  /** The default output is equal to the input, but can be overridden by
+   * specifying -opct in the command line.
+   */
+  if( retopct )
   {
-    std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
-    std::cerr << "Vector images not supported yet by this tool." << std::endl;
-    return 1;
+    componentType = itk::ImageIOBase::GetComponentTypeFromString( componentTypeAsString );
   }
 
-  /** Get rid of the possible "_" in ComponentType. */
-  itktools::ReplaceUnderscoreWithSpace( ComponentTypeIn );
-
   /** Check order. */
-  if ( !retlap && !retinv )
+  if( !retlap && !retinv )
   {
-    if ( order.size() != Dimension )
+    if( order.size() != dim )
     {
       std::cerr << "ERROR: the # of orders should be equal to the image dimension!" << std::endl;
-      return 1;
+      return EXIT_FAILURE;
     }
   }
 
   /** Check sigma. */
-  if ( sigma.size() != 1 && sigma.size() != Dimension )
+  if( sigma.size() != 1 && sigma.size() != dim )
   {
     std::cerr << "ERROR: the # of sigmas should be equal to 1 or the image dimension!" << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
-  /** Run the program. */
-  bool supported = false;
+  /** Class that does the work. */
+  ITKToolsGaussianBase * filter = NULL;
+
   try
-  {
-    run( GaussianImageFilter, char, 2 );
-    run( GaussianImageFilter, unsigned char, 2 );
-    run( GaussianImageFilter, short, 2 );
-    run( GaussianImageFilter, unsigned short, 2 );
-    run( GaussianImageFilter, int, 2 );
-    run( GaussianImageFilter, unsigned int, 2 );
-    run( GaussianImageFilter, long, 2 );
-    run( GaussianImageFilter, unsigned long, 2 );
-    run( GaussianImageFilter, float, 2 );
-    run( GaussianImageFilter, double, 2 );
+  {    
+    // now call all possible template combinations.
+    if( !filter ) filter = ITKToolsGaussian< 2, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsGaussian< 2, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsGaussian< 2, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsGaussian< 2, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsGaussian< 2, float >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsGaussian< 2, double >::New( dim, componentType );
+    
+#ifdef ITKTOOLS_3D_SUPPORT
+    if( !filter ) filter = ITKToolsGaussian< 3, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsGaussian< 3, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsGaussian< 3, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsGaussian< 3, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsGaussian< 3, float >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsGaussian< 3, double >::New( dim, componentType );
+#endif
+    /** Check if filter was instantiated. */
+    bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
+    if( !supported ) return EXIT_FAILURE;
 
-    run( GaussianImageFilter, char, 3 );
-    run( GaussianImageFilter, unsigned char, 3 );
-    run( GaussianImageFilter, short, 3 );
-    run( GaussianImageFilter, unsigned short, 3 );
-    run( GaussianImageFilter, int, 3 );
-    run( GaussianImageFilter, unsigned int, 3 );
-    run( GaussianImageFilter, long, 3 );
-    run( GaussianImageFilter, unsigned long, 3 );
-    run( GaussianImageFilter, float, 3 );
-    run( GaussianImageFilter, double, 3 );
+    /** Set the filter arguments. */
+    filter->m_InputFileName = inputFileName;
+    filter->m_OutputFileName = outputFileName;
+    filter->m_WhichOperation = whichOperation;
+    filter->m_Sigma = sigma;
+    filter->m_Order = order;
+    filter->m_Invariant = invariant;
+
+    filter->Run();
+    
+    delete filter;  
   }
-  catch( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    return 1;
-  }
-  if ( !supported )
-  {
-    std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-    std::cerr
-      << "pixel (component) type = " << ComponentTypeIn
-      << " ; dimension = " << Dimension
-      << std::endl;
-    return 1;
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+    delete filter;
+    return EXIT_FAILURE;
   }
 
   /** End program. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main

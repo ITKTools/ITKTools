@@ -17,12 +17,10 @@
 *=========================================================================*/
 /** \file
  \brief Unary operations on an image.
- 
+
  \verbinclude unaryimageoperator.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
-
 #include "UnaryImageOperatorMainHelper.h"
 #include "UnaryImageOperatorHelper.h"
 
@@ -93,22 +91,22 @@ int main( int argc, char **argv )
   std::string ops = "PLUS";
   parser->GetCommandLineArgument( "-ops", ops );
 
-  std::string argument = "1";
-  bool retarg = parser->GetCommandLineArgument( "-arg", argument );
+  std::vector<std::string> arguments( 1, "" );
+  bool retarg = parser->GetCommandLineArgument( "-arg", arguments );
 
   const bool useCompression = parser->ArgumentExists( "-z" );
 
   /** Create outputFileName. */
-  if ( outputFileName == "" )
+  if( outputFileName == "" )
   {
-    CreateOutputFileName( inputFileName, outputFileName, ops, argument );
+    CreateOutputFileName( inputFileName, outputFileName, ops, arguments[0] );
   }
 
   /** Get the input and output component type. */
-  itktools::ComponentType inputComponentType;
+  itk::ImageIOBase::IOComponentType inputComponentType;
   itktools::GetImageComponentType( inputFileName, inputComponentType );
 
-  itktools::ComponentType outputComponentType = inputComponentType;
+  itk::ImageIOBase::IOComponentType outputComponentType = inputComponentType;
   std::string componentTypeOutString = "";
   bool retopct = parser->GetCommandLineArgument( "-opct", componentTypeOutString );
   if( retopct )
@@ -118,7 +116,7 @@ int main( int argc, char **argv )
 
   /** The input is only templated over int and double. */
   bool inputIsInteger = itktools::ComponentTypeIsInteger( inputComponentType );
-  if ( inputIsInteger )
+  if( inputIsInteger )
   {
     inputComponentType = itk::ImageIOBase::INT;
   }
@@ -126,7 +124,7 @@ int main( int argc, char **argv )
   {
     inputComponentType = itk::ImageIOBase::DOUBLE;
   }
-  
+
   /** Get the correct form of ops. For some operators
    * there are integer and double versions, in which case
    * ops is concatenated with INT or DOUBLE. For example
@@ -135,100 +133,102 @@ int main( int argc, char **argv )
    * and the argument type. If both are of integer type then
    * INT is used, otherwise DOUBLE.
    */
-  bool argumentIsInteger = itktools::StringIsInteger( argument );
+  bool argumentIsInteger = false;
+  for( unsigned int i = 0; i < arguments.size(); i++ )
+  {
+    argumentIsInteger |= itktools::StringIsInteger( arguments[ i ] );
+  }
 
   /** Append ops and at the same time check if ops is a valid
    * functor.
    */
   std::string opsOld = ops;
   int retCO  = CheckOps( ops, inputIsInteger & argumentIsInteger );
-  if ( retCO ) return retCO;
+  if( retCO ) return retCO;
 
   /** For certain ops an argument is mandatory. */
   bool operatorNeedsArgument = OperatorNeedsArgument( opsOld );
-  if ( operatorNeedsArgument && !retarg )
+  if( operatorNeedsArgument && !retarg )
   {
     std::cerr << "ERROR: operator " << opsOld << " needs an argument." << std::endl;
     std::cerr << "Specify the argument with \"-arg\"." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
-  if ( !operatorNeedsArgument && retarg )
+  if( !operatorNeedsArgument && retarg )
   {
     std::cerr << "WARNING: operator " << opsOld << " does not need an argument." << std::endl;
-    std::cerr << "The argument (" << argument << ") is ignored." << std::endl;
+    std::cerr << "The argument (" << arguments[0] << ") is ignored." << std::endl;
   }
 
-  /** Class that does the work */
-  ITKToolsUnaryImageOperatorBase * unaryImageOperator = NULL;
+  /** Class that does the work. */
+  ITKToolsUnaryImageOperatorBase * filter = NULL;
 
   unsigned int dim = 0;
   itktools::GetImageDimension( inputFileName, dim );
 
+  /** Short aliases. */
+  itk::ImageIOBase::IOComponentType inputType = inputComponentType;
+  itk::ImageIOBase::IOComponentType outputType = outputComponentType;
+
   try
-  {    
-    // now call all possible template combinations.
-    if (!unaryImageOperator) unaryImageOperator = ITKToolsUnaryImageOperator< int, unsigned char, 2 >::New( inputComponentType, outputComponentType, dim );
-    if (!unaryImageOperator) unaryImageOperator = ITKToolsUnaryImageOperator< int, char, 2 >::New( inputComponentType, outputComponentType, dim );
-    if (!unaryImageOperator) unaryImageOperator = ITKToolsUnaryImageOperator< int, unsigned short, 2 >::New( inputComponentType, outputComponentType, dim );
-    if (!unaryImageOperator) unaryImageOperator = ITKToolsUnaryImageOperator< int, short, 2 >::New( inputComponentType, outputComponentType, dim );
-    if (!unaryImageOperator) unaryImageOperator = ITKToolsUnaryImageOperator< int, unsigned int, 2 >::New( inputComponentType, outputComponentType, dim );
-    if (!unaryImageOperator) unaryImageOperator = ITKToolsUnaryImageOperator< int, int, 2 >::New( inputComponentType, outputComponentType, dim );
-    if (!unaryImageOperator) unaryImageOperator = ITKToolsUnaryImageOperator< int, float, 2 >::New( inputComponentType, outputComponentType, dim );
-    
-    if (!unaryImageOperator) unaryImageOperator = ITKToolsUnaryImageOperator< double, unsigned char, 2 >::New( inputComponentType, outputComponentType, dim );
-    if (!unaryImageOperator) unaryImageOperator = ITKToolsUnaryImageOperator< double, char, 2 >::New( inputComponentType, outputComponentType, dim );
-    if (!unaryImageOperator) unaryImageOperator = ITKToolsUnaryImageOperator< double, unsigned short, 2 >::New( inputComponentType, outputComponentType, dim );
-    if (!unaryImageOperator) unaryImageOperator = ITKToolsUnaryImageOperator< double, short, 2 >::New( inputComponentType, outputComponentType, dim );
-    if (!unaryImageOperator) unaryImageOperator = ITKToolsUnaryImageOperator< double, unsigned int, 2 >::New( inputComponentType, outputComponentType, dim );
-    if (!unaryImageOperator) unaryImageOperator = ITKToolsUnaryImageOperator< double, int, 2 >::New( inputComponentType, outputComponentType, dim );
-    if (!unaryImageOperator) unaryImageOperator = ITKToolsUnaryImageOperator< double, float, 2 >::New( inputComponentType, outputComponentType, dim );
-    
-#ifdef ITKTOOLS_3D_SUPPORT
-    if (!unaryImageOperator) unaryImageOperator = ITKToolsUnaryImageOperator< int, unsigned char, 3 >::New( inputComponentType, outputComponentType, dim );
-    if (!unaryImageOperator) unaryImageOperator = ITKToolsUnaryImageOperator< int, char, 3 >::New( inputComponentType, outputComponentType, dim );
-    if (!unaryImageOperator) unaryImageOperator = ITKToolsUnaryImageOperator< int, unsigned short, 3 >::New( inputComponentType, outputComponentType, dim );
-    if (!unaryImageOperator) unaryImageOperator = ITKToolsUnaryImageOperator< int, short, 3 >::New( inputComponentType, outputComponentType, dim );
-    if (!unaryImageOperator) unaryImageOperator = ITKToolsUnaryImageOperator< int, unsigned int, 3 >::New( inputComponentType, outputComponentType, dim );
-    if (!unaryImageOperator) unaryImageOperator = ITKToolsUnaryImageOperator< int, int, 3 >::New( inputComponentType, outputComponentType, dim );
-    if (!unaryImageOperator) unaryImageOperator = ITKToolsUnaryImageOperator< int, float, 3 >::New( inputComponentType, outputComponentType, dim );
-    
-    if (!unaryImageOperator) unaryImageOperator = ITKToolsUnaryImageOperator< double, unsigned char, 3 >::New( inputComponentType, outputComponentType, dim );
-    if (!unaryImageOperator) unaryImageOperator = ITKToolsUnaryImageOperator< double, char, 3 >::New( inputComponentType, outputComponentType, dim );
-    if (!unaryImageOperator) unaryImageOperator = ITKToolsUnaryImageOperator< double, unsigned short, 3 >::New( inputComponentType, outputComponentType, dim );
-    if (!unaryImageOperator) unaryImageOperator = ITKToolsUnaryImageOperator< double, short, 3 >::New( inputComponentType, outputComponentType, dim );
-    if (!unaryImageOperator) unaryImageOperator = ITKToolsUnaryImageOperator< double, unsigned int, 3 >::New( inputComponentType, outputComponentType, dim );
-    if (!unaryImageOperator) unaryImageOperator = ITKToolsUnaryImageOperator< double, int, 3 >::New( inputComponentType, outputComponentType, dim );
-    if (!unaryImageOperator) unaryImageOperator = ITKToolsUnaryImageOperator< double, float, 3 >::New( inputComponentType, outputComponentType, dim );
-#endif
-    if (!unaryImageOperator) 
-    {
-      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-      std::cerr
-        << "input pixel (component) type = " << inputComponentType
-        << "output pixel (component) type = " << componentTypeOutString
-        << " ; dimension = " << dim
-        << std::endl;
-      return 1;
-    }
-
-    unaryImageOperator->m_InputFileName = inputFileName;
-    unaryImageOperator->m_OutputFileName = outputFileName;
-    unaryImageOperator->m_UnaryOperatorName = ops;
-    unaryImageOperator->m_UseCompression = useCompression;
-    unaryImageOperator->m_Argument = argument;
-
-    unaryImageOperator->Run();
-    
-    delete unaryImageOperator;  
-  }
-  catch( itk::ExceptionObject &e )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    delete unaryImageOperator;
-    return 1;
+    // now call all possible template combinations.
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 2, int, unsigned char >::New( dim, inputType, outputType );
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 2, int, char >::New( dim, inputType, outputType );
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 2, int, unsigned short >::New( dim, inputType, outputType );
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 2, int, short >::New( dim, inputType, outputType );
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 2, int, unsigned int >::New( dim, inputType, outputType );
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 2, int, int >::New( dim, inputType, outputType );
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 2, int, float >::New( dim, inputType, outputType );
+
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 2, double, unsigned char >::New( dim, inputType, outputType );
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 2, double, char >::New( dim, inputType, outputType );
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 2, double, unsigned short >::New( dim, inputType, outputType );
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 2, double, short >::New( dim, inputType, outputType );
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 2, double, unsigned int >::New( dim, inputType, outputType );
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 2, double, int >::New( dim, inputType, outputType );
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 2, double, float >::New( dim, inputType, outputType );
+
+#ifdef ITKTOOLS_3D_SUPPORT
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 3, int, unsigned char >::New( dim, inputType, outputType );
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 3, int, char >::New( dim, inputType, outputType );
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 3, int, unsigned short >::New( dim, inputType, outputType );
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 3, int, short >::New( dim, inputType, outputType );
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 3, int, unsigned int >::New( dim, inputType, outputType );
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 3, int, int >::New( dim, inputType, outputType );
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 3, int, float >::New( dim, inputType, outputType );
+
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 3, double, unsigned char >::New( dim, inputType, outputType );
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 3, double, char >::New( dim, inputType, outputType );
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 3, double, unsigned short >::New( dim, inputType, outputType );
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 3, double, short >::New( dim, inputType, outputType );
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 3, double, unsigned int >::New( dim, inputType, outputType );
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 3, double, int >::New( dim, inputType, outputType );
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 3, double, float >::New( dim, inputType, outputType );
+#endif
+    /** Check if filter was instantiated. */
+    bool supported = itktools::IsFilterSupportedCheck( filter, dim, inputType, outputType );
+    if( !supported ) return EXIT_FAILURE;
+
+    /** Set the filter arguments. */
+    filter->m_InputFileName = inputFileName;
+    filter->m_OutputFileName = outputFileName;
+    filter->m_UnaryOperatorName = ops;
+    filter->m_UseCompression = useCompression;
+    filter->m_Arguments = arguments;
+
+    filter->Run();
+
+    delete filter;
+  }
+  catch( itk::ExceptionObject & excp )
+  {
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+    delete filter;
+    return EXIT_FAILURE;
   }
 
   /** End program. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main

@@ -21,7 +21,7 @@
  \verbinclude computeoverlap.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
 
 #include "ComputeOverlapOld.h"
 //#include "ComputeOverlap2.h"
@@ -36,16 +36,16 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-    << "Usage:" << std::endl
-    << "pxcomputeoverlap" << std::endl
-    << "This program computes the overlap of two images." << std::endl
-    << "By default the overlap of nonzero regions is computed." << std::endl
-    << "Masks of a valid region are also taken into account." << std::endl
-    << "If the images are not binary, you can specify threshold values." << std::endl
-    << "The results is computed as:" << std::endl
-    << "   2 * L1( (im1 AND mask2) AND (im2 AND mask1) )" << std::endl
-    << "  ----------------------------------------------" << std::endl
-    << "       L1(im1 AND mask2) + L1(im2 AND mask1)" << std::endl
+    << "Usage:\n"
+    << "pxcomputeoverlap\n"
+    << "This program computes the overlap of two images.\n"
+    << "By default the overlap of nonzero regions is computed.\n"
+    << "Masks of a valid region are also taken into account.\n"
+    << "If the images are not binary, you can specify threshold values.\n"
+    << "The results is computed as:\n"
+    << "   2 * L1( (im1 AND mask2) AND (im2 AND mask1) )\n"
+    << "  ----------------------------------------------\n"
+    << "       L1(im1 AND mask2) + L1(im2 AND mask1)\n\n"
     << "  -in      inputFilename1 inputFilename2" << std::endl
     << "  [-mask1] maskFilename1" << std::endl
     << "  [-mask2] maskFilename2" << std::endl
@@ -102,128 +102,104 @@ int main( int argc, char ** argv )
   parser->GetCommandLineArgument( "-l", labels );
 
   /** Checks. */
-  if ( !retin || inputFileNames.size() != 2 )
+  if( !retin || inputFileNames.size() != 2 )
   {
     std::cerr << "ERROR: You should specify two input file names with \"-in\"." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   /** Determine image properties. */
-  std::string ComponentType = "float";
-  std::string PixelType = "VECTOR";
-  unsigned int Dimension = 2;
-  unsigned int NumberOfComponents = Dimension;
-  std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = itktools::GetImageProperties(
-    inputFileNames[ 0 ],
-    PixelType,
-    ComponentType,
-    Dimension,
-    NumberOfComponents,
-    imagesize );
-  if ( retgip != 0 )
+  itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
+  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  unsigned int dim = 0;
+  unsigned int numberOfComponents = 0;
+  bool retgip = itktools::GetImageProperties(
+    inputFileNames[ 0 ], pixelType, componentType, dim, numberOfComponents );
+  if( !retgip ) return EXIT_FAILURE;
+
+  /** Check for vector images. */
+  bool retNOCCheck = itktools::NumberOfComponentsCheck( numberOfComponents );
+  if( !retNOCCheck ) return EXIT_FAILURE;
+
+  /** Select overlap compute filter. */
+  if( retlabel )
   {
-    return 1;
-  }
+    /** Class that does the work. */
+    ITKToolsComputeOverlap3Base * filter3 = 0; 
 
-  /** Checks. */
-  if ( NumberOfComponents > 1 )
-  {
-    std::cerr << "Vector images are not supported!" << std::endl;
-    return 1;
-  }
-
-  /** Get rid of the possible "_" in ComponentType. */
-  itktools::ReplaceUnderscoreWithSpace( ComponentType );
-
-  /** Run the program. */
-
-  unsigned int dim = Dimension;
-  itktools::ComponentType componentType = itktools::GetImageComponentType( inputFileNames[0] );
-
-  if ( retlabel )
-  {
-    ITKToolsComputeOverlap3Base * computeOverlap3 = 0; 
     try
     {
       // now call all possible template combinations.
-      if (!computeOverlap3) computeOverlap3 = ITKToolsComputeOverlap3< char, 2 >::New( componentType, dim );
-      if (!computeOverlap3) computeOverlap3 = ITKToolsComputeOverlap3< short, 2 >::New( componentType, dim );
+      if( !filter3 ) filter3 = ITKToolsComputeOverlap3< 2, char >::New( dim, componentType );
+      if( !filter3 ) filter3 = ITKToolsComputeOverlap3< 2, short >::New( dim, componentType );
+
 #ifdef ITKTOOLS_3D_SUPPORT
-      if (!computeOverlap3) computeOverlap3 = ITKToolsComputeOverlap3< char, 3 >::New( componentType, dim );
-      if (!computeOverlap3) computeOverlap3 = ITKToolsComputeOverlap3< unsigned char, 3 >::New( componentType, dim );
-      if (!computeOverlap3) computeOverlap3 = ITKToolsComputeOverlap3< short, 3 >::New( componentType, dim );
-      if (!computeOverlap3) computeOverlap3 = ITKToolsComputeOverlap3< unsigned short, 3 >::New( componentType, dim );
+      if( !filter3 ) filter3 = ITKToolsComputeOverlap3< 3, char >::New( dim, componentType );
+      if( !filter3 ) filter3 = ITKToolsComputeOverlap3< 3, unsigned char >::New( dim, componentType );
+      if( !filter3 ) filter3 = ITKToolsComputeOverlap3< 3, short >::New( dim, componentType );
+      if( !filter3 ) filter3 = ITKToolsComputeOverlap3< 3, unsigned short >::New( dim, componentType );
 #endif
-      if (!computeOverlap3) 
-      {
-        std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-        std::cerr
-          << "pixel (component) type = "
-          << itk::ImageIOBase::GetComponentTypeAsString( componentType )
-          << " ; dimension = " << Dimension
-          << std::endl;
-        return 1;
-      }
+      /** Check if filter was instantiated. */
+      bool supported = itktools::IsFilterSupportedCheck( filter3, dim, componentType );
+      if( !supported ) return EXIT_FAILURE;
 
-      computeOverlap3->m_InputFileNames = inputFileNames;
-      computeOverlap3->m_Labels = labels;
+      /** Set the filter arguments. */
+      filter3->m_InputFileNames = inputFileNames;
+      filter3->m_Labels = labels;
 
-      computeOverlap3->Run();
+      filter3->Run();
       
-      delete computeOverlap3;  
+      delete filter3;  
     }
-    catch( itk::ExceptionObject &e )
+    catch( itk::ExceptionObject & excp )
     {
-      std::cerr << "Caught ITK exception: " << e << std::endl;
-      delete computeOverlap3;
-      return 1;
+      std::cerr << "Caught ITK exception: " << excp << std::endl;
+      delete filter3;
+      return EXIT_FAILURE;
     }
 
   }
   else
   {
-    ITKToolsComputeOverlapOldBase * computeOverlapOld = 0; 
+    /** Class that does the work. */
+    ITKToolsComputeOverlapOldBase * filterOld = 0;
+
     try
     {
       // now call all possible template combinations.
-      if (!computeOverlapOld) computeOverlapOld = ITKToolsComputeOverlapOld< char, 2 >::New( componentType, dim );
-      if (!computeOverlapOld) computeOverlapOld = ITKToolsComputeOverlapOld< short, 2 >::New( componentType, dim );
+      if( !filterOld ) filterOld = ITKToolsComputeOverlapOld< 2, char >::New( dim, componentType );
+      if( !filterOld ) filterOld = ITKToolsComputeOverlapOld< 2, short >::New( dim, componentType );
+
 #ifdef ITKTOOLS_3D_SUPPORT
-      if (!computeOverlapOld) computeOverlapOld = ITKToolsComputeOverlapOld< char, 3 >::New( componentType, dim );
-      if (!computeOverlapOld) computeOverlapOld = ITKToolsComputeOverlapOld< unsigned char, 3 >::New( componentType, dim );
-      if (!computeOverlapOld) computeOverlapOld = ITKToolsComputeOverlapOld< short, 3 >::New( componentType, dim );
-      if (!computeOverlapOld) computeOverlapOld = ITKToolsComputeOverlapOld< unsigned short, 3 >::New( componentType, dim );
+      if( !filterOld ) filterOld = ITKToolsComputeOverlapOld< 3, char >::New( dim, componentType );
+      if( !filterOld ) filterOld = ITKToolsComputeOverlapOld< 3, unsigned char >::New( dim, componentType );
+      if( !filterOld ) filterOld = ITKToolsComputeOverlapOld< 3, short >::New( dim, componentType );
+      if( !filterOld ) filterOld = ITKToolsComputeOverlapOld< 3, unsigned short >::New( dim, componentType );
 #endif
-      if (!computeOverlapOld) 
-      {
-        std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-        std::cerr
-          << "pixel (component) type = " << componentType
-          << " ; dimension = " << Dimension
-          << std::endl;
-        return 1;
-      }
+      /** Check if filter was instantiated. */
+      bool supported = itktools::IsFilterSupportedCheck( filterOld, dim, componentType );
+      if( !supported ) return EXIT_FAILURE;
 
-      computeOverlapOld->m_InputFileNames = inputFileNames;
-      computeOverlapOld->m_MaskFileName1 = maskFileName1;
-      computeOverlapOld->m_MaskFileName2 = maskFileName2;
-      computeOverlapOld->m_T1 = t1;
-      computeOverlapOld->m_T2 = t2;
+      /** Set the filter arguments. */
+      filterOld->m_InputFileNames = inputFileNames;
+      filterOld->m_MaskFileName1 = maskFileName1;
+      filterOld->m_MaskFileName2 = maskFileName2;
+      filterOld->m_T1 = t1;
+      filterOld->m_T2 = t2;
 
-      computeOverlapOld->Run();
+      filterOld->Run();
       
-      delete computeOverlapOld;  
+      delete filterOld;  
     }
-    catch( itk::ExceptionObject &e )
+    catch( itk::ExceptionObject & excp )
     {
-      std::cerr << "Caught ITK exception: " << e << std::endl;
-      delete computeOverlapOld;
-      return 1;
+      std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+      delete filterOld;
+      return EXIT_FAILURE;
     }
   }
 
   /** End program. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main

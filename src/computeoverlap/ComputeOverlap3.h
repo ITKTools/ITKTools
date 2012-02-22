@@ -1,55 +1,69 @@
-#ifndef ComputeOverlap3_H
-#define ComputeOverlap3_H
-
+/*=========================================================================
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
+#ifndef __ComputeOverlap3_h_
+#define __ComputeOverlap3_h_
 
 #include "itkImageFileReader.h"
-#include "itkImage.h"
-#include "itkAndImageFilter.h"
-#include "itkImageRegionConstIterator.h"
-#include "itkThresholdLabelerImageFilter.h"
-#include "itkNumericTraits.h"
-
 #include "itkDiceOverlapImageFilter.h"
 
-#include <iostream>
 #include <string>
 #include <vector>
-#include <map>
-#include <set>
 
-/** ComputeOverlap */
+
+/** \class ITKToolsComputeOverlap3Base
+ *
+ * Untemplated pure virtual base class that holds
+ * the Run() function and all required parameters.
+ */
 
 class ITKToolsComputeOverlap3Base : public itktools::ITKToolsBase
 { 
 public:
+  /** Constructor. */
   ITKToolsComputeOverlap3Base(){};
+  /** Destructor. */
   ~ITKToolsComputeOverlap3Base(){};
 
-  /** Input parameters */
+  /** Input member parameters */
   std::vector<std::string> m_InputFileNames;
   std::vector<unsigned int> m_Labels;
     
-}; // end ComputeOverlap2
+}; // end ITKToolsComputeOverlap3Base
 
 
-template< class TComponentType, unsigned int VDimension >
+/** \class ITKToolsComputeOverlap3
+ *
+ * Templated class that implements the Run() function
+ * and the New() function for its creation.
+ */
+
+template< unsigned int VDimension, class TComponentType >
 class ITKToolsComputeOverlap3 : public ITKToolsComputeOverlap3Base
 {
 public:
+  /** Standard ITKTools stuff. */
   typedef ITKToolsComputeOverlap3 Self;
+  itktoolsOneTypeNewMacro( Self );
 
   ITKToolsComputeOverlap3(){};
   ~ITKToolsComputeOverlap3(){};
 
-  static Self * New( itktools::ComponentType componentType, unsigned int dim )
-  {
-    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
+  /** Run function. */
   void Run( void )
   {
     /** Some typedef's. */
@@ -82,8 +96,9 @@ public:
 
     /** Print the results. */
     diceFilter->PrintRequestedDiceOverlaps();
-  }
 
-}; // end ComputeOverlap3
+  } // end Run()
 
-#endif
+}; // end class ITKToolsComputeOverlap3
+
+#endif // end #ifndef __ComputeOverlap3_h_

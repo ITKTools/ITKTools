@@ -36,23 +36,23 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-  << "Usage:" << std::endl
-  << "pxgetimageinformation" << std::endl
-  << "  -in      inputFileName" << std::endl
-  << "  [-dim]   dimension" << std::endl
-  << "  [-pt]    pixelType" << std::endl
-  << "  [-ct]    componentType" << std::endl
-  << "  [-noc]   #components" << std::endl
-  << "  [-sz]    size" << std::endl
-  << "  [-sp]    spacing" << std::endl
-  << "  [-vol]   voxel volume" << std::endl
-  << "  [-o]     origin" << std::endl
-  << "  [-dc]    direction cosines" << std::endl
-  << "  [-all]   all of the above" << std::endl
-  << "Image information about the inputFileName is printed to screen." << std::endl
-  << "Only one option should be given, e.g. -sp, then the spacing is printed." << std::endl
-  << "  [-i]     index, if this option is given only e.g." << std::endl
-  << "spacing[index] is printed.";
+    << "Usage:\n"
+    << "pxgetimageinformation\n"
+    << "  -in      inputFileName\n"
+    << "  [-dim]   dimension\n"
+    << "  [-pt]    pixelType\n"
+    << "  [-ct]    componentType\n"
+    << "  [-noc]   #components\n"
+    << "  [-sz]    size\n"
+    << "  [-sp]    spacing\n"
+    << "  [-vol]   voxel volume\n"
+    << "  [-o]     origin\n"
+    << "  [-dc]    direction cosines\n"
+    << "  [-all]   all of the above\n"
+    << "Image information about the inputFileName is printed to screen.\n"
+    << "Only one option should be given, e.g. -sp, then the spacing is printed.\n"
+    << "  [-i]     index, if this option is given only e.g.\n"
+    << "spacing[index] is printed.";
 
   return ss.str();
 
@@ -114,11 +114,11 @@ int main( int argc, char **argv )
   {
     testReader->GenerateOutputInformation();
   }
-  catch( itk::ExceptionObject  &  err  )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr  << "ExceptionObject caught !"  << std::endl;
-    std::cerr  << err <<  std::endl;
-    return 1;
+    std::cerr << "ExceptionObject caught !"  << std::endl;
+    std::cerr << excp <<  std::endl;
+    return EXIT_FAILURE;
   }
 
   /** Extract the ImageIO from the testReader. */
@@ -126,144 +126,144 @@ int main( int argc, char **argv )
   unsigned int dim = testImageIOBase->GetNumberOfDimensions();
 
   /** Check the index. */
-  if ( index > static_cast<int>( dim ) - 1 )
+  if( index > static_cast<int>( dim ) - 1 )
   {
     std::cerr << "ERROR: index out of bounds." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   /**
    * ************************ Print image information ***************
    */
 
-  if ( !exall )
+  if( !exall )
   {
     /** Print image dimension. */
-    if ( exdim )
+    if( exdim )
     {
       std::cout << dim;
-      return 0;
+      return EXIT_SUCCESS;
     }
 
     /** Print image pixel type. */
-    if ( expt )
+    if( expt )
     {
       //ReplaceUnderscoreWithSpace( PixelType );
       std::cout << testImageIOBase->GetPixelTypeAsString(
         testImageIOBase->GetPixelType() );
-      return 0;
+      return EXIT_SUCCESS;
     }
 
     /** Print image component type. */
-    if ( exct )
+    if( exct )
     {
       std::cout << testImageIOBase->GetComponentTypeAsString(
         testImageIOBase->GetComponentType() );
-      return 0;
+      return EXIT_SUCCESS;
     }
 
     /** Print image number of components. */
-    if ( exnoc )
+    if( exnoc )
     {
       std::cout << testImageIOBase->GetNumberOfComponents();
-      return 0;
+      return EXIT_SUCCESS;
     }
 
     /** Print image size. */
-    if ( exsz )
+    if( exsz )
     {
-      if ( reti )
+      if( reti )
       {
         std::cout << testImageIOBase->GetDimensions( index );
       }
       else
       {
-        for ( unsigned int i = 0; i < dim - 1; i++ )
+        for( unsigned int i = 0; i < dim - 1; i++ )
         {
           std::cout << testImageIOBase->GetDimensions( i ) << " ";
         }
         std::cout << testImageIOBase->GetDimensions( dim - 1 );
       }
-      return 0;
+      return EXIT_SUCCESS;
     }
 
     /** Print image index. */
-    if ( exind )
+    if( exind )
     {
-      if ( reti )
+      if( reti )
       {
         std::cout << (testImageIOBase->GetIORegion().GetIndex())[ index ];
       }
       else
       {
-        for ( unsigned int i = 0; i < dim - 1; i++ )
+        for( unsigned int i = 0; i < dim - 1; i++ )
         {
           std::cout << (testImageIOBase->GetIORegion().GetIndex())[ i ] << " ";
         }
         std::cout << (testImageIOBase->GetIORegion().GetIndex())[ dim - 1 ];
       }
-      return 0;
+      return EXIT_SUCCESS;
     }
 
     /** Print image spacing. */
     std::cout << std::fixed;
     std::cout << std::setprecision( 6 );
-    if ( exsp )
+    if( exsp )
     {
-      if ( reti )
+      if( reti )
       {
         std::cout << testImageIOBase->GetSpacing( index );
       }
       else
       {
-        for ( unsigned int i = 0; i < dim - 1; i++ )
+        for( unsigned int i = 0; i < dim - 1; i++ )
         {
           std::cout << testImageIOBase->GetSpacing( i ) << " ";
         }
         std::cout << testImageIOBase->GetSpacing( dim - 1 );
       }
-      return 0;
+      return EXIT_SUCCESS;
     }
 
     /** Print image voxel volume. */
     std::cout << std::fixed;
     std::cout << std::setprecision( 6 );
-    if ( exvol )
+    if( exvol )
     {
       double volume = 1.0;
-      for ( unsigned int i = 0; i < dim; i++ )
+      for( unsigned int i = 0; i < dim; i++ )
       {
         volume *= testImageIOBase->GetSpacing( i );
       }
       std::cout << volume;
-      return 0;
+      return EXIT_SUCCESS;
     }
 
     /** Print image origin. */
-    if ( exo )
+    if( exo )
     {
-      if ( reti )
+      if( reti )
       {
         std::cout << testImageIOBase->GetOrigin( index );
       }
       else
       {
-        for ( unsigned int i = 0; i < dim - 1; i++ )
+        for( unsigned int i = 0; i < dim - 1; i++ )
         {
           std::cout << testImageIOBase->GetOrigin( i ) << " ";
         }
         std::cout << testImageIOBase->GetOrigin( dim - 1 );
       }
-      return 0;
+      return EXIT_SUCCESS;
     }
 
     /** Print image direction. */
-    if ( exdc )
+    if( exdc )
     {
-      if ( reti )
+      if( reti )
       {
         std::vector<double> dir = testImageIOBase->GetDirection( index );
-        for ( unsigned int i = 0; i < dim - 1; i++ )
+        for( unsigned int i = 0; i < dim - 1; i++ )
         {
           std::cout << dir[ i ] << " ";
         }
@@ -271,16 +271,16 @@ int main( int argc, char **argv )
       }
       else
       {
-        for ( unsigned int j = 0; j < dim; ++j )
+        for( unsigned int j = 0; j < dim; ++j )
         {
           std::vector<double> dir = testImageIOBase->GetDirection( j );
-          for ( unsigned int i = 0; i < dim; i++ )
+          for( unsigned int i = 0; i < dim; i++ )
           {
             std::cout << dir[ i ] << " ";
           }
         }
       }
-      return 0;
+      return EXIT_SUCCESS;
     }
 
   } // end don't print all
@@ -302,47 +302,47 @@ int main( int argc, char **argv )
       ->GetNumberOfComponents() << "\n";
 
     std::cout << "size:           (";
-    for ( unsigned int i = 0; i < dim - 1; i++ )
+    for( unsigned int i = 0; i < dim - 1; i++ )
     {
       std::cout << testImageIOBase->GetDimensions( i ) << ", ";
     }
     std::cout << testImageIOBase->GetDimensions( dim - 1 ) << ")\n";
 
     std::cout << "spacing:        (";
-    for ( unsigned int i = 0; i < dim - 1; i++ )
+    for( unsigned int i = 0; i < dim - 1; i++ )
     {
       std::cout << testImageIOBase->GetSpacing( i ) << ", ";
     }
     std::cout << testImageIOBase->GetSpacing( dim - 1 ) << ")\n";
 
     std::cout << "origin:         (";
-    for ( unsigned int i = 0; i < dim - 1; i++ )
+    for( unsigned int i = 0; i < dim - 1; i++ )
     {
       std::cout << testImageIOBase->GetOrigin( i ) << ", ";
     }
     std::cout << testImageIOBase->GetOrigin( dim - 1 ) << ")\n";
 
     std::cout << "direction:      (";
-    for ( unsigned int j = 0; j < dim - 1; ++j )
+    for( unsigned int j = 0; j < dim - 1; ++j )
     {
       std::vector<double> dir = testImageIOBase->GetDirection( j );
-      for ( unsigned int i = 0; i < dim; i++ )
+      for( unsigned int i = 0; i < dim; i++ )
       {
         std::cout << dir[ i ] << ", ";
       }
     }
     std::vector<double> dir = testImageIOBase->GetDirection( dim - 1 );
-    for ( unsigned int i = 0; i < dim - 1; i++ )
+    for( unsigned int i = 0; i < dim - 1; i++ )
     {
       std::cout << dir[ i ] << ", ";
     }
     std::cout << dir[ dim - 1  ] << ")\n";
 
-    return 0;
+    return EXIT_SUCCESS;
 
   } // end print all information
 
   /** End program. */
-  return 1;
+  return EXIT_FAILURE;
 
 } // end main

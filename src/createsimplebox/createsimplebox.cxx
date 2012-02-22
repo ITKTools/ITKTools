@@ -20,13 +20,9 @@
  
  \verbinclude createsimplebox.help
  */
-#ifndef __createbox_cxx
-#define __createbox_cxx
-
-#include "createsimplebox.h"
-
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
+#include "createsimplebox.h"
 
 
 /**
@@ -37,31 +33,34 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-    << "This program creates an image containing a white box, defined by point A and B." << std::endl
-    << "Usage:" << std::endl
-    << "pxcreatesimplebox" << std::endl
-    << "[-in]  InputImageFileName" << std::endl
-    << "Size, origin, and spacing for the output image will be taken" << std::endl
-    << "from this image. NB: not the dimension and the pixeltype;" << std::endl
-    << "you must set them anyway!" << std::endl
-    << "-out   OutputImageFileName" << std::endl
-    << "-pt    PixelType <FLOAT, SHORT, USHORT, INT, UINT, CHAR, UCHAR>" << std::endl
-    << "Currently only char, uchar and short are supported." << std::endl
-    << "-id    ImageDimension <2,3>" << std::endl
-    << "[-d0]  Size of dimension 0" << std::endl
-    << "[-d1]  Size of dimension 1" << std::endl
-    << "[-d2]  Size of dimension 2" << std::endl
-    << "-pA0  Index 0 of pointA" << std::endl
-    << "-pA1  Index 1 of pointA" << std::endl
-    << "[-pA2]Index 2 of pointA" << std::endl
-    << "-pB0  Index 0 of pointB" << std::endl
-    << "-pB1  Index 1 of pointB" << std::endl
+    << "This program creates an image containing a white box, defined by point A and B.\n"
+    << "Usage:\n"
+    << "pxcreatesimplebox\n"
+    << "[-in]  InputImageFileName\n"
+    << "Size, origin, and spacing for the output image will be taken\n"
+    << "from this image. NB: not the dimension and the pixeltype;\n"
+    << "you must set them anyway!\n"
+    << "-out   OutputImageFileName\n"
+    << "-pt    PixelType <FLOAT, SHORT, USHORT, INT, UINT, CHAR, UCHAR>\n"
+    << "Currently only char, uchar and short are supported.\n"
+    << "-id    ImageDimension <2,3>\n"
+    << "[-d0]  Size of dimension 0\n"
+    << "[-d1]  Size of dimension 1\n"
+    << "[-d2]  Size of dimension 2\n"
+    << "-pA0  Index 0 of pointA\n"
+    << "-pA1  Index 1 of pointA\n"
+    << "[-pA2]Index 2 of pointA\n"
+    << "-pB0  Index 0 of pointB\n"
+    << "-pB1  Index 1 of pointB\n"
     << "[-pB2]Index 2 of pointB";
+
   return ss.str();
 
 } // end GetHelpString()
 
-int main(int argc, char** argv)
+//-------------------------------------------------------------------------------------
+
+int main( int argc, char** argv )
 {
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
@@ -80,94 +79,86 @@ int main(int argc, char** argv)
   {
     return EXIT_SUCCESS;
   }
-  
-  unsigned int imageDimension = 0;
 
   /** Read the dimension. */
-  parser->GetCommandLineArgument("-id", imageDimension);
+  unsigned int dim = 0;
+  parser->GetCommandLineArgument( "-id", dim );
 
-  if (imageDimension == 0)
+  if( dim == 0 )
   {
-    std::cerr << "ERROR: Image dimension cannot be 0" <<std::endl;
-    return 1;
+    std::cerr << "ERROR: Image dimension cannot be 0" << std::endl;
+    return EXIT_FAILURE;
   }
   
-  std::string pixelTypeString("");
-  bool retpt = parser->GetCommandLineArgument( "-pt", pixelTypeString );
+  std::string componentTypeAsString = "";
+  bool retopct = parser->GetCommandLineArgument( "-opct", componentTypeAsString );
   
   std::string outputFileName;
-  parser->GetCommandLineArgument("-out", outputFileName);
+  parser->GetCommandLineArgument( "-out", outputFileName );
   
-  std::string inputFileName("");
-  bool retin = parser->GetCommandLineArgument("-in", inputFileName);
+  std::string inputFileName = "";
+  bool retin = parser->GetCommandLineArgument( "-in", inputFileName );
 
   /** read point A and B from the commandline.*/
   std::vector<unsigned int> indexA;
-  parser->GetCommandLineArgument("-pA", indexA);
+  parser->GetCommandLineArgument( "-pA", indexA );
   
   std::vector<unsigned int> indexB;
-  parser->GetCommandLineArgument("-pB", indexB);
+  parser->GetCommandLineArgument( "-pB", indexB );
   
   std::vector<unsigned int> boxSize;
-  parser->GetCommandLineArgument("-d", boxSize);
+  parser->GetCommandLineArgument( "-d", boxSize );
   
-  /** Class that does the work */
-  CreateSimpleBoxBase * createSimpleBox = NULL;
-
-  unsigned int dim = 0;
-  itktools::ComponentType componentType = itk::ImageIOBase::UCHAR; // to prevent uninitialized variable warning
+  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
   if( retin ) // if an input file was specified
   {
     itktools::GetImageDimension( inputFileName, dim );
     componentType = itktools::GetImageComponentType( inputFileName );
   }
 
-  if( retpt ) // if a pixel type was specified on the command line
+  /** Let the user overrule. */
+  if( retopct )
   {
-    componentType = itk::ImageIOBase::GetComponentTypeFromString( pixelTypeString );
+    componentType = itk::ImageIOBase::GetComponentTypeFromString( componentTypeAsString );
   }
+
+  /** Class that does the work. */
+  ITKToolsCreateSimpleBoxBase * filter = NULL;
 
   try
   {    
     // now call all possible template combinations.
-    if (!createSimpleBox) createSimpleBox = CreateSimpleBox< short, 2 >::New( componentType, dim );
-    if (!createSimpleBox) createSimpleBox = CreateSimpleBox< char, 2 >::New( componentType, dim );
-    if (!createSimpleBox) createSimpleBox = CreateSimpleBox< unsigned char, 2 >::New( componentType, dim );
+    if( !filter) filter = ITKToolsCreateSimpleBox< 2, short >::New( dim, componentType );
+    if( !filter) filter = ITKToolsCreateSimpleBox< 2, char >::New( dim, componentType );
+    if( !filter) filter = ITKToolsCreateSimpleBox< 2, unsigned char >::New( dim, componentType );
     
 #ifdef ITKTOOLS_3D_SUPPORT
-    if (!createSimpleBox) createSimpleBox = CreateSimpleBox< short, 3 >::New( componentType, dim );    
-    if (!createSimpleBox) createSimpleBox = CreateSimpleBox< char, 3 >::New( componentType, dim );
-    if (!createSimpleBox) createSimpleBox = CreateSimpleBox< unsigned char, 3 >::New( componentType, dim );
+    if( !filter) filter = ITKToolsCreateSimpleBox< 3, short >::New( dim, componentType );    
+    if( !filter) filter = ITKToolsCreateSimpleBox< 3, char >::New( dim, componentType );
+    if( !filter) filter = ITKToolsCreateSimpleBox< 3, unsigned char >::New( dim, componentType );
 #endif
-    if (!createSimpleBox) 
-    {
-      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-      std::cerr
-        << "pixel (component) type = " << componentType
-        << " ; dimension = " << dim
-        << std::endl;
-      return 1;
-    }
+    /** Check if filter was instantiated. */
+    bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
+    if( !supported ) return EXIT_FAILURE;
 
-    createSimpleBox->m_InputFileName = inputFileName;
-    createSimpleBox->m_OutputFileName = outputFileName;
-    createSimpleBox->m_BoxSize = boxSize;
-    createSimpleBox->m_IndexA = indexA;
-    createSimpleBox->m_IndexB = indexB;
+    /** Set the filter arguments. */
+    filter->m_InputFileName = inputFileName;
+    filter->m_OutputFileName = outputFileName;
+    filter->m_BoxSize = boxSize;
+    filter->m_IndexA = indexA;
+    filter->m_IndexB = indexB;
 
-    createSimpleBox->Run();
+    filter->Run();
     
-    delete createSimpleBox;  
+    delete filter;  
   }
-  catch( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    delete createSimpleBox;
-    return 1;
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+    delete filter;
+    return EXIT_FAILURE;
   }
 
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end function main
-
-#endif // #ifndef __createbox_cxx

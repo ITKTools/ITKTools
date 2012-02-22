@@ -1,5 +1,22 @@
-#ifndef __itkCommandLineArgumentParser_h
-#define __itkCommandLineArgumentParser_h
+/*=========================================================================
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
+#ifndef __itkCommandLineArgumentParser_h_
+#define __itkCommandLineArgumentParser_h_
 
 #include "itkObject.h"
 #include "itkObjectFactory.h"
@@ -69,7 +86,7 @@ public:
   typedef SmartPointer<Self>            Pointer;
   typedef SmartPointer<const Self>      ConstPointer;
 
-  enum ReturnValue { PASSED, FAILED, HELPREQUESTED};
+  enum ReturnValue {PASSED, FAILED, HELPREQUESTED};
 
   /** Method for creation through the object factory. */
   itkNewMacro( Self );
@@ -79,10 +96,10 @@ public:
 
   /** Set the command line arguments in a vector of strings. */
   void SetCommandLineArguments( int argc, char **argv );
-  
+
   /** Ensure that all required arguments have been passed. */
   ReturnValue CheckForRequiredArguments() const;
-  
+
   /** Map to store the arguments and their indices. */
   typedef std::size_t                           IndexType;
   typedef std::map< std::string, IndexType >    ArgumentMapType;
@@ -90,7 +107,7 @@ public:
 
   /** Copy argv in a map. */
   void CreateArgumentMap( void );
-  
+
   /** Print all arguments. */
   void PrintAllArguments( void ) const;
 
@@ -113,28 +130,28 @@ public:
 
   /** Get command line argument if arg is a vector type. */
   template <class T>
-    bool GetCommandLineArgument(
-      const std::string & key, std::vector<T> & arg )
+  bool GetCommandLineArgument(
+    const std::string & key, std::vector<T> & arg )
   {
     /** Check for the key. */
     IndexType keyIndex, nextKeyIndex;
     keyIndex = nextKeyIndex = 0;
     bool keyFound = this->FindKey( key, keyIndex, nextKeyIndex );
-    if ( !keyFound ) return false;
+    if( !keyFound ) return false;
 
     /** If a vector of size oldSize > 1 is given to this function, and if
      * only one (1) argument is provided in the command line, we create
      * a vector of size oldSize and fill it with the single argument.
      */
     IndexType oldSize = arg.size();
-    if ( oldSize > 1 && nextKeyIndex - keyIndex == 2 )
+    if( oldSize > 1 && nextKeyIndex - keyIndex == 2 )
     {
       /** Cast the string to type T. */
       T casted;
       bool castSuccesful = this->StringCast( this->m_Argv[ keyIndex + 1 ], casted );
 
       /** Check if the cast was successful. */
-      if ( !castSuccesful )
+      if( !castSuccesful )
       {
         std::stringstream ss;
         ss << "ERROR: Casting entry number " << 0
@@ -166,7 +183,7 @@ public:
       bool castSuccesful = this->StringCast( this->m_Argv[ i ], casted );
 
       /** Check if the cast was successful. */
-      if ( !castSuccesful )
+      if( !castSuccesful )
       {
         std::stringstream ss;
         ss << "ERROR: Casting entry number " << i
@@ -186,16 +203,16 @@ public:
 
   }; // end GetCommandLineArgument()
 
-  /** Get command line argument if arg is not a vector type. 
+  /** Get command line argument if arg is not a vector type.
     * We do this by creating a 1D vector, using the GetCommandLineArgument
     * for vector types, and then returning the first element.
     */
   template <class T>
     bool GetCommandLineArgument( const std::string & key, T & arg )
   {
-    std::vector<T> vec;    
+    std::vector<T> vec;
     bool returnvalue = this->GetCommandLineArgument( key, vec );
-    if ( returnvalue ) arg = vec[ 0 ];
+    if( returnvalue ) arg = vec[ 0 ];
 
     return returnvalue;
 
@@ -221,14 +238,15 @@ protected:
   {
     std::stringstream ss( parameterValue );
 
-    /** For (unsigned) char we need a workaround, because ">>" casts it wrongly. 
-    * It takes the first digit and thinks it is a char. For example:
-    * 84 becomes '8', which is asci number 56. So, as a workaround, we use
-    * the accumulate type, and then cast back to T.*/  
+    /** For (unsigned) char we need a workaround, because ">>" casts it wrongly.
+     * It takes the first digit and thinks it is a char. For example:
+     * 84 becomes '8', which is asci number 56. So, as a workaround, we use
+     * the accumulate type, and then cast back to T.
+     */
     typename NumericTraits<T>::AccumulateType tempCasted;
     ss >> tempCasted;
     casted = static_cast<T>( tempCasted );
-    if ( ss.bad() || ss.fail() )
+    if( ss.bad() || ss.fail() )
     {
       return false;
     }
@@ -265,4 +283,4 @@ private:
 
 } // end namespace itk
 
-#endif // end #ifndef __itkCommandLineArgumentParser_h
+#endif // end #ifndef __itkCommandLineArgumentParser_h_

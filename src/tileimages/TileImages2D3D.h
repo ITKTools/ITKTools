@@ -1,42 +1,81 @@
-#ifndef TILEIMAGES2D3D_H
-#define TILEIMAGES2D3D_H
+/*=========================================================================
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
+#ifndef __TileImages2D3D_h_
+#define __TileImages2D3D_h_
 
 #include "ITKToolsBase.h"
 
-/** TileImages2D3D */
+#include "itkImageSeriesReader.h"
+#include "itkImageFileWriter.h"
 
-class TileImages2D3DBase : public itktools::ITKToolsBase
+
+/** \class TileImages2D3DBase
+ *
+ * Untemplated pure virtual base class that holds
+ * the Run() function and all required parameters.
+ */
+
+class ITKToolsTileImages2D3DBase : public itktools::ITKToolsBase
 {
 public:
-  TileImages2D3DBase(){};
-  ~TileImages2D3DBase(){};
+  /** Constructor. */
+  ITKToolsTileImages2D3DBase()
+  {
+    this->m_OutputFileName = "";
+    this->m_Zspacing = 1.0;
+  };
+  /** Destructor. */
+  ~ITKToolsTileImages2D3DBase(){};
 
-  /** Input parameters */
+  /** Input member parameters. */
   std::vector<std::string> m_InputFileNames;
   std::string m_OutputFileName;
   double m_Zspacing;
 
-}; // end TileImages2D3DBase
+}; // end class ITKToolsTileImages2D3DBase
 
+
+/** \class ITKToolsTileImages2D3D
+ *
+ * Templated class that implements the Run() function
+ * and the New() function for its creation.
+ */
 
 template< class TComponentType >
-class TileImages2D3D : public TileImages2D3DBase
+class ITKToolsTileImages2D3D : public ITKToolsTileImages2D3DBase
 {
 public:
-  typedef TileImages2D3D Self;
+  /** Standard ITKTools stuff. */
+  typedef ITKToolsTileImages2D3D Self;
 
-  TileImages2D3D(){};
-  ~TileImages2D3D(){};
-
-  static Self * New( itktools::ComponentType componentType )
+  static Self * New( itk::ImageIOBase::IOComponentType componentType )
   {
-    if ( itktools::IsType<TComponentType>( componentType ) )
+    if( itktools::IsType<TComponentType>( componentType ) )
     {
       return new Self;
     }
     return 0;
   }
 
+  ITKToolsTileImages2D3D(){};
+  ~ITKToolsTileImages2D3D(){};
+
+  /** Run function. */
   void Run( void )
   {
     /** Define image type. */
@@ -53,16 +92,15 @@ public:
     reader->SetFileNames( this->m_InputFileNames );
 
     /** Update the reader. */
-    std::cout << "Input images are read..." << std::endl;
     reader->Update();
-    std::cout << "Reading done." << std::endl;
     typename ImageType::Pointer tiledImage = reader->GetOutput();
 
     /** Get and set the spacing, if it was set by the user. */
-    if ( this->m_Zspacing > 0.0 )
+    if( this->m_Zspacing > 0.0 )
     {
-      /** Make sure that changes are not undone */
+      /** Make sure that changes are not undone. */
       tiledImage->DisconnectPipeline();
+
       /** Set the zspacing */
       SpacingType spacing = tiledImage->GetSpacing();
       spacing[ 2 ] = this->m_Zspacing;
@@ -73,11 +111,11 @@ public:
     typename ImageWriterType::Pointer writer = ImageWriterType::New();
     writer->SetFileName( this->m_OutputFileName.c_str() );
     writer->SetInput( tiledImage );
-    std::cout << "Writing tiled image..." << std::endl;
     writer->Update();
-    std::cout << "Ready." << std::endl;
-  }
 
-}; // end TileImages2D3D
+  } // end Run()
+
+}; // end class ITKToolsTileImages2D3D
+
 
 #endif

@@ -34,7 +34,7 @@ public:
   inline TOutput operator()( const TInput1 & A, const TInput2 & B, const TInput3 & C)
   { 
     // A should be the output of the erosion, B the dilation, C the mask
-    if ( C > 0)
+    if( C > 0)
       {
       // inside the mask
       return static_cast<TOutput>(vcl_sqrt((double)A + this->m_Val));

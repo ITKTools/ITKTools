@@ -1,4 +1,21 @@
 /*=========================================================================
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
+/*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: itkSmoothingRecursiveGaussianImageFilter2.txx,v $
@@ -14,8 +31,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef _itkSmoothingRecursiveGaussianImageFilter2_txx
-#define _itkSmoothingRecursiveGaussianImageFilter2_txx
+#ifndef _itkSmoothingRecursiveGaussianImageFilter2_txx_
+#define _itkSmoothingRecursiveGaussianImageFilter2_txx_
 
 #include "itkSmoothingRecursiveGaussianImageFilter2.h"
 #include "itkImageRegionIteratorWithIndex.h"
@@ -43,7 +60,7 @@ SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
   this->m_FirstSmoothingFilter->ReleaseDataFlagOn();
 
   /** Setup the remaining smoothing filters. */
-  for ( unsigned int i = 0; i < ImageDimension - 1; i++ )
+  for( unsigned int i = 0; i < ImageDimension - 1; i++ )
   {
     this->m_SmoothingFilters[ i ] = InternalGaussianFilterType::New();
     this->m_SmoothingFilters[ i ]->SetOrder( InternalGaussianFilterType::ZeroOrder );
@@ -54,7 +71,7 @@ SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
 
   /** Connect the pipeline. */
   this->m_SmoothingFilters[ 0 ]->SetInput( this->m_FirstSmoothingFilter->GetOutput() );
-  for ( unsigned int i = 1; i < ImageDimension - 1; i++ )
+  for( unsigned int i = 1; i < ImageDimension - 1; i++ )
   {
     this->m_SmoothingFilters[ i ]->SetInput(
       this->m_SmoothingFilters[ i - 1 ]->GetOutput() );
@@ -94,14 +111,14 @@ void
 SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
 ::SetSigma( const SigmaType sigma )
 {
-  if ( this->m_Sigma != sigma )
+  if( this->m_Sigma != sigma )
   {
     this->m_Sigma = sigma;
     this->Modified();
 
     /** Pass on the sigma. */
     this->m_FirstSmoothingFilter->SetSigma( sigma[ 0 ] );
-    for ( unsigned int i = 0; i < ImageDimension - 1; i++ )
+    for( unsigned int i = 0; i < ImageDimension - 1; i++ )
     {
       this->m_SmoothingFilters[ i ]->SetSigma( sigma[ i + 1 ] );
     }
@@ -118,7 +135,7 @@ void
 SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
 ::SetNormalizeAcrossScale( const bool arg )
 {
-  if ( this->m_NormalizeAcrossScale != arg )
+  if( this->m_NormalizeAcrossScale != arg )
   {
     this->m_NormalizeAcrossScale = arg;
     this->Modified();
@@ -156,38 +173,38 @@ void
 SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
 ::SetOrder( const OrderType order )
 {
-  if ( this->m_Order != order )
+  if( this->m_Order != order )
   {
     this->m_Order = order;
     this->Modified();
 
     /** Set the order for the first smoothing filter. */
-    if ( order[ 0 ] == 0 )
+    if( order[ 0 ] == 0 )
     {
       this->m_FirstSmoothingFilter->SetOrder( FirstGaussianFilterType::ZeroOrder );
     }
-    else if ( order[ 0 ] == 1 )
+    else if( order[ 0 ] == 1 )
     {
       this->m_FirstSmoothingFilter->SetOrder( FirstGaussianFilterType::FirstOrder );
     }
-    else if ( order[ 0 ] == 2 )
+    else if( order[ 0 ] == 2 )
     {
       this->m_FirstSmoothingFilter->SetOrder( FirstGaussianFilterType::SecondOrder );
     }
     //else warning??
 
     /** Set the order for the last smoothing filters. */
-    for ( unsigned int i = 0; i < ImageDimension - 1; i++ )
+    for( unsigned int i = 0; i < ImageDimension - 1; i++ )
     {
-      if ( order[ i + 1 ] == 0 )
+      if( order[ i + 1 ] == 0 )
       {
         this->m_SmoothingFilters[ i ]->SetOrder( InternalGaussianFilterType::ZeroOrder );
       }
-      else if ( order[ i + 1 ] == 1 )
+      else if( order[ i + 1 ] == 1 )
       {
         this->m_SmoothingFilters[ i ]->SetOrder( InternalGaussianFilterType::FirstOrder );
       }
-      else if ( order[ i + 1 ] == 2 )
+      else if( order[ i + 1 ] == 2 )
       {
         this->m_SmoothingFilters[ i ]->SetOrder( InternalGaussianFilterType::SecondOrder );
       }
@@ -231,7 +248,7 @@ SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
 {
   TOutputImage *out = dynamic_cast<TOutputImage*>(output);
 
-  if (out)
+  if(out)
     {
     out->SetRequestedRegion( out->GetLargestPossibleRegion() );
     }
@@ -270,7 +287,7 @@ SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage >
   // equal weight proportion
   for( unsigned int i = 0; i<ImageDimension-1; i++ )
     {
-    progress->RegisterInternalFilter( this->m_SmoothingFilters[i],1.0 / (ImageDimension));
+    progress->RegisterInternalFilter( this->m_SmoothingFilters[ i ],1.0 / (ImageDimension));
     }
 
   progress->RegisterInternalFilter( this->m_FirstSmoothingFilter,1.0 / (ImageDimension));

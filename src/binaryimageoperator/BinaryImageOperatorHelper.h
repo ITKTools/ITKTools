@@ -15,8 +15,8 @@
 * limitations under the License.
 *
 *=========================================================================*/
-#ifndef __BinaryImageOperatorHelper_h
-#define __BinaryImageOperatorHelper_h
+#ifndef __BinaryImageOperatorHelper_h_
+#define __BinaryImageOperatorHelper_h_
 
 #include "itkImage.h"
 #include "itkBinaryFunctors.h"
@@ -27,13 +27,16 @@
 #include <vector>
 #include <itksys/SystemTools.hxx>
 
-//-------------------------------------------------------------------------------------
+/** \class ITKToolsBinaryImageOperatorBase
+ *
+ * Untemplated pure virtual base class that holds
+ * the Run() function and all required parameters.
+ */
 
-
-/** ITKToolsBinaryImageOperator */
 class ITKToolsBinaryImageOperatorBase : public itktools::ITKToolsBase
 {
 public:
+  /** Constructor. */
   ITKToolsBinaryImageOperatorBase()
   {
     this->m_InputFileName1 = "";
@@ -43,9 +46,10 @@ public:
     this->m_UseCompression = false;
     this->m_Arg = "";
   }
+  /** Destructor. */
   ~ITKToolsBinaryImageOperatorBase(){};
 
-  /** Input parameters */
+  /** Input member parameters. */
   std::string m_InputFileName1;
   std::string m_InputFileName2;
   std::string m_OutputFileName;
@@ -53,39 +57,34 @@ public:
   bool m_UseCompression;
   std::string m_Arg;
 
-  virtual void Run( void ) = 0;
-
-}; // end ITKToolsBinaryImageOperatorBase
+}; // end class ITKToolsBinaryImageOperatorBase
 
 
-template< class TComponentType1, class TComponentType2, class TComponentTypeOut, unsigned int VDimension >
+/** \class ITKToolsBinaryImageOperator
+ *
+ * Templated class that implements the Run() function
+ * and the New() function for its creation.
+ */
+
+template< unsigned int VDimension, class TInputComponentType1,
+  class TInputComponentType2, class TOutputComponentType >
 class ITKToolsBinaryImageOperator : public ITKToolsBinaryImageOperatorBase
 {
 public:
+  /** Standard ITKTools stuff. */
   typedef ITKToolsBinaryImageOperator Self;
+  itktoolsThreeTypeNewMacro( Self );
 
   ITKToolsBinaryImageOperator(){};
   ~ITKToolsBinaryImageOperator(){};
 
-  static Self * New( itktools::ComponentType componentType1,
-    itktools::ComponentType componentType2,
-    itktools::ComponentType componentTypeOut, unsigned int dim )
-  {
-    if ( itktools::IsType<TComponentType1>( componentType1 ) &&
-      itktools::IsType<TComponentType2>( componentType2 ) &&
-      itktools::IsType<TComponentTypeOut>( componentTypeOut ) && VDimension == dim )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
+  /** Run function. */
   void Run( void )
   {
     /** Typedefs. */
-    typedef itk::Image<TComponentType1, VDimension>     InputImage1Type;
-    typedef itk::Image<TComponentType2, VDimension>     InputImage2Type;
-    typedef itk::Image<TComponentTypeOut, VDimension>   OutputImageType;
+    typedef itk::Image<TInputComponentType1, VDimension>  InputImage1Type;
+    typedef itk::Image<TInputComponentType2, VDimension>  InputImage2Type;
+    typedef itk::Image<TOutputComponentType, VDimension>  OutputImageType;
 
     typedef typename InputImage1Type::PixelType         InputPixel1Type;
     typedef typename InputImage2Type::PixelType         InputPixel2Type;
@@ -153,74 +152,74 @@ public:
 
     /** Set up the binaryFilter. */
     typename BaseFilterType::Pointer binaryFilter = 0;
-    if ( binaryOperatorName == "ADDITION" )
+    if( binaryOperatorName == "ADDITION" )
     {
       typename ADDITIONFilterType::Pointer tempBinaryFilter = ADDITIONFilterType::New();
       binaryFilter = tempBinaryFilter.GetPointer();
     }
-    else if ( binaryOperatorName == "MINUS" )
+    else if( binaryOperatorName == "MINUS" )
     {
       typename MINUSFilterType::Pointer tempBinaryFilter = MINUSFilterType::New();
       binaryFilter = tempBinaryFilter.GetPointer();
     }
-    else if ( binaryOperatorName == "TIMES" )
+    else if( binaryOperatorName == "TIMES" )
     {
       typename TIMESFilterType::Pointer tempBinaryFilter = TIMESFilterType::New();
       binaryFilter = tempBinaryFilter.GetPointer();
     }
-    else if ( binaryOperatorName == "DIVIDE" )
+    else if( binaryOperatorName == "DIVIDE" )
     {
       typename DIVIDEFilterType::Pointer tempBinaryFilter = DIVIDEFilterType::New();
       binaryFilter = tempBinaryFilter.GetPointer();
     }
-    else if ( binaryOperatorName == "POWER" )
+    else if( binaryOperatorName == "POWER" )
     {
       typename POWERFilterType::Pointer tempBinaryFilter = POWERFilterType::New();
       binaryFilter = tempBinaryFilter.GetPointer();
     }
-    else if ( binaryOperatorName == "MAXIMUM" )
+    else if( binaryOperatorName == "MAXIMUM" )
     {
       typename MAXIMUMFilterType::Pointer tempBinaryFilter = MAXIMUMFilterType::New();
       binaryFilter = tempBinaryFilter.GetPointer();
     }
-    else if ( binaryOperatorName == "MINIMUM" )
+    else if( binaryOperatorName == "MINIMUM" )
     {
       typename MINIMUMFilterType::Pointer tempBinaryFilter = MINIMUMFilterType::New();
       binaryFilter = tempBinaryFilter.GetPointer();
     }
-    else if ( binaryOperatorName == "ABSOLUTEDIFFERENCE" )
+    else if( binaryOperatorName == "ABSOLUTEDIFFERENCE" )
     {
       typename ABSOLUTEDIFFERENCEFilterType::Pointer tempBinaryFilter = ABSOLUTEDIFFERENCEFilterType::New();
       binaryFilter = tempBinaryFilter.GetPointer();
     }
-    else if ( binaryOperatorName == "SQUAREDDIFFERENCE" )
+    else if( binaryOperatorName == "SQUAREDDIFFERENCE" )
     {
       typename SQUAREDDIFFERENCEFilterType::Pointer tempBinaryFilter = SQUAREDDIFFERENCEFilterType::New();
       binaryFilter = tempBinaryFilter.GetPointer();
     }
-    else if ( binaryOperatorName == "BINARYMAGNITUDE" )
+    else if( binaryOperatorName == "BINARYMAGNITUDE" )
     {
       typename BINARYMAGNITUDEFilterType::Pointer tempBinaryFilter = BINARYMAGNITUDEFilterType::New();
       binaryFilter = tempBinaryFilter.GetPointer();
     }
-    else if ( binaryOperatorName == "LOG" )
+    else if( binaryOperatorName == "LOG" )
     {
       typename LOGFilterType::Pointer tempBinaryFilter = LOGFilterType::New();
       binaryFilter = tempBinaryFilter.GetPointer();
     }
-    else if ( binaryOperatorName == "WEIGHTEDADDITION" )
+    else if( binaryOperatorName == "WEIGHTEDADDITION" )
     {
       typename WEIGHTEDADDITIONFilterType::Pointer tempBinaryFilter = WEIGHTEDADDITIONFilterType::New();
       tempBinaryFilter->GetFunctor().SetArgument( argument );
       binaryFilter = tempBinaryFilter.GetPointer();
     }
-    else if ( binaryOperatorName == "MASK" )
+    else if( binaryOperatorName == "MASK" )
     {
       typename MASKFilterType::Pointer tempBinaryFilter = MASKFilterType::New();
       tempBinaryFilter->GetFunctor().SetArgument( argument );
       binaryFilter = tempBinaryFilter.GetPointer();
     }
-    else if ( binaryOperatorName == "MASKNEGATED" )
+    else if( binaryOperatorName == "MASKNEGATED" )
     {
       typename MASKNEGATEDFilterType::Pointer tempBinaryFilter = MASKNEGATEDFilterType::New();
       tempBinaryFilter->GetFunctor().SetArgument( argument );
@@ -237,9 +236,10 @@ public:
     writer->SetInput( binaryFilter->GetOutput() );
     writer->SetUseCompression( this->m_UseCompression );
     writer->Update();
-  }
+
+  } // end Run()
 
 }; // end ITKToolsBinaryImageOperator
 
 
-#endif //#ifndef __BinaryImageOperatorHelper_h
+#endif //#ifndef __BinaryImageOperatorHelper_h_

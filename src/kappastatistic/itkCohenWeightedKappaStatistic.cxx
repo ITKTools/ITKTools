@@ -24,7 +24,7 @@ bool CohenWeightedKappaStatistic
 ::CheckObservations( const SamplesType & observations ) const
 {
   bool check = Superclass::CheckObservations( observations );
-  if ( observations.size() != 2 ) return false;
+  if( observations.size() != 2 ) return false;
   return check;
 } // end CheckObservations()
 
@@ -38,9 +38,9 @@ bool CohenWeightedKappaStatistic
 {
   /** Check that the weights are a square matrix. */
   unsigned int size = weights.size();
-  for ( unsigned int i = 0; i < size; ++i )
+  for( unsigned int i = 0; i < size; ++i )
   {
-    if ( weights[ i ].size() != size ) return false;
+    if( weights[ i ].size() != size ) return false;
   }
   return true;
 } // end CheckWeights()
@@ -54,7 +54,7 @@ void CohenWeightedKappaStatistic
 ::SetWeights( const WeightsType & weights )
 {
   bool check = CheckWeights( weights );
-  if ( check )
+  if( check )
   {
     this->Modified();
     this->m_Weights = weights;
@@ -82,7 +82,7 @@ void CohenWeightedKappaStatistic
 void CohenWeightedKappaStatistic
 ::SetWeights( const std::string & weights )
 {
-  if ( weights == "linear" || weights == "quadratic"
+  if( weights == "linear" || weights == "quadratic"
     || weights == "equal" || weights == "identity" )
   {
     this->Modified();
@@ -113,7 +113,7 @@ void CohenWeightedKappaStatistic
   /** Construct the weights matrix. */
   this->m_Weights.resize( 0 );
   this->m_Weights.resize( k );
-  for ( unsigned int i = 0; i < k; ++i )
+  for( unsigned int i = 0; i < k; ++i )
   {
     this->m_Weights[ i ].resize( k, 0 );
   }
@@ -124,24 +124,24 @@ void CohenWeightedKappaStatistic
    * linear:    1 - | i - j | / ( k - 1 )
    * quadratic: 1 - [ (i - j ) / ( k - 1 ) ]^2
    */
-  for ( unsigned int i = 0; i < k; ++i )
+  for( unsigned int i = 0; i < k; ++i )
   {
-    for ( unsigned int j = 0; j < k; ++j )
+    for( unsigned int j = 0; j < k; ++j )
     {
-      if ( weights == "equal" )
+      if( weights == "equal" )
       {
         this->m_Weights[ i ][ j ] = 1.0;
       }
-      else if ( weights == "identity" )
+      else if( weights == "identity" )
       {
-        if ( i == j ) this->m_Weights[ i ][ j ] = 1.0;
+        if( i == j ) this->m_Weights[ i ][ j ] = 1.0;
         else this->m_Weights[ i ][ j ] = 0.0;
       }
-      else if ( weights == "linear" )
+      else if( weights == "linear" )
       {
         this->m_Weights[ i ][ j ] = 1.0 - vcl_abs( static_cast<float>( i - j ) ) / ( k - 1.0 );
       }
-      else if ( weights == "quadratic" )
+      else if( weights == "quadratic" )
       {
         this->m_Weights[ i ][ j ] = 1.0 - vnl_math_sqr( ( i - j ) / ( k - 1.0 ) );
       }
@@ -178,7 +178,7 @@ void CohenWeightedKappaStatistic
   /** Construct the confusion matrix. */
   this->m_ConfusionMatrix.resize( 0 );
   this->m_ConfusionMatrix.resize( k );
-  for ( unsigned int i = 0; i < k; ++i )
+  for( unsigned int i = 0; i < k; ++i )
   {
     this->m_ConfusionMatrix[ i ].resize( k, 0 );
   }
@@ -188,7 +188,7 @@ void CohenWeightedKappaStatistic
    * and observer 2 in category j.
    * We loop over the observations, and increase the correct bin.
    */
-  for ( unsigned int i = 0; i < N; ++i )
+  for( unsigned int i = 0; i < N; ++i )
   {
     unsigned int ind0 = this->m_Indices[ this->m_Observations[ 0 ][ i ] ];
     unsigned int ind1 = this->m_Indices[ this->m_Observations[ 1 ][ i ] ];
@@ -213,7 +213,7 @@ void CohenWeightedKappaStatistic
   unsigned int k = this->GetNumberOfCategories();
 
   /** Check if the weights are set. */
-  if ( this->m_WeightsName == "" )
+  if( this->m_WeightsName == "" )
   {
     InvalidArgumentError exp(__FILE__, __LINE__);
     std::ostringstream message;
@@ -226,7 +226,7 @@ void CohenWeightedKappaStatistic
   }
 
   /** Compute the weights if only the weights name is set. */
-  if ( this->m_WeightsName != "user_defined" )
+  if( this->m_WeightsName != "user_defined" )
   {
     this->InitializeWeights( this->m_WeightsName, k );
   }
@@ -242,18 +242,18 @@ void CohenWeightedKappaStatistic
   std::vector< double > row( k, 0.0 );
   std::vector< double > col( k, 0.0 );
   Po = Pe = 0.0;
-  for ( unsigned int i = 0; i < k; ++i )
+  for( unsigned int i = 0; i < k; ++i )
   {
-    for ( unsigned int j = 0; j < k; ++j )
+    for( unsigned int j = 0; j < k; ++j )
     {
       row[ i ] += this->m_ConfusionMatrix[ i ][ j ];
       col[ j ] += this->m_ConfusionMatrix[ i ][ j ];
     }
   }
 
-  for ( unsigned int i = 0; i < k; ++i )
+  for( unsigned int i = 0; i < k; ++i )
   {
-    for ( unsigned int j = 0; j < k; ++j )
+    for( unsigned int j = 0; j < k; ++j )
     {
       Po += this->m_Weights[ i ][ j ] * this->m_ConfusionMatrix[ i ][ j ];
       Pe += this->m_Weights[ i ][ j ] * row[ i ] * col[ j ];
@@ -287,7 +287,7 @@ void CohenWeightedKappaStatistic
   unsigned int k = this->GetNumberOfCategories();
 
   /** Check if the weights are set. */
-  if ( this->m_WeightsName == "" )
+  if( this->m_WeightsName == "" )
   {
     InvalidArgumentError exp(__FILE__, __LINE__);
     std::ostringstream message;
@@ -300,7 +300,7 @@ void CohenWeightedKappaStatistic
   }
 
   /** Compute the weights if only the weights name is set. */
-  if ( this->m_WeightsName != "user_defined" )
+  if( this->m_WeightsName != "user_defined" )
   {
     this->InitializeWeights( this->m_WeightsName, k );
   }
@@ -318,18 +318,18 @@ void CohenWeightedKappaStatistic
   Po = Pe = kappa = std = 0.0;
   std::vector< double > barwi( k, 0.0 );
   std::vector< double > barwj( k, 0.0 );
-  for ( unsigned int i = 0; i < k; ++i )
+  for( unsigned int i = 0; i < k; ++i )
   {
-    for ( unsigned int j = 0; j < k; ++j )
+    for( unsigned int j = 0; j < k; ++j )
     {
       row[ i ] += this->m_ConfusionMatrix[ i ][ j ];
       col[ j ] += this->m_ConfusionMatrix[ i ][ j ];
     }
   }
 
-  for ( unsigned int i = 0; i < k; ++i )
+  for( unsigned int i = 0; i < k; ++i )
   {
-    for ( unsigned int j = 0; j < k; ++j )
+    for( unsigned int j = 0; j < k; ++j )
     {
       Po += this->m_Weights[ i ][ j ] * this->m_ConfusionMatrix[ i ][ j ];
       Pe += this->m_Weights[ i ][ j ] * row[ i ] * col[ j ];
@@ -350,11 +350,11 @@ void CohenWeightedKappaStatistic
 
   /** Compute the standard deviation. */
   double tmp = 0.0;
-  for ( unsigned int i = 0; i < k; ++i )
+  for( unsigned int i = 0; i < k; ++i )
   {
-    for ( unsigned int j = 0; j < k; ++j )
+    for( unsigned int j = 0; j < k; ++j )
     {
-      if ( compare )
+      if( compare )
       {
         tmp += this->m_ConfusionMatrix[ i ][ j ]
           * ( this->m_Weights[ i ][ j ] - ( barwi[ i ] + barwj[ j ] ) * ( 1.0 - kappa ) )
@@ -368,7 +368,7 @@ void CohenWeightedKappaStatistic
       }
     }
   }
-  if ( compare )
+  if( compare )
   {
     std = tmp / N;
     std -= ( kappa - Pe * ( 1.0 - kappa ) ) * ( kappa - Pe * ( 1.0 - kappa ) );
@@ -396,13 +396,13 @@ CohenWeightedKappaStatistic
 
   /** Print the confusion matrix. */
   unsigned int k = this->m_ConfusionMatrix.size();
-  if ( k > 0 )
+  if( k > 0 )
   {
     os << indent << "Confusion matrix:" << std::endl;
-    for ( unsigned int i = 0; i < k; ++i )
+    for( unsigned int i = 0; i < k; ++i )
     {
       os << indent;
-      for ( unsigned int j = 0; j < k; ++j )
+      for( unsigned int j = 0; j < k; ++j )
       {
         os << this->m_ConfusionMatrix[ i ][ j ] << " ";
       }
@@ -416,13 +416,13 @@ CohenWeightedKappaStatistic
 
   /** Print the weight matrix. */
   k = this->m_Weights.size();
-  if ( k > 0 )
+  if( k > 0 )
   {
     os << indent << "Weight matrix:" << std::endl;
-    for ( unsigned int i = 0; i < k; ++i )
+    for( unsigned int i = 0; i < k; ++i )
     {
       os << indent;
-      for ( unsigned int j = 0; j < k; ++j )
+      for( unsigned int j = 0; j < k; ++j )
       {
         os << this->m_Weights[ i ][ j ] << " ";
       }

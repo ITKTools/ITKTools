@@ -38,13 +38,13 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-  << "Usage:" << std::endl
-  << "pxgetdicominformation" << std::endl
-  << "  -in      inputDirectoryName" << std::endl
-  << "  [-s]     seriesUID" << std::endl
-  << "  [-r]     add restrictions to generate a unique seriesUID" << std::endl
-  << "           e.g. \"0020|0012\" to add a check for acquisition number." << std::endl
-  << "By default the first series encountered is used.";
+    << "Usage:\n"
+    << "pxgetdicominformation\n"
+    << "  -in      inputDirectoryName\n"
+    << "  [-s]     seriesUID\n"
+    << "  [-r]     add restrictions to generate a unique seriesUID\n"
+    << "           e.g. \"0020|0012\" to add a check for acquisition number.\n"
+    << "By default the first series encountered is used.";
 
   return ss.str();
 
@@ -83,7 +83,7 @@ int main( int argc, char **argv )
   /** Make sure last character of inputDirectoryName != "/".
    * Otherwise FileIsDirectory() won't work.
    */
-  if ( inputDirectoryName.rfind( "/" ) == inputDirectoryName.size() - 1 )
+  if( inputDirectoryName.rfind( "/" ) == inputDirectoryName.size() - 1 )
   {
     inputDirectoryName.erase( inputDirectoryName.size() - 1, 1 );
   }
@@ -92,11 +92,11 @@ int main( int argc, char **argv )
   bool exists = itksys::SystemTools::FileExists( inputDirectoryName.c_str() );
   bool isDir = itksys::SystemTools::FileIsDirectory( inputDirectoryName.c_str() );
   isDir &= exists;
-  if ( !isDir )
+  if( !isDir )
   {
     std::cerr << "ERROR: " << inputDirectoryName
       << " does not exist or is no directory." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   /** Some typedefs. */
@@ -112,7 +112,7 @@ int main( int argc, char **argv )
    */
   GDCMNamesGeneratorType::Pointer nameGenerator = GDCMNamesGeneratorType::New();
   nameGenerator->SetUseSeriesDetails( true );
-  for ( unsigned int i = 0; i < restrictions.size(); ++i )
+  for( unsigned int i = 0; i < restrictions.size(); ++i )
   {
     nameGenerator->AddSeriesRestriction( restrictions[ i ] );
   }
@@ -120,7 +120,7 @@ int main( int argc, char **argv )
 
   /** Generate the file names corresponding to the series. */
   FileNamesContainerType fileNames;
-  if ( seriesNumber == "" )
+  if( seriesNumber == "" )
   {
     fileNames = nameGenerator->GetInputFileNames();
   }
@@ -130,11 +130,11 @@ int main( int argc, char **argv )
   }
 
   /** Check if there is at least one dicom file in the directory. */
-  if ( !fileNames.size() )
+  if( !fileNames.size() )
   {
     std::cerr << "ERROR: no DICOM series in directory "
       << inputDirectoryName << "." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   /** Create a test reader. */
@@ -148,11 +148,11 @@ int main( int argc, char **argv )
   {
     testReader->GenerateOutputInformation();
   }
-  catch( itk::ExceptionObject  &  err  )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr  << "ExceptionObject caught !"  << std::endl;
-    std::cerr  << err <<  std::endl;
-    return 1;
+    std::cerr << "ExceptionObject caught !"  << std::endl;
+    std::cerr << excp <<  std::endl;
+    return EXIT_FAILURE;
   }
 
   /** Get general image information from the dicomIO. */
@@ -304,6 +304,6 @@ int main( int argc, char **argv )
   //  GetValueFromTag(const std::string &tag, std::string &value)
 
   /** End  program. Return success. */
-  return 0;
+  return EXIT_SUCCESS;
 
 }  // end main

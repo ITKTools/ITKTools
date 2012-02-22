@@ -21,7 +21,7 @@
  \verbinclude countnonzerovoxels.help
  */
 #include "itkCommandLineArgumentParser.h"
-#include "CommandLineArgumentHelper.h"
+#include "ITKToolsHelpers.h"
 
 #include "itkImageFileReader.h"
 #include "itkImageRegionConstIterator.h"
@@ -35,7 +35,7 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-    << "Usage:" << std::endl
+    << "Usage:\n"
     << "pxcountnonzerovoxels\n"
     << "  -in      inputFilename";
   return ss.str();
@@ -92,13 +92,13 @@ int main( int argc, char *argv[] )
     std::cerr << "ERROR: caught ITK exception while reading image "
       << inputFileName << "." << std::endl;
     std::cerr << excp << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   /** Get the spacing. */
   SpacingType sp = reader->GetOutput()->GetSpacing();
   double voxelVolume = 1.0;
-  for ( unsigned int i = 0; i < Dimension; i++ )
+  for( unsigned int i = 0; i < Dimension; i++ )
   {
     voxelVolume *= sp[ i ];
   }
@@ -112,7 +112,7 @@ int main( int argc, char *argv[] )
   /** Walk over the image. */
   while ( !it.IsAtEnd() )
   {
-    if ( it.Value() )
+    if( it.Value() )
     {
       counter++;
     }
@@ -124,6 +124,6 @@ int main( int argc, char *argv[] )
   std::cout << "volume: " << counter * voxelVolume / 1000.0 << std::endl;
 
   /** End program. Return a value. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main

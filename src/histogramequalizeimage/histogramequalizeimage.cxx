@@ -50,7 +50,7 @@ std::string GetHelpString( void )
 
 //-------------------------------------------------------------------------------------
 
-int main(int argc, char** argv)
+int main( int argc, char** argv )
 {
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
@@ -82,77 +82,56 @@ int main(int argc, char** argv)
   parser->GetCommandLineArgument( "-mask", maskFileName );
 
   /** Determine image properties. */
-  std::string componentTypeIn = "short";
-  std::string PixelType; //we don't use this
-  unsigned int Dimension = 2;
-  unsigned int numberOfComponents = 1;
-  std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = itktools::GetImageProperties(
-    inputFileName,
-    PixelType,
-    componentTypeIn,
-    Dimension,
-    numberOfComponents,
-    imagesize );
-  if ( retgip != 0 )
-  {
-    return 1;
-  }
-
-  itk::ImageIOBase::IOComponentType componentType
-    = itk::ImageIOBase::GetComponentTypeFromString( componentTypeIn );
+  itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
+  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  unsigned int dim = 0;
+  unsigned int numberOfComponents = 0;
+  bool retgip = itktools::GetImageProperties(
+    inputFileName, pixelType, componentType, dim, numberOfComponents );
+  if( !retgip ) return EXIT_FAILURE;
 
   /** Check for vector images. */
-  if ( numberOfComponents > 1 )
-  {
-    std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
-    std::cerr << "Vector images are not supported." << std::endl;
-    return 1;
-  }
+  bool retNOCCheck = itktools::NumberOfComponentsCheck( numberOfComponents );
+  if( !retNOCCheck ) return EXIT_FAILURE;
 
-  /** Class that does the work */
-  ITKToolsHistogramEqualizeImageBase * equalizer = NULL;
+  /** Class that does the work. */
+  ITKToolsHistogramEqualizeImageBase * filter = NULL;
 
   try
   {
-    if( !equalizer ) equalizer = ITKToolsHistogramEqualizeImage< char, 2 >::New( componentType, Dimension );
-    if( !equalizer ) equalizer = ITKToolsHistogramEqualizeImage< unsigned char, 2 >::New( componentType, Dimension );
-    if( !equalizer ) equalizer = ITKToolsHistogramEqualizeImage< short, 2 >::New( componentType, Dimension );
-    if( !equalizer ) equalizer = ITKToolsHistogramEqualizeImage< unsigned short, 2 >::New( componentType, Dimension );
-    if( !equalizer ) equalizer = ITKToolsHistogramEqualizeImage< int, 2 >::New( componentType, Dimension );
-    if( !equalizer ) equalizer = ITKToolsHistogramEqualizeImage< unsigned int, 2 >::New( componentType, Dimension );
+    if( !filter ) filter = ITKToolsHistogramEqualizeImage< 2, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsHistogramEqualizeImage< 2, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsHistogramEqualizeImage< 2, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsHistogramEqualizeImage< 2, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsHistogramEqualizeImage< 2, int >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsHistogramEqualizeImage< 2, unsigned int >::New( dim, componentType );
 
 #ifdef ITKTOOLS_3D_SUPPORT
-    if( !equalizer ) equalizer = ITKToolsHistogramEqualizeImage< char, 3 >::New( componentType, Dimension );
-    if( !equalizer ) equalizer = ITKToolsHistogramEqualizeImage< unsigned char, 3 >::New( componentType, Dimension );
-    if( !equalizer ) equalizer = ITKToolsHistogramEqualizeImage< short, 3 >::New( componentType, Dimension );
-    if( !equalizer ) equalizer = ITKToolsHistogramEqualizeImage< unsigned short, 3 >::New( componentType, Dimension );
-    if( !equalizer ) equalizer = ITKToolsHistogramEqualizeImage< int, 3 >::New( componentType, Dimension );
-    if( !equalizer ) equalizer = ITKToolsHistogramEqualizeImage< unsigned int, 3 >::New( componentType, Dimension );
+    if( !filter ) filter = ITKToolsHistogramEqualizeImage< 3, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsHistogramEqualizeImage< 3, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsHistogramEqualizeImage< 3, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsHistogramEqualizeImage< 3, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsHistogramEqualizeImage< 3, int >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsHistogramEqualizeImage< 3, unsigned int >::New( dim, componentType );
 #endif
-    if( !equalizer )
-    {
-      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-      std::cerr
-        << "pixel (component) type = " << componentTypeIn
-        << " ; dimension = " << Dimension
-        << std::endl;
-      return 1;
-    }
+    /** Check if filter was instantiated. */
+    bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
+    if( !supported ) return EXIT_FAILURE;
 
-    equalizer->m_InputFileName = inputFileName;
-    equalizer->m_OutputFileName = outputFileName;
-    equalizer->m_MaskFileName = maskFileName;
+    /** Set the filter arguments. */
+    filter->m_InputFileName = inputFileName;
+    filter->m_OutputFileName = outputFileName;
+    filter->m_MaskFileName = maskFileName;
 
-    equalizer->Run();
+    filter->Run();
 
-    delete equalizer;
+    delete filter;
   }
   catch( itk::ExceptionObject & excp )
   {
     std::cerr << "Caught ITK exception: " << excp << std::endl;
-    delete equalizer;
-    return 1;
+    delete filter;
+    return EXIT_FAILURE;
   }
 
   /** End program. */

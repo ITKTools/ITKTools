@@ -18,19 +18,11 @@
 /** \file
  \brief Perform PCA.
  
- \verbinclude pca.help
+ \verbinclude filter.help
  */
 #include "itkCommandLineArgumentParser.h"
 #include "ITKToolsHelpers.h"
-#include "ITKToolsBase.h"
-
-#include <itksys/SystemTools.hxx>
-#include <sstream>
-
-#include "itkPCAImageToImageFilter.h"
-
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
+#include "pca.h"
 
 
 /**
@@ -41,143 +33,17 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-  << "Usage:" << std::endl
-  << "pxpca" << std::endl
-  << "  -in      inputFilenames" << std::endl
-  << "  [-out]   outputDirectory, default equal to the inputFilename directory" << std::endl
-  << "  [-opc]   the number of principal components that you want to output, default all" << std::endl
-  << "  [-opct]  output pixel component type, default derived from the input image" << std::endl
-  << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
+    << "Usage:\n"
+    << "pxpca\n"
+    << "  -in      inputFilenames\n"
+    << "  [-out]   outputDirectory, default equal to the inputFilename directory\n"
+    << "  [-opc]   the number of principal components that you want to output, default all\n"
+    << "  [-opct]  output pixel component type, default derived from the input image\n"
+    << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
 
   return ss.str();
 
 } // end GetHelpString()
-
-
-/** PCA */
-
-class ITKToolsPCABase : public itktools::ITKToolsBase
-{ 
-public:
-  ITKToolsPCABase()
-  {
-    //std::vector< std::string > this->m_InputFileNames;
-    this->m_OutputDirectory = "";
-    this->m_NumberOfPCs = 0;
-  };
-  ~ITKToolsPCABase(){};
-
-  /** Input parameters */
-  std::vector< std::string > m_InputFileNames;
-  std::string m_OutputDirectory;
-  unsigned int m_NumberOfPCs;
-
-    
-}; // end ReplaceVoxelBase
-
-
-template< class TComponentType, unsigned int VDimension >
-class ITKToolsPCA : public ITKToolsPCABase
-{
-public:
-  typedef ITKToolsPCA Self;
-
-  ITKToolsPCA(){};
-  ~ITKToolsPCA(){};
-
-  static Self * New( itktools::ComponentType componentType, unsigned int dim )
-  {
-    if ( itktools::IsType<TComponentType>( componentType ) && VDimension == dim )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
-  void Run( void )
-  {
-    /** Typedefs. */
-    typedef itk::Image< TComponentType, VDimension >      OutputImageType;
-    typedef itk::Image< double, VDimension >              DoubleImageType;
-    typedef itk::PCAImageToImageFilter<
-      DoubleImageType, OutputImageType >                  PCAEstimatorType;
-    typedef typename PCAEstimatorType::VectorOfDoubleType VectorOfDoubleType;
-    typedef typename PCAEstimatorType::MatrixOfDoubleType MatrixOfDoubleType;
-    typedef itk::ImageFileReader< DoubleImageType >       ReaderType;
-    typedef typename ReaderType::Pointer                  ReaderPointer;
-    typedef itk::ImageFileWriter< OutputImageType >       WriterType;
-    typedef typename WriterType::Pointer                  WriterPointer;
-
-    /** Get some sizes. */
-    unsigned int noInputs = this->m_InputFileNames.size();
-
-    /** Create the PCA estimator. */
-    typename PCAEstimatorType::Pointer pcaEstimator = PCAEstimatorType::New();
-    pcaEstimator->SetNumberOfFeatureImages( noInputs );
-    pcaEstimator->SetNumberOfPrincipalComponentsRequired( this->m_NumberOfPCs );
-
-    /** For all inputs... */
-    std::vector<ReaderPointer> readers( noInputs );
-    for ( unsigned int i = 0; i < noInputs; ++i )
-    {
-      /** Read in the input images. */
-      readers[ i ] = ReaderType::New();
-      readers[ i ]->SetFileName( this->m_InputFileNames[ i ] );
-      readers[ i ]->Update();
-
-      /** Setup PCA estimator. */
-      pcaEstimator->SetInput( i, readers[ i ]->GetOutput() );
-    }
-
-    /** Do the PCA analysis. */
-    pcaEstimator->Update();
-
-    /** Get eigenvalues and vectors, and print it to screen. */
-    //pcaEstimator->Print( std::cout );
-    VectorOfDoubleType vec = pcaEstimator->GetEigenValues();
-    MatrixOfDoubleType mat = pcaEstimator->GetEigenVectors();
-
-    std::cout << "Eigenvalues: " << std::endl;
-    for ( unsigned int i = 0; i < vec.size(); ++i )
-    {
-      std::cout << vec[ i ] << " ";
-    }
-    std::cout << std::endl;
-
-    std::cout << "Eigenvectors: " << std::endl;
-    for ( unsigned int i = 0; i < vec.size(); ++i )
-    {
-      std::cout << mat.get_row( i ) << std::endl;
-    }
-
-    /** Setup and process the pipeline. */
-    unsigned int noo = pcaEstimator->GetNumberOfOutputs();
-    std::vector<WriterPointer> writers( noo );
-    for ( unsigned int i = 0; i < noo; ++i )
-    {
-      /** Create output filename. */
-      std::ostringstream makeFileName( "" );
-      makeFileName << this->m_OutputDirectory << "pc" << i << ".mhd";
-
-      /** Write principal components. */
-      writers[ i ] = WriterType::New();
-      writers[ i ]->SetFileName( makeFileName.str().c_str() );
-      writers[ i ]->SetInput( pcaEstimator->GetOutput( i ) );
-      writers[ i ]->Update();
-    }
-  }
-
-}; // end PCA
-
-//-------------------------------------------------------------------------------------
-
-/* Declare PerformPCA. */
-template< class OutputImageType >
-void PerformPCA(
-  const std::vector< std::string > & inputFileNames,
-  const std::string & outputDirectory,
-  unsigned int numberOfPCs );
-
 
 //-------------------------------------------------------------------------------------
 
@@ -206,107 +72,96 @@ int main( int argc, char **argv )
   parser->GetCommandLineArgument( "-in", inputFileNames );
 
   std::string base = itksys::SystemTools::GetFilenamePath( inputFileNames[ 0 ] );
-  if ( base != "" ) base = base + "/";
+  if( base != "" ) base = base + "/";
   std::string outputDirectory = base;
   parser->GetCommandLineArgument( "-out", outputDirectory );
   bool endslash = itksys::SystemTools::StringEndsWith( outputDirectory.c_str(), "/" );
-  if ( !endslash ) outputDirectory += "/";
+  if( !endslash ) outputDirectory += "/";
 
   unsigned int numberOfPCs = inputFileNames.size();
   parser->GetCommandLineArgument( "-npc", numberOfPCs );
 
   std::string componentTypeString = "";
-  bool retpt = parser->GetCommandLineArgument( "-opct", componentTypeString );
+  bool retopct = parser->GetCommandLineArgument( "-opct", componentTypeString );
 
   /** Check that numberOfOutputs <= numberOfInputs. */
-  if ( numberOfPCs > inputFileNames.size() )
+  if( numberOfPCs > inputFileNames.size() )
   {
     std::cerr << "ERROR: you should specify less than " << inputFileNames.size() << " output pc's." << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
+  /** Determine image properties. */
+  itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
+  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  unsigned int dim = 0;
   unsigned int numberOfComponents = 0;
-  itktools::GetImageNumberOfComponents(inputFileNames[0], numberOfComponents);
+  bool retgip = itktools::GetImageProperties(
+    inputFileNames[ 0 ], pixelType, componentType, dim, numberOfComponents );
+  if( !retgip ) return EXIT_FAILURE;
+
   /** Check for vector images. */
-  if ( numberOfComponents > 1 )
-  {
-    std::cerr << "ERROR: The NumberOfComponents is larger than 1!" << std::endl;
-    std::cerr << "Vector images are not supported." << std::endl;
-    return 1;
-  }
+  bool retNOCCheck = itktools::NumberOfComponentsCheck( numberOfComponents );
+  if( !retNOCCheck ) return EXIT_FAILURE;
 
   /** The default output is equal to the input, but can be overridden by
-   * specifying -pt in the command line.
+   * specifying -opct in the command line.
    */
-  
-  itktools::ComponentType componentType = itktools::GetImageComponentType(inputFileNames[0]);
- 
-  if ( !retpt ) 
+  if( retopct )
   {
     componentType = itk::ImageIOBase::GetComponentTypeFromString( componentTypeString );
   }
-  
-  /** Class that does the work */
-  ITKToolsPCABase * pca = 0; 
 
-  unsigned int imageDimension = 0;
-  itktools::GetImageDimension(inputFileNames[0], imageDimension);
-  
-  std::cout << "Internal image component type: " << 
-    itk::ImageIOBase::GetComponentTypeAsString( componentType ) << std::endl;
+  /** Class that does the work. */
+  ITKToolsPCABase * filter = 0; 
 
   try
   {    
     // now call all possible template combinations.
-    if (!pca) pca = ITKToolsPCA< unsigned char, 2 >::New( componentType, imageDimension );
-    if (!pca) pca = ITKToolsPCA< char, 2 >::New( componentType, imageDimension );
-    if (!pca) pca = ITKToolsPCA< unsigned short, 2 >::New( componentType, imageDimension );
-    if (!pca) pca = ITKToolsPCA< short, 2 >::New( componentType, imageDimension );
-    if (!pca) pca = ITKToolsPCA< unsigned int, 2 >::New( componentType, imageDimension );
-    if (!pca) pca = ITKToolsPCA< int, 2 >::New( componentType, imageDimension );
-    if (!pca) pca = ITKToolsPCA< unsigned long, 2 >::New( componentType, imageDimension );
-    if (!pca) pca = ITKToolsPCA< long, 2 >::New( componentType, imageDimension );
-    if (!pca) pca = ITKToolsPCA< float, 2 >::New( componentType, imageDimension );
-    if (!pca) pca = ITKToolsPCA< double, 2 >::New( componentType, imageDimension );
-#ifdef ITKTOOLS_3D_SUPPORT
-    if (!pca) pca = ITKToolsPCA< unsigned char, 3 >::New( componentType, imageDimension );
-    if (!pca) pca = ITKToolsPCA< char, 3 >::New( componentType, imageDimension );
-    if (!pca) pca = ITKToolsPCA< unsigned short, 3 >::New( componentType, imageDimension );
-    if (!pca) pca = ITKToolsPCA< short, 3 >::New( componentType, imageDimension );
-    if (!pca) pca = ITKToolsPCA< unsigned int, 3 >::New( componentType, imageDimension );
-    if (!pca) pca = ITKToolsPCA< int, 3 >::New( componentType, imageDimension );
-    if (!pca) pca = ITKToolsPCA< unsigned long, 3 >::New( componentType, imageDimension );
-    if (!pca) pca = ITKToolsPCA< long, 3 >::New( componentType, imageDimension );
-    if (!pca) pca = ITKToolsPCA< float, 3 >::New( componentType, imageDimension );
-    if (!pca) pca = ITKToolsPCA< double, 3 >::New( componentType, imageDimension );
-#endif
-    if (!pca) 
-    {
-      std::cerr << "ERROR: this combination of pixeltype and dimension is not supported!" << std::endl;
-      std::cerr
-        << "pixel (component) type = " << componentType
-        << " ; dimension = " << imageDimension
-        << std::endl;
-      return 1;
-    }
+    if( !filter ) filter = ITKToolsPCA< 2, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsPCA< 2, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsPCA< 2, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsPCA< 2, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsPCA< 2, unsigned int >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsPCA< 2, int >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsPCA< 2, unsigned long >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsPCA< 2, long >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsPCA< 2, float >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsPCA< 2, double >::New( dim, componentType );
 
-    pca->m_InputFileNames = inputFileNames;
-    pca->m_OutputDirectory = outputDirectory;
-    pca->m_NumberOfPCs = numberOfPCs;
+#ifdef ITKTOOLS_3D_SUPPORT
+    if( !filter ) filter = ITKToolsPCA< 3, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsPCA< 3, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsPCA< 3, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsPCA< 3, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsPCA< 3, unsigned int >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsPCA< 3, int >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsPCA< 3, unsigned long >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsPCA< 3, long >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsPCA< 3, float >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsPCA< 3, double >::New( dim, componentType );
+#endif
+    /** Check if filter was instantiated. */
+    bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
+    if( !supported ) return EXIT_FAILURE;
+
+    /** Set the filter arguments. */
+    filter->m_InputFileNames = inputFileNames;
+    filter->m_OutputDirectory = outputDirectory;
+    filter->m_NumberOfPCs = numberOfPCs;
     
-    pca->Run();
+    filter->Run();
     
-    delete pca;  
+    delete filter;  
   }
-  catch( itk::ExceptionObject &e )
+  catch( itk::ExceptionObject & excp )
   {
-    std::cerr << "Caught ITK exception: " << e << std::endl;
-    delete pca;
-    return 1;
+    std::cerr << "ERROR: Caught ITK exception: " << excp << std::endl;
+    delete filter;
+    return EXIT_FAILURE;
   }
 
   /** End program. */
-  return 0;
+  return EXIT_SUCCESS;
 
 } // end main()
-

@@ -15,8 +15,8 @@
 * limitations under the License.
 *
 *=========================================================================*/
-#ifndef __castconverthelpers_h__
-#define __castconverthelpers_h__
+#ifndef __castconverthelpers_h_
+#define __castconverthelpers_h_
 
 #include "ITKToolsBase.h"
 #include "ITKToolsHelpers.h"
@@ -44,14 +44,17 @@
 //#include "itkShiftScaleImageFilter.h"
 #include "itkVectorCastImageFilter.h"
 
-/**
- * \class ITKToolsCastConvertBase
- * \brief Base class for all castconverters.
+
+/** \class ITKToolsCastConvertBase
+ *
+ * Untemplated pure virtual base class that holds
+ * the Run() function and all required parameters.
  */
 
 class ITKToolsCastConvertBase : public itktools::ITKToolsBase
 {
 public:
+  /** Constructor. */
   ITKToolsCastConvertBase()
   {
     this->m_InputFileName = "";
@@ -61,9 +64,10 @@ public:
     this->m_InputDirectoryName = "";
     this->m_DICOMSeriesUID = "";
   };
+  /** Destructor. */
   ~ITKToolsCastConvertBase(){};
 
-  /** Input parameters */
+  /** Input member parameters. */
   std::string m_InputFileName;
   std::string m_OutputFileName;
   bool m_UseCompression;
@@ -76,37 +80,30 @@ public:
 }; // end class ITKToolsCastConvertBase
 
 
-/**
- * \class ITKToolsCastConvert
- * \brief Class that castconverts "normal" images.
+/** \class ITKToolsCastConvert
+ *
+ * Templated class that implements the Run() function
+ * and the New() function for its creation.
  */
 
-template< class TOutputComponentType, unsigned int VDimension >
+template< unsigned int VDimension, class TComponentType >
 class ITKToolsCastConvert : public ITKToolsCastConvertBase
 {
 public:
+  /** Standard ITKTools stuff. */
   typedef ITKToolsCastConvert Self;
+  itktoolsOneTypeNewMacro( Self );
 
   ITKToolsCastConvert(){};
   ~ITKToolsCastConvert(){};
 
-  static Self * New( itktools::ComponentType outputComponentType, unsigned int dim )
-  {
-    if ( itktools::IsType<TOutputComponentType>( outputComponentType ) && VDimension == dim )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
+  /** Run function. */
   void Run( void )
   {
-    typedef itk::VectorImage<double, VDimension>                InputVectorImageType;
-    typedef itk::VectorImage<TOutputComponentType, VDimension>  OutputVectorImageType;
-
-    typedef itk::Image<double, VDimension>                      InputScalarImageType;
-    typedef itk::Image<TOutputComponentType, VDimension>        OutputScalarImageType;
-
+    typedef itk::VectorImage< double, VDimension >              InputVectorImageType;
+    typedef itk::VectorImage< TComponentType, VDimension >      OutputVectorImageType;
+    typedef itk::Image< double, VDimension >                    InputScalarImageType;
+    typedef itk::Image< TComponentType, VDimension >            OutputScalarImageType;
     typedef typename itk::ImageFileReader< InputVectorImageType >     ImageReaderType;
     typedef typename itk::ImageFileWriter< OutputVectorImageType >    ImageWriterType;
 
@@ -116,18 +113,21 @@ public:
     reader->Update();
 
     // Create the disassembler
-    typedef itk::VectorIndexSelectionCastImageFilter<InputVectorImageType, InputScalarImageType> IndexSelectionType;
-    typename IndexSelectionType::Pointer indexSelectionFilter = IndexSelectionType::New();
+    typedef itk::VectorIndexSelectionCastImageFilter<
+      InputVectorImageType, InputScalarImageType >        IndexSelectionType;
+    typename IndexSelectionType::Pointer indexSelectionFilter
+      = IndexSelectionType::New();
     indexSelectionFilter->SetInput( reader->GetOutput() );
 
     // Create the re-assembler
-    typedef itk::ImageToVectorImageFilter<OutputScalarImageType> ImageToVectorImageFilterType;
-    typename ImageToVectorImageFilterType::Pointer imageToVectorImageFilter = ImageToVectorImageFilterType::New();
+    typedef itk::ImageToVectorImageFilter< OutputScalarImageType > ImageToVectorImageFilterType;
+    typename ImageToVectorImageFilterType::Pointer imageToVectorImageFilter
+      = ImageToVectorImageFilterType::New();
 
-    typedef itk::CastImageFilter<InputVectorImageType, OutputVectorImageType> CastImageFilterType;
+    typedef itk::CastImageFilter< InputVectorImageType, OutputVectorImageType > CastImageFilterType;
     typename CastImageFilterType::Pointer castImageFilter = CastImageFilterType::New();
     
-    castImageFilter->SetInput(reader->GetOutput());
+    castImageFilter->SetInput( reader->GetOutput() );
     castImageFilter->Update();
 
     typename ImageWriterType::Pointer writer = ImageWriterType::New();
@@ -140,34 +140,30 @@ public:
 
 }; // end class ITKToolsCastConvert
 
-/**
- * \class ITKToolsCastConvertDICOM
- * \brief Class that castconverts DICOM images.
+
+/** \class ITKToolsCastConvertDICOM
+ *
+ * Templated class that implements the Run() function
+ * and the New() function for its creation.
  */
 
-template< class TOutputComponentType, unsigned int VDimension >
+template< unsigned int VDimension, class TComponentType >
 class ITKToolsCastConvertDICOM : public ITKToolsCastConvertBase
 {
 public:
+  /** Standard ITKTools stuff. */
   typedef ITKToolsCastConvertDICOM Self;
+  itktoolsOneTypeNewMacro( Self );
 
   ITKToolsCastConvertDICOM(){};
   ~ITKToolsCastConvertDICOM(){};
 
-  static Self * New( itktools::ComponentType outputComponentType, unsigned int dim )
-  {
-    if ( itktools::IsType<TOutputComponentType>( outputComponentType ) && VDimension == dim )
-    {
-      return new Self;
-    }
-    return 0;
-  }
-
+  /** Run function. */
   virtual void Run( void )
   {
     /** Typedef the correct reader, caster and writer. */
-    typedef itk::Image< double, VDimension >                      InputScalarImageType;
-    typedef itk::Image< TOutputComponentType, VDimension >        OutputScalarImageType;
+    typedef itk::Image< double, VDimension >                          InputScalarImageType;
+    typedef itk::Image< TComponentType, VDimension >                  OutputScalarImageType;
 
     typedef typename itk::ImageSeriesReader< InputScalarImageType >   SeriesReaderType;
     typedef typename itk::CastImageFilter<
@@ -185,7 +181,7 @@ public:
     /** Get a list of the filenames of the 2D input DICOM images. */
     GDCMNamesGeneratorType::Pointer nameGenerator = GDCMNamesGeneratorType::New();
     nameGenerator->SetUseSeriesDetails( true );
-    for ( unsigned int i = 0; i < this->m_DICOMSeriesRestrictions.size(); ++i )
+    for( unsigned int i = 0; i < this->m_DICOMSeriesRestrictions.size(); ++i )
     {
       nameGenerator->AddSeriesRestriction( this->m_DICOMSeriesRestrictions[ i ] );
     }
@@ -210,89 +206,9 @@ public:
     /**  Do the actual  conversion.  */
     writer->Update();
 
-    /**  Print  information. */
-    //PrintInfo( seriesReader, writer );
-
   } // end Run()
 
 }; // end class ITKToolsCastConvertDICOM
 
 
-
-///----------------------------------------
-
-
-
-
-// BELOW IS NOT USED
-
-
-
-
-/** Print image information from the reader and the writer. */
-template< class ReaderType, class WriterType >
-void
-PrintInfo( ReaderType reader, WriterType writer )
-{
-  /** Typedef's. */
-  typedef itk::ImageIOBase                        ImageIOBaseType;
-  typedef itk::ImageIORegion                      ImageIORegionType;
-  typedef typename ImageIORegionType::SizeType    SizeType;
-
-  /** Get IOBase of the reader and extract information. */
-  ImageIOBaseType::Pointer imageIOBaseIn = reader->GetImageIO();
-  ImageIORegionType iORegionIn = imageIOBaseIn->GetIORegion();
-
-  const char * fileNameIn = imageIOBaseIn->GetFileName();
-  std::string pixelTypeIn = imageIOBaseIn->GetPixelTypeAsString(
-    imageIOBaseIn->GetPixelType() );
-  unsigned int nocIn = imageIOBaseIn->GetNumberOfComponents();
-  std::string componentTypeIn = imageIOBaseIn->GetComponentTypeAsString(
-    imageIOBaseIn->GetComponentType() );
-  unsigned int dimensionIn = imageIOBaseIn->GetNumberOfDimensions();
-  SizeType sizeIn = iORegionIn.GetSize();
-
-  /** Get IOBase of the writer and extract information. */
-  ImageIOBaseType::Pointer imageIOBaseOut = writer->GetImageIO();
-  ImageIORegionType iORegionOut = imageIOBaseOut->GetIORegion();
-
-  const char * fileNameOut = imageIOBaseOut->GetFileName();
-  std::string pixelTypeOut = imageIOBaseOut->GetPixelTypeAsString(
-    imageIOBaseOut->GetPixelType() );
-  unsigned int nocOut = imageIOBaseOut->GetNumberOfComponents();
-  std::string componentTypeOut = imageIOBaseOut->GetComponentTypeAsString(
-    imageIOBaseOut->GetComponentType() );
-  unsigned int dimensionOut = imageIOBaseOut->GetNumberOfDimensions();
-  SizeType sizeOut = iORegionOut.GetSize();
-  std::string useCompression = "false";
-  if ( imageIOBaseOut->GetUseCompression() )
-  {
-    useCompression = "true";
-  }
-
-  /** Print information. */
-  std::cout << "Information about the input image \"" << fileNameIn << "\":\n";
-  std::cout << "\tdimension:\t\t" << dimensionIn << "\n";
-  std::cout << "\tpixel type:\t\t" << pixelTypeIn << "\n";
-  std::cout << "\tnumber of components:\t" << nocIn << "\n";
-  std::cout << "\tcomponent type:\t\t" << componentTypeIn << "\n";
-  std::cout << "\tsize:\t\t\t";
-  for ( unsigned int i = 0; i < dimensionIn; i++ ) std::cout << sizeIn[ i ] << " ";
-  std::cout << std::endl;
-
-  /** Print information. */
-  std::cout << std::endl;
-  std::cout << "Information about the output image \"" << fileNameOut << "\":\n";
-  std::cout << "\tdimension:\t\t" << dimensionOut << "\n";
-  std::cout << "\tpixel type:\t\t" << pixelTypeOut << "\n";
-  std::cout << "\tnumber of components:\t" << nocOut << "\n";
-  std::cout << "\tcomponent type:\t\t" << componentTypeOut << "\n";
-  std::cout << "\tuse compression:\t" << useCompression << "\n";
-  std::cout << "\tsize:\t\t\t";
-  for ( unsigned int i = 0; i < dimensionOut; i++ ) std::cout << sizeOut[ i ] << " ";
-  std::cout << std::endl;
-
-}  // end PrintInfo()
-
-
-#endif //__castconverthelpers_h__
+#endif //__castconverthelpers_h_

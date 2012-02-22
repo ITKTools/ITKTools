@@ -1,4 +1,21 @@
 /*=========================================================================
+*
+* Copyright Marius Staring, Stefan Klein, David Doria. 2011.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+*=========================================================================*/
+/*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: itkStatisticsImageFilterWithMask.txx,v $
@@ -14,8 +31,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-#ifndef _itkStatisticsImageFilter_txx
-#define _itkStatisticsImageFilter_txx
+#ifndef _itkStatisticsImageFilter_txx_
+#define _itkStatisticsImageFilter_txx_
 
 #include "itkStatisticsImageFilterWithMask.h"
 
@@ -198,7 +215,7 @@ StatisticsImageFilter<TInputImage>
 ::GenerateInputRequestedRegion()
 {
   Superclass::GenerateInputRequestedRegion();
-  if ( this->GetInput() )
+  if( this->GetInput() )
     {
     InputImagePointer image =
       const_cast< typename Superclass::InputImageType * >( this->GetInput() );
@@ -277,19 +294,19 @@ StatisticsImageFilter<TInputImage>
   // sum of squares
   minimum = NumericTraits<PixelType>::max();
   maximum = NumericTraits<PixelType>::NonpositiveMin();
-  for( i = 0; i < numberOfThreads; i++)
+  for( i = 0; i < numberOfThreads; i++ )
     {
-    count += this->m_Count[i];
-    sum += this->m_ThreadSum[i];
-    sumOfSquares += this->m_SumOfSquares[i];
+    count += this->m_Count[ i ];
+    sum += this->m_ThreadSum[ i ];
+    sumOfSquares += this->m_SumOfSquares[ i ];
 
-    if ( this->m_ThreadMin[i] < minimum)
+    if( this->m_ThreadMin[ i ] < minimum)
       {
-      minimum = this->m_ThreadMin[i];
+      minimum = this->m_ThreadMin[ i ];
       }
-    if ( this->m_ThreadMax[i] > maximum)
+    if( this->m_ThreadMax[ i ] > maximum)
       {
-      maximum = this->m_ThreadMax[i];
+      maximum = this->m_ThreadMax[ i ];
       }
     }
   // compute statistics
@@ -321,7 +338,7 @@ StatisticsImageFilter<TInputImage>
   // support progress methods/callbacks
   ProgressReporter progress( this, threadId, outputRegionForThread.GetNumberOfPixels() );
 
-  if ( this->m_Mask.IsNull() )
+  if( this->m_Mask.IsNull() )
   {
     ImageRegionConstIterator<TInputImage> it (this->GetInput(), outputRegionForThread);
     // do the work
@@ -329,11 +346,11 @@ StatisticsImageFilter<TInputImage>
     {
         value = it.Get();
         realValue = static_cast<RealType>( value );
-        if (value < this->m_ThreadMin[threadId])
+        if(value < this->m_ThreadMin[threadId])
         {
         this->m_ThreadMin[threadId] = value;
         }
-        if (value > this->m_ThreadMax[threadId])
+        if(value > this->m_ThreadMax[threadId])
         {
         this->m_ThreadMax[threadId] = value;
         }
@@ -356,15 +373,15 @@ StatisticsImageFilter<TInputImage>
     // do the work
     while ( !itIm.IsAtEnd() )
     {
-      if ( itMask.Value() )
+      if( itMask.Value() )
         {
             value = itIm.Get();
             realValue = static_cast<RealType>( value );
-            if (value < this->m_ThreadMin[threadId])
+            if(value < this->m_ThreadMin[threadId])
             {
             this->m_ThreadMin[threadId] = value;
             }
-            if (value > this->m_ThreadMax[threadId])
+            if(value > this->m_ThreadMax[threadId])
             {
             this->m_ThreadMax[threadId] = value;
             }
