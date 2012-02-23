@@ -45,7 +45,7 @@ namespace itk {
 
 template<class TInputImage>
 StatisticsImageFilter<TInputImage>
-::StatisticsImageFilter(): m_ThreadSum(1), m_SumOfSquares(1), m_Count(1), m_ThreadMin(1), m_ThreadMax(1)
+::StatisticsImageFilter(): m_ThreadSum(1), m_ThreadAbsoluteSum(1), m_SumOfSquares(1), m_Count(1), m_ThreadMin(1), m_ThreadMax(1)
 {
   // first output is a copy of the image, DataObject created by
   // superclass
@@ -60,7 +60,7 @@ StatisticsImageFilter<TInputImage>
   }
   // allocate the data objects for the outputs which are
   // just decorators around real types
-  for ( int i = 3; i < 7; ++i )
+  for ( int i = 3; i < 8; ++i )
   {
     typename RealObjectType::Pointer output
       = static_cast<RealObjectType*>( this->MakeOutput(i).GetPointer() );
@@ -70,6 +70,7 @@ StatisticsImageFilter<TInputImage>
   this->GetMinimumOutput()->Set( NumericTraits<PixelType>::max() );
   this->GetMaximumOutput()->Set( NumericTraits<PixelType>::NonpositiveMin() );
   this->GetMeanOutput()->Set( NumericTraits<RealType>::max() );
+  this->GetAbsoluteMeanOutput()->Set( NumericTraits<RealType>::max() );
   this->GetSigmaOutput()->Set( NumericTraits<RealType>::max() );
   this->GetVarianceOutput()->Set( NumericTraits<RealType>::max() );
   this->GetSumOutput()->Set( NumericTraits<RealType>::Zero );
@@ -98,6 +99,7 @@ StatisticsImageFilter<TInputImage>
     case 4:
     case 5:
     case 6:
+    case 7:
       return static_cast<DataObject*>(RealObjectType::New().GetPointer());
       break;
     default:
@@ -210,6 +212,22 @@ StatisticsImageFilter<TInputImage>
 }
 
 template<class TInputImage>
+typename StatisticsImageFilter<TInputImage>::RealObjectType*
+StatisticsImageFilter<TInputImage>
+::GetAbsoluteMeanOutput()
+{
+  return static_cast<RealObjectType*>(this->ProcessObject::GetOutput(7));
+}
+
+template<class TInputImage>
+const typename StatisticsImageFilter<TInputImage>::RealObjectType*
+StatisticsImageFilter<TInputImage>
+::GetAbsoluteMeanOutput() const
+{
+  return static_cast<const RealObjectType*>(this->ProcessObject::GetOutput(7));
+}
+
+template<class TInputImage>
 void
 StatisticsImageFilter<TInputImage>
 ::GenerateInputRequestedRegion()
@@ -257,12 +275,14 @@ StatisticsImageFilter<TInputImage>
   this->m_Count.SetSize(numberOfThreads);
   this->m_SumOfSquares.SetSize(numberOfThreads);
   this->m_ThreadSum.SetSize(numberOfThreads);
+  this->m_ThreadAbsoluteSum.SetSize(numberOfThreads);
   this->m_ThreadMin.SetSize(numberOfThreads);
   this->m_ThreadMax.SetSize(numberOfThreads);
 
   // Initialize the temporaries
   this->m_Count.Fill(NumericTraits<long>::Zero);
   this->m_ThreadSum.Fill(NumericTraits<RealType>::Zero);
+  this->m_ThreadAbsoluteSum.Fill(NumericTraits<RealType>::Zero);
   this->m_SumOfSquares.Fill(NumericTraits<RealType>::Zero);
   this->m_ThreadMin.Fill(NumericTraits<PixelType>::max());
   this->m_ThreadMax.Fill(NumericTraits<PixelType>::NonpositiveMin());
@@ -283,11 +303,13 @@ StatisticsImageFilter<TInputImage>
   PixelType minimum;
   PixelType maximum;
   RealType  mean;
+  RealType  absmean;
   RealType  sigma;
   RealType  variance;
   RealType  sum;
+  RealType  abssum;
 
-  sum = sumOfSquares = NumericTraits<RealType>::Zero;
+  sum = sumOfSquares = abssum = NumericTraits<RealType>::Zero;
   count = 0;
 
   // Find the min/max over all threads and accumulate count, sum and
@@ -298,6 +320,7 @@ StatisticsImageFilter<TInputImage>
     {
     count += this->m_Count[ i ];
     sum += this->m_ThreadSum[ i ];
+    abssum += this->m_ThreadAbsoluteSum[ i ];
     sumOfSquares += this->m_SumOfSquares[ i ];
 
     if( this->m_ThreadMin[ i ] < minimum)
@@ -311,6 +334,7 @@ StatisticsImageFilter<TInputImage>
     }
   // compute statistics
   mean = sum / static_cast<RealType>( count );
+  absmean = abssum / static_cast<RealType>( count );
 
   // unbiased estimate
   variance = (sumOfSquares - (sum*sum / static_cast<RealType>(count)))
@@ -323,6 +347,7 @@ StatisticsImageFilter<TInputImage>
   this->GetMinimumOutput()->Set( minimum );
   this->GetMaximumOutput()->Set( maximum );
   this->GetMeanOutput()->Set( mean );
+  this->GetAbsoluteMeanOutput()->Set( absmean );
   this->GetSigmaOutput()->Set( sigma );
   this->GetVarianceOutput()->Set( variance );
   this->GetSumOutput()->Set( sum );
@@ -356,6 +381,7 @@ StatisticsImageFilter<TInputImage>
         }
 
         this->m_ThreadSum[threadId] += realValue;
+        this->m_ThreadAbsoluteSum[threadId] += vnl_math_abs(realValue);
         this->m_SumOfSquares[threadId] += (realValue * realValue);
         this->m_Count[threadId]++;
         ++it;
@@ -387,6 +413,7 @@ StatisticsImageFilter<TInputImage>
             }
 
             this->m_ThreadSum[threadId] += realValue;
+            this->m_ThreadAbsoluteSum[threadId] += vnl_math_abs(realValue);
             this->m_SumOfSquares[threadId] += (realValue * realValue);
             this->m_Count[threadId]++;
         }
@@ -410,6 +437,7 @@ StatisticsImageFilter<TImage>
      << static_cast<typename NumericTraits<PixelType>::PrintType>(this->GetMaximum()) << std::endl;
   os << indent << "Sum: "      << this->GetSum() << std::endl;
   os << indent << "Mean: "     << this->GetMean() << std::endl;
+  os << indent << "Absolute Mean: "     << this->GetAbsoluteMean() << std::endl;
   os << indent << "Sigma: "    << this->GetSigma() << std::endl;
   os << indent << "Variance: " << this->GetVariance() << std::endl;
 }

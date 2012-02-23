@@ -132,6 +132,12 @@ public:
   RealObjectType* GetMeanOutput();
   const RealObjectType* GetMeanOutput() const;
 
+  /** Return the computed absolute Mean. */
+  RealType GetAbsoluteMean() const
+    { return this->GetAbsoluteMeanOutput()->Get(); }
+  RealObjectType* GetAbsoluteMeanOutput();
+  const RealObjectType* GetAbsoluteMeanOutput() const;
+
   /** Return the computed Standard Deviation. */
   RealType GetSigma() const
     { return this->GetSigmaOutput()->Get(); }
@@ -190,6 +196,7 @@ private:
   void operator=(const Self&); //purposely not implemented
 
   Array<RealType>  m_ThreadSum;
+  Array<RealType>  m_ThreadAbsoluteSum;
   Array<RealType>  m_SumOfSquares;
   Array<long>      m_Count;
   Array<PixelType> m_ThreadMin;

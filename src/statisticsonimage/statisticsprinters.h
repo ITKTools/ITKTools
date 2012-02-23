@@ -39,6 +39,7 @@ void PrintStatistics( const TStatisticsFilter * statistics )
   std::cout << "\tarithmetic stdev: " << statistics->GetSigma() << std::endl;
   std::cout << "\tarithmetic var  : " << statistics->GetVariance() << std::endl;
   std::cout << "\tsum             : " << statistics->GetSum() << std::endl;
+  std::cout << "\tarithmetic abs mean : " << statistics->GetAbsoluteMean() << std::endl;
 
 } // end PrintStatistics()
 
