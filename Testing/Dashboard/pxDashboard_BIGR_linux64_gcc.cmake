@@ -20,9 +20,14 @@
 set( CTEST_SITE "BIGR.cluster" )
 set( CTEST_BUILD_NAME "Linux-64bit-gcc4.4.6" )
 set( CTEST_BUILD_FLAGS "-j3" ) # parallel build for makefiles
+set( CTEST_TEST_ARGS PARALLEL_LEVEL 3 ) # parallel testing
 set( CTEST_BUILD_CONFIGURATION Release )
 set( CTEST_CMAKE_GENERATOR "Unix Makefiles" )
 set( CTEST_DASHBOARD_ROOT "/cm/shared/apps/itktools/nightly" )
+
+# Overrule binary directory. Use 'release' instead of 'bin',
+# for consistency with other itktools verisons on the cluster2
+set( CTEST_BINARY_DIRECTORY ${CTEST_DASHBOARD_ROOT}/release )
 
 # default: automatically determined
 #set(CTEST_UPDATE_COMMAND /path/to/svn)
