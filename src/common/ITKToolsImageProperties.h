@@ -101,7 +101,7 @@ int GetImageProperties(
  * dimension and numberofcomponents from an image
  * returns 0 when successful. 0 otherwise.
  */
-int GetImageProperties(
+bool GetImageProperties(
   const std::string & filename,
   itk::ImageIOBase::IOPixelType & pixeltype,
   itk::ImageIOBase::IOComponentType & componenttype,

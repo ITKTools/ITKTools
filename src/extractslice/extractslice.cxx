@@ -42,7 +42,7 @@ std::string GetHelpString( void )
     << "pxextractslice\n"
     << "  -in      input image filename\n"
     << "  [-out]   output image filename\n"
-    << "  [-pt]    pixel type of input and output images;\n"
+    << "  [-opct]  pixel type of input and output images;\n"
     << "           default: automatically determined from the first input image.\n"
     << "  -sn      slice number\n"
     << "  [-d]     the dimension from which a slice is extracted, default the z dimension\n"

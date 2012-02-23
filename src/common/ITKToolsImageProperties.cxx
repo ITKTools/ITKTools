@@ -300,7 +300,7 @@ int GetImageProperties(
  * ***************** GetImageProperties ************************
  */
 
-int GetImageProperties(
+bool GetImageProperties(
   const std::string & fileName,
   itk::ImageIOBase::IOPixelType & pixelType,
   itk::ImageIOBase::IOComponentType & componentType,
@@ -309,7 +309,7 @@ int GetImageProperties(
   std::vector<unsigned int> & imageSize )
 {
   itk::ImageIOBase::Pointer imageIOBase;
-  GetImageIOBase( fileName, imageIOBase );
+  bool success = GetImageIOBase( fileName, imageIOBase );
 
   componentType = imageIOBase->GetComponentType();
   pixelType = imageIOBase->GetPixelType();
@@ -318,7 +318,7 @@ int GetImageProperties(
   numberOfComponents = imageIOBase->GetNumberOfComponents();
   GetImageSize( imageIOBase, imageSize );
 
-  return 0;
+  return success;
 
 } // end GetImageProperties()
 
