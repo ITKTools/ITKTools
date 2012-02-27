@@ -121,3 +121,4 @@ public:
 
 
 #endif // #ifndef __histogramequalizeimage_h_
+

@@ -43,17 +43,19 @@ public:
     this->m_InputFileName = "";
     this->m_OutputFileName = "";
     this->m_Force = false;
+    this->m_UseCompression = false;
   };
   /** Destructor. */
   ~ITKToolsCropImageBase(){};
 
   /** Input member parameters. */
-  std::string m_InputFileName;
-  std::string m_OutputFileName;
-  std::vector<int> m_Input1;
-  std::vector<int> m_Input2;
-  unsigned int m_Option;
-  bool m_Force;
+  std::string       m_InputFileName;
+  std::string       m_OutputFileName;
+  std::vector<int>  m_Input1;
+  std::vector<int>  m_Input2;
+  unsigned int      m_Option;
+  bool              m_Force;
+  bool              m_UseCompression;
 
 }; // end class ITKToolsCropImageBase
 
@@ -158,6 +160,7 @@ public:
 
     /** Setup and process the pipeline. */
     writer->SetFileName( this->m_OutputFileName.c_str() );
+    writer->SetUseCompression( this->m_UseCompression );
     writer->Update();
 
   } // end Run()

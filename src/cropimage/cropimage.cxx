@@ -44,6 +44,7 @@ std::string GetHelpString( void )
     << "  [-lb]    lower bound\n"
     << "  [-ub]    upper bound\n"
     << "  [-force] force to extract a region of size sz, pad if necessary\n"
+    << "  [-z]     compression flag; if provided, the output image is compressed\n"
     << "pxcropimage can be called in different ways:\n"
     << "1: supply two points with \"-pA\" and \"-pB\".\n"
     << "2: supply a points and a size with \"-pA\" and \"-sz\".\n"
@@ -102,6 +103,8 @@ int main( int argc, char **argv )
   bool retub = parser->GetCommandLineArgument( "-ub", upBound );
 
   bool force = parser->ArgumentExists( "-force" );
+
+  bool useCompression = parser->ArgumentExists( "-z" );
 
   /** Determine image properties. */
   itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
@@ -237,6 +240,7 @@ int main( int argc, char **argv )
     filter->m_Input2 = input2;
     filter->m_Option = option;
     filter->m_Force = force;
+    filter->m_UseCompression = useCompression;
 
     filter->Run();
 
