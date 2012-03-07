@@ -82,6 +82,7 @@ std::string GetHelpString( void )
     << "[-ov]    outputlabels for relabeling. Each input label is replaced by the corresponding\n"
     << "        output label, before the combinationMethod is invoked. NumberOfClasses should be\n"
     << "        valid for the situation after relabeling!\n"
+    << "[-z]    compression flag; if provided, the output image is compressed\n"
     << "[-threads] maximum number of threads to use.\n"
     << "Supported: 2D/3D.";
 
@@ -238,6 +239,9 @@ int main( int argc, char **argv )
     prefOrder[ i ] = i;
   }
   parser->GetCommandLineArgument( "-ord", prefOrder );
+
+  /** Use compression */
+  const bool useCompression = parser->ArgumentExists( "-z" );
 
   /** Threads. */
   unsigned int maximumNumberOfThreads

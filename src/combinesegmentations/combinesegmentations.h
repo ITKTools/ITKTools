@@ -60,6 +60,7 @@ public:
     this->m_CombinationMethod = "MULTISTAPLE2";
     this->m_UseMask = false;
     this->m_MaskDilationRadius = 1;
+    this->m_UseCompression = false;
   };
   /** Destructor. */
   ~ITKToolsCombineSegmentationsBase(){};
@@ -80,6 +81,7 @@ public:
   std::vector< unsigned int > m_PrefOrder;
   std::vector< unsigned int > m_InValues;
   std::vector< unsigned int > m_OutValues;
+  bool                        m_UseCompression;
 
 }; // end class ITKToolsCombineSegmentationsBase
 
@@ -678,6 +680,7 @@ public:
         if( softSegmentationArray[ i ].IsNotNull() )
         {
           softWriter->SetInput( softSegmentationArray[ i ] );
+          softWriter->SetUseCompression( this->m_UseCompression );
           softWriter->Update();
         }
       }
@@ -693,6 +696,7 @@ public:
       if( hardSegmentation.IsNotNull() )
       {
         hardWriter->SetInput( hardSegmentation );
+        hardWriter->SetUseCompression( this->m_UseCompression );
         std::cout << "Writing hard segmentation..." << std::endl;
         hardWriter->Update();
         std::cout << "Done writing hard segmentation." << std::endl;
@@ -708,6 +712,7 @@ public:
       if( confusionMatrixImage.IsNotNull() )
       {
         confusionWriter->SetInput( confusionMatrixImage );
+        confusionWriter->SetUseCompression( this->m_UseCompression );
         std::cout << "Writing confusion matrix image..." << std::endl;
         confusionWriter->Update();
         std::cout << "Done writing confusion matrix image..." << std::endl;
