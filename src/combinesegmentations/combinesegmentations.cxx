@@ -304,6 +304,7 @@ int main( int argc, char **argv )
     filter->m_PrefOrder = prefOrder;
     filter->m_InValues = inValues;
     filter->m_OutValues = outValues;
+    filter->m_UseCompression = useCompression;
 
     filter->Run();
 
