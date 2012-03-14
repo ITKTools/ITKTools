@@ -21,6 +21,9 @@
  \verbinclude computeboundingbox.help
  */
 
+/** Setup Mevislab DicomTiff IO support */
+#include "itkUseMevisDicomTiff.h"
+
 #include "itkCommandLineArgumentParser.h"
 #include "ITKToolsHelpers.h"
 #include "computeboundingbox.h"

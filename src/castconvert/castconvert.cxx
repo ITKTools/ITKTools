@@ -31,6 +31,9 @@
  * ENH: on 09-06-2006 we added support for extracting a specific DICOM serie.
  */
 
+/** Setup Mevislab DicomTiff IO support */
+#include "itkUseMevisDicomTiff.h"
+
 #include "itkCommandLineArgumentParser.h"
 #include "castconvert.h"
 #include "castconverthelpers2.h"

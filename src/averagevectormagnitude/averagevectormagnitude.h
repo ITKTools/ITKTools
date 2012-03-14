@@ -18,6 +18,7 @@
 #ifndef __averagevectormagnitude_h_
 #define __averagevectormagnitude_h_
 
+
 #include "ITKToolsBase.h"
 
 #include "itkImageFileReader.h"

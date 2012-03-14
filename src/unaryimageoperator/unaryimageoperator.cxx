@@ -20,6 +20,10 @@
 
  \verbinclude unaryimageoperator.help
  */
+
+/** Setup Mevislab DicomTiff IO support */
+#include "itkUseMevisDicomTiff.h"
+
 #include "itkCommandLineArgumentParser.h"
 #include "UnaryImageOperatorMainHelper.h"
 #include "UnaryImageOperatorHelper.h"
