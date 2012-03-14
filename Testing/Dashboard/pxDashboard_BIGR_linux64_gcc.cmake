@@ -13,7 +13,7 @@
 #
 # Setup: linux 64bit
 # gcc 4.4.6 (RedHat Linux),
-# Release mode, ITK 4.1rc01
+# Release mode, ITK 4.1.0
 # PC: linux cluster2 at BIGR (SK).
 
 # Client maintainer: s.klein@erasmusmc.nl
@@ -46,12 +46,13 @@ ENDIF()
 
 SET( dashboard_cache "
 // Which ITK to use
-ITK_DIR:PATH=/cm/shared/apps/itk/4.1rc01/release
+ITK_DIR:PATH=/cm/shared/apps/itk/4.1.0/release
 
 // Some ITKTools settings, defining the configuration
 ITKTOOLS_BUILD_TESTING:BOOL=ON
 ITKTOOLS_3D_SUPPORT:BOOL=ON
 ITKTOOLS_4D_SUPPORT:BOOL=ON
+ITKTOOLS_USE_MEVISDICOMTIFF:BOOL=ON
 
 // Install dir
 CMAKE_INSTALL_PREFIX:PATH=/cm/shared/apps/itktools/nightly/install

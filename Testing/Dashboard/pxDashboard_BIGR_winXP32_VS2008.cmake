@@ -11,7 +11,7 @@
 # and defaults to Nightly.
 # NOTE that Model should directly follow the comma: no space allowed!
 #
-# Setup: Windows XP, 32bit, Visual Studio 9 2008, Release mode, ITK git
+# Setup: Windows XP, 32bit, Visual Studio 9 2008, Release mode, ITK 4.1.0
 # PC: BIGR, SK personal computer.
 
 # Client maintainer: s.klein@erasmusmc.nl
@@ -36,12 +36,14 @@ ENDIF()
 
 SET( dashboard_cache "
 // Which ITK to use
-ITK_DIR:PATH=D:/tk/itk/4.0.0/bin
+ITK_DIR:PATH=D:/tk/itk/4.1.0/bin
 
 // Some ITKTools settings, defining the configuration
 ITKTOOLS_BUILD_TESTING:BOOL=ON
 ITKTOOLS_3D_SUPPORT:BOOL=ON
 ITKTOOLS_4D_SUPPORT:BOOL=OFF
+ITKTOOLS_USE_MEVISDICOMTIFF:BOOL=ON
+
 ")
 
 
