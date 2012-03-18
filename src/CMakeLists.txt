@@ -37,12 +37,6 @@ MARK_AS_ADVANCED( ITKTOOLS_USE_MEVISDICOMTIFF )
 OPTION( ITKTOOLS_USE_MEVISDICOMTIFF
   "Support MevisLab DicomTiff image format" OFF )
 
-# Define a macro that makes sure mevis dicomtiff IO is loaded.
-IF( ITKTOOLS_USE_MEVISDICOMTIFF )
-  ADD_DEFINITIONS( -D_ITKTOOLS_USE_MEVISDICOMTIFF )
-ENDIF()
-
-
 #---------------------------------------------------------------------
 # Kill the anoying MS VS warning about non-safe functions.
 # They hide real warnings.
@@ -77,7 +71,7 @@ include_directories( ${ITKTOOLS_INCLUDE_DIRECTORIES} )
 
 #---------------------------------------------------------------------
 # Link libraries
-SET( ITKTOOLS_LIBRARIES ITKTools-Common)
+SET( ITKTOOLS_LIBRARIES ITKTools-Common mevisdcmtiff)
 
 #---------------------------------------------------------------------
 # Compilation options
