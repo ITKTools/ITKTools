@@ -63,6 +63,8 @@ static const unsigned int ITK_TEST_DIMENSION_MAX = 6;
 
 int main( int argc, char **argv )
 {
+  RegisterMevisDicomTiff();
+
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
   parser->SetProgramHelpText( GetHelpString() );

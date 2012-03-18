@@ -81,6 +81,8 @@ void ComputeBrainDistance(
 
 int main( int argc, char ** argv )
 {
+  RegisterMevisDicomTiff();
+  
   /** Create a command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser
     = itk::CommandLineArgumentParser::New();

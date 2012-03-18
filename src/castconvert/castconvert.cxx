@@ -133,6 +133,8 @@ int main( int argc, char **argv )
   itk::PhilipsRECImageIOFactory::RegisterOneFactory();
 #endif
 
+  RegisterMevisDicomTiff();
+
   /** Construct the command line argument parser. */
   itk::CommandLineArgumentParser::Pointer parser = itk::CommandLineArgumentParser::New();
   parser->SetCommandLineArguments( argc, argv );
