@@ -66,7 +66,9 @@ set( ITKTOOLS_EXECUTABLE_PATH "${EXECUTABLE_OUTPUT_PATH}" )
 
 #---------------------------------------------------------------------
 # Include directories
-set( ITKTOOLS_INCLUDE_DIRECTORIES "${ITKTOOLS_SOURCE_DIR}/common" )
+set( ITKTOOLS_INCLUDE_DIRECTORIES 
+  "${ITKTOOLS_SOURCE_DIR}/common" 
+  "${ITKTOOLS_SOURCE_DIR}/common/MevisDicomTiff" )
 include_directories( ${ITKTOOLS_INCLUDE_DIRECTORIES} )
 
 #---------------------------------------------------------------------
