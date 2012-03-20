@@ -50,8 +50,8 @@ std::string GetHelpString( void )
     << "             default \"Threshold\"\n"
     << "  [-t1]      lower threshold, for \"Threshold\", default -infinity\n"
     << "  [-t2]      upper threshold, for \"Threshold\", default 1.0\n"
-    << "  [-inside]  inside value, default 1\n"
-    << "  [-outside] outside value, default 0\n"
+    << "  [-inside]  inside value, default 0\n"
+    << "  [-outside] outside value, default 1\n"
     << "  [-t]       number of thresholds, for \"OtsuMultipleThreshold\", default 1\n"
     << "  [-b]       number of histogram bins, for \"OtsuThreshold\", \"MinErrorThreshold\"\n"
     << "               and \"AdaptiveOtsuThreshold\", default 128\n"
@@ -66,7 +66,7 @@ std::string GetHelpString( void )
     << "  [-mv]      mask value, for \"KappaSigmaThreshold\", default 1\n"
     << "  [-mt]      mixture type (1 - Gaussians, 2 - Poissons), for \"MinErrorThreshold\", default 1\n"
     << "  [-z]       compression flag; if provided, the output image is compressed\n\n"
-    << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
+    << "Supported: 2D, 3D, 4D, (unsigned) char, (unsigned) short, float, double.";
 
   return ss.str();
 
@@ -116,10 +116,10 @@ int main( int argc, char **argv )
   double threshold2 = itk::NumericTraits<double>::One;
   parser->GetCommandLineArgument( "-t2", threshold2 );
 
-  double inside = itk::NumericTraits<double>::One;
+  double inside = itk::NumericTraits<double>::Zero;
   parser->GetCommandLineArgument( "-inside", inside );
 
-  double outside = itk::NumericTraits<double>::Zero;
+  double outside = itk::NumericTraits<double>::One;
   parser->GetCommandLineArgument( "-outside", outside );
 
   unsigned int radius = 8;
@@ -214,6 +214,16 @@ int main( int argc, char **argv )
     if( !filter ) filter = ITKToolsThresholdImage< 3, float >::New( dim, componentType );
     if( !filter ) filter = ITKToolsThresholdImage< 3, double >::New( dim, componentType );
 #endif
+
+#ifdef ITKTOOLS_4D_SUPPORT
+    if( !filter ) filter = ITKToolsThresholdImage< 4, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsThresholdImage< 4, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsThresholdImage< 4, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsThresholdImage< 4, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsThresholdImage< 4, float >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsThresholdImage< 4, double >::New( dim, componentType );
+#endif
+    
     /** Check if filter was instantiated. */
     bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
     if( !supported ) return EXIT_FAILURE;

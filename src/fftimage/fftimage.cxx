@@ -25,6 +25,7 @@
 #include "CommandLineArgumentHelper.h"
 #include <itksys/SystemTools.hxx>
 #include "ITKToolsImageProperties.h"
+#include "ITKToolsHelpers.h"
 
 //#include "itkFFTWRealToComplexConjugateImageFilter.h"
 #include "itkFFTWForwardFFTImageFilter.h"
@@ -47,7 +48,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "Usage:" << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+  << "Usage:" << std::endl
   << "pxfftimage" << std::endl
   << "  -in      inputFilenames" << std::endl
   << "             forward: only one input" << std::endl
