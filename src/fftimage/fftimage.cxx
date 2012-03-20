@@ -25,11 +25,14 @@
 #include "CommandLineArgumentHelper.h"
 #include <itksys/SystemTools.hxx>
 
-#include "itkFFTWRealToComplexConjugateImageFilter.h"
-#include "itkFFTWComplexConjugateToRealImageFilter.h"
+//#include "itkFFTWRealToComplexConjugateImageFilter.h"
+#include "itkFFTWForwardFFTImageFilter.h"
+//#include "itkFFTWComplexConjugateToRealImageFilter.h"
+#include "itkFFTWInverseFFTImageFilter.h"
 #include "itkComplexToRealImageFilter.h"
 #include "itkComplexToImaginaryImageFilter.h"
-#include "itkComposeComplexImageFilter.h"
+//#include "itkComposeComplexImageFilter.h"
+#include "itkComposeImageFilter.h"
 
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
@@ -59,8 +62,8 @@ std::string GetHelpString( void )
   << "             backward: only one output, default in + IFFT" << std::endl
   << "  [-opct]  the output type" << std::endl
   << "             choose from {float, double}, default float" << std::endl
-  << "  [-xdim]  the backward transform needs to know if the actual x-dimension was odd or even." << std::endl
-  << "             choose from {odd, even}, default even" << std::endl
+//  << "  [-xdim]  the backward transform needs to know if the actual x-dimension was odd or even." << std::endl
+//  << "             choose from {odd, even}, default even" << std::endl
   << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
 
   return ss.str();
@@ -136,8 +139,8 @@ int main( int argc, char **argv )
   std::string componentType = "float";
   bool retopct = parser->GetCommandLineArgument( "-opct", componentType );
 
-  std::string xdim = "even";
-  bool retxdim = parser->GetCommandLineArgument( "-xdim", xdim );
+  //std::string xdim = "even";
+  //bool retxdim = parser->GetCommandLineArgument( "-xdim", xdim );
 
   /** Check operator. */
   op = itksys::SystemTools::LowerCase( op );
@@ -160,7 +163,7 @@ int main( int argc, char **argv )
     return 1;
   }
 
-  /** Check xdim. */
+  /** Check xdim. 
   if ( op == "backward" && retxdim )
   {
     if ( xdim != "odd" && xdim != "even" )
@@ -169,6 +172,7 @@ int main( int argc, char **argv )
       return 1;
     }
   }
+  */
 
   /** Check output names. */
   if ( outputFileNames.size() == 0 )
@@ -260,8 +264,8 @@ void FFTImage( const std::string & inputFileName,
   typedef itk::Image< PixelType, Dimension >        ImageType;
   typedef itk::ImageFileReader< ImageType >         ReaderType;
   typedef itk::ImageFileWriter< ImageType >         WriterType;
-  typedef itk::FFTWRealToComplexConjugateImageFilter<
-    PixelType, Dimension >                          FFTFilterType;
+  typedef itk::FFTWForwardFFTImageFilter< 
+    ImageType >                                     FFTFilterType;
   typedef typename FFTFilterType::OutputImageType   ComplexImageType;
   typedef itk::ImageFileWriter< ComplexImageType >  ComplexWriterType;
   typedef itk::ComplexToRealImageFilter<
@@ -331,12 +335,14 @@ void IFFTImage( const std::vector<std::string> & inputFileNames,
 {
   /** Typedefs. */
   typedef itk::Image< PixelType, Dimension >            ImageType;
-  typedef itk::FFTWComplexConjugateToRealImageFilter<
-    PixelType, Dimension >                              IFFTFilterType;
-  typedef typename IFFTFilterType::TInputImageType      ComplexImageType;
+  typedef itk::Image< 
+    std::complex< PixelType >, Dimension >                ComplexImageType;
+  typedef itk::FFTWInverseFFTImageFilter<
+    ComplexImageType >                                  IFFTFilterType;
   typedef itk::ImageFileReader< ImageType >             ReaderType;
   typedef itk::ImageFileReader< ComplexImageType >      ComplexReaderType;
-  typedef itk::ComposeComplexImageFilter< ImageType >   ComposeComplexImageFilterType;
+  typedef itk::ComposeImageFilter<
+    ImageType, ComplexImageType>                        ComposeComplexImageFilterType;
   typedef itk::ImageFileWriter< ImageType >             WriterType;
 
   /** The IFFT of the image. */
@@ -364,7 +370,7 @@ void IFFTImage( const std::vector<std::string> & inputFileNames,
     ifftFilter->SetInput( composer->GetOutput() );
   }
 
-  /** Setup IFFT filter. */
+  /** Setup IFFT filter. 
   if ( xdim == "odd" )
   {
     ifftFilter->SetActualXDimensionIsOdd( true );
@@ -373,6 +379,7 @@ void IFFTImage( const std::vector<std::string> & inputFileNames,
   {
     ifftFilter->SetActualXDimensionIsOdd( false );
   }
+  */
 
   /** Write the output image. */
   typename WriterType::Pointer writer = WriterType::New();
