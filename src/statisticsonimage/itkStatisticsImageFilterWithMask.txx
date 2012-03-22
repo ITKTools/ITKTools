@@ -360,32 +360,41 @@ StatisticsImageFilter<TInputImage>
 {
   RealType realValue;
   PixelType value;
+
+  RealType sum = NumericTraits< RealType >::Zero;
+  RealType absoluteSum = NumericTraits< RealType >::Zero;
+  RealType sumOfSquares = NumericTraits< RealType >::Zero;
+  SizeValueType count = NumericTraits< SizeValueType >::Zero;
+  PixelType min = NumericTraits< PixelType >::max();
+  PixelType max = NumericTraits< PixelType >::NonpositiveMin();
+
   // support progress methods/callbacks
   ProgressReporter progress( this, threadId, outputRegionForThread.GetNumberOfPixels() );
 
   if( this->m_Mask.IsNull() )
   {
-    ImageRegionConstIterator<TInputImage> it (this->GetInput(), outputRegionForThread);
-    // do the work
-    while (!it.IsAtEnd())
-    {
-        value = it.Get();
-        realValue = static_cast<RealType>( value );
-        if(value < this->m_ThreadMin[threadId])
-        {
-        this->m_ThreadMin[threadId] = value;
-        }
-        if(value > this->m_ThreadMax[threadId])
-        {
-        this->m_ThreadMax[threadId] = value;
-        }
+    ImageRegionConstIterator<TInputImage> it( this->GetInput(), outputRegionForThread );
 
-        this->m_ThreadSum[threadId] += realValue;
-        this->m_ThreadAbsoluteSum[threadId] += vnl_math_abs(realValue);
-        this->m_SumOfSquares[threadId] += (realValue * realValue);
-        this->m_Count[threadId]++;
-        ++it;
-        progress.CompletedPixel();
+    // do the work
+    while( !it.IsAtEnd() )
+    {
+      value = it.Get();
+      realValue = static_cast<RealType>( value );
+      if( value < min )
+      {
+        min = value;
+      }
+      if( value > max )
+      {
+        max = value;
+      }
+
+      sum += realValue;
+      absoluteSum += vnl_math_abs(realValue);
+      sumOfSquares += (realValue * realValue);
+      ++count;
+      ++it;
+      progress.CompletedPixel();
     } // end while
   } //end if
   else
@@ -400,29 +409,37 @@ StatisticsImageFilter<TInputImage>
     while ( !itIm.IsAtEnd() )
     {
       if( itMask.Value() )
+      {
+        value = itIm.Get();
+        realValue = static_cast<RealType>( value );
+        if( value < min )
         {
-            value = itIm.Get();
-            realValue = static_cast<RealType>( value );
-            if(value < this->m_ThreadMin[threadId])
-            {
-            this->m_ThreadMin[threadId] = value;
-            }
-            if(value > this->m_ThreadMax[threadId])
-            {
-            this->m_ThreadMax[threadId] = value;
-            }
-
-            this->m_ThreadSum[threadId] += realValue;
-            this->m_ThreadAbsoluteSum[threadId] += vnl_math_abs(realValue);
-            this->m_SumOfSquares[threadId] += (realValue * realValue);
-            this->m_Count[threadId]++;
+          min = value;
         }
-        ++itIm; ++itMask;
-        progress.CompletedPixel();
+        if( value > max )
+        {
+          max = value;
+        }
+
+        sum += realValue;
+        absoluteSum += vnl_math_abs(realValue);
+        sumOfSquares += (realValue * realValue);
+        ++count;
+      }
+      ++itIm; ++itMask;
+      progress.CompletedPixel();
     } // end while
   } // end else
 
-}
+  this->m_ThreadSum[threadId] = sum;
+  this->m_ThreadAbsoluteSum[threadId] = absoluteSum;
+  this->m_SumOfSquares[threadId] = sumOfSquares;
+  this->m_Count[threadId] = count;
+  this->m_ThreadMin[threadId] = min;
+  this->m_ThreadMax[threadId] = max;
+
+} // end ThreadedGenerateData()
+
 
 template <class TImage>
 void
