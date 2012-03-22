@@ -46,13 +46,14 @@ ENDIF()
 
 SET( dashboard_cache "
 // Which ITK to use
-ITK_DIR:PATH=/cm/shared/apps/itk/4.1.0/release
+ITK_DIR:PATH=/cm/shared/apps/itk/4.1.0/releasefftw
 
 // Some ITKTools settings, defining the configuration
 ITKTOOLS_BUILD_TESTING:BOOL=ON
 ITKTOOLS_3D_SUPPORT:BOOL=ON
 ITKTOOLS_4D_SUPPORT:BOOL=ON
 ITKTOOLS_USE_MEVISDICOMTIFF:BOOL=ON
+USE_FFTIMAGE:BOOL=ON
 
 // Install dir
 CMAKE_INSTALL_PREFIX:PATH=/cm/shared/apps/itktools/nightly/install

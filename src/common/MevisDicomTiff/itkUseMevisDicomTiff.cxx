@@ -23,7 +23,7 @@
  *  Call this in your program, before you load/write any images. */
 void RegisterMevisDicomTiff(void)
 {
-#ifdef _ELASTIX_USE_MEVISDICOMTIFF
+#ifdef _ITKTOOLS_USE_MEVISDICOMTIFF
   itk::ObjectFactoryBase::RegisterFactory( itk::MevisDicomTiffImageIOFactory::New(), 
     itk::ObjectFactoryBase::INSERT_AT_FRONT );
 #endif

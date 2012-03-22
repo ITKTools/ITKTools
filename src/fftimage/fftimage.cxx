@@ -24,6 +24,8 @@
 #include "itkCommandLineArgumentParser.h"
 #include "CommandLineArgumentHelper.h"
 #include <itksys/SystemTools.hxx>
+#include "ITKToolsImageProperties.h"
+#include "ITKToolsHelpers.h"
 
 //#include "itkFFTWRealToComplexConjugateImageFilter.h"
 #include "itkFFTWForwardFFTImageFilter.h"
@@ -46,7 +48,8 @@
 std::string GetHelpString( void )
 {
   std::stringstream ss;
-  ss << "Usage:" << std::endl
+  ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
+  << "Usage:" << std::endl
   << "pxfftimage" << std::endl
   << "  -in      inputFilenames" << std::endl
   << "             forward: only one input" << std::endl
@@ -81,7 +84,7 @@ if ( componentType == #type && Dimension == dim ) \
   } \
   else \
   { \
-    IFFTImage< type, dim >( inputFileNames, outputFileNames[ 0 ], xdim ); \
+    IFFTImage< type, dim >( inputFileNames, outputFileNames[ 0 ] ); \
   } \
 }
 
@@ -95,8 +98,7 @@ void FFTImage( const std::string & inputFileName,
 /* Declare IFFTImage. */
 template< class PixelType, unsigned int Dimension >
 void IFFTImage( const std::vector<std::string> & inputFileNames,
-  const std::string & outputFileName,
-  const std::string & xdim );
+  const std::string & outputFileName );
 
 /** Declare other functions. */
 std::string GetHelpString( void );
@@ -198,7 +200,7 @@ int main( int argc, char **argv )
   unsigned int Dimension = 3;
   unsigned int NumberOfComponents = 1;
   std::vector<unsigned int> imagesize( Dimension, 0 );
-  int retgip = GetImageProperties(
+  int retgip = itktools::GetImageProperties(
     inputFileNames[ 0 ],
     PixelType,
     ComponentTypeIn,
@@ -234,6 +236,7 @@ int main( int argc, char **argv )
   /** Run the program. */
   try
   {
+    /** \todo: rewrite to new-style itktools */
     run( float, 2 );
     run( double, 2 );
 
@@ -331,7 +334,7 @@ void FFTImage( const std::string & inputFileName,
 
 template< class PixelType, unsigned int Dimension >
 void IFFTImage( const std::vector<std::string> & inputFileNames,
-  const std::string & outputFileName, const std::string & xdim )
+  const std::string & outputFileName )
 {
   /** Typedefs. */
   typedef itk::Image< PixelType, Dimension >            ImageType;
