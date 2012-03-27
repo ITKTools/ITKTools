@@ -75,7 +75,7 @@ public:
   }
 };
 }
-template <class TInputImage, class TOutputImage>
+template< class TInputImage, class TOutputImage >
 class NaryUnequalityTestImageFilter : public
   NaryFunctorImageFilter< TInputImage, TOutputImage,
   Functor::UnequalityTest<typename TInputImage::PixelType, typename TOutputImage::PixelType > >

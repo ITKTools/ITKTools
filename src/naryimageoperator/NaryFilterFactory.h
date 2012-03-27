@@ -22,7 +22,7 @@
 
 enum NaryFilterEnum {ADDITION, MEAN, MINUS, TIMES, DIVIDE, MAXIMUM, MINIMUM, ABSOLUTEDIFFERENCE, NARYMAGNITUDE};
 
-template <class TInputImage, class TOutputImage>
+template< class TInputImage, class TOutputImage >
 class NaryFilterFactory
 {
 public:

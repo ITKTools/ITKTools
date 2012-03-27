@@ -18,7 +18,7 @@ namespace itk
 /**
  * Initialize new instance
  */
-template <class TInputImage, class TOutputImage>
+template< class TInputImage, class TOutputImage >
 CartesianToSphericalCoordinateImageFilter<TInputImage, TOutputImage>
 ::CartesianToSphericalCoordinateImageFilter()
 {
@@ -41,7 +41,7 @@ CartesianToSphericalCoordinateImageFilter<TInputImage, TOutputImage>
  *
  * \todo Add details about this class
  */
-template <class TInputImage, class TOutputImage>
+template< class TInputImage, class TOutputImage >
 void
 CartesianToSphericalCoordinateImageFilter<TInputImage, TOutputImage>
 ::PrintSelf(std::ostream& os, Indent indent) const
@@ -62,7 +62,7 @@ CartesianToSphericalCoordinateImageFilter<TInputImage, TOutputImage>
  *
  * We do the easy thing and request the entire input image.
  */
-template <class TInputImage, class TOutputImage>
+template< class TInputImage, class TOutputImage >
 void
 CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
 ::GenerateInputRequestedRegion()
@@ -93,7 +93,7 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
  * Inform pipeline of required output region
  * Computes the output spacing etc.
  */
-template <class TInputImage, class TOutputImage>
+template< class TInputImage, class TOutputImage >
 void
 CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
 ::GenerateOutputInformation()
@@ -176,7 +176,7 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
 /**
  * GenerateData
  */
-template <class TInputImage, class TOutputImage>
+template< class TInputImage, class TOutputImage >
 void
 CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
 ::GenerateData( void )
@@ -508,7 +508,7 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
 * ******************* GenerateRandomCoordinate *******************
 */
 
-template <class TInputImage, class TOutputImage>
+template< class TInputImage, class TOutputImage >
 void
 CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>::
 GenerateRandomCoordinate(

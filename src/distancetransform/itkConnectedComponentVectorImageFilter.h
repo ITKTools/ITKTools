@@ -35,7 +35,7 @@ namespace itk
  * \sa ImageToImageFilter
  */
 
-template <class TInputImage, class TOutputImage>
+template< class TInputImage, class TOutputImage >
 class ITK_EXPORT ConnectedComponentVectorImageFilter :
     public ImageToImageFilter< TInputImage, TOutputImage >
 {

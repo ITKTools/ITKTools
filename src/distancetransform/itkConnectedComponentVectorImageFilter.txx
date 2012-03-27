@@ -84,7 +84,7 @@ ConnectedComponentVectorImageFilter<TInputImage, TOutputImage>
 
 
 
-template <class TInputImage, class TOutputImage>
+template< class TInputImage, class TOutputImage >
 void
 ConnectedComponentVectorImageFilter<TInputImage, TOutputImage>
 ::EnlargeOutputRequestedRegion(DataObject *)

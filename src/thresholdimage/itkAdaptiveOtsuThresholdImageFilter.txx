@@ -46,7 +46,7 @@
 namespace itk
 {
 //  Software Guide : BeginCodeSnippet
-template <class TInputImage, class TOutputImage>
+template< class TInputImage, class TOutputImage >
 AdaptiveOtsuThresholdImageFilter<TInputImage, TOutputImage>::
 AdaptiveOtsuThresholdImageFilter()
 {
@@ -66,7 +66,7 @@ AdaptiveOtsuThresholdImageFilter()
   this->Superclass::SetNthOutput( 0, OutputImageType::New() );
 }
 
-template <class TInputImage, class TOutputImage>
+template< class TInputImage, class TOutputImage >
 void
 AdaptiveOtsuThresholdImageFilter<TInputImage, TOutputImage>
 ::ComputeRandomPointSet()
@@ -117,7 +117,7 @@ AdaptiveOtsuThresholdImageFilter<TInputImage, TOutputImage>
     }
 }
 
-template <class TInputImage, class TOutputImage>
+template< class TInputImage, class TOutputImage >
 void
 AdaptiveOtsuThresholdImageFilter<TInputImage, TOutputImage>
 ::GenerateData()
@@ -214,7 +214,7 @@ AdaptiveOtsuThresholdImageFilter<TInputImage, TOutputImage>
     }
 }
 
-template <class TInputImage, class TOutputImage>
+template< class TInputImage, class TOutputImage >
 void
 AdaptiveOtsuThresholdImageFilter<TInputImage, TOutputImage>::
 PrintSelf( std::ostream& os, Indent indent ) const
