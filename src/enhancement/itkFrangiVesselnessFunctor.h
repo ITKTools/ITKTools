@@ -49,10 +49,10 @@ class FrangiVesselnessFunctor
 {
 public:
   /** Standard class typedefs. */
-  typedef FrangiVesselnessFunctor    Self;
-  typedef UnaryFunctorBase           Superclass;
-  typedef SmartPointer< Self >       Pointer;
-  typedef SmartPointer< const Self > ConstPointer;
+  typedef FrangiVesselnessFunctor             Self;
+  typedef UnaryFunctorBase< TInput, TOutput > Superclass;
+  typedef SmartPointer< Self >                Pointer;
+  typedef SmartPointer< const Self >          ConstPointer;
 
   /** New macro for creation of through a smart pointer. */
   itkNewMacro( Self );

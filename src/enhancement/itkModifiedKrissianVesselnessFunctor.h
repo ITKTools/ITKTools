@@ -46,10 +46,10 @@ class ModifiedKrissianVesselnessFunctor
 {
 public:
   /** Standard class typedefs. */
-  typedef ModifiedKrissianVesselnessFunctor    Self;
-  typedef UnaryFunctorBase           Superclass;
-  typedef SmartPointer< Self >       Pointer;
-  typedef SmartPointer< const Self > ConstPointer;
+  typedef ModifiedKrissianVesselnessFunctor   Self;
+  typedef UnaryFunctorBase< TInput, TOutput > Superclass;
+  typedef SmartPointer< Self >                Pointer;
+  typedef SmartPointer< const Self >          ConstPointer;
 
   /** New macro for creation of through a smart pointer. */
   itkNewMacro( Self );

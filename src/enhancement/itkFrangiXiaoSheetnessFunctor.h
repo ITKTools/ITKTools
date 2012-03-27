@@ -63,10 +63,10 @@ class FrangiXiaoSheetnessFunctor
 {
 public:
   /** Standard class typedefs. */
-  typedef FrangiXiaoSheetnessFunctor    Self;
-  typedef BinaryFunctorBase             Superclass;
-  typedef SmartPointer< Self >          Pointer;
-  typedef SmartPointer< const Self >    ConstPointer;
+  typedef FrangiXiaoSheetnessFunctor                      Self;
+  typedef BinaryFunctorBase< TInput1, TInput2, TOutput >  Superclass;
+  typedef SmartPointer< Self >                            Pointer;
+  typedef SmartPointer< const Self >                      ConstPointer;
 
   /** New macro for creation of through a smart pointer. */
   itkNewMacro( Self );

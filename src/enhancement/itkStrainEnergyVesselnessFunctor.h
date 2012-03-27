@@ -51,10 +51,10 @@ class StrainEnergyVesselnessFunctor
 {
 public:
   /** Standard class typedefs. */
-  typedef StrainEnergyVesselnessFunctor Self;
-  typedef BinaryFunctorBase             Superclass;
-  typedef SmartPointer< Self >          Pointer;
-  typedef SmartPointer< const Self >    ConstPointer;
+  typedef StrainEnergyVesselnessFunctor                   Self;
+  typedef BinaryFunctorBase< TInput1, TInput2, TOutput >  Superclass;
+  typedef SmartPointer< Self >                            Pointer;
+  typedef SmartPointer< const Self >                      ConstPointer;
 
   /** New macro for creation of through a smart pointer. */
   itkNewMacro( Self );

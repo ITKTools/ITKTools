@@ -51,10 +51,10 @@ class StrainEnergySheetnessFunctor
 {
 public:
   /** Standard class typedefs. */
-  typedef StrainEnergySheetnessFunctor  Self;
-  typedef BinaryFunctorBase             Superclass;
-  typedef SmartPointer< Self >          Pointer;
-  typedef SmartPointer< const Self >    ConstPointer;
+  typedef StrainEnergySheetnessFunctor                    Self;
+  typedef BinaryFunctorBase< TInput1, TInput2, TOutput >  Superclass;
+  typedef SmartPointer< Self >                            Pointer;
+  typedef SmartPointer< const Self >                      ConstPointer;
 
   /** New macro for creation of through a smart pointer. */
   itkNewMacro( Self );

@@ -50,10 +50,10 @@ class FrangiSheetnessFunctor
 {
 public:
   /** Standard class typedefs. */
-  typedef FrangiSheetnessFunctor    Self;
-  typedef UnaryFunctorBase           Superclass;
-  typedef SmartPointer< Self >       Pointer;
-  typedef SmartPointer< const Self > ConstPointer;
+  typedef FrangiSheetnessFunctor              Self;
+  typedef UnaryFunctorBase< TInput, TOutput > Superclass;
+  typedef SmartPointer< Self >                Pointer;
+  typedef SmartPointer< const Self >          ConstPointer;
 
   /** New macro for creation of through a smart pointer. */
   itkNewMacro( Self );
