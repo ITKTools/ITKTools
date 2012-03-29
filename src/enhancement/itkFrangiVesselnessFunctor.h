@@ -19,6 +19,7 @@
 #define __itkFrangiVesselnessFunctor_h
 
 #include "itkUnaryFunctorBase.h"
+#include "itkComparisonOperators.h"
 #include "vnl/vnl_math.h"
 
 namespace itk
@@ -62,70 +63,56 @@ public:
 
   /** Typedef's. */
   typedef typename NumericTraits<TOutput>::RealType RealType;
+  typedef TInput                                    EigenValueArrayType;
+  typedef typename EigenValueArrayType::ValueType   EigenValueType;
 
   /** This does the real computation */
   virtual TOutput Evaluate( const TInput & eigenValues ) const
   {
-    RealType vesselness = NumericTraits<RealType>::Zero;
+    /** Sort the eigenvalues by their absolute value, such that |l1| < |l2| < |l3|. */
+    EigenValueArrayType sortedEigenValues = eigenValues;
+    std::sort( sortedEigenValues.Begin(), sortedEigenValues.End(),
+      Functor::AbsLessCompare<EigenValueType>() );
 
-    RealType a1 = static_cast<RealType>( eigenValues[0] );
-    RealType a2 = static_cast<RealType>( eigenValues[1] );
-    RealType a3 = static_cast<RealType>( eigenValues[2] );
+    /** Take the absolute values and abbreviate. */
+    const RealType l1 = vnl_math_abs( sortedEigenValues[ 0 ] );
+    const RealType l2 = vnl_math_abs( sortedEigenValues[ 1 ] );
+    const RealType l3 = vnl_math_abs( sortedEigenValues[ 2 ] );
 
-    RealType l1 = vnl_math_abs( a1 );
-    RealType l2 = vnl_math_abs( a2 );
-    RealType l3 = vnl_math_abs( a3 );
-
-    // Sort the eigenvalues by their absolute value.
-    // At the end of the sorting we should have
-    // |l1| <= |l2| <= |l3|
-    if( l2 > l3 )
-    {
-      std::swap(l2, l3);
-      std::swap(a2, a3);
-    }
-    if( l1 > l2 )
-    {
-      std::swap(l1, l2);
-      std::swap(a1, a2);
-    }
-    if( l2 > l3 )
-    {
-      std::swap(l2, l3);
-      std::swap(a2, a3);
-    }
-
+    /** Reject. */
     if( this->m_BrightObject )
     {
       // Reject dark tubes and dark ridges over bright background
-      if( a3 > NumericTraits<RealType>::Zero )
+      if( sortedEigenValues[ 2 ] > NumericTraits<RealType>::Zero )
       {
-        return static_cast<TOutput>( vesselness );
+        return NumericTraits<TOutput>::Zero;
       }
     }
     else
     {
       // Reject bright tubes and bright ridges over dark background
-      if( a3 < NumericTraits<RealType>::Zero )
+      if( sortedEigenValues[ 2 ] < NumericTraits<RealType>::Zero )
       {
-        return static_cast<TOutput>( vesselness );
+        return NumericTraits<TOutput>::Zero;
       }
     }
 
-    // Avoid divisions by zero (or close to zero)
+    /** Avoid divisions by zero (or close to zero). */
     if( l2 < vnl_math::eps || l3 < vnl_math::eps )
     {
-      return static_cast<TOutput>( vesselness );
+      return NumericTraits<TOutput>::Zero;
     }
 
+    /** Compute several structure measures. */
     const RealType Ra = l2 / l3; // see Eq.(11)
     const RealType Rb = l1 / vcl_sqrt( l2 * l3 ); // see Eq.(10)
     const RealType S  = vcl_sqrt( l1 * l1 + l2 * l2 + l3 * l3 ); // see Eq.(12)
 
-    // Vesselness function, see Eq.(13)
-    vesselness  = ( 1.0 - vcl_exp( -( Ra * Ra ) / ( 2.0 * m_Alpha * m_Alpha ) ) );
-    vesselness *= (       vcl_exp( -( Rb * Rb ) / ( 2.0 * m_Beta  * m_Beta  ) ) );
-    vesselness *= ( 1.0 - vcl_exp( -( S  * S )  / ( 2.0 * m_C     * m_C ) ) );
+    /** Compute final vesselness measure, see Eq.(13). */
+    RealType vesselness = NumericTraits<RealType>::Zero;
+    vesselness  = ( 1.0 - vcl_exp( -( Ra * Ra ) / ( 2.0 * m_Alpha * m_Alpha ) ) ); // sheetness vs lineness
+    vesselness *=         vcl_exp( -( Rb * Rb ) / ( 2.0 * m_Beta  * m_Beta  ) );   // blobness
+    vesselness *= ( 1.0 - vcl_exp( -( S  * S )  / ( 2.0 * m_C     * m_C ) ) );     // noise = structuredness
 
     return static_cast<TOutput>( vesselness );
   } // end operator ()
@@ -135,6 +122,13 @@ public:
   itkSetClampMacro( Beta, double, 0.0, NumericTraits<double>::max() );
   itkSetClampMacro( C, double, 0.0, NumericTraits<double>::max() );
   itkSetMacro( BrightObject, bool );
+
+#ifdef ITK_USE_CONCEPT_CHECKING
+  /** Begin concept checking */
+  itkConceptMacro( DimensionIs3Check,
+    ( Concept::SameDimension< EigenValueArrayType::Dimension, 3 > ) );
+  /** End concept checking */
+#endif
 
 protected:
   /** Constructor */

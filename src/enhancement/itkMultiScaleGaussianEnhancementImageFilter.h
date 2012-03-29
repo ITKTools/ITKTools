@@ -23,26 +23,26 @@
 namespace itk
 {
 /**\class MultiScaleGaussianEnhancementImageFilter
-* \brief A filter to enhance image structures using Hessian
-* measures in a multi scale framework.
-*
-* Minimum and maximum sigma value can be set using SetSigmaMinimum
-* and SetSigmaMaximum methods respectively. The number of scale levels is set
-* using SetNumberOfSigmaSteps method. Exponentially distributed scale levels are
-* computed within the bound set by the minimum and maximum sigma values.
-*
-* The filter computes a second output image (accessed by the GetScalesOutput method)
-* containing the scales at which each pixel gave the best response.
-*
-* \sa GaussianEnhancementImageFilter
-* \sa HessianRecursiveGaussianImageFilter
-* \sa SymmetricEigenAnalysisImageFilter
-* \sa DescoteauxSheetnessImageFilter
-* \sa FrangiSheetnessImageFilter
-* \sa StrainEnergyVesselnessImageFilter
-*
-* \ingroup IntensityImageFilters TensorObjects
-*/
+ * \brief A filter to enhance image structures using Hessian
+ * measures in a multi scale framework.
+ *
+ * Minimum and maximum sigma value can be set using SetSigmaMinimum
+ * and SetSigmaMaximum methods respectively. The number of scale levels is set
+ * using SetNumberOfSigmaSteps method. Exponentially distributed scale levels are
+ * computed within the bound set by the minimum and maximum sigma values.
+ *
+ * The filter computes a second output image (accessed by the GetScalesOutput method)
+ * containing the scales at which each pixel gave the best response.
+ *
+ * \sa GaussianEnhancementImageFilter
+ * \sa HessianRecursiveGaussianImageFilter
+ * \sa SymmetricEigenAnalysisImageFilter
+ * \sa DescoteauxSheetnessImageFilter
+ * \sa FrangiSheetnessImageFilter
+ * \sa StrainEnergyVesselnessImageFilter
+ *
+ * \ingroup IntensityImageFilters TensorObjects
+ */
 template < typename TInputImage, typename TOutputImage >
 class MultiScaleGaussianEnhancementImageFilter
   : public ImageToImageFilter< TInputImage, TOutputImage >

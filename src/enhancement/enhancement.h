@@ -34,6 +34,7 @@
 #include "itkFrangiSheetnessFunctor.h"
 #include "itkDescoteauxSheetnessFunctor.h"
 #include "itkFrangiXiaoSheetnessFunctor.h"
+#include "itkDescoteauxXiaoSheetnessFunctor.h"
 
 #include <vector>
 #include <string>
@@ -145,6 +146,9 @@ public:
   typedef itk::Functor::FrangiXiaoSheetnessFunctor<
     GradientMagnitudePixelType, EigenValueArrayType,
     OutputPixelType >                                 FrangiXiaoSheetnessFunctorType;
+  typedef itk::Functor::DescoteauxXiaoSheetnessFunctor<
+    GradientMagnitudePixelType, EigenValueArrayType,
+    OutputPixelType >                                 DescoteauxXiaoSheetnessFunctorType;
 
   /** Run function. */
   void Run( void )
@@ -239,6 +243,18 @@ public:
     {
       typename FrangiXiaoSheetnessFunctorType::Pointer functor
         = FrangiXiaoSheetnessFunctorType::New();
+      functor->SetAlpha( this->m_Alpha );
+      functor->SetBeta( this->m_Beta );
+      functor->SetC( this->m_C );
+      functor->SetKappa( this->m_Kappa );
+      functor->SetBrightObject( true );
+
+      multiScaleFilter->SetBinaryFunctor( functor );
+    }
+    else if ( this->m_Method == "DescoteauxXiaoSheetness" )
+    {
+      typename DescoteauxXiaoSheetnessFunctorType::Pointer functor
+        = DescoteauxXiaoSheetnessFunctorType::New();
       functor->SetAlpha( this->m_Alpha );
       functor->SetBeta( this->m_Beta );
       functor->SetC( this->m_C );

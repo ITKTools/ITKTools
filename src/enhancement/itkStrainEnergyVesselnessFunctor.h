@@ -64,6 +64,8 @@ public:
 
   /** Typedef's. */
   typedef typename NumericTraits<TOutput>::RealType RealType;
+  typedef TInput2                                   EigenValueArrayType;
+  typedef typename EigenValueArrayType::ValueType   EigenValueType;
   itkStaticConstMacro( Dimension, unsigned int, TInput2::Dimension );
 
   /** This does the real computation */
@@ -174,6 +176,13 @@ public:
   itkSetClampMacro( Nu, double, -1.0, 0.5 );
   itkSetClampMacro( Kappa, double, 0.0, NumericTraits<double>::max() );
   itkSetMacro( BrightObject, bool );
+
+#ifdef ITK_USE_CONCEPT_CHECKING
+  /** Begin concept checking */
+  itkConceptMacro( DimensionIs3Check,
+    ( Concept::SameDimension< EigenValueArrayType::Dimension, 3 > ) );
+  /** End concept checking */
+#endif
 
 protected:
   /** Constructor */

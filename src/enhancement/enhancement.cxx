@@ -27,7 +27,6 @@
 #include "itkCommandLineArgumentParser.h"
 #include "ITKToolsHelpers.h"
 #include "enhancement.h"
-//#include "CommandLineArgumentHelper.h"
 
 
 /**
@@ -59,6 +58,7 @@ std::string GetHelpString( void )
     << "             DescoteauxSheetness    - Descoteaux sheetness [5]\n"
     << "             StrainEnergySheetness  - Strain energy sheetness [2]\n"
     << "             FrangiXiaoSheetness    - Frangi-Xiao sheetness [?]\n"
+    << "             DescoteauxXiaoSheetness - Descoteaux-Xiao sheetness [?]\n"
     << std::endl
     << "  Options for method FrangiVesselness:\n"
     << "  [-alpha] alpha, distinguish sheets from lines, default 0.5\n"
@@ -84,8 +84,12 @@ std::string GetHelpString( void )
     << "  [-beta]  beta, blob-ness, default 0.5\n"
     << "  [-C]     C, noise\n"
     << std::endl
-    << "  Options for method StrainEnergySheetness: ...\n"
+    << "  Options for method StrainEnergySheetness:\n"
+    << "           same as StrainEnergyVesselness\n"
     << "  Options for method FrangiXiaoSheetness: ...\n"
+    << "           same as Frangi + kappa (step edge) \n"
+    << "  Options for method DescoteauxXiaoSheetness: ...\n"
+    << "           same as Descoteaux + kappa (step edge) \n"
     << "Supported: 3D, float, double.";
 
   return ss.str();

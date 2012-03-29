@@ -19,6 +19,7 @@
 #define __itkFrangiXiaoSheetnessFunctor_h
 
 #include "itkBinaryFunctorBase.h"
+#include "itkComparisonOperators.h"
 #include "vnl/vnl_math.h"
 
 namespace itk
@@ -76,82 +77,63 @@ public:
 
   /** Typedef's. */
   typedef typename NumericTraits<TOutput>::RealType RealType;
+  typedef TInput2                                   EigenValueArrayType;
+  typedef typename EigenValueArrayType::ValueType   EigenValueType;
 
   /** This does the real computation */
   virtual TOutput Evaluate( const TInput1 & gMag, const TInput2 & eigenValues ) const
   {
-    RealType sheetness = NumericTraits<RealType>::Zero;
+    /** Sort the eigenvalues by their absolute value, such that |l1| < |l2| < |l3|. */
+    EigenValueArrayType sortedEigenValues = eigenValues;
+    std::sort( sortedEigenValues.Begin(), sortedEigenValues.End(),
+      Functor::AbsLessCompare<EigenValueType>() );
 
-    RealType a1 = static_cast<RealType>( eigenValues[0] );
-    RealType a2 = static_cast<RealType>( eigenValues[1] );
-    RealType a3 = static_cast<RealType>( eigenValues[2] );
-
-    RealType l1 = vnl_math_abs( a1 );
-    RealType l2 = vnl_math_abs( a2 );
-    RealType l3 = vnl_math_abs( a3 );
+    /** Take the absolute values and abbreviate. */
+    const RealType l1 = vnl_math_abs( sortedEigenValues[ 0 ] );
+    const RealType l2 = vnl_math_abs( sortedEigenValues[ 1 ] );
+    const RealType l3 = vnl_math_abs( sortedEigenValues[ 2 ] );
 
     const RealType gradientMagnitude = static_cast<RealType>( gMag ) ;
-    const RealType eigenValuesSum = a1 + a2 + a3;
+    const RealType eigenValuesSum = eigenValues[ 0 ]
+      + eigenValues[ 1 ] + eigenValues[ 2 ];
 
-    // Sort the eigenvalues by their absolute value.
-    // At the end of the sorting we should have
-    // |l1| <= |l2| <= |l3|
-    if( l2 > l3 )
-    {
-      std::swap(l2, l3);
-      std::swap(a2, a3);
-    }
-    if( l1 > l2 )
-    {
-      std::swap(l1, l2);
-      std::swap(a1, a2);
-    }
-    if( l2 > l3 )
-    {
-      std::swap(l2, l3);
-      std::swap(a2, a3);
-    }
-
+    /** Reject. */
     if( this->m_BrightObject )
     {
       if( eigenValuesSum > NumericTraits<RealType>::Zero )
       {
-        return static_cast<TOutput>( sheetness );
+        return NumericTraits<TOutput>::Zero;
       }
     }
     else
     {
       if( eigenValuesSum < NumericTraits<RealType>::Zero )
       {
-        return static_cast<TOutput>( sheetness );
+        return NumericTraits<TOutput>::Zero;
       }
     }
 
-    // Avoid divisions by zero (or close to zero)
+    /** Avoid divisions by zero (or close to zero). */
     if( l2 < vnl_math::eps || l3 < vnl_math::eps )
     {
-      return static_cast<TOutput>( sheetness );
+      return NumericTraits<TOutput>::Zero;
     }
 
+    /** Compute several structure measures. */
     const RealType Ra = l2 / l3; // see Eq.(11)
     const RealType Rb = l1 / vcl_sqrt( l2 * l3 ); // see Eq.(10)
     const RealType S  = vcl_sqrt( l1 * l1 + l2 * l2 + l3 * l3 ); // see Eq.(12)
 
-    // Avoid divisions by zero (or close to zero)
-    if( S < vnl_math::eps )
-    {
-      return static_cast<TOutput>( sheetness );
-    }
-    else
-    {
-      // Frangi Sheetness function. Modified from Vesselness function, see Eq.(13)
-      sheetness  =         vcl_exp( - ( Ra * Ra ) / ( 2.0 * m_Alpha * m_Alpha ) );
-      sheetness *=         vcl_exp( - ( Rb * Rb ) / ( 2.0 * m_Beta * m_Beta ) );
-      sheetness *= ( 1.0 - vcl_exp( - ( S  * S  ) / ( 2.0 * m_C * m_C ) ) );
+    /** Compute Frangi sheetness measure. */
+    RealType sheetness = NumericTraits<RealType>::Zero;
+    sheetness  =         vcl_exp( - ( Ra * Ra ) / ( 2.0 * m_Alpha * m_Alpha ) ); // sheetness vs lineness
+    sheetness *=         vcl_exp( - ( Rb * Rb ) / ( 2.0 * m_Beta * m_Beta ) );   // blobness
+    sheetness *= ( 1.0 - vcl_exp( - ( S  * S  ) / ( 2.0 * m_C * m_C ) ) );       // noise = structuredness
 
-      // Step-edge suppressing proposed by Changyan Xiao
-      sheetness *= vcl_exp( -1.0 * m_Kappa * ( gradientMagnitude / S ) );
-    }
+    // Step-edge suppressing proposed by Changyan Xiao
+    // Dividing by S or l3 does not make much difference
+    //sheetness *= vcl_exp( -1.0 * m_Kappa * ( gradientMagnitude / S ) );
+    sheetness *= vcl_exp( -1.0 * m_Kappa * ( gradientMagnitude / l3 ) );
 
     return static_cast<TOutput>( sheetness );
   } // end Evaluate()
@@ -163,13 +145,20 @@ public:
   itkSetClampMacro( Kappa, double, 0.0, NumericTraits<double>::max() );
   itkSetMacro( BrightObject, bool );
 
+#ifdef ITK_USE_CONCEPT_CHECKING
+  /** Begin concept checking */
+  itkConceptMacro( DimensionIs3Check,
+    ( Concept::SameDimension< EigenValueArrayType::Dimension, 3 > ) );
+  /** End concept checking */
+#endif
+
 protected:
   /** Constructor */
   FrangiXiaoSheetnessFunctor()
   {
     this->m_Alpha = 0.5; // suggested value in the paper
     this->m_Beta = 0.5;  // suggested value in the paper
-    this->m_C = 500.0;   // Depends on intensity range, 500 good for lung CT
+    this->m_C = 1.0;     // good for lung CT
     this->m_Kappa = 0.8; // suggested value in the paper
     this->m_BrightObject = true;
   };

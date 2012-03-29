@@ -190,7 +190,7 @@ MultiScaleGaussianEnhancementImageFilter< TInputImage, TOutputImage >
     scalesImage->FillBuffer( itk::NumericTraits<ScalesPixelType>::Zero );
   }
 
-  // Check staff here before starting
+  // Check stuff here before starting
   if ( this->m_SigmaMinimum > this->m_SigmaMaximum )
   {
     itkExceptionMacro( << "ERROR: SigmaMinimum: " << this->m_SigmaMinimum
@@ -368,7 +368,8 @@ MultiScaleGaussianEnhancementImageFilter< TInputImage, TOutputImage >
     << this->m_NonNegativeHessianBasedMeasure << std::endl;
   os << indent << "GenerateScalesOutput: " << this->m_GenerateScalesOutput << std::endl;
   os << indent << "Rescale: " << this->m_Rescale << std::endl;
-  os << indent << "NormalizeAcrossScale: " << this->m_GaussianEnhancementFilter->GetNormalizeAcrossScale() << std::endl;
+  os << indent << "NormalizeAcrossScale: "
+    << this->m_GaussianEnhancementFilter->GetNormalizeAcrossScale() << std::endl;
 
 } // end PrintSelf()
 
