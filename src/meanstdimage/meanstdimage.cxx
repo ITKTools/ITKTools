@@ -44,6 +44,9 @@ std::string GetHelpString( void )
 	<< "  -inMask    list of inputMaskFilenames\n"
     << "  [-outmean] outputFilename for mean image; always written as float\n"
     << "  [-outstd]  outputFilename for standard deviation image; always written as float,\n"
+	<< "  [-popstd]  population standard deviation flag; if provided, use population standard deviation\n"
+	<< "             rather than sample standard deviation (divide by N instead of N-1)\n"
+    << "  [-z]       compression flag; if provided, the output image is compressed\n"
     << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
 
   return ss.str();
@@ -90,6 +93,12 @@ int main( int argc, char **argv )
   parser->GetCommandLineArgument( "-outstd", outputFileNameStd );
   bool retoutstd  = parser->GetCommandLineArgument( "-outstd", outputFileNameStd );
 
+  /** Use population standard deviation */
+  const bool usePopulationStd = parser->ArgumentExists( "-populationstd" );
+
+  /** Use compression */
+  const bool useCompression = parser->ArgumentExists( "-z" );
+
   /** Determine image properties. */
   itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
   itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
@@ -102,6 +111,13 @@ int main( int argc, char **argv )
   /** Check for vector images. */
   bool retNOCCheck = itktools::NumberOfComponentsCheck( numberOfComponents );
   if( !retNOCCheck ) return EXIT_FAILURE;
+
+  /** Input check for number of masks */
+  if (inputFileNames.size() != inputMaskFileNames.size() && inputMaskFileNames.size() > 0)
+  {
+	  std::cerr << "ERROR: the number of masks has to match the number of input images"  << std::endl;
+	  return EXIT_FAILURE;
+  }  
 
   /** Class that does the work. */
   ITKToolsMeanStdImageBase * filter = 0;
@@ -135,6 +151,8 @@ int main( int argc, char **argv )
     filter->m_OutputFileNameStd = outputFileNameStd;
     filter->m_CalcMean = retoutmean;
     filter->m_CalcStd = retoutstd;
+	filter->m_UsePopulationStd = usePopulationStd;
+	filter->m_UseCompression = useCompression;
 
     filter->Run();
 

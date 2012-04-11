@@ -30,7 +30,9 @@ ITKToolsMeanStdImage< VDimension, TComponentType >
   const bool calc_mean,
   const std::string & outputFileNameMean,
   const bool calc_std,
-  const std::string & outputFileNameStd )
+  const std::string & outputFileNameStd,
+  const bool population_std,
+  const bool use_compression)
 {
   /** TYPEDEF's. */
   typedef typename InputImageType::Pointer              ImagePointer;
@@ -42,11 +44,9 @@ ITKToolsMeanStdImage< VDimension, TComponentType >
   typedef typename WriterType::Pointer                  WriterPointer;
 
   /** DECLARATION'S. */
-  unsigned int nrInputs = inputFileNames.size();
-  unsigned int nrMasks = inputMaskFileNames.size();
-  if (nrInputs != nrMasks)
-  {
-  }  
+  const unsigned int nrInputs = inputFileNames.size();
+  const unsigned int nrMasks = inputMaskFileNames.size();
+  
   ReaderPointer inReader;
   ReaderPointer inMaskReader;
   WriterPointer writer_mean = WriterType::New();
@@ -159,36 +159,53 @@ ITKToolsMeanStdImage< VDimension, TComponentType >
 
   /** Calculate mean and standard deviation using:
       mean = ( SUM(X) / N )
-      std  = sqrt( E(X^2) - (E(X))^2 )
+      std  = sqrt( E(X^2) - (E(X))^2 ) for population standard deviation
+      std  = sqrt(N / (N-1)) * sqrt( E(X^2) - (E(X))^2 ) for sample standard deviation
   */
   mean_iterator.GoToBegin();
   sq_mean_iterator.GoToBegin();
   std_iterator.GoToBegin();
   nr_images_iterator.GoToBegin();
   
-  /** Denominator depends on the type of standard deviation wanted: sample or population standard deviation */
-  float denominator( 1.0f / nrInputs );  
+  /** Denominator for the 1/N calculations and sample_std_factor N/(N-1) to get sample std from population std */
+  float denominator( 1.0f / nrInputs );
+  float sample_std_factor = std::sqrt(((float) nrInputs) / ((float) nrInputs - 1));
+
   for (; !mean_iterator.IsAtEnd(); ++mean_iterator, ++sq_mean_iterator, ++std_iterator)
   {
     if (nrMasks != 0)
 	{
-		if (nr_images_iterator.Get() > 0)
-			denominator = 1 / nr_images_iterator.Get();
-		else
-			denominator = 0;
-		++nr_images_iterator;
+	  if (nr_images_iterator.Get() > 0)
+	  {
+	    denominator = 1 / nr_images_iterator.Get();
+	    sample_std_factor = std::sqrt(((float) nr_images_iterator.Get()) / ((float) nr_images_iterator.Get() - 1));
+	  }
+	  else
+	  {
+	    denominator = 0;
+	    sample_std_factor = 0;
+	  }
+	  ++nr_images_iterator;
 	}
 	
 	/** Calculate mean and mean of squares */
 	mean_iterator.Set( denominator * mean_iterator.Get() );
 	sq_mean_iterator.Set( denominator * sq_mean_iterator.Get() );
 	
-	/** Calculate standard deviation: sqrt( E(X^2) - (E(X))^2 ) */
+	/** Calculate standard deviation */
 	
 	if (calc_std)
 	{
-		std_iterator.Set( std::sqrt(
-			(float) std::abs( sq_mean_iterator.Get() - (mean_iterator.Get() * mean_iterator.Get() ) ) ) );
+	  if (population_std) // Calculate either sample or population standard deviation
+	  { 
+	    std_iterator.Set( std::sqrt(
+	      (float) std::abs( sq_mean_iterator.Get() - (mean_iterator.Get() * mean_iterator.Get() ) ) ) );
+	  } 
+	  else
+	  {
+	    std_iterator.Set( sample_std_factor * std::sqrt(
+	      (float) std::abs( sq_mean_iterator.Get() - (mean_iterator.Get() * mean_iterator.Get() ) ) ) );
+	  }
 	}
   }
   
@@ -197,12 +214,15 @@ ITKToolsMeanStdImage< VDimension, TComponentType >
   {
     writer_mean->SetFileName( outputFileNameMean.c_str() );
     writer_mean->SetInput( mean );
+	writer_mean->SetUseCompression( use_compression );
     writer_mean->Update();
   }
+
   if( calc_std )
   {
     writer_std->SetFileName( outputFileNameStd.c_str() );
     writer_std->SetInput( std );
+	writer_std->SetUseCompression( use_compression );
     writer_std->Update();
   }
 
