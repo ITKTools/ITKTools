@@ -41,6 +41,7 @@ std::string GetHelpString( void )
     << "Usage:\n"
     << "pxmeanstdimage\n"
     << "  -in        list of inputFilenames\n"
+	<< "  -inMask    list of inputMaskFilenames\n"
     << "  [-outmean] outputFilename for mean image; always written as float\n"
     << "  [-outstd]  outputFilename for standard deviation image; always written as float,\n"
     << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, float, double.";
@@ -77,6 +78,9 @@ int main( int argc, char **argv )
   /** Get arguments. */
   std::vector<std::string> inputFileNames;
   parser->GetCommandLineArgument( "-in", inputFileNames );
+  
+  std::vector<std::string> inputMaskFileNames;
+  parser->GetCommandLineArgument( "-inMask", inputMaskFileNames );
 
   std::string outputFileNameMean = "";
   parser->GetCommandLineArgument( "-outmean", outputFileNameMean );
@@ -126,6 +130,7 @@ int main( int argc, char **argv )
 
     /** Set the filter arguments. */
     filter->m_InputFileNames = inputFileNames;
+	filter->m_InputMaskFileNames = inputMaskFileNames;
     filter->m_OutputFileNameMean= outputFileNameMean;
     filter->m_OutputFileNameStd = outputFileNameStd;
     filter->m_CalcMean = retoutmean;

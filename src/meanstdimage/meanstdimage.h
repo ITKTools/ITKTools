@@ -38,6 +38,7 @@ public:
   ITKToolsMeanStdImageBase()
   {
     this->m_InputFileNames = std::vector<std::string>();
+	this->m_InputMaskFileNames = std::vector<std::string>();
     this->m_OutputFileNameMean = "";
     this->m_OutputFileNameStd = "";
     this->m_CalcMean = false;
@@ -48,6 +49,7 @@ public:
 
   /** Input member parameters. */
   std::vector<std::string> m_InputFileNames;
+  std::vector<std::string> m_InputMaskFileNames;
   std::string              m_OutputFileNameMean;
   std::string              m_OutputFileNameStd;
   bool                     m_CalcMean;
@@ -82,6 +84,7 @@ public:
   {
     this->MeanStdImage(
       this->m_InputFileNames,
+	  this->m_InputMaskFileNames,
       this->m_CalcMean,
       this->m_OutputFileNameMean,
       this->m_CalcStd,
@@ -92,6 +95,7 @@ public:
   /** Function to perform normal thresholding. */
   void MeanStdImage(
     const std::vector<std::string> & inputFileNames,
+	const std::vector<std::string> & inputMaskFileNames,
     const bool calc_mean, const std::string & outputFileNameMean,
     const bool calc_std, const std::string & outputFileNameStd );
 
