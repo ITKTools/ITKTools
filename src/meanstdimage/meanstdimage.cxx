@@ -94,7 +94,7 @@ int main( int argc, char **argv )
   bool retoutstd  = parser->GetCommandLineArgument( "-outstd", outputFileNameStd );
 
   /** Use population standard deviation */
-  const bool usePopulationStd = parser->ArgumentExists( "-populationstd" );
+  const bool usePopulationStd = parser->ArgumentExists( "-popstd" );
 
   /** Use compression */
   const bool useCompression = parser->ArgumentExists( "-z" );
