@@ -10,4 +10,4 @@ ElementSpacing = 1 1
 DimSize = 100 100
 AnatomicalOrientation = ??
 ElementType = MET_FLOAT
-ElementDataFile = MeanStdImage_Std.raw
+ElementDataFile = MeanStdImage_SampleStd.raw

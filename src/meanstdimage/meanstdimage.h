@@ -38,20 +38,26 @@ public:
   ITKToolsMeanStdImageBase()
   {
     this->m_InputFileNames = std::vector<std::string>();
+	this->m_InputMaskFileNames = std::vector<std::string>();
     this->m_OutputFileNameMean = "";
     this->m_OutputFileNameStd = "";
     this->m_CalcMean = false;
     this->m_CalcStd = false;
+	this->m_UsePopulationStd = false;
+	this->m_UseCompression = false;
   };
   /** Destructor. */
   ~ITKToolsMeanStdImageBase(){};
 
   /** Input member parameters. */
   std::vector<std::string> m_InputFileNames;
+  std::vector<std::string> m_InputMaskFileNames;
   std::string              m_OutputFileNameMean;
   std::string              m_OutputFileNameStd;
   bool                     m_CalcMean;
-  bool                     m_CalcStd;
+  bool                     m_CalcStd;\
+  bool                     m_UsePopulationStd;
+  bool                     m_UseCompression;
 
 }; // end class ITKToolsMeanStdImageBase
 
@@ -82,18 +88,23 @@ public:
   {
     this->MeanStdImage(
       this->m_InputFileNames,
+	  this->m_InputMaskFileNames,
       this->m_CalcMean,
       this->m_OutputFileNameMean,
       this->m_CalcStd,
-      this->m_OutputFileNameStd );
+      this->m_OutputFileNameStd,
+	  this->m_UsePopulationStd,
+	  this->m_UseCompression);
 
   } // end Run()
 
   /** Function to perform normal thresholding. */
   void MeanStdImage(
     const std::vector<std::string> & inputFileNames,
+	const std::vector<std::string> & inputMaskFileNames,
     const bool calc_mean, const std::string & outputFileNameMean,
-    const bool calc_std, const std::string & outputFileNameStd );
+    const bool calc_std, const std::string & outputFileNameStd,
+	const bool population_std, const bool use_compression);
 
 }; // end class MeanStdImage
 
