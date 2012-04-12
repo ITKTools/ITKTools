@@ -364,9 +364,13 @@ itktools_add_test( meanstdimage "MEAN" mhd
   "-in;${DataDir}/WhiteStripe1.mhd;${DataDir}/WhiteStripe2.mhd;${DataDir}/WhiteStripe3.mhd;${DataDir}/WhiteStripe4.mhd;-outmean;${OutDir}/meanstdimage_MEAN.mhd"
   "MeanStdImage_Mean.mhd" )
 
-itktools_add_test( meanstdimage "STD" mhd
-  "-in;${DataDir}/WhiteStripe1.mhd;${DataDir}/WhiteStripe2.mhd;${DataDir}/WhiteStripe3.mhd;${DataDir}/WhiteStripe4.mhd;-outstd;${OutDir}/meanstdimage_STD.mhd"
-  "MeanStdImage_Std.mhd" )
+itktools_add_test( meanstdimage "SAMSTD" mhd
+	"-in;${DataDir}/WhiteStripe1.mhd;${DataDir}/WhiteStripe2.mhd;${DataDir}/WhiteStripe3.mhd;${DataDir}/WhiteStripe4.mhd;-outstd;${OutDir}/meanstdimage_SAMSTD.mhd"
+  "MeanStdImage_SampleStd.mhd" )
+
+itktools_add_test( meanstdimage "POPSTD" mhd
+  "-in;${DataDir}/WhiteStripe1.mhd;${DataDir}/WhiteStripe2.mhd;${DataDir}/WhiteStripe3.mhd;${DataDir}/WhiteStripe4.mhd;-popstd;-outstd;${OutDir}/meanstdimage_POPSTD.mhd"
+  "MeanStdImage_PopulationStd.mhd" )
 
 ######### Morphology #########
 # add_test(NAME MorphologyOutput
