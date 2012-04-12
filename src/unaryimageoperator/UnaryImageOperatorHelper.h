@@ -128,6 +128,9 @@ public:
     stringToEnumMap["ARCCOS"] = ARCCOS;
     stringToEnumMap["ARCTAN"] = ARCTAN;
     stringToEnumMap["LINEAR"] = LINEAR;
+    stringToEnumMap["ERRFUNC"] = ERRFUNC;
+    stringToEnumMap["NORMCDF"] = NORMCDF;
+    stringToEnumMap["QFUNC"] = QFUNC;
 
     /** Construct the unary filter. */
     UnaryFunctorFactory<InputImageType, OutputImageType, double> unaryFunctorFactory;

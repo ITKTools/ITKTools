@@ -63,6 +63,9 @@ int CheckOps( std::string & ops, bool isInteger )
   operatorMap["ARCTAN"]   = false;
   operatorMap["EQUAL"]    = false;
   operatorMap["LINEAR"]   = false;
+  operatorMap["ERRFUNC"]  = false;
+  operatorMap["NORMCDF"]  = false;
+  operatorMap["QFUNC"]    = false;
 
   /** Append with INT or DOUBLE if necessary. */
   if( operatorMap.count( ops ) ) // the operator exists
@@ -123,6 +126,9 @@ bool OperatorNeedsArgument( const std::string & ops )
   operatorMap["ARCTAN"]  = false;
   operatorMap["EQUAL"]   = true;
   operatorMap["LINEAR"]  = true;
+  operatorMap["ERRFUNC"]  = false;
+  operatorMap["NORMCDF"]  = true;
+  operatorMap["QFUNC"]  = true;
 
   return operatorMap[ ops ];
 
@@ -143,34 +149,37 @@ void CreateOutputFileName( const std::string & inputFileName,
   std::map< std::string, PairPairType > operatorMap;
 
   /** Fill the map. */
-  operatorMap["PLUS"]   = PairPairType( false, PairType( true, false ) );
-  operatorMap["RMINUS"] = PairPairType( false, PairType( true, false ) );
-  operatorMap["LMINUS"] = PairPairType( true, PairType( true, true ) );
-  operatorMap["TIMES"]  = PairPairType( false, PairType( true, false ) );
+  operatorMap["PLUS"]    = PairPairType( false, PairType( true, false ) );
+  operatorMap["RMINUS"]  = PairPairType( false, PairType( true, false ) );
+  operatorMap["LMINUS"]  = PairPairType( true, PairType( true, true ) );
+  operatorMap["TIMES"]   = PairPairType( false, PairType( true, false ) );
   operatorMap["RDIVIDE"] = PairPairType( false, PairType( true, false ) );
   operatorMap["LDIVIDE"] = PairPairType( true, PairType( true, true ) );
-  operatorMap["RPOWER"] = PairPairType( false, PairType( true, false ) );
-  operatorMap["LPOWER"] = PairPairType( true, PairType( true, true ) );
-  operatorMap["RMOD"]   = PairPairType( false, PairType( true, false ) );
-  operatorMap["LMOD"]   = PairPairType( true, PairType( true, true ) );
-  operatorMap["NEG"]    = PairPairType( true, PairType( false, true ) );
-  operatorMap["SIGN"]   = PairPairType( true, PairType( false, true ) );
-  operatorMap["ABS"]    = PairPairType( true, PairType( false, true ) );
-  operatorMap["FLOOR"]  = PairPairType( true, PairType( false, true ) );
-  operatorMap["CEIL"]   = PairPairType( true, PairType( false, true ) );
-  operatorMap["ROUND"]  = PairPairType( true, PairType( false, true ) );
-  operatorMap["LN"]     = PairPairType( true, PairType( false, true ) );
-  operatorMap["LOG10"]  = PairPairType( true, PairType( false, true ) );
-  operatorMap["NLOG"]   = PairPairType( true, PairType( false, true ) );
-  operatorMap["EXP"]    = PairPairType( true, PairType( false, true ) );
-  operatorMap["SIN"]    = PairPairType( true, PairType( false, true ) );
-  operatorMap["COS"]    = PairPairType( true, PairType( false, true ) );
-  operatorMap["TAN"]    = PairPairType( true, PairType( false, true ) );
-  operatorMap["ARCSIN"] = PairPairType( true, PairType( false, true ) );
-  operatorMap["ARCCOS"] = PairPairType( true, PairType( false, true ) );
-  operatorMap["ARCTAN"] = PairPairType( true, PairType( false, true ) );
-  operatorMap["EQUAL"]  = PairPairType( false, PairType( true, false ) );
-  operatorMap["LINEAR"] = PairPairType( false, PairType( true, false ) );
+  operatorMap["RPOWER"]  = PairPairType( false, PairType( true, false ) );
+  operatorMap["LPOWER"]  = PairPairType( true, PairType( true, true ) );
+  operatorMap["RMOD"]    = PairPairType( false, PairType( true, false ) );
+  operatorMap["LMOD"]    = PairPairType( true, PairType( true, true ) );
+  operatorMap["NEG"]     = PairPairType( true, PairType( false, true ) );
+  operatorMap["SIGN"]    = PairPairType( true, PairType( false, true ) );
+  operatorMap["ABS"]     = PairPairType( true, PairType( false, true ) );
+  operatorMap["FLOOR"]   = PairPairType( true, PairType( false, true ) );
+  operatorMap["CEIL"]    = PairPairType( true, PairType( false, true ) );
+  operatorMap["ROUND"]   = PairPairType( true, PairType( false, true ) );
+  operatorMap["LN"]      = PairPairType( true, PairType( false, true ) );
+  operatorMap["LOG10"]   = PairPairType( true, PairType( false, true ) );
+  operatorMap["NLOG"]    = PairPairType( true, PairType( false, true ) );
+  operatorMap["EXP"]     = PairPairType( true, PairType( false, true ) );
+  operatorMap["SIN"]     = PairPairType( true, PairType( false, true ) );
+  operatorMap["COS"]     = PairPairType( true, PairType( false, true ) );
+  operatorMap["TAN"]     = PairPairType( true, PairType( false, true ) );
+  operatorMap["ARCSIN"]  = PairPairType( true, PairType( false, true ) );
+  operatorMap["ARCCOS"]  = PairPairType( true, PairType( false, true ) );
+  operatorMap["ARCTAN"]  = PairPairType( true, PairType( false, true ) );
+  operatorMap["EQUAL"]   = PairPairType( false, PairType( true, false ) );
+  operatorMap["LINEAR"]  = PairPairType( false, PairType( true, false ) );
+  operatorMap["ERRFUNC"] = PairPairType( true, PairType( false, true ) );
+  operatorMap["NORMCDF"] = PairPairType( false, PairType( true, false ) );
+  operatorMap["QFUNC"]   = PairPairType( false, PairType( true, false ) );
 
   /** Get parts of file name. */
   std::string path =

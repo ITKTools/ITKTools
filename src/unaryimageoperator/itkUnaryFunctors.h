@@ -19,6 +19,7 @@
 #define __itkUnaryFunctors_h_
 
 #include "vnl/vnl_math.h"
+#include "vnl/vnl_erf.h"
 #include "itkNumericTraits.h"
 
 /** All available unary operators. */
@@ -26,7 +27,7 @@ enum UnaryFunctorEnum{ PLUS, RMINUS, LMINUS, TIMES, LDIVIDE, RDIVIDE,
   RMODINT, RMODDOUBLE, LMODINT, LMODDOUBLE, NLOG, RPOWER, LPOWER, NEG,
   SIGNINT, SIGNDOUBLE, ABSINT, ABSDOUBLE, FLOOR, CEIL, ROUND,
   LN, LOG10, EXP, SIN, COS, TAN, ARCSIN, ARCCOS, ARCTAN,
-  LINEAR };
+  LINEAR, ERRFUNC, NORMCDF, QFUNC };
 
 namespace itk {
 
@@ -551,6 +552,52 @@ private:
 
 };
 
+template< class TInput, class TArgument=TInput, class TOutput=TInput >
+class ERRFUNC
+{
+public:
+  ERRFUNC() {};
+  ~ERRFUNC() {};
+  inline TOutput operator()( const TInput & A )
+  {
+    return static_cast<TOutput>( vnl_erf( static_cast<double>( A ) ) );
+  }
+};
+
+template< class TInput, class TArgument=TInput, class TOutput=TInput >
+class NORMCDF
+{
+public:
+  NORMCDF() {};
+  ~NORMCDF() {};
+  inline TOutput operator()( const TInput & A )
+  {
+    return static_cast<TOutput>( 0.5 + 0.5 * vnl_erf( ( static_cast<double>( A ) - this->m_Argument1 ) *  this->m_Argument2 ) );
+  }
+  void SetArgument1( TArgument arg ){ this->m_Argument1 = arg; };
+  void SetArgument2( TArgument arg ){ this->m_Argument2 = 1 / (arg * sqrt(2.0)); }; // Precompute the denominator for speed
+private:
+  TArgument m_Argument1;
+  TArgument m_Argument2;
+};
+
+template< class TInput, class TArgument=TInput, class TOutput=TInput >
+class QFUNC
+{
+public:
+  QFUNC() {};
+  ~QFUNC() {};
+  inline TOutput operator()( const TInput & A )
+  {
+    return static_cast<TOutput>( 0.5 - (0.5 * vnl_erf( ( static_cast<double>( A ) - this->m_Argument1 ) *  ( this->m_Argument2 ) ) ) );
+  }
+  void SetArgument1( TArgument arg ){ this->m_Argument1 = arg; };
+  void SetArgument2( TArgument arg ){ this->m_Argument2 = 1 / (arg * sqrt(2.0)); }; // Precompute the denominator for speed
+private:
+  TArgument m_Argument1;
+  TArgument m_Argument2;
+};
+
 /** More complicated functors. */
 
 template< class TInput, class TArgument=TInput, class TOutput=TInput >
@@ -715,6 +762,32 @@ struct UnaryFunctorFactory
       filter->GetFunctor().SetArgument( argument );
       return filter.GetPointer();
     }
+    else if( filterType == ERRFUNC )
+    {
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::ERRFUNC< InputPixelType, double, OutputPixelType > >  FilterType;
+      typename FilterType::Pointer filter = FilterType::New();
+      return filter.GetPointer();
+    }
+    else if( filterType == NORMCDF )
+    {
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::NORMCDF< InputPixelType, double, OutputPixelType > >  FilterType;
+      typename FilterType::Pointer filter = FilterType::New();
+      filter->GetFunctor().SetArgument1( argument1 );
+      filter->GetFunctor().SetArgument2( argument2 );
+      return filter.GetPointer();
+    }    
+    else if( filterType == QFUNC )
+    {
+      typedef itk::UnaryFunctorImageFilter< TInputImage, TOutputImage,
+        itk::Functor::QFUNC< InputPixelType, double, OutputPixelType > >  FilterType;
+      typename FilterType::Pointer filter = FilterType::New();
+      filter->GetFunctor().SetArgument1( argument1 );
+      filter->GetFunctor().SetArgument2( argument2 );
+      return filter.GetPointer();
+    }    
+
     /** The following filters do not use the argument at all.*/
     else if( filterType == NEG )
     {
