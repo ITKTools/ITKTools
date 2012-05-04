@@ -175,14 +175,14 @@ ITKToolsMeanStdImage< VDimension, TComponentType >
   {
     if (nrMasks != 0)
 	{
-	  if (nr_images_iterator.Get() > 0)
+	  if (nr_images_iterator.Get() > 1)
 	  {
 	    denominator = 1 / nr_images_iterator.Get();
 	    sample_std_factor = std::sqrt(((float) nr_images_iterator.Get()) / ((float) nr_images_iterator.Get() - 1));
 	  }
 	  else
 	  {
-	    denominator = 0;
+	    denominator = nr_images_iterator.Get();
 	    sample_std_factor = 0;
 	  }
 	  ++nr_images_iterator;
