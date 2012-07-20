@@ -46,7 +46,7 @@ ENDIF()
 
 SET( dashboard_cache "
 // Which ITK to use
-ITK_DIR:PATH=/cm/shared/apps/itk/4.1.0/releasefftw
+ITK_DIR:PATH=/cm/shared/apps/itk/4.2.0/releasefftw
 
 // Some ITKTools settings, defining the configuration
 ITKTOOLS_BUILD_TESTING:BOOL=ON
