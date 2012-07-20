@@ -235,6 +235,20 @@ int main( int argc, char **argv )
     if( !filter ) filter = ITKToolsCropImage< 3, float >::New( dim, componentType );
     if( !filter ) filter = ITKToolsCropImage< 3, double >::New( dim, componentType );
 #endif
+
+#ifdef ITKTOOLS_4D_SUPPORT
+    if( !filter ) filter = ITKToolsCropImage< 4, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCropImage< 4, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCropImage< 4, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCropImage< 4, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCropImage< 4, unsigned int >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCropImage< 4, int >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCropImage< 4, unsigned long >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCropImage< 4, long >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCropImage< 4, float >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsCropImage< 4, double >::New( dim, componentType );
+#endif
+
     /** Check if filter was instantiated. */
     bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
     if( !supported ) return EXIT_FAILURE;
