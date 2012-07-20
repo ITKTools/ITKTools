@@ -29,7 +29,7 @@ namespace itktools
 
 std::string GetITKToolsVersion( void )
 {
-  return "0.2.2";
+  return "0.3.1";
 } // end GetITKToolsVersion()
 
 
