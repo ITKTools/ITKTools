@@ -19,7 +19,7 @@
 #define __itkChannelByChannelVectorImageFilter2_h
 
 #include "itkVectorIndexSelectionCastImageFilter.h" // decompose
-#include "itkImageToVectorImageFilter.h" // reassemble
+#include "itkComposeImageFilter.h" // reassemble
 #include "itkImage.h"
 #include "itkVectorImage.h"
 #include "itkImageToImageFilter.h"

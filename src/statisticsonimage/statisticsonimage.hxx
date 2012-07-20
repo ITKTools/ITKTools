@@ -20,7 +20,7 @@
 
 #include "itkImageFileReader.h"
 #include "itkCastImageFilter.h"
-#include "itkGradientToMagnitudeImageFilter.h"
+#include "itkVectorMagnitudeImageFilter.h"
 #include "itkMaskImageFilter.h"
 #include "itkLogImageFilter.h"
 
@@ -51,7 +51,7 @@ ITKToolsStatisticsOnImage< VDimension, VNumberOfComponents, TComponentType >
   typedef itk::ImageFileReader< MaskImageType >       MaskReaderType;
   typedef itk::CastImageFilter<
     InternalImageType, InternalImageType>             CopierType;
-  typedef itk::GradientToMagnitudeImageFilter<
+  typedef itk::VectorMagnitudeImageFilter<
     VectorImageType, InternalImageType >              MagnitudeFilterType;
 
   typedef itk::MaskImageFilter< InternalImageType,

@@ -23,8 +23,8 @@
 #include "itkImageFileReader.h"
 #include "itkSmoothingRecursiveGaussianImageFilter2.h"
 #include "itkGaussianInvariantsImageFilter.h"
-#include "itkImageToVectorImageFilter.h"
-#include "itkGradientToMagnitudeImageFilter.h"
+#include "itkComposeImageFilter.h"
+#include "itkVectorMagnitudeImageFilter.h"
 #include "itkImageRegionConstIterator.h"
 #include "itkImageRegionIterator.h"
 #include "itkImageFileWriter.h"
@@ -240,11 +240,11 @@ ITKToolsGaussian< VDimension, TComponentType >
   typedef typename SmoothingFilterType::Pointer           SmoothingFilterPointer;
   typedef typename SmoothingFilterType::OrderType         OrderType;
   typedef typename SmoothingFilterType::SigmaType         SigmaType;
-  typedef itk::ImageToVectorImageFilter<
+  typedef itk::ComposeImageFilter<
     InputImageType >                                      ImageToVectorImageFilterType;
   typedef typename ImageToVectorImageFilterType
     ::OutputImageType                                     VectorImageType;
-  typedef itk::GradientToMagnitudeImageFilter<
+  typedef itk::VectorMagnitudeImageFilter<
     VectorImageType, OutputImageType >                    MagnitudeFilterType;
   typedef itk::ImageFileWriter< OutputImageType >         WriterType;
 
@@ -280,7 +280,7 @@ ITKToolsGaussian< VDimension, TComponentType >
     smoothingFilter[ i ]->Update();
 
     /** Setup composition filter. */
-    composeFilter->SetNthInput( i, smoothingFilter[ i ]->GetOutput() );
+    composeFilter->SetInput( i, smoothingFilter[ i ]->GetOutput() );
   }
 
   /** Compose vector image and compute magnitude. */

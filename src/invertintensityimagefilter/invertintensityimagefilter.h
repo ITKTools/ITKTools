@@ -28,7 +28,7 @@
 
 // Vector image support
 #include "itkVectorIndexSelectionCastImageFilter.h" // decompose
-#include "itkImageToVectorImageFilter.h" // reassemble
+#include "itkComposeImageFilter.h" // reassemble
 #include "itkChannelByChannelVectorImageFilter2.h"
 
 

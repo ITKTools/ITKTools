@@ -156,7 +156,7 @@ public:
 
       logicalFilter->Update();
 
-      imageToVectorImageFilter->SetNthInput( component, logicalFilter->GetOutput() );
+      imageToVectorImageFilter->SetInput( component, logicalFilter->GetOutput() );
     } // end component loop
 
     /** Write the image to disk */
@@ -309,7 +309,7 @@ public:
       }
       logicalFilter->Update();
 
-      imageToVectorImageFilter->SetNthInput(component, logicalFilter->GetOutput());
+      imageToVectorImageFilter->SetInput(component, logicalFilter->GetOutput());
     } // end component loop
 
     /** Write the image to disk */

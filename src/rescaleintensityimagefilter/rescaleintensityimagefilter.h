@@ -23,7 +23,7 @@
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
-#include "itkImageToVectorImageFilter.h"
+#include "itkComposeImageFilter.h"
 #include "itkRescaleIntensityImageFilter.h"
 #include "itkShiftScaleImageFilter.h"
 #include "itkStatisticsImageFilter.h"
@@ -109,7 +109,7 @@ public:
     typedef itk::VectorIndexSelectionCastImageFilter<VectorImageType, ScalarImageType> IndexSelectionType;
 
     // Setup the filter to reassemble the components
-    typedef itk::ImageToVectorImageFilter<ScalarImageType> ImageToVectorImageFilterType;
+    typedef itk::ComposeImageFilter<ScalarImageType> ImageToVectorImageFilterType;
     typename ImageToVectorImageFilterType::Pointer imageToVectorImageFilter = ImageToVectorImageFilterType::New();
 
     for( unsigned int component = 0; component < reader->GetOutput()->GetNumberOfComponentsPerPixel(); ++component)
@@ -148,7 +148,7 @@ public:
         filter->Update();
 
         /** Setup the recombining. */
-        imageToVectorImageFilter->SetNthInput(component, filter->GetOutput());
+        imageToVectorImageFilter->SetInput(component, filter->GetOutput());
 
       } // end if values are extrema
       else
@@ -172,7 +172,7 @@ public:
         shiftscaler->Update();
 
         /** Setup the recombining. */
-        imageToVectorImageFilter->SetNthInput(component, shiftscaler->GetOutput());
+        imageToVectorImageFilter->SetInput(component, shiftscaler->GetOutput());
 
       } // end if values are mean and variance
     }// end component loop

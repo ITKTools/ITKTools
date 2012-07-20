@@ -26,7 +26,7 @@
 #include "itkImageFileWriter.h"
 #include "itkImageRegionIteratorWithIndex.h"
 #include "itkDisplacementFieldJacobianDeterminantFilter.h"
-#include "itkGradientToMagnitudeImageFilter.h"
+#include "itkVectorMagnitudeImageFilter.h"
 #include "itkIterativeInverseDisplacementFieldImageFilter.h"
 
 
@@ -207,7 +207,7 @@ ITKToolsDeformationFieldOperator< VDimension, TComponentType >
 ::ComputeMagnitude( VectorImageType * inputImage )
 {
   typedef itk::ImageFileWriter< ScalarImageType >     WriterType;
-  typedef itk::GradientToMagnitudeImageFilter<
+  typedef itk::VectorMagnitudeImageFilter<
     VectorImageType, ScalarImageType >                MagnitudeFilterType;
 
   typename MagnitudeFilterType::Pointer magnitudeFilter = MagnitudeFilterType::New();

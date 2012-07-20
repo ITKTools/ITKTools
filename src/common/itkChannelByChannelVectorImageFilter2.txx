@@ -58,7 +58,7 @@ ChannelByChannelVectorImageFilter2<TInputImage, TFilter, TOutputImage>
   indexSelectionFilter->SetInput(this->GetInput());
 
   // Create the re-assembler
-  typedef itk::ImageToVectorImageFilter<InputScalarImageType> ImageToVectorImageFilterType;
+  typedef itk::ComposeImageFilter<InputScalarImageType> ImageToVectorImageFilterType;
   typename ImageToVectorImageFilterType::Pointer imageToVectorImageFilter = ImageToVectorImageFilterType::New();
 
   // Create a filter for each channel - duplicating all of the settings of the input filter
@@ -79,7 +79,7 @@ ChannelByChannelVectorImageFilter2<TInputImage, TFilter, TOutputImage>
     filters[channel]->SetInput(indexSelectionFilter->GetOutput());
     filters[channel]->Update();
 
-    imageToVectorImageFilter->SetNthInput(channel, filters[channel]->GetOutput());
+    imageToVectorImageFilter->SetInput(channel, filters[channel]->GetOutput());
     }
 
   imageToVectorImageFilter->Update();

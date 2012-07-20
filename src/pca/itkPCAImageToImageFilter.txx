@@ -167,8 +167,7 @@ namespace itk
     {
       for( unsigned int i = noo - 1; i >= n; --i )
       {
-        typename DataObject::Pointer output = this->GetOutputs()[ i ];
-        this->RemoveOutput( output );
+        this->RemoveOutput( i );
       }
     }
 

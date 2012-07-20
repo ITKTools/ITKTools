@@ -25,7 +25,7 @@
 #include "itkImageFileWriter.h"
 #include "itkVector.h"
 #include "itkImage.h"
-#include "itkGradientToMagnitudeImageFilter.h"
+#include "itkVectorMagnitudeImageFilter.h"
 
 
 /** \class ITKToolsAverageVectorMagnitudeBase
@@ -95,7 +95,7 @@ public:
     typedef itk::Image< OutputPixelType, VDimension >         OutputImageType;
 
     typedef itk::ImageFileReader< InputImageType >            ReaderType;
-    typedef itk::GradientToMagnitudeImageFilter<
+    typedef itk::VectorMagnitudeImageFilter<
       InputImageType, OutputImageType >                       FilterType;
     typedef itk::ImageFileWriter< OutputImageType >           WriterType;
 

@@ -27,7 +27,7 @@
 #include "itkImageFileReader.h"
 #include "itkCastImageFilter.h"
 #include "itkVectorIndexSelectionCastImageFilter.h"
-#include "itkImageToVectorImageFilter.h"
+#include "itkComposeImageFilter.h"
 #include "itkImageFileWriter.h"
 
 #include <map>
@@ -135,7 +135,7 @@ public:
       = unaryFactory.GetFilter( unaryOperation, static_cast<TComponentType>( this->m_Argument ) );
 
     // Create the filter which will assemble the component into the output image
-    typedef itk::ImageToVectorImageFilter<ScalarImageType> ImageToVectorImageFilterType;
+    typedef itk::ComposeImageFilter<ScalarImageType> ImageToVectorImageFilterType;
     typename ImageToVectorImageFilterType::Pointer imageToVectorImageFilter = ImageToVectorImageFilterType::New();
 
     std::cout
@@ -156,7 +156,7 @@ public:
 
       logicalFilter->Update();
 
-      imageToVectorImageFilter->SetNthInput( component, logicalFilter->GetOutput() );
+      imageToVectorImageFilter->SetInput( component, logicalFilter->GetOutput() );
     } // end component loop
 
     /** Write the image to disk */
@@ -273,7 +273,7 @@ public:
       = binaryFactory.GetFilter( logicalOperator.first );
 
     // Create the filter which will assemble the component into the output image
-    typedef itk::ImageToVectorImageFilter<ScalarImageType> ImageToVectorImageFilterType;
+    typedef itk::ComposeImageFilter<ScalarImageType> ImageToVectorImageFilterType;
     typename ImageToVectorImageFilterType::Pointer imageToVectorImageFilter = ImageToVectorImageFilterType::New();
 
     std::cout
@@ -309,7 +309,7 @@ public:
       }
       logicalFilter->Update();
 
-      imageToVectorImageFilter->SetNthInput(component, logicalFilter->GetOutput());
+      imageToVectorImageFilter->SetInput(component, logicalFilter->GetOutput());
     } // end component loop
 
     /** Write the image to disk */

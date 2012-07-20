@@ -21,7 +21,7 @@
 #include "ITKToolsBase.h"
 
 #include "itkImageFileReader.h"
-#include "itkImageToVectorImageFilter.h"
+#include "itkComposeImageFilter.h"
 #include "itkImageFileWriter.h"
 #include "itkVectorIndexSelectionCastImageFilter.h"
 
@@ -89,7 +89,7 @@ public:
     }
 
     /** Create assembler. */
-    typedef itk::ImageToVectorImageFilter< ScalarImageType > ImageToVectorImageFilterType;
+    typedef itk::ComposeImageFilter< ScalarImageType > ImageToVectorImageFilterType;
     typename ImageToVectorImageFilterType::Pointer imageToVectorImageFilter
       = ImageToVectorImageFilterType::New();
 
@@ -111,7 +111,7 @@ public:
         componentExtractionFilter->SetInput( readers[inputImageIndex]->GetOutput() );
         componentExtractionFilter->Update();
 
-        imageToVectorImageFilter->SetNthInput( currentOutputIndex, componentExtractionFilter->GetOutput());
+        imageToVectorImageFilter->SetInput( currentOutputIndex, componentExtractionFilter->GetOutput());
         currentOutputIndex++;
       }
     }

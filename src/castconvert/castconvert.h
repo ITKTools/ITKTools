@@ -40,7 +40,7 @@
 #include "itkCastImageFilter.h"
 #include "itkVectorCastImageFilter.h"
 #include "itkVectorIndexSelectionCastImageFilter.h"
-#include "itkImageToVectorImageFilter.h"
+#include "itkComposeImageFilter.h"
 //#include "itkShiftScaleImageFilter.h"
 #include "itkVectorCastImageFilter.h"
 
@@ -120,7 +120,7 @@ public:
     indexSelectionFilter->SetInput( reader->GetOutput() );
 
     // Create the re-assembler
-    typedef itk::ImageToVectorImageFilter< OutputScalarImageType > ImageToVectorImageFilterType;
+    typedef itk::ComposeImageFilter< OutputScalarImageType > ImageToVectorImageFilterType;
     typename ImageToVectorImageFilterType::Pointer imageToVectorImageFilter
       = ImageToVectorImageFilterType::New();
 

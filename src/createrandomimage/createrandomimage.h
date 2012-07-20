@@ -31,11 +31,9 @@
 #include "itkSmoothingRecursiveGaussianImageFilter.h"
 #include "itkCastImageFilter.h"
 #include "itkExtractImageFilter.h"
-#include "itkCompose2DVectorImageFilter.h"
-#include "itkCompose3DVectorImageFilter.h"
+#include "itkComposeImageFilter.h"
 #include "itkExceptionObject.h"
 #include "itkNumericTraits.h"
-#include "itkImageToVectorImageFilter.h"
 #include "itkMersenneTwisterRandomVariateGenerator.h"
 #include <iostream>
 #include <string>
@@ -288,11 +286,11 @@ public:
       //  itk::Object::GlobalWarningDisplayOn();
     }
 
-    typedef itk::ImageToVectorImageFilter<ScalarOutputImageType> ImageToVectorImageFilterType;
+    typedef itk::ComposeImageFilter<ScalarOutputImageType> ImageToVectorImageFilterType;
     typename ImageToVectorImageFilterType::Pointer imageToVectorImageFilter = ImageToVectorImageFilterType::New();
     for( unsigned int spaceDimensionIndex = 0; spaceDimensionIndex < this->m_SpaceDimension; ++spaceDimensionIndex )
     {
-      imageToVectorImageFilter->SetNthInput( spaceDimensionIndex, setOfExtracters[spaceDimensionIndex]->GetOutput() );
+      imageToVectorImageFilter->SetInput( spaceDimensionIndex, setOfExtracters[spaceDimensionIndex]->GetOutput() );
     }
     imageToVectorImageFilter->Update();
 
