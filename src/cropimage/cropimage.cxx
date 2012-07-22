@@ -54,7 +54,7 @@ std::string GetHelpString( void )
     << "2: supply a points and a size with \"-pA\" and \"-sz\".\n"
     << "3: supply a lower and an upper bound with \"-lb\" and \"-ub\".\n"
     << "The points are supplied in index coordinates.\n"
-    << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
+    << "Supported: 2D, 3D, 4D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
 
   return ss.str();
 
