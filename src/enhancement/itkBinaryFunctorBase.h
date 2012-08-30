@@ -27,6 +27,8 @@ namespace itk
 *
 * \sa BinaryFunctorImageFilter
 * \ingroup IntensityImageFilters
+* \authors Changyan Xiao, Marius Staring, Denis Shamonin,
+* Johan H.C. Reiber, Jan Stolk, Berend C. Stoel
 */
 
 namespace Functor

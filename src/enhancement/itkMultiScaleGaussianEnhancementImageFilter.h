@@ -42,6 +42,8 @@ namespace itk
  * \sa StrainEnergyVesselnessImageFilter
  *
  * \ingroup IntensityImageFilters TensorObjects
+ * \authors Changyan Xiao, Marius Staring, Denis Shamonin,
+ * Johan H.C. Reiber, Jan Stolk, Berend C. Stoel
  */
 template < typename TInputImage, typename TOutputImage >
 class MultiScaleGaussianEnhancementImageFilter

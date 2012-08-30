@@ -19,6 +19,8 @@
  \brief Perform enhancement on an image. Mainly vessel and sheetness enhancement.
 
  \verbinclude enhancement.help
+ * \authors Changyan Xiao, Marius Staring, Denis Shamonin,
+ * Johan H.C. Reiber, Jan Stolk, Berend C. Stoel
  */
 
 /** Setup Mevislab DicomTiff IO support */

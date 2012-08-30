@@ -45,6 +45,8 @@
  *
  * Untemplated pure virtual base class that holds
  * the Run() function and all required parameters.
+ * \authors Changyan Xiao, Marius Staring, Denis Shamonin,
+ * Johan H.C. Reiber, Jan Stolk, Berend C. Stoel
  */
 
 class ITKToolsEnhancementBase : public itktools::ITKToolsBase

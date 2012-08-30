@@ -40,6 +40,8 @@ namespace itk
  *     measures in a single scale framework.
  *
  * \ingroup IntensityImageFilters Singlethreaded
+ * \authors Changyan Xiao, Marius Staring, Denis Shamonin,
+ * Johan H.C. Reiber, Jan Stolk, Berend C. Stoel
  */
 
 template < typename TInputImage, typename TOutputImage >
