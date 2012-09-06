@@ -45,7 +45,7 @@ std::string GetHelpString( void )
     << "  -out    Filename to write the results to\n"
     << "  -seperator    Seperator to use in csv file; default '\\t'\n"
     << "The results file contains:\n"
-    << "  Union Overlap or Jaccard coefficient; Mean Overlap or Dice coefficient;\n"
+    << "  Target overlap, Union(jaccard) overlap, Mean(dice) overlap, Volume similarity, False negative error, False positive error\n"
     << "Background is assumed to be 0. \n"
     << "Supported: 2D, 3D, (unsigned) char, (unsigned) short.";
 
