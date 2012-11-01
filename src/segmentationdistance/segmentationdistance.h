@@ -145,6 +145,7 @@ public:
       ExtracterType::InputImageRegionType               RegionType;
     typedef typename RegionType::IndexType              IndexType;
     typedef typename RegionType::SizeType               SizeType;
+    typedef typename SizeType::SizeValueType            SizeValueType;
     typedef itk::ImageRegionConstIterator<
       InputImageType1>                                  ConstInputIteratorType1;
     typedef itk::ImageRegionConstIterator<
@@ -184,7 +185,7 @@ public:
      */
     padder1->SetInput( reader1->GetOutput() );
     padder2->SetInput( reader2->GetOutput() );
-    unsigned long padsize[VDimension];
+    SizeValueType padsize[VDimension];
     for( unsigned int i = 0; i < VDimension; ++i )
     {
       padsize[ i ] = 1;

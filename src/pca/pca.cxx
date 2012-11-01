@@ -41,6 +41,7 @@ std::string GetHelpString( void )
     << "pxpca\n"
     << "  -in      inputFilenames\n"
     << "  [-out]   outputDirectory, default equal to the inputFilename directory\n"
+    << "  [-of]    outputFormat, default mhd\n"
     << "  [-opc]   the number of principal components that you want to output, default all\n"
     << "  [-opct]  output pixel component type, default derived from the input image\n"
     << "Supported: 2D, 3D, (unsigned) char, (unsigned) short, (unsigned) int, (unsigned) long, float, double.";
@@ -83,6 +84,9 @@ int main( int argc, char **argv )
   parser->GetCommandLineArgument( "-out", outputDirectory );
   bool endslash = itksys::SystemTools::StringEndsWith( outputDirectory.c_str(), "/" );
   if( !endslash ) outputDirectory += "/";
+
+  std::string outputFormat = "mhd";
+  bool retof = parser->GetCommandLineArgument( "-of", outputFormat );
 
   unsigned int numberOfPCs = inputFileNames.size();
   parser->GetCommandLineArgument( "-npc", numberOfPCs );
@@ -154,6 +158,7 @@ int main( int argc, char **argv )
     /** Set the filter arguments. */
     filter->m_InputFileNames = inputFileNames;
     filter->m_OutputDirectory = outputDirectory;
+    filter->m_OutputFormat = outputFormat;
     filter->m_NumberOfPCs = numberOfPCs;
 
     filter->Run();

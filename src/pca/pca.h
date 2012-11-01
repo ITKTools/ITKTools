@@ -40,6 +40,7 @@ public:
   ITKToolsPCABase()
   {
     this->m_OutputDirectory = "";
+    this->m_OutputFormat = "mhd";
     this->m_NumberOfPCs = 0;
   };
   /** Destructor. */
@@ -47,6 +48,7 @@ public:
 
   /** Input member parameters. */
   std::vector< std::string > m_InputFileNames;
+  std::string m_OutputFormat;
   std::string m_OutputDirectory;
   unsigned int m_NumberOfPCs;
 
@@ -134,7 +136,8 @@ public:
     {
       /** Create output filename. */
       std::ostringstream makeFileName( "" );
-      makeFileName << this->m_OutputDirectory << "pc" << i << ".mhd";
+      makeFileName << this->m_OutputDirectory
+        << "pc" << i << "." << this->m_OutputFormat;
 
       /** Write principal components. */
       writers[ i ] = WriterType::New();

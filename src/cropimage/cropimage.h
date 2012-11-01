@@ -88,6 +88,7 @@ public:
     typedef itk::ImageFileReader< InputImageType >                  ReaderType;
     typedef itk::ImageFileWriter< InputImageType >                  WriterType;
     typedef typename InputImageType::SizeType                       SizeType;
+    typedef typename InputImageType::SizeValueType                  SizeValueType;
 
     const unsigned int Dimension = InputImageType::ImageDimension;
 
@@ -141,8 +142,8 @@ public:
      */
     if( this->m_Force )
     {
-      unsigned long uBound[ Dimension ];
-      unsigned long lBound[ Dimension ];
+      SizeValueType uBound[ Dimension ];
+      SizeValueType lBound[ Dimension ];
       for( unsigned int i = 0; i < Dimension; i++ )
       {
         lBound[ i ] = padLowerBound[ i ];

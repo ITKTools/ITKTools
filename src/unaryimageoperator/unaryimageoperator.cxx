@@ -190,6 +190,7 @@ int main( int argc, char **argv )
     if( !filter ) filter = ITKToolsUnaryImageOperator< 2, int, unsigned int >::New( dim, inputType, outputType );
     if( !filter ) filter = ITKToolsUnaryImageOperator< 2, int, int >::New( dim, inputType, outputType );
     if( !filter ) filter = ITKToolsUnaryImageOperator< 2, int, float >::New( dim, inputType, outputType );
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 2, int, double >::New( dim, inputType, outputType );
 
     if( !filter ) filter = ITKToolsUnaryImageOperator< 2, double, unsigned char >::New( dim, inputType, outputType );
     if( !filter ) filter = ITKToolsUnaryImageOperator< 2, double, char >::New( dim, inputType, outputType );
@@ -198,6 +199,7 @@ int main( int argc, char **argv )
     if( !filter ) filter = ITKToolsUnaryImageOperator< 2, double, unsigned int >::New( dim, inputType, outputType );
     if( !filter ) filter = ITKToolsUnaryImageOperator< 2, double, int >::New( dim, inputType, outputType );
     if( !filter ) filter = ITKToolsUnaryImageOperator< 2, double, float >::New( dim, inputType, outputType );
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 2, double, double >::New( dim, inputType, outputType );
 
 #ifdef ITKTOOLS_3D_SUPPORT
     if( !filter ) filter = ITKToolsUnaryImageOperator< 3, int, unsigned char >::New( dim, inputType, outputType );
@@ -207,6 +209,7 @@ int main( int argc, char **argv )
     if( !filter ) filter = ITKToolsUnaryImageOperator< 3, int, unsigned int >::New( dim, inputType, outputType );
     if( !filter ) filter = ITKToolsUnaryImageOperator< 3, int, int >::New( dim, inputType, outputType );
     if( !filter ) filter = ITKToolsUnaryImageOperator< 3, int, float >::New( dim, inputType, outputType );
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 3, int, double >::New( dim, inputType, outputType );
 
     if( !filter ) filter = ITKToolsUnaryImageOperator< 3, double, unsigned char >::New( dim, inputType, outputType );
     if( !filter ) filter = ITKToolsUnaryImageOperator< 3, double, char >::New( dim, inputType, outputType );
@@ -215,6 +218,7 @@ int main( int argc, char **argv )
     if( !filter ) filter = ITKToolsUnaryImageOperator< 3, double, unsigned int >::New( dim, inputType, outputType );
     if( !filter ) filter = ITKToolsUnaryImageOperator< 3, double, int >::New( dim, inputType, outputType );
     if( !filter ) filter = ITKToolsUnaryImageOperator< 3, double, float >::New( dim, inputType, outputType );
+    if( !filter ) filter = ITKToolsUnaryImageOperator< 3, double, double >::New( dim, inputType, outputType );
 #endif
     /** Check if filter was instantiated. */
     bool supported = itktools::IsFilterSupportedCheck( filter, dim, inputType, outputType );
