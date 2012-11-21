@@ -160,8 +160,7 @@ namespace itk
     typedef Array<WeightsType>                      PriorProbabilitiesType;
     typedef Image<
       WeightsType,
-      ::itk::GetImageDimension<
-        InputImageType>::ImageDimension>            ProbabilityImageType;
+      InputImageType::ImageDimension >              ProbabilityImageType;
     typedef typename ProbabilityImageType::Pointer  ProbabilityImagePointer;
     typedef std::vector<ProbabilityImagePointer>    PriorProbabilityImageArrayType;
 

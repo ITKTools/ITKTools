@@ -61,8 +61,8 @@ namespace itk
 template <typename TInputImage,
   typename TOutputImage= Image< SymmetricSecondRankTensor<
   typename NumericTraits< typename TInputImage::PixelType>::RealType,
-  ::itk::GetImageDimension<TInputImage>::ImageDimension >,
-  ::itk::GetImageDimension<TInputImage>::ImageDimension > >
+  TInputImage::ImageDimension >,
+  TInputImage::ImageDimension > >
 class ITK_EXPORT HessianRecursiveGaussianImageFilter2:
   public ImageToImageFilter<TInputImage,TOutputImage>
 {
@@ -85,11 +85,11 @@ public:
 
   /** Image dimension. */
   itkStaticConstMacro( ImageDimension, unsigned int,
-    GetImageDimension<TInputImage>::ImageDimension );
+    TInputImage::ImageDimension );
 
   /** Number of smoothing filters. */
   itkStaticConstMacro( NumberOfSmoothingFilters, unsigned int,
-    GetImageDimension<TInputImage>::ImageDimension - 2 );
+    TInputImage::ImageDimension - 2 );
 
   /** Define the image type for internal computations
       RealType is usually 'double' in NumericTraits.
@@ -98,7 +98,7 @@ public:
   typedef float                                       InternalRealType;
   typedef Image<
     InternalRealType,
-    GetImageDimension<TInputImage>::ImageDimension >  RealImageType;
+    TInputImage::ImageDimension >  RealImageType;
 
   /**  Output Image Nth Element Adaptor
    *  This adaptor allows to use conventional scalar

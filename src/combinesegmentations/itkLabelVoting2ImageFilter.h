@@ -116,8 +116,7 @@ namespace itk
     typedef Array2D<WeightsType>                    ConfusionMatrixType;
     typedef Image<
       WeightsType,
-      ::itk::GetImageDimension<
-      InputImageType>::ImageDimension>              ProbabilityImageType;
+      InputImageType::ImageDimension >              ProbabilityImageType;
     typedef typename ProbabilityImageType::Pointer  ProbabilityImagePointer;
 
     typedef Array<WeightsType>                      ObserverTrustType;

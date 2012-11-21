@@ -74,8 +74,8 @@ struct SortingElement  {
 */
 template <class TInputImage,
                     class TOutputImage,
-                    class TKDistanceImage=VectorImage<float, ::itk::GetImageDimension<TInputImage>::ImageDimension>,
-                    class TKIDImage=VectorImage<int, ::itk::GetImageDimension<TInputImage>::ImageDimension> >
+                    class TKDistanceImage=VectorImage<float, TInputImage::ImageDimension>,
+                    class TKIDImage=VectorImage<int, TInputImage::ImageDimension> >
 class ITK_EXPORT OrderKDistanceTransformImageFilter :
     public ImageToImageFilter<TInputImage, TOutputImage >
 {
