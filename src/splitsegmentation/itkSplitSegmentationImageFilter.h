@@ -67,8 +67,8 @@ public:
   typedef std::vector<OutputPixelType>                      LabelType;
 
   /** Set the number of splits. */
-  itkSetMacro( NumberOfSplitsZ, unsigned int );
-  itkSetMacro( NumberOfSplitsY, unsigned int );
+  virtual void SetNumberOfSplitsZ(const unsigned int &_v);
+  virtual void SetNumberOfSplitsY(const unsigned int &_v);
 
   /** Set the output labels. */
   void SetChunkLabels( const LabelType & labels );
@@ -85,6 +85,8 @@ protected:
 private:
   SplitSegmentationImageFilter(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
+
+  void ResizeChunkLabels();
 
   /** Member variables. */
   unsigned int m_NumberOfSplitsZ;

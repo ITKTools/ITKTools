@@ -40,13 +40,66 @@ SplitSegmentationImageFilter<TInputImage,TOutputImage>
   /** Initialize variables. */
   this->m_NumberOfSplitsZ = 3;
   this->m_NumberOfSplitsY = 2;
-  this->m_ChunkLabels.resize( 6 );
-  for( unsigned int i = 0; i < 6; ++i )
+  this->ResizeChunkLabels();
+} // end Constructor
+
+
+/**
+ * ********************* SetNumberOfSplitsZ ****************************
+ */
+
+template <typename TInputImage, typename TOutputImage >
+void
+SplitSegmentationImageFilter<TInputImage,TOutputImage >
+::SetNumberOfSplitsZ( const unsigned int &_v )
+{
+  if ( this->m_NumberOfSplitsZ != _v )
+  {
+    if( _v == 0 ) this->m_NumberOfSplitsZ = 1;
+    else this->m_NumberOfSplitsZ = _v;
+
+    this->ResizeChunkLabels();
+    this->Modified();
+  }
+} // end SetNumberOfSplitsZ()
+
+
+/**
+ * ********************* SetNumberOfSplitsY ****************************
+ */
+
+template <typename TInputImage, typename TOutputImage >
+void
+SplitSegmentationImageFilter<TInputImage,TOutputImage >
+::SetNumberOfSplitsY( const unsigned int &_v )
+{
+  if( this->m_NumberOfSplitsY != _v )
+  {
+    if( _v == 0 ) this->m_NumberOfSplitsY = 1;
+    else this->m_NumberOfSplitsY = _v;
+
+    this->ResizeChunkLabels();
+    this->Modified();
+  }
+} // end SetNumberOfSplitsY()
+
+
+/**
+ * ********************* ResizeChunkLabels ****************************
+ */
+
+template <typename TInputImage, typename TOutputImage >
+void
+SplitSegmentationImageFilter<TInputImage,TOutputImage >
+::ResizeChunkLabels()
+{
+  const unsigned int numLabels = this->m_NumberOfSplitsZ * this->m_NumberOfSplitsY;
+  this->m_ChunkLabels.resize( numLabels );
+  for( unsigned int i = 0; i < numLabels; ++i )
   {
     this->m_ChunkLabels[ i ] = static_cast<OutputPixelType>( i + 1 );
   }
-
-} // end Constructor
+} // end ResizeChunkLabels()
 
 
 /**
@@ -305,7 +358,7 @@ SplitSegmentationImageFilter<TInputImage,TOutputImage>
     os << this->m_ChunkLabels[ i ] << " ";
   }
   os << "]" << std::endl;
-}
+} // end PrintSelf()
 
 
 } // end namespace itk
