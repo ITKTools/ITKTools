@@ -60,7 +60,7 @@ namespace itk
  */
 
 template <class TInputImage,
-  class TOutputImage = Image< double, ::itk::GetImageDimension<TInputImage>::ImageDimension> >
+  class TOutputImage = Image< double, TInputImage::ImageDimension > >
 class ITK_EXPORT TextureImageToImageFilter:
   public ImageToImageFilter< TInputImage, TOutputImage >
 {

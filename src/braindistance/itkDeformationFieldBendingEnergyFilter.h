@@ -56,10 +56,8 @@ namespace itk
  * \author Stefan Klein, Erasmus MC Rotterdam, The Netherlands.
  */
 template < typename TInputImage,
-           typename TRealType = float,
-           typename TOutputImage = Image< TRealType,
-                                          ::itk::GetImageDimension<TInputImage>::ImageDimension >
->
+  typename TRealType = float,
+  typename TOutputImage = Image< TRealType, TInputImage::ImageDimension > >
 class ITK_EXPORT DeformationFieldBendingEnergyFilter :
     public DisplacementFieldJacobianDeterminantFilter< TInputImage,TRealType,TOutputImage>
 {
