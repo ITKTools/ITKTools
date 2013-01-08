@@ -104,15 +104,17 @@ public:
       throw invalidfilexception();
     }
 
-    fprintf( pFile, "%s%s%s%s%s%s%s%s%s%s%s\n",
+    fprintf( pFile, "%s%s%s%s%s%s%s%s%s%s%s%s%s\n",
       "Label", this->m_Seperator.c_str(),
+	  "Target", this->m_Seperator.c_str(),
       "Union (jaccard)", this->m_Seperator.c_str(),
       "Mean (dice)", this->m_Seperator.c_str(),
       "Volume sim.", this->m_Seperator.c_str(),
       "False negative", this->m_Seperator.c_str(),
       "False positive" );
-    fprintf( pFile, "%s%s%f%s%f%s%f%s%f%s%f\n",
+    fprintf( pFile, "%s%s%f%s%f%s%f%s%f%s%f%s%f\n",
       "Total", this->m_Seperator.c_str(),
+	  filter->GetTotalOverlap(), this->m_Seperator.c_str(),
       filter->GetUnionOverlap(), this->m_Seperator.c_str(),
       filter->GetMeanOverlap(), this->m_Seperator.c_str(),
       filter->GetVolumeSimilarity(), this->m_Seperator.c_str(),
@@ -129,8 +131,9 @@ public:
       }
 
       int label = (*it).first;
-      fprintf( pFile, "%i%s%f%s%f%s%f%s%f%s%f\n",
+      fprintf( pFile, "%i%s%f%s%f%s%f%s%f%s%f%s%f\n",
         label, this->m_Seperator.c_str(),
+		filter->GetTargetOverlap( label ), this->m_Seperator.c_str(),
         filter->GetUnionOverlap( label ), this->m_Seperator.c_str(),
         filter->GetMeanOverlap( label ), this->m_Seperator.c_str(),
         filter->GetVolumeSimilarity( label ), this->m_Seperator.c_str(),
