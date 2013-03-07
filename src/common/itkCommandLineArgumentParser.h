@@ -86,7 +86,7 @@ public:
   typedef SmartPointer<Self>            Pointer;
   typedef SmartPointer<const Self>      ConstPointer;
 
-  enum ReturnValue {PASSED, FAILED, HELPREQUESTED};
+  enum ReturnValue{ PASSED, FAILED, HELPREQUESTED };
 
   /** Method for creation through the object factory. */
   itkNewMacro( Self );
@@ -119,11 +119,13 @@ public:
 
   /** Mark an argument as required. */
   void MarkArgumentAsRequired(
-    const std::string & argument, const std::string & helpText = "" );
+    const std::string & argument,
+    const std::string & helpText = "" );
 
   /** Mark exactly one of the specified arguments as required. */
   void MarkExactlyOneOfArgumentsAsRequired(
-    const std::vector<std::string> & arguments, const std::string & helpText = "" );
+    const std::vector<std::string> & arguments,
+    const std::string & helpText = "" );
 
   itkSetMacro( ProgramHelpText, std::string );
   itkGetMacro( ProgramHelpText, std::string );
@@ -131,7 +133,7 @@ public:
   /** Get command line argument if arg is a vector type. */
   template <class T>
   bool GetCommandLineArgument(
-    const std::string & key, std::vector<T> & arg )
+    const std::string & key, std::vector<T> & arg ) const
   {
     /** Check for the key. */
     IndexType keyIndex, nextKeyIndex;
@@ -208,7 +210,7 @@ public:
     * for vector types, and then returning the first element.
     */
   template <class T>
-    bool GetCommandLineArgument( const std::string & key, T & arg )
+    bool GetCommandLineArgument( const std::string & key, T & arg ) const
   {
     std::vector<T> vec;
     bool returnvalue = this->GetCommandLineArgument( key, vec );
@@ -221,6 +223,9 @@ public:
 protected:
   CommandLineArgumentParser();
   virtual ~CommandLineArgumentParser() {}
+
+  /** PrintSelf method. */
+  virtual void PrintSelf( std::ostream & os, Indent indent ) const;
 
   /** General functionality: find a key. */
   bool FindKey( const std::string & key,

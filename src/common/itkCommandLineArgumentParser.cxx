@@ -93,6 +93,7 @@ CommandLineArgumentParser
 
 } // end ArgumentExists()
 
+
 /**
  * ******************* PrintAllArguments *******************
  */
@@ -101,14 +102,15 @@ void
 CommandLineArgumentParser
 ::PrintAllArguments() const
 {
-  ArgumentMapType::const_iterator iter = this->m_ArgumentMap.begin();
+  ArgumentMapType::const_iterator it = this->m_ArgumentMap.begin();
 
-  for(; iter != this->m_ArgumentMap.end(); ++iter)
+  for( ; it != this->m_ArgumentMap.end(); ++it )
   {
-   std::cout << iter->first << std::endl;
+   std::cout << it->first << std::endl;
   }
 
 } // end PrintAllArguments()
+
 
 /**
  * ******************* ExactlyOneExists *******************
@@ -127,14 +129,8 @@ CommandLineArgumentParser
     }
   }
 
-  if( counter == 1 )
-  {
-    return true;
-  }
-  else
-  {
-    return false;
-  }
+  if( counter == 1 ) return true;
+  else               return false;
 
 } // end ExactlyOneExists()
 
@@ -261,15 +257,15 @@ CommandLineArgumentParser::ReturnValue
 CommandLineArgumentParser
 ::CheckForRequiredArguments() const
 {
-  // If no arguments were specified at all, display the help text.
+  /** If no arguments were specified at all, display the help text. */
   if( this->m_Argv.size() == 1 )
   {
     std::cerr << this->m_ProgramHelpText << std::endl;
     return HELPREQUESTED;
   }
 
-  // Display the help text if the user asked for it.
-  if( this->ArgumentExists( "--help" )
+  /** Display the help text if the user asked for it. */
+  if(  this->ArgumentExists( "--help" )
     || this->ArgumentExists( "-help" )
     || this->ArgumentExists( "--h" ) )
   {
@@ -277,9 +273,9 @@ CommandLineArgumentParser
     return HELPREQUESTED;
   }
 
-  // Loop through all required arguments. Check them all even if one fails.
+  /** Loop through all required arguments. Check them all even if one fails. */
   bool allRequiredArgumentsSpecified = true;
-  for ( std::size_t i = 0; i < this->m_RequiredArguments.size(); ++i )
+  for( std::size_t i = 0; i < this->m_RequiredArguments.size(); ++i )
   {
     if( !this->ArgumentExists( this->m_RequiredArguments[ i ].first ) )
     {
@@ -291,8 +287,8 @@ CommandLineArgumentParser
     }
   }
 
-  // Loop through ExactlyOneOf argument sets
-  for ( std::size_t i = 0; i < this->m_RequiredExactlyOneArguments.size(); ++i )
+  /** Loop through ExactlyOneOf argument sets. */
+  for( std::size_t i = 0; i < this->m_RequiredExactlyOneArguments.size(); ++i )
   {
     std::vector<std::string> exactlyOneOf
       = this->m_RequiredExactlyOneArguments[ i ].first;
@@ -311,14 +307,42 @@ CommandLineArgumentParser
     }
   }
 
-  if( !allRequiredArgumentsSpecified)
-  {
-    return FAILED;
-  }
+  if( !allRequiredArgumentsSpecified ) return FAILED;
 
   return PASSED;
 
 } // end CheckForRequiredArguments()
+
+
+/**
+ * ******************* PrintSelf *******************
+ */
+
+void
+CommandLineArgumentParser
+::PrintSelf( std::ostream & os, Indent indent ) const
+{
+  os << "ProgramHelpText\n" << this->m_ProgramHelpText << std::endl;
+
+  os << std::endl << "CommandLine arguments:" << std::endl;
+  ArgumentMapType::const_iterator it = this->m_ArgumentMap.begin();
+  for( ; it != this->m_ArgumentMap.end(); ++it )
+  {
+    std::string key = it->first;
+    os << indent << key;
+
+    std::vector< std::string > arg;
+    this->GetCommandLineArgument( key, arg );
+
+    if( arg.size() > 0 ) os << ":\t";
+    for( std::size_t i = 0; i < arg.size(); ++i )
+    {
+      os << arg[ i ] << " ";
+    }
+    os << std::endl;
+  }
+
+} // end PrintSelf()
 
 
 } // end namespace itk
