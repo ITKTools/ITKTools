@@ -174,7 +174,9 @@ int main( int argc, char ** argv )
     {
       // now call all possible template combinations.
       if( !filterOld ) filterOld = ITKToolsComputeOverlapOld< 2, char >::New( dim, componentType );
+      if( !filterOld ) filterOld = ITKToolsComputeOverlapOld< 2, unsigned char >::New( dim, componentType );
       if( !filterOld ) filterOld = ITKToolsComputeOverlapOld< 2, short >::New( dim, componentType );
+      if( !filterOld ) filterOld = ITKToolsComputeOverlapOld< 2, unsigned short >::New( dim, componentType );
 
 #ifdef ITKTOOLS_3D_SUPPORT
       if( !filterOld ) filterOld = ITKToolsComputeOverlapOld< 3, char >::New( dim, componentType );
