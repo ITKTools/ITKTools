@@ -22,7 +22,7 @@
 #endif
 
 #include "itkImageIOBase.h"
-#include "tiffio.h"
+#include "itk_tiff.h"
 #include "gdcmTag.h"
 #include "gdcmAttribute.h"
 
