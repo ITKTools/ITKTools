@@ -36,7 +36,7 @@ ENDIF()
 
 SET( dashboard_cache "
 // Which ITK to use
-ITK_DIR:PATH=D:/toolkits/ITK/4.0.0/binVS2008
+ITK_DIR:PATH=D:/toolkits/ITK/latest_release/bin_VS2008
 
 // Some ITKTools settings, defining the configuration
 ITKTOOLS_BUILD_TESTING:BOOL=ON
