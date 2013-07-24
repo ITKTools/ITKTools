@@ -90,7 +90,9 @@ make_directory( ${CTEST_BINARY_DIRECTORY} )
 
 # Look for a GIT command-line client.
 if( NOT DEFINED CTEST_GIT_COMMAND )
-  find_program( CTEST_GIT_COMMAND NAMES git git.cmd )
+  find_program( CTEST_GIT_COMMAND
+    NAMES git git.cmd
+    HINTS "C:/cygwin/bin/" )
 endif()
 if( NOT DEFINED CTEST_GIT_COMMAND )
   message( FATAL_ERROR "No Git Found." )
