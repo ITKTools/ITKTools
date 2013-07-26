@@ -92,7 +92,7 @@ make_directory( ${CTEST_BINARY_DIRECTORY} )
 if( NOT DEFINED CTEST_GIT_COMMAND )
   find_program( CTEST_GIT_COMMAND
     NAMES git git.cmd
-    HINTS "C:/cygwin/bin/" )
+    HINTS "C:/Program Files (x86)/Git/bin/" )
 endif()
 if( NOT DEFINED CTEST_GIT_COMMAND )
   message( FATAL_ERROR "No Git Found." )
