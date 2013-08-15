@@ -43,7 +43,7 @@ public:
   {
     this->m_InputFileName = "";
     this->m_OutputFileName = "";
-    this->m_IsFactor = false;
+    this->m_ResizingSpecifiedBy = "";
     this->m_InterpolationOrder = 0;
   };
   /** Destructor. */
@@ -52,8 +52,10 @@ public:
   /** Input member parameters. */
   std::string m_InputFileName;
   std::string m_OutputFileName;
-  std::vector<double> m_FactorOrSpacing;
-  bool m_IsFactor;
+  std::string m_ResizingSpecifiedBy;
+  std::vector<double> m_ResizeFactor;
+  std::vector<double> m_OutputSpacing;
+  std::vector<unsigned int> m_OutputSize;
   unsigned int m_InterpolationOrder;
 
 }; // end class ITKToolsResizeImageBase
@@ -114,21 +116,29 @@ public:
     SizeType    inputSize     = inputImage->GetLargestPossibleRegion().GetSize();
     SpacingType outputSpacing = inputSpacing;
     SizeType    outputSize    = inputSize;
-    if( this->m_IsFactor )
+    if( this->m_ResizingSpecifiedBy == "ResizeFactor" )
     {
       for( unsigned int i = 0; i < Dimension; i++ )
       {
-        outputSpacing[ i ] /= this->m_FactorOrSpacing[ i ];
-        outputSize[ i ] = static_cast<unsigned int>( outputSize[ i ] * this->m_FactorOrSpacing[ i ] );
+        outputSpacing[ i ] /= this->m_ResizeFactor[ i ];
+        outputSize[ i ] = static_cast<unsigned int>( outputSize[ i ] * this->m_ResizeFactor[ i ] );
       }
     }
-    else
+    else if( this->m_ResizingSpecifiedBy == "OutputSpacing" )
     {
       for( unsigned int i = 0; i < Dimension; i++ )
       {
-        outputSpacing[ i ] = this->m_FactorOrSpacing[ i ];
+        outputSpacing[ i ] = this->m_OutputSpacing[ i ];
         outputSize[ i ] = static_cast<unsigned int>(
-          inputSpacing[ i ] * inputSize[ i ] / this->m_FactorOrSpacing[ i ] );
+          inputSpacing[ i ] * inputSize[ i ] / this->m_OutputSpacing[ i ] );
+      }
+    }
+    else if( this->m_ResizingSpecifiedBy == "OutputSize" )
+    {
+      for( unsigned int i = 0; i < Dimension; i++ )
+      {
+        outputSpacing[ i ] = inputSpacing[ i ] * inputSize[ i ] / this->m_OutputSize[ i ];
+        outputSize[ i ] = this->m_OutputSize[ i ];
       }
     }
 
@@ -139,6 +149,7 @@ public:
     resampler->SetOutputStartIndex( inputImage->GetLargestPossibleRegion().GetIndex() );
     resampler->SetOutputSpacing( outputSpacing );
     resampler->SetOutputOrigin( inputImage->GetOrigin() );
+    resampler->SetOutputDirection( inputImage->GetDirection() );
 
     /* The interpolator: the resampler has by default a
      * LinearInterpolateImageFunction as interpolator.
