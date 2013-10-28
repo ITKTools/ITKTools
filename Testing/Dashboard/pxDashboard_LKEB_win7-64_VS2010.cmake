@@ -11,15 +11,15 @@
 # and defaults to Nightly.
 # NOTE that Model should directly follow the comma: no space allowed!
 #
-# Setup: Windows 7, Visual Studio 9 2008 Win64, Release mode, ITK 4.0.0
+# Setup: Windows 7, Visual Studio 10 2010 Win64, Release mode, ITK latest release
 # PC: LKEB, MS personal computer
 
 # Client maintainer: m.staring@lumc.nl
 set( CTEST_SITE "LKEB.PCMarius" )
-set( CTEST_BUILD_NAME "Win7-64bit-VS2008" )
+set( CTEST_BUILD_NAME "Win7-64bit-VS2010" )
 #set( CTEST_BUILD_FLAGS "-j2" ) # parallel build for makefiles
 set( CTEST_BUILD_CONFIGURATION Release )
-set( CTEST_CMAKE_GENERATOR "Visual Studio 9 2008 Win64" )
+set( CTEST_CMAKE_GENERATOR "Visual Studio 10 Win64" )
 set( CTEST_DASHBOARD_ROOT "D:/toolkits/ITKTools/nightly" )
 
 # Specify the kind of dashboard to submit
@@ -36,7 +36,7 @@ ENDIF()
 
 SET( dashboard_cache "
 // Which ITK to use
-ITK_DIR:PATH=D:/toolkits/ITK/latest_release/bin_VS2008
+ITK_DIR:PATH=D:/toolkits/ITK/latest_release/bin_VS2010
 
 // Some ITKTools settings, defining the configuration
 ITKTOOLS_BUILD_TESTING:BOOL=ON
