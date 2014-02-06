@@ -16,8 +16,11 @@
 
 #include "itkUseMevisDicomTiff.h"
 
-#include "itkMevisDicomTiffImageIOFactory.h"
-#include "itkObjectFactoryBase.h"
+/** Avoid dependencies when Mevis dicom tiff is not used */
+#ifdef _ITKTOOLS_USE_MEVISDICOMTIFF
+  #include "itkMevisDicomTiffImageIOFactory.h"
+  #include "itkObjectFactoryBase.h"
+#endif
 
 /** Function that registers the Mevis DicomTiff IO factory. 
  *  Call this in your program, before you load/write any images. */

@@ -3,13 +3,18 @@ PROJECT( MevisDicomTiff )
 
 IF( ITKTOOLS_USE_MEVISDICOMTIFF )
   ADD_DEFINITIONS( -D_ITKTOOLS_USE_MEVISDICOMTIFF )
+  
+  ADD_LIBRARY( mevisdcmtiff
+    itkMevisDicomTiffImageIO.cxx
+    itkMevisDicomTiffImageIOFactory.cxx
+    itkUseMevisDicomTiff.cxx
+  )
+ELSE()
+  # avoid the dependencies on the tiff library.
+  ADD_LIBRARY( mevisdcmtiff
+    itkUseMevisDicomTiff.cxx
+  )
 ENDIF()
-
-ADD_LIBRARY( mevisdcmtiff
-  itkMevisDicomTiffImageIO.cxx
-  itkMevisDicomTiffImageIOFactory.cxx
-  itkUseMevisDicomTiff.cxx
-)
 
 TARGET_LINK_LIBRARIES( mevisdcmtiff ${ITK_LIBRARIES} )
 
