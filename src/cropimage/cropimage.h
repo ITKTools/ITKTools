@@ -27,6 +27,7 @@
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 
+#include "cropimageMainHelper.h"
 
 /** \class ITKToolsCropImageBase
  *
