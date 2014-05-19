@@ -39,6 +39,7 @@ DiceOverlapImageFilter<TInputImage>
   //this->m_RequestedLabels = 0;
 
   this->SetNumberOfRequiredInputs( 2 );
+  this->m_MeanLabelOverlap = 0.0;
 
 } // end Constructor
 
@@ -55,9 +56,9 @@ DiceOverlapImageFilter<TInputImage>
   const int numberOfThreads = this->GetNumberOfThreads();
 
   // Create the thread temporaries
-  this->m_SumA.resize( numberOfThreads );
-  this->m_SumB.resize( numberOfThreads );
-  this->m_SumC.resize( numberOfThreads );
+  this->m_SumAForThread.resize( numberOfThreads );
+  this->m_SumBForThread.resize( numberOfThreads );
+  this->m_SumCForThread.resize( numberOfThreads );
 
 } // end BeforeThreadedGenerateData()
 
@@ -102,9 +103,9 @@ DiceOverlapImageFilter<TInputImage>
   } // end while
 
   /** Update sums for this thread. */
-  this->m_SumA[ threadId ] = sumA;
-  this->m_SumB[ threadId ] = sumB;
-  this->m_SumC[ threadId ] = sumC;
+  this->m_SumAForThread[ threadId ] = sumA;
+  this->m_SumBForThread[ threadId ] = sumB;
+  this->m_SumCForThread[ threadId ] = sumC;
 
 } // end ThreadedGenerateData()
 
@@ -119,13 +120,13 @@ DiceOverlapImageFilter<TInputImage>
 ::AfterThreadedGenerateData( void )
 {
   /** Merge sums from all threads. */
-  OverlapMapType sumA = this->m_SumA[ 0 ];
-  OverlapMapType sumB = this->m_SumB[ 0 ];
-  OverlapMapType sumC = this->m_SumC[ 0 ];
+  OverlapMapType sumA = this->m_SumAForThread[ 0 ];
+  OverlapMapType sumB = this->m_SumBForThread[ 0 ];
+  OverlapMapType sumC = this->m_SumCForThread[ 0 ];
   typename OverlapMapType::const_iterator  it;
   for( unsigned int threadId = 1; threadId < this->GetNumberOfThreads(); threadId++ )
   {
-    for ( it = this->m_SumA[ threadId ].begin(); it != this->m_SumA[ threadId ].end(); it++ )
+    for( it = this->m_SumAForThread[ threadId ].begin(); it != this->m_SumAForThread[ threadId ].end(); ++it )
     {
       if( sumA.count( (*it).first ) == 0 )
       {
@@ -137,7 +138,7 @@ DiceOverlapImageFilter<TInputImage>
       }
     }
 
-    for ( it = this->m_SumB[ threadId ].begin(); it != this->m_SumB[ threadId ].end(); it++ )
+    for( it = this->m_SumBForThread[ threadId ].begin(); it != this->m_SumBForThread[ threadId ].end(); ++it )
     {
       if( sumB.count( (*it).first ) == 0 )
       {
@@ -149,7 +150,7 @@ DiceOverlapImageFilter<TInputImage>
       }
     }
 
-    for ( it = this->m_SumC[ threadId ].begin(); it != this->m_SumC[ threadId ].end(); it++ )
+    for( it = this->m_SumCForThread[ threadId ].begin(); it != this->m_SumCForThread[ threadId ].end(); ++it )
     {
       if( sumC.count( (*it).first ) == 0 )
       {
@@ -163,8 +164,8 @@ DiceOverlapImageFilter<TInputImage>
   }
 
   /** Calculate the Dice overlaps. */
-  //typename OverlapMapType::const_iterator  it;
-  for ( it = sumA.begin(); it != sumA.end(); it++ )
+  std::size_t numberOfLabels = 0;
+  for( it = sumA.begin(); it != sumA.end(); ++it )
   {
     InputPixelType currentLabel = (*it).first;
 
@@ -181,8 +182,21 @@ DiceOverlapImageFilter<TInputImage>
         / static_cast<double>( sumAB );
     }
 
+    this->m_SumA[ currentLabel ] = sumA[ currentLabel ];
+    this->m_SumB[ currentLabel ] = sumB[ currentLabel ];
+    this->m_SumC[ currentLabel ] = sumC[ currentLabel ];
+
+    if( currentLabel > 0 )
+    {
+      numberOfLabels++;
+      this->m_MeanLabelOverlap += this->m_DiceOverlap[ currentLabel ];
+    }
   } // end loop over all labels
 
+  if( numberOfLabels > 0 )
+  {
+    this->m_MeanLabelOverlap /= numberOfLabels;
+  }
 } // end AfterThreadedGenerateData()
 
 
@@ -209,8 +223,8 @@ DiceOverlapImageFilter<TInputImage>
   }
 
   /** Print the requested Dice overlaps. */
-  //std::cout << "label => sum input1 \t, sum input2 \t, sum overlap \t, overlap" << std::endl;
-  std::cout << "label => overlap" << std::endl;
+  std::cout << "label => sum input1 \t, sum input2 \t, sum overlap \t, overlap" << std::endl;
+  //std::cout << "label => overlap" << std::endl;
   typename OverlapMapRealType::const_iterator  it;
   for ( it = this->m_DiceOverlap.begin() ; it != this->m_DiceOverlap.end(); it++ )
   {
@@ -227,13 +241,16 @@ DiceOverlapImageFilter<TInputImage>
 
     /** Print current label. */
     std::cout << static_cast<std::size_t>( currentLabel ) << " => "
-//       << sumA[ currentLabel ]
-//       << "\t, " << sumB[ currentLabel ]
-//       << "\t, " << sumC[ currentLabel ]
-//       << "\t, "
+      << this->m_SumA[ currentLabel ]
+      << "\t, " << this->m_SumB[ currentLabel ]
+      << "\t, " << this->m_SumC[ currentLabel ]
+      << "\t, "
       << this->m_DiceOverlap[ currentLabel ] << std::endl;
 
   } // end loop over all labels
+
+    std::cout << "Mean overlap (exclude label 0)  =>  "
+      << this->m_MeanLabelOverlap << std::endl;
 
 } // end PrintRequestedDiceOverlaps()
 
@@ -250,7 +267,19 @@ DiceOverlapImageFilter<TInputImage>
   Superclass::PrintSelf( os, indent );
 
   //os << indent << "RequestedLabels: " << this->m_RequestedLabels << std::endl;
-  //os << indent << "RequestedLabels: " << this->m_DiceOverlap << std::endl;
+  //os << indent << "Sum A: " << this->m_SumAForThread << std::endl;
+  //os << indent << "Sum B: " << this->m_SumBForThread << std::endl;
+  //os << indent << "Sum C: " << this->m_SumCForThread << std::endl;
+
+  //LabelsType                    m_RequestedLabels;
+  //std::vector<OverlapMapType>   m_SumAForThread;
+  //std::vector<OverlapMapType>   m_SumBForThread;
+  //std::vector<OverlapMapType>   m_SumCForThread;
+  //OverlapMapRealType            m_SumA;
+  //OverlapMapRealType            m_SumB;
+  //OverlapMapRealType            m_SumC;
+  //OverlapMapRealType            m_DiceOverlap;
+  //double m_TotalOverlap;
 
 } // end PrintSelf()
 

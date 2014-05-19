@@ -119,16 +119,21 @@ protected:
     ThreadIdType threadId );
 
 private:
-  DiceOverlapImageFilter(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+  DiceOverlapImageFilter(const Self&);  // purposely not implemented
+  void operator=(const Self&);          // purposely not implemented
 
   /** Member variables. */
   LabelsType                    m_RequestedLabels;
 
-  std::vector<OverlapMapType>   m_SumA;
-  std::vector<OverlapMapType>   m_SumB;
-  std::vector<OverlapMapType>   m_SumC;
+  std::vector<OverlapMapType>   m_SumAForThread;
+  std::vector<OverlapMapType>   m_SumBForThread;
+  std::vector<OverlapMapType>   m_SumCForThread;
+  OverlapMapRealType            m_SumA;
+  OverlapMapRealType            m_SumB;
+  OverlapMapRealType            m_SumC;
   OverlapMapRealType            m_DiceOverlap;
+
+  RealType m_MeanLabelOverlap;
 
 }; // end class DiceOverlapImageFilter
 
