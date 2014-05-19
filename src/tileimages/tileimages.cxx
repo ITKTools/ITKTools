@@ -51,9 +51,9 @@ std::string GetHelpString( void )
     << "  -out     output image filename\n"
     << "  [-pt]    pixel type of input and output images\n"
     << "           default: automatically determined from the first input image\n"
-    << "  [-sp]    spacing in z-direction for 2D-3D tiling [double];\n"
-    << "           if omitted, the origins of the 2d images are used to find the spacing;\n"
-    << "           if these are identical, a spacing of 1.0 is assumed\n"
+    << "  [-sp]    spacing in last direction for N-D to (N+1)-D tiling [double];\n"
+    << "           if omitted, the origins of the N-D images are used to find the spacing;\n"
+    << "           if these are identical, a spacing of 1.0 is assumed by default\n"
     << "  [-ly]    layout of the nD-nD tiling\n"
     << "           example: in 2D for 4 images \"-ly 2 2\" results in\n"
     << "             im1 im2\n"
@@ -108,8 +108,8 @@ int main( int argc, char ** argv )
   parser->GetCommandLineArgument( "-out", outputFileName );
 
   /** Read the z-spacing. */
-  double zspacing = -1.0;
-  parser->GetCommandLineArgument( "-sp", zspacing );
+  double lastSpacing = -1.0;
+  parser->GetCommandLineArgument( "-sp", lastSpacing );
 
   /** Get the layout. */
   std::vector< unsigned int > layout;
@@ -149,11 +149,20 @@ int main( int argc, char ** argv )
     try
     {
       // now call all possible template combinations.
-      if( !filterTile2D3D ) filterTile2D3D = ITKToolsTileImages2D3D< unsigned char >::New( componentType );
-      if( !filterTile2D3D ) filterTile2D3D = ITKToolsTileImages2D3D< char >::New( componentType );
-      if( !filterTile2D3D ) filterTile2D3D = ITKToolsTileImages2D3D< unsigned short >::New( componentType );
-      if( !filterTile2D3D ) filterTile2D3D = ITKToolsTileImages2D3D< short >::New( componentType );
-      if( !filterTile2D3D ) filterTile2D3D = ITKToolsTileImages2D3D< float >::New( componentType );
+#ifdef ITKTOOLS_3D_SUPPORT
+      if( !filterTile2D3D ) filterTile2D3D = ITKToolsTileImages2D3D< 3, unsigned char >::New( dim + 1, componentType );
+      if( !filterTile2D3D ) filterTile2D3D = ITKToolsTileImages2D3D< 3, char >::New( dim + 1, componentType );
+      if( !filterTile2D3D ) filterTile2D3D = ITKToolsTileImages2D3D< 3, unsigned short >::New( dim + 1, componentType );
+      if( !filterTile2D3D ) filterTile2D3D = ITKToolsTileImages2D3D< 3, short >::New( dim + 1, componentType );
+      if( !filterTile2D3D ) filterTile2D3D = ITKToolsTileImages2D3D< 3, float >::New( dim + 1, componentType );
+#endif
+#ifdef ITKTOOLS_4D_SUPPORT
+      if( !filterTile2D3D ) filterTile2D3D = ITKToolsTileImages2D3D< 4, unsigned char >::New( dim + 1, componentType );
+      if( !filterTile2D3D ) filterTile2D3D = ITKToolsTileImages2D3D< 4, char >::New( dim + 1, componentType );
+      if( !filterTile2D3D ) filterTile2D3D = ITKToolsTileImages2D3D< 4, unsigned short >::New( dim + 1, componentType );
+      if( !filterTile2D3D ) filterTile2D3D = ITKToolsTileImages2D3D< 4, short >::New( dim + 1, componentType );
+      if( !filterTile2D3D ) filterTile2D3D = ITKToolsTileImages2D3D< 4, float >::New( dim + 1, componentType );
+#endif
 
       /** Check if filter was instantiated. */
       bool supported = itktools::IsFilterSupportedCheck( filterTile2D3D, dim, componentType );
@@ -162,7 +171,7 @@ int main( int argc, char ** argv )
       /** Set the filter arguments. */
       filterTile2D3D->m_InputFileNames = inputFileNames;
       filterTile2D3D->m_OutputFileName = outputFileName;
-      filterTile2D3D->m_Zspacing = zspacing;
+      filterTile2D3D->m_LastSpacing = lastSpacing;
 
       filterTile2D3D->Run();
 
@@ -195,6 +204,13 @@ int main( int argc, char ** argv )
       if( !filter ) filter = ITKToolsTileImages< 3, unsigned short >::New( dim, componentType );
       if( !filter ) filter = ITKToolsTileImages< 3, short >::New( dim, componentType );
       if( !filter ) filter = ITKToolsTileImages< 3, float >::New( dim, componentType );
+#endif
+#ifdef ITKTOOLS_4D_SUPPORT
+      if( !filter ) filter = ITKToolsTileImages< 4, unsigned char >::New( dim, componentType );
+      if( !filter ) filter = ITKToolsTileImages< 4, char >::New( dim, componentType );
+      if( !filter ) filter = ITKToolsTileImages< 4, unsigned short >::New( dim, componentType );
+      if( !filter ) filter = ITKToolsTileImages< 4, short >::New( dim, componentType );
+      if( !filter ) filter = ITKToolsTileImages< 4, float >::New( dim, componentType );
 #endif
       /** Check if filter was instantiated. */
       bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );

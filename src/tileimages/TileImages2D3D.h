@@ -37,7 +37,7 @@ public:
   ITKToolsTileImages2D3DBase()
   {
     this->m_OutputFileName = "";
-    this->m_Zspacing = 1.0;
+    this->m_LastSpacing = 1.0;
   };
   /** Destructor. */
   ~ITKToolsTileImages2D3DBase(){};
@@ -45,7 +45,7 @@ public:
   /** Input member parameters. */
   std::vector<std::string> m_InputFileNames;
   std::string m_OutputFileName;
-  double m_Zspacing;
+  double m_LastSpacing;
 
 }; // end class ITKToolsTileImages2D3DBase
 
@@ -56,21 +56,14 @@ public:
  * and the New() function for its creation.
  */
 
-template< class TComponentType >
+template< unsigned int VDimension, class TComponentType >
 class ITKToolsTileImages2D3D : public ITKToolsTileImages2D3DBase
 {
 public:
   /** Standard ITKTools stuff. */
   typedef ITKToolsTileImages2D3D Self;
 
-  static Self * New( itk::ImageIOBase::IOComponentType componentType )
-  {
-    if( itktools::IsType<TComponentType>( componentType ) )
-    {
-      return new Self;
-    }
-    return 0;
-  }
+  itktoolsOneTypeNewMacro( Self );
 
   ITKToolsTileImages2D3D(){};
   ~ITKToolsTileImages2D3D(){};
@@ -78,11 +71,8 @@ public:
   /** Run function. */
   void Run( void )
   {
-    /** Define image type. */
-    const unsigned int Dimension = 3;
-
     /** Some typedef's. */
-    typedef itk::Image<TComponentType, Dimension>       ImageType;
+    typedef itk::Image<TComponentType, VDimension>      ImageType;
     typedef typename ImageType::SpacingType             SpacingType;
     typedef itk::ImageSeriesReader<ImageType>           ImageSeriesReaderType;
     typedef itk::ImageFileWriter<ImageType>             ImageWriterType;
@@ -96,14 +86,14 @@ public:
     typename ImageType::Pointer tiledImage = reader->GetOutput();
 
     /** Get and set the spacing, if it was set by the user. */
-    if( this->m_Zspacing > 0.0 )
+    if( this->m_LastSpacing > 0.0 )
     {
       /** Make sure that changes are not undone. */
       tiledImage->DisconnectPipeline();
 
-      /** Set the zspacing */
+      /** Set the spacing of the last dimension. */
       SpacingType spacing = tiledImage->GetSpacing();
-      spacing[ 2 ] = this->m_Zspacing;
+      spacing[ VDimension - 1 ] = this->m_LastSpacing;
       tiledImage->SetSpacing( spacing );
     }
 
