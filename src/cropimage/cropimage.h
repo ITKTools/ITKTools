@@ -51,11 +51,13 @@ public:
   /** Input member parameters. */
   std::string       m_InputFileName;
   std::string       m_OutputFileName;
-  std::vector<int>  m_Input1;
-  std::vector<int>  m_Input2;
-  unsigned int      m_Option;
   bool              m_Force;
   bool              m_UseCompression;
+
+  std::vector<int>            m_LowerBoundary;
+  std::vector<int>            m_UpperBoundary;
+  std::vector<unsigned long>  m_PadLowerBoundary;
+  std::vector<unsigned long>  m_PadUpperBoundary;
 
 }; // end class ITKToolsCropImageBase
 
@@ -98,38 +100,16 @@ public:
     typename ReaderType::Pointer reader = ReaderType::New();
     typename WriterType::Pointer writer = WriterType::New();
 
-    /** Prepare stuff. */
-    SizeType input1Size, input2Size;
-    for( unsigned int i = 0; i < Dimension; i++ )
-    {
-      input1Size[ i ] = this->m_Input1[ i ];
-      input2Size[ i ] = this->m_Input2[ i ];
-    }
-
     /** Read the image. */
     reader->SetFileName( this->m_InputFileName.c_str() );
     reader->Update();
 
-    /** Get the size of input image. */
-    SizeType imageSize = reader->GetOutput()->GetLargestPossibleRegion().GetSize();
-    std::vector<int> imSize( Dimension );
-    for( unsigned int i = 0; i < Dimension; i++ )
-    {
-      imSize[ i ] = static_cast<int>( imageSize[ i ] );
-    }
-
-    /** Get the lower and upper boundary. */
-    std::vector<unsigned long> padLowerBound, padUpperBound;
-    std::vector<int> down = GetLowerBoundary(
-      this->m_Input1, Dimension, this->m_Force, padLowerBound );
-    std::vector<int> up = GetUpperBoundary(
-      this->m_Input1, this->m_Input2, imSize, Dimension,
-      this->m_Option, this->m_Force, padUpperBound );
+    /** Convert the lower and upper boundary to SizeType. */
     SizeType downSize, upSize;
     for( unsigned int i = 0; i < Dimension; i++ )
     {
-      downSize[ i ] = down[ i ];
-      upSize[ i ] = up[ i ];
+      downSize[ i ] = this->m_LowerBoundary[ i ];
+      upSize[ i ] = this->m_UpperBoundary[ i ];
     }
 
     /** Set the boundaries for the cropping filter. */
@@ -146,8 +126,8 @@ public:
       SizeValueType lBound[ Dimension ];
       for( unsigned int i = 0; i < Dimension; i++ )
       {
-        lBound[ i ] = padLowerBound[ i ];
-        uBound[ i ] = padUpperBound[ i ];
+        lBound[ i ] = this->m_PadLowerBoundary[ i ];
+        uBound[ i ] = this->m_PadUpperBoundary[ i ];
       }
       padFilter->SetPadLowerBound( lBound );
       padFilter->SetPadUpperBound( uBound );

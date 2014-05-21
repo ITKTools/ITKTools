@@ -206,6 +206,20 @@ int main( int argc, char **argv )
     input2 = upBound;
   }
 
+  /** Get image size, needed for computing the upper boundary. */
+  std::vector<unsigned int> imageSize;
+  bool retiz = itktools::GetImageSize(
+    inputFileName, imageSize );
+  if( !retiz ) return EXIT_FAILURE;
+
+  /** Process the input arguments to obtain upper and lower bounds. */
+  std::vector<unsigned long> padLowerBound, padUpperBound;
+  std::vector<int> down = GetLowerBoundary(
+    input1, dim, force, padLowerBound );
+  std::vector<int> up = GetUpperBoundary(
+    input1, input2, imageSize, dim,
+    option, force, padUpperBound );
+
   /** Class that does the work. */
   ITKToolsCropImageBase * filter = 0;
 
@@ -256,11 +270,12 @@ int main( int argc, char **argv )
     /** Set the filter arguments. */
     filter->m_InputFileName = inputFileName;
     filter->m_OutputFileName = outputFileName;
-    filter->m_Input1 = input1;
-    filter->m_Input2 = input2;
-    filter->m_Option = option;
     filter->m_Force = force;
     filter->m_UseCompression = useCompression;
+    filter->m_LowerBoundary = down;
+    filter->m_UpperBoundary = up;
+    filter->m_PadLowerBoundary = padLowerBound;
+    filter->m_PadUpperBoundary = padUpperBound;
 
     filter->Run();
 

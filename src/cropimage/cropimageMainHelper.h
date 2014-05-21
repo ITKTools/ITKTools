@@ -155,7 +155,7 @@ std::vector<int> GetLowerBoundary( const std::vector<int> & input1,
  */
 
  std::vector<int> GetUpperBoundary( const std::vector<int> & input1,
-   const std::vector<int> & input2, const std::vector<int> & imageSize,
+   const std::vector<int> & input2, const std::vector<unsigned int> & imageSize,
    const unsigned int dimension, const unsigned int option,
    const bool force, std::vector<unsigned long> & padUpperBound )
 {
