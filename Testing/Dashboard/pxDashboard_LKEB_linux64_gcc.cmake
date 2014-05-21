@@ -18,7 +18,7 @@
 
 # Client maintainer: m.staring@lumc.nl
 set( CTEST_SITE "LKEB.goliath" )
-set( CTEST_BUILD_NAME "Linux-64bit-gcc4.6.3" )
+set( CTEST_BUILD_NAME "Linux-64bit-gcc4.8.2" )
 set( CTEST_BUILD_FLAGS "-j6" ) # parallel build for makefiles
 set( CTEST_TEST_ARGS PARALLEL_LEVEL 6 ) # parallel testing
 set( CTEST_BUILD_CONFIGURATION Debug )
