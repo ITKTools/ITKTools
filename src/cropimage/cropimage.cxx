@@ -27,7 +27,6 @@
 #include "itkCommandLineArgumentParser.h"
 #include "ITKToolsHelpers.h"
 #include "cropimage.h"
-#include "cropimageMainHelper.h"
 
 
 /**
