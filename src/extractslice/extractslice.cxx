@@ -50,6 +50,7 @@ std::string GetHelpString( void )
     << "           default: automatically determined from the first input image.\n"
     << "  -sn      slice number\n"
     << "  [-d]     the dimension from which a slice is extracted, default the last dimension\n"
+    << "  [-z]     compression flag; if provided, the output image is compressed\n"
     << "Supported pixel types: (unsigned) char, (unsigned) short, float.";
 
   return ss.str();
@@ -91,6 +92,8 @@ int main( int argc, char ** argv )
 
   std::string slicenumberstring;
   parser->GetCommandLineArgument( "-sn", slicenumberstring );
+
+  bool useCompression = parser->ArgumentExists( "-z" );
 
   /** Determine image properties. */
   itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
@@ -182,6 +185,7 @@ int main( int argc, char ** argv )
     filter->m_OutputFileName = outputFileName;
     filter->m_WhichDimension = which_dimension;
     filter->m_Slicenumber = slicenumber;
+    filter->m_UseCompression = useCompression;
 
     filter->Run();
 

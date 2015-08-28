@@ -44,15 +44,17 @@ public:
     this->m_OutputFileName = "";
     this->m_Slicenumber = 0;
     this->m_WhichDimension = 0;
+    this->m_UseCompression = false;
   };
   /** Destructor. */
   ~ITKToolsExtractSliceBase(){};
 
   /** Input member parameters. */
-  std::string m_InputFileName;
-  std::string m_OutputFileName;
+  std::string  m_InputFileName;
+  std::string  m_OutputFileName;
   unsigned int m_Slicenumber;
   unsigned int m_WhichDimension;
+  bool         m_UseCompression;
 
 }; // end class ITKToolsExtractSliceBase
 
@@ -121,6 +123,7 @@ public:
     typename ImageWriterType::Pointer writer = ImageWriterType::New();
     writer->SetFileName( this->m_OutputFileName.c_str() );
     writer->SetInput( extractor->GetOutput() );
+    writer->SetUseCompression( this->m_UseCompression );
     writer->Update();
 
   } // end Run()
