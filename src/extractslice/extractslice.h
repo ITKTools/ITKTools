@@ -63,21 +63,13 @@ public:
  * and the New() function for its creation.
  */
 
-template< class TComponentType >
+template< unsigned int VDimension, class TComponentType >
 class ITKToolsExtractSlice : public ITKToolsExtractSliceBase
 {
 public:
   /** Standard ITKTools stuff. */
   typedef ITKToolsExtractSlice Self;
-
-  static Self * New( itk::ImageIOBase::IOComponentType componentType )
-  {
-    if( itktools::IsType<TComponentType>( componentType ) )
-    {
-      return new Self;
-    }
-    return 0;
-  }
+  itktoolsOneTypeNewMacro( Self );
 
   ITKToolsExtractSlice(){};
   ~ITKToolsExtractSlice(){};
@@ -86,16 +78,16 @@ public:
   void Run( void )
   {
     /** Some typedef's. */
-    typedef itk::Image<TComponentType, 3>         Image3DType;
-    typedef itk::Image<TComponentType, 2>         Image2DType;
-    typedef itk::ImageFileReader<Image3DType>     ImageReaderType;
+    typedef itk::Image< TComponentType, VDimension >      Image3DType;
+    typedef itk::Image< TComponentType, VDimension - 1 >  Image2DType;
+    typedef itk::ImageFileReader<Image3DType>             ImageReaderType;
     typedef itk::ExtractImageFilter<
-      Image3DType, Image2DType >                  ExtractFilterType;
-    typedef itk::ImageFileWriter<Image2DType>     ImageWriterType;
+      Image3DType, Image2DType >                          ExtractFilterType;
+    typedef itk::ImageFileWriter<Image2DType>             ImageWriterType;
 
-    typedef typename Image3DType::RegionType      RegionType;
-    typedef typename Image3DType::SizeType        SizeType;
-    typedef typename Image3DType::IndexType       IndexType;
+    typedef typename Image3DType::RegionType  RegionType;
+    typedef typename Image3DType::SizeType    SizeType;
+    typedef typename Image3DType::IndexType   IndexType;
 
     /** Create reader. */
     typename ImageReaderType::Pointer reader = ImageReaderType::New();

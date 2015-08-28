@@ -41,7 +41,7 @@ std::string GetHelpString( void )
 {
   std::stringstream ss;
   ss << "ITKTools v" << itktools::GetITKToolsVersion() << "\n"
-    << "pxextractslice extracts a 2D slice from a 3D image.\n"
+    << "pxextractslice extracts an (n-1)D slice from an nD image.\n"
     << "Usage:\n"
     << "pxextractslice\n"
     << "  -in      input image filename\n"
@@ -49,7 +49,7 @@ std::string GetHelpString( void )
     << "  [-opct]  pixel type of input and output images;\n"
     << "           default: automatically determined from the first input image.\n"
     << "  -sn      slice number\n"
-    << "  [-d]     the dimension from which a slice is extracted, default the z dimension\n"
+    << "  [-d]     the dimension from which a slice is extracted, default the last dimension\n"
     << "Supported pixel types: (unsigned) char, (unsigned) short, float.";
 
   return ss.str();
@@ -92,12 +92,6 @@ int main( int argc, char ** argv )
   std::string slicenumberstring;
   parser->GetCommandLineArgument( "-sn", slicenumberstring );
 
-  /** Get the dimension in which the slice is to be extracted.
-   * The default is the z-direction.
-   */
-  unsigned int which_dimension = 2;
-  parser->GetCommandLineArgument( "-d", which_dimension );
-
   /** Determine image properties. */
   itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
   itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
@@ -119,6 +113,12 @@ int main( int argc, char ** argv )
   {
     componentType = itk::ImageIOBase::GetComponentTypeFromString( componentTypeAsString );
   }
+
+  /** Get the dimension in which the slice is to be extracted.
+   * The default is the last direction.
+   */
+  unsigned int which_dimension = dim - 1;
+  parser->GetCommandLineArgument( "-d", which_dimension );
 
   /** Sanity check. */
   if( slicenumber > imageSize[ which_dimension ] )
@@ -144,13 +144,12 @@ int main( int argc, char ** argv )
   }
 
   /** Get the outputFileName. */
-  std::string direction = "z";
+  std::string direction = "t";
   if( which_dimension == 0 ) direction = "x";
   else if( which_dimension == 1 ) direction = "y";
-  std::string part1 =
-      itksys::SystemTools::GetFilenameWithoutLastExtension( inputFileName );
-  std::string part2 =
-    itksys::SystemTools::GetFilenameLastExtension( inputFileName );
+  else if( which_dimension == 2 ) direction = "z";
+  std::string part1 = itksys::SystemTools::GetFilenameWithoutLastExtension( inputFileName );
+  std::string part2 = itksys::SystemTools::GetFilenameLastExtension( inputFileName );
   std::string outputFileName = part1 + "_slice_" + direction + "=" + slicenumberstring + part2;
   parser->GetCommandLineArgument( "-out", outputFileName );
 
@@ -161,11 +160,18 @@ int main( int argc, char ** argv )
   {
     // now call all possible template combinations.
 #ifdef ITKTOOLS_3D_SUPPORT
-    if( !filter ) filter = ITKToolsExtractSlice< unsigned char >::New( componentType );
-    if( !filter ) filter = ITKToolsExtractSlice< char >::New( componentType );
-    if( !filter ) filter = ITKToolsExtractSlice< unsigned short >::New( componentType );
-    if( !filter ) filter = ITKToolsExtractSlice< short >::New( componentType );
-    if( !filter ) filter = ITKToolsExtractSlice< float >::New( componentType );
+    if( !filter ) filter = ITKToolsExtractSlice< 3, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsExtractSlice< 3, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsExtractSlice< 3, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsExtractSlice< 3, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsExtractSlice< 3, float >::New( dim, componentType );
+#endif
+#ifdef ITKTOOLS_4D_SUPPORT
+    if( !filter ) filter = ITKToolsExtractSlice< 4, unsigned char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsExtractSlice< 4, char >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsExtractSlice< 4, unsigned short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsExtractSlice< 4, short >::New( dim, componentType );
+    if( !filter ) filter = ITKToolsExtractSlice< 4, float >::New( dim, componentType );
 #endif
     /** Check if filter was instantiated. */
     bool supported = itktools::IsFilterSupportedCheck( filter, dim, componentType );
