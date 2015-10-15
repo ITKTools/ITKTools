@@ -92,6 +92,8 @@ public:
     diceFilter->SetInput( 0, reader1->GetOutput() );
     diceFilter->SetInput( 1, reader2->GetOutput() );
     diceFilter->SetRequestedLabels( requestedLabels );
+    diceFilter->SetCoordinateTolerance( 1e-3 );
+    diceFilter->SetDirectionTolerance( 1e-3 );
     diceFilter->Update();
 
     /** Print the results. */
