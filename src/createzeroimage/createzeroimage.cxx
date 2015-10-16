@@ -197,7 +197,7 @@ int main( int argc, char **argv )
     if( !supported ) return EXIT_FAILURE;
 
     /** Set the filter arguments. */
-    filter->m_OutputFileName = inputFileName;
+    filter->m_OutputFileName = outputFileName;
     filter->m_Size = size;
     filter->m_Spacing = spacing;
     filter->m_Origin = origin;
