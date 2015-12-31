@@ -35,19 +35,23 @@ int DetermineImageProperties(
   itk::ImageIOBase::IOComponentType & componentTypeOut,
   unsigned int & inputDimension )
 {
-  /** Determine image properties of image 1. */
-  itk::ImageIOBase::IOPixelType inputPixelType1;
-  unsigned int inputDimension1 = 2;
-  unsigned int numberOfComponents1 = 1;
-  std::vector<unsigned int> imagesize1( inputDimension1, 0 );
-  int retgip1 = itktools::GetImageProperties(
+  /** Determine image properties of image 0. */
+  itk::ImageIOBase::IOPixelType inputPixelType0;
+  unsigned int inputDimension0 = 2;
+  unsigned int numberOfComponents0 = 1;
+  std::vector<unsigned int> imagesize0( inputDimension0, 0 );
+  bool retgip0 = itktools::GetImageProperties(
     inputFileNames[ 0 ],
-    inputPixelType1,
+    inputPixelType0,
     componentTypeIn,
-    inputDimension1,
-    numberOfComponents1,
-    imagesize1 );
-  if( retgip1 ) return retgip1;
+    inputDimension0,
+    numberOfComponents0,
+    imagesize0 );
+  /** If false, it means there was an error. Return 1. 
+   * \todo: the various GetImageProperties functions in ITKToolsImageProperties
+   * return either bool or int, which is very confusing. Harmonize.
+   */
+  if( !retgip0 ) return 1;
 
   /** Determine image properties of other images. */
   itk::ImageIOBase::IOPixelType inputPixelType_i;
@@ -57,39 +61,40 @@ int DetermineImageProperties(
   std::vector<unsigned int> imagesize_i;
   for( unsigned int i = 1; i < inputFileNames.size(); i++ )
   {
-    int retgip_i = itktools::GetImageProperties(
-      inputFileNames[ 1 ],
+    bool retgip_i = itktools::GetImageProperties(
+      inputFileNames[ i ],
       inputPixelType_i,
       componentTypeIn_i,
       inputDimension_i,
       numberOfComponents_i,
       imagesize_i );
-    if( retgip_i ) return retgip_i;
+	/** If false, it means there was an error. Return 1. */
+    if( !retgip_i ) return 1;
 
     /** Check the input. */
-    if( inputPixelType1 != inputPixelType_i )
+    if( inputPixelType0 != inputPixelType_i )
     {
       std::cerr << "ERROR: the input images are not of equal pixel type (SCALAR, VECTOR, etc)." << std::endl;
       return EXIT_FAILURE;
     }
 
-    if( numberOfComponents1 != numberOfComponents_i )
+    if( numberOfComponents0 != numberOfComponents_i )
     {
       std::cerr << "ERROR: the input images have a different number of components." << std::endl;
       return EXIT_FAILURE;
     }
 
-    if( inputDimension1 != inputDimension_i )
+    if( inputDimension0 != inputDimension_i )
     {
       std::cerr << "ERROR: the input images are of different dimension." << std::endl;
       return EXIT_FAILURE;
     }
     else
     {
-      inputDimension = inputDimension1;
+      inputDimension = inputDimension0;
     }
 
-    if( imagesize1 != imagesize_i )
+    if( imagesize0 != imagesize_i )
     {
       std::cerr << "ERROR: the input images have different sizes." << std::endl;
       return EXIT_FAILURE;
@@ -110,7 +115,7 @@ int DetermineImageProperties(
     componentTypeIn = itk::ImageIOBase::DOUBLE;
   }
 
-  /** Return a value. */
+  /** Return a value indicating success. */
   return 0;
 
 } // end DetermineImageProperties()
