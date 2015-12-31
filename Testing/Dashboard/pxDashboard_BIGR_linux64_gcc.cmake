@@ -13,7 +13,7 @@
 #
 # Setup: linux 64bit
 # gcc 4.4.6 (RedHat Linux),
-# Release mode, ITK 4.1.0
+# Release mode, ITK 4.8.0
 # PC: linux cluster2 at BIGR (SK).
 
 # Client maintainer: s.klein@erasmusmc.nl
@@ -46,7 +46,7 @@ ENDIF()
 
 SET( dashboard_cache "
 // Which ITK to use
-ITK_DIR:PATH=/cm/shared/apps/itk/4.5.0/releasefftw
+ITK_DIR:PATH=/cm/shared/apps/itk/4.8.0/releasefftw
 
 // Some ITKTools settings, defining the configuration
 ITKTOOLS_BUILD_TESTING:BOOL=ON
