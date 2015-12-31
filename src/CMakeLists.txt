@@ -51,7 +51,9 @@ endif()
 #---------------------------------------------------------------------
 # Increases address capacity
 if( WIN32 )
-  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj" )
+  if ( NOT MINGW )
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj" )
+  endif()
 endif()
 
 #---------------------------------------------------------------------
