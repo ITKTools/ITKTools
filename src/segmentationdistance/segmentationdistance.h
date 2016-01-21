@@ -330,6 +330,7 @@ public:
     extractionSize[0] = 0;
     extractionRegion.SetSize( extractionSize );
     extracter->SetExtractionRegion( extractionRegion );
+    extracter->SetDirectionCollapseToIdentity();
     std::cout << "Collapsing the result to a 2d image..." << std::endl;
     extracter->Update();
     std::cout << "Done collapsing." << std::endl;
