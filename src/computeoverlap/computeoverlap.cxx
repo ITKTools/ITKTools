@@ -59,6 +59,11 @@ std::string GetHelpString( void )
     << "          the overlap of exactly corresponding labels is computed" << std::endl
     << "           if \"-l\" is specified with no arguments, all labels in im1 are used," << std::endl
     << "           otherwise (e.g. \"-l 1 6 19\") the specified labels are used." << std::endl
+    << "  [-tol]   tolerance on ensuring that the input images occupy the same physical space." << std::endl
+    << "           The tolerance for coordinates and direction is the same for convenience." << std::endl
+
+    // tolerance for origin and spacing depends on the size of pixel
+    // tolerance for directions a fraction of the unit cube." << std::endl
     << "Supported: 2D, 3D, (unsigned) char, (unsigned) short";
 
   return ss.str();
@@ -107,6 +112,9 @@ int main( int argc, char ** argv )
   std::vector<unsigned int> labels( 0 );
   parser->GetCommandLineArgument( "-l", labels );
 
+  double tolerance = 1e-3;
+  parser->GetCommandLineArgument( "-tol", tolerance );
+
   /** Checks. */
   if( !retin || inputFileNames.size() != 2 )
   {
@@ -152,6 +160,7 @@ int main( int argc, char ** argv )
       /** Set the filter arguments. */
       filter3->m_InputFileNames = inputFileNames;
       filter3->m_Labels = labels;
+      filter3->m_Tolerance = tolerance;
 
       filter3->Run();
 
@@ -194,6 +203,7 @@ int main( int argc, char ** argv )
       filterOld->m_MaskFileName2 = maskFileName2;
       filterOld->m_T1 = t1;
       filterOld->m_T2 = t2;
+      filterOld->m_Tolerance = tolerance;
 
       filterOld->Run();
 

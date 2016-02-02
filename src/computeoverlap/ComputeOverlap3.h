@@ -35,13 +35,18 @@ class ITKToolsComputeOverlap3Base : public itktools::ITKToolsBase
 {
 public:
   /** Constructor. */
-  ITKToolsComputeOverlap3Base(){};
+  ITKToolsComputeOverlap3Base()
+  {
+    this->m_Tolerance = 1e-3;
+  };
+
   /** Destructor. */
   ~ITKToolsComputeOverlap3Base(){};
 
   /** Input member parameters */
   std::vector<std::string> m_InputFileNames;
   std::vector<unsigned int> m_Labels;
+  double                    m_Tolerance;
 
 }; // end ITKToolsComputeOverlap3Base
 
@@ -92,8 +97,8 @@ public:
     diceFilter->SetInput( 0, reader1->GetOutput() );
     diceFilter->SetInput( 1, reader2->GetOutput() );
     diceFilter->SetRequestedLabels( requestedLabels );
-    diceFilter->SetCoordinateTolerance( 1e-3 );
-    diceFilter->SetDirectionTolerance( 1e-3 );
+    diceFilter->SetCoordinateTolerance( this->m_Tolerance );
+    diceFilter->SetDirectionTolerance( this->m_Tolerance );
     diceFilter->Update();
 
     /** Print the results. */

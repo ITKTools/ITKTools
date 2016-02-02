@@ -46,6 +46,7 @@ public:
     this->m_MaskFileName2 = "";
     this->m_T1 = 0;
     this->m_T2 = 0;
+    this->m_Tolerance = 1e-3;
   };
   /** Destructor. */
   ~ITKToolsComputeOverlapOldBase(){};
@@ -56,6 +57,7 @@ public:
   std::string m_MaskFileName2;
   unsigned int m_T1;
   unsigned int m_T2;
+  double m_Tolerance;
 
 }; // end ITKToolsComputeOverlapOldBase
 
@@ -105,6 +107,8 @@ public:
     ImageReaderPointer reader2 = ImageReaderType::New();
     reader2->SetFileName( this->m_InputFileNames[ 1 ].c_str() );
     AndFilterPointer finalANDFilter = AndFilterType::New();
+    finalANDFilter->SetCoordinateTolerance( this->m_Tolerance );
+    finalANDFilter->SetDirectionTolerance( this->m_Tolerance );
 
     /** Create images, threshold filters, and threshold vectors. */
     ImagePointer im1 = 0;
@@ -122,6 +126,8 @@ public:
       thresholdVector1[ 1 ] = itk::NumericTraits<PixelType>::max();
       thresholder1->SetThresholds( thresholdVector1 );
       thresholder1->SetInput( reader1->GetOutput() );
+      thresholder1->SetCoordinateTolerance( this->m_Tolerance );
+      thresholder1->SetDirectionTolerance( this->m_Tolerance );
       im1 = thresholder1->GetOutput();
     }
     /** Otherwise, just take the input image1. */
@@ -138,6 +144,8 @@ public:
       thresholdVector2[ 1 ] = itk::NumericTraits<PixelType>::max();
       thresholder2->SetThresholds( thresholdVector2 );
       thresholder2->SetInput( reader2->GetOutput() );
+      thresholder2->SetCoordinateTolerance( this->m_Tolerance );
+      thresholder2->SetDirectionTolerance( this->m_Tolerance );
       im2 = thresholder2->GetOutput();
     }
     else
@@ -159,6 +167,8 @@ public:
       im2ANDmask1Filter = AndFilterType::New();
       im2ANDmask1Filter->SetInput1( im2 );
       im2ANDmask1Filter->SetInput2( maskReader1->GetOutput() );
+      im2ANDmask1Filter->SetCoordinateTolerance( this->m_Tolerance );
+      im2ANDmask1Filter->SetDirectionTolerance( this->m_Tolerance );
       finalANDFilter->SetInput1( im2ANDmask1Filter->GetOutput() );
     }
     /** Otherwise, just use image2. */
@@ -175,6 +185,8 @@ public:
       im1ANDmask2Filter = AndFilterType::New();
       im1ANDmask2Filter->SetInput1( im1 );
       im1ANDmask2Filter->SetInput2( maskReader2->GetOutput() );
+      im1ANDmask2Filter->SetCoordinateTolerance( this->m_Tolerance );
+      im1ANDmask2Filter->SetDirectionTolerance( this->m_Tolerance );
       finalANDFilter->SetInput2( im1ANDmask2Filter->GetOutput() );
     }
     /** Otherwise, just use image1. */
