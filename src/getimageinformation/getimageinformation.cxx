@@ -118,7 +118,7 @@ int main( int argc, char **argv )
   testReader->SetFileName( inputFileName.c_str() );
   try
   {
-    testReader->GenerateOutputInformation();
+    testReader->UpdateOutputInformation();
   }
   catch( itk::ExceptionObject & excp )
   {

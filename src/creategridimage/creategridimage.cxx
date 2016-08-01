@@ -127,7 +127,7 @@ public:
     if( this->m_InputFileName != "" )
     {
       reader->SetFileName( this->m_InputFileName.c_str() );
-      reader->GenerateOutputInformation();
+      reader->UpdateOutputInformation();
 
       SizeType size = reader->GetOutput()->GetLargestPossibleRegion().GetSize();
       image->SetRegions( size );

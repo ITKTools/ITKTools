@@ -408,7 +408,7 @@ bool GetImageIOBase(
   /** Generate all information. */
   try
   {
-    testReader->GenerateOutputInformation();
+    testReader->UpdateOutputInformation();
   }
   catch( itk::ExceptionObject & excp )
   {
