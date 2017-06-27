@@ -21,6 +21,7 @@ set( CTEST_BUILD_NAME "Win7-64bit-VS2010" )
 set( CTEST_BUILD_CONFIGURATION Release )
 set( CTEST_CMAKE_GENERATOR "Visual Studio 10 2010 Win64" )
 set( CTEST_DASHBOARD_ROOT "D:/toolkits/ITKTools/nightly" )
+set( CTEST_BINARY_DIRECTORY "D:/toolkits/ITKTools/nightly/bin_VS2010" )
 
 # Specify the kind of dashboard to submit
 # default: Nightly
