@@ -21,6 +21,7 @@ set( CTEST_BUILD_NAME "Win10-64bit-VS2015" )
 set( CTEST_BUILD_CONFIGURATION Release )
 set( CTEST_CMAKE_GENERATOR "Visual Studio 14 2015 Win64" )
 set( CTEST_DASHBOARD_ROOT "D:/toolkits/ITKTools/nightly" )
+set( CTEST_BINARY_DIRECTORY "D:/toolkits/ITKTools/nightly/bin_VS2015" )
 
 # Specify the kind of dashboard to submit
 # default: Nightly

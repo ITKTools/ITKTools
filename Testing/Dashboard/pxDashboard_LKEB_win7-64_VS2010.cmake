@@ -19,7 +19,7 @@ set( CTEST_SITE "LKEB.PCMarius" )
 set( CTEST_BUILD_NAME "Win7-64bit-VS2010" )
 #set( CTEST_BUILD_FLAGS "-j2" ) # parallel build for makefiles
 set( CTEST_BUILD_CONFIGURATION Release )
-set( CTEST_CMAKE_GENERATOR "Visual Studio 10 Win64" )
+set( CTEST_CMAKE_GENERATOR "Visual Studio 10 2010 Win64" )
 set( CTEST_DASHBOARD_ROOT "D:/toolkits/ITKTools/nightly" )
 
 # Specify the kind of dashboard to submit
