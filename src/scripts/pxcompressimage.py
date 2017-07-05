@@ -2,6 +2,7 @@
 
 import fileinput
 import sys
+import subprocess
 import glob
 import os.path
 from optparse import OptionParser
@@ -34,10 +35,6 @@ def main() :
   # Get all arguments
   arguments = sys.argv[1:];
 
-  # Get optional argument output type
-  opct = "";
-  if options.opct : opct = " -opct " + options.opct;
-
   # Construct a list of file names
   # all arguments may contain wild cards
   fileNameList = [];
@@ -63,8 +60,12 @@ def main() :
       print( "Processing " + fileName + " ..." );
 
     # Compress image
-    command = "pxcastconvert -in " + fileName + " -out " + fileName + opct + " -z >> /dev/null";
-    os.system( command );
+    command = [ "pxcastconvert", "-in", fileName, "-out", fileName ];
+    if options.opct : command.extend( [ "-opct", options.opct ] );
+    #command.extend( [ "-z", ">>", "/dev/null" ] );
+    command.extend( [ "-z" ] );
+    print( ' '.join( command ) );
+    subprocess.call( command );
 
   return 0
 
