@@ -57,10 +57,10 @@ def main() :
     # Check if file extension is allowable
     ( root, extension ) = os.path.splitext( fileName );
     if extension not in allowable :
-      print "Skipping " + fileName;
+      print( "Skipping " + fileName );
       continue;
     else :
-      print "Processing " + fileName + " ...";
+      print( "Processing " + fileName + " ..." );
 
     # Compress image
     command = "pxcastconvert -in " + fileName + " -out " + fileName + opct + " -z >> /dev/null";
