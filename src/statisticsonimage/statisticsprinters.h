@@ -80,6 +80,7 @@ void PrintHistogramStatistics( const THistogram * histogram,
   double fifteenthpercentile = histogram->Quantile( 0, 0.15 );
   double firstquartile = histogram->Quantile( 0, 0.25 );
   double thirdquartile = histogram->Quantile( 0, 0.75 );
+  double eightyfivequartile = histogram->Quantile(0, 0.85);
   double binsize = histogram->GetBinMax( 0, 0 ) - histogram->GetBinMin( 0, 0 );
 
   std::cout << std::setprecision( 10 );
@@ -89,6 +90,7 @@ void PrintHistogramStatistics( const THistogram * histogram,
   std::cout << "\t1st quartile:    \t" << firstquartile << std::endl;
   std::cout << "\t3rd quartile:    \t" << thirdquartile << std::endl;
   std::cout << "\t15th percentile: \t" << fifteenthpercentile << std::endl;
+  std::cout << "\t85th percentile: \t" << eightyfivequartile << std::endl;
 
   /** Print histogram to output file */
   if( histogramOutputFileName != "" )
