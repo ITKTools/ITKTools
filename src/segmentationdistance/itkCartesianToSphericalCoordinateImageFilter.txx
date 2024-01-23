@@ -290,7 +290,7 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
       VectorType vec0 = inPoint - cor;
       /** compute r^2 sin(phi) */
       const double r2 = vec0.GetSquaredNorm() ;
-      const double sinphi = vcl_sin( std::acos( vec0[2] / std::sqrt(r2) ) );
+      const double sinphi = std::sin( std::acos( vec0[2] / std::sqrt(r2) ) );
 
       /** Compute the number of samples needed */
       const double deltaVolumeRatio = deltaVolumeRatioFactor * r2 * sinphi;

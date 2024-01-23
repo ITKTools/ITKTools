@@ -465,7 +465,7 @@ public:
   ~SIN() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_sin( static_cast<double>( A ) ) );
+    return static_cast<TOutput>( std::sin( static_cast<double>( A ) ) );
   }
 
 private:
