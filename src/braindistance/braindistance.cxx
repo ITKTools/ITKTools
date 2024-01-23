@@ -290,12 +290,12 @@ void ComputeBrainDistance(
 
   /** Instantiate main variables */
   InputReaderType::Pointer inputReader = InputReaderType::New();
-  InputImageType::Pointer inputImage = 0;
+  InputImageType::Pointer inputImage = nullptr;
   MaskReaderType::Pointer maskReader = MaskReaderType::New();
   MaskCropFilterType::Pointer maskCropFilter = MaskCropFilterType::New();
-  MaskImageType::Pointer labelMask = 0;
-  MaskImageType::Pointer brainMask = 0;
-  InternalImageType::Pointer jacobian = 0;
+  MaskImageType::Pointer labelMask = nullptr;
+  MaskImageType::Pointer brainMask = nullptr;
+  InternalImageType::Pointer jacobian = nullptr;
   JacobianCropFilterType::Pointer jacobianCropFilter = JacobianCropFilterType::New();
   ThresholderType::Pointer thresholder = ThresholderType::New();
   StatFilterType::Pointer statFilterBrainMask = StatFilterType::New();
@@ -307,7 +307,7 @@ void ComputeBrainDistance(
   LogFilterType::Pointer logFilter = LogFilterType::New();
 
   /** method 0 or 1 */
-  JacobianFilterType::Pointer jacobianFilter = 0;
+  JacobianFilterType::Pointer jacobianFilter = nullptr;
   if( method==0 || method ==2 )
   {
     jacobianFilter = JacobianFilterType::New();

@@ -133,9 +133,9 @@ public:
     typename InputImageReaderType::Pointer reader2 = InputImageReaderType::New();
     typename IPPReaderType::Pointer ipp1Reader = IPPReaderType::New();
     typename IPPReaderType::Pointer ipp2Reader = IPPReaderType::New();
-    typename PointSetType::Pointer inputPointSet1 = 0;
-    typename PointSetType::Pointer inputPointSet2 = 0;
-    typename KernelTransformType::Pointer kernelTransform = 0;
+    typename PointSetType::Pointer inputPointSet1 = nullptr;
+    typename PointSetType::Pointer inputPointSet2 = nullptr;
+    typename KernelTransformType::Pointer kernelTransform = nullptr;
     typename DeformationFieldType::Pointer deformationField = DeformationFieldType::New();
     typename DeformationFieldWriterType::Pointer writer = DeformationFieldWriterType::New();
 

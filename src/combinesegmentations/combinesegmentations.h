@@ -186,12 +186,12 @@ public:
 
     /** Declare some variables */
     unsigned int numberOfObservers = 0;
-    SegmentationCombinerType::Pointer segmentationCombiner = 0;
+    SegmentationCombinerType::Pointer segmentationCombiner = nullptr;
     LabelImageArrayType labelImageArray;
     ProbImageArrayType priorProbImageArray;
     ProbImageArrayType softSegmentationArray;
-    LabelImagePointer hardSegmentation = 0;
-    ConfusionMatrixImagePointer confusionMatrixImage = 0;
+    LabelImagePointer hardSegmentation = nullptr;
+    ConfusionMatrixImagePointer confusionMatrixImage = nullptr;
 
     /** Initialize some variables */
     numberOfObservers = this->m_InputSegmentationFileNames.size();

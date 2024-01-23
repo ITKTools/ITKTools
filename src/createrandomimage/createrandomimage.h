@@ -148,7 +148,7 @@ public:
     typedef RandomGeneratorType::Pointer RandomGeneratorPointer;
 
     /** Create variables */
-    VectorWriterPointer vectorWriter = 0;
+    VectorWriterPointer vectorWriter = nullptr;
 
     SetOfChannelsType setOfChannels( this->m_SpaceDimension );
     SetOfBlurrersType setOfBlurrers( this->m_SpaceDimension );

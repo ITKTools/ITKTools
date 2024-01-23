@@ -151,7 +151,7 @@ public:
     std::string binaryOperatorName = this->m_Ops;
 
     /** Set up the binaryFilter. */
-    typename BaseFilterType::Pointer binaryFilter = 0;
+    typename BaseFilterType::Pointer binaryFilter = nullptr;
     if( binaryOperatorName == "ADDITION" )
     {
       typename ADDITIONFilterType::Pointer tempBinaryFilter = ADDITIONFilterType::New();
