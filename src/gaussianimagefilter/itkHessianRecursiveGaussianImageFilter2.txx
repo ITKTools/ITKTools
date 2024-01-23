@@ -56,7 +56,7 @@ HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
   for( unsigned int i = 0; i < NumberOfSmoothingFilters; i++ )
   {
     GaussianFilterPointer filter = GaussianFilterType::New();
-    filter->SetOrder( GaussianFilterType::ZeroOrder );
+    filter->SetOrder( GaussianOrderEnum::ZeroOrder );
     filter->SetNormalizeAcrossScale( this->m_NormalizeAcrossScale );
     filter->ReleaseDataFlagOn();
     this->m_SmoothingFilters.push_back( filter );
