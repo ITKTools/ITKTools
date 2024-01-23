@@ -385,7 +385,7 @@ public:
   ~SQR() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vnl_math_sqr( static_cast<double>( A ) ) );
+    return static_cast<TOutput>( vnl_math::sqr( static_cast<double>( A ) ) );
   }
 
 private:

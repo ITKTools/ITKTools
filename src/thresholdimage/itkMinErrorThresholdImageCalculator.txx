@@ -181,7 +181,7 @@ MinErrorThresholdImageCalculator<TInputImage>
     meanLeft/=priorLeft;
     for ( i=0; i<=j; i++ )
       {
-      varLeft+=(vnl_math_sqr(i-meanLeft)*relativeFrequency[ i ]);
+      varLeft+=(vnl_math::sqr(i-meanLeft)*relativeFrequency[ i ]);
       }
     varLeft/=priorLeft;
     stdLeft = std::sqrt(varLeft); //standard deviation
@@ -198,7 +198,7 @@ MinErrorThresholdImageCalculator<TInputImage>
     meanRight/=priorRight;
     for ( i=j+1; i<m_NumberOfHistogramBins; i++ )
       {
-      varRight+=(vnl_math_sqr(i-meanRight)*relativeFrequency[ i ]);
+      varRight+=(vnl_math::sqr(i-meanRight)*relativeFrequency[ i ]);
       }
     varRight/=priorRight;
     stdRight = std::sqrt(varRight); //standard deviation
@@ -257,7 +257,7 @@ MinErrorThresholdImageCalculator<TInputImage>
     varLeft = 0.0;
     for (j=0; j<=i; j++)
       {
-      varLeft+=(vnl_math_sqr(j-m_AlphaLeft)*relativeFrequency[j]);
+      varLeft+=(vnl_math::sqr(j-m_AlphaLeft)*relativeFrequency[j]);
       }
     varLeft/=m_PriorLeft;
     this->m_StdLeft=std::sqrt(varLeft);
@@ -265,7 +265,7 @@ MinErrorThresholdImageCalculator<TInputImage>
     varRight = 0.0;
     for ( j=i+1; j<m_NumberOfHistogramBins; j++)
       {
-      varRight+=(vnl_math_sqr(j-m_AlphaRight)*relativeFrequency[j]);
+      varRight+=(vnl_math::sqr(j-m_AlphaRight)*relativeFrequency[j]);
       }
     varRight/=m_PriorRight;
     this->m_StdRight=std::sqrt(varRight);

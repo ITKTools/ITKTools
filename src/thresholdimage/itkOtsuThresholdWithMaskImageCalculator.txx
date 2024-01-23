@@ -159,7 +159,7 @@ OtsuThresholdWithMaskImageCalculator<TInputImage>
   double meanRight = ( totalMean - freqLeft ) / ( 1.0 - freqLeft );
 
   double maxVarBetween = freqLeft * ( 1.0 - freqLeft ) *
-    vnl_math_sqr( meanLeft - meanRight );
+    vnl_math::sqr( meanLeft - meanRight );
   int maxBinNumber = 0;
 
   double freqLeftOld = freqLeft;
@@ -180,7 +180,7 @@ OtsuThresholdWithMaskImageCalculator<TInputImage>
         ( 1.0 - freqLeft );
       }
     double varBetween = freqLeft * ( 1.0 - freqLeft ) *
-      vnl_math_sqr( meanLeft - meanRight );
+      vnl_math::sqr( meanLeft - meanRight );
 
     if( varBetween > maxVarBetween )
       {

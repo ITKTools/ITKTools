@@ -102,11 +102,11 @@ public:
       RealType HA2 = NumericTraits<RealType>::Zero;
       for ( unsigned int i = 0; i < Dimension; ++i )
       {
-        H2 += vnl_math_sqr( eigenValues[ i ] );
-        HA2 += vnl_math_sqr( eigenValues[ i ] - mLamda );
+        H2 += vnl_math::sqr( eigenValues[ i ] );
+        HA2 += vnl_math::sqr( eigenValues[ i ] - mLamda );
       }
 
-      const RealType HI2 = 3.0 * vnl_math_sqr( mLamda );
+      const RealType HI2 = 3.0 * vnl_math::sqr( mLamda );
 
       // Compute the strain energy function, see Eq.(18)
       const RealType SE = std::sqrt( ( 1.0 - 2.0 * this->m_Nu ) * HI2
@@ -123,7 +123,7 @@ public:
       for ( unsigned int i = 0; i < Dimension; ++i )
       {
         tm1 += std::pow( eigenValues[ i ] - mLamda, Dimension );
-        tm2 += vnl_math_sqr( eigenValues[ i ] - mLamda );
+        tm2 += vnl_math::sqr( eigenValues[ i ] - mLamda );
       }
       tm1 /= Dimension;
       tm2 = std::pow( tm2 / 3.0, 1.5 );

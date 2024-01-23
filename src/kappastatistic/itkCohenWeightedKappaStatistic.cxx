@@ -143,7 +143,7 @@ void CohenWeightedKappaStatistic
       }
       else if( weights == "quadratic" )
       {
-        this->m_Weights[ i ][ j ] = 1.0 - vnl_math_sqr( ( i - j ) / ( k - 1.0 ) );
+        this->m_Weights[ i ][ j ] = 1.0 - vnl_math::sqr( ( i - j ) / ( k - 1.0 ) );
       }
     }
   }
