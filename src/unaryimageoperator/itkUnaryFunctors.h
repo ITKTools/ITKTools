@@ -545,7 +545,7 @@ public:
   ~ARCTAN() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_atan( static_cast<double>( A ) ) );
+    return static_cast<TOutput>( std::atan( static_cast<double>( A ) ) );
   }
 
 private:
