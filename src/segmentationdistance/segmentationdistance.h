@@ -518,7 +518,7 @@ public:
 
     /** Computing spherical transforms */
     RTPSizeType rtpSize;
-    rtpSize[0] = static_cast<unsigned int>( vcl_ceil(maxR / minSpacing ) );
+    rtpSize[0] = static_cast<unsigned int>( std::ceil(maxR / minSpacing ) );
     std::cout << "r = " << rtpSize[0] << std::endl;
     rtpSize[1] = thetasize;
     rtpSize[2] = phisize;

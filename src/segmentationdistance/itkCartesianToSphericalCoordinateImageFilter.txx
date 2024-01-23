@@ -303,7 +303,7 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
       {
         /** Use ceil: at least 1 sample! */
         numberOfSamplesPerVoxel = static_cast<unsigned int>(
-          vcl_ceil( 1.0 / deltaVolumeRatio ) );
+          std::ceil( 1.0 / deltaVolumeRatio ) );
       }
 
       /** For the first iteration use the indexPoint. This makes sure that,

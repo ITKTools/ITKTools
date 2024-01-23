@@ -97,7 +97,7 @@ public:
     /** Define size of output image. */
     SizeType sizeIn = reader->GetOutput()->GetLargestPossibleRegion().GetSize();
     SizeType sizeOut = sizeIn;
-    float newSize = vcl_ceil(
+    float newSize = std::ceil(
       ( static_cast<float>( sizeOut[ this->m_Direction ] - this->m_Offset ) )
       / static_cast<float>( this->m_EveryOther ) );
     sizeOut[ this->m_Direction ] = static_cast<unsigned int>( newSize );

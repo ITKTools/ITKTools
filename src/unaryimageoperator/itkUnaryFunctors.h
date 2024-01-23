@@ -353,7 +353,7 @@ public:
   ~CEIL() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_ceil( static_cast<double>( A ) ) );
+    return static_cast<TOutput>( std::ceil( static_cast<double>( A ) ) );
   }
 
 private:
