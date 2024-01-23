@@ -162,7 +162,7 @@ void ConvertVersorToEuler(
 
   /** Computer Euler angles. */
   parEuler[ 0 ] = vcl_atan2( 2.0 * ( q0 * q1 + q2 * q3 ), 1.0 - 2.0 * ( q1 * q1 + q2 * q2 ) );
-  parEuler[ 1 ] = vcl_asin( 2.0 * ( q0 * q2 - q3 * q1 ) );
+  parEuler[ 1 ] = std::asin( 2.0 * ( q0 * q2 - q3 * q1 ) );
   parEuler[ 2 ] = vcl_atan2( 2.0 * ( q0 * q3 + q1 * q2 ), 1.0 - 2.0 * ( q2 * q2 + q3 * q3 ) );
   parEuler[ 3 ] = parVersor[ 3 ];
   parEuler[ 4 ] = parVersor[ 4 ];
