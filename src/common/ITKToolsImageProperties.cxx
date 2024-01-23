@@ -67,7 +67,7 @@ bool GetImageComponentType(
 itk::ImageIOBase::IOComponentEnum GetImageComponentType( const std::string & filename )
 {
   itk::ImageIOBase::Pointer imageIO = itk::ImageIOFactory::CreateImageIO(
-    filename.c_str(), itk::ImageIOFactory::ReadMode);
+    filename.c_str(), itk::IOFileModeEnum::ReadMode);
   if( imageIO.IsNull() )
   {
     return itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE; // complain
