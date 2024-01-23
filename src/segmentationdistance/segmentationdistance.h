@@ -21,7 +21,6 @@
 #include "ITKToolsBase.h"
 
 #include "itkImage.h"
-#include "itkExceptionObject.h"
 #include "itkImageFileReader.h"
 #include "itkConstantPadImageFilter.h"
 #include "itkSignedMaurerDistanceMapImageFilter.h"

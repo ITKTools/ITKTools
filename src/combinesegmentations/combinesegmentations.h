@@ -24,7 +24,6 @@
 #include <vector>
 
 #include "itkImage.h"
-#include "itkExceptionObject.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "itkSTAPLEImageFilter.h"

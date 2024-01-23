@@ -32,7 +32,6 @@
 #include "itkCastImageFilter.h"
 #include "itkExtractImageFilter.h"
 #include "itkComposeImageFilter.h"
-#include "itkExceptionObject.h"
 #include "itkNumericTraits.h"
 #include "itkMersenneTwisterRandomVariateGenerator.h"
 #include <iostream>

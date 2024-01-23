@@ -19,7 +19,6 @@
 #define __itkMeshFileReaderBase_h_
 
 #include "itkMeshSource.h"
-#include "itkExceptionObject.h"
 
 namespace itk
 {

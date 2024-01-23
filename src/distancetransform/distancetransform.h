@@ -21,7 +21,6 @@
 #include <string>
 
 #include "itkImage.h"
-#include "itkExceptionObject.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 

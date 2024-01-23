@@ -21,7 +21,6 @@
 #include "ITKToolsBase.h"
 
 #include "itkImage.h"
-#include "itkExceptionObject.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "itkImageRegionIteratorWithIndex.h"
