@@ -497,7 +497,7 @@ public:
   ~TAN() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_tan( static_cast<double>( A ) ) );
+    return static_cast<TOutput>( std::tan( static_cast<double>( A ) ) );
   }
 
 private:
