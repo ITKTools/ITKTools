@@ -144,7 +144,7 @@ int main( int argc, char ** argv )
   if( !retly )
   {
     /** Class that does the work. */
-    ITKToolsTileImages2D3DBase * filterTile2D3D = NULL;
+    ITKToolsTileImages2D3DBase * filterTile2D3D = nullptr;
 
     try
     {
@@ -187,7 +187,7 @@ int main( int argc, char ** argv )
   else
   {
     /** Class that does the work. */
-    ITKToolsTileImagesBase * filter = NULL;
+    ITKToolsTileImagesBase * filter = nullptr;
 
     try
     {

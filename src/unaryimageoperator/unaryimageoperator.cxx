@@ -171,7 +171,7 @@ int main( int argc, char **argv )
   }
 
   /** Class that does the work. */
-  ITKToolsUnaryImageOperatorBase * filter = NULL;
+  ITKToolsUnaryImageOperatorBase * filter = nullptr;
 
   unsigned int dim = 0;
   itktools::GetImageDimension( inputFileName, dim );

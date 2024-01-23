@@ -141,7 +141,7 @@ int main( int argc, char **argv )
   componentType = itk::ImageIOBase::GetComponentTypeFromString( componentTypeAsString );
 
   /** Class that does the work. */
-  ITKToolsDeformationFieldGeneratorBase * filter = NULL;
+  ITKToolsDeformationFieldGeneratorBase * filter = nullptr;
 
   try
   {

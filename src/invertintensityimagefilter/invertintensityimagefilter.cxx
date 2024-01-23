@@ -92,7 +92,7 @@ int main( int argc, char ** argv )
   //if( !retNOCCheck ) return EXIT_FAILURE;
 
   /** Class that does the work. */
-  ITKToolsInvertIntensityBase * filter = NULL;
+  ITKToolsInvertIntensityBase * filter = nullptr;
 
   try
   {

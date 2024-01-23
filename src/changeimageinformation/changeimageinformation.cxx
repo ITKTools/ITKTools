@@ -100,7 +100,7 @@ int main( int argc, char ** argv )
   if( !retNOCCheck ) return EXIT_FAILURE;
 
   /** Class that does the work. */
-  ITKToolsChangeImageInformationBase * filter = NULL;
+  ITKToolsChangeImageInformationBase * filter = nullptr;
 
   try
   {

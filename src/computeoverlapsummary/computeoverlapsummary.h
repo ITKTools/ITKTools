@@ -99,7 +99,7 @@ public:
     FILE * pFile;
     pFile = fopen( this->m_OutputFileName.c_str(), "w" );
 
-    if( pFile == NULL )
+    if( pFile == nullptr )
     {
       throw invalidfilexception();
     }

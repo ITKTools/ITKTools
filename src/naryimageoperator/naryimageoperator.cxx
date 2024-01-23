@@ -157,7 +157,7 @@ int main( int argc, char **argv )
   if( !retCOA ) return EXIT_FAILURE;
 
   /** Class that does the work. */
-  ITKToolsNaryImageOperatorBase * filter = NULL;
+  ITKToolsNaryImageOperatorBase * filter = nullptr;
 
   try
   {

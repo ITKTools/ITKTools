@@ -101,7 +101,7 @@ int main( int argc, char **argv )
   componentType = itk::ImageIOBase::FLOAT;
 
   /** Class that does the work. */
-  ITKToolsWeightedAdditionBase * filter = NULL;
+  ITKToolsWeightedAdditionBase * filter = nullptr;
 
   try
   {

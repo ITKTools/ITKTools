@@ -231,7 +231,7 @@ int main( int argc, char ** argv )
   }
 
   /** Class that does the work. */
-  ITKToolsEnhancementBase * filter = NULL;
+  ITKToolsEnhancementBase * filter = nullptr;
 
   try
   {

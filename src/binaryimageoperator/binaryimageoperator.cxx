@@ -154,7 +154,7 @@ int main( int argc, char **argv )
   if( !retCOA ) return EXIT_FAILURE;
 
   /** Class that does the work. */
-  ITKToolsBinaryImageOperatorBase * filter = NULL;
+  ITKToolsBinaryImageOperatorBase * filter = nullptr;
 
   unsigned int dim = 0;
   itktools::GetImageDimension( inputFileNames[1], dim );

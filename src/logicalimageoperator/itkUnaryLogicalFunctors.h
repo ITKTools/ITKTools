@@ -70,7 +70,7 @@ struct UnaryLogicalFunctorFactory
     }
     else
     {
-      return NULL;
+      return nullptr;
     }
   }
 }; // end struct UnaryLogicalFunctorFactory

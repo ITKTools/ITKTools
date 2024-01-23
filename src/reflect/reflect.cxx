@@ -119,7 +119,7 @@ int main( int argc, char ** argv )
   }
 
   /** Class that does the work. */
-  ITKToolsReflectBase * filter = NULL;
+  ITKToolsReflectBase * filter = nullptr;
 
   try
   {

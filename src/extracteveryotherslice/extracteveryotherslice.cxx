@@ -127,7 +127,7 @@ int main( int argc, char **argv )
   }
 
   /** Class that does the work. */
-  ITKToolsExtractEveryOtherSliceBase * filter = NULL;
+  ITKToolsExtractEveryOtherSliceBase * filter = nullptr;
 
   try
   {

@@ -171,7 +171,7 @@ int main( int argc, char ** argv )
   }
 
   /** Class that does the work. */
-  ITKToolsGaussianBase * filter = NULL;
+  ITKToolsGaussianBase * filter = nullptr;
 
   try
   {

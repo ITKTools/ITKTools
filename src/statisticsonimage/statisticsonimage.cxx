@@ -130,7 +130,7 @@ int main( int argc, char ** argv )
   componentType = itk::ImageIOBase::FLOAT;
 
   /** Class that does the work. */
-  ITKToolsStatisticsOnImageBase * filter = NULL;
+  ITKToolsStatisticsOnImageBase * filter = nullptr;
 
   try
   {

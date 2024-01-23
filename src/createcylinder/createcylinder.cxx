@@ -221,7 +221,7 @@ int main( int argc, char *argv[] )
 
 
   /** Class that does the work. */
-  ITKToolsCreateCylinderBase * createCylinder = NULL;
+  ITKToolsCreateCylinderBase * createCylinder = nullptr;
 
   /** Short alias */
   unsigned int dim = Dimension;

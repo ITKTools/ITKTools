@@ -129,7 +129,7 @@ int main( int argc, char** argv )
   }
 
   /** Class that does the work. */
-  ITKToolsCreateSimpleBoxBase * filter = NULL;
+  ITKToolsCreateSimpleBoxBase * filter = nullptr;
 
   try
   {

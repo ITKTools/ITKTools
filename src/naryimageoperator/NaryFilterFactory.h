@@ -94,7 +94,7 @@ public:
     else
     {
       std::cerr << "Invalid filter type specified!" << std::endl;
-      return NULL;
+      return nullptr;
     }
   }
 };

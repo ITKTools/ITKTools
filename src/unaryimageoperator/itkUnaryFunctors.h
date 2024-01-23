@@ -920,7 +920,7 @@ struct UnaryFunctorFactory
     else
     {
       std::cerr << "Selected functor is not valid!" << std::endl;
-      return NULL;
+      return nullptr;
     }
   }
 };

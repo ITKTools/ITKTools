@@ -59,7 +59,7 @@ AdaptiveOtsuThresholdImageFilter()
   this->m_OutsideValue = 0;
   this->m_InsideValue = 1;
 
-  this->m_PointSet = NULL;
+  this->m_PointSet = nullptr;
 
   this->Superclass::SetNumberOfRequiredInputs( 1 );
   this->Superclass::SetNumberOfRequiredOutputs( 1 );

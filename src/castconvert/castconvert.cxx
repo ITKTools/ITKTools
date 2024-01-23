@@ -232,7 +232,7 @@ int main( int argc, char **argv )
   }
 
   /** Class that does the work. */
-  ITKToolsCastConvertBase * castConvert = NULL;
+  ITKToolsCastConvertBase * castConvert = nullptr;
 
   try
   {

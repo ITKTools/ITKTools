@@ -101,7 +101,7 @@ int main( int argc, char ** argv )
   if( !retgip ) return EXIT_FAILURE;
 
   /** Class that does the work. */
-  ITKToolsImagesToVectorImageBase * filter = NULL;
+  ITKToolsImagesToVectorImageBase * filter = nullptr;
 
   try
   {

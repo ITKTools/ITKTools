@@ -40,7 +40,7 @@ public:
   /** Constructor. */
   ITKToolsCreateBoxBase()
   {
-    this->m_ReferenceImageIOBase = NULL;
+    this->m_ReferenceImageIOBase = nullptr;
     this->m_OutputFileName = "";
     this->m_BoxDefinition = "";
   }

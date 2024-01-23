@@ -131,7 +131,7 @@ int main( int argc, char **argv )
   if( !retNOCCheck ) return EXIT_FAILURE;
 
   /** Class that does the work. */
-  ITKToolsTextureBase * filter = NULL;
+  ITKToolsTextureBase * filter = nullptr;
 
   /** Input images are read in as float, always. The default output is float,
    * but can be overridden by specifying -opct in the command line.

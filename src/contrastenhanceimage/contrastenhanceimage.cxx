@@ -115,7 +115,7 @@ int main( int argc, char** argv )
   if( !retgip ) return EXIT_FAILURE;
 
   /** Class that does the work. */
-  ITKToolsContrastEnhanceImageBase * filter = NULL;
+  ITKToolsContrastEnhanceImageBase * filter = nullptr;
 
   try
   {

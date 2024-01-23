@@ -142,7 +142,7 @@ int main( int argc, char** argv )
   itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::GetComponentTypeFromString( pixelType );
 
   /** Class that does the work. */
-  ITKToolsCreateRandomImageBase * filter = NULL;
+  ITKToolsCreateRandomImageBase * filter = nullptr;
 
   try
   {

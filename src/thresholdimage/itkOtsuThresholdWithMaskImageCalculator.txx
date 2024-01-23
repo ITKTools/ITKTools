@@ -34,8 +34,8 @@ template<class TInputImage>
 OtsuThresholdWithMaskImageCalculator<TInputImage>
 ::OtsuThresholdWithMaskImageCalculator()
 {
-  this->m_Image = NULL;
-  this->m_MaskImage = NULL;
+  this->m_Image = nullptr;
+  this->m_MaskImage = nullptr;
   this->m_Threshold = NumericTraits<PixelType>::Zero;
   this->m_NumberOfHistogramBins = 128;
   this->m_RegionSetByUser = false;
