@@ -100,7 +100,7 @@ int main( int argc, char *argv[] )
 
   std::string componentTypeAsString = "short";
   parser->GetCommandLineArgument( "-opct", componentTypeAsString );
-  itk::ImageIOBase::IOComponentType componentType
+  itk::ImageIOBase::IOComponentEnum componentType
     = itk::ImageIOBase::GetComponentTypeFromString( componentTypeAsString );
 
   std::vector<double> spacing( dim, 1.0 );

@@ -101,7 +101,7 @@ int main( int argc, char *argv[] )
   parser->GetCommandLineArgument( "-sp", spacing );
 
   /** String to component type. */
-  itk::ImageIOBase::IOComponentType componentType
+  itk::ImageIOBase::IOComponentEnum componentType
     = itk::ImageIOBase::GetComponentTypeFromString( componentTypeAsString );
 
   /** Class that does the work. */

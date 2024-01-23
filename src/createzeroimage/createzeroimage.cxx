@@ -112,7 +112,7 @@ int main( int argc, char **argv )
   parser->GetCommandLineArgument( "-d", direction );
 
   /** Determine image properties. */
-  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  itk::ImageIOBase::IOComponentEnum componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
   if( retin )
   {
     itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;

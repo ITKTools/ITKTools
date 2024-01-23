@@ -124,9 +124,9 @@ int main( int argc, char **argv )
   }
 
   /** Determine image properties. */
-  itk::ImageIOBase::IOComponentType componentType1;
-  itk::ImageIOBase::IOComponentType componentType2;
-  itk::ImageIOBase::IOComponentType componentTypeOut;
+  itk::ImageIOBase::IOComponentEnum componentType1;
+  itk::ImageIOBase::IOComponentEnum componentType2;
+  itk::ImageIOBase::IOComponentEnum componentTypeOut;
   DetermineComponentTypes( inputFileNames, componentType1, componentType2, componentTypeOut );
 
   /** Let the user override the output component type. */
@@ -160,9 +160,9 @@ int main( int argc, char **argv )
   itktools::GetImageDimension( inputFileNames[1], dim );
 
   /** Short aliases. */
-  itk::ImageIOBase::IOComponentType inCType1 = componentType1;
-  itk::ImageIOBase::IOComponentType inCType2 = componentType2;
-  itk::ImageIOBase::IOComponentType outCType = componentTypeOut;
+  itk::ImageIOBase::IOComponentEnum inCType1 = componentType1;
+  itk::ImageIOBase::IOComponentEnum inCType2 = componentType2;
+  itk::ImageIOBase::IOComponentEnum outCType = componentTypeOut;
 
   try
   {

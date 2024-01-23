@@ -124,8 +124,8 @@ int main( int argc, char **argv )
   }
 
   /** Determine image properties. */
-  itk::ImageIOBase::IOComponentType componentTypeIn = itk::ImageIOBase::LONG;
-  itk::ImageIOBase::IOComponentType componentTypeOut = itk::ImageIOBase::LONG;
+  itk::ImageIOBase::IOComponentEnum componentTypeIn = itk::ImageIOBase::LONG;
+  itk::ImageIOBase::IOComponentEnum componentTypeOut = itk::ImageIOBase::LONG;
   unsigned int dim = 2;
   int retdip = DetermineImageProperties( inputFileNames,
     componentTypeIn, componentTypeOut, dim );

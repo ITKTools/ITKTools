@@ -113,10 +113,10 @@ int main( int argc, char **argv )
   }
 
   /** Get the input and output component type. */
-  itk::ImageIOBase::IOComponentType inputComponentType;
+  itk::ImageIOBase::IOComponentEnum inputComponentType;
   itktools::GetImageComponentType( inputFileName, inputComponentType );
 
-  itk::ImageIOBase::IOComponentType outputComponentType = inputComponentType;
+  itk::ImageIOBase::IOComponentEnum outputComponentType = inputComponentType;
   std::string componentTypeOutString = "";
   bool retopct = parser->GetCommandLineArgument( "-opct", componentTypeOutString );
   if( retopct )
@@ -177,8 +177,8 @@ int main( int argc, char **argv )
   itktools::GetImageDimension( inputFileName, dim );
 
   /** Short aliases. */
-  itk::ImageIOBase::IOComponentType inputType = inputComponentType;
-  itk::ImageIOBase::IOComponentType outputType = outputComponentType;
+  itk::ImageIOBase::IOComponentEnum inputType = inputComponentType;
+  itk::ImageIOBase::IOComponentEnum outputType = outputComponentType;
 
   try
   {

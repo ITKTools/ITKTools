@@ -104,19 +104,19 @@ std::string GetHelpString( void )
 /** Break the program into smaller compilation units. */
 extern void ITKToolsCastConvert2D(
   unsigned int dim,
-  itk::ImageIOBase::IOComponentType outputComponentType,
+  itk::ImageIOBase::IOComponentEnum outputComponentType,
   ITKToolsCastConvertBase * & castConvert );
 extern void ITKToolsCastConvert3D(
   unsigned int dim,
-  itk::ImageIOBase::IOComponentType outputComponentType,
+  itk::ImageIOBase::IOComponentEnum outputComponentType,
   ITKToolsCastConvertBase * & castConvert );
 extern void ITKToolsCastConvert4D(
   unsigned int dim,
-  itk::ImageIOBase::IOComponentType outputComponentType,
+  itk::ImageIOBase::IOComponentEnum outputComponentType,
   ITKToolsCastConvertBase * & castConvert );
 extern void ITKToolsCastConvertDICOM3D(
   unsigned int dim,
-  itk::ImageIOBase::IOComponentType outputComponentType,
+  itk::ImageIOBase::IOComponentEnum outputComponentType,
   ITKToolsCastConvertBase * & castConvert );
 
 //-------------------------------------------------------------------------------------
@@ -224,7 +224,7 @@ int main( int argc, char **argv )
 
   /** Get dimension and component type. */
   itktools::GetImageDimension( inputFileName, dim );
-  itk::ImageIOBase::IOComponentType componentType
+  itk::ImageIOBase::IOComponentEnum componentType
     = itktools::GetImageComponentType( inputFileName );
   if( retopct )
   {

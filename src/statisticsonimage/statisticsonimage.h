@@ -72,7 +72,7 @@ public:
   ITKToolsStatisticsOnImage(){};
   ~ITKToolsStatisticsOnImage(){};
 
-  static Self * New( unsigned int dim, unsigned int numberOfComponents, itk::ImageIOBase::IOComponentType componentType )
+  static Self * New( unsigned int dim, unsigned int numberOfComponents, itk::ImageIOBase::IOComponentEnum componentType )
   {
     if( itktools::IsType<TComponentType>( componentType )
       && VDimension == dim && VNumberOfComponents == numberOfComponents )

@@ -31,7 +31,7 @@ namespace itktools
 
 #define itktoolsOneTypeNewMacro( object )                                       \
 static object * New( unsigned int dim,                                          \
-  itk::ImageIOBase::IOComponentType componentType )                             \
+  itk::ImageIOBase::IOComponentEnum componentType )                             \
 {                                                                               \
   if( VDimension == dim                                                         \
     && itktools::IsType<TComponentType>( componentType ) )                      \
@@ -43,8 +43,8 @@ static object * New( unsigned int dim,                                          
 
 #define itktoolsTwoTypeNewMacro( object )                                       \
 static object * New( unsigned int dim,                                          \
-  itk::ImageIOBase::IOComponentType inputComponentType,                         \
-  itk::ImageIOBase::IOComponentType outputComponentType )                       \
+  itk::ImageIOBase::IOComponentEnum inputComponentType,                         \
+  itk::ImageIOBase::IOComponentEnum outputComponentType )                       \
 {                                                                               \
   if( VDimension == dim                                                         \
     && itktools::IsType<TInputComponentType>( inputComponentType )              \
@@ -57,9 +57,9 @@ static object * New( unsigned int dim,                                          
 
 #define itktoolsThreeTypeNewMacro( object )                                     \
 static object * New( unsigned int dim,                                          \
-  itk::ImageIOBase::IOComponentType inputComponentType1,                        \
-  itk::ImageIOBase::IOComponentType inputComponentType2,                        \
-  itk::ImageIOBase::IOComponentType outputComponentType )                       \
+  itk::ImageIOBase::IOComponentEnum inputComponentType1,                        \
+  itk::ImageIOBase::IOComponentEnum inputComponentType2,                        \
+  itk::ImageIOBase::IOComponentEnum outputComponentType )                       \
 {                                                                               \
   if( VDimension == dim                                                         \
     && itktools::IsType<TInputComponentType1>( inputComponentType1 )            \

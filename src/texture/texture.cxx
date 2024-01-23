@@ -119,7 +119,7 @@ int main( int argc, char **argv )
 
   /** Determine image properties. */
   itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
-  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  itk::ImageIOBase::IOComponentEnum componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
   unsigned int dim = 0;
   unsigned int numberOfComponents = 0;
   bool retgip = itktools::GetImageProperties(
@@ -137,7 +137,7 @@ int main( int argc, char **argv )
    * but can be overridden by specifying -opct in the command line.
    */
   componentType = itk::ImageIOBase::FLOAT;
-  itk::ImageIOBase::IOComponentType outputComponentType
+  itk::ImageIOBase::IOComponentEnum outputComponentType
     = itk::ImageIOBase::GetComponentTypeFromString( componentTypeOutString );
 
   try

@@ -33,10 +33,10 @@ bool GetImagePixelType(
 /** Determine componenttype (short, float etc) of an image */
 bool GetImageComponentType(
   const std::string & filename,
-  itk::ImageIOBase::IOComponentType & componenttype );
+  itk::ImageIOBase::IOComponentEnum & componenttype );
 
 /** Determine the component type of an image. */
-itk::ImageIOBase::IOComponentType GetImageComponentType(
+itk::ImageIOBase::IOComponentEnum GetImageComponentType(
   const std::string & filename );
 
 /** Determine the number of components of each pixel in an image. */
@@ -81,7 +81,7 @@ bool GetImageDirection(
 bool GetImageProperties(
   const std::string & filename,
   itk::ImageIOBase::IOPixelType & pixeltype,
-  itk::ImageIOBase::IOComponentType & componenttype,
+  itk::ImageIOBase::IOComponentEnum & componenttype,
   unsigned int & dimension,
   unsigned int & numberofcomponents );
 
@@ -104,7 +104,7 @@ int GetImageProperties(
 bool GetImageProperties(
   const std::string & filename,
   itk::ImageIOBase::IOPixelType & pixeltype,
-  itk::ImageIOBase::IOComponentType & componenttype,
+  itk::ImageIOBase::IOComponentEnum & componenttype,
   unsigned int & dimension,
   unsigned int & numberofcomponents,
   std::vector<unsigned int> & imagesize );
@@ -112,7 +112,7 @@ bool GetImageProperties(
 bool GetImageProperties(
   const std::string & filename,
   itk::ImageIOBase::IOPixelType & pixeltype,
-  itk::ImageIOBase::IOComponentType & componenttype,
+  itk::ImageIOBase::IOComponentEnum & componenttype,
   unsigned int & dimension,
   unsigned int & numberofcomponents,
   std::vector<unsigned int> & size,
@@ -126,7 +126,7 @@ bool GetImageProperties(
  */
 int GetImageProperties(
   const std::string & filename,
-  itk::ImageIOBase::IOComponentType & componenttype,
+  itk::ImageIOBase::IOComponentEnum & componenttype,
   unsigned int & dimension,
   unsigned int & numberofcomponents,
   std::vector<unsigned int> & imagesize );

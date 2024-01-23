@@ -32,9 +32,9 @@
 
 int DetermineComponentTypes(
   const std::vector<std::string> & inputFileNames,
-  itk::ImageIOBase::IOComponentType & componentType1,
-  itk::ImageIOBase::IOComponentType & componentType2,
-  itk::ImageIOBase::IOComponentType & componentTypeOut )
+  itk::ImageIOBase::IOComponentEnum & componentType1,
+  itk::ImageIOBase::IOComponentEnum & componentType2,
+  itk::ImageIOBase::IOComponentEnum & componentTypeOut )
 {
   // Note: a bit of an ugly combination between itktools
   // and itk::ImageIOBase functionality.

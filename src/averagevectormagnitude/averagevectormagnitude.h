@@ -70,7 +70,7 @@ public:
   ~ITKToolsAverageVectorMagnitude(){};
 
   static Self * New( unsigned int imageDimension,
-    itk::ImageIOBase::IOComponentType componentType,
+    itk::ImageIOBase::IOComponentEnum componentType,
     unsigned int vectorDimension )
   {
     if( VDimension == imageDimension

@@ -34,7 +34,7 @@ std::string GetITKToolsVersion( void );
 
 /** Test if a ComponentType corresponds to the template parameter. */
 template <class T>
-bool IsType( itk::ImageIOBase::IOComponentType ct )
+bool IsType( itk::ImageIOBase::IOComponentEnum ct )
 {
   return ct == itk::ImageIOBase::MapPixelType<T>::CType;
 }
@@ -53,42 +53,42 @@ void RemoveUnsignedFromString( std::string & arg );
 
 /** ComponentTypeIsInteger. */
 bool ComponentTypeIsInteger(
-  const itk::ImageIOBase::IOComponentType & inputComponentType );
+  const itk::ImageIOBase::IOComponentEnum & inputComponentType );
 
 /** Remove "unsigned " or "unsigned_" from the component type. */
-itk::ImageIOBase::IOComponentType RemoveUnsignedFromComponentType(
-  const itk::ImageIOBase::IOComponentType & componentType );
+itk::ImageIOBase::IOComponentEnum RemoveUnsignedFromComponentType(
+  const itk::ImageIOBase::IOComponentEnum & componentType );
 
 /** Check for a valid component type. */
-bool ComponentTypeIsValid( const itk::ImageIOBase::IOComponentType & arg );
+bool ComponentTypeIsValid( const itk::ImageIOBase::IOComponentEnum & arg );
 
 /** Selects the largest type of the two. The order is:
  * char < short < int < long < float < double.
  */
-itk::ImageIOBase::IOComponentType GetLargestComponentType(
-  const itk::ImageIOBase::IOComponentType & type1,
-  const itk::ImageIOBase::IOComponentType & type2 );
+itk::ImageIOBase::IOComponentEnum GetLargestComponentType(
+  const itk::ImageIOBase::IOComponentEnum & type1,
+  const itk::ImageIOBase::IOComponentEnum & type2 );
 
 /** IsFilterSupportedCheck. Unify error message printing. */
 bool IsFilterSupportedCheck(
   const ITKToolsBase * filter,
   const unsigned int & dim,
-  const itk::ImageIOBase::IOComponentType & inputType );
+  const itk::ImageIOBase::IOComponentEnum & inputType );
 
 /** IsFilterSupportedCheck. Unify error message printing. */
 bool IsFilterSupportedCheck(
   const ITKToolsBase * filter,
   const unsigned int & dim,
-  const itk::ImageIOBase::IOComponentType & inputType,
-  const itk::ImageIOBase::IOComponentType & outputType );
+  const itk::ImageIOBase::IOComponentEnum & inputType,
+  const itk::ImageIOBase::IOComponentEnum & outputType );
 
 /** IsFilterSupportedCheck. Unify error message printing. */
 bool IsFilterSupportedCheck(
   const ITKToolsBase * filter,
   const unsigned int & dim,
-  const itk::ImageIOBase::IOComponentType & inputType1,
-  const itk::ImageIOBase::IOComponentType & inputType2,
-  const itk::ImageIOBase::IOComponentType & outputType );
+  const itk::ImageIOBase::IOComponentEnum & inputType1,
+  const itk::ImageIOBase::IOComponentEnum & inputType2,
+  const itk::ImageIOBase::IOComponentEnum & outputType );
 
 /** NumberOfComponentsCheck. Unify error message printing. */
 bool NumberOfComponentsCheck( const unsigned int & numberOfComponents );

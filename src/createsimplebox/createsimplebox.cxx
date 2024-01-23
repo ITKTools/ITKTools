@@ -115,7 +115,7 @@ int main( int argc, char** argv )
   std::vector<unsigned int> boxSize;
   parser->GetCommandLineArgument( "-d", boxSize );
 
-  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  itk::ImageIOBase::IOComponentEnum componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
   if( retin ) // if an input file was specified
   {
     itktools::GetImageDimension( inputFileName, dim );

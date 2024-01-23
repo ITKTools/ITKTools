@@ -31,8 +31,8 @@
 
 int DetermineImageProperties(
   const std::vector<std::string> & inputFileNames,
-  itk::ImageIOBase::IOComponentType & componentTypeIn,
-  itk::ImageIOBase::IOComponentType & componentTypeOut,
+  itk::ImageIOBase::IOComponentEnum & componentTypeIn,
+  itk::ImageIOBase::IOComponentEnum & componentTypeOut,
   unsigned int & inputDimension )
 {
   /** Determine image properties of image 0. */
@@ -55,7 +55,7 @@ int DetermineImageProperties(
 
   /** Determine image properties of other images. */
   itk::ImageIOBase::IOPixelType inputPixelType_i;
-  itk::ImageIOBase::IOComponentType componentTypeIn_i = componentTypeIn;
+  itk::ImageIOBase::IOComponentEnum componentTypeIn_i = componentTypeIn;
   unsigned int inputDimension_i = 2;
   unsigned int numberOfComponents_i = 1;
   std::vector<unsigned int> imagesize_i;

@@ -107,7 +107,7 @@ void RemoveUnsignedFromString( std::string & arg )
  * ******************* ComponentTypeIsInteger *******************
  */
 
-bool ComponentTypeIsInteger( const itk::ImageIOBase::IOComponentType & componentType )
+bool ComponentTypeIsInteger( const itk::ImageIOBase::IOComponentEnum & componentType )
 {
   /** Check if the input image is of integer type. */
   bool componentIsInteger = false;
@@ -128,7 +128,7 @@ bool ComponentTypeIsInteger( const itk::ImageIOBase::IOComponentType & component
  * *************** ComponentTypeIsValid ***********************
  */
 
-bool ComponentTypeIsValid( const itk::ImageIOBase::IOComponentType & componentType )
+bool ComponentTypeIsValid( const itk::ImageIOBase::IOComponentEnum & componentType )
 {
   /** Check argument. */
   if( componentType == itk::ImageIOBase::UCHAR
@@ -154,8 +154,8 @@ bool ComponentTypeIsValid( const itk::ImageIOBase::IOComponentType & componentTy
  * *************** RemoveUnsignedFromComponentType ***********************
  */
 
-itk::ImageIOBase::IOComponentType RemoveUnsignedFromComponentType(
-  const itk::ImageIOBase::IOComponentType & componentType )
+itk::ImageIOBase::IOComponentEnum RemoveUnsignedFromComponentType(
+  const itk::ImageIOBase::IOComponentEnum & componentType )
 {
   if( componentType == itk::ImageIOBase::UCHAR )
   {
@@ -183,12 +183,12 @@ itk::ImageIOBase::IOComponentType RemoveUnsignedFromComponentType(
  * *************** GetLargestComponentType ***********************
  */
 
-itk::ImageIOBase::IOComponentType GetLargestComponentType(
-  const itk::ImageIOBase::IOComponentType & type1,
-  const itk::ImageIOBase::IOComponentType & type2 )
+itk::ImageIOBase::IOComponentEnum GetLargestComponentType(
+  const itk::ImageIOBase::IOComponentEnum & type1,
+  const itk::ImageIOBase::IOComponentEnum & type2 )
 {
   /** Typedef's. */
-  typedef std::map< itk::ImageIOBase::IOComponentType, unsigned int > RankingType;
+  typedef std::map< itk::ImageIOBase::IOComponentEnum, unsigned int > RankingType;
   typedef RankingType::value_type               EntryType;
 
   /** Define the ranking. */
@@ -201,11 +201,11 @@ itk::ImageIOBase::IOComponentType GetLargestComponentType(
   ranking.insert( EntryType( itk::ImageIOBase::DOUBLE, 6 ) );
 
   /** Remove unsigned. */
-  itk::ImageIOBase::IOComponentType type1Cleaned = RemoveUnsignedFromComponentType( type1 );
-  itk::ImageIOBase::IOComponentType type2Cleaned = RemoveUnsignedFromComponentType( type2 );
+  itk::ImageIOBase::IOComponentEnum type1Cleaned = RemoveUnsignedFromComponentType( type1 );
+  itk::ImageIOBase::IOComponentEnum type2Cleaned = RemoveUnsignedFromComponentType( type2 );
 
   /** Determine which one is the largest. */
-  itk::ImageIOBase::IOComponentType outputComponentType;
+  itk::ImageIOBase::IOComponentEnum outputComponentType;
   if( type1Cleaned == type2Cleaned )
   {
     outputComponentType = type1;
@@ -228,7 +228,7 @@ itk::ImageIOBase::IOComponentType GetLargestComponentType(
 bool IsFilterSupportedCheck(
   const ITKToolsBase * filter,
   const unsigned int & dim,
-  const itk::ImageIOBase::IOComponentType & inputType )
+  const itk::ImageIOBase::IOComponentEnum & inputType )
 {
   if( !filter )
   {
@@ -251,8 +251,8 @@ bool IsFilterSupportedCheck(
 bool IsFilterSupportedCheck(
   const ITKToolsBase * filter,
   const unsigned int & dim,
-  const itk::ImageIOBase::IOComponentType & inputType,
-  const itk::ImageIOBase::IOComponentType & outputType )
+  const itk::ImageIOBase::IOComponentEnum & inputType,
+  const itk::ImageIOBase::IOComponentEnum & outputType )
 {
   if( !filter )
   {
@@ -276,9 +276,9 @@ bool IsFilterSupportedCheck(
 bool IsFilterSupportedCheck(
   const ITKToolsBase * filter,
   const unsigned int & dim,
-  const itk::ImageIOBase::IOComponentType & inputType1,
-  const itk::ImageIOBase::IOComponentType & inputType2,
-  const itk::ImageIOBase::IOComponentType & outputType )
+  const itk::ImageIOBase::IOComponentEnum & inputType1,
+  const itk::ImageIOBase::IOComponentEnum & inputType2,
+  const itk::ImageIOBase::IOComponentEnum & outputType )
 {
   if( !filter )
   {
