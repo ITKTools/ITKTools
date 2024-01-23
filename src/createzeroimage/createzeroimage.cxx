@@ -115,7 +115,7 @@ int main( int argc, char **argv )
   itk::ImageIOBase::IOComponentEnum componentType = itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE;
   if( retin )
   {
-    itk::IOPixelEnum pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
+    itk::IOPixelEnum pixelType = itk::IOPixelEnum::UNKNOWNPIXELTYPE;
     unsigned int dim = 0;
     unsigned int numberOfComponents = 0;
     bool retgip = itktools::GetImageProperties(

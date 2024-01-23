@@ -258,7 +258,7 @@ int main( int argc, char **argv )
     maximumNumberOfThreads );
 
   /** Determine image properties. */
-  itk::IOPixelEnum pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
+  itk::IOPixelEnum pixelType = itk::IOPixelEnum::UNKNOWNPIXELTYPE;
   itk::ImageIOBase::IOComponentEnum componentType = itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE;
   unsigned int dim = 0;
   unsigned int numberOfComponents = 0;
