@@ -54,7 +54,7 @@ SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
 
   /** Setup the first smoothing filter. */
   this->m_FirstSmoothingFilter = FirstGaussianFilterType::New();
-  this->m_FirstSmoothingFilter->SetOrder( FirstGaussianFilterType::ZeroOrder );
+  this->m_FirstSmoothingFilter->SetOrder( GaussianOrderEnum::ZeroOrder );
   this->m_FirstSmoothingFilter->SetDirection( 0 );
   this->m_FirstSmoothingFilter->SetNormalizeAcrossScale( this->m_NormalizeAcrossScale );
   this->m_FirstSmoothingFilter->ReleaseDataFlagOn();
@@ -181,15 +181,15 @@ SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
     /** Set the order for the first smoothing filter. */
     if( order[ 0 ] == 0 )
     {
-      this->m_FirstSmoothingFilter->SetOrder( FirstGaussianFilterType::ZeroOrder );
+      this->m_FirstSmoothingFilter->SetOrder( GaussianOrderEnum::ZeroOrder );
     }
     else if( order[ 0 ] == 1 )
     {
-      this->m_FirstSmoothingFilter->SetOrder( FirstGaussianFilterType::FirstOrder );
+      this->m_FirstSmoothingFilter->SetOrder( GaussianOrderEnum::FirstOrder );
     }
     else if( order[ 0 ] == 2 )
     {
-      this->m_FirstSmoothingFilter->SetOrder( FirstGaussianFilterType::SecondOrder );
+      this->m_FirstSmoothingFilter->SetOrder( GaussianOrderEnum::SecondOrder );
     }
     //else warning??
 
