@@ -111,10 +111,10 @@ bool ComponentTypeIsInteger( const itk::ImageIOBase::IOComponentEnum & component
 {
   /** Check if the input image is of integer type. */
   bool componentIsInteger = false;
-  if( componentType == itk::ImageIOBase::UCHAR  || componentType == itk::ImageIOBase::CHAR
-    || componentType == itk::ImageIOBase::USHORT || componentType == itk::ImageIOBase::SHORT
-    || componentType == itk::ImageIOBase::UINT   || componentType == itk::ImageIOBase::INT
-    || componentType == itk::ImageIOBase::ULONG  || componentType == itk::ImageIOBase::LONG )
+  if( componentType == itk::IOComponentEnum::UCHAR  || componentType == itk::IOComponentEnum::CHAR
+    || componentType == itk::IOComponentEnum::USHORT || componentType == itk::IOComponentEnum::SHORT
+    || componentType == itk::IOComponentEnum::UINT   || componentType == itk::IOComponentEnum::INT
+    || componentType == itk::IOComponentEnum::ULONG  || componentType == itk::IOComponentEnum::LONG )
   {
     componentIsInteger = true;
   }
@@ -131,16 +131,16 @@ bool ComponentTypeIsInteger( const itk::ImageIOBase::IOComponentEnum & component
 bool ComponentTypeIsValid( const itk::ImageIOBase::IOComponentEnum & componentType )
 {
   /** Check argument. */
-  if( componentType == itk::ImageIOBase::UCHAR
-    || componentType == itk::ImageIOBase::CHAR
-    || componentType == itk::ImageIOBase::USHORT
-    || componentType == itk::ImageIOBase::SHORT
-    || componentType == itk::ImageIOBase::UINT
-    || componentType == itk::ImageIOBase::INT
-    || componentType == itk::ImageIOBase::ULONG
-    || componentType == itk::ImageIOBase::LONG
-    || componentType == itk::ImageIOBase::FLOAT
-    || componentType == itk::ImageIOBase::DOUBLE )
+  if( componentType == itk::IOComponentEnum::UCHAR
+    || componentType == itk::IOComponentEnum::CHAR
+    || componentType == itk::IOComponentEnum::USHORT
+    || componentType == itk::IOComponentEnum::SHORT
+    || componentType == itk::IOComponentEnum::UINT
+    || componentType == itk::IOComponentEnum::INT
+    || componentType == itk::IOComponentEnum::ULONG
+    || componentType == itk::IOComponentEnum::LONG
+    || componentType == itk::IOComponentEnum::FLOAT
+    || componentType == itk::IOComponentEnum::DOUBLE )
   {
     return true;
   }
@@ -157,21 +157,21 @@ bool ComponentTypeIsValid( const itk::ImageIOBase::IOComponentEnum & componentTy
 itk::ImageIOBase::IOComponentEnum RemoveUnsignedFromComponentType(
   const itk::ImageIOBase::IOComponentEnum & componentType )
 {
-  if( componentType == itk::ImageIOBase::UCHAR )
+  if( componentType == itk::IOComponentEnum::UCHAR )
   {
-    return itk::ImageIOBase::CHAR;
+    return itk::IOComponentEnum::CHAR;
   }
-  else if( componentType == itk::ImageIOBase::UINT )
+  else if( componentType == itk::IOComponentEnum::UINT )
   {
-    return itk::ImageIOBase::INT;
+    return itk::IOComponentEnum::INT;
   }
-  else if( componentType == itk::ImageIOBase::USHORT )
+  else if( componentType == itk::IOComponentEnum::USHORT )
   {
-    return itk::ImageIOBase::SHORT;
+    return itk::IOComponentEnum::SHORT;
   }
-  else if( componentType == itk::ImageIOBase::ULONG )
+  else if( componentType == itk::IOComponentEnum::ULONG )
   {
-    return itk::ImageIOBase::LONG;
+    return itk::IOComponentEnum::LONG;
   }
 
   return componentType;
@@ -193,12 +193,12 @@ itk::ImageIOBase::IOComponentEnum GetLargestComponentType(
 
   /** Define the ranking. */
   RankingType ranking;
-  ranking.insert( EntryType( itk::ImageIOBase::CHAR,   1 ) );
-  ranking.insert( EntryType( itk::ImageIOBase::SHORT,  2 ) );
-  ranking.insert( EntryType( itk::ImageIOBase::INT,    3 ) );
-  ranking.insert( EntryType( itk::ImageIOBase::LONG,   4 ) );
-  ranking.insert( EntryType( itk::ImageIOBase::FLOAT,  5 ) );
-  ranking.insert( EntryType( itk::ImageIOBase::DOUBLE, 6 ) );
+  ranking.insert( EntryType( itk::IOComponentEnum::CHAR,   1 ) );
+  ranking.insert( EntryType( itk::IOComponentEnum::SHORT,  2 ) );
+  ranking.insert( EntryType( itk::IOComponentEnum::INT,    3 ) );
+  ranking.insert( EntryType( itk::IOComponentEnum::LONG,   4 ) );
+  ranking.insert( EntryType( itk::IOComponentEnum::FLOAT,  5 ) );
+  ranking.insert( EntryType( itk::IOComponentEnum::DOUBLE, 6 ) );
 
   /** Remove unsigned. */
   itk::ImageIOBase::IOComponentEnum type1Cleaned = RemoveUnsignedFromComponentType( type1 );

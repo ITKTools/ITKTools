@@ -80,7 +80,7 @@ int main( int argc, char **argv )
 
   /** Determine image properties. */
   itk::IOPixelEnum pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
-  itk::ImageIOBase::IOComponentEnum componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  itk::ImageIOBase::IOComponentEnum componentType = itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE;
   unsigned int dim = 0;
   unsigned int numberOfComponents = 0;
   bool retgip = itktools::GetImageProperties(
@@ -94,7 +94,7 @@ int main( int argc, char **argv )
   /** Overrule component type, since only short will do something,
    * and it is not relevant in this case.
    */
-  componentType = itk::ImageIOBase::SHORT;
+  componentType = itk::IOComponentEnum::SHORT;
 
   /** Class that does the work. */
   ITKToolsComputeBoundingBoxBase * filter = 0;

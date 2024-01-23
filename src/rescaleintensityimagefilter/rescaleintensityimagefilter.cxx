@@ -134,7 +134,7 @@ int main( int argc, char **argv )
 
   /** Determine image properties. */
   itk::IOPixelEnum pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
-  itk::ImageIOBase::IOComponentEnum componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  itk::ImageIOBase::IOComponentEnum componentType = itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE;
   unsigned int dim = 0;
   unsigned int numberOfComponents = 0;
   bool retgip = itktools::GetImageProperties(
@@ -144,7 +144,7 @@ int main( int argc, char **argv )
   /** If the option -mv is used then output is float. */
   if( retmv )
   {
-    componentType = itk::ImageIOBase::FLOAT;
+    componentType = itk::IOComponentEnum::FLOAT;
   }
 
   /** Let the user overrule this. */

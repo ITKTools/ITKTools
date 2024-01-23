@@ -70,7 +70,7 @@ itk::ImageIOBase::IOComponentEnum GetImageComponentType( const std::string & fil
     filename.c_str(), itk::ImageIOFactory::ReadMode);
   if( imageIO.IsNull() )
   {
-    return itk::ImageIOBase::UNKNOWNCOMPONENTTYPE; // complain
+    return itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE; // complain
   }
   imageIO->SetFileName( filename.c_str() );
   imageIO->ReadImageInformation();

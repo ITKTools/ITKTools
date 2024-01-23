@@ -86,7 +86,7 @@ int main( int argc, char **argv )
 
   /** Determine image properties. */
   itk::IOPixelEnum pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
-  itk::ImageIOBase::IOComponentEnum componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  itk::ImageIOBase::IOComponentEnum componentType = itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE;
   unsigned int dim = 0;
   unsigned int numberOfComponents = 0;
   bool retgip = itktools::GetImageProperties(
@@ -98,7 +98,7 @@ int main( int argc, char **argv )
   if( !retNOCCheck ) return EXIT_FAILURE;
 
   /** Anyway, float is only supported. */
-  componentType = itk::ImageIOBase::FLOAT;
+  componentType = itk::IOComponentEnum::FLOAT;
 
   /** Class that does the work. */
   ITKToolsWeightedAdditionBase * filter = nullptr;

@@ -132,7 +132,7 @@ int main( int argc, char **argv )
 
   /** Determine image properties. */
   itk::IOPixelEnum pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
-  itk::ImageIOBase::IOComponentEnum componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  itk::ImageIOBase::IOComponentEnum componentType = itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE;
   unsigned int dim = 0;
   unsigned int numberOfComponents = 0;
   bool retgip = itktools::GetImageProperties(
@@ -147,7 +147,7 @@ int main( int argc, char **argv )
    * than short are supported, but automatically converted to short.
    * The output distance image is always float.
    */
-  componentType = itk::ImageIOBase::FLOAT;
+  componentType = itk::IOComponentEnum::FLOAT;
 
   /** Class that does the work. */
   ITKToolsSegmentationDistanceBase * filter = nullptr;

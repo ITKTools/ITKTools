@@ -140,7 +140,7 @@ int main( int argc, char **argv )
     }
     if( !itktools::ComponentTypeIsInteger( componentTypeOut ) )
     {
-      componentType1 = componentType2 = itk::ImageIOBase::DOUBLE;
+      componentType1 = componentType2 = itk::IOComponentEnum::DOUBLE;
     }
   }
 

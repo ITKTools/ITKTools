@@ -108,11 +108,11 @@ int DetermineImageProperties(
   bool outIsInteger = itktools::ComponentTypeIsInteger( componentTypeOut );
   if( outIsInteger )
   {
-    componentTypeIn = itk::ImageIOBase::LONG;
+    componentTypeIn = itk::IOComponentEnum::LONG;
   }
   else
   {
-    componentTypeIn = itk::ImageIOBase::DOUBLE;
+    componentTypeIn = itk::IOComponentEnum::DOUBLE;
   }
 
   /** Return a value indicating success. */

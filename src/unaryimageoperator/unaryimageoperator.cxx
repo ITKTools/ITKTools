@@ -128,11 +128,11 @@ int main( int argc, char **argv )
   bool inputIsInteger = itktools::ComponentTypeIsInteger( inputComponentType );
   if( inputIsInteger )
   {
-    inputComponentType = itk::ImageIOBase::INT;
+    inputComponentType = itk::IOComponentEnum::INT;
   }
   else
   {
-    inputComponentType = itk::ImageIOBase::DOUBLE;
+    inputComponentType = itk::IOComponentEnum::DOUBLE;
   }
 
   /** Get the correct form of ops. For some operators

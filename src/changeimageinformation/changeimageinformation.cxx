@@ -88,7 +88,7 @@ int main( int argc, char ** argv )
 
   /** Determine image properties. */
   itk::IOPixelEnum pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
-  itk::ImageIOBase::IOComponentEnum componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  itk::ImageIOBase::IOComponentEnum componentType = itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE;
   unsigned int dim = 0;
   unsigned int numberOfComponents = 0;
   bool retgip = itktools::GetImageProperties(

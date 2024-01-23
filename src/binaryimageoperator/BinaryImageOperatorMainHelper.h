@@ -131,11 +131,11 @@ int DetermineComponentTypes(
   bool outIsInteger = itktools::ComponentTypeIsInteger( componentTypeOut );
   if( outIsInteger )
   {
-    componentType1 = componentType2 = itk::ImageIOBase::LONG;
+    componentType1 = componentType2 = itk::IOComponentEnum::LONG;
   }
   else
   {
-    componentType1 = componentType2 = itk::ImageIOBase::DOUBLE;
+    componentType1 = componentType2 = itk::IOComponentEnum::DOUBLE;
   }
 
   /** Return a value. */
