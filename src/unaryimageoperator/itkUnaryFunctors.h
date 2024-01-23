@@ -273,7 +273,7 @@ public:
   ~SIGNINT() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vnl_math_sgn( A ) );
+    return static_cast<TOutput>( vnl_math::sgn( A ) );
   }
 
 private:
@@ -289,7 +289,7 @@ public:
   ~SIGNDOUBLE() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vnl_math_sgn( A ) );
+    return static_cast<TOutput>( vnl_math::sgn( A ) );
   }
 
 private:
