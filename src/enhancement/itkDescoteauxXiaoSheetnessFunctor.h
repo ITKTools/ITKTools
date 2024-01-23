@@ -50,7 +50,7 @@ namespace Functor
  *
  * \par Reference
  * Multiscale Vessel Enhancement Filtering.
- * Medical Image Computing and Computer-Assisted Interventation MICCAI’98
+ * Medical Image Computing and Computer-Assisted Interventation MICCAI 98
  * Lecture Notes in Computer Science, 1998, Volume 1496/1998, 130-137,
  * DOI: 10.1007/BFb0056195
  *
