@@ -105,7 +105,7 @@ GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator< THistogram >
   std::vector<double> marginalSums( binsPerAxis, 0.0 );
 
   /** Walk over the histogram. Only once instead of 4! */
-  double log2 = vcl_log(2.);
+  double log2 = std::log(2.);
   HistogramConstIterator hit( this->m_Histogram );
   for ( hit = this->m_Histogram->Begin(); hit != this->m_Histogram->End(); ++hit )
   {
@@ -140,7 +140,7 @@ GrayLevelCooccurrenceMatrixTextureCoefficientsCalculator< THistogram >
 
     /** Compute the features that can be computed in this loop immediately. */
     this->m_Energy += frequency * frequency;
-    this->m_Entropy -= ( frequency > 0.0001 ) ? frequency * vcl_log( frequency ) / log2 : 0.0;
+    this->m_Entropy -= ( frequency > 0.0001 ) ? frequency * std::log( frequency ) / log2 : 0.0;
     this->m_InverseDifferenceMoment += frequency /
       ( 1.0 + ( index[ 0 ] - index[ 1 ] ) * ( index[ 0 ] - index[ 1 ] ) );
     this->m_Inertia += ( index[ 0 ] - index[ 1 ] ) * ( index[ 0 ] - index[ 1 ] ) * frequency;

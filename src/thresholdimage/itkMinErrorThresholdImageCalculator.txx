@@ -209,8 +209,8 @@ MinErrorThresholdImageCalculator<TInputImage>
     stdRight += std::numeric_limits<long double>::epsilon();
 
     //compute the values of the error functions at the current threshold (j)
-    errorFunctionPois[j] = totalMean-priorLeft*(vcl_log(priorLeft)+meanLeft*vcl_log(meanLeft))-priorRight*(vcl_log(priorRight)+meanRight*vcl_log(meanRight));
-    errorFunctionGaus[j] = 1+2*(priorLeft*vcl_log(stdLeft)+priorRight*vcl_log(stdRight))-2*(priorLeft*vcl_log(priorLeft)+priorRight*vcl_log(priorRight));
+    errorFunctionPois[j] = totalMean-priorLeft*(std::log(priorLeft)+meanLeft*std::log(meanLeft))-priorRight*(std::log(priorRight)+meanRight*std::log(meanRight));
+    errorFunctionGaus[j] = 1+2*(priorLeft*std::log(stdLeft)+priorRight*std::log(stdRight))-2*(priorLeft*std::log(priorLeft)+priorRight*std::log(priorRight));
     }
 
   //find the threshold value that minimizes each of the error functions

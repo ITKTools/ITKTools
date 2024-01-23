@@ -412,7 +412,7 @@ public:
   {
     const double A = static_cast<double>( a );
     const double B = static_cast<double>( b );
-    return static_cast<TOutput>( vcl_log( A ) / vcl_log( B ) );
+    return static_cast<TOutput>( std::log( A ) / std::log( B ) );
   }
 }; // end class LOG
 

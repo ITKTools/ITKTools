@@ -296,9 +296,9 @@ MultiScaleGaussianEnhancementImageFilter< TInputImage, TOutputImage >
   case Self::LogarithmicSigmaSteps:
     {
       const double stepSize = std::max( 1e-10,
-        ( vcl_log( this->m_SigmaMaximum ) - vcl_log( this->m_SigmaMinimum ) )
+        ( std::log( this->m_SigmaMaximum ) - std::log( this->m_SigmaMinimum ) )
         / ( this->m_NumberOfSigmaSteps - 1 ) );
-      sigmaValue = vcl_exp( vcl_log ( this->m_SigmaMinimum ) + stepSize * scaleLevel );
+      sigmaValue = vcl_exp( std::log ( this->m_SigmaMinimum ) + stepSize * scaleLevel );
       break;
     }
   default:
