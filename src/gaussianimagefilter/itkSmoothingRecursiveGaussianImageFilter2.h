@@ -131,7 +131,6 @@ public:
       \li FirstOrder is equivalent to convolving with the first derivative of a Gaussian.
       \li SecondOrder is equivalent to convolving with the second derivative of a Gaussian.
     */
-  typedef typename InternalGaussianFilterType::OrderEnumType OrderEnumType;
   typedef FixedArray< unsigned int,
     itkGetStaticConstMacro(ImageDimension) >              OrderType;
   virtual void SetOrder( const unsigned int order );
