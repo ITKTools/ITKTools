@@ -390,7 +390,7 @@ StatisticsImageFilter<TInputImage>
       }
 
       sum += realValue;
-      absoluteSum += vnl_math_abs(realValue);
+      absoluteSum += std::abs(realValue);
       sumOfSquares += (realValue * realValue);
       ++count;
       ++it;
@@ -422,7 +422,7 @@ StatisticsImageFilter<TInputImage>
         }
 
         sum += realValue;
-        absoluteSum += vnl_math_abs(realValue);
+        absoluteSum += std::abs(realValue);
         sumOfSquares += (realValue * realValue);
         ++count;
       }

@@ -91,7 +91,7 @@ public:
     for ( unsigned int i = 0; i < Dimension; ++i )
     {
       RealType tmp1 = eigenValues[ i ];
-      RealType tmp2 = vnl_math_abs( tmp1 );
+      RealType tmp2 = std::abs( tmp1 );
       if ( maxEvMag < tmp2 )
       {
         maxEvMag = tmp2;

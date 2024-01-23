@@ -89,9 +89,9 @@ public:
       Functor::AbsLessCompare<EigenValueType>() );
 
     /** Take the absolute values and abbreviate. */
-    const RealType l1 = vnl_math_abs( sortedEigenValues[ 0 ] );
-    const RealType l2 = vnl_math_abs( sortedEigenValues[ 1 ] );
-    const RealType l3 = vnl_math_abs( sortedEigenValues[ 2 ] );
+    const RealType l1 = std::abs( sortedEigenValues[ 0 ] );
+    const RealType l2 = std::abs( sortedEigenValues[ 1 ] );
+    const RealType l3 = std::abs( sortedEigenValues[ 2 ] );
 
     const RealType gradientMagnitude = static_cast<RealType>( gMag ) ;
     const RealType eigenValuesSum = eigenValues[ 0 ]

@@ -73,9 +73,9 @@ public:
       Functor::AbsLessCompare<EigenValueType>() );
 
     /** Take the absolute values and abbreviate. */
-    const RealType l1 = vnl_math_abs( sortedEigenValues[ 0 ] );
-    const RealType l2 = vnl_math_abs( sortedEigenValues[ 1 ] );
-    const RealType l3 = vnl_math_abs( sortedEigenValues[ 2 ] );
+    const RealType l1 = std::abs( sortedEigenValues[ 0 ] );
+    const RealType l2 = std::abs( sortedEigenValues[ 1 ] );
+    const RealType l3 = std::abs( sortedEigenValues[ 2 ] );
 
     /** Reject. */
     if( this->m_BrightObject )
@@ -103,7 +103,7 @@ public:
 
     /** Compute several structure measures. */
     const RealType Rsheet = l2 / l3;
-    const RealType Rblob  = vnl_math_abs( l3 + l3 - l2 - l1 ) / l3;
+    const RealType Rblob  = std::abs( l3 + l3 - l2 - l1 ) / l3;
     const RealType Rnoise = std::sqrt( l1 * l1 + l2 * l2 + l3 * l3 );
 
     /** Compute final sheetness measure, see Eq.(13). */

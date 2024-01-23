@@ -97,7 +97,7 @@ ScalarImageToGrayLevelCooccurrenceMatrixGenerator<
   {
     for( unsigned int i = 0; i < offsets.Value().GetOffsetDimension(); i++ )
     {
-      unsigned int distance = vnl_math_abs( offsets.Value()[ i ] );
+      unsigned int distance = std::abs( offsets.Value()[ i ] );
       if( distance > minRadius )
       {
         minRadius = distance;

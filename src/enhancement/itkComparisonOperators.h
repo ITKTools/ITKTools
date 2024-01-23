@@ -41,7 +41,7 @@ class AbsLessEqualCompare
 public:
   bool operator()( T a, T b )
   {
-    return vnl_math_abs( a ) <= vnl_math_abs( b );
+    return std::abs( a ) <= std::abs( b );
   }
 };
 
@@ -58,7 +58,7 @@ class AbsLessCompare
 public:
   bool operator()( T a, T b )
   {
-    return vnl_math_abs( a ) < vnl_math_abs( b );
+    return std::abs( a ) < std::abs( b );
   }
 };
 
