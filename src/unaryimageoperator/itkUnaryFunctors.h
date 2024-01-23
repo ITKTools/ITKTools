@@ -305,7 +305,7 @@ public:
   ~ABSINT() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_abs( static_cast<int>( A ) ) );
+    return static_cast<TOutput>( std::abs( static_cast<int>( A ) ) );
   }
 
 private:
@@ -321,7 +321,7 @@ public:
   ~ABSDOUBLE() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_abs( static_cast<double>( A ) ) );
+    return static_cast<TOutput>( std::abs( static_cast<double>( A ) ) );
   }
 
 private:

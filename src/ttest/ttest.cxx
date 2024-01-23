@@ -184,7 +184,7 @@ int main( int argc, char **argv )
   DistributionType::Pointer distributionFunction = DistributionType::New();
   distributionFunction->SetDegreesOfFreedom( samples1.size() - 1 );
   //double pValue = distributionFunction->EvaluateCDF( tValue );
-  double pValue = distributionFunction->EvaluateCDF( -vcl_abs( tValue ) );
+  double pValue = distributionFunction->EvaluateCDF( -std::abs( tValue ) );
 
   /** For a 2-tailed t-test, multiply with 2. */
   if( tail == 2 ) pValue *= 2.0;

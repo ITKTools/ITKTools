@@ -139,7 +139,7 @@ void CohenWeightedKappaStatistic
       }
       else if( weights == "linear" )
       {
-        this->m_Weights[ i ][ j ] = 1.0 - vcl_abs( static_cast<float>( i - j ) ) / ( k - 1.0 );
+        this->m_Weights[ i ][ j ] = 1.0 - std::abs( static_cast<float>( i - j ) ) / ( k - 1.0 );
       }
       else if( weights == "quadratic" )
       {

@@ -158,9 +158,9 @@ public:
     {
       const double distance = pointB[ i ] - pointA[ i ];
       double sign = 1.0;
-      if( vcl_abs(distance) > small_number )
+      if( std::abs(distance) > small_number )
       {
-        sign = distance / vcl_abs( distance );
+        sign = distance / std::abs( distance );
       }
       pointA[ i ] -= small_factor * sign * spacing[ i ];
       pointB[ i ] += small_factor * sign * spacing[ i ];
