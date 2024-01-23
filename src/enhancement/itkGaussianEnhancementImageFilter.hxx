@@ -51,7 +51,7 @@ GaussianEnhancementImageFilter< TInPixel, TOutPixel >
   this->m_SymmetricEigenValueFilter = EigenAnalysisFilterType::New();
   this->m_SymmetricEigenValueFilter->SetDimension( ImageDimension );
   this->m_SymmetricEigenValueFilter->OrderEigenValuesBy(
-    EigenAnalysisFilterType::FunctorType::OrderByValue );//OrderByMagnitude?
+    EigenValueOrderEnum::OrderByValue );//OrderByMagnitude?
 
   // Construct the rescale filter
   this->m_RescaleFilter = RescaleFilterType::New();
