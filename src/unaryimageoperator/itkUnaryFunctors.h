@@ -529,7 +529,7 @@ public:
   ~ARCCOS() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_acos( static_cast<double>( A ) ) );
+    return static_cast<TOutput>( std::acos( static_cast<double>( A ) ) );
   }
 
 private:
