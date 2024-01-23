@@ -336,7 +336,7 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
 
         /** compute r, theta and phi */
         const double r = vec.GetNorm() ;
-        double theta = vcl_atan2( y, x);
+        double theta = std::atan2( y, x);
         if( theta<0 )
         {
           theta += 2.0* vnl_math::pi;
