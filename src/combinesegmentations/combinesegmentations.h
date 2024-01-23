@@ -37,7 +37,7 @@
 #include "itkBinaryDilateImageFilter.h"
 #include "itkBinaryBallStructuringElement.h"
 #include "itkChangeLabelImageFilter.h"
-#include "itkMultiThreader.h"
+#include "itkMultiThreaderBase.h"
 
 
 /** \class ITKToolsCombineSegmentationsBase

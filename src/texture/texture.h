@@ -25,7 +25,7 @@
 #include "itkTextureImageToImageFilter.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
-#include "itkMultiThreader.h"
+#include "itkMultiThreaderBase.h"
 
 
 /** \class ITKToolsTextureBase
