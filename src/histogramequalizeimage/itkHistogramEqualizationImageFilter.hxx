@@ -144,7 +144,7 @@ HistogramEqualizationImageFilter<TImage>
   for( unsigned int i = 0; i < this->m_NumberOfBins; i++ )
   {
     this->m_LUT[ i ] = static_cast<OutputImagePixelType>(
-      vnl_math_max(
+      std::max(
       static_cast<double>( tempmin ),
       -1.0 + tempmin + vcl_floor( static_cast<double>( hist[ i ] ) / this->m_MeanFrequency + 0.5 ) ) );
   }

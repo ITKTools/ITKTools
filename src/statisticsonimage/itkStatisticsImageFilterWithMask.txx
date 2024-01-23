@@ -340,7 +340,7 @@ StatisticsImageFilter<TInputImage>
   variance = (sumOfSquares - (sum*sum / static_cast<RealType>(count)))
     / (static_cast<RealType>(count) - 1);
   // in case of numerical errors the variance might be <0.
-  variance = vnl_math_max(0.0, variance);
+  variance = std::max(0.0, variance);
   sigma = std::sqrt(variance);
 
   // Set the outputs

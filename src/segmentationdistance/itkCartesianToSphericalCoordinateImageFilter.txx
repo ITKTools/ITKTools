@@ -158,7 +158,7 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
         PointType cornerPoint;
         inputPtr->TransformIndexToPhysicalPoint( cornerIndex, cornerPoint);
         VectorType vec = cornerPoint - cor;
-        maxR = vnl_math_max( maxR, vec.GetNorm() );
+        maxR = std::max( maxR, vec.GetNorm() );
       }
     }
   }
@@ -242,7 +242,7 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
   for( unsigned int i = 0; i < ImageDimension; ++i )
   {
     dVrtp = vnl_math_min( this->m_OutputSpacing[ i ], dVrtp);
-    dVxyz = vnl_math_max( this->m_InputSpacing[ i ], dVxyz);
+    dVxyz = std::max( this->m_InputSpacing[ i ], dVxyz);
   }
   double deltaVolumeRatioFactor =
     ( dVrtp / dVxyz ) * ( dVrtp / dVxyz ) * ( dVrtp / dVxyz );

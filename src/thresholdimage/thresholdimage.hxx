@@ -66,7 +66,7 @@ ITKToolsThresholdImage< VDimension, TComponentType >
   reader->SetFileName( inputFileName.c_str() );
 
   /** Apply the threshold. */
-  lowerthreshold = static_cast<InputPixelType>( vnl_math_max(
+  lowerthreshold = static_cast<InputPixelType>( std::max(
     static_cast<double>( itk::NumericTraits<InputPixelType>::NonpositiveMin() ),
     threshold1 ) );
   thresholder->SetLowerThreshold( lowerthreshold );

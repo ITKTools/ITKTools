@@ -507,7 +507,7 @@ public:
           inputImage1->TransformIndexToPhysicalPoint(
             cornerIndex, cornerPoint);
           VectorType vec = cornerPoint - cor;
-          maxR = vnl_math_max( maxR, vec.GetNorm() );
+          maxR = std::max( maxR, vec.GetNorm() );
         }
       }
     }

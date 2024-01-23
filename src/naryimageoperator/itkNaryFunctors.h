@@ -147,7 +147,7 @@ public:
     AccumulateType result = static_cast< AccumulateType >( B[ 0 ] );
     for( unsigned int i = 1; i < B.size(); i++ )
     {
-      result = vnl_math_max( result, B[ i ] );
+      result = std::max( result, B[ i ] );
     }
     return static_cast< TOutput >( result );
   }

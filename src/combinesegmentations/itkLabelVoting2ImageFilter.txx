@@ -66,7 +66,7 @@ namespace itk
         ( this->GetInput( k ), this->GetInput( k )->GetBufferedRegion() );
 
       for ( it.GoToBegin(); !it.IsAtEnd(); ++it )
-        maxLabel = vnl_math_max( maxLabel, it.Get() );
+        maxLabel = std::max( maxLabel, it.Get() );
     }
 
     return maxLabel;

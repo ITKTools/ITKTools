@@ -113,7 +113,7 @@ void GetBox( std::vector<int> & pA, std::vector<int> & pB, unsigned int dimensio
   for( unsigned int i = 0; i < dimension; i++ )
   {
     pa[ i ] = vnl_math_min( pA[ i ], pB[ i ] );
-    pb[ i ] = vnl_math_max( pA[ i ], pB[ i ] );
+    pb[ i ] = std::max( pA[ i ], pB[ i ] );
   }
 
   /** Copy to the input variables. */

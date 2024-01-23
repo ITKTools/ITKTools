@@ -72,7 +72,7 @@ namespace itk
         ( this->GetInput( k ), this->GetInput( k )->GetBufferedRegion() );
 
       for ( it.GoToBegin(); !it.IsAtEnd(); ++it )
-        maxLabel = vnl_math_max( maxLabel, it.Get() );
+        maxLabel = std::max( maxLabel, it.Get() );
     }
 
     return maxLabel;
@@ -471,7 +471,7 @@ namespace itk
       {
         const WeightsType maximumUpdate_k = static_cast<WeightsType>(
           (this->m_UpdatedConfusionMatrixArray[k]-this->m_ConfusionMatrixArray[k]).array_inf_norm() );
-        maximumUpdate = vnl_math_max( maximumUpdate, maximumUpdate_k );
+        maximumUpdate = std::max( maximumUpdate, maximumUpdate_k );
 
         this->m_ConfusionMatrixArray[k] = this->m_UpdatedConfusionMatrixArray[k];
       }
