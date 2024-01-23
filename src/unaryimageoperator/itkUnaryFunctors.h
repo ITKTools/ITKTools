@@ -337,7 +337,7 @@ public:
   ~FLOOR() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_floor( static_cast<double>( A ) ) );
+    return static_cast<TOutput>( std::floor( static_cast<double>( A ) ) );
   }
 
 private:

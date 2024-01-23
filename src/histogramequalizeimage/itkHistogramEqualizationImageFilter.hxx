@@ -146,7 +146,7 @@ HistogramEqualizationImageFilter<TImage>
     this->m_LUT[ i ] = static_cast<OutputImagePixelType>(
       std::max(
       static_cast<double>( tempmin ),
-      -1.0 + tempmin + vcl_floor( static_cast<double>( hist[ i ] ) / this->m_MeanFrequency + 0.5 ) ) );
+      -1.0 + tempmin + std::floor( static_cast<double>( hist[ i ] ) / this->m_MeanFrequency + 0.5 ) ) );
   }
 
 } // end BeforeThreadedGenerateData()

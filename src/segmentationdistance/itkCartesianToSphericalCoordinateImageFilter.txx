@@ -356,7 +356,7 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
         sumImage->TransformPhysicalPointToContinuousIndex( rtpPoint, rtpCIndex);
         for( unsigned int i=0 ; i < ImageDimension; ++i )
         {
-          rtpIndex0[ i ] = static_cast<int>( vcl_floor( rtpCIndex[ i ] ) );
+          rtpIndex0[ i ] = static_cast<int>( std::floor( rtpCIndex[ i ] ) );
           parzenWeight(i,0) = kernel->Evaluate(
             static_cast<double>(rtpIndex0[ i ]) - rtpCIndex[ i ] );
           parzenWeight(i,1) = kernel->Evaluate(
