@@ -147,7 +147,7 @@ public:
   ~RMODDOUBLE() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_fmod( static_cast<double>( A ), static_cast<double>( this->m_Argument ) ) );
+    return static_cast<TOutput>( std::fmod( static_cast<double>( A ), static_cast<double>( this->m_Argument ) ) );
   }
   void SetArgument( TArgument arg ){ this->m_Argument = arg; };
 private:
@@ -177,7 +177,7 @@ public:
   ~LMODDOUBLE() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_fmod( static_cast<double>( this->m_Argument ), static_cast<double>( A ) ) );
+    return static_cast<TOutput>( std::fmod( static_cast<double>( this->m_Argument ), static_cast<double>( A ) ) );
   }
   void SetArgument( TArgument arg ){ this->m_Argument = arg; };
 private:
