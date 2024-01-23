@@ -239,9 +239,9 @@ bool ReadInputData( const std::string & filename, std::vector<std::vector<double
      *   char separator = '/', bool isPath = false );
      * The columns are assumed to be separated by one space ' ' or one tab '\t'.
      */
-    std::vector<itksys::String> linevec1 = itksys::SystemTools::SplitString(
+    std::vector<std::string> linevec1 = itksys::SystemTools::SplitString(
       line.c_str(), ' ', false );
-    std::vector<itksys::String> linevec2 = itksys::SystemTools::SplitString(
+    std::vector<std::string> linevec2 = itksys::SystemTools::SplitString(
       line.c_str(), '\t', false );
     unsigned int linelength = linevec1.size() > linevec2.size() ? linevec1.size() : linevec2.size();
 
