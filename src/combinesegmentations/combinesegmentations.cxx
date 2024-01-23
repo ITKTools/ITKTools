@@ -251,10 +251,10 @@ int main( int argc, char **argv )
 
   /** Threads. */
   unsigned int maximumNumberOfThreads
-    = itk::MultiThreader::GetGlobalDefaultNumberOfThreads();
+    = itk::MultiThreaderBase::GetGlobalDefaultNumberOfThreads();
   parser->GetCommandLineArgument(
     "-threads", maximumNumberOfThreads );
-  itk::MultiThreader::SetGlobalMaximumNumberOfThreads(
+  itk::MultiThreaderBase::SetGlobalMaximumNumberOfThreads(
     maximumNumberOfThreads );
 
   /** Determine image properties. */

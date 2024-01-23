@@ -144,9 +144,9 @@ int main( int argc, char ** argv )
 
   bool retrescale = parser->ArgumentExists( "-rescaleoff" );
 
-  unsigned int maxThreads = itk::MultiThreader::GetGlobalDefaultNumberOfThreads();
+  unsigned int maxThreads = itk::MultiThreaderBase::GetGlobalDefaultNumberOfThreads();
   parser->GetCommandLineArgument( "-threads", maxThreads );
-  itk::MultiThreader::SetGlobalMaximumNumberOfThreads( maxThreads );
+  itk::MultiThreaderBase::SetGlobalMaximumNumberOfThreads( maxThreads );
 
   // Enhancement filter parameters
   double alpha = 0.5;

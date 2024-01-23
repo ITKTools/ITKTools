@@ -113,8 +113,8 @@ int main( int argc, char **argv )
 
   /** Threads. */
   unsigned int maximumNumberOfThreads
-    = itk::MultiThreader::GetGlobalDefaultNumberOfThreads();
-  itk::MultiThreader::SetGlobalMaximumNumberOfThreads(
+    = itk::MultiThreaderBase::GetGlobalDefaultNumberOfThreads();
+  itk::MultiThreaderBase::SetGlobalMaximumNumberOfThreads(
     maximumNumberOfThreads );
 
   /** Determine image properties. */
