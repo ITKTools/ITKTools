@@ -5,7 +5,7 @@ project( ITKTOOLS )
 
 #---------------------------------------------------------------------
 # Find ITK.
-FIND_PACKAGE( ITK 4 REQUIRED )
+FIND_PACKAGE( ITK 5 REQUIRED )
 include( ${ITK_USE_FILE} )
 
 # ITKTools depends on some ITK modules. Check for them:
