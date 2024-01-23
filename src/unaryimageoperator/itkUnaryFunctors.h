@@ -481,7 +481,7 @@ public:
   ~COS() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_cos( static_cast<double>( A ) ) );
+    return static_cast<TOutput>( std::cos( static_cast<double>( A ) ) );
   }
 
 private:
