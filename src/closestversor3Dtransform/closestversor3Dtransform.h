@@ -154,7 +154,7 @@ void ConvertVersorToEuler(
   parEuler.resize( nop, 0.0 );
 
   /** Easy notation. */
-  double q0 = vcl_sqrt( 1.0 - parVersor[ 0 ] * parVersor[ 0 ]
+  double q0 = std::sqrt( 1.0 - parVersor[ 0 ] * parVersor[ 0 ]
     - parVersor[ 1 ] * parVersor[ 1 ] - parVersor[ 2 ] * parVersor[ 2 ] );
   double q1 = parVersor[ 0 ];
   double q2 = parVersor[ 1 ];

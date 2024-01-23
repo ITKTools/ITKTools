@@ -121,8 +121,8 @@ public:
 
     /** Compute several structure measures. */
     const RealType Ra = l2 / l3; // see Eq.(11)
-    const RealType Rb = l1 / vcl_sqrt( l2 * l3 ); // see Eq.(10)
-    const RealType S  = vcl_sqrt( l1 * l1 + l2 * l2 + l3 * l3 ); // see Eq.(12)
+    const RealType Rb = l1 / std::sqrt( l2 * l3 ); // see Eq.(10)
+    const RealType S  = std::sqrt( l1 * l1 + l2 * l2 + l3 * l3 ); // see Eq.(12)
 
     /** Compute Frangi sheetness measure. */
     RealType sheetness = NumericTraits<RealType>::Zero;

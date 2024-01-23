@@ -450,7 +450,7 @@ void ComputeBrainDistance(
   {
     if( statFilterLabelsSpecial->HasLabel( i ) )
     {
-      sigma_itot[ i ] = vcl_sqrt( statFilterLabelsSpecial->GetMean( i ) );
+      sigma_itot[ i ] = std::sqrt( statFilterLabelsSpecial->GetMean( i ) );
     }
     else
     {

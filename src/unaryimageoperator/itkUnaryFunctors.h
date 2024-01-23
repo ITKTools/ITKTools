@@ -401,7 +401,7 @@ public:
   ~SQRT() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_sqrt( static_cast<double>( A ) ) );
+    return static_cast<TOutput>( std::sqrt( static_cast<double>( A ) ) );
   }
 
 private:

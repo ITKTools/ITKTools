@@ -333,7 +333,7 @@ public:
   {
     const double A = static_cast<double>( a );
     const double B = static_cast<double>( b );
-    return static_cast<TOutput>( vcl_sqrt( A * A + B * B ) );
+    return static_cast<TOutput>( std::sqrt( A * A + B * B ) );
   }
 }; // end class BINARYMAGNITUDE
 

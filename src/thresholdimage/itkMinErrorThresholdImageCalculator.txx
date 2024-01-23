@@ -184,7 +184,7 @@ MinErrorThresholdImageCalculator<TInputImage>
       varLeft+=(vnl_math_sqr(i-meanLeft)*relativeFrequency[ i ]);
       }
     varLeft/=priorLeft;
-    stdLeft = vcl_sqrt(varLeft); //standard deviation
+    stdLeft = std::sqrt(varLeft); //standard deviation
 
     //compute the current parameters for right (foreground) mixture component
     priorRight = 0.0; //Prior Probability
@@ -201,7 +201,7 @@ MinErrorThresholdImageCalculator<TInputImage>
       varRight+=(vnl_math_sqr(i-meanRight)*relativeFrequency[ i ]);
       }
     varRight/=priorRight;
-    stdRight = vcl_sqrt(varRight); //standard deviation
+    stdRight = std::sqrt(varRight); //standard deviation
     //Make sure you don't end up with zero values for the parameters
     priorLeft += std::numeric_limits<long double>::epsilon();
     priorRight += std::numeric_limits<long double>::epsilon();
@@ -260,7 +260,7 @@ MinErrorThresholdImageCalculator<TInputImage>
       varLeft+=(vnl_math_sqr(j-m_AlphaLeft)*relativeFrequency[j]);
       }
     varLeft/=m_PriorLeft;
-    this->m_StdLeft=vcl_sqrt(varLeft);
+    this->m_StdLeft=std::sqrt(varLeft);
 
     varRight = 0.0;
     for ( j=i+1; j<m_NumberOfHistogramBins; j++)
@@ -268,7 +268,7 @@ MinErrorThresholdImageCalculator<TInputImage>
       varRight+=(vnl_math_sqr(j-m_AlphaRight)*relativeFrequency[j]);
       }
     varRight/=m_PriorRight;
-    this->m_StdRight=vcl_sqrt(varRight);
+    this->m_StdRight=std::sqrt(varRight);
     }
   this->m_AlphaLeft= imageMin + ( this->m_AlphaLeft+1) / binMultiplier ;
   this->m_AlphaRight= imageMin + ( this->m_AlphaRight+1) / binMultiplier ;

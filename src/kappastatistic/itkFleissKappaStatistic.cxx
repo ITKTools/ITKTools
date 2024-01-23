@@ -171,7 +171,7 @@ void FleissKappaStatistic
   std = Pe - ( 2.0 * n - 3.0 ) * Pe * Pe + 2.0 * ( n - 2.0 ) * p3;
   std /= ( 1.0 - Pe ) * ( 1.0 - Pe );
   std *= 2.0 / ( N * n * ( n - 1.0 ) );
-  std = vcl_sqrt( std );
+  std = std::sqrt( std );
 
   /** Compute kappa. */
   kappa = ( Po - Pe ) / ( 1.0 - Pe );

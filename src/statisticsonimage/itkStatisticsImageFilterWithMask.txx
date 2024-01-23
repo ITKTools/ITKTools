@@ -341,7 +341,7 @@ StatisticsImageFilter<TInputImage>
     / (static_cast<RealType>(count) - 1);
   // in case of numerical errors the variance might be <0.
   variance = vnl_math_max(0.0, variance);
-  sigma = vcl_sqrt(variance);
+  sigma = std::sqrt(variance);
 
   // Set the outputs
   this->GetMinimumOutput()->Set( minimum );

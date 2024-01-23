@@ -379,7 +379,7 @@ void CohenWeightedKappaStatistic
     std -= Pe * Pe;
   }
   std /= N * ( 1.0 - Pe ) * ( 1.0 - Pe );
-  std = vcl_sqrt( std );
+  std = std::sqrt( std );
 
 } // end ComputeKappaStatisticValueAndStandardDeviation()
 

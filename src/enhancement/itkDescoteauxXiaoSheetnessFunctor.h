@@ -122,7 +122,7 @@ public:
     /** Compute several structure measures. */
     const RealType Rsheet = l2 / l3;
     const RealType Rblob  = vnl_math_abs( l3 + l3 - l2 - l1 ) / l3;
-    const RealType Rnoise = vcl_sqrt( l1 * l1 + l2 * l2 + l3 * l3 );
+    const RealType Rnoise = std::sqrt( l1 * l1 + l2 * l2 + l3 * l3 );
 
     /** Compute Descoteaux sheetness measure, see Eq. . */
     RealType sheetness = NumericTraits<RealType>::Zero;

@@ -109,13 +109,13 @@ public:
       const RealType HI2 = 3.0 * vnl_math_sqr( mLamda );
 
       // Compute the strain energy function, see Eq.(18)
-      const RealType SE = vcl_sqrt( ( 1.0 - 2.0 * this->m_Nu ) * HI2
+      const RealType SE = std::sqrt( ( 1.0 - 2.0 * this->m_Nu ) * HI2
         + ( 1.0 + this->m_Nu ) * HA2 );
 
       // Compute the FA, see Eq.(26)
       RealType FA2 = NumericTraits<RealType>::Zero;
       FA2 = HA2 / H2;
-      const RealType FA = vcl_sqrt( 3.0 * FA2 );
+      const RealType FA = std::sqrt( 3.0 * FA2 );
 
       // Calculate the mode, see Eq.(27)
       RealType tm1 = NumericTraits<RealType>::Zero;
@@ -127,7 +127,7 @@ public:
       }
       tm1 /= Dimension;
       tm2 = vcl_pow( tm2 / 3.0, 1.5 );
-      RealType mode = vcl_sqrt( 2.0 ) * tm1 / tm2;
+      RealType mode = std::sqrt( 2.0 ) * tm1 / tm2;
 
       // Combine FA and mode to generate the S(x), see Eq.(28)
       // Needs work

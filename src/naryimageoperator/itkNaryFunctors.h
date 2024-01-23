@@ -215,7 +215,7 @@ public:
     {
       result += B[ i ] * B[ i ];
     }
-    return static_cast< TOutput >( vcl_sqrt( result ) );
+    return static_cast< TOutput >( std::sqrt( result ) );
   }
 };
 
