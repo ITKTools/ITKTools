@@ -193,7 +193,7 @@ public:
   {
     const double A = static_cast<double>( a );
     const double B = static_cast<double>( b );
-    const double result1 = vcl_pow( A, B );
+    const double result1 = std::pow( A, B );
     const double result2 = ( result1 < NumericTraits<TOutput>::max() )
       ? result1 : NumericTraits<TOutput>::max();
     const double result3 = ( result2 > NumericTraits<TOutput>::NonpositiveMin() )

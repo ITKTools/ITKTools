@@ -226,7 +226,7 @@ public:
   ~RPOWER() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_pow( static_cast<double>( A ), static_cast<double>( this->m_Argument ) ) );
+    return static_cast<TOutput>( std::pow( static_cast<double>( A ), static_cast<double>( this->m_Argument ) ) );
   }
   void SetArgument( TArgument arg ){ this->m_Argument = arg; };
 private:
@@ -241,7 +241,7 @@ public:
   ~LPOWER() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_pow( static_cast<double>( this->m_Argument ), static_cast<double>( A ) ) );
+    return static_cast<TOutput>( std::pow( static_cast<double>( this->m_Argument ), static_cast<double>( A ) ) );
   }
   void SetArgument( TArgument arg ){ this->m_Argument = arg; };
 private:

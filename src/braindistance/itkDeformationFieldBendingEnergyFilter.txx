@@ -45,7 +45,7 @@ DeformationFieldBendingEnergyFilter< TInputImage, TRealType, TOutputImage >
     const RealVectorType q = it.GetPrevious(i);
     const RealVectorType pqc = p + q - c2;
     bending += pqc.GetSquaredNorm() *
-      vcl_pow( this->m_HalfDerivativeWeights[ i ], static_cast<int>(4) );
+      std::pow( this->m_HalfDerivativeWeights[ i ], static_cast<int>(4) );
   }
   /** off-diagonal: */
   for( unsigned int i = 0; i < ImageDimension; ++i )
