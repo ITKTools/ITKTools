@@ -66,10 +66,10 @@ HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
   this->m_DerivativeFilterA = DerivativeFilterAType::New();
   this->m_DerivativeFilterB = DerivativeFilterBType::New();
 
-  this->m_DerivativeFilterA->SetOrder( DerivativeFilterAType::FirstOrder );
+  this->m_DerivativeFilterA->SetOrder( GaussianOrderEnum::FirstOrder );
   this->m_DerivativeFilterA->SetNormalizeAcrossScale( this->m_NormalizeAcrossScale );
 
-  this->m_DerivativeFilterB->SetOrder( DerivativeFilterBType::FirstOrder );
+  this->m_DerivativeFilterB->SetOrder( GaussianOrderEnum::FirstOrder );
   this->m_DerivativeFilterB->SetNormalizeAcrossScale( this->m_NormalizeAcrossScale );
 
   this->m_DerivativeFilterA->SetInput( this->GetInput() );
@@ -249,8 +249,8 @@ HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage >
       // to smooth one of the other directions.
       if( dimb == dima )
       {
-        this->m_DerivativeFilterA->SetOrder( DerivativeFilterAType::SecondOrder );
-        this->m_DerivativeFilterB->SetOrder( DerivativeFilterBType::ZeroOrder );
+        this->m_DerivativeFilterA->SetOrder( GaussianOrderEnum::SecondOrder );
+        this->m_DerivativeFilterB->SetOrder( GaussianOrderEnum::ZeroOrder );
 
         unsigned int i = 0;
         unsigned int j = 0;
@@ -285,8 +285,8 @@ HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage >
       }
       else
       {
-        this->m_DerivativeFilterA->SetOrder( DerivativeFilterAType::FirstOrder );
-        this->m_DerivativeFilterB->SetOrder( DerivativeFilterBType::FirstOrder );
+        this->m_DerivativeFilterA->SetOrder( GaussianOrderEnum::FirstOrder );
+        this->m_DerivativeFilterB->SetOrder( GaussianOrderEnum::FirstOrder );
 
         unsigned int i = 0;
         unsigned int j = 0;
