@@ -80,7 +80,7 @@ bool GetImageDirection(
  */
 bool GetImageProperties(
   const std::string & filename,
-  itk::ImageIOBase::IOPixelType & pixeltype,
+  itk::IOPixelEnum & pixeltype,
   itk::ImageIOBase::IOComponentEnum & componenttype,
   unsigned int & dimension,
   unsigned int & numberofcomponents );
@@ -103,7 +103,7 @@ int GetImageProperties(
  */
 bool GetImageProperties(
   const std::string & filename,
-  itk::ImageIOBase::IOPixelType & pixeltype,
+  itk::IOPixelEnum & pixeltype,
   itk::ImageIOBase::IOComponentEnum & componenttype,
   unsigned int & dimension,
   unsigned int & numberofcomponents,
@@ -111,7 +111,7 @@ bool GetImageProperties(
 
 bool GetImageProperties(
   const std::string & filename,
-  itk::ImageIOBase::IOPixelType & pixeltype,
+  itk::IOPixelEnum & pixeltype,
   itk::ImageIOBase::IOComponentEnum & componenttype,
   unsigned int & dimension,
   unsigned int & numberofcomponents,

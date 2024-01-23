@@ -224,7 +224,7 @@ bool GetImageDirection(
 
 bool GetImageProperties(
   const std::string & fileName,
-  itk::ImageIOBase::IOPixelType & pixelType,
+  itk::IOPixelEnum & pixelType,
   itk::ImageIOBase::IOComponentEnum & componentType,
   unsigned int & dimension,
   unsigned int & numberOfComponents )
@@ -302,7 +302,7 @@ int GetImageProperties(
 
 bool GetImageProperties(
   const std::string & fileName,
-  itk::ImageIOBase::IOPixelType & pixelType,
+  itk::IOPixelEnum & pixelType,
   itk::ImageIOBase::IOComponentEnum & componentType,
   unsigned int & dimension,
   unsigned int & numberOfComponents,
@@ -329,7 +329,7 @@ bool GetImageProperties(
 
 bool GetImageProperties(
   const std::string & fileName,
-  itk::ImageIOBase::IOPixelType & pixelType,
+  itk::IOPixelEnum & pixelType,
   itk::ImageIOBase::IOComponentEnum & componentType,
   unsigned int & dimension,
   unsigned int & numberOfComponents,
@@ -443,7 +443,7 @@ void FillImageIOBase( itk::ImageIOBase::Pointer & imageIOBase,
   imageIOBase->SetNumberOfComponents( numberOfComponents );
 
   /** Set pixel type. */
-  itk::ImageIOBase::IOPixelType pixelType
+  itk::IOPixelEnum pixelType
     = itk::ImageIOBase::GetPixelTypeFromString( pixelTypeAsString );
   imageIOBase->SetPixelType( pixelType );
 
