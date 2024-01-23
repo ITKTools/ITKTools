@@ -160,7 +160,7 @@ public:
       }
 
       // Relative Hessian strength function, see Eq.(27)
-      const RealType edgeW = vcl_exp( -this->m_Beta * gradientMagnitude / maxEvMag );
+      const RealType edgeW = std::exp( -this->m_Beta * gradientMagnitude / maxEvMag );
 
       // Integrate the above terms to form the final vessel-tuned strain energy density, see Eq.(31)
       SEV *= edgeW * SE;

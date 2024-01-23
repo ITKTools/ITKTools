@@ -126,14 +126,14 @@ public:
 
     /** Compute Descoteaux sheetness measure, see Eq. . */
     RealType sheetness = NumericTraits<RealType>::Zero;
-    sheetness  =         vcl_exp( - ( Rsheet * Rsheet ) / ( 2.0 * this->m_Alpha * this->m_Alpha ) ); // sheetness vs lineness
-    sheetness *= ( 1.0 - vcl_exp( - ( Rblob  * Rblob )  / ( 2.0 * this->m_Beta * this->m_Beta ) ) ); // blobness
-    sheetness *= ( 1.0 - vcl_exp( - ( Rnoise * Rnoise ) / ( 2.0 * this->m_C * this->m_C ) ) );       // noise = structuredness
+    sheetness  =         std::exp( - ( Rsheet * Rsheet ) / ( 2.0 * this->m_Alpha * this->m_Alpha ) ); // sheetness vs lineness
+    sheetness *= ( 1.0 - std::exp( - ( Rblob  * Rblob )  / ( 2.0 * this->m_Beta * this->m_Beta ) ) ); // blobness
+    sheetness *= ( 1.0 - std::exp( - ( Rnoise * Rnoise ) / ( 2.0 * this->m_C * this->m_C ) ) );       // noise = structuredness
 
     // Step-edge suppressing proposed by Changyan Xiao
     // Dividing by Rnoise or l3 does not make much difference
-    //sheetness *= vcl_exp( -1.0 * m_Kappa * ( gradientMagnitude / Rnoise ) );
-    sheetness *= vcl_exp( -1.0 * m_Kappa * ( gradientMagnitude / l3 ) );
+    //sheetness *= std::exp( -1.0 * m_Kappa * ( gradientMagnitude / Rnoise ) );
+    sheetness *= std::exp( -1.0 * m_Kappa * ( gradientMagnitude / l3 ) );
 
     return static_cast<TOutput>( sheetness );
   } // end Evaluate()

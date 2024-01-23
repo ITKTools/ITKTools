@@ -142,7 +142,7 @@ public:
       }
 
       // Relative Hessian strength, see Eq.(25)
-      const RealType edgeW = vcl_exp( -this->m_Beta * gMag / maxEvMag );
+      const RealType edgeW = std::exp( -this->m_Beta * gMag / maxEvMag );
 
       // Integrate the above terms to form the final sheet-tuned strain energy density, see Eq.(29)
       SES *= edgeW * SE;

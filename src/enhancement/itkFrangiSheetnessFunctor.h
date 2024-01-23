@@ -112,9 +112,9 @@ public:
 
     /** Compute Frangi sheetness measure. */
     RealType sheetness = NumericTraits<RealType>::Zero;
-    sheetness  =         vcl_exp( - ( Ra * Ra ) / ( 2.0 * m_Alpha * m_Alpha ) ); // sheetness vs lineness
-    sheetness *=         vcl_exp( - ( Rb * Rb ) / ( 2.0 * m_Beta * m_Beta ) );   // blobness
-    sheetness *= ( 1.0 - vcl_exp( - ( S  * S  ) / ( 2.0 * m_C * m_C ) ) );       // noise = structuredness
+    sheetness  =         std::exp( - ( Ra * Ra ) / ( 2.0 * m_Alpha * m_Alpha ) ); // sheetness vs lineness
+    sheetness *=         std::exp( - ( Rb * Rb ) / ( 2.0 * m_Beta * m_Beta ) );   // blobness
+    sheetness *= ( 1.0 - std::exp( - ( S  * S  ) / ( 2.0 * m_C * m_C ) ) );       // noise = structuredness
 
     return static_cast<TOutput>( sheetness );
   } // end operator ()

@@ -108,9 +108,9 @@ public:
 
     /** Compute final sheetness measure, see Eq.(13). */
     RealType sheetness = NumericTraits<RealType>::Zero;
-    sheetness  =         vcl_exp( - ( Rsheet * Rsheet ) / ( 2.0 * this->m_Alpha * this->m_Alpha ) ); // sheetness vs lineness
-    sheetness *= ( 1.0 - vcl_exp( - ( Rblob  * Rblob )  / ( 2.0 * this->m_Beta * this->m_Beta ) ) ); // blobness
-    sheetness *= ( 1.0 - vcl_exp( - ( Rnoise * Rnoise ) / ( 2.0 * this->m_C * this->m_C ) ) );       // noise = structuredness
+    sheetness  =         std::exp( - ( Rsheet * Rsheet ) / ( 2.0 * this->m_Alpha * this->m_Alpha ) ); // sheetness vs lineness
+    sheetness *= ( 1.0 - std::exp( - ( Rblob  * Rblob )  / ( 2.0 * this->m_Beta * this->m_Beta ) ) ); // blobness
+    sheetness *= ( 1.0 - std::exp( - ( Rnoise * Rnoise ) / ( 2.0 * this->m_C * this->m_C ) ) );       // noise = structuredness
 
     return static_cast<TOutput>( sheetness );
   } // end operator ()

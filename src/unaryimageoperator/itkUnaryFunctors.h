@@ -449,7 +449,7 @@ public:
   ~EXP() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_exp( static_cast<double>( A ) ) );
+    return static_cast<TOutput>( std::exp( static_cast<double>( A ) ) );
   }
 
 private:

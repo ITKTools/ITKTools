@@ -110,9 +110,9 @@ public:
 
     /** Compute final vesselness measure, see Eq.(13). */
     RealType vesselness = NumericTraits<RealType>::Zero;
-    vesselness  = ( 1.0 - vcl_exp( -( Ra * Ra ) / ( 2.0 * m_Alpha * m_Alpha ) ) ); // sheetness vs lineness
-    vesselness *=         vcl_exp( -( Rb * Rb ) / ( 2.0 * m_Beta  * m_Beta  ) );   // blobness
-    vesselness *= ( 1.0 - vcl_exp( -( S  * S )  / ( 2.0 * m_C     * m_C ) ) );     // noise = structuredness
+    vesselness  = ( 1.0 - std::exp( -( Ra * Ra ) / ( 2.0 * m_Alpha * m_Alpha ) ) ); // sheetness vs lineness
+    vesselness *=         std::exp( -( Rb * Rb ) / ( 2.0 * m_Beta  * m_Beta  ) );   // blobness
+    vesselness *= ( 1.0 - std::exp( -( S  * S )  / ( 2.0 * m_C     * m_C ) ) );     // noise = structuredness
 
     return static_cast<TOutput>( vesselness );
   } // end operator ()
