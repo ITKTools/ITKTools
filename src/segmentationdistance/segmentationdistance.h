@@ -436,7 +436,7 @@ public:
     SpacingType inputSpacing = inputImage1->GetSpacing();
     for( unsigned int i = 0; i < Dimension; ++i )
     {
-      minSpacing = vnl_math_min( minSpacing, inputSpacing[ i ]);
+      minSpacing = std::min( minSpacing, inputSpacing[ i ]);
     }
 
     /** Find distanceMap2==0 pixels */

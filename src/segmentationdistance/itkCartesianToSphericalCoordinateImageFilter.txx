@@ -241,7 +241,7 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
   double dVxyz = 0.0;
   for( unsigned int i = 0; i < ImageDimension; ++i )
   {
-    dVrtp = vnl_math_min( this->m_OutputSpacing[ i ], dVrtp);
+    dVrtp = std::min( this->m_OutputSpacing[ i ], dVrtp);
     dVxyz = std::max( this->m_InputSpacing[ i ], dVxyz);
   }
   double deltaVolumeRatioFactor =

@@ -108,7 +108,7 @@ public:
         const IndexType & index = iterator.GetIndex();
         for( unsigned int i = 0; i < dimension; ++i )
         {
-          minIndex[ i ] = vnl_math_min( index[ i ], minIndex[ i ] );
+          minIndex[ i ] = std::min( index[ i ], minIndex[ i ] );
           maxIndex[ i ] = std::max( index[ i ], maxIndex[ i ] );
         }
       }
