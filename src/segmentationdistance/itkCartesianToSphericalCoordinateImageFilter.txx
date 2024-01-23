@@ -478,7 +478,7 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
       if( counts > 1e-14 )
       {
         outIt.Value() = static_cast<OutputPixelType>(
-          vnl_math_rnd( sumIt.Value() / counts ) );
+          vnl_math::rnd( sumIt.Value() / counts ) );
       }
       ++sumIt;
       ++countsIt;

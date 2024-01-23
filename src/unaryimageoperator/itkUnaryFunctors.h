@@ -369,7 +369,7 @@ public:
   ~ROUND() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vnl_math_rnd( static_cast<double>( A ) ) );
+    return static_cast<TOutput>( vnl_math::rnd( static_cast<double>( A ) ) );
   }
 
 private:

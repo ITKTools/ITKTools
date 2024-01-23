@@ -214,7 +214,7 @@ public:
         inputPointSet1->GetPoint( j, &point );
         for ( unsigned int i = 0; i < VDimension; i++ )
         {
-          index[i] = static_cast< IndexValueType >( vnl_math_rnd( point[i] ) );
+          index[i] = static_cast< IndexValueType >( vnl_math::rnd( point[i] ) );
         }
         dummyImage->TransformIndexToPhysicalPoint( index, point );
         tempPointSet->SetPoint( j, point );
@@ -238,7 +238,7 @@ public:
         inputPointSet2->GetPoint(j, &point);
         for ( unsigned int i = 0; i < VDimension; i++ )
         {
-          index[i] = static_cast< IndexValueType >( vnl_math_rnd( point[i] ) );
+          index[i] = static_cast< IndexValueType >( vnl_math::rnd( point[i] ) );
         }
         dummyImage->TransformIndexToPhysicalPoint( index, point );
         tempPointSet->SetPoint(j, point);
