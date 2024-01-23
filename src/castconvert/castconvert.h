@@ -38,11 +38,9 @@
 
 /** One of these is used to cast the image. */
 #include "itkCastImageFilter.h"
-#include "itkVectorCastImageFilter.h"
 #include "itkVectorIndexSelectionCastImageFilter.h"
 #include "itkComposeImageFilter.h"
 //#include "itkShiftScaleImageFilter.h"
-#include "itkVectorCastImageFilter.h"
 
 
 /** \class ITKToolsCastConvertBase
