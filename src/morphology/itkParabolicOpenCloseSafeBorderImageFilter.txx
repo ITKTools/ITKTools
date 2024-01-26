@@ -31,7 +31,7 @@ ParabolicOpenCloseSafeBorderImageFilter<TInputImage, doOpen, TOutputImage>
     this->m_StatsFilt->Update();
     InputPixelType range = this->m_StatsFilt->GetMaximum() - this->m_StatsFilt->GetMinimum();
     typename MorphFilterType::RadiusType Sigma = this->m_MorphFilt->GetScale();
-    typename TInputImage::SpacingType spcing = this->m_StatsFilt->GetOutput()->GetSpacing();
+    typename TInputImage::SpacingType spcing = this->GetInput()->GetSpacing();
     for (unsigned s = 0; s < ImageDimension;s++)
       {
       if( this->m_MorphFilt->GetUseImageSpacing())
@@ -50,7 +50,7 @@ ParabolicOpenCloseSafeBorderImageFilter<TInputImage, doOpen, TOutputImage>
     this->m_PadFilt->SetPadLowerBound(Bounds);
     this->m_PadFilt->SetPadUpperBound(Bounds);
     this->m_PadFilt->SetConstant(NumericTraits<InputPixelType>::max());
-    this->m_PadFilt->SetInput( this->m_StatsFilt->GetOutput());
+    this->m_PadFilt->SetInput( this->GetInput());
     progress->RegisterInternalFilter( this->m_PadFilt, 0.1f );
     inputImage = this->m_PadFilt->GetOutput();
     }
