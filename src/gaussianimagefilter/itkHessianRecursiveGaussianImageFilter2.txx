@@ -324,8 +324,6 @@ HessianRecursiveGaussianImageFilter2<TInputImage,TOutputImage >
         derivativeImage = this->m_DerivativeFilterB->GetOutput();
       }
 
-      progress->ResetFilterProgressAndKeepAccumulatedProgress();
-
       // Copy the results to the corresponding component
       // on the output image of vectors
       this->m_ImageAdaptor->SelectNthElement( element++ );
