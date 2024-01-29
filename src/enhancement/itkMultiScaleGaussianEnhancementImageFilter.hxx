@@ -265,7 +265,7 @@ MultiScaleGaussianEnhancementImageFilter< TInputImage, TOutputImage >
   typename MaxFilterType::Pointer maxFilter = MaxFilterType::New();
   maxFilter->SetInput1( this->GetOutput() );
   maxFilter->SetInput2( seOutput );
-  maxFilter->SetNumberOfThreads(this->GetNumberOfThreads());
+  maxFilter->SetNumberOfThreads(this->GetNumberOfWorkUnits());
   maxFilter->InPlaceOn();
   maxFilter->Update();
   this->GraftOutput( maxFilter->GetOutput() );

@@ -132,7 +132,7 @@ GaussianEnhancementImageFilter< TInPixel, TOutPixel >
     this->m_BinaryFunctorFilter->SetNumberOfThreads( nt );
   }
 
-  if ( this->GetNumberOfThreads() != ( nt < 1 ? 1 : ( nt > ITK_MAX_THREADS ? ITK_MAX_THREADS : nt ) ) )
+  if ( this->GetNumberOfWorkUnits() != ( nt < 1 ? 1 : ( nt > ITK_MAX_THREADS ? ITK_MAX_THREADS : nt ) ) )
   {
     this->Modified();
   }

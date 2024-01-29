@@ -180,7 +180,7 @@ ParabolicOpenCloseImageFilter<TInputImage, doOpen, TOutputImage >
   // Set up the multithreaded processing
   typename ImageSource< TOutputImage >::ThreadStruct str;
   str.Filter = this;
-  this->GetMultiThreader()->SetNumberOfThreads(this->GetNumberOfThreads());
+  this->GetMultiThreader()->SetNumberOfThreads(this->GetNumberOfWorkUnits());
   this->GetMultiThreader()->SetSingleMethod(this->ThreaderCallback, &str);
 
   // multithread the execution - stage 1
