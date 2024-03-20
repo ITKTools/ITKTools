@@ -55,8 +55,8 @@ void PrintGeometricStatistics( const TStatisticsFilter * statistics )
 {
   /** Print to screen. */
   std::cout << std::setprecision(10);
-  double geometricmean = vcl_exp( statistics->GetMean() );
-  double geometricstdev = vcl_exp( statistics->GetSigma() );
+  double geometricmean = std::exp( statistics->GetMean() );
+  double geometricstdev = std::exp( statistics->GetSigma() );
   std::cout << "\tgeometric mean : " << geometricmean << std::endl;
   std::cout << "\tgeometric stdev: " << geometricstdev << std::endl;
 

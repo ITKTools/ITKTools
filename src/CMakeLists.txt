@@ -1,11 +1,13 @@
-cmake_minimum_required( VERSION 2.6 )
+# Require at least ITK_OLDEST_VALIDATED_POLICIES_VERSION from
+# https://github.com/InsightSoftwareConsortium/ITK/blob/v5.0.0/CMakeLists.txt#L13 
+cmake_minimum_required( VERSION 3.10.2 )
 
 # This project is intended to be built outside the Insight source tree
 project( ITKTOOLS )
 
 #---------------------------------------------------------------------
 # Find ITK.
-FIND_PACKAGE( ITK 4 REQUIRED )
+FIND_PACKAGE( ITK 5 REQUIRED )
 include( ${ITK_USE_FILE} )
 
 # ITKTools depends on some ITK modules. Check for them:

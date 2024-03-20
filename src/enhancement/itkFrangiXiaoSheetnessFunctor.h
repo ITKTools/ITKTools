@@ -50,7 +50,7 @@ namespace Functor
  *
  * \par Reference
  * Multiscale Vessel Enhancement Filtering.
- * Medical Image Computing and Computer-Assisted Interventation MICCAI’98
+ * Medical Image Computing and Computer-Assisted Interventation MICCAI 98
  * Lecture Notes in Computer Science, 1998, Volume 1496/1998, 130-137,
  * DOI: 10.1007/BFb0056195
  *
@@ -89,9 +89,9 @@ public:
       Functor::AbsLessCompare<EigenValueType>() );
 
     /** Take the absolute values and abbreviate. */
-    const RealType l1 = vnl_math_abs( sortedEigenValues[ 0 ] );
-    const RealType l2 = vnl_math_abs( sortedEigenValues[ 1 ] );
-    const RealType l3 = vnl_math_abs( sortedEigenValues[ 2 ] );
+    const RealType l1 = std::abs( sortedEigenValues[ 0 ] );
+    const RealType l2 = std::abs( sortedEigenValues[ 1 ] );
+    const RealType l3 = std::abs( sortedEigenValues[ 2 ] );
 
     const RealType gradientMagnitude = static_cast<RealType>( gMag ) ;
     const RealType eigenValuesSum = eigenValues[ 0 ]
@@ -121,19 +121,19 @@ public:
 
     /** Compute several structure measures. */
     const RealType Ra = l2 / l3; // see Eq.(11)
-    const RealType Rb = l1 / vcl_sqrt( l2 * l3 ); // see Eq.(10)
-    const RealType S  = vcl_sqrt( l1 * l1 + l2 * l2 + l3 * l3 ); // see Eq.(12)
+    const RealType Rb = l1 / std::sqrt( l2 * l3 ); // see Eq.(10)
+    const RealType S  = std::sqrt( l1 * l1 + l2 * l2 + l3 * l3 ); // see Eq.(12)
 
     /** Compute Frangi sheetness measure. */
     RealType sheetness = NumericTraits<RealType>::Zero;
-    sheetness  =         vcl_exp( - ( Ra * Ra ) / ( 2.0 * m_Alpha * m_Alpha ) ); // sheetness vs lineness
-    sheetness *=         vcl_exp( - ( Rb * Rb ) / ( 2.0 * m_Beta * m_Beta ) );   // blobness
-    sheetness *= ( 1.0 - vcl_exp( - ( S  * S  ) / ( 2.0 * m_C * m_C ) ) );       // noise = structuredness
+    sheetness  =         std::exp( - ( Ra * Ra ) / ( 2.0 * m_Alpha * m_Alpha ) ); // sheetness vs lineness
+    sheetness *=         std::exp( - ( Rb * Rb ) / ( 2.0 * m_Beta * m_Beta ) );   // blobness
+    sheetness *= ( 1.0 - std::exp( - ( S  * S  ) / ( 2.0 * m_C * m_C ) ) );       // noise = structuredness
 
     // Step-edge suppressing proposed by Changyan Xiao
     // Dividing by S or l3 does not make much difference
-    //sheetness *= vcl_exp( -1.0 * m_Kappa * ( gradientMagnitude / S ) );
-    sheetness *= vcl_exp( -1.0 * m_Kappa * ( gradientMagnitude / l3 ) );
+    //sheetness *= std::exp( -1.0 * m_Kappa * ( gradientMagnitude / S ) );
+    sheetness *= std::exp( -1.0 * m_Kappa * ( gradientMagnitude / l3 ) );
 
     return static_cast<TOutput>( sheetness );
   } // end Evaluate()

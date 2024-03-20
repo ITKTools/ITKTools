@@ -139,11 +139,11 @@ void CohenWeightedKappaStatistic
       }
       else if( weights == "linear" )
       {
-        this->m_Weights[ i ][ j ] = 1.0 - vcl_abs( static_cast<float>( i - j ) ) / ( k - 1.0 );
+        this->m_Weights[ i ][ j ] = 1.0 - std::abs( static_cast<float>( i - j ) ) / ( k - 1.0 );
       }
       else if( weights == "quadratic" )
       {
-        this->m_Weights[ i ][ j ] = 1.0 - vnl_math_sqr( ( i - j ) / ( k - 1.0 ) );
+        this->m_Weights[ i ][ j ] = 1.0 - vnl_math::sqr( ( i - j ) / ( k - 1.0 ) );
       }
     }
   }
@@ -379,7 +379,7 @@ void CohenWeightedKappaStatistic
     std -= Pe * Pe;
   }
   std /= N * ( 1.0 - Pe ) * ( 1.0 - Pe );
-  std = vcl_sqrt( std );
+  std = std::sqrt( std );
 
 } // end ComputeKappaStatisticValueAndStandardDeviation()
 

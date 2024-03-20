@@ -31,12 +31,12 @@
 
 int DetermineImageProperties(
   const std::vector<std::string> & inputFileNames,
-  itk::ImageIOBase::IOComponentType & componentTypeIn,
-  itk::ImageIOBase::IOComponentType & componentTypeOut,
+  itk::ImageIOBase::IOComponentEnum & componentTypeIn,
+  itk::ImageIOBase::IOComponentEnum & componentTypeOut,
   unsigned int & inputDimension )
 {
   /** Determine image properties of image 0. */
-  itk::ImageIOBase::IOPixelType inputPixelType0;
+  itk::IOPixelEnum inputPixelType0;
   unsigned int inputDimension0 = 2;
   unsigned int numberOfComponents0 = 1;
   std::vector<unsigned int> imagesize0( inputDimension0, 0 );
@@ -54,8 +54,8 @@ int DetermineImageProperties(
   if( !retgip0 ) return 1;
 
   /** Determine image properties of other images. */
-  itk::ImageIOBase::IOPixelType inputPixelType_i;
-  itk::ImageIOBase::IOComponentType componentTypeIn_i = componentTypeIn;
+  itk::IOPixelEnum inputPixelType_i;
+  itk::ImageIOBase::IOComponentEnum componentTypeIn_i = componentTypeIn;
   unsigned int inputDimension_i = 2;
   unsigned int numberOfComponents_i = 1;
   std::vector<unsigned int> imagesize_i;
@@ -108,11 +108,11 @@ int DetermineImageProperties(
   bool outIsInteger = itktools::ComponentTypeIsInteger( componentTypeOut );
   if( outIsInteger )
   {
-    componentTypeIn = itk::ImageIOBase::LONG;
+    componentTypeIn = itk::IOComponentEnum::LONG;
   }
   else
   {
-    componentTypeIn = itk::ImageIOBase::DOUBLE;
+    componentTypeIn = itk::IOComponentEnum::DOUBLE;
   }
 
   /** Return a value indicating success. */

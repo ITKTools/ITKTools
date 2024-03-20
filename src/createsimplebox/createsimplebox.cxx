@@ -115,7 +115,7 @@ int main( int argc, char** argv )
   std::vector<unsigned int> boxSize;
   parser->GetCommandLineArgument( "-d", boxSize );
 
-  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  itk::ImageIOBase::IOComponentEnum componentType = itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE;
   if( retin ) // if an input file was specified
   {
     itktools::GetImageDimension( inputFileName, dim );
@@ -129,7 +129,7 @@ int main( int argc, char** argv )
   }
 
   /** Class that does the work. */
-  ITKToolsCreateSimpleBoxBase * filter = NULL;
+  ITKToolsCreateSimpleBoxBase * filter = nullptr;
 
   try
   {

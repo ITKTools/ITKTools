@@ -20,7 +20,7 @@
 
 void ITKToolsCastConvertDICOM3D(
   unsigned int dim,
-  itk::ImageIOBase::IOComponentType componentType,
+  itk::ImageIOBase::IOComponentEnum componentType,
   ITKToolsCastConvertBase * & filter )
 {
   if( !filter ) filter = ITKToolsCastConvertDICOM< 3, short >::New( dim, componentType );

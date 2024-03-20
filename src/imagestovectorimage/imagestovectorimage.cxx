@@ -92,8 +92,8 @@ int main( int argc, char ** argv )
   }
 
   /** Determine image properties. */
-  itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
-  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  itk::IOPixelEnum pixelType = itk::IOPixelEnum::UNKNOWNPIXELTYPE;
+  itk::ImageIOBase::IOComponentEnum componentType = itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE;
   unsigned int dim = 0;
   unsigned int numberOfComponents = 0;
   bool retgip = itktools::GetImageProperties(
@@ -101,7 +101,7 @@ int main( int argc, char ** argv )
   if( !retgip ) return EXIT_FAILURE;
 
   /** Class that does the work. */
-  ITKToolsImagesToVectorImageBase * filter = NULL;
+  ITKToolsImagesToVectorImageBase * filter = nullptr;
 
   try
   {

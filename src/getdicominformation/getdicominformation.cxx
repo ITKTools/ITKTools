@@ -187,18 +187,27 @@ int main( int argc, char **argv )
 
   /** Get patient information from the dicomIO. */
   const unsigned int maxSize = 255;
+
+  const auto getDicomValue = [gdcmIO](const char(&dicomTag)[sizeof("0123|0123")], char(&dicomValue)[maxSize])
+  {
+    std::string str;
+    itk::ExposeMetaData(gdcmIO->GetMetaDataDictionary(), dicomTag, str);
+    std::strncpy(dicomValue, str.c_str(), sizeof(dicomValue));
+    dicomValue[sizeof(dicomValue) - 1] = '\0';
+  };
+
   char patientName[maxSize];
-  gdcmIO->GetPatientName( patientName );
+  getDicomValue("0010|0010", patientName);
   char patientAge[maxSize];
-  gdcmIO->GetPatientAge( patientAge );
+  getDicomValue("0010|1010", patientAge);
   char patientSex[maxSize];
-  gdcmIO->GetPatientSex( patientSex );
+  getDicomValue("0010|0040", patientSex);
   char patientDOB[maxSize];
-  gdcmIO->GetPatientDOB( patientDOB );
+  getDicomValue("0010|0030", patientDOB);
   char patientID[maxSize];
-  gdcmIO->GetPatientID( patientID );
+  getDicomValue("0010|0020", patientID);
   char bodypart[maxSize];
-  gdcmIO->GetBodyPart( bodypart );
+  getDicomValue("0018|0015", bodypart);
   std::string position = "";
   gdcmIO->GetValueFromTag( "0018|5100", position );
   std::string viewPosition = "";
@@ -216,17 +225,17 @@ int main( int argc, char **argv )
 
   /** Get study information from the dicomIO. */
   char noSeries[maxSize];
-  gdcmIO->GetNumberOfSeriesInStudy( noSeries );
+  getDicomValue("0020|1000", noSeries);
   char noRelatedSeries[maxSize];
-  gdcmIO->GetNumberOfStudyRelatedSeries( noRelatedSeries );
+  getDicomValue("0020|1206", noRelatedSeries);
   std::string studyDate = "";
   gdcmIO->GetValueFromTag( "0008|0020", studyDate );
   std::string studyTime = "";
   gdcmIO->GetValueFromTag( "0008|0030", studyTime );
   char studyDesc[maxSize];
-  gdcmIO->GetStudyDescription( studyDesc );
+  getDicomValue("0008|1030", studyDesc);
   char studyID[maxSize];
-  gdcmIO->GetStudyID( studyID );
+  getDicomValue("0020|0010", studyID);
   std::string protocolName = "";
   gdcmIO->GetValueFromTag( "0018|1030", protocolName );
 
@@ -256,15 +265,15 @@ int main( int argc, char **argv )
 
   /** Get scanner information from the dicomIO. */
   char modality[maxSize];
-  gdcmIO->GetModality( modality );
+  getDicomValue("0008|0060", modality);
   char manufacturer[maxSize];
-  gdcmIO->GetManufacturer( manufacturer );
+  getDicomValue("0008|0070", manufacturer);
   char model[maxSize];
-  gdcmIO->GetModel( model );
+  getDicomValue("0008|1090", model);
   char scanOptions[maxSize];
-  gdcmIO->GetScanOptions( scanOptions );
+  getDicomValue("0018|0022", scanOptions);
   char institution[maxSize];
-  gdcmIO->GetInstitution( institution );
+  getDicomValue("0008|0080", institution);
   std::string convolutionKernel = "";
   gdcmIO->GetValueFromTag( "0018|1210", convolutionKernel );
 

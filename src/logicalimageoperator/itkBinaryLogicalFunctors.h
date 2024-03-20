@@ -195,7 +195,7 @@ struct BinaryLogicalFunctorFactory
     }
     else
     {
-      return NULL;
+      return nullptr;
     }
   }
 };

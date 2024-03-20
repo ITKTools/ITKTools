@@ -290,10 +290,10 @@ ITKToolsStatisticsOnImage< VDimension, VNumberOfComponents, TComponentType >
 
     double binsize = static_cast<double>( maxPixelValue - minPixelValue )
       / static_cast<double>( numberOfBins );
-    binsize = vnl_math_max( binsize, epsilon );
-    double uppermargin = vnl_math_max( epsilon, binsize / marginalScale );
+    binsize = std::max( binsize, epsilon );
+    double uppermargin = std::max( epsilon, binsize / marginalScale );
     histogramMax = static_cast<RealPixelType>(
-      vnl_math_max( binsize * static_cast<double>( numberOfBins ) + minPixelValue,
+      std::max( binsize * static_cast<double>( numberOfBins ) + minPixelValue,
       maxPixelValue + uppermargin ) );
   }
   /** Integer pixeltypes. in principle this function will never be called

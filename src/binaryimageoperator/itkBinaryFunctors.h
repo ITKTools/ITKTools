@@ -193,7 +193,7 @@ public:
   {
     const double A = static_cast<double>( a );
     const double B = static_cast<double>( b );
-    const double result1 = vcl_pow( A, B );
+    const double result1 = std::pow( A, B );
     const double result2 = ( result1 < NumericTraits<TOutput>::max() )
       ? result1 : NumericTraits<TOutput>::max();
     const double result3 = ( result2 > NumericTraits<TOutput>::NonpositiveMin() )
@@ -223,7 +223,7 @@ public:
   {
     const double A = static_cast<double>( a );
     const double B = static_cast<double>( b );
-    const double result1 = vnl_math_max( A, B );
+    const double result1 = std::max( A, B );
     const double result2 = ( result1 < NumericTraits<TOutput>::max() )
       ? result1 : NumericTraits<TOutput>::max();
     const double result3 = ( result2 > NumericTraits<TOutput>::NonpositiveMin() )
@@ -253,7 +253,7 @@ public:
   {
     const double A = static_cast<double>( a );
     const double B = static_cast<double>( b );
-    const double result1 = vnl_math_min( A, B );
+    const double result1 = std::min( A, B );
     const double result2 = ( result1 < NumericTraits<TOutput>::max() )
       ? result1 : NumericTraits<TOutput>::max();
     const double result3 = ( result2 > NumericTraits<TOutput>::NonpositiveMin() )
@@ -333,7 +333,7 @@ public:
   {
     const double A = static_cast<double>( a );
     const double B = static_cast<double>( b );
-    return static_cast<TOutput>( vcl_sqrt( A * A + B * B ) );
+    return static_cast<TOutput>( std::sqrt( A * A + B * B ) );
   }
 }; // end class BINARYMAGNITUDE
 
@@ -412,7 +412,7 @@ public:
   {
     const double A = static_cast<double>( a );
     const double B = static_cast<double>( b );
-    return static_cast<TOutput>( vcl_log( A ) / vcl_log( B ) );
+    return static_cast<TOutput>( std::log( A ) / std::log( B ) );
   }
 }; // end class LOG
 

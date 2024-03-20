@@ -21,7 +21,6 @@
 #include "ITKToolsBase.h"
 
 #include "itkImage.h"
-#include "itkExceptionObject.h"
 #include "itkImageFileReader.h"
 #include "itkConstantPadImageFilter.h"
 #include "itkSignedMaurerDistanceMapImageFilter.h"
@@ -198,10 +197,10 @@ public:
     padder2->Update();
 
     /** Compute the distance */
-    typename ImageType::Pointer accum1 = 0;
-    typename ImageType::Pointer accum2 = 0;
-    typename ImageType::Pointer dist = 0;
-    typename ImageType::Pointer edge = 0;
+    typename ImageType::Pointer accum1 = nullptr;
+    typename ImageType::Pointer accum2 = nullptr;
+    typename ImageType::Pointer dist = nullptr;
+    typename ImageType::Pointer edge = nullptr;
 
     std::vector<double> cor = this->m_Mancor;
 
@@ -241,10 +240,10 @@ public:
     }
 
     /** Compute again the distance */
-    typename ImageType::Pointer accum1inv = 0;
-    typename ImageType::Pointer accum2inv = 0;
-    typename ImageType::Pointer distinv = 0;
-    typename ImageType::Pointer edgeinv = 0;
+    typename ImageType::Pointer accum1inv = nullptr;
+    typename ImageType::Pointer accum2inv = nullptr;
+    typename ImageType::Pointer distinv = nullptr;
+    typename ImageType::Pointer edgeinv = nullptr;
 
     SegmentationDistanceHelper<InputImageType1, InputImageType2, ImageType>(
       invInputImage1, invInputImage2, accum1inv, accum2inv, distinv, edgeinv,
@@ -437,7 +436,7 @@ public:
     SpacingType inputSpacing = inputImage1->GetSpacing();
     for( unsigned int i = 0; i < Dimension; ++i )
     {
-      minSpacing = vnl_math_min( minSpacing, inputSpacing[ i ]);
+      minSpacing = std::min( minSpacing, inputSpacing[ i ]);
     }
 
     /** Find distanceMap2==0 pixels */
@@ -508,7 +507,7 @@ public:
           inputImage1->TransformIndexToPhysicalPoint(
             cornerIndex, cornerPoint);
           VectorType vec = cornerPoint - cor;
-          maxR = vnl_math_max( maxR, vec.GetNorm() );
+          maxR = std::max( maxR, vec.GetNorm() );
         }
       }
     }
@@ -519,7 +518,7 @@ public:
 
     /** Computing spherical transforms */
     RTPSizeType rtpSize;
-    rtpSize[0] = static_cast<unsigned int>( vcl_ceil(maxR / minSpacing ) );
+    rtpSize[0] = static_cast<unsigned int>( std::ceil(maxR / minSpacing ) );
     std::cout << "r = " << rtpSize[0] << std::endl;
     rtpSize[1] = thetasize;
     rtpSize[2] = phisize;

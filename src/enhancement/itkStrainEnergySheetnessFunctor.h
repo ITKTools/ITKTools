@@ -83,7 +83,7 @@ public:
     for ( unsigned int i = 0; i < Dimension; ++i )
     {
       RealType tmp1 = eigenValues[ i ];
-      RealType tmp2 = vnl_math_abs( tmp1 );
+      RealType tmp2 = std::abs( tmp1 );
       if ( maxEvMag < tmp2 )
       {
         maxEvMag = tmp2;
@@ -102,39 +102,39 @@ public:
       RealType HA2 = NumericTraits<RealType>::Zero;
       for ( unsigned int i = 0; i < Dimension; ++i )
       {
-        H2 += vnl_math_sqr( eigenValues[ i ] );
-        HA2 += vnl_math_sqr( eigenValues[ i ] - mLamda );
+        H2 += vnl_math::sqr( eigenValues[ i ] );
+        HA2 += vnl_math::sqr( eigenValues[ i ] - mLamda );
       }
 
-      const RealType HI2 = 3.0 * vnl_math_sqr( mLamda );
+      const RealType HI2 = 3.0 * vnl_math::sqr( mLamda );
 
       // Compute the strain energy function, see Eq.(18)
-      const RealType SE = vcl_sqrt( ( 1.0 - 2.0 * this->m_Nu ) * HI2
+      const RealType SE = std::sqrt( ( 1.0 - 2.0 * this->m_Nu ) * HI2
         + ( 1.0 + this->m_Nu ) * HA2 );
 
       // Compute the FA, see Eq.(26)
       RealType FA2 = NumericTraits<RealType>::Zero;
       FA2 = HA2 / H2;
-      const RealType FA = vcl_sqrt( 3.0 * FA2 );
+      const RealType FA = std::sqrt( 3.0 * FA2 );
 
       // Calculate the mode, see Eq.(27)
       RealType tm1 = NumericTraits<RealType>::Zero;
       RealType tm2 = NumericTraits<RealType>::Zero;
       for ( unsigned int i = 0; i < Dimension; ++i )
       {
-        tm1 += vcl_pow( eigenValues[ i ] - mLamda, Dimension );
-        tm2 += vnl_math_sqr( eigenValues[ i ] - mLamda );
+        tm1 += std::pow( eigenValues[ i ] - mLamda, Dimension );
+        tm2 += vnl_math::sqr( eigenValues[ i ] - mLamda );
       }
       tm1 /= Dimension;
-      tm2 = vcl_pow( tm2 / 3.0, 1.5 );
-      RealType mode = vcl_sqrt( 2.0 ) * tm1 / tm2;
+      tm2 = std::pow( tm2 / 3.0, 1.5 );
+      RealType mode = std::sqrt( 2.0 ) * tm1 / tm2;
 
       // Combine FA and mode to generate the S(x), see Eq.(28)
       // Needs work
       if ( FA > NumericTraits<RealType>::One )
       {
         RealType p2 = this->m_Kappa;
-        SES = vcl_pow( ( 1.0 - mode ) / 2.0, p2 );
+        SES = std::pow( ( 1.0 - mode ) / 2.0, p2 );
       }
       else
       {
@@ -142,7 +142,7 @@ public:
       }
 
       // Relative Hessian strength, see Eq.(25)
-      const RealType edgeW = vcl_exp( -this->m_Beta * gMag / maxEvMag );
+      const RealType edgeW = std::exp( -this->m_Beta * gMag / maxEvMag );
 
       // Integrate the above terms to form the final sheet-tuned strain energy density, see Eq.(29)
       SES *= edgeW * SE;

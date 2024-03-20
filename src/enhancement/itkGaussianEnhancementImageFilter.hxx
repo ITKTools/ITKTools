@@ -31,8 +31,8 @@ template < typename TInPixel, typename TOutPixel >
 GaussianEnhancementImageFilter< TInPixel, TOutPixel >
 ::GaussianEnhancementImageFilter()
 {
-  this->m_UnaryFunctor = NULL;
-  this->m_BinaryFunctor = NULL;
+  this->m_UnaryFunctor = nullptr;
+  this->m_BinaryFunctor = nullptr;
   this->m_UnaryFunctorFilter = UnaryFunctorImageFilterType::New();//needed to be global?
   this->m_BinaryFunctorFilter = BinaryFunctorImageFilterType::New();
   this->m_Sigma = 1.0;
@@ -51,7 +51,7 @@ GaussianEnhancementImageFilter< TInPixel, TOutPixel >
   this->m_SymmetricEigenValueFilter = EigenAnalysisFilterType::New();
   this->m_SymmetricEigenValueFilter->SetDimension( ImageDimension );
   this->m_SymmetricEigenValueFilter->OrderEigenValuesBy(
-    EigenAnalysisFilterType::FunctorType::OrderByValue );//OrderByMagnitude?
+    EigenValueOrderEnum::OrderByValue );//OrderByMagnitude?
 
   // Construct the rescale filter
   this->m_RescaleFilter = RescaleFilterType::New();
@@ -81,7 +81,7 @@ GaussianEnhancementImageFilter< TInPixel, TOutPixel >
     // Only one of them should be initialized
     this->m_UnaryFunctor = _arg;
     this->m_UnaryFunctorFilter->SetFunctor( _arg );
-    this->m_BinaryFunctor = NULL;
+    this->m_BinaryFunctor = nullptr;
     this->Modified();
   }
 } // end SetUnaryFunctor()
@@ -101,7 +101,7 @@ GaussianEnhancementImageFilter< TInPixel, TOutPixel >
     // Only one of them should be initialized
     this->m_BinaryFunctor = _arg;
     this->m_BinaryFunctorFilter->SetFunctor( _arg );
-    this->m_UnaryFunctor = NULL;
+    this->m_UnaryFunctor = nullptr;
     this->Modified();
   }
 } // end SetBinaryFunctor()
@@ -132,7 +132,7 @@ GaussianEnhancementImageFilter< TInPixel, TOutPixel >
     this->m_BinaryFunctorFilter->SetNumberOfThreads( nt );
   }
 
-  if ( this->GetNumberOfThreads() != ( nt < 1 ? 1 : ( nt > ITK_MAX_THREADS ? ITK_MAX_THREADS : nt ) ) )
+  if ( this->GetNumberOfWorkUnits() != ( nt < 1 ? 1 : ( nt > ITK_MAX_THREADS ? ITK_MAX_THREADS : nt ) ) )
   {
     this->Modified();
   }

@@ -50,7 +50,7 @@ namespace Functor
  *
  * \par Reference
  * Multiscale Vessel Enhancement Filtering.
- * Medical Image Computing and Computer-Assisted Interventation MICCAI’98
+ * Medical Image Computing and Computer-Assisted Interventation MICCAI 98
  * Lecture Notes in Computer Science, 1998, Volume 1496/1998, 130-137,
  * DOI: 10.1007/BFb0056195
  *
@@ -89,9 +89,9 @@ public:
       Functor::AbsLessCompare<EigenValueType>() );
 
     /** Take the absolute values and abbreviate. */
-    const RealType l1 = vnl_math_abs( sortedEigenValues[ 0 ] );
-    const RealType l2 = vnl_math_abs( sortedEigenValues[ 1 ] );
-    const RealType l3 = vnl_math_abs( sortedEigenValues[ 2 ] );
+    const RealType l1 = std::abs( sortedEigenValues[ 0 ] );
+    const RealType l2 = std::abs( sortedEigenValues[ 1 ] );
+    const RealType l3 = std::abs( sortedEigenValues[ 2 ] );
 
     const RealType gradientMagnitude = static_cast<RealType>( gMag ) ;
     const RealType eigenValuesSum = eigenValues[ 0 ]
@@ -121,19 +121,19 @@ public:
 
     /** Compute several structure measures. */
     const RealType Rsheet = l2 / l3;
-    const RealType Rblob  = vnl_math_abs( l3 + l3 - l2 - l1 ) / l3;
-    const RealType Rnoise = vcl_sqrt( l1 * l1 + l2 * l2 + l3 * l3 );
+    const RealType Rblob  = std::abs( l3 + l3 - l2 - l1 ) / l3;
+    const RealType Rnoise = std::sqrt( l1 * l1 + l2 * l2 + l3 * l3 );
 
     /** Compute Descoteaux sheetness measure, see Eq. . */
     RealType sheetness = NumericTraits<RealType>::Zero;
-    sheetness  =         vcl_exp( - ( Rsheet * Rsheet ) / ( 2.0 * this->m_Alpha * this->m_Alpha ) ); // sheetness vs lineness
-    sheetness *= ( 1.0 - vcl_exp( - ( Rblob  * Rblob )  / ( 2.0 * this->m_Beta * this->m_Beta ) ) ); // blobness
-    sheetness *= ( 1.0 - vcl_exp( - ( Rnoise * Rnoise ) / ( 2.0 * this->m_C * this->m_C ) ) );       // noise = structuredness
+    sheetness  =         std::exp( - ( Rsheet * Rsheet ) / ( 2.0 * this->m_Alpha * this->m_Alpha ) ); // sheetness vs lineness
+    sheetness *= ( 1.0 - std::exp( - ( Rblob  * Rblob )  / ( 2.0 * this->m_Beta * this->m_Beta ) ) ); // blobness
+    sheetness *= ( 1.0 - std::exp( - ( Rnoise * Rnoise ) / ( 2.0 * this->m_C * this->m_C ) ) );       // noise = structuredness
 
     // Step-edge suppressing proposed by Changyan Xiao
     // Dividing by Rnoise or l3 does not make much difference
-    //sheetness *= vcl_exp( -1.0 * m_Kappa * ( gradientMagnitude / Rnoise ) );
-    sheetness *= vcl_exp( -1.0 * m_Kappa * ( gradientMagnitude / l3 ) );
+    //sheetness *= std::exp( -1.0 * m_Kappa * ( gradientMagnitude / Rnoise ) );
+    sheetness *= std::exp( -1.0 * m_Kappa * ( gradientMagnitude / l3 ) );
 
     return static_cast<TOutput>( sheetness );
   } // end Evaluate()

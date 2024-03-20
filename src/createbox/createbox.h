@@ -40,7 +40,7 @@ public:
   /** Constructor. */
   ITKToolsCreateBoxBase()
   {
-    this->m_ReferenceImageIOBase = NULL;
+    this->m_ReferenceImageIOBase = nullptr;
     this->m_OutputFileName = "";
     this->m_BoxDefinition = "";
   }
@@ -157,7 +157,7 @@ public:
       for( unsigned int i = 0; i < VDimension; i++ )
       {
         Center[ i ] = ( point1[ i ] + point2[ i ] ) / 2.0;
-        Radius[ i ] = spacingITK[ i ] + vcl_abs( point1[ i ] - Center[ i ] );
+        Radius[ i ] = spacingITK[ i ] + std::abs( point1[ i ] - Center[ i ] );
       }
     }
     else

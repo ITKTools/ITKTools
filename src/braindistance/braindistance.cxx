@@ -125,8 +125,8 @@ int main( int argc, char ** argv )
   }
 
   /** Determine image properties. */
-  itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
-  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  itk::IOPixelEnum pixelType = itk::IOPixelEnum::UNKNOWNPIXELTYPE;
+  itk::ImageIOBase::IOComponentEnum componentType = itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE;
   unsigned int dim = 0;
   unsigned int numberOfComponents = 0;
   std::vector<unsigned int> imageSize;
@@ -290,12 +290,12 @@ void ComputeBrainDistance(
 
   /** Instantiate main variables */
   InputReaderType::Pointer inputReader = InputReaderType::New();
-  InputImageType::Pointer inputImage = 0;
+  InputImageType::Pointer inputImage = nullptr;
   MaskReaderType::Pointer maskReader = MaskReaderType::New();
   MaskCropFilterType::Pointer maskCropFilter = MaskCropFilterType::New();
-  MaskImageType::Pointer labelMask = 0;
-  MaskImageType::Pointer brainMask = 0;
-  InternalImageType::Pointer jacobian = 0;
+  MaskImageType::Pointer labelMask = nullptr;
+  MaskImageType::Pointer brainMask = nullptr;
+  InternalImageType::Pointer jacobian = nullptr;
   JacobianCropFilterType::Pointer jacobianCropFilter = JacobianCropFilterType::New();
   ThresholderType::Pointer thresholder = ThresholderType::New();
   StatFilterType::Pointer statFilterBrainMask = StatFilterType::New();
@@ -307,7 +307,7 @@ void ComputeBrainDistance(
   LogFilterType::Pointer logFilter = LogFilterType::New();
 
   /** method 0 or 1 */
-  JacobianFilterType::Pointer jacobianFilter = 0;
+  JacobianFilterType::Pointer jacobianFilter = nullptr;
   if( method==0 || method ==2 )
   {
     jacobianFilter = JacobianFilterType::New();
@@ -450,7 +450,7 @@ void ComputeBrainDistance(
   {
     if( statFilterLabelsSpecial->HasLabel( i ) )
     {
-      sigma_itot[ i ] = vcl_sqrt( statFilterLabelsSpecial->GetMean( i ) );
+      sigma_itot[ i ] = std::sqrt( statFilterLabelsSpecial->GetMean( i ) );
     }
     else
     {

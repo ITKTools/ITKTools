@@ -75,7 +75,7 @@ BoxSpatialFunction<VImageDimension,TInput>
   bool acc = true;
   for( unsigned int i = 0; i < ImageDimension; i++ )
   {
-    acc &= vcl_abs( mappedPosition[ i ] - this->m_Center[ i ] ) < this->m_Radius[ i ];
+    acc &= std::abs( mappedPosition[ i ] - this->m_Center[ i ] ) < this->m_Radius[ i ];
   }
 
   /** Return a value. */

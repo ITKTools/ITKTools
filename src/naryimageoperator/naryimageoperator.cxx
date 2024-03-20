@@ -124,8 +124,8 @@ int main( int argc, char **argv )
   }
 
   /** Determine image properties. */
-  itk::ImageIOBase::IOComponentType componentTypeIn = itk::ImageIOBase::LONG;
-  itk::ImageIOBase::IOComponentType componentTypeOut = itk::ImageIOBase::LONG;
+  itk::ImageIOBase::IOComponentEnum componentTypeIn = itk::IOComponentEnum::LONG;
+  itk::ImageIOBase::IOComponentEnum componentTypeOut = itk::IOComponentEnum::LONG;
   unsigned int dim = 2;
   int retdip = DetermineImageProperties( inputFileNames,
     componentTypeIn, componentTypeOut, dim );
@@ -143,7 +143,7 @@ int main( int argc, char **argv )
 
     if( !itktools::ComponentTypeIsInteger( componentTypeOut ) )
     {
-      componentTypeIn = itk::ImageIOBase::DOUBLE;
+      componentTypeIn = itk::IOComponentEnum::DOUBLE;
     }
   }
 
@@ -157,7 +157,7 @@ int main( int argc, char **argv )
   if( !retCOA ) return EXIT_FAILURE;
 
   /** Class that does the work. */
-  ITKToolsNaryImageOperatorBase * filter = NULL;
+  ITKToolsNaryImageOperatorBase * filter = nullptr;
 
   try
   {

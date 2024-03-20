@@ -48,7 +48,7 @@ bool GetImagePixelType(
 
 bool GetImageComponentType(
   const std::string & filename,
-  itk::ImageIOBase::IOComponentType & componentType )
+  itk::ImageIOBase::IOComponentEnum & componentType )
 {
   itk::ImageIOBase::Pointer imageIOBase;
   GetImageIOBase( filename, imageIOBase );
@@ -64,13 +64,13 @@ bool GetImageComponentType(
  * ***************** GetImageComponentType ************************
  */
 
-itk::ImageIOBase::IOComponentType GetImageComponentType( const std::string & filename )
+itk::ImageIOBase::IOComponentEnum GetImageComponentType( const std::string & filename )
 {
   itk::ImageIOBase::Pointer imageIO = itk::ImageIOFactory::CreateImageIO(
-    filename.c_str(), itk::ImageIOFactory::ReadMode);
+    filename.c_str(), itk::IOFileModeEnum::ReadMode);
   if( imageIO.IsNull() )
   {
-    return itk::ImageIOBase::UNKNOWNCOMPONENTTYPE; // complain
+    return itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE; // complain
   }
   imageIO->SetFileName( filename.c_str() );
   imageIO->ReadImageInformation();
@@ -224,8 +224,8 @@ bool GetImageDirection(
 
 bool GetImageProperties(
   const std::string & fileName,
-  itk::ImageIOBase::IOPixelType & pixelType,
-  itk::ImageIOBase::IOComponentType & componentType,
+  itk::IOPixelEnum & pixelType,
+  itk::ImageIOBase::IOComponentEnum & componentType,
   unsigned int & dimension,
   unsigned int & numberOfComponents )
 {
@@ -277,7 +277,7 @@ int GetImageProperties(
 
 int GetImageProperties(
   const std::string & filename,
-  itk::ImageIOBase::IOComponentType & componentType,
+  itk::ImageIOBase::IOComponentEnum & componentType,
   unsigned int & dimension,
   unsigned int & numberOfComponents,
   std::vector<unsigned int> & imageSize )
@@ -302,8 +302,8 @@ int GetImageProperties(
 
 bool GetImageProperties(
   const std::string & fileName,
-  itk::ImageIOBase::IOPixelType & pixelType,
-  itk::ImageIOBase::IOComponentType & componentType,
+  itk::IOPixelEnum & pixelType,
+  itk::ImageIOBase::IOComponentEnum & componentType,
   unsigned int & dimension,
   unsigned int & numberOfComponents,
   std::vector<unsigned int> & imageSize )
@@ -329,8 +329,8 @@ bool GetImageProperties(
 
 bool GetImageProperties(
   const std::string & fileName,
-  itk::ImageIOBase::IOPixelType & pixelType,
-  itk::ImageIOBase::IOComponentType & componentType,
+  itk::IOPixelEnum & pixelType,
+  itk::ImageIOBase::IOComponentEnum & componentType,
   unsigned int & dimension,
   unsigned int & numberOfComponents,
   std::vector<unsigned int> & imageSize,
@@ -443,12 +443,12 @@ void FillImageIOBase( itk::ImageIOBase::Pointer & imageIOBase,
   imageIOBase->SetNumberOfComponents( numberOfComponents );
 
   /** Set pixel type. */
-  itk::ImageIOBase::IOPixelType pixelType
+  itk::IOPixelEnum pixelType
     = itk::ImageIOBase::GetPixelTypeFromString( pixelTypeAsString );
   imageIOBase->SetPixelType( pixelType );
 
   /** Set component type. */
-  itk::ImageIOBase::IOComponentType componentType
+  itk::ImageIOBase::IOComponentEnum componentType
     = itk::ImageIOBase::GetComponentTypeFromString( componentTypeAsString );
   imageIOBase->SetComponentType( componentType );
 

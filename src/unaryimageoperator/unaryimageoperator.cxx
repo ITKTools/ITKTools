@@ -113,10 +113,10 @@ int main( int argc, char **argv )
   }
 
   /** Get the input and output component type. */
-  itk::ImageIOBase::IOComponentType inputComponentType;
+  itk::ImageIOBase::IOComponentEnum inputComponentType;
   itktools::GetImageComponentType( inputFileName, inputComponentType );
 
-  itk::ImageIOBase::IOComponentType outputComponentType = inputComponentType;
+  itk::ImageIOBase::IOComponentEnum outputComponentType = inputComponentType;
   std::string componentTypeOutString = "";
   bool retopct = parser->GetCommandLineArgument( "-opct", componentTypeOutString );
   if( retopct )
@@ -128,11 +128,11 @@ int main( int argc, char **argv )
   bool inputIsInteger = itktools::ComponentTypeIsInteger( inputComponentType );
   if( inputIsInteger )
   {
-    inputComponentType = itk::ImageIOBase::INT;
+    inputComponentType = itk::IOComponentEnum::INT;
   }
   else
   {
-    inputComponentType = itk::ImageIOBase::DOUBLE;
+    inputComponentType = itk::IOComponentEnum::DOUBLE;
   }
 
   /** Get the correct form of ops. For some operators
@@ -171,14 +171,14 @@ int main( int argc, char **argv )
   }
 
   /** Class that does the work. */
-  ITKToolsUnaryImageOperatorBase * filter = NULL;
+  ITKToolsUnaryImageOperatorBase * filter = nullptr;
 
   unsigned int dim = 0;
   itktools::GetImageDimension( inputFileName, dim );
 
   /** Short aliases. */
-  itk::ImageIOBase::IOComponentType inputType = inputComponentType;
-  itk::ImageIOBase::IOComponentType outputType = outputComponentType;
+  itk::ImageIOBase::IOComponentEnum inputType = inputComponentType;
+  itk::ImageIOBase::IOComponentEnum outputType = outputComponentType;
 
   try
   {

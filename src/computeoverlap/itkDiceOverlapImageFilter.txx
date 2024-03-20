@@ -53,7 +53,7 @@ void
 DiceOverlapImageFilter<TInputImage>
 ::BeforeThreadedGenerateData( void )
 {
-  const int numberOfThreads = this->GetNumberOfThreads();
+  const int numberOfThreads = this->GetNumberOfWorkUnits();
 
   // Create the thread temporaries
   this->m_SumAForThread.resize( numberOfThreads );
@@ -124,7 +124,7 @@ DiceOverlapImageFilter<TInputImage>
   OverlapMapType sumB = this->m_SumBForThread[ 0 ];
   OverlapMapType sumC = this->m_SumCForThread[ 0 ];
   typename OverlapMapType::const_iterator  it;
-  for( unsigned int threadId = 1; threadId < this->GetNumberOfThreads(); threadId++ )
+  for( unsigned int threadId = 1; threadId < this->GetNumberOfWorkUnits(); threadId++ )
   {
     for( it = this->m_SumAForThread[ threadId ].begin(); it != this->m_SumAForThread[ threadId ].end(); ++it )
     {

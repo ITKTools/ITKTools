@@ -49,7 +49,7 @@ void gradient(
 
   /** Setup the gradient filter. BASIC = 0, HISTO = 1, ANCHOR = 2, VHGW = 3. */
   filter->SetKernel( structuringElement );
-  filter->SetAlgorithm( algorithm );
+  filter->SetAlgorithm( static_cast<itk::MathematicalMorphologyEnums::Algorithm>(algorithm) );
   filter->SetInput( reader->GetOutput() );
 
   /** Write the output image. */

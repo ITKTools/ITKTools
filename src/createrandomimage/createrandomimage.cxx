@@ -139,10 +139,10 @@ int main( int argc, char** argv )
   unsigned long resolution = nrOfPixels / 64;
   parser->GetCommandLineArgument( "-r", resolution );
 
-  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::GetComponentTypeFromString( pixelType );
+  itk::ImageIOBase::IOComponentEnum componentType = itk::ImageIOBase::GetComponentTypeFromString( pixelType );
 
   /** Class that does the work. */
-  ITKToolsCreateRandomImageBase * filter = NULL;
+  ITKToolsCreateRandomImageBase * filter = nullptr;
 
   try
   {

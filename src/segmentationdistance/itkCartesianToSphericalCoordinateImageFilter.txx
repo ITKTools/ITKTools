@@ -158,7 +158,7 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
         PointType cornerPoint;
         inputPtr->TransformIndexToPhysicalPoint( cornerIndex, cornerPoint);
         VectorType vec = cornerPoint - cor;
-        maxR = vnl_math_max( maxR, vec.GetNorm() );
+        maxR = std::max( maxR, vec.GetNorm() );
       }
     }
   }
@@ -241,8 +241,8 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
   double dVxyz = 0.0;
   for( unsigned int i = 0; i < ImageDimension; ++i )
   {
-    dVrtp = vnl_math_min( this->m_OutputSpacing[ i ], dVrtp);
-    dVxyz = vnl_math_max( this->m_InputSpacing[ i ], dVxyz);
+    dVrtp = std::min( this->m_OutputSpacing[ i ], dVrtp);
+    dVxyz = std::max( this->m_InputSpacing[ i ], dVxyz);
   }
   double deltaVolumeRatioFactor =
     ( dVrtp / dVxyz ) * ( dVrtp / dVxyz ) * ( dVrtp / dVxyz );
@@ -290,7 +290,7 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
       VectorType vec0 = inPoint - cor;
       /** compute r^2 sin(phi) */
       const double r2 = vec0.GetSquaredNorm() ;
-      const double sinphi = vcl_sin( vcl_acos( vec0[2] / vcl_sqrt(r2) ) );
+      const double sinphi = std::sin( std::acos( vec0[2] / std::sqrt(r2) ) );
 
       /** Compute the number of samples needed */
       const double deltaVolumeRatio = deltaVolumeRatioFactor * r2 * sinphi;
@@ -303,7 +303,7 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
       {
         /** Use ceil: at least 1 sample! */
         numberOfSamplesPerVoxel = static_cast<unsigned int>(
-          vcl_ceil( 1.0 / deltaVolumeRatio ) );
+          std::ceil( 1.0 / deltaVolumeRatio ) );
       }
 
       /** For the first iteration use the indexPoint. This makes sure that,
@@ -336,12 +336,12 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
 
         /** compute r, theta and phi */
         const double r = vec.GetNorm() ;
-        double theta = vcl_atan2( y, x);
+        double theta = std::atan2( y, x);
         if( theta<0 )
         {
           theta += 2.0* vnl_math::pi;
         }
-        const double phi = vcl_acos( z / r );
+        const double phi = std::acos( z / r );
 
         /** Find out in which voxels in the sumImage and countImage we have to do something */
         PointType rtpPoint;
@@ -356,7 +356,7 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
         sumImage->TransformPhysicalPointToContinuousIndex( rtpPoint, rtpCIndex);
         for( unsigned int i=0 ; i < ImageDimension; ++i )
         {
-          rtpIndex0[ i ] = static_cast<int>( vcl_floor( rtpCIndex[ i ] ) );
+          rtpIndex0[ i ] = static_cast<int>( std::floor( rtpCIndex[ i ] ) );
           parzenWeight(i,0) = kernel->Evaluate(
             static_cast<double>(rtpIndex0[ i ]) - rtpCIndex[ i ] );
           parzenWeight(i,1) = kernel->Evaluate(
@@ -478,7 +478,7 @@ CartesianToSphericalCoordinateImageFilter<TInputImage,TOutputImage>
       if( counts > 1e-14 )
       {
         outIt.Value() = static_cast<OutputPixelType>(
-          vnl_math_rnd( sumIt.Value() / counts ) );
+          vnl_math::rnd( sumIt.Value() / counts ) );
       }
       ++sumIt;
       ++countsIt;

@@ -291,7 +291,7 @@ namespace itk
       /** In this case the number of required PC's have been
        * specified.
        */
-      unsigned int numberOfValidOutputs = vnl_math_min(
+      unsigned int numberOfValidOutputs = std::min(
         this->m_NumberOfFeatureImages,
         this->m_NumberOfPrincipalComponentsRequired );
       this->SetAndCreateOutputs( numberOfValidOutputs );

@@ -184,7 +184,7 @@ int main( int argc, char **argv )
   DistributionType::Pointer distributionFunction = DistributionType::New();
   distributionFunction->SetDegreesOfFreedom( samples1.size() - 1 );
   //double pValue = distributionFunction->EvaluateCDF( tValue );
-  double pValue = distributionFunction->EvaluateCDF( -vcl_abs( tValue ) );
+  double pValue = distributionFunction->EvaluateCDF( -std::abs( tValue ) );
 
   /** For a 2-tailed t-test, multiply with 2. */
   if( tail == 2 ) pValue *= 2.0;
@@ -239,9 +239,9 @@ bool ReadInputData( const std::string & filename, std::vector<std::vector<double
      *   char separator = '/', bool isPath = false );
      * The columns are assumed to be separated by one space ' ' or one tab '\t'.
      */
-    std::vector<itksys::String> linevec1 = itksys::SystemTools::SplitString(
+    std::vector<std::string> linevec1 = itksys::SystemTools::SplitString(
       line.c_str(), ' ', false );
-    std::vector<itksys::String> linevec2 = itksys::SystemTools::SplitString(
+    std::vector<std::string> linevec2 = itksys::SystemTools::SplitString(
       line.c_str(), '\t', false );
     unsigned int linelength = linevec1.size() > linevec2.size() ? linevec1.size() : linevec2.size();
 
@@ -312,7 +312,7 @@ bool ComputeTValue( const std::vector<double> & samples1,
       std1, std2, stddiff );
 
     /** Compute the t-value. */
-    tValue = meandiff * vcl_sqrt( static_cast<double>( samples1.size() ) ) / stddiff;
+    tValue = meandiff * std::sqrt( static_cast<double>( samples1.size() ) ) / stddiff;
   }
   else
   {
@@ -349,7 +349,7 @@ void ComputeMeanAndStandardDeviation(
     std += ( vec[ i ] - mean ) * ( vec[ i ] - mean );
   }
   std /= ( vec.size() - 1 );
-  std = vcl_sqrt( std );
+  std = std::sqrt( std );
   */
 
   /** Compute mean and std fast, using one loop. */
@@ -367,10 +367,10 @@ void ComputeMeanAndStandardDeviation(
     ssd += ( samples1[ i ] - samples2[ i ] ) * ( samples1[ i ] - samples2[ i ] );
   }
   mean1 = s1 / N;
-  std1 = vcl_sqrt( ( ss1 * N - s1 * s1 ) / ( N * ( N - 1.0 ) ) );
+  std1 = std::sqrt( ( ss1 * N - s1 * s1 ) / ( N * ( N - 1.0 ) ) );
   mean2 = s2 / N;
-  std2 = vcl_sqrt( ( ss2 * N - s2 * s2 ) / ( N * ( N - 1.0 ) ) );
+  std2 = std::sqrt( ( ss2 * N - s2 * s2 ) / ( N * ( N - 1.0 ) ) );
   meandiff = sd / N;
-  stddiff = vcl_sqrt( ( ssd * N - sd * sd ) / ( N * ( N - 1.0 ) ) );
+  stddiff = std::sqrt( ( ssd * N - sd * sd ) / ( N * ( N - 1.0 ) ) );
 
 } // end ComputeMeanAndStandardDeviation()

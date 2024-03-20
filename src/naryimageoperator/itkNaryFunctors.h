@@ -147,7 +147,7 @@ public:
     AccumulateType result = static_cast< AccumulateType >( B[ 0 ] );
     for( unsigned int i = 1; i < B.size(); i++ )
     {
-      result = vnl_math_max( result, B[ i ] );
+      result = std::max( result, B[ i ] );
     }
     return static_cast< TOutput >( result );
   }
@@ -169,7 +169,7 @@ public:
     AccumulateType result = static_cast< AccumulateType >( B[ 0 ] );
     for( unsigned int i = 1; i < B.size(); i++ )
     {
-      result = vnl_math_min( result, B[ i ] );
+      result = std::min( result, B[ i ] );
     }
     return static_cast< TOutput >( result );
   }
@@ -215,7 +215,7 @@ public:
     {
       result += B[ i ] * B[ i ];
     }
-    return static_cast< TOutput >( vcl_sqrt( result ) );
+    return static_cast< TOutput >( std::sqrt( result ) );
   }
 };
 

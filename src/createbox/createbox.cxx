@@ -207,7 +207,7 @@ int main( int argc, char** argv )
   /** Let the user overrule this. */
   bool retopct = parser->GetCommandLineArgument( "-opct", componentTypeAsString );
 
-  itk::ImageIOBase::IOComponentType componentType
+  itk::ImageIOBase::IOComponentEnum componentType
     = referenceIOBase->GetComponentTypeFromString( componentTypeAsString );
 
   /** How was the input supplied by the user? */

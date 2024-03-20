@@ -34,7 +34,7 @@ template<class TInputImage>
 MinErrorThresholdImageCalculator<TInputImage>
 ::MinErrorThresholdImageCalculator()
 {
-  this->m_Image = NULL;
+  this->m_Image = nullptr;
   this->m_Threshold = NumericTraits<PixelType>::Zero;
   this->m_NumberOfHistogramBins = 128;
   this->m_RegionSetByUser = false;
@@ -135,7 +135,7 @@ MinErrorThresholdImageCalculator<TInputImage>
       }
     else
       {
-      binNumber = (unsigned int) vcl_ceil((value - imageMin) * binMultiplier ) - 1;
+      binNumber = (unsigned int) std::ceil((value - imageMin) * binMultiplier ) - 1;
       if( binNumber == this->m_NumberOfHistogramBins ) // in case of rounding errors
         {
         binNumber -= 1;
@@ -181,10 +181,10 @@ MinErrorThresholdImageCalculator<TInputImage>
     meanLeft/=priorLeft;
     for ( i=0; i<=j; i++ )
       {
-      varLeft+=(vnl_math_sqr(i-meanLeft)*relativeFrequency[ i ]);
+      varLeft+=(vnl_math::sqr(i-meanLeft)*relativeFrequency[ i ]);
       }
     varLeft/=priorLeft;
-    stdLeft = vcl_sqrt(varLeft); //standard deviation
+    stdLeft = std::sqrt(varLeft); //standard deviation
 
     //compute the current parameters for right (foreground) mixture component
     priorRight = 0.0; //Prior Probability
@@ -198,10 +198,10 @@ MinErrorThresholdImageCalculator<TInputImage>
     meanRight/=priorRight;
     for ( i=j+1; i<m_NumberOfHistogramBins; i++ )
       {
-      varRight+=(vnl_math_sqr(i-meanRight)*relativeFrequency[ i ]);
+      varRight+=(vnl_math::sqr(i-meanRight)*relativeFrequency[ i ]);
       }
     varRight/=priorRight;
-    stdRight = vcl_sqrt(varRight); //standard deviation
+    stdRight = std::sqrt(varRight); //standard deviation
     //Make sure you don't end up with zero values for the parameters
     priorLeft += std::numeric_limits<long double>::epsilon();
     priorRight += std::numeric_limits<long double>::epsilon();
@@ -209,8 +209,8 @@ MinErrorThresholdImageCalculator<TInputImage>
     stdRight += std::numeric_limits<long double>::epsilon();
 
     //compute the values of the error functions at the current threshold (j)
-    errorFunctionPois[j] = totalMean-priorLeft*(vcl_log(priorLeft)+meanLeft*vcl_log(meanLeft))-priorRight*(vcl_log(priorRight)+meanRight*vcl_log(meanRight));
-    errorFunctionGaus[j] = 1+2*(priorLeft*vcl_log(stdLeft)+priorRight*vcl_log(stdRight))-2*(priorLeft*vcl_log(priorLeft)+priorRight*vcl_log(priorRight));
+    errorFunctionPois[j] = totalMean-priorLeft*(std::log(priorLeft)+meanLeft*std::log(meanLeft))-priorRight*(std::log(priorRight)+meanRight*std::log(meanRight));
+    errorFunctionGaus[j] = 1+2*(priorLeft*std::log(stdLeft)+priorRight*std::log(stdRight))-2*(priorLeft*std::log(priorLeft)+priorRight*std::log(priorRight));
     }
 
   //find the threshold value that minimizes each of the error functions
@@ -257,18 +257,18 @@ MinErrorThresholdImageCalculator<TInputImage>
     varLeft = 0.0;
     for (j=0; j<=i; j++)
       {
-      varLeft+=(vnl_math_sqr(j-m_AlphaLeft)*relativeFrequency[j]);
+      varLeft+=(vnl_math::sqr(j-m_AlphaLeft)*relativeFrequency[j]);
       }
     varLeft/=m_PriorLeft;
-    this->m_StdLeft=vcl_sqrt(varLeft);
+    this->m_StdLeft=std::sqrt(varLeft);
 
     varRight = 0.0;
     for ( j=i+1; j<m_NumberOfHistogramBins; j++)
       {
-      varRight+=(vnl_math_sqr(j-m_AlphaRight)*relativeFrequency[j]);
+      varRight+=(vnl_math::sqr(j-m_AlphaRight)*relativeFrequency[j]);
       }
     varRight/=m_PriorRight;
-    this->m_StdRight=vcl_sqrt(varRight);
+    this->m_StdRight=std::sqrt(varRight);
     }
   this->m_AlphaLeft= imageMin + ( this->m_AlphaLeft+1) / binMultiplier ;
   this->m_AlphaRight= imageMin + ( this->m_AlphaRight+1) / binMultiplier ;

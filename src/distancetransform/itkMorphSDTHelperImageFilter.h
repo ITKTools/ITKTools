@@ -37,12 +37,12 @@ public:
     if( C > 0)
       {
       // inside the mask
-      return static_cast<TOutput>(vcl_sqrt((double)A + this->m_Val));
+      return static_cast<TOutput>(std::sqrt((double)A + this->m_Val));
       }
     else
       {
       // outside the mask
-      return static_cast<TOutput>(- vcl_sqrt( this->m_Val -(double)B));
+      return static_cast<TOutput>(- std::sqrt( this->m_Val -(double)B));
       }
   }
 private:

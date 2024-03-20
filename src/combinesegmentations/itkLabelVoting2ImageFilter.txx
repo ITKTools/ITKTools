@@ -66,7 +66,7 @@ namespace itk
         ( this->GetInput( k ), this->GetInput( k )->GetBufferedRegion() );
 
       for ( it.GoToBegin(); !it.IsAtEnd(); ++it )
-        maxLabel = vnl_math_max( maxLabel, it.Get() );
+        maxLabel = std::max( maxLabel, it.Get() );
     }
 
     return maxLabel;
@@ -99,7 +99,7 @@ namespace itk
     }
 
     /** For multithreading: */
-    unsigned int numberOfThreads = this->GetNumberOfThreads();
+    unsigned int numberOfThreads = this->GetNumberOfWorkUnits();
     this->m_ConfusionMatrixArrays.resize( numberOfThreads );
     for( unsigned int t = 0; t < numberOfThreads; ++t)
     {
@@ -355,7 +355,7 @@ namespace itk
     {
 
       /** Add the confusion matrix arrays of all threads */
-      for( unsigned int t = 0; t < this->GetNumberOfThreads(); ++t )
+      for( unsigned int t = 0; t < this->GetNumberOfWorkUnits(); ++t )
       {
         for( unsigned int i = 0; i < numberOfInputs; ++i )
         {

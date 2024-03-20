@@ -144,9 +144,9 @@ int main( int argc, char ** argv )
 
   bool retrescale = parser->ArgumentExists( "-rescaleoff" );
 
-  unsigned int maxThreads = itk::MultiThreader::GetGlobalDefaultNumberOfThreads();
+  unsigned int maxThreads = itk::MultiThreaderBase::GetGlobalDefaultNumberOfThreads();
   parser->GetCommandLineArgument( "-threads", maxThreads );
-  itk::MultiThreader::SetGlobalMaximumNumberOfThreads( maxThreads );
+  itk::MultiThreaderBase::SetGlobalMaximumNumberOfThreads( maxThreads );
 
   // Enhancement filter parameters
   double alpha = 0.5;
@@ -212,8 +212,8 @@ int main( int argc, char ** argv )
   }
 
   /** Determine image properties. */
-  itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
-  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  itk::IOPixelEnum pixelType = itk::IOPixelEnum::UNKNOWNPIXELTYPE;
+  itk::ImageIOBase::IOComponentEnum componentType = itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE;
   unsigned int dim = 0;
   unsigned int numberOfComponents = 0;
   bool retgip = itktools::GetImageProperties(
@@ -225,13 +225,13 @@ int main( int argc, char ** argv )
   if( !retNOCCheck ) return EXIT_FAILURE;
 
   /** Component type should be at least float. */
-  if ( componentType != itk::ImageIOBase::FLOAT && componentType != itk::ImageIOBase::DOUBLE )
+  if ( componentType != itk::IOComponentEnum::FLOAT && componentType != itk::IOComponentEnum::DOUBLE )
   {
-    componentType = itk::ImageIOBase::FLOAT;
+    componentType = itk::IOComponentEnum::FLOAT;
   }
 
   /** Class that does the work. */
-  ITKToolsEnhancementBase * filter = NULL;
+  ITKToolsEnhancementBase * filter = nullptr;
 
   try
   {

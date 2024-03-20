@@ -167,8 +167,8 @@ public:
 
         /** Setup the shiftscaler. */
         shiftscaler->SetInput( indexSelectionFilter->GetOutput() );
-        shiftscaler->SetShift( this->m_Values[ 0 ] * sigma / vcl_sqrt( this->m_Values[ 1 ] ) - mean );
-        shiftscaler->SetScale( vcl_sqrt( this->m_Values[ 1 ] ) / sigma );
+        shiftscaler->SetShift( this->m_Values[ 0 ] * sigma / std::sqrt( this->m_Values[ 1 ] ) - mean );
+        shiftscaler->SetScale( std::sqrt( this->m_Values[ 1 ] ) / sigma );
         shiftscaler->Update();
 
         /** Setup the recombining. */

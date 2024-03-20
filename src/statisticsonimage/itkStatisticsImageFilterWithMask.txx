@@ -269,7 +269,7 @@ void
 StatisticsImageFilter<TInputImage>
 ::BeforeThreadedGenerateData( void )
 {
-  int numberOfThreads = this->GetNumberOfThreads();
+  int numberOfThreads = this->GetNumberOfWorkUnits();
 
   // Resize the thread temporaries
   this->m_Count.SetSize(numberOfThreads);
@@ -298,7 +298,7 @@ StatisticsImageFilter<TInputImage>
   long count;
   RealType sumOfSquares;
 
-  int numberOfThreads = this->GetNumberOfThreads();
+  int numberOfThreads = this->GetNumberOfWorkUnits();
 
   PixelType minimum;
   PixelType maximum;
@@ -340,8 +340,8 @@ StatisticsImageFilter<TInputImage>
   variance = (sumOfSquares - (sum*sum / static_cast<RealType>(count)))
     / (static_cast<RealType>(count) - 1);
   // in case of numerical errors the variance might be <0.
-  variance = vnl_math_max(0.0, variance);
-  sigma = vcl_sqrt(variance);
+  variance = std::max(0.0, variance);
+  sigma = std::sqrt(variance);
 
   // Set the outputs
   this->GetMinimumOutput()->Set( minimum );
@@ -390,7 +390,7 @@ StatisticsImageFilter<TInputImage>
       }
 
       sum += realValue;
-      absoluteSum += vnl_math_abs(realValue);
+      absoluteSum += std::abs(realValue);
       sumOfSquares += (realValue * realValue);
       ++count;
       ++it;
@@ -422,7 +422,7 @@ StatisticsImageFilter<TInputImage>
         }
 
         sum += realValue;
-        absoluteSum += vnl_math_abs(realValue);
+        absoluteSum += std::abs(realValue);
         sumOfSquares += (realValue * realValue);
         ++count;
       }

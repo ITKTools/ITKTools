@@ -111,10 +111,10 @@ public:
     finalANDFilter->SetDirectionTolerance( this->m_Tolerance );
 
     /** Create images, threshold filters, and threshold vectors. */
-    ImagePointer im1 = 0;
-    ImagePointer im2 = 0;
-    ThresholdFilterPointer thresholder1 = 0;
-    ThresholdFilterPointer thresholder2 = 0;
+    ImagePointer im1 = nullptr;
+    ImagePointer im2 = nullptr;
+    ThresholdFilterPointer thresholder1 = nullptr;
+    ThresholdFilterPointer thresholder2 = nullptr;
     ThresholdVectorType thresholdVector1( 2 );
     ThresholdVectorType thresholdVector2( 2 );
 
@@ -154,10 +154,10 @@ public:
     }
 
     /** Create readers for the masks and AND filters. */
-    ImageReaderPointer maskReader1 = 0;
-    ImageReaderPointer maskReader2 = 0;
-    AndFilterPointer im2ANDmask1Filter = 0;
-    AndFilterPointer im1ANDmask2Filter = 0;
+    ImageReaderPointer maskReader1 = nullptr;
+    ImageReaderPointer maskReader2 = nullptr;
+    AndFilterPointer im2ANDmask1Filter = nullptr;
+    AndFilterPointer im1ANDmask2Filter = nullptr;
 
     /** If there is a mask given for image1, use it on image2. */
     if( this->m_MaskFileName1 != "" )

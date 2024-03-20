@@ -113,13 +113,13 @@ int main( int argc, char **argv )
 
   /** Threads. */
   unsigned int maximumNumberOfThreads
-    = itk::MultiThreader::GetGlobalDefaultNumberOfThreads();
-  itk::MultiThreader::SetGlobalMaximumNumberOfThreads(
+    = itk::MultiThreaderBase::GetGlobalDefaultNumberOfThreads();
+  itk::MultiThreaderBase::SetGlobalMaximumNumberOfThreads(
     maximumNumberOfThreads );
 
   /** Determine image properties. */
-  itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
-  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  itk::IOPixelEnum pixelType = itk::IOPixelEnum::UNKNOWNPIXELTYPE;
+  itk::ImageIOBase::IOComponentEnum componentType = itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE;
   unsigned int dim = 0;
   unsigned int numberOfComponents = 0;
   bool retgip = itktools::GetImageProperties(
@@ -131,13 +131,13 @@ int main( int argc, char **argv )
   if( !retNOCCheck ) return EXIT_FAILURE;
 
   /** Class that does the work. */
-  ITKToolsTextureBase * filter = NULL;
+  ITKToolsTextureBase * filter = nullptr;
 
   /** Input images are read in as float, always. The default output is float,
    * but can be overridden by specifying -opct in the command line.
    */
-  componentType = itk::ImageIOBase::FLOAT;
-  itk::ImageIOBase::IOComponentType outputComponentType
+  componentType = itk::IOComponentEnum::FLOAT;
+  itk::ImageIOBase::IOComponentEnum outputComponentType
     = itk::ImageIOBase::GetComponentTypeFromString( componentTypeOutString );
 
   try

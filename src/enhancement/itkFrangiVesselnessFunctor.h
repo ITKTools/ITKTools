@@ -36,7 +36,7 @@ namespace Functor
  *
  * \par Reference
  * Multiscale Vessel Enhancement Filtering.
- * Medical Image Computing and Computer-Assisted Interventation MICCAI’98
+ * Medical Image Computing and Computer-Assisted Interventation MICCAI 98
  * Lecture Notes in Computer Science, 1998, Volume 1496/1998, 130-137,
  * DOI: 10.1007/BFb0056195
  *
@@ -75,9 +75,9 @@ public:
       Functor::AbsLessCompare<EigenValueType>() );
 
     /** Take the absolute values and abbreviate. */
-    const RealType l1 = vnl_math_abs( sortedEigenValues[ 0 ] );
-    const RealType l2 = vnl_math_abs( sortedEigenValues[ 1 ] );
-    const RealType l3 = vnl_math_abs( sortedEigenValues[ 2 ] );
+    const RealType l1 = std::abs( sortedEigenValues[ 0 ] );
+    const RealType l2 = std::abs( sortedEigenValues[ 1 ] );
+    const RealType l3 = std::abs( sortedEigenValues[ 2 ] );
 
     /** Reject. */
     if( this->m_BrightObject )
@@ -105,14 +105,14 @@ public:
 
     /** Compute several structure measures. */
     const RealType Ra = l2 / l3; // see Eq.(11)
-    const RealType Rb = l1 / vcl_sqrt( l2 * l3 ); // see Eq.(10)
-    const RealType S  = vcl_sqrt( l1 * l1 + l2 * l2 + l3 * l3 ); // see Eq.(12)
+    const RealType Rb = l1 / std::sqrt( l2 * l3 ); // see Eq.(10)
+    const RealType S  = std::sqrt( l1 * l1 + l2 * l2 + l3 * l3 ); // see Eq.(12)
 
     /** Compute final vesselness measure, see Eq.(13). */
     RealType vesselness = NumericTraits<RealType>::Zero;
-    vesselness  = ( 1.0 - vcl_exp( -( Ra * Ra ) / ( 2.0 * m_Alpha * m_Alpha ) ) ); // sheetness vs lineness
-    vesselness *=         vcl_exp( -( Rb * Rb ) / ( 2.0 * m_Beta  * m_Beta  ) );   // blobness
-    vesselness *= ( 1.0 - vcl_exp( -( S  * S )  / ( 2.0 * m_C     * m_C ) ) );     // noise = structuredness
+    vesselness  = ( 1.0 - std::exp( -( Ra * Ra ) / ( 2.0 * m_Alpha * m_Alpha ) ) ); // sheetness vs lineness
+    vesselness *=         std::exp( -( Rb * Rb ) / ( 2.0 * m_Beta  * m_Beta  ) );   // blobness
+    vesselness *= ( 1.0 - std::exp( -( S  * S )  / ( 2.0 * m_C     * m_C ) ) );     // noise = structuredness
 
     return static_cast<TOutput>( vesselness );
   } // end operator ()

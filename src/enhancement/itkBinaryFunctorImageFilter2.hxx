@@ -83,7 +83,7 @@ BinaryFunctorImageFilter2< TInputImage1, TInputImage2, TOutputImage >
   itkDebugMacro("Getting constant 1");
   const DecoratedInput1ImagePixelType *input = dynamic_cast< const DecoratedInput1ImagePixelType * >(
       this->ProcessObject::GetInput(0) );
-  if( input == NULL )
+  if( input == nullptr )
     {
     itkExceptionMacro(<<"Constant 1 is not set");
     }
@@ -139,7 +139,7 @@ BinaryFunctorImageFilter2< TInputImage1, TInputImage2, TOutputImage >
   itkDebugMacro("Getting constant 2");
   const DecoratedInput2ImagePixelType *input = dynamic_cast< const DecoratedInput2ImagePixelType * >(
       this->ProcessObject::GetInput(1) );
-  if( input == NULL )
+  if( input == nullptr )
     {
     itkExceptionMacro(<<"Constant 2 is not set");
     }
@@ -152,7 +152,7 @@ void
 BinaryFunctorImageFilter2< TInputImage1, TInputImage2, TOutputImage >
 ::GenerateOutputInformation()
 {
-  const DataObject * input = NULL;
+  const DataObject * input = nullptr;
   Input1ImagePointer inputPtr1 =
     dynamic_cast< const TInputImage1 * >( ProcessObject::GetInput(0) );
   Input2ImagePointer inputPtr2 =

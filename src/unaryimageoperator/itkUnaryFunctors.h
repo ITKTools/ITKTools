@@ -147,7 +147,7 @@ public:
   ~RMODDOUBLE() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_fmod( static_cast<double>( A ), static_cast<double>( this->m_Argument ) ) );
+    return static_cast<TOutput>( std::fmod( static_cast<double>( A ), static_cast<double>( this->m_Argument ) ) );
   }
   void SetArgument( TArgument arg ){ this->m_Argument = arg; };
 private:
@@ -177,7 +177,7 @@ public:
   ~LMODDOUBLE() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_fmod( static_cast<double>( this->m_Argument ), static_cast<double>( A ) ) );
+    return static_cast<TOutput>( std::fmod( static_cast<double>( this->m_Argument ), static_cast<double>( A ) ) );
   }
   void SetArgument( TArgument arg ){ this->m_Argument = arg; };
 private:
@@ -192,7 +192,7 @@ public:
   ~NLOG() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_log( static_cast<double>( A ) ) / vcl_log( static_cast<double>( this->m_Argument ) ) );
+    return static_cast<TOutput>( std::log( static_cast<double>( A ) ) / std::log( static_cast<double>( this->m_Argument ) ) );
   }
   void SetArgument( TArgument arg ){ this->m_Argument = arg; };
 private:
@@ -226,7 +226,7 @@ public:
   ~RPOWER() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_pow( static_cast<double>( A ), static_cast<double>( this->m_Argument ) ) );
+    return static_cast<TOutput>( std::pow( static_cast<double>( A ), static_cast<double>( this->m_Argument ) ) );
   }
   void SetArgument( TArgument arg ){ this->m_Argument = arg; };
 private:
@@ -241,7 +241,7 @@ public:
   ~LPOWER() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_pow( static_cast<double>( this->m_Argument ), static_cast<double>( A ) ) );
+    return static_cast<TOutput>( std::pow( static_cast<double>( this->m_Argument ), static_cast<double>( A ) ) );
   }
   void SetArgument( TArgument arg ){ this->m_Argument = arg; };
 private:
@@ -273,7 +273,7 @@ public:
   ~SIGNINT() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vnl_math_sgn( A ) );
+    return static_cast<TOutput>( vnl_math::sgn( A ) );
   }
 
 private:
@@ -289,7 +289,7 @@ public:
   ~SIGNDOUBLE() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vnl_math_sgn( A ) );
+    return static_cast<TOutput>( vnl_math::sgn( A ) );
   }
 
 private:
@@ -305,7 +305,7 @@ public:
   ~ABSINT() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_abs( static_cast<int>( A ) ) );
+    return static_cast<TOutput>( std::abs( static_cast<int>( A ) ) );
   }
 
 private:
@@ -321,7 +321,7 @@ public:
   ~ABSDOUBLE() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_abs( static_cast<double>( A ) ) );
+    return static_cast<TOutput>( std::abs( static_cast<double>( A ) ) );
   }
 
 private:
@@ -337,7 +337,7 @@ public:
   ~FLOOR() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_floor( static_cast<double>( A ) ) );
+    return static_cast<TOutput>( std::floor( static_cast<double>( A ) ) );
   }
 
 private:
@@ -353,7 +353,7 @@ public:
   ~CEIL() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_ceil( static_cast<double>( A ) ) );
+    return static_cast<TOutput>( std::ceil( static_cast<double>( A ) ) );
   }
 
 private:
@@ -369,7 +369,7 @@ public:
   ~ROUND() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vnl_math_rnd( static_cast<double>( A ) ) );
+    return static_cast<TOutput>( vnl_math::rnd( static_cast<double>( A ) ) );
   }
 
 private:
@@ -385,7 +385,7 @@ public:
   ~SQR() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vnl_math_sqr( static_cast<double>( A ) ) );
+    return static_cast<TOutput>( vnl_math::sqr( static_cast<double>( A ) ) );
   }
 
 private:
@@ -401,7 +401,7 @@ public:
   ~SQRT() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_sqrt( static_cast<double>( A ) ) );
+    return static_cast<TOutput>( std::sqrt( static_cast<double>( A ) ) );
   }
 
 private:
@@ -417,7 +417,7 @@ public:
   ~LN() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_log( static_cast<double>( A ) ) );
+    return static_cast<TOutput>( std::log( static_cast<double>( A ) ) );
   }
 
 private:
@@ -433,7 +433,7 @@ public:
   ~LOG10() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_log10( static_cast<double>( A ) ) );
+    return static_cast<TOutput>( std::log10( static_cast<double>( A ) ) );
   }
 
 private:
@@ -449,7 +449,7 @@ public:
   ~EXP() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_exp( static_cast<double>( A ) ) );
+    return static_cast<TOutput>( std::exp( static_cast<double>( A ) ) );
   }
 
 private:
@@ -465,7 +465,7 @@ public:
   ~SIN() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_sin( static_cast<double>( A ) ) );
+    return static_cast<TOutput>( std::sin( static_cast<double>( A ) ) );
   }
 
 private:
@@ -481,7 +481,7 @@ public:
   ~COS() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_cos( static_cast<double>( A ) ) );
+    return static_cast<TOutput>( std::cos( static_cast<double>( A ) ) );
   }
 
 private:
@@ -497,7 +497,7 @@ public:
   ~TAN() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_tan( static_cast<double>( A ) ) );
+    return static_cast<TOutput>( std::tan( static_cast<double>( A ) ) );
   }
 
 private:
@@ -513,7 +513,7 @@ public:
   ~ARCSIN() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_asin( static_cast<double>( A ) ) );
+    return static_cast<TOutput>( std::asin( static_cast<double>( A ) ) );
   }
 
 private:
@@ -529,7 +529,7 @@ public:
   ~ARCCOS() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_acos( static_cast<double>( A ) ) );
+    return static_cast<TOutput>( std::acos( static_cast<double>( A ) ) );
   }
 
 private:
@@ -545,7 +545,7 @@ public:
   ~ARCTAN() {};
   inline TOutput operator()( const TInput & A )
   {
-    return static_cast<TOutput>( vcl_atan( static_cast<double>( A ) ) );
+    return static_cast<TOutput>( std::atan( static_cast<double>( A ) ) );
   }
 
 private:
@@ -920,7 +920,7 @@ struct UnaryFunctorFactory
     else
     {
       std::cerr << "Selected functor is not valid!" << std::endl;
-      return NULL;
+      return nullptr;
     }
   }
 };

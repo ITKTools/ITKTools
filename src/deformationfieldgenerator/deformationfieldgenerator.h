@@ -133,9 +133,9 @@ public:
     typename InputImageReaderType::Pointer reader2 = InputImageReaderType::New();
     typename IPPReaderType::Pointer ipp1Reader = IPPReaderType::New();
     typename IPPReaderType::Pointer ipp2Reader = IPPReaderType::New();
-    typename PointSetType::Pointer inputPointSet1 = 0;
-    typename PointSetType::Pointer inputPointSet2 = 0;
-    typename KernelTransformType::Pointer kernelTransform = 0;
+    typename PointSetType::Pointer inputPointSet1 = nullptr;
+    typename PointSetType::Pointer inputPointSet2 = nullptr;
+    typename KernelTransformType::Pointer kernelTransform = nullptr;
     typename DeformationFieldType::Pointer deformationField = DeformationFieldType::New();
     typename DeformationFieldWriterType::Pointer writer = DeformationFieldWriterType::New();
 
@@ -214,7 +214,7 @@ public:
         inputPointSet1->GetPoint( j, &point );
         for ( unsigned int i = 0; i < VDimension; i++ )
         {
-          index[i] = static_cast< IndexValueType >( vnl_math_rnd( point[i] ) );
+          index[i] = static_cast< IndexValueType >( vnl_math::rnd( point[i] ) );
         }
         dummyImage->TransformIndexToPhysicalPoint( index, point );
         tempPointSet->SetPoint( j, point );
@@ -238,7 +238,7 @@ public:
         inputPointSet2->GetPoint(j, &point);
         for ( unsigned int i = 0; i < VDimension; i++ )
         {
-          index[i] = static_cast< IndexValueType >( vnl_math_rnd( point[i] ) );
+          index[i] = static_cast< IndexValueType >( vnl_math::rnd( point[i] ) );
         }
         dummyImage->TransformIndexToPhysicalPoint( index, point );
         tempPointSet->SetPoint(j, point);

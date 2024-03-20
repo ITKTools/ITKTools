@@ -120,8 +120,8 @@ int main( int argc, char ** argv )
   parser->GetCommandLineArgument( "-d", defaultvalue );
 
   /** Determine image properties. */
-  itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
-  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  itk::IOPixelEnum pixelType = itk::IOPixelEnum::UNKNOWNPIXELTYPE;
+  itk::ImageIOBase::IOComponentEnum componentType = itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE;
   unsigned int dim = 0;
   unsigned int numberOfComponents = 0;
   bool retgip = itktools::GetImageProperties(
@@ -144,7 +144,7 @@ int main( int argc, char ** argv )
   if( !retly )
   {
     /** Class that does the work. */
-    ITKToolsTileImages2D3DBase * filterTile2D3D = NULL;
+    ITKToolsTileImages2D3DBase * filterTile2D3D = nullptr;
 
     try
     {
@@ -187,7 +187,7 @@ int main( int argc, char ** argv )
   else
   {
     /** Class that does the work. */
-    ITKToolsTileImagesBase * filter = NULL;
+    ITKToolsTileImagesBase * filter = nullptr;
 
     try
     {

@@ -290,7 +290,7 @@ int main( int argc, char *argv[] )
 
 
   /** Class that does the work. */
-  ITKToolsCreateGridImageBase * filter = NULL;
+  ITKToolsCreateGridImageBase * filter = nullptr;
 
   /** Short alias */
   unsigned int dim = imageDimension;

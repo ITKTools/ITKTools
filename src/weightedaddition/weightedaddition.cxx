@@ -85,8 +85,8 @@ int main( int argc, char **argv )
   parser->GetCommandLineArgument( "-out", outputFileName );
 
   /** Determine image properties. */
-  itk::ImageIOBase::IOPixelType pixelType = itk::ImageIOBase::UNKNOWNPIXELTYPE;
-  itk::ImageIOBase::IOComponentType componentType = itk::ImageIOBase::UNKNOWNCOMPONENTTYPE;
+  itk::IOPixelEnum pixelType = itk::IOPixelEnum::UNKNOWNPIXELTYPE;
+  itk::ImageIOBase::IOComponentEnum componentType = itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE;
   unsigned int dim = 0;
   unsigned int numberOfComponents = 0;
   bool retgip = itktools::GetImageProperties(
@@ -98,10 +98,10 @@ int main( int argc, char **argv )
   if( !retNOCCheck ) return EXIT_FAILURE;
 
   /** Anyway, float is only supported. */
-  componentType = itk::ImageIOBase::FLOAT;
+  componentType = itk::IOComponentEnum::FLOAT;
 
   /** Class that does the work. */
-  ITKToolsWeightedAdditionBase * filter = NULL;
+  ITKToolsWeightedAdditionBase * filter = nullptr;
 
   try
   {

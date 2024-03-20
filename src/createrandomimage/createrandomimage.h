@@ -32,7 +32,6 @@
 #include "itkCastImageFilter.h"
 #include "itkExtractImageFilter.h"
 #include "itkComposeImageFilter.h"
-#include "itkExceptionObject.h"
 #include "itkNumericTraits.h"
 #include "itkMersenneTwisterRandomVariateGenerator.h"
 #include <iostream>
@@ -148,7 +147,7 @@ public:
     typedef RandomGeneratorType::Pointer RandomGeneratorPointer;
 
     /** Create variables */
-    VectorWriterPointer vectorWriter = 0;
+    VectorWriterPointer vectorWriter = nullptr;
 
     SetOfChannelsType setOfChannels( this->m_SpaceDimension );
     SetOfBlurrersType setOfBlurrers( this->m_SpaceDimension );

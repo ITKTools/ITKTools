@@ -54,7 +54,7 @@ SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
 
   /** Setup the first smoothing filter. */
   this->m_FirstSmoothingFilter = FirstGaussianFilterType::New();
-  this->m_FirstSmoothingFilter->SetOrder( FirstGaussianFilterType::ZeroOrder );
+  this->m_FirstSmoothingFilter->SetOrder( GaussianOrderEnum::ZeroOrder );
   this->m_FirstSmoothingFilter->SetDirection( 0 );
   this->m_FirstSmoothingFilter->SetNormalizeAcrossScale( this->m_NormalizeAcrossScale );
   this->m_FirstSmoothingFilter->ReleaseDataFlagOn();
@@ -63,7 +63,7 @@ SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
   for( unsigned int i = 0; i < ImageDimension - 1; i++ )
   {
     this->m_SmoothingFilters[ i ] = InternalGaussianFilterType::New();
-    this->m_SmoothingFilters[ i ]->SetOrder( InternalGaussianFilterType::ZeroOrder );
+    this->m_SmoothingFilters[ i ]->SetOrder( GaussianOrderEnum::ZeroOrder );
     this->m_SmoothingFilters[ i ]->SetNormalizeAcrossScale( this->m_NormalizeAcrossScale );
     this->m_SmoothingFilters[ i ]->SetDirection( i + 1 );
     this->m_SmoothingFilters[ i ]->ReleaseDataFlagOn();
@@ -181,15 +181,15 @@ SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
     /** Set the order for the first smoothing filter. */
     if( order[ 0 ] == 0 )
     {
-      this->m_FirstSmoothingFilter->SetOrder( FirstGaussianFilterType::ZeroOrder );
+      this->m_FirstSmoothingFilter->SetOrder( GaussianOrderEnum::ZeroOrder );
     }
     else if( order[ 0 ] == 1 )
     {
-      this->m_FirstSmoothingFilter->SetOrder( FirstGaussianFilterType::FirstOrder );
+      this->m_FirstSmoothingFilter->SetOrder( GaussianOrderEnum::FirstOrder );
     }
     else if( order[ 0 ] == 2 )
     {
-      this->m_FirstSmoothingFilter->SetOrder( FirstGaussianFilterType::SecondOrder );
+      this->m_FirstSmoothingFilter->SetOrder( GaussianOrderEnum::SecondOrder );
     }
     //else warning??
 
@@ -198,15 +198,15 @@ SmoothingRecursiveGaussianImageFilter2<TInputImage,TOutputImage>
     {
       if( order[ i + 1 ] == 0 )
       {
-        this->m_SmoothingFilters[ i ]->SetOrder( InternalGaussianFilterType::ZeroOrder );
+        this->m_SmoothingFilters[ i ]->SetOrder( GaussianOrderEnum::ZeroOrder );
       }
       else if( order[ i + 1 ] == 1 )
       {
-        this->m_SmoothingFilters[ i ]->SetOrder( InternalGaussianFilterType::FirstOrder );
+        this->m_SmoothingFilters[ i ]->SetOrder( GaussianOrderEnum::FirstOrder );
       }
       else if( order[ i + 1 ] == 2 )
       {
-        this->m_SmoothingFilters[ i ]->SetOrder( InternalGaussianFilterType::SecondOrder );
+        this->m_SmoothingFilters[ i ]->SetOrder( GaussianOrderEnum::SecondOrder );
       }
       //else warning??
     } // end for

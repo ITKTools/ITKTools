@@ -20,7 +20,7 @@
 
 void ITKToolsCastConvert4D(
   unsigned int dim,
-  itk::ImageIOBase::IOComponentType componentType,
+  itk::ImageIOBase::IOComponentEnum componentType,
   ITKToolsCastConvertBase * & filter )
 {
   if( !filter ) filter = ITKToolsCastConvert< 4, short >::New( dim, componentType );
