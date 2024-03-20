@@ -18,7 +18,7 @@ The move to git(hub) in April 2011 under the name ITKTools was inspired by David
 Building
 --------
 
-Building ITKTools from source requires to first build the ITK. Currently we relky on ITK4 the latest git version, available at git://itk.org/ITK.git.
+Building ITKTools from source requires to first build the ITK. Currently we relky on ITK4 the latest git version, available at https://github.com/InsightSoftwareConsortium/ITK .
 
 Linux:
 
